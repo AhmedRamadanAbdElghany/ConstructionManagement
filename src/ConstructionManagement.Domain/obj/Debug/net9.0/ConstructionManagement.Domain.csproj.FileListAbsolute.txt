@@ -1,0 +1,11 @@
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\bin\Debug\net9.0\ConstructionManagement.Domain.deps.json
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\bin\Debug\net9.0\ConstructionManagement.Domain.dll
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\bin\Debug\net9.0\ConstructionManagement.Domain.pdb
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\obj\Debug\net9.0\ConstructionManagement.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\obj\Debug\net9.0\ConstructionManagement.Domain.AssemblyInfoInputs.cache
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\obj\Debug\net9.0\ConstructionManagement.Domain.AssemblyInfo.cs
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\obj\Debug\net9.0\ConstructionManagement.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\obj\Debug\net9.0\ConstructionManagement.Domain.dll
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\obj\Debug\net9.0\refint\ConstructionManagement.Domain.dll
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\obj\Debug\net9.0\ConstructionManagement.Domain.pdb
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\obj\Debug\net9.0\ref\ConstructionManagement.Domain.dll
