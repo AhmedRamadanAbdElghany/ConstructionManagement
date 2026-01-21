@@ -93,7 +93,7 @@ builder.Services.AddAuthentication(options =>
 
 // 7. Authorization Policies + Custom Handlers
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSingleton<IAuthorizationHandler, ProjectRoleHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, ProjectRoleHandler>();
 
 // Read Gemini API key (falls back to environment variable)
 var geminiApiKey = builder.Configuration["Gemini:ApiKey"]

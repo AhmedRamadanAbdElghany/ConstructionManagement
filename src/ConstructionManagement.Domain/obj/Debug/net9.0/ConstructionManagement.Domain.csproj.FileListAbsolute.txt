@@ -5,6 +5,7 @@ C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Doma
 C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\obj\Debug\net9.0\ConstructionManagement.Domain.AssemblyInfoInputs.cache
 C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\obj\Debug\net9.0\ConstructionManagement.Domain.AssemblyInfo.cs
 C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\obj\Debug\net9.0\ConstructionManagement.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\obj\Debug\net9.0\ConstructionManagement.Domain.sourcelink.json
 C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\obj\Debug\net9.0\ConstructionManagement.Domain.dll
 C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\obj\Debug\net9.0\refint\ConstructionManagement.Domain.dll
 C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\obj\Debug\net9.0\ConstructionManagement.Domain.pdb

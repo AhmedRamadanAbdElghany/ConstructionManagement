@@ -7,6 +7,7 @@ using System.Security.Claims;
 namespace ConstructionManagement.WebApi.Controllers;
 
 [Authorize]
+// البارامتر itemId معرف هنا مرة واحدة لكل الميثودز تحت
 [Route("api/items/{itemId}/dailylogs")]
 [ApiController]
 public class DailyLogsController : ControllerBase
@@ -18,23 +19,23 @@ public class DailyLogsController : ControllerBase
         _dailyLogService = dailyLogService;
     }
 
-    // 1. إنشاء أو جلب يومية اليوم (لو مش موجودة تتعمل تلقائيًا)
+    // 1. إنشاء أو جلب يومية اليوم
+    // المسار النهائي: POST api/items/{itemId}/dailylogs
     [HttpPost]
     public async Task<IActionResult> CreateOrGet(int itemId, [FromBody] CreateDailyLogRequest request)
     {
-        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-
+        var userId = GetUserId();
         var logId = await _dailyLogService.GetOrCreateDailyLogIdAsync(itemId, request.LogDate, userId);
         return Ok(new { dailyLogId = logId });
     }
 
-    // 2. تقفيل اليوم + تحديد نسبة الإنجاز (المدير بس)
-    [HttpPut("{logDate}/close")]
+    // 2. تقفيل اليوم + تحديد نسبة الإنجاز
+    // المسار النهائي: PUT api/items/{itemId}/dailylogs/{logDate}/close
+    [HttpPut("{logDate:datetime}/close")] // إضافة datetime constraint للحماية
     [Authorize(Policy = "CanCloseDaily")]
     public async Task<IActionResult> Close(int itemId, DateTime logDate, [FromBody] CloseDailyLogRequest request)
     {
-        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-
+        var userId = GetUserId();
         var success = await _dailyLogService.CloseDailyLogAsync(itemId, logDate, userId, request);
 
         if (!success)
@@ -44,11 +45,19 @@ public class DailyLogsController : ControllerBase
     }
 
     // 3. جلب تاريخ اليوميات والنسب للبند ده
-    [HttpGet("item/{itemId}/history")]
+    // تم حذف كلمة item/{itemId} لأنها موروثة من الـ Route الأساسي فوق الكلاس
+    // المسار النهائي: GET api/items/{itemId}/dailylogs/history
+    [HttpGet("history")]
     public async Task<IActionResult> GetHistory(int itemId)
     {
-        // تأكد أن الاستدعاء بهذا الاسم الموحد
         var history = await _dailyLogService.GetDailyLogHistoryAsync(itemId);
         return Ok(history);
+    }
+
+    // Helper method لتجنب تكرار الكود
+    private int GetUserId()
+    {
+        var claim = User.FindFirst(ClaimTypes.NameIdentifier);
+        return claim != null ? int.Parse(claim.Value) : 0;
     }
 }

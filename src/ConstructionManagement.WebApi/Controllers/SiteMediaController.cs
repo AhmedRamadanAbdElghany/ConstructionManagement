@@ -25,34 +25,37 @@ public class SiteMediaController : ControllerBase
     /// رفع صورة أو فيديو جديد (مرتبط بمشروع وبند اختياري)
     /// </summary>
     [HttpPost]
-    [RequestSizeLimit(100_000_000)] // تحديد الحد بـ 100 ميجابايت مثلاً
+    [Consumes("multipart/form-data")] // السطر ده هو اللي بيخلي Swagger يفهم إنه يرفع ملف
     public async Task<IActionResult> Upload(
         int projectId,
-        [FromForm] UploadMediaRequest request,
-        [FromForm] IFormFile file,
-        [FromQuery] int? itemId = null) // اختياري
+        [FromForm] UploadMediaRequest request)
     {
-        // 1. التحقق من التقفيل اليومي (لو مرتبط ببند)
-        if (itemId.HasValue)
+        // 1. التحقق من التقفيل اليومي
+        if (request.ItemId.HasValue)
         {
             var today = DateTime.UtcNow.Date;
-            var isClosed = await _dailyLogService.IsDayClosedForItemAsync(itemId.Value, today);
+            var isClosed = await _dailyLogService.IsDayClosedForItemAsync(request.ItemId.Value, today);
             if (isClosed)
                 return BadRequest("اليوم مقفول لهذا البند، لا يمكن رفع ملفات جديدة");
         }
 
-        // 2. رفع الملف والحفظ
-        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        var mediaId = await _mediaService.UploadMediaAsync(
-    itemId,
-    projectId,
-    request.MediaType,
-    request.Description,
-    file,
-    userId,
-    request.SourceType);
+        // 2. التحقق من الملف
+        if (request.File == null || request.File.Length == 0)
+            return BadRequest("يرجى اختيار ملف صالح");
 
-        return CreatedAtAction(nameof(Get), new { mediaId }, new { mediaId });
+        // 3. رفع الملف والحفظ
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        var mediaId = await _mediaService.UploadMediaAsync(
+            request.ItemId,
+            projectId,
+            request.MediaType,
+            request.Description,
+            request.File,
+            userId,
+            request.SourceType);
+
+        return CreatedAtAction(nameof(Get), new { projectId, mediaId }, new { mediaId });
     }
 
     /// <summary>
