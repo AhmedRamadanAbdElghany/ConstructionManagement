@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.DTOs;
+﻿﻿using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
@@ -52,9 +52,9 @@ public class UserServiceTests
 
         // Assert
         // التأكد من إضافة المستخدم
-        _userRepo.Verify(r => r.AddAsync(It.IsAny<User>()), Times.Once);
+        _userRepo.Verify(r => r.AddAsync(It.IsAny<User>()), Times.Once());
         // التأكد من استدعاء الحفظ النهائي عبر Unit of Work
-        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
+        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once());
     }
 
     [Fact]
@@ -72,8 +72,8 @@ public class UserServiceTests
         await service.DeleteUserAsync(targetUserId, adminId);
 
         // Assert
-        _userRepo.Verify(r => r.DeleteAsync(user), Times.Once);
-        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
+        _userRepo.Verify(r => r.DeleteAsync(user), Times.Once());
+        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once());
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public class UserServiceTests
         await service.AssignRoleToUserAsync(userId, "Engineer", adminId);
 
         // Assert
-        _userRoleRepo.Verify(r => r.AddAsync(It.IsAny<UserRole>()), Times.Once);
-        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
+        _userRoleRepo.Verify(r => r.AddAsync(It.IsAny<UserRole>()), Times.Once());
+        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once());
     }
 }

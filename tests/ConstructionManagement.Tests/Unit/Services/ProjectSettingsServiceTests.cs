@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.DTOs;
+﻿﻿using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
@@ -67,8 +67,8 @@ public class ProjectSettingsServiceTests
 
         // Assert
         settings.DelayNotificationIntervalDays.Should().Be(14);
-        _settingsRepo.Verify(r => r.UpdateAsync(settings), Times.Once);
-        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
+        _settingsRepo.Verify(r => r.UpdateAsync(settings), Times.Once());
+        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once());
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public class ProjectSettingsServiceTests
         await service.GetSettingsAsync(projectId);
 
         // Assert
-        _settingsRepo.Verify(r => r.AddAsync(It.Is<ProjectSettings>(s => s.Id == projectId)), Times.Once);
-        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
+        _settingsRepo.Verify(r => r.AddAsync(It.Is<ProjectSettings>(s => s.Id == projectId)), Times.Once());
+        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once());
     }
 }

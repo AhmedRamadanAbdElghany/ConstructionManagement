@@ -38,6 +38,7 @@
 		<ProjectReference Include="..\..\src\ConstructionManagement.Application\ConstructionManagement.Application.csproj" />
 		<ProjectReference Include="..\..\src\ConstructionManagement.Domain\ConstructionManagement.Domain.csproj" />
 		<ProjectReference Include="..\..\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj" />
+		<ProjectReference Include="..\..\src\ConstructionManagement.WebApi\ConstructionManagement.WebApi.csproj" />
 	</ItemGroup>
 
 </Project>

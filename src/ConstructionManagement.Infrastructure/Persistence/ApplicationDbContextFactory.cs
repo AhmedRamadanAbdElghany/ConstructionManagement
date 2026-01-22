@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ConstructionManagement.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System.IO;
@@ -39,4 +40,5 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
 
         return new ApplicationDbContext(optionsBuilder.Options);
     }
+
 }

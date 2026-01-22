@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.DTOs;
+﻿﻿using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
@@ -36,8 +36,8 @@ public class ProjectTeamServiceTests
         await service.AddTeamMemberAsync(projectId, userId, null);
 
         // Assert
-        _teamRepo.Verify(r => r.AddAsync(It.IsAny<ProjectTeamMember>()), Times.Once);
-        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once); // التأكد من الحفظ
+        _teamRepo.Verify(r => r.AddAsync(It.IsAny<ProjectTeamMember>()), Times.Once());
+        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once()); // التأكد من الحفظ
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class ProjectTeamServiceTests
             .Should().ThrowAsync<InvalidOperationException>()
             .WithMessage("*نفسه*");
 
-        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never); // لا يجب الحفظ في حالة الخطأ
+        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never()); // لا يجب الحفظ في حالة الخطأ
     }
 
     [Fact]
@@ -68,8 +68,8 @@ public class ProjectTeamServiceTests
         await service.AssignRoleToMemberAsync(teamId, roleId);
 
         // Assert
-        _teamRoleRepo.Verify(r => r.AddAsync(It.IsAny<ProjectTeamRole>()), Times.Once);
-        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
+        _teamRoleRepo.Verify(r => r.AddAsync(It.IsAny<ProjectTeamRole>()), Times.Once());
+        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once());
     }
 
     [Fact]

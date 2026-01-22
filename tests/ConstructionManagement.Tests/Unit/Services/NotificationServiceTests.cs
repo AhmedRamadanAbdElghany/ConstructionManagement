@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.Interfaces;
+﻿﻿using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using ConstructionManagement.Infrastructure.Services;
@@ -39,8 +39,8 @@ public class NotificationServiceTests
         _repoMock.Verify(r => r.AddAsync(It.Is<Notification>(n =>
             n.UserId == userId &&
             n.Title == "Test Title" &&
-            n.Link == "/link")), Times.Once);
-        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once);
+            n.Link == "/link")), Times.Once());
+        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once());
     }
 
     #endregion
@@ -92,8 +92,8 @@ public class NotificationServiceTests
         // Assert
         notification.IsRead.Should().BeTrue();
         notification.ReadAt.Should().NotBeNull();
-        _repoMock.Verify(r => r.UpdateAsync(notification), Times.Once);
-        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once);
+        _repoMock.Verify(r => r.UpdateAsync(notification), Times.Once());
+        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once());
     }
 
     [Fact]
@@ -113,7 +113,7 @@ public class NotificationServiceTests
 
         // Assert
         notification.IsRead.Should().BeFalse(); // لم يتغير
-        _repoMock.Verify(r => r.UpdateAsync(It.IsAny<Notification>()), Times.Never);
+        _repoMock.Verify(r => r.UpdateAsync(It.IsAny<Notification>()), Times.Never());
     }
 
     [Fact]
@@ -135,8 +135,8 @@ public class NotificationServiceTests
         await service.MarkAllAsReadAsync(userId);
 
         // Assert
-        _repoMock.Verify(r => r.UpdateRangeAsync(It.Is<List<Notification>>(list => list.Count == 2)), Times.Once);
-        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once);
+        _repoMock.Verify(r => r.UpdateRangeAsync(It.Is<List<Notification>>(list => list.Count == 2)), Times.Once());
+        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once());
     }
 
     [Fact]
@@ -156,8 +156,8 @@ public class NotificationServiceTests
         await service.MarkAllAsReadAsync(userId);
 
         // Assert
-        _repoMock.Verify(r => r.UpdateRangeAsync(It.IsAny<List<Notification>>()), Times.Never);
-        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Never);
+        _repoMock.Verify(r => r.UpdateRangeAsync(It.IsAny<List<Notification>>()), Times.Never());
+        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Never());
     }
 
     #endregion

@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.DTOs;
+﻿﻿using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
@@ -96,7 +96,7 @@ public class AuthServiceTests
         // Assert
         result.Success.Should().BeFalse();
         result.Message.Should().Be("البريد الإلكتروني مستخدم بالفعل");
-        _userRepoMock.Verify(r => r.AddAsync(It.IsAny<User>()), Times.Never);
+        _userRepoMock.Verify(r => r.AddAsync(It.IsAny<User>()), Times.Never());
     }
 
     [Fact]
@@ -120,9 +120,9 @@ public class AuthServiceTests
             u.FullName == request.FullName &&
             u.Phone == request.Phone && // التأكد من تخزين الهاتف
             u.PasswordHash != request.Password // التأكد من التشفير
-        )), Times.Once);
+        )), Times.Once());
 
-        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once);
+        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once());
     }
 
     // ─── EDGE CASES ─────────────────────────────────────────────────────────

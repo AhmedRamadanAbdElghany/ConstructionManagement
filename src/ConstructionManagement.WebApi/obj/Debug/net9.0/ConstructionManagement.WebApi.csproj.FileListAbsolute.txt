@@ -203,10 +203,10 @@ C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.WebA
 C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.WebApi\obj\Debug\net9.0\staticwebassets.build.json.cache
 C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.WebApi\obj\Debug\net9.0\staticwebassets.development.json
 C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.WebApi\obj\Debug\net9.0\staticwebassets.build.endpoints.json
-C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.WebApi\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.WebApi\obj\Debug\net9.0\Construc.58CDB598.Up2Date
 C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.WebApi\obj\Debug\net9.0\ConstructionManagement.WebApi.dll
 C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.WebApi\obj\Debug\net9.0\refint\ConstructionManagement.WebApi.dll
 C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.WebApi\obj\Debug\net9.0\ConstructionManagement.WebApi.pdb
 C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.WebApi\obj\Debug\net9.0\ConstructionManagement.WebApi.genruntimeconfig.cache
 C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.WebApi\obj\Debug\net9.0\ref\ConstructionManagement.WebApi.dll
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.WebApi\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

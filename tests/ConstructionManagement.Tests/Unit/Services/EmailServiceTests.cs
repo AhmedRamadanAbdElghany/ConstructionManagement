@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Infrastructure.Services;
+﻿﻿using ConstructionManagement.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -69,7 +69,7 @@ public class EmailServiceTests
         var service = CreateService();
         await service.SendAsync("recipient@test.com", "Subject", "Body");
 
-        _loggerMock.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.IsAny<It.IsAnyType>(), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.AtMostOnce);
+        _loggerMock.Verify(x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.IsAny<It.IsAnyType>(), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.AtMostOnce());
     }
 
     private void VerifyLog(LogLevel level, string messagePart)
@@ -81,6 +81,6 @@ public class EmailServiceTests
                 It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(messagePart)),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once);
+            Times.Once());
     }
 }

@@ -1,4 +1,4 @@
-using ConstructionManagement.Application.Interfaces;
+﻿using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Application.Validators;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Authorization;
@@ -17,28 +17,21 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-
-// Add these for Google Gemini (official SDK)
 using Google.GenAI;
-using Google.GenAI.Types;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Add controllers
+// 1. Add controllers + FluentValidation
 builder.Services.AddControllers();
-
-// 2. FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateProjectRequestValidator>();
 
-// 3. Database (SQL Server)
+// 2. Database (SQL Server)
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 4. Generic + Specific Repositories
+// 3. Repositories (Generic + Specific)
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
-// Specific repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBOQItemRepository, BOQItemRepository>();
 builder.Services.AddScoped<IRepository<ProjectApprovalRule>, Repository<ProjectApprovalRule>>();
@@ -47,7 +40,7 @@ builder.Services.AddScoped<IRepository<ProjectSettings>, Repository<ProjectSetti
 builder.Services.AddScoped<IRepository<EscalationLog>, Repository<EscalationLog>>();
 builder.Services.AddScoped<IRepository<Notification>, Repository<Notification>>();
 
-// 5. All Services
+// 4. Services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
@@ -55,7 +48,7 @@ builder.Services.AddScoped<IProjectTeamService, ProjectTeamService>();
 builder.Services.AddScoped<IBOQItemService, BOQItemService>();
 builder.Services.AddScoped<IDailyLogService, DailyLogService>();
 builder.Services.AddScoped<ISiteMediaService, SiteMediaService>();
-builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>(); // or AzureFileStorageService later
+builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IProjectSettingsService, ProjectSettingsService>();
 builder.Services.AddScoped<IProjectApprovalRuleService, ProjectApprovalRuleService>();
@@ -63,11 +56,11 @@ builder.Services.AddScoped<IEscalationService, EscalationService>();
 builder.Services.AddScoped<IProjectTransactionService, ProjectTransactionService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-// Notification & Email stubs (replace with real impl later)
+// Notification & Email
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
-// 6. JWT Authentication
+// 5. JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]!);
 
@@ -91,13 +84,45 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// 7. Authorization Policies + Custom Handlers
+// 6. Authorization + Custom Policy Handlers
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthorizationHandler, ProjectRoleHandler>();
 
-// Read Gemini API key (falls back to environment variable)
+builder.Services.AddAuthorization(options =>
+{
+    // Global roles
+    options.AddPolicy("SuperAdminOnly", policy => policy.RequireRole("SuperAdmin"));
+    options.AddPolicy("CanManageUsers", policy => policy.RequireRole("SuperAdmin", "CompanyAdmin"));
+
+    // Project-specific permissions (using custom requirement & handler)
+    options.AddPolicy("CanEditProject", policy =>
+        policy.AddRequirements(new ProjectRoleRequirement("Project.Edit")));
+
+    options.AddPolicy("CanCloseProject", policy =>
+        policy.AddRequirements(new ProjectRoleRequirement("Project.Close")));
+
+    options.AddPolicy("CanViewProjectFinancials", policy =>
+        policy.AddRequirements(new ProjectRoleRequirement("Financials.View")));
+
+    options.AddPolicy("CanAddTransaction", policy =>
+        policy.AddRequirements(new ProjectRoleRequirement("Transaction.Add")));
+
+    options.AddPolicy("CanReviewTransactions", policy =>
+        policy.AddRequirements(new ProjectRoleRequirement("Transaction.Review")));
+
+    options.AddPolicy("CanReviewSiteMedia", policy =>
+        policy.AddRequirements(new ProjectRoleRequirement("Media.Review")));
+
+    options.AddPolicy("CanCloseDailyLog", policy =>
+        policy.AddRequirements(new ProjectRoleRequirement("DailyLog.Close")));
+
+    options.AddPolicy("CanManageProjectSettings", policy =>
+        policy.AddRequirements(new ProjectRoleRequirement("ProjectSettings.Manage")));
+});
+
+// 7. Gemini AI Client (singleton)
 var geminiApiKey = builder.Configuration["Gemini:ApiKey"]
-    ?? builder.Configuration["GEMINI_API_KEY"];
+    ?? Environment.GetEnvironmentVariable("GEMINI_API_KEY");
 
 if (string.IsNullOrWhiteSpace(geminiApiKey))
 {
@@ -106,41 +131,12 @@ if (string.IsNullOrWhiteSpace(geminiApiKey))
         throw new InvalidOperationException(
             "Gemini API key is missing! Add it via: dotnet user-secrets set \"Gemini:ApiKey\" \"your-key\"");
     }
-    else
-    {
-        throw new InvalidOperationException("Gemini API key is missing. Set it as environment variable.");
-    }
+    throw new InvalidOperationException("Gemini API key is missing in production.");
 }
 
-// Register the official Google GenAI client (thread-safe, singleton is fine)
 builder.Services.AddSingleton<Client>(sp => new Client(apiKey: geminiApiKey));
 
-builder.Services.AddAuthorization(options =>
-{
-    // Global roles
-    options.AddPolicy("SuperAdminOnly", policy => policy.RequireRole("SuperAdmin"));
-    options.AddPolicy("CanManageUsers", policy => policy.RequireRole("SuperAdmin", "CompanyAdmin"));
-    options.AddPolicy("CanCreateProject", policy => policy.RequireRole("SuperAdmin", "ProjectCreator"));
-    options.AddPolicy("CanEditProject", policy => policy.RequireRole("SuperAdmin", "ProjectAdmin"));
-    options.AddPolicy("CanCloseProject", policy => policy.RequireRole("SuperAdmin", "ProjectAdmin"));
-    options.AddPolicy("CanManageProjectSettings", policy => policy.RequireRole("SuperAdmin", "ProjectAdmin"));
-    options.AddPolicy("CanViewProjectFinancials", policy =>
-        policy.RequireRole("SuperAdmin", "ProjectAdmin", "FinanceManager"));
-    options.AddPolicy("CanAddTransaction", policy =>
-        policy.RequireRole("SuperAdmin", "FinanceManager", "ProjectAdmin"));
-    options.AddPolicy("CanViewTransactions", policy =>
-        policy.RequireRole("SuperAdmin", "FinanceManager", "ProjectAdmin"));
-    options.AddPolicy("CanReviewTransactions", policy =>
-        policy.RequireRole("SuperAdmin", "FinanceManager"));
-
-    // Project-specific custom policies
-    options.AddPolicy("CanReviewSiteImage", policy =>
-        policy.AddRequirements(new ProjectRoleRequirement("MediaReviewer")));
-    options.AddPolicy("CanCloseDaily", policy =>
-        policy.AddRequirements(new ProjectRoleRequirement("SiteEngineer")));
-});
-
-// 8. Hangfire for background jobs
+// 8. Hangfire Configuration
 builder.Services.AddHangfire(config => config
     .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
     .UseSimpleAssemblyNameTypeSerializer()
@@ -149,7 +145,7 @@ builder.Services.AddHangfire(config => config
 
 builder.Services.AddHangfireServer();
 
-// 9. Swagger
+// 9. Swagger with JWT support
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -188,28 +184,29 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Hangfire Dashboard (secured - only SuperAdmin)
+// Hangfire Dashboard (secured – only SuperAdmin)
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
-    Authorization = new[] { new HangfireAuthorizationFilter() }
+    Authorization = new[] { new HangfireCustomAuthorizationFilter() }
 });
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseStaticFiles(); // for serving local uploaded files (images, invoices, etc.)
+
+app.UseStaticFiles(); // لخدمة الملفات المرفوعة محليًا (صور، فواتير، إلخ)
 
 app.MapControllers();
 
-// Schedule daily escalation job
+// Schedule daily escalation check (8 AM every day)
 RecurringJob.AddOrUpdate<IEscalationService>(
     "daily-delay-escalations",
     service => service.CheckAndSendDelayEscalationsAsync(),
-    Cron.Daily(8)); // every day at 8 AM
+    Cron.Daily(8));
 
 app.Run();
 
-// Hangfire Dashboard Authorization Filter
-public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
+// ── Hangfire Custom Authorization Filter ──────────────────────────────────────
+public class HangfireCustomAuthorizationFilter : IDashboardAuthorizationFilter
 {
     public bool Authorize(DashboardContext context)
     {

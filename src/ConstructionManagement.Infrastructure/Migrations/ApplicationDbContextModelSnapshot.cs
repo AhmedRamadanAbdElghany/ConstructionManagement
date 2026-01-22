@@ -72,6 +72,40 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("BOQItems");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AccountingType = "Measured",
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ItemCode = "A-01",
+                            ItemName = "حفر أساسات",
+                            ProjectId = 1,
+                            Status = "جاري",
+                            Unit = "م³"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AccountingType = "Measured",
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ItemCode = "B-02",
+                            ItemName = "صب خرسانة أساسات",
+                            ProjectId = 1,
+                            Status = "جديد",
+                            Unit = "م³"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AccountingType = "Supervision",
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ItemCode = "C-01",
+                            ItemName = "إشراف عام على الموقع",
+                            ProjectId = 1,
+                            Status = "جاري"
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.BOQItemNote", b =>
@@ -148,6 +182,24 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BOQMeasured");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AgreedQuantity = 1200m,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExecutedQuantity = 480m,
+                            UnitPrice = 450m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AgreedQuantity = 800m,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExecutedQuantity = 0m,
+                            UnitPrice = 1850m
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.BOQProfitabilityLog", b =>
@@ -216,6 +268,16 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BOQSupervision");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 3,
+                            BaseCalculation = "AllProjectInvoices",
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            EstimatedTotalCost = 0m,
+                            SupervisionPercentage = 8.5m
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ClientPayment", b =>
@@ -536,15 +598,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserId1")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserId2")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ClosedByUserId");
@@ -553,13 +606,23 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
                     b.HasIndex("OwnerUserId");
 
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("UserId1");
-
-                    b.HasIndex("UserId2");
-
                     b.ToTable("Projects");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AccountingSystem = "Mixed",
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "مشروع سكني تجريبي لاختبار النظام",
+                            GeneralManagerUserId = 2,
+                            IsClosed = false,
+                            OwnerUserId = 1,
+                            ProjectName = "مشروع تجريبي - فيلا القاهرة الجديدة",
+                            StartDate = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "جاري",
+                            TotalContractValue = 8500000m
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectApprovalRule", b =>
@@ -609,6 +672,97 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.ToTable("ProjectApprovalRules");
                 });
 
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectPermission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProjectPermission");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "تعديل بيانات المشروع",
+                            Name = "Project.Edit"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "إغلاق/إنهاء المشروع",
+                            Name = "Project.Close"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "عرض الملخص المالي",
+                            Name = "Financials.View"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "إضافة معاملة مالية",
+                            Name = "Transaction.Add"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "مراجعة/اعتماد المعاملات",
+                            Name = "Transaction.Review"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "مراجعة الصور والفيديوهات",
+                            Name = "Media.Review"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "إغلاق السجل اليومي",
+                            Name = "DailyLog.Close"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "اعتماد الفواتير",
+                            Name = "Invoice.Approve"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "تعديل إعدادات المشروع",
+                            Name = "Settings.Manage"
+                        });
+                });
+
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectRole", b =>
                 {
                     b.Property<int>("Id")
@@ -638,6 +792,129 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ProjectRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "له جميع الصلاحيات تقريباً",
+                            Name = "مدير المشروع",
+                            ProjectId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "رفع صور وتسجيل يومي",
+                            Name = "مهندس ميداني",
+                            ProjectId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "مراجعة الصور والتقدم",
+                            Name = "مراجع فني",
+                            ProjectId = 1
+                        });
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectRolePermission", b =>
+                {
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProjectRoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RoleId", "PermissionId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.HasIndex("ProjectRoleId");
+
+                    b.ToTable("ProjectRolePermission");
+
+                    b.HasData(
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 1
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 2
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 3
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 4
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 5
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 6
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 7
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 8
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 9
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 4
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 6
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 7
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 5
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 6
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 8
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectSettings", b =>
@@ -688,6 +965,24 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ProjectSettings");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DelayGracePeriodDays = 3,
+                            DelayNotificationIntervalDays = 5,
+                            DelayNotificationIsOneTimeOnly = false,
+                            DelayNotificationSendEmail = true,
+                            EnableDelayNotification = true,
+                            EnableInvoiceAggregation = true,
+                            EnableInvoiceReview = true,
+                            EnablePhotoUpload = true,
+                            MaxPhotosPerUpload = 15,
+                            PhotoApproverRole = "مراجع فني",
+                            RequirePhotoReview = true
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectTeamMember", b =>
@@ -723,6 +1018,23 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("ProjectTeam");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ProjectId = 1,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ProjectId = 1,
+                            ReportsToUserId = 2,
+                            UserId = 3
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectTeamRole", b =>
@@ -750,6 +1062,24 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ProjectRoleId");
 
                     b.ToTable("ProjectTeamRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            ProjectTeamMemberId = 1,
+                            ProjectRoleId = 1,
+                            AssignedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0
+                        },
+                        new
+                        {
+                            ProjectTeamMemberId = 2,
+                            ProjectRoleId = 2,
+                            AssignedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Role", b =>
@@ -776,6 +1106,29 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "مدير النظام الكلي",
+                            Name = "SuperAdmin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "مدير الشركة",
+                            Name = "CompanyAdmin"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "مدير مشروع",
+                            Name = "ProjectManager"
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.SiteMedia", b =>
@@ -831,12 +1184,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<int>("UploaderUserId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserId1")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BOQItemId");
@@ -846,10 +1193,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ReviewerUserId");
 
                     b.HasIndex("UploaderUserId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("SiteMedias");
                 });
@@ -910,12 +1253,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserId1")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BOQItemId");
@@ -925,10 +1262,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ProjectId");
 
                     b.HasIndex("ReviewedByUserId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("Transactions");
                 });
@@ -965,6 +1298,32 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "superadmin@demo.com",
+                            FullName = "Super Admin",
+                            PasswordHash = "$2a$11$7r6fX9k2YvQ8mP3nL5tJ2eW9xH4kR8vB2cN6jQ1pT5yU3mW9xK8v"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "ahmed.pm@demo.com",
+                            FullName = "أحمد مدير المشروع",
+                            PasswordHash = "$2a$11$7r6fX9k2YvQ8mP3nL5tJ2eW9xH4kR8vB2cN6jQ1pT5yU3mW9xK8v"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "site.engineer@demo.com",
+                            FullName = "مهندس ميداني",
+                            PasswordHash = "$2a$11$7r6fX9k2YvQ8mP3nL5tJ2eW9xH4kR8vB2cN6jQ1pT5yU3mW9xK8v"
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.UserRole", b =>
@@ -983,6 +1342,20 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("UserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            RoleId = 1,
+                            AssignedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            RoleId = 3,
+                            AssignedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.BOQItem", b =>
@@ -1001,25 +1374,24 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasOne("ConstructionManagement.Domain.Entities.BOQItem", "BOQItem")
                         .WithMany("Notes")
                         .HasForeignKey("BOQItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ConstructionManagement.Domain.Entities.User", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ConstructionManagement.Domain.Entities.Project", "Project")
                         .WithMany("Notes")
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ConstructionManagement.Domain.Entities.SiteMedia", "RelatedMedia")
                         .WithMany("RelatedNotes")
-                        .HasForeignKey("RelatedMediaId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("RelatedMediaId");
 
                     b.Navigation("BOQItem");
 
@@ -1035,7 +1407,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasOne("ConstructionManagement.Domain.Entities.BOQItem", "Item")
                         .WithOne("MeasuredData")
                         .HasForeignKey("ConstructionManagement.Domain.Entities.BOQMeasured", "Id")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Item");
@@ -1046,7 +1418,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasOne("ConstructionManagement.Domain.Entities.BOQItem", "BOQItem")
                         .WithMany("ProfitabilityLogs")
                         .HasForeignKey("BOQItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("BOQItem");
@@ -1057,7 +1429,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasOne("ConstructionManagement.Domain.Entities.BOQItem", "Item")
                         .WithOne("SupervisionData")
                         .HasForeignKey("ConstructionManagement.Domain.Entities.BOQSupervision", "Id")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Item");
@@ -1068,7 +1440,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasOne("ConstructionManagement.Domain.Entities.Project", "Project")
                         .WithMany("ClientPayments")
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Project");
@@ -1090,7 +1462,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasOne("ConstructionManagement.Domain.Entities.User", "Recipient")
                         .WithMany("ReceivedEscalations")
                         .HasForeignKey("RecipientUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("BOQItem");
@@ -1105,7 +1477,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasOne("ConstructionManagement.Domain.Entities.BOQItem", "BOQItem")
                         .WithMany("DailyLogs")
                         .HasForeignKey("BOQItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ConstructionManagement.Domain.Entities.User", "ClosedByUser")
@@ -1121,13 +1493,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
                     b.HasOne("ConstructionManagement.Domain.Entities.User", null)
                         .WithMany("ClosedDailyLogs")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("UserId");
 
                     b.HasOne("ConstructionManagement.Domain.Entities.User", null)
                         .WithMany("CreatedDailyLogs")
-                        .HasForeignKey("UserId1")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("BOQItem");
 
@@ -1152,8 +1522,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
                     b.HasOne("ConstructionManagement.Domain.Entities.User", "Reviewer")
                         .WithMany("ReviewedInvoices")
-                        .HasForeignKey("ReviewerUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("ReviewerUserId");
 
                     b.Navigation("BOQItem");
 
@@ -1167,7 +1536,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasOne("ConstructionManagement.Domain.Entities.User", "User")
                         .WithMany("Notifications")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -1176,35 +1545,20 @@ namespace ConstructionManagement.Infrastructure.Migrations
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Project", b =>
                 {
                     b.HasOne("ConstructionManagement.Domain.Entities.User", "ClosedBy")
-                        .WithMany()
+                        .WithMany("ClosedProjects")
                         .HasForeignKey("ClosedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ConstructionManagement.Domain.Entities.User", "GeneralManager")
-                        .WithMany()
+                        .WithMany("ManagedProjects")
                         .HasForeignKey("GeneralManagerUserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ConstructionManagement.Domain.Entities.User", "Owner")
-                        .WithMany()
+                        .WithMany("OwnedProjects")
                         .HasForeignKey("OwnerUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("ConstructionManagement.Domain.Entities.User", null)
-                        .WithMany("ClosedProjects")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("ConstructionManagement.Domain.Entities.User", null)
-                        .WithMany("ManagedProjects")
-                        .HasForeignKey("UserId1")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("ConstructionManagement.Domain.Entities.User", null)
-                        .WithMany("OwnedProjects")
-                        .HasForeignKey("UserId2")
-                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ClosedBy");
 
@@ -1217,13 +1571,12 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     b.HasOne("ConstructionManagement.Domain.Entities.BOQItem", "BOQItem")
                         .WithMany()
-                        .HasForeignKey("BOQItemId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("BOQItemId");
 
                     b.HasOne("ConstructionManagement.Domain.Entities.Project", "Project")
                         .WithMany("ApprovalRules")
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("BOQItem");
@@ -1236,10 +1589,33 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasOne("ConstructionManagement.Domain.Entities.Project", "Project")
                         .WithMany("ProjectRoles")
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectRolePermission", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.ProjectPermission", "Permission")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.ProjectRole", null)
+                        .WithMany("Permissions")
+                        .HasForeignKey("ProjectRoleId");
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.Role", "Role")
+                        .WithMany("Permissions")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectSettings", b =>
@@ -1247,7 +1623,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasOne("ConstructionManagement.Domain.Entities.Project", "Project")
                         .WithOne("Settings")
                         .HasForeignKey("ConstructionManagement.Domain.Entities.ProjectSettings", "Id")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Project");
@@ -1312,25 +1688,15 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("ConstructionManagement.Domain.Entities.User", "Reviewer")
-                        .WithMany()
+                        .WithMany("ReviewedMedias")
                         .HasForeignKey("ReviewerUserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ConstructionManagement.Domain.Entities.User", "Uploader")
-                        .WithMany()
+                        .WithMany("UploadedMedias")
                         .HasForeignKey("UploaderUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("ConstructionManagement.Domain.Entities.User", null)
-                        .WithMany("ReviewedMedias")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("ConstructionManagement.Domain.Entities.User", null)
-                        .WithMany("UploadedMedias")
-                        .HasForeignKey("UserId1")
-                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("BOQItem");
 
@@ -1349,7 +1715,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ConstructionManagement.Domain.Entities.User", "CreatedBy")
-                        .WithMany()
+                        .WithMany("CreatedTransactions")
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -1361,18 +1727,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("ConstructionManagement.Domain.Entities.User", "ReviewedBy")
-                        .WithMany()
-                        .HasForeignKey("ReviewedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("ConstructionManagement.Domain.Entities.User", null)
-                        .WithMany("CreatedTransactions")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("ConstructionManagement.Domain.Entities.User", null)
                         .WithMany("ReviewedTransactions")
-                        .HasForeignKey("UserId1")
+                        .HasForeignKey("ReviewedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("BOQItem");
@@ -1389,13 +1745,13 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasOne("ConstructionManagement.Domain.Entities.Role", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ConstructionManagement.Domain.Entities.User", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Role");
@@ -1447,9 +1803,16 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("Transactions");
                 });
 
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectPermission", b =>
+                {
+                    b.Navigation("RolePermissions");
+                });
+
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectRole", b =>
                 {
                     b.Navigation("Assignments");
+
+                    b.Navigation("Permissions");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectTeamMember", b =>
@@ -1459,6 +1822,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Role", b =>
                 {
+                    b.Navigation("Permissions");
+
                     b.Navigation("UserRoles");
                 });
 

@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.Interfaces;
+﻿﻿using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using ConstructionManagement.Infrastructure.Services;
@@ -80,9 +80,9 @@ public class SiteMediaServiceTests
             m.FilePath == filePath &&
             m.MediaType == "Photo" &&
             m.Source == SourceType.OnlineUpload
-        )), Times.Once);
+        )), Times.Once());
 
-        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
+        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once());
     }
 
     [Fact]

@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.DTOs;
+﻿﻿using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
@@ -40,8 +40,8 @@ public class RoleServiceTests
         await service.AddRoleAsync(new AddRoleRequest("Manager", "Desc"), 1);
 
         // Assert
-        _roleRepo.Verify(r => r.AddAsync(It.Is<Role>(role => role.Name == "Manager")), Times.Once);
-        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once); // التأكد من استدعاء الحفظ
+        _roleRepo.Verify(r => r.AddAsync(It.Is<Role>(role => role.Name == "Manager")), Times.Once());
+        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once()); // التأكد من استدعاء الحفظ
     }
 
     [Fact]
@@ -57,8 +57,8 @@ public class RoleServiceTests
         await service.DeleteRoleAsync(5, 1);
 
         // Assert
-        _roleRepo.Verify(r => r.DeleteAsync(role), Times.Once);
-        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
+        _roleRepo.Verify(r => r.DeleteAsync(role), Times.Once());
+        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once());
     }
 
     [Fact]
@@ -75,7 +75,7 @@ public class RoleServiceTests
 
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>();
-        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never); // التأكد من عدم الحفظ في حالة الخطأ
+        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never()); // التأكد من عدم الحفظ في حالة الخطأ
     }
 
     [Fact]
@@ -92,6 +92,6 @@ public class RoleServiceTests
         await service.Invoking(s => s.DeleteRoleAsync(10, 1))
             .Should().ThrowAsync<InvalidOperationException>().WithMessage("*مدير النظام الأساسي*");
 
-        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never);
+        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never());
     }
 }

@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.DTOs.ProjectApprovalRule;
+﻿﻿using ConstructionManagement.Application.DTOs.ProjectApprovalRule;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
@@ -43,7 +43,7 @@ public class ProjectApprovalRuleServiceTests
 
         // Assert
         result.Should().Be(101);
-        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once);
+        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once());
     }
 
     [Fact]

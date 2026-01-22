@@ -1,5 +1,6 @@
 ﻿using ConstructionManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -59,16 +60,16 @@ public class ApplicationDbContext : DbContext
             .HasOne(ps => ps.Project)
             .WithOne(p => p.Settings)
             .HasForeignKey<ProjectSettings>(ps => ps.Id)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade); // آمن هنا لأنه 1:1
 
         // ────────────────────────────────────────────────────────────────
-        // 2. Project ↔ BOQItem (1:N)
+        // 2. Project ↔ BOQItem (1:N) ← Restrict لتجنب التعارض
         // ────────────────────────────────────────────────────────────────
         modelBuilder.Entity<BOQItem>()
             .HasOne(bi => bi.Project)
             .WithMany(p => p.BOQItems)
             .HasForeignKey(bi => bi.ProjectId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Restrict);   // ← التعديل المهم
 
         // ────────────────────────────────────────────────────────────────
         // 3. BOQItem ↔ BOQMeasured / BOQSupervision (1:1 – shared PK)
@@ -79,7 +80,7 @@ public class ApplicationDbContext : DbContext
             .HasOne(m => m.Item)
             .WithOne(i => i.MeasuredData)
             .HasForeignKey<BOQMeasured>(m => m.Id)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<BOQSupervision>()
             .HasKey(s => s.Id);
@@ -87,7 +88,7 @@ public class ApplicationDbContext : DbContext
             .HasOne(s => s.Item)
             .WithOne(i => i.SupervisionData)
             .HasForeignKey<BOQSupervision>(s => s.Id)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         // ────────────────────────────────────────────────────────────────
         // 4. User ↔ UserRole (many-to-many)
@@ -98,12 +99,12 @@ public class ApplicationDbContext : DbContext
             .HasOne(ur => ur.User)
             .WithMany(u => u.UserRoles)
             .HasForeignKey(ur => ur.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<UserRole>()
             .HasOne(ur => ur.Role)
             .WithMany(r => r.UserRoles)
             .HasForeignKey(ur => ur.RoleId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         // ────────────────────────────────────────────────────────────────
         // 5. ProjectTeamMember ↔ ProjectTeamRole (many-to-many bridge)
@@ -150,13 +151,13 @@ public class ApplicationDbContext : DbContext
             .IsUnique();
 
         // ────────────────────────────────────────────────────────────────
-        // 7. Project children – Restrict for direct relationships to avoid cascade cycles
+        // 7. Project children – Restrict لتجنب multiple cascade paths
         // ────────────────────────────────────────────────────────────────
         modelBuilder.Entity<ClientPayment>()
             .HasOne(cp => cp.Project)
             .WithMany(p => p.ClientPayments)
             .HasForeignKey(cp => cp.ProjectId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Cascade); // آمن هنا
 
         modelBuilder.Entity<EscalationLog>()
             .HasOne(el => el.Project)
@@ -207,7 +208,7 @@ public class ApplicationDbContext : DbContext
             .OnDelete(DeleteBehavior.Restrict);
 
         // ────────────────────────────────────────────────────────────────
-        // 8. BOQItem children
+        // 8. BOQItem children – Cascade آمن هنا لأنهم أولاد مباشرين
         // ────────────────────────────────────────────────────────────────
         modelBuilder.Entity<ItemDailyLog>()
             .HasOne(dl => dl.BOQItem)
@@ -230,8 +231,6 @@ public class ApplicationDbContext : DbContext
         // ────────────────────────────────────────────────────────────────
         // 9. User relationships (CreatedBy, ClosedBy, Reviewer, Uploader, etc.)
         // ────────────────────────────────────────────────────────────────
-
-        // ItemDailyLog → CreatedByUser (required)
         modelBuilder.Entity<ItemDailyLog>()
             .HasOne(dl => dl.CreatedByUser)
             .WithMany()
@@ -239,7 +238,6 @@ public class ApplicationDbContext : DbContext
             .OnDelete(DeleteBehavior.Restrict)
             .IsRequired(true);
 
-        // ItemDailyLog → ClosedByUser (nullable)
         modelBuilder.Entity<ItemDailyLog>()
             .HasOne(dl => dl.ClosedByUser)
             .WithMany()
@@ -247,54 +245,51 @@ public class ApplicationDbContext : DbContext
             .OnDelete(DeleteBehavior.Restrict)
             .IsRequired(false);
 
-        // Project → Owner / GeneralManager / ClosedBy
         modelBuilder.Entity<Project>()
             .HasOne(p => p.Owner)
-            .WithMany()
+            .WithMany(u => u.OwnedProjects)
             .HasForeignKey(p => p.OwnerUserId)
             .OnDelete(DeleteBehavior.Restrict)
             .IsRequired(true);
 
         modelBuilder.Entity<Project>()
             .HasOne(p => p.GeneralManager)
-            .WithMany()
+            .WithMany(u => u.ManagedProjects)
             .HasForeignKey(p => p.GeneralManagerUserId)
             .OnDelete(DeleteBehavior.Restrict)
             .IsRequired(false);
 
         modelBuilder.Entity<Project>()
             .HasOne(p => p.ClosedBy)
-            .WithMany()
+            .WithMany(u => u.ClosedProjects)
             .HasForeignKey(p => p.ClosedByUserId)
             .OnDelete(DeleteBehavior.Restrict)
             .IsRequired(false);
 
-        // SiteMedia → Uploader / Reviewer
         modelBuilder.Entity<SiteMedia>()
             .HasOne(sm => sm.Uploader)
-            .WithMany()
+            .WithMany(u => u.UploadedMedias)
             .HasForeignKey(sm => sm.UploaderUserId)
             .OnDelete(DeleteBehavior.Restrict)
             .IsRequired(true);
 
         modelBuilder.Entity<SiteMedia>()
             .HasOne(sm => sm.Reviewer)
-            .WithMany()
+            .WithMany(u => u.ReviewedMedias)
             .HasForeignKey(sm => sm.ReviewerUserId)
             .OnDelete(DeleteBehavior.Restrict)
             .IsRequired(false);
 
-        // Transaction → CreatedBy / ReviewedBy
         modelBuilder.Entity<Transaction>()
             .HasOne(t => t.CreatedBy)
-            .WithMany()
+            .WithMany(u => u.CreatedTransactions)
             .HasForeignKey(t => t.CreatedByUserId)
             .OnDelete(DeleteBehavior.Restrict)
             .IsRequired(true);
 
         modelBuilder.Entity<Transaction>()
             .HasOne(t => t.ReviewedBy)
-            .WithMany()
+            .WithMany(u => u.ReviewedTransactions)
             .HasForeignKey(t => t.ReviewedByUserId)
             .OnDelete(DeleteBehavior.Restrict)
             .IsRequired(false);
@@ -309,14 +304,32 @@ public class ApplicationDbContext : DbContext
             .OnDelete(DeleteBehavior.Cascade);
 
         // ────────────────────────────────────────────────────────────────
-        // 11. Global decimal precision (18,2) – مرة واحدة فقط
+        // 11. Many-to-Many Configurations
         // ────────────────────────────────────────────────────────────────
-        foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
-        {
-            relationship.DeleteBehavior = DeleteBehavior.Restrict;
-        }
+        modelBuilder.Entity<ProjectRolePermission>()
+            .HasKey(rp => new { rp.RoleId, rp.PermissionId });
 
-        // 3. ضبط أرقام الـ Decimal (المبالغ المالية)
+        modelBuilder.Entity<ProjectRolePermission>()
+            .HasOne(rp => rp.Role)
+            .WithMany(r => r.Permissions)
+            .HasForeignKey(rp => rp.RoleId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<ProjectRolePermission>()
+            .HasOne(rp => rp.Permission)
+            .WithMany(p => p.RolePermissions)
+            .HasForeignKey(rp => rp.PermissionId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<ProjectRole>()
+            .HasOne(pr => pr.Project)
+            .WithMany(p => p.ProjectRoles)
+            .HasForeignKey(pr => pr.ProjectId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // ────────────────────────────────────────────────────────────────
+        // 12. Global decimal precision (18,2)
+        // ────────────────────────────────────────────────────────────────
         foreach (var property in modelBuilder.Model.GetEntityTypes()
             .SelectMany(t => t.GetProperties())
             .Where(p => p.ClrType == typeof(decimal) || p.ClrType == typeof(decimal?)))
@@ -325,7 +338,7 @@ public class ApplicationDbContext : DbContext
         }
 
         // ────────────────────────────────────────────────────────────────
-        // 12. Useful indexes
+        // 13. Useful indexes
         // ────────────────────────────────────────────────────────────────
         modelBuilder.Entity<BOQItem>()
             .HasIndex(b => b.ProjectId);
@@ -333,6 +346,141 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<ItemDailyLog>()
             .HasIndex(d => new { d.BOQItemId, d.LogDate })
             .IsUnique();
+
+        // ────────────────────────────────────────────────────────────────
+        // 14. Seed Data
+        // ────────────────────────────────────────────────────────────────
+        SeedData(modelBuilder);
+    }
+
+    private void SeedData(ModelBuilder modelBuilder)
+    {
+        var now = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        // 1. Project Permissions
+        modelBuilder.Entity<ProjectPermission>().HasData(
+            new ProjectPermission { Id = 1, Name = "Project.Edit", Description = "تعديل بيانات المشروع", CreatedAt = now },
+            new ProjectPermission { Id = 2, Name = "Project.Close", Description = "إغلاق/إنهاء المشروع", CreatedAt = now },
+            new ProjectPermission { Id = 3, Name = "Financials.View", Description = "عرض الملخص المالي", CreatedAt = now },
+            new ProjectPermission { Id = 4, Name = "Transaction.Add", Description = "إضافة معاملة مالية", CreatedAt = now },
+            new ProjectPermission { Id = 5, Name = "Transaction.Review", Description = "مراجعة/اعتماد المعاملات", CreatedAt = now },
+            new ProjectPermission { Id = 6, Name = "Media.Review", Description = "مراجعة الصور والفيديوهات", CreatedAt = now },
+            new ProjectPermission { Id = 7, Name = "DailyLog.Close", Description = "إغلاق السجل اليومي", CreatedAt = now },
+            new ProjectPermission { Id = 8, Name = "Invoice.Approve", Description = "اعتماد الفواتير", CreatedAt = now },
+            new ProjectPermission { Id = 9, Name = "Settings.Manage", Description = "تعديل إعدادات المشروع", CreatedAt = now }
+        );
+
+        // 2. Global Roles
+        modelBuilder.Entity<Role>().HasData(
+            new Role { Id = 1, Name = "SuperAdmin", Description = "مدير النظام الكلي", CreatedAt = now },
+            new Role { Id = 2, Name = "CompanyAdmin", Description = "مدير الشركة", CreatedAt = now },
+            new Role { Id = 3, Name = "ProjectManager", Description = "مدير مشروع", CreatedAt = now }
+        );
+
+        // 3. Users
+        modelBuilder.Entity<User>().HasData(
+            new User { Id = 1, FullName = "Super Admin", Email = "superadmin@demo.com", PasswordHash = "$2a$11$7r6fX9k2YvQ8mP3nL5tJ2eW9xH4kR8vB2cN6jQ1pT5yU3mW9xK8v", CreatedAt = now },
+            new User { Id = 2, FullName = "أحمد مدير المشروع", Email = "ahmed.pm@demo.com", PasswordHash = "$2a$11$7r6fX9k2YvQ8mP3nL5tJ2eW9xH4kR8vB2cN6jQ1pT5yU3mW9xK8v", CreatedAt = now },
+            new User { Id = 3, FullName = "مهندس ميداني", Email = "site.engineer@demo.com", PasswordHash = "$2a$11$7r6fX9k2YvQ8mP3nL5tJ2eW9xH4kR8vB2cN6jQ1pT5yU3mW9xK8v", CreatedAt = now }
+        );
+
+        modelBuilder.Entity<UserRole>().HasData(
+            new UserRole { UserId = 1, RoleId = 1, AssignedAt = now },
+            new UserRole { UserId = 2, RoleId = 3, AssignedAt = now }
+        );
+
+        // 4. Project
+        modelBuilder.Entity<Project>().HasData(
+            new Project
+            {
+                Id = 1,
+                ProjectName = "مشروع تجريبي - فيلا القاهرة الجديدة",
+                Description = "مشروع سكني تجريبي لاختبار النظام",
+                StartDate = now.AddMonths(-2),
+                Status = "جاري",
+                OwnerUserId = 1,
+                GeneralManagerUserId = 2,
+                AccountingSystem = "Mixed",
+                TotalContractValue = 8500000m,
+                CreatedAt = now
+            }
+        );
+
+        // 5. ProjectRoles
+        modelBuilder.Entity<ProjectRole>().HasData(
+            new ProjectRole { Id = 1, ProjectId = 1, Name = "مدير المشروع", Description = "له جميع الصلاحيات تقريباً", CreatedAt = now },
+            new ProjectRole { Id = 2, ProjectId = 1, Name = "مهندس ميداني", Description = "رفع صور وتسجيل يومي", CreatedAt = now },
+            new ProjectRole { Id = 3, ProjectId = 1, Name = "مراجع فني", Description = "مراجعة الصور والتقدم", CreatedAt = now }
+        );
+
+        // 6. ProjectRolePermission
+        modelBuilder.Entity<ProjectRolePermission>().HasData(
+            new ProjectRolePermission { RoleId = 1, PermissionId = 1 },
+            new ProjectRolePermission { RoleId = 1, PermissionId = 2 },
+            new ProjectRolePermission { RoleId = 1, PermissionId = 3 },
+            new ProjectRolePermission { RoleId = 1, PermissionId = 4 },
+            new ProjectRolePermission { RoleId = 1, PermissionId = 5 },
+            new ProjectRolePermission { RoleId = 1, PermissionId = 6 },
+            new ProjectRolePermission { RoleId = 1, PermissionId = 7 },
+            new ProjectRolePermission { RoleId = 1, PermissionId = 8 },
+            new ProjectRolePermission { RoleId = 1, PermissionId = 9 },
+            new ProjectRolePermission { RoleId = 2, PermissionId = 4 },
+            new ProjectRolePermission { RoleId = 2, PermissionId = 6 },
+            new ProjectRolePermission { RoleId = 2, PermissionId = 7 },
+            new ProjectRolePermission { RoleId = 3, PermissionId = 5 },
+            new ProjectRolePermission { RoleId = 3, PermissionId = 6 },
+            new ProjectRolePermission { RoleId = 3, PermissionId = 8 }
+        );
+
+        // 7. ProjectTeamMember
+        modelBuilder.Entity<ProjectTeamMember>().HasData(
+            new ProjectTeamMember { Id = 1, ProjectId = 1, UserId = 2, ReportsToUserId = null, CreatedAt = now },
+            new ProjectTeamMember { Id = 2, ProjectId = 1, UserId = 3, ReportsToUserId = 2, CreatedAt = now }
+        );
+
+        // 8. ProjectTeamRole
+        modelBuilder.Entity<ProjectTeamRole>().HasData(
+            new ProjectTeamRole { ProjectTeamMemberId = 1, ProjectRoleId = 1, AssignedAt = now },
+            new ProjectTeamRole { ProjectTeamMemberId = 2, ProjectRoleId = 2, AssignedAt = now }
+        );
+
+        // 9. ProjectSettings
+        modelBuilder.Entity<ProjectSettings>().HasData(
+            new ProjectSettings
+            {
+                Id = 1,
+                EnableDelayNotification = true,
+                DelayNotificationIsOneTimeOnly = false,
+                DelayNotificationIntervalDays = 5,
+                DelayNotificationSendEmail = true,
+                DelayGracePeriodDays = 3,
+                EnablePhotoUpload = true,
+                RequirePhotoReview = true,
+                PhotoApproverRole = "مراجع فني",
+                EnableInvoiceReview = true,
+                EnableInvoiceAggregation = true,
+                MaxPhotosPerUpload = 15,
+                CreatedAt = now
+            }
+        );
+
+        // 10. BOQItems
+        modelBuilder.Entity<BOQItem>().HasData(
+            new BOQItem { Id = 1, ProjectId = 1, ItemCode = "A-01", ItemName = "حفر أساسات", Unit = "م³", AccountingType = "Measured", Status = "جاري", CreatedAt = now },
+            new BOQItem { Id = 2, ProjectId = 1, ItemCode = "B-02", ItemName = "صب خرسانة أساسات", Unit = "م³", AccountingType = "Measured", Status = "جديد", CreatedAt = now },
+            new BOQItem { Id = 3, ProjectId = 1, ItemCode = "C-01", ItemName = "إشراف عام على الموقع", AccountingType = "Supervision", Status = "جاري", CreatedAt = now }
+        );
+
+        // 11. BOQMeasured
+        modelBuilder.Entity<BOQMeasured>().HasData(
+            new BOQMeasured { Id = 1, AgreedQuantity = 1200m, UnitPrice = 450m, ExecutedQuantity = 480m, CreatedAt = now },
+            new BOQMeasured { Id = 2, AgreedQuantity = 800m, UnitPrice = 1850m, ExecutedQuantity = 0m, CreatedAt = now }
+        );
+
+        // 12. BOQSupervision
+        modelBuilder.Entity<BOQSupervision>().HasData(
+            new BOQSupervision { Id = 3, SupervisionPercentage = 8.5m, BaseCalculation = "AllProjectInvoices", EstimatedTotalCost = 0m, CreatedAt = now }
+        );
     }
 
     // ── Audit Logic ─────────────────────────────────────────────────────────────

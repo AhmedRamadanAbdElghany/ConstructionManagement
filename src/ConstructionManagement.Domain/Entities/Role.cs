@@ -6,4 +6,5 @@ public class Role : BaseEntity
     public string Name { get; set; } = string.Empty; // "Approver", "Closer", "Viewer", "Admin", etc.
     public string? Description { get; set; }
     public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+    public virtual ICollection<ProjectRolePermission> Permissions { get; set; } = new List<ProjectRolePermission>();
 }

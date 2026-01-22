@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.DTOs;
+﻿﻿using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
@@ -57,8 +57,8 @@ public class DailyLogServiceTests
 
         await _service.GetOrCreateDailyLogIdAsync(itemId, date, 10);
 
-        _logRepoMock.Verify(r => r.AddAsync(It.IsAny<ItemDailyLog>()), Times.Once);
-        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once);
+        _logRepoMock.Verify(r => r.AddAsync(It.IsAny<ItemDailyLog>()), Times.Once());
+        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once());
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public class DailyLogServiceTests
 
         result.Should().BeTrue();
         existingLog.IsClosed.Should().BeTrue();
-        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once);
+        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once());
     }
 
     [Fact]

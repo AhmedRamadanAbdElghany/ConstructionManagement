@@ -4,10 +4,10 @@ namespace ConstructionManagement.Infrastructure.Authorization;
 
 public class ProjectRoleRequirement : IAuthorizationRequirement
 {
-    public string RequiredRole { get; }
+    public string PermissionName { get; }
 
-    public ProjectRoleRequirement(string requiredRole)
+    public ProjectRoleRequirement(string permissionName)
     {
-        RequiredRole = requiredRole;
+        PermissionName = permissionName;
     }
 }

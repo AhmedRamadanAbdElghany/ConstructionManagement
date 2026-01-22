@@ -29,6 +29,6 @@ public class ProjectRole : BaseEntity
     public virtual ICollection<ProjectTeamRole> Assignments { get; set; }
         = new List<ProjectTeamRole>();
 
-    // Optional: if you later want to define permissions per role
-    // public virtual ICollection<ProjectRolePermission> Permissions { get; set; } = new List<ProjectRolePermission>();
+    // if you later want to define permissions per role
+     public virtual ICollection<ProjectRolePermission> Permissions { get; set; } = new List<ProjectRolePermission>();
 }

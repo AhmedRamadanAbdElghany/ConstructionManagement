@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.Interfaces;
+﻿﻿using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories;
 using ConstructionManagement.Infrastructure.Services;
@@ -72,7 +72,7 @@ namespace ConstructionManagement.Tests.Integration
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 NotificationType.ProjectDelay),
-                Times.Once);
+                Times.Once());
         }
     }
 }

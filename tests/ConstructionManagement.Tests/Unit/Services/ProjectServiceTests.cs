@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.DTOs;
+﻿﻿using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
@@ -37,8 +37,8 @@ public class ProjectServiceTests
         var result = await service.CreateProjectAsync(request, 1);
 
         // Assert
-        _uowMock.Verify(u => u.BeginTransactionAsync(), Times.Once);
-        _uowMock.Verify(u => u.CommitAsync(), Times.Once);
+        _uowMock.Verify(u => u.BeginTransactionAsync(), Times.Once());
+        _uowMock.Verify(u => u.CommitAsync(), Times.Once());
     }
 
     [Fact]
@@ -61,7 +61,7 @@ public class ProjectServiceTests
 
         // Assert
         await act.Should().ThrowAsync<System.Exception>();
-        _uowMock.Verify(u => u.RollbackAsync(), Times.Once); // تم التصحيح هنا من _unitOfWork إلى _uowMock
+        _uowMock.Verify(u => u.RollbackAsync(), Times.Once()); // تم التصحيح هنا من _unitOfWork إلى _uowMock
     }
 
     [Fact]
@@ -93,7 +93,7 @@ public class ProjectServiceTests
         // Assert
         result.Should().BeTrue();
         project.ProjectName.Should().Be("New Name");
-        _uowMock.Verify(u => u.SaveChangesAsync(), Times.AtLeastOnce);
+        _uowMock.Verify(u => u.SaveChangesAsync(), Times.AtLeastOnce());
     }
 
     [Fact]
@@ -115,7 +115,7 @@ public class ProjectServiceTests
         // Assert
         result.Should().BeTrue();
         project.IsClosed.Should().BeTrue();
-        _uowMock.Verify(u => u.SaveChangesAsync(), Times.AtLeastOnce);
+        _uowMock.Verify(u => u.SaveChangesAsync(), Times.AtLeastOnce());
     }
 
     [Fact]

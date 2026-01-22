@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.Interfaces;
+﻿﻿using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using ConstructionManagement.Infrastructure.Services;
@@ -100,7 +100,7 @@ public class EscalationServiceTests
             log.BOQItemId == itemId &&
             log.RecipientUserId == managerId &&
             log.EscalationType == "ItemEndDelay")), // تأكد من مطابقة الاسم في الكود
-            Times.Once);
+            Times.Once());
     }
 
 
@@ -157,8 +157,8 @@ public class EscalationServiceTests
 
         // Assert
         // يجب ألا يتم إضافة أي سجل جديد لأن السجل موجود بالفعل لنفس اليوم
-        _escalationLogRepo.Verify(r => r.AddAsync(It.IsAny<EscalationLog>()), Times.Never);
-        _uowMock.Verify(u => u.SaveChangesAsync(), Times.AtMostOnce); // سيتم استدعاؤه مرة واحدة فقط في نهاية الميثود الرئيسية
+        _escalationLogRepo.Verify(r => r.AddAsync(It.IsAny<EscalationLog>()), Times.Never());
+        _uowMock.Verify(u => u.SaveChangesAsync(), Times.AtMostOnce()); // سيتم استدعاؤه مرة واحدة فقط في نهاية الميثود الرئيسية
     }
     #endregion
 }

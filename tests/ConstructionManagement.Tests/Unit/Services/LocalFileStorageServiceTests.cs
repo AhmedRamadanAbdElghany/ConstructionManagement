@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿﻿using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
@@ -64,7 +64,7 @@ public class LocalFileStorageServiceTests : IDisposable
         var fileMock = CreateMockFile("large.pdf", 51L * 1024 * 1024);
 
         // Act & Assert
-        await FluentActions.Invoking(() => service.UploadFileAsync(fileMock.Object))
+        await FluentActions.Invoking(() => service.UploadFileAsync(fileMock.Object, "uploads"))
             .Should().ThrowAsync<ArgumentException>()
             .WithMessage("*يتجاوز الحد المسموح*");
     }
@@ -77,7 +77,7 @@ public class LocalFileStorageServiceTests : IDisposable
         var fileMock = CreateMockFile("malicious.exe", 1024);
 
         // Act & Assert
-        await FluentActions.Invoking(() => service.UploadFileAsync(fileMock.Object))
+        await FluentActions.Invoking(() => service.UploadFileAsync(fileMock.Object, "uploads"))
             .Should().ThrowAsync<ArgumentException>()
             .WithMessage("*نوع الملف غير مدعوم*");
     }
