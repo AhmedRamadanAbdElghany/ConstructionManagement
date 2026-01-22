@@ -1,4 +1,4 @@
-﻿﻿using ConstructionManagement.Application.Interfaces;
+﻿using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories;
 using ConstructionManagement.Infrastructure.Services;
@@ -16,23 +16,24 @@ namespace ConstructionManagement.Tests.Integration
 
         public EscalationIntegrationTests() : base()
         {
-            // بناء السيرفس مع الـ Repositories المعتمدة على الـ Context الخاص بـ SQLite
+            // الترتيب الصحيح تمامًا مطابق لـ EscalationService constructor
             _service = new EscalationService(
-                new Repository<Project>(Context),
-                new Repository<EscalationLog>(Context),
-                new Repository<User>(Context),
-                new Mock<IEmailService>().Object,
-                new Repository<Transaction>(Context),
-                new Repository<Notification>(Context),
-                _notifMock.Object,
-                new Repository<ProjectTeamRole>(Context),
-                UnitOfWork);
+                new Repository<Project>(Context),                     // 1: IRepository<Project>
+                new Repository<EscalationLog>(Context),               // 2: IRepository<EscalationLog>
+                new Repository<User>(Context),                        // 3: IRepository<User>
+                new Mock<IEmailService>().Object,                     // 4: IEmailService
+                _notifMock.Object,                                    // 5: INotificationService
+                new Repository<ProjectTeamRole>(Context),             // 6: IRepository<ProjectTeamRole>
+                new Repository<Transaction>(Context),                 // 7: IRepository<Transaction>
+                new Repository<Notification>(Context),                // 8: IRepository<Notification>
+                UnitOfWork                                            // 9: IUnitOfWork
+            );
         }
 
         [Fact]
         public async Task CheckEscalations_ShouldDetectDelayedProjects()
         {
-            // 1. Arrange: إنشاء مستخدم بالخصائص المتاحة فقط (FullName, Email)
+            // 1. Arrange: إنشاء مستخدم
             var user = new User
             {
                 FullName = "Manager",
@@ -42,6 +43,7 @@ namespace ConstructionManagement.Tests.Integration
             Context.Users.Add(user);
             await Context.SaveChangesAsync();
 
+            // 2. Arrange: إنشاء مشروع متأخر
             var project = new Project
             {
                 ProjectName = "Late Tower",
@@ -50,17 +52,17 @@ namespace ConstructionManagement.Tests.Integration
                 Settings = new ProjectSettings
                 {
                     EnableDelayNotification = true,
-                    DelayNotificationIntervalDays = 1
+                    DelayNotificationIntervalDays = 1,
+                    DelayGracePeriodDays = 0 // عشان يتفعل التأخير فورًا
                 }
             };
             Context.Projects.Add(project);
             await Context.SaveChangesAsync();
 
-            // 2. Act
+            // 3. Act
             await _service.CheckAndSendDelayEscalationsAsync();
 
-            // 3. Assert
-            // نتحقق من وجود لوج مربوط برقم المشروع
+            // 4. Assert
             var log = await Context.EscalationLogs
                 .FirstOrDefaultAsync(l => l.ProjectId == project.Id);
 

@@ -1,5 +1,6 @@
-﻿﻿using ConstructionManagement.Application.Interfaces;
+﻿using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Infrastructure.Persistence.Repositories;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
@@ -24,24 +25,22 @@ public class EscalationServiceTests
     private readonly Mock<IRepository<ProjectTeamRole>> _teamRoleRepo = new();
     private readonly Mock<IRepository<Transaction>> _transactionRepo = new();
     private readonly Mock<IRepository<Notification>> _notificationRepo = new();
-    private readonly Mock<IUnitOfWork> _uowMock = new(); // تأكد من وجود هذا السطر هنا
+    private readonly Mock<IUnitOfWork> _uowMock = new();
 
     private EscalationService CreateService()
     {
         return new EscalationService(
-            _projectRepo.Object,
-            _escalationLogRepo.Object,
-            _userRepo.Object,
-            _emailService.Object,
-            _transactionRepo.Object,
-            _notificationRepo.Object,
-            _notificationService.Object,
-            _teamRoleRepo.Object,
-            _uowMock.Object // تمرير الـ Mock الصحيح هنا
+            _projectRepo.Object,                     // 1
+            _escalationLogRepo.Object,               // 2
+            _userRepo.Object,                        // 3
+            _emailService.Object,                    // 4
+            _notificationService.Object,             // 5 ← INotificationService
+            _teamRoleRepo.Object,                    // 6
+            _transactionRepo.Object,                 // 7
+            _notificationRepo.Object,                // 8
+            _uowMock.Object                          // 9
         );
     }
-
-    #region Delay Escalation Tests
 
     [Fact]
     public async Task CheckAndSendDelayEscalationsAsync_ShouldCreateCorrectLogEntry_WhenEscalated()
@@ -60,32 +59,34 @@ public class EscalationServiceTests
             Settings = new ProjectSettings
             {
                 EnableDelayNotification = true,
-                DelayGracePeriodDays = 0
+                DelayGracePeriodDays = 0 // عشان يتفعل التأخير فورًا
             },
             BOQItems = new List<BOQItem>
-        {
-            new BOQItem
             {
-                Id = itemId,
-                ItemName = "Finishing",
-                EndDate = today.AddDays(-1),
-                Status = "جاري"
+                new BOQItem
+                {
+                    Id = itemId,
+                    ItemName = "Finishing",
+                    EndDate = today.AddDays(-1),
+                    Status = "جاري"
+                }
             }
-        }
         };
 
-        // استخدام BuildMock() لضمان دعم ToListAsync و FirstOrDefaultAsync
+        // محاكاة المشاريع
         _projectRepo.Setup(r => r.AsQueryable()).Returns(new List<Project> { project }.BuildMock());
 
+        // محاكاة عضو فريق (ProjectManager)
         _teamRoleRepo.Setup(r => r.AsQueryable()).Returns(new List<ProjectTeamRole>
-    {
-        new ProjectTeamRole
         {
-            ProjectTeamMember = new ProjectTeamMember { ProjectId = projectId, UserId = managerId },
-            ProjectRole = new ProjectRole { Name = "ProjectManager" }
-        }
-    }.BuildMock());
+            new ProjectTeamRole
+            {
+                ProjectTeamMember = new ProjectTeamMember { ProjectId = projectId, UserId = managerId },
+                ProjectRole = new ProjectRole { Name = "ProjectManager" }
+            }
+        }.BuildMock());
 
+        // لا يوجد logs سابقة
         _escalationLogRepo.Setup(r => r.AsQueryable()).Returns(new List<EscalationLog>().BuildMock());
 
         var service = CreateService();
@@ -94,15 +95,15 @@ public class EscalationServiceTests
         await service.CheckAndSendDelayEscalationsAsync();
 
         // Assert
-        // تصحيح: الكود يرسل "ItemEndDelay" وليس "EndDelay"
         _escalationLogRepo.Verify(r => r.AddAsync(It.Is<EscalationLog>(log =>
             log.ProjectId == projectId &&
             log.BOQItemId == itemId &&
             log.RecipientUserId == managerId &&
-            log.EscalationType == "ItemEndDelay")), // تأكد من مطابقة الاسم في الكود
+            log.EscalationType == "ItemEndDelay")), // تأكد من الاسم اللي في الكود الفعلي
             Times.Once());
-    }
 
+        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once());
+    }
 
     [Fact]
     public async Task CheckAndSendDelayEscalationsAsync_WhenLogExistsForThisItemToday_ShouldSkip()
@@ -116,39 +117,39 @@ public class EscalationServiceTests
         var project = new Project
         {
             Id = projectId,
-            IsClosed = false, // شرط أساسي في الاستعلام
+            IsClosed = false,
             Settings = new ProjectSettings { EnableDelayNotification = true },
             BOQItems = new List<BOQItem>
-        {
-            new BOQItem { Id = itemId, EndDate = today.AddDays(-1), Status = "جاري" }
-        }
+            {
+                new BOQItem { Id = itemId, EndDate = today.AddDays(-1), Status = "جاري" }
+            }
         };
 
-        // 1. محاكاة المشاريع
         _projectRepo.Setup(r => r.AsQueryable()).Returns(new List<Project> { project }.BuildMock());
 
-        // 2. محاكاة الـ Log الموجود مسبقاً (هذا ما يمنع التكرار)
+        // محاكاة log موجود مسبقًا (يمنع التكرار)
         var existingLogs = new List<EscalationLog>
-    {
-        new EscalationLog
         {
-            ProjectId = projectId,
-            BOQItemId = itemId,
-            SentAt = today,
-            EscalationType = "ItemEndDelay" // تأكد من مطابقة النوع المستخدم في الكود
-        }
-    }.BuildMock();
+            new EscalationLog
+            {
+                ProjectId = projectId,
+                BOQItemId = itemId,
+                SentAt = today,
+                EscalationType = "ItemEndDelay"
+            }
+        }.BuildMock();
+
         _escalationLogRepo.Setup(r => r.AsQueryable()).Returns(existingLogs);
 
-        // 3. الأهم: محاكاة فريق العمل لدعم FirstOrDefaultAsync (حل الخطأ CS1061/InvalidOperation)
+        // عضو فريق (لازم عشان الكود يلاقي managerId)
         _teamRoleRepo.Setup(r => r.AsQueryable()).Returns(new List<ProjectTeamRole>
-    {
-        new ProjectTeamRole
         {
-            ProjectTeamMember = new ProjectTeamMember { ProjectId = projectId, UserId = managerId },
-            ProjectRole = new ProjectRole { Name = "ProjectManager" }
-        }
-    }.BuildMock());
+            new ProjectTeamRole
+            {
+                ProjectTeamMember = new ProjectTeamMember { ProjectId = projectId, UserId = managerId },
+                ProjectRole = new ProjectRole { Name = "ProjectManager" }
+            }
+        }.BuildMock());
 
         var service = CreateService();
 
@@ -156,9 +157,7 @@ public class EscalationServiceTests
         await service.CheckAndSendDelayEscalationsAsync();
 
         // Assert
-        // يجب ألا يتم إضافة أي سجل جديد لأن السجل موجود بالفعل لنفس اليوم
         _escalationLogRepo.Verify(r => r.AddAsync(It.IsAny<EscalationLog>()), Times.Never());
-        _uowMock.Verify(u => u.SaveChangesAsync(), Times.AtMostOnce()); // سيتم استدعاؤه مرة واحدة فقط في نهاية الميثود الرئيسية
+        _uowMock.Verify(u => u.SaveChangesAsync(), Times.AtMostOnce());
     }
-    #endregion
 }

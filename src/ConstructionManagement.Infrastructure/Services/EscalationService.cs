@@ -25,20 +25,20 @@ public class EscalationService : IEscalationService
         IRepository<EscalationLog> escalationLogRepository,
         IRepository<User> userRepository,
         IEmailService emailService,
-        IRepository<Transaction> transactionRepository,
-        IRepository<Notification> notificationRepository,
         INotificationService notificationService,
         IRepository<ProjectTeamRole> projectTeamRoleRepository,
+        IRepository<Transaction> transactionRepository,
+        IRepository<Notification> notificationRepository,
         IUnitOfWork unitOfWork)
     {
         _projectRepository = projectRepository;
         _escalationLogRepository = escalationLogRepository;
         _userRepository = userRepository;
         _emailService = emailService;
-        _transactionRepository = transactionRepository;
-        _notificationRepository = notificationRepository;
         _notificationService = notificationService;
         _projectTeamRoleRepository = projectTeamRoleRepository;
+        _transactionRepository = transactionRepository;
+        _notificationRepository = notificationRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -53,23 +53,26 @@ public class EscalationService : IEscalationService
                 .ThenInclude(i => i.MeasuredData)
             .Include(p => p.BOQItems)
                 .ThenInclude(i => i.SupervisionData)
+            .AsNoTracking()
             .ToListAsync();
 
         foreach (var project in projects)
         {
             var settings = project.Settings;
-            if (settings == null || !settings.EnableDelayNotification) continue;
+            if (settings == null || !(settings.EnableDelayNotification ?? false)) continue;
 
+            // تأخير بداية المشروع ككل
             if (project.StartDate.HasValue &&
-                today > project.StartDate.Value.AddDays(settings.DelayGracePeriodDays) &&
+                today > project.StartDate.Value.AddDays(settings.DelayGracePeriodDays ?? 0) &&
                 project.Status == "جديد")
             {
                 await SendEscalationAsync(project, null, "StartDelay", project.OwnerUserId,
-                    $"تأخير بداية المشروع {project.ProjectName} (الموعد: {project.StartDate.Value:yyyy-MM-dd})");
+                    $"تأخير بداية المشروع {project.ProjectName} (الموعد المتوقع: {project.StartDate.Value:yyyy-MM-dd})");
             }
 
             foreach (var item in project.BOQItems)
             {
+                // تأخير بداية البند
                 if (item.StartDate.HasValue && today > item.StartDate.Value && item.Status == "جديد")
                 {
                     var engineerId = await GetResponsibleUserIdForItemAsync(project.Id, "SiteEngineer");
@@ -80,17 +83,19 @@ public class EscalationService : IEscalationService
                     }
                 }
 
-                if (item.EndDate.HasValue && today > item.EndDate.Value && item.Status != "منتهي")
+                // تأخير نهاية البند
+                if (item.EndDate.HasValue && today > item.EndDate.Value.Date && item.Status != "منتهي")
                 {
                     var managerId = await GetResponsibleUserIdForItemAsync(project.Id, "ProjectManager");
                     if (managerId > 0)
                     {
                         await SendEscalationAsync(project, item.Id, "ItemEndDelay", managerId,
-                            $"تأخير تسليم البند {item.ItemName}");
+                            $"تأخير تسليم البند {item.ItemName} (الموعد: {item.EndDate.Value:yyyy-MM-dd})");
                     }
                 }
 
-                if (settings.EnableInvoiceReview)
+                // تحذير الميزانية
+                if (settings.EnableInvoiceReview ?? false)
                 {
                     await CheckBudgetWarningAsync(project, item);
                 }
@@ -102,14 +107,14 @@ public class EscalationService : IEscalationService
 
     private async Task CheckBudgetWarningAsync(Project project, BOQItem item)
     {
-        decimal budget = item.EstimatedBudget;
-        if (budget <= 0) return;
+        decimal estimatedBudget = item.EstimatedBudget;
+        if (estimatedBudget <= 0) return;
 
         var totalSpent = await _transactionRepository.AsQueryable()
             .Where(t => t.BOQItemId == item.Id && t.Status == TransactionStatus.Approved)
             .SumAsync(t => t.Amount);
 
-        decimal warningThreshold = budget * 0.90m;
+        decimal warningThreshold = estimatedBudget * 0.90m;
 
         if (totalSpent >= warningThreshold)
         {
@@ -123,7 +128,7 @@ public class EscalationService : IEscalationService
                 await _notificationService.CreateAndSendAsync(
                     project.OwnerUserId,
                     "تحذير ميزانية",
-                    $"البند {item.ItemName} استهلك {(totalSpent / budget * 100):F1}%",
+                    $"البند {item.ItemName} استهلك {(totalSpent / estimatedBudget * 100):F1}% من الميزانية",
                     $"/projects/{project.Id}/items/{item.Id}",
                     NotificationType.BudgetWarning
                 );
@@ -136,23 +141,29 @@ public class EscalationService : IEscalationService
         var settings = project.Settings;
         if (settings == null) return;
 
-        // تصحيح: المقارنة بـ ProjectID و ItemID وليس Id
         var alreadySent = await _escalationLogRepository.AsQueryable()
             .AnyAsync(l => l.ProjectId == project.Id &&
                            l.BOQItemId == itemId &&
                            l.EscalationType == type &&
-                           (settings.DelayNotificationIsOneTimeOnly || l.SentAt.Date == DateTime.UtcNow.Date));
+                           (!(settings.DelayNotificationIsOneTimeOnly ?? false) || l.SentAt.Date == DateTime.UtcNow.Date));
 
         if (alreadySent) return;
 
-        await _notificationService.CreateAndSendAsync(recipientUserId, "إشعار تأخير", message,
-            $"/projects/{project.Id}", NotificationType.ProjectDelay);
+        await _notificationService.CreateAndSendAsync(
+            recipientUserId,
+            "إشعار تصعيد – تأخير",
+            message,
+            $"/projects/{project.Id}/items/{itemId ?? 0}",
+            NotificationType.ProjectDelay
+        );
 
-        if (settings.DelayNotificationSendEmail)
+        if (settings.DelayNotificationSendEmail ?? false)
         {
             var user = await _userRepository.GetByIdAsync(recipientUserId);
-            if (!string.IsNullOrEmpty(user?.Email))
-                await _emailService.SendAsync(user.Email, "تنبيه نظام إدارة الإنشاءات", message);
+            if (user != null && !string.IsNullOrEmpty(user.Email))
+            {
+                await _emailService.SendAsync(user.Email, "تنبيه نظام إدارة الإنشاءات – تصعيد", message);
+            }
         }
 
         await _escalationLogRepository.AddAsync(new EscalationLog
@@ -162,16 +173,17 @@ public class EscalationService : IEscalationService
             EscalationType = type,
             RecipientUserId = recipientUserId,
             Message = message,
-            SentByEmail = settings.DelayNotificationSendEmail,
-            SentAt = DateTime.UtcNow
+            SentByEmail = settings.DelayNotificationSendEmail ?? false,
+            SentAt = DateTime.UtcNow,
+            CreatedAt = DateTime.UtcNow
         });
     }
 
     private async Task<int> GetResponsibleUserIdForItemAsync(int projectId, string roleName)
     {
         return await _projectTeamRoleRepository.AsQueryable()
-            // تصحيح: استخدام ProjectID للربط الصحيح
-            .Where(ptr => ptr.ProjectTeamMember.ProjectId == projectId && ptr.ProjectRole.Name == roleName)
+            .Where(ptr => ptr.ProjectTeamMember.ProjectId == projectId &&
+                          ptr.ProjectRole.Name == roleName)
             .Select(ptr => ptr.ProjectTeamMember.UserId)
             .FirstOrDefaultAsync();
     }

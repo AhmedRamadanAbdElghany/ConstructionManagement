@@ -4,6 +4,10 @@ using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ConstructionManagement.Infrastructure.Services;
 
@@ -27,24 +31,33 @@ public class SiteMediaService : ISiteMediaService
     }
 
     public async Task<int> UploadMediaAsync(
-    int? boqItemId,
-    int projectId,
-    string mediaType,
-    string? description,
-    IFormFile file,
-    int uploaderUserId,
-    SourceType source
-)
-        {
-        // تم الإصلاح: البحث باستخدام ProjectID بدلاً من Id الخاص بجدول الإعدادات
+        int? boqItemId,
+        int projectId,
+        string mediaType,
+        string? description,
+        IFormFile file,
+        int uploaderUserId,
+        SourceType source)
+    {
+        // جلب إعدادات المشروع (Id = projectId بسبب shared PK)
         var settings = await _settingsRepository.AsQueryable()
             .FirstOrDefaultAsync(s => s.Id == projectId);
 
-        if (settings == null) throw new InvalidOperationException("إعدادات المشروع غير موجودة.");
-        if (!settings.EnablePhotoUpload) throw new InvalidOperationException("ميزة رفع الصور معطلة");
+        if (settings == null)
+        {
+            throw new InvalidOperationException("إعدادات المشروع غير موجودة.");
+        }
 
+        // التحقق من إمكانية الرفع
+        if (!(settings.EnablePhotoUpload ?? true))
+        {
+            throw new InvalidOperationException("ميزة رفع الصور معطلة في إعدادات المشروع.");
+        }
+
+        // رفع الملف
         var filePath = await _fileStorageService.UploadFileAsync(file, "site-media");
 
+        // إنشاء كائن الوسائط
         var media = new SiteMedia
         {
             ProjectId = projectId,
@@ -55,8 +68,10 @@ public class SiteMediaService : ISiteMediaService
             UploaderUserId = uploaderUserId,
             Source = source,
             CreatedAt = DateTime.UtcNow,
-            IsApproved = !settings.RequirePhotoReview,
-            Status = settings.RequirePhotoReview ? "Pending" : "Approved"
+
+            // هل يحتاج مراجعة؟
+            IsApproved = !(settings.RequirePhotoReview ?? true),
+            Status = (settings.RequirePhotoReview ?? true) ? "Pending" : "Approved"
         };
 
         await _mediaRepository.AddAsync(media);
@@ -78,6 +93,7 @@ public class SiteMediaService : ISiteMediaService
 
         await _mediaRepository.UpdateAsync(media);
         await _unitOfWork.SaveChangesAsync();
+
         return true;
     }
 
@@ -88,13 +104,17 @@ public class SiteMediaService : ISiteMediaService
 
     public async Task<List<SiteMedia>> GetMediaForProjectAsync(int projectId, int? itemId = null, string? status = null)
     {
-        // تم الإصلاح: الفلترة بـ ProjectID وليس Id
         var query = _mediaRepository.AsQueryable()
             .Where(m => m.ProjectId == projectId);
 
-        if (itemId.HasValue) query = query.Where(m => m.BOQItemId == itemId);
-        if (!string.IsNullOrEmpty(status)) query = query.Where(m => m.Status == status);
+        if (itemId.HasValue)
+            query = query.Where(m => m.BOQItemId == itemId.Value);
 
-        return await query.OrderByDescending(m => m.CreatedAt).ToListAsync();
+        if (!string.IsNullOrEmpty(status))
+            query = query.Where(m => m.Status == status);
+
+        return await query
+            .OrderByDescending(m => m.CreatedAt)
+            .ToListAsync();
     }
 }

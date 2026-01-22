@@ -2,43 +2,74 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.IO;
 
 namespace ConstructionManagement.Infrastructure.Persistence;
 
+/// <summary>
+/// Design-time factory for EF Core tools (migrations, dotnet ef commands, etc.).
+/// Uses the master database connection string (not tenant-specific).
+/// </summary>
 public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
 {
     public ApplicationDbContext CreateDbContext(string[] args)
     {
-        // 1. تحديد المسار الأساسي (Base Path)
-        // البحث عن ملف appsettings.json في مشروع الـ WebApi
-        var basePath = Path.Combine(Directory.GetCurrentDirectory(), "ConstructionManagement.WebApi");
+        // Try to locate the WebApi project folder (where appsettings.json lives)
+        var currentDir = Directory.GetCurrentDirectory();
 
-        // إذا كنت تشغل الأمر من داخل مجلد src، قد تحتاج لهذا التعديل:
-        if (!Directory.Exists(basePath))
+        var possibleBasePaths = new[]
         {
-            basePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "ConstructionManagement.WebApi");
+            Path.Combine(currentDir, "ConstructionManagement.WebApi"),
+            Path.Combine(currentDir, "..", "ConstructionManagement.WebApi"),
+            Path.Combine(currentDir, "..", "..", "ConstructionManagement.WebApi"),
+            Path.Combine(currentDir, "..", "..", "..", "ConstructionManagement.WebApi"),
+            currentDir // fallback: current directory
+        };
+
+        string? configBasePath = null;
+        foreach (var path in possibleBasePaths)
+        {
+            if (Directory.Exists(path))
+            {
+                var settingsPath = Path.Combine(path, "appsettings.json");
+                if (File.Exists(settingsPath))
+                {
+                    configBasePath = path;
+                    break;
+                }
+            }
         }
 
-        // 2. بناء الـ Configuration مع التأكد من وجود الملف
-        var builder = new ConfigurationBuilder()
-            .SetBasePath(basePath)
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-
-        var configuration = builder.Build();
-
-        // 3. جلب الـ Connection String
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
-
-        if (string.IsNullOrEmpty(connectionString))
+        if (string.IsNullOrEmpty(configBasePath))
         {
-            throw new InvalidOperationException("Could not find 'DefaultConnection' in appsettings.json");
+            throw new InvalidOperationException(
+                "Could not locate appsettings.json. " +
+                "Make sure you run migrations from the solution root or inside the WebApi project folder. " +
+                $"Searched paths: {string.Join(", ", possibleBasePaths)}");
         }
+
+        // Build configuration with environment support
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(configBasePath)
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development"}.json", optional: true)
+            .AddEnvironmentVariables()
+            .Build();
+
+        // Get the master connection string (for design-time / migrations)
+        var connectionString = configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException(
+                "Connection string 'DefaultConnection' not found in appsettings.json or environment variables. " +
+                "This factory uses the master database for migrations – tenant switching happens at runtime only.");
 
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
         optionsBuilder.UseSqlServer(connectionString);
 
+        // Optional: enable more detailed EF Core output during migrations (uncomment if needed)
+        // optionsBuilder.EnableSensitiveDataLogging();
+        // optionsBuilder.EnableDetailedErrors();
+
         return new ApplicationDbContext(optionsBuilder.Options);
     }
-
 }

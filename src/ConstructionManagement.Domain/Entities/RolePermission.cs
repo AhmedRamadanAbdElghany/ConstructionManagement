@@ -4,18 +4,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+// many to many 
 namespace ConstructionManagement.Domain.Entities
 {
-    // Project-specific: ProjectRole ↔ Permission
-    public class ProjectRolePermission
+    public class RolePermission
     {
-        [ForeignKey(nameof(ProjectRoleId))]
-        public int ProjectRoleId { get; set; }
+        [ForeignKey(nameof(RoleId))]
+        public int RoleId { get; set; }
         [ForeignKey(nameof(PermissionId))]
         public int PermissionId { get; set; }
 
-        public virtual ProjectRole ProjectRole { get; set; } = null!;
+        public virtual Role Role { get; set; } = null!;
         public virtual Permission Permission { get; set; } = null!;
     }
 }

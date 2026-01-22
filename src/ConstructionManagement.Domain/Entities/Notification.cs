@@ -48,12 +48,13 @@ public enum NotificationType
     BudgetWarning,    // approaching limit (e.g. 80–90%)
     BudgetOverrun,    // exceeded budget
     Escalation,       // timeout → escalated to higher role
+    MediaReview,
 
     // Common additions you might want later:
-    // ApprovalGranted,
-    // ApprovalRejected,
-    // PaymentReceived,
-    // MilestoneAchieved,
-    // DocumentUploaded,
-    // TeamMemberAssigned,
+    ApprovalGranted,
+     ApprovalRejected,
+     PaymentReceived,
+     MilestoneAchieved,
+     DocumentUploaded,
+     TeamMemberAssigned,
 }

@@ -2,22 +2,26 @@
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConstructionManagement.Infrastructure.Services;
 
 public class ProjectSettingsService : IProjectSettingsService
 {
-    private readonly IRepository<ProjectSettings> _settingsRepository;
+    private readonly IRepository<ProjectSettings> _projectSettingsRepository;
     private readonly IRepository<Project> _projectRepository;
+    private readonly IRepository<CompanySettings> _companySettingsRepository; // ← New: global settings
     private readonly IUnitOfWork _unitOfWork;
 
     public ProjectSettingsService(
-        IRepository<ProjectSettings> settingsRepository,
+        IRepository<ProjectSettings> projectSettingsRepository,
         IRepository<Project> projectRepository,
+        IRepository<CompanySettings> companySettingsRepository,
         IUnitOfWork unitOfWork)
     {
-        _settingsRepository = settingsRepository;
+        _projectSettingsRepository = projectSettingsRepository;
         _projectRepository = projectRepository;
+        _companySettingsRepository = companySettingsRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -27,49 +31,67 @@ public class ProjectSettingsService : IProjectSettingsService
         var projectExists = await _projectRepository.ExistsAsync(projectId);
         if (!projectExists)
         {
-            throw new InvalidOperationException("المشروع غير موجود");
+            throw new KeyNotFoundException("المشروع غير موجود");
         }
 
-        // Get settings using shared PK (Id = projectId)
-        var settings = await _settingsRepository.GetByIdAsync(projectId);
+        // Get project-specific settings (optional)
+        var projectSettings = await _projectSettingsRepository.GetByIdAsync(projectId);
 
-        // Auto-create default settings if not found
-        if (settings == null)
+        // Get global company settings (must exist – singleton row Id=1)
+        var companySettings = await _companySettingsRepository.GetByIdAsync(1)
+            ?? throw new InvalidOperationException("إعدادات الشركة العامة غير موجودة");
+
+        // Merge: project overrides take precedence, else fall back to global
+        var effectiveSettings = new ProjectSettingsDto
         {
-            settings = new ProjectSettings
-            {
-                Id = projectId   // Shared PK + FK to Project.Id
-                // All other properties use defaults from entity
-            };
+            EnableDelayNotification = projectSettings?.EnableDelayNotification ?? companySettings.EnableDelayNotification,
+            DelayNotificationIsOneTimeOnly = projectSettings?.DelayNotificationIsOneTimeOnly ?? companySettings.DelayNotificationIsOneTimeOnly,
+            DelayNotificationIntervalDays = projectSettings?.DelayNotificationIntervalDays ?? companySettings.DelayNotificationIntervalDays,
+            DelayNotificationSendEmail = projectSettings?.DelayNotificationSendEmail ?? companySettings.DelayNotificationSendEmail,
+            DelayGracePeriodDays = projectSettings?.DelayGracePeriodDays ?? companySettings.DelayGracePeriodDays,
 
-            await _settingsRepository.AddAsync(settings);
+            EnablePhotoUpload = projectSettings?.EnablePhotoUpload ?? companySettings.EnablePhotoUpload,
+            RequirePhotoReview = projectSettings?.RequirePhotoReview ?? companySettings.RequirePhotoReview,
+            PhotoApproverRole = projectSettings?.PhotoApproverRole ?? companySettings.PhotoApproverRole,
+
+            EnableInvoiceReview = projectSettings?.EnableInvoiceReview ?? companySettings.EnableInvoiceReview,
+            EnableInvoiceAggregation = projectSettings?.EnableInvoiceAggregation ?? companySettings.EnableInvoiceAggregation,
+
+            MaxPhotosPerUpload = projectSettings?.MaxPhotosPerUpload ?? companySettings.MaxPhotosPerUpload
+        };
+
+        // Auto-create project settings if they don't exist (optional – lazy creation)
+        if (projectSettings == null)
+        {
+            projectSettings = new ProjectSettings { Id = projectId };
+            await _projectSettingsRepository.AddAsync(projectSettings);
             await _unitOfWork.SaveChangesAsync();
         }
 
-        return MapToDto(settings);
+        return effectiveSettings;
     }
 
     public async Task UpdateSettingsAsync(int projectId, UpdateProjectSettingsRequest request, int userId)
     {
-        // Fetch project to check existence + permissions
+        // Fetch project to check existence + authorization
         var project = await _projectRepository.GetByIdAsync(projectId)
-            ?? throw new InvalidOperationException("المشروع غير موجود");
+            ?? throw new KeyNotFoundException("المشروع غير موجود");
 
-        // Authorization: only owner or general manager can update
+        // Authorization: only owner or general manager can update project settings
         if (project.OwnerUserId != userId && project.GeneralManagerUserId != userId)
         {
             throw new UnauthorizedAccessException("ليس لديك صلاحية لتعديل إعدادات هذا المشروع");
         }
 
-        // Get existing settings or create new
-        var settings = await _settingsRepository.GetByIdAsync(projectId);
+        // Get or create project settings
+        var settings = await _projectSettingsRepository.GetByIdAsync(projectId);
         if (settings == null)
         {
             settings = new ProjectSettings { Id = projectId };
-            await _settingsRepository.AddAsync(settings);
+            await _projectSettingsRepository.AddAsync(settings);
         }
 
-        // Apply updates (only if value was provided in request)
+        // Apply updates only if value was explicitly provided in request
         if (request.EnableDelayNotification.HasValue)
             settings.EnableDelayNotification = request.EnableDelayNotification.Value;
 
@@ -103,31 +125,28 @@ public class ProjectSettingsService : IProjectSettingsService
         if (request.MaxPhotosPerUpload.HasValue)
             settings.MaxPhotosPerUpload = request.MaxPhotosPerUpload.Value;
 
-        // Note: UpdatedAt is automatically handled by your audit interceptor
-        // No need to set it manually here
-
-        await _settingsRepository.UpdateAsync(settings);
+        await _projectSettingsRepository.UpdateAsync(settings);
         await _unitOfWork.SaveChangesAsync();
     }
 
-    private ProjectSettingsDto MapToDto(ProjectSettings s)
+    private ProjectSettingsDto MapToDto(ProjectSettings settings, CompanySettings global)
     {
         return new ProjectSettingsDto
         {
-            EnableDelayNotification = s.EnableDelayNotification,
-            DelayNotificationIsOneTimeOnly = s.DelayNotificationIsOneTimeOnly,
-            DelayNotificationIntervalDays = s.DelayNotificationIntervalDays,
-            DelayNotificationSendEmail = s.DelayNotificationSendEmail,
-            DelayGracePeriodDays = s.DelayGracePeriodDays,
+            EnableDelayNotification = settings.EnableDelayNotification ?? global.EnableDelayNotification,
+            DelayNotificationIsOneTimeOnly = settings.DelayNotificationIsOneTimeOnly ?? global.DelayNotificationIsOneTimeOnly,
+            DelayNotificationIntervalDays = settings.DelayNotificationIntervalDays ?? global.DelayNotificationIntervalDays,
+            DelayNotificationSendEmail = settings.DelayNotificationSendEmail ?? global.DelayNotificationSendEmail,
+            DelayGracePeriodDays = settings.DelayGracePeriodDays ?? global.DelayGracePeriodDays,
 
-            EnablePhotoUpload = s.EnablePhotoUpload,
-            RequirePhotoReview = s.RequirePhotoReview,
-            PhotoApproverRole = s.PhotoApproverRole,
+            EnablePhotoUpload = settings.EnablePhotoUpload ?? global.EnablePhotoUpload,
+            RequirePhotoReview = settings.RequirePhotoReview ?? global.RequirePhotoReview,
+            PhotoApproverRole = settings.PhotoApproverRole ?? global.PhotoApproverRole,
 
-            EnableInvoiceReview = s.EnableInvoiceReview,
-            EnableInvoiceAggregation = s.EnableInvoiceAggregation,
+            EnableInvoiceReview = settings.EnableInvoiceReview ?? global.EnableInvoiceReview,
+            EnableInvoiceAggregation = settings.EnableInvoiceAggregation ?? global.EnableInvoiceAggregation,
 
-            MaxPhotosPerUpload = s.MaxPhotosPerUpload
+            MaxPhotosPerUpload = settings.MaxPhotosPerUpload ?? global.MaxPhotosPerUpload
         };
     }
 }

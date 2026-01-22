@@ -1,20 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿namespace ConstructionManagement.Application.DTOs;
 
-namespace ConstructionManagement.Domain.Entities;
-
-/// <summary>
-/// Project-specific configuration settings (1:1 relationship with Project)
-/// Uses shared primary key (ProjectId = PK + FK)
-/// </summary>
-public class ProjectSettings : BaseEntity
+public class UpdateCompanySettingsRequest
 {
-    [Key, ForeignKey(nameof(Project))]
-    public int Id { get; set; } // = Project.Id
+    // All fields are nullable so partial updates are possible
+    // (only send the fields you want to change)
 
-    public virtual Project Project { get; set; } = null!;
-
-    // All fields are now nullable → null means "use global default"
     public bool? EnableDelayNotification { get; set; }
     public bool? DelayNotificationIsOneTimeOnly { get; set; }
     public int? DelayNotificationIntervalDays { get; set; }

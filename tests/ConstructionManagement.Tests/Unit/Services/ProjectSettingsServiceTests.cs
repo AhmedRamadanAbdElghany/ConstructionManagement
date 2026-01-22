@@ -1,4 +1,4 @@
-﻿﻿using ConstructionManagement.Application.DTOs;
+﻿using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
@@ -13,13 +13,16 @@ public class ProjectSettingsServiceTests
 {
     private readonly Mock<IRepository<ProjectSettings>> _settingsRepo = new();
     private readonly Mock<IRepository<Project>> _projectRepo = new();
+    private readonly Mock<IRepository<CompanySettings>> _companySettingsRepo = new(); // ← الجديد: Mock للإعدادات العامة
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
 
     private ProjectSettingsService CreateService() =>
         new ProjectSettingsService(
-            _settingsRepo.Object,
-            _projectRepo.Object,
-            _unitOfWork.Object);
+            _settingsRepo.Object,           // 1
+            _projectRepo.Object,            // 2
+            _companySettingsRepo.Object,    // 3 ← إضافة الموك الجديد هنا
+            _unitOfWork.Object              // 4
+        );
 
     [Fact]
     public async Task GetSettingsAsync_WhenProjectDoesNotExist_ThrowsException()
@@ -30,7 +33,7 @@ public class ProjectSettingsServiceTests
 
         // Act & Assert
         await service.Invoking(s => s.GetSettingsAsync(1))
-            .Should().ThrowAsync<InvalidOperationException>()
+            .Should().ThrowAsync<KeyNotFoundException>()  // ← غيّر هنا إلى KeyNotFoundException
             .WithMessage("المشروع غير موجود");
     }
 
@@ -39,7 +42,6 @@ public class ProjectSettingsServiceTests
     {
         // Arrange
         int projectId = 1, ownerId = 1;
-
         var project = new Project { Id = projectId, OwnerUserId = ownerId };
         var settings = new ProjectSettings { Id = projectId };
 
@@ -76,9 +78,17 @@ public class ProjectSettingsServiceTests
     {
         // Arrange
         int projectId = 1;
-
         _projectRepo.Setup(r => r.ExistsAsync(projectId)).ReturnsAsync(true);
         _settingsRepo.Setup(r => r.GetByIdAsync(projectId)).ReturnsAsync((ProjectSettings)null!);
+
+        // محاكاة إعدادات الشركة العامة (لأن GetSettingsAsync بيستخدمها للـ fallback)
+        var globalSettings = new CompanySettings
+        {
+            EnableDelayNotification = true,
+            DelayNotificationIntervalDays = 7,
+            // ... باقي الافتراضيات
+        };
+        _companySettingsRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(globalSettings);
 
         var service = CreateService();
 

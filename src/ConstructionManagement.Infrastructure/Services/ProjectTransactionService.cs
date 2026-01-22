@@ -75,7 +75,11 @@ public class ProjectTransactionService : IProjectTransactionService
                 AttachmentPath = attachmentPath,
                 CreatedByUserId = userId,
                 TransactionDate = DateTime.UtcNow,
-                Status = settings.EnableInvoiceReview ? TransactionStatus.Pending : TransactionStatus.Approved,
+
+                Status = (settings?.EnableInvoiceReview ?? true)
+    ? TransactionStatus.Pending
+    : TransactionStatus.Approved,
+              //  Status = settings.EnableInvoiceReview ? TransactionStatus.Pending : TransactionStatus.Approved,
                 CreatedAt = DateTime.UtcNow
             };
 
