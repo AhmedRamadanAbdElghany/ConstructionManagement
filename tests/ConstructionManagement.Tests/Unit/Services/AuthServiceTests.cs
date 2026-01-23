@@ -1,4 +1,4 @@
-﻿﻿using ConstructionManagement.Application.DTOs;
+﻿using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
@@ -6,10 +6,6 @@ using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace ConstructionManagement.Tests.Unit.Services;
 

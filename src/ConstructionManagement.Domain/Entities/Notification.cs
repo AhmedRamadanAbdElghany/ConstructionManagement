@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
@@ -52,9 +51,9 @@ public enum NotificationType
 
     // Common additions you might want later:
     ApprovalGranted,
-     ApprovalRejected,
-     PaymentReceived,
-     MilestoneAchieved,
-     DocumentUploaded,
-     TeamMemberAssigned,
+    ApprovalRejected,
+    PaymentReceived,
+    MilestoneAchieved,
+    DocumentUploaded,
+    TeamMemberAssigned,
 }

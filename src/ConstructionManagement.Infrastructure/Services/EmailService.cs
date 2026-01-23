@@ -1,6 +1,6 @@
 ﻿using ConstructionManagement.Application.Interfaces;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Net.Mail;
 

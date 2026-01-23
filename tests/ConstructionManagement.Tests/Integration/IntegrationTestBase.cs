@@ -1,9 +1,7 @@
 ﻿using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Infrastructure.Persistence;
 using ConstructionManagement.Infrastructure.Persistence.Repositories;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace ConstructionManagement.Tests.Integration
 {

@@ -5,7 +5,6 @@ using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
 using Moq;
-using Xunit;
 
 namespace ConstructionManagement.Tests.Unit.Services;
 

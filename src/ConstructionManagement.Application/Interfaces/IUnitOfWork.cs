@@ -1,6 +1,4 @@
-﻿using System.Data;
-
-namespace ConstructionManagement.Application.Interfaces;
+﻿namespace ConstructionManagement.Application.Interfaces;
 
 public interface IUnitOfWork : IDisposable
 {

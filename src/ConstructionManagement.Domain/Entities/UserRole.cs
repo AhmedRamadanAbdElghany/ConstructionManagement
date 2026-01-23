@@ -1,6 +1,5 @@
 ﻿// Domain/Entities/UserRole.cs
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
 
 namespace ConstructionManagement.Domain.Entities;
 

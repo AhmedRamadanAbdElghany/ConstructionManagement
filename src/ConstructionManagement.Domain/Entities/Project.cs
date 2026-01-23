@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
@@ -67,7 +65,7 @@ public class Project : BaseEntity
         = new List<SiteMedia>();
 
     // ── Recommended additional collections (add as you implement features) ─────
-     public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
+    public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
     public virtual ICollection<BOQItemNote> Notes { get; set; }
             = new List<BOQItemNote>();
     public virtual ICollection<ProjectRole> ProjectRoles { get; set; } = new List<ProjectRole>();

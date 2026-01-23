@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace ConstructionManagement.Domain.Entities;
+﻿namespace ConstructionManagement.Domain.Entities;
 
 /// <summary>
 /// Represents a system user (employee, manager, engineer, client rep, etc.)

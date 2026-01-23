@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using ConstructionManagement.Application.DTOs;
+﻿using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 [Authorize(Policy = "CanManageUsers")]
 [Route("api/admin/users")]

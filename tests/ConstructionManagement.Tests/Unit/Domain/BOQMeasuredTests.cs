@@ -1,6 +1,5 @@
 ﻿using ConstructionManagement.Domain.Entities;
 using FluentAssertions;
-using Xunit;
 
 namespace ConstructionManagement.Tests.Unit.Domain;
 

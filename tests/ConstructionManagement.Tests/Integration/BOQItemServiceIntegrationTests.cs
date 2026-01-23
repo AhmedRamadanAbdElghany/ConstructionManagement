@@ -1,13 +1,10 @@
-﻿using ConstructionManagement.Application.DTOs;
-using ConstructionManagement.Application.DTOs.Transaction;
+﻿using ConstructionManagement.Application.DTOs.Transaction;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories;
 using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Moq;
-using Xunit;
 
 namespace ConstructionManagement.Tests.Integration;
 

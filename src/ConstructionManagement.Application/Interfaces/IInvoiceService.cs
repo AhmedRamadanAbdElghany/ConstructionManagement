@@ -1,7 +1,4 @@
-﻿using ConstructionManagement.Application.DTOs;
-using System.Threading.Tasks;
-
-namespace ConstructionManagement.Application.Interfaces;
+﻿namespace ConstructionManagement.Application.Interfaces;
 
 public interface IInvoiceService
 {

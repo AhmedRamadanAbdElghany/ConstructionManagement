@@ -79,7 +79,7 @@ public class ProjectTransactionService : IProjectTransactionService
                 Status = (settings?.EnableInvoiceReview ?? true)
     ? TransactionStatus.Pending
     : TransactionStatus.Approved,
-              //  Status = settings.EnableInvoiceReview ? TransactionStatus.Pending : TransactionStatus.Approved,
+                //  Status = settings.EnableInvoiceReview ? TransactionStatus.Pending : TransactionStatus.Approved,
                 CreatedAt = DateTime.UtcNow
             };
 

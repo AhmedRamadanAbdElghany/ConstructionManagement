@@ -1,9 +1,8 @@
-﻿﻿using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Http;
-using Moq;
-using Xunit;
+﻿using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
-using ConstructionManagement.Infrastructure.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
+using Moq;
 using System.Text;
 
 namespace ConstructionManagement.Tests.Unit.Services;

@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using ConstructionManagement.Application.DTOs;
 
 namespace ConstructionManagement.Application.Validators;
 

@@ -1,6 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ConstructionManagement.Domain.Entities; // for TransactionType
 using Microsoft.AspNetCore.Http;
-using ConstructionManagement.Domain.Entities; // for TransactionType
 
 namespace ConstructionManagement.Application.DTOs.Transaction;
 

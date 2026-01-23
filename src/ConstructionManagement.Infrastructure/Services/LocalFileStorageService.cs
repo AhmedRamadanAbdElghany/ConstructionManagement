@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Http;
-using ConstructionManagement.Application.Interfaces;
-using System.IO;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 
 namespace ConstructionManagement.Infrastructure.Services;
 

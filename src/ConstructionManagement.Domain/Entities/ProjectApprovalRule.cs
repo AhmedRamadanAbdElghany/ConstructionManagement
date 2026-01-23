@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Security.AccessControl;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 

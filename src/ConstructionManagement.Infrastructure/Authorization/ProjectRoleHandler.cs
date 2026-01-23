@@ -1,9 +1,9 @@
-﻿using System.Security.Claims;
-using ConstructionManagement.Infrastructure.Persistence;
+﻿using ConstructionManagement.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Security.Claims;
 
 namespace ConstructionManagement.Infrastructure.Authorization;
 

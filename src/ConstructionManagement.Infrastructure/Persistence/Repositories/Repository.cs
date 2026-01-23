@@ -1,7 +1,6 @@
 ﻿// Infrastructure/Persistence/Repositories/Repository.cs
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace ConstructionManagement.Infrastructure.Persistence.Repositories;

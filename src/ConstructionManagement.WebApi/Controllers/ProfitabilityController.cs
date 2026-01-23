@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ConstructionManagement.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using ConstructionManagement.Application.DTOs;
-using ConstructionManagement.Application.Interfaces;
 
 namespace ConstructionManagement.WebApi.Controllers;
 

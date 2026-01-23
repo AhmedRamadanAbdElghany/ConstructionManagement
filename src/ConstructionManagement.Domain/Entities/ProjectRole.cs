@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Collections.Generic;
 
 namespace ConstructionManagement.Domain.Entities;
 
@@ -30,5 +29,5 @@ public class ProjectRole : BaseEntity
         = new List<ProjectTeamRole>();
 
     // if you later want to define permissions per role
-     public virtual ICollection<ProjectRolePermission> Permissions { get; set; } = new List<ProjectRolePermission>();
+    public virtual ICollection<ProjectRolePermission> Permissions { get; set; } = new List<ProjectRolePermission>();
 }

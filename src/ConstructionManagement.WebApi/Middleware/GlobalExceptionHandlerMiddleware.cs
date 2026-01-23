@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace ConstructionManagement.WebApi.Middleware;
 

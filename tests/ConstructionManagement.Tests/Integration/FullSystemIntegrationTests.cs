@@ -1,5 +1,4 @@
 ﻿using ConstructionManagement.Application.DTOs;
-using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories; // للـ Repository
 using ConstructionManagement.Infrastructure.Services;
@@ -7,9 +6,6 @@ using FluentAssertions; // ضروري لحل أخطاء .Should()
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration; // ضروري لحل خطأ IConfiguration
 using Moq;
-using Xunit;
-using System.Threading.Tasks;
-using System;
 
 namespace ConstructionManagement.Tests.Integration;
 

@@ -1,14 +1,10 @@
-﻿using ConstructionManagement.Application.DTOs;
-using ConstructionManagement.Application.Interfaces;
+﻿using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using MockQueryable;
-using MockQueryable.Moq;
 using Moq;
-using Xunit;
 
 namespace ConstructionManagement.Tests.Unit.Services;
 

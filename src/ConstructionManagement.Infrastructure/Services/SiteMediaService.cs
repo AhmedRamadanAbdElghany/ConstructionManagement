@@ -1,13 +1,8 @@
-﻿using ConstructionManagement.Application.DTOs;
-using ConstructionManagement.Application.Interfaces;
+﻿using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ConstructionManagement.Infrastructure.Services;
 

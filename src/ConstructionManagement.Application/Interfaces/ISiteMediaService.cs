@@ -1,7 +1,4 @@
-﻿
-
-using ConstructionManagement.Application.DTOs;
-using ConstructionManagement.Domain.Entities;
+﻿using ConstructionManagement.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 
 namespace ConstructionManagement.Application.Interfaces;

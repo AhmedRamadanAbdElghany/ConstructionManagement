@@ -5,7 +5,6 @@ using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using Xunit;
 
 namespace ConstructionManagement.Tests.Integration
 {

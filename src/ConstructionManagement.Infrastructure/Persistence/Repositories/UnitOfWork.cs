@@ -1,5 +1,4 @@
 ﻿using ConstructionManagement.Application.Interfaces;
-using ConstructionManagement.Infrastructure.Persistence; // تم تعديل المسار هنا ليكون المسار العام
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace ConstructionManagement.Infrastructure.Persistence.Repositories;
