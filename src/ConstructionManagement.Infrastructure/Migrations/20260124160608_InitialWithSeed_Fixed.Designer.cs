@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ConstructionManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260124154522_InitialWithSeed_Fixed")]
+    [Migration("20260124160608_InitialWithSeed_Fixed")]
     partial class InitialWithSeed_Fixed
     {
         /// <inheritdoc />
@@ -135,6 +135,53 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ApproverUserId");
 
                     b.ToTable("ApprovalSteps");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.BOQExecutedDelta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BOQItemId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ChangeType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DeltaDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("DeltaQuantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ReferenceId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BOQItemId");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("ProcessedAt");
+
+                    b.ToTable("BOQExecutedDeltas");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.BOQItem", b =>
@@ -1383,6 +1430,25 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("ApproverUser");
 
                     b.Navigation("Request");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.BOQExecutedDelta", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.BOQItem", "BOQItem")
+                        .WithMany()
+                        .HasForeignKey("BOQItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BOQItem");
+
+                    b.Navigation("CreatedBy");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.BOQItem", b =>

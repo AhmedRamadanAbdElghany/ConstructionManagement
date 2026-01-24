@@ -28,6 +28,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<CompanySettings> CompanySettings => Set<CompanySettings>();
     public DbSet<BOQItem> BOQItems => Set<BOQItem>();
     public DbSet<BOQMeasured> BOQMeasured => Set<BOQMeasured>();
+    public DbSet<BOQExecutedDelta> BOQExecutedDeltas => Set<BOQExecutedDelta>();
     public DbSet<BOQSupervision> BOQSupervision => Set<BOQSupervision>();
     public DbSet<ItemDailyLog> ItemDailyLogs => Set<ItemDailyLog>();
     public DbSet<ItemInvoice> ItemInvoices => Set<ItemInvoice>();
@@ -96,6 +97,12 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey<BOQSupervision>(s => s.Id)
             .OnDelete(DeleteBehavior.Cascade);
 
+
+        modelBuilder.Entity<BOQExecutedDelta>()
+    .HasIndex(d => d.BOQItemId);
+
+        modelBuilder.Entity<BOQExecutedDelta>()
+            .HasIndex(d => d.ProcessedAt); // لتسريع الـ job
         // ────────────────────────────────────────────────────────────────
         // 3. InvoiceSequence (year-based sequence)
         // ────────────────────────────────────────────────────────────────

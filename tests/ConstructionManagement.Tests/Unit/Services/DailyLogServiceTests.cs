@@ -1,32 +1,38 @@
-﻿using ConstructionManagement.Application.Interfaces;
+﻿using ConstructionManagement.Application.DTOs;
+using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
 using MockQueryable;
 using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace ConstructionManagement.Tests.Unit.Services;
 
 public class DailyLogServiceTests
 {
-    private readonly Mock<IRepository<ItemDailyLog>> _logRepoMock;
-    private readonly Mock<IUnitOfWork> _uowMock;
-    private readonly DailyLogService _service;
+    private readonly Mock<IRepository<ItemDailyLog>> _logRepoMock = new();
+    private readonly Mock<IRepository<BOQExecutedDelta>> _deltaRepoMock = new(); // ← New mock
+    private readonly Mock<IUnitOfWork> _uowMock = new();
 
-    public DailyLogServiceTests()
-    {
-        _logRepoMock = new Mock<IRepository<ItemDailyLog>>();
-        _uowMock = new Mock<IUnitOfWork>();
-        _service = new DailyLogService(_logRepoMock.Object, _uowMock.Object);
-    }
+    private DailyLogService CreateService()
+        => new DailyLogService(
+            _logRepoMock.Object,
+            _deltaRepoMock.Object,           // ← required now
+            _uowMock.Object
+        );
 
     [Fact]
     public async Task IsDayClosedForItemAsync_ShouldReturnTrue_WhenLogIsClosed()
     {
         var itemId = 1;
         var date = DateTime.UtcNow.Date;
-        // تصحيح: BuildMock مباشرة على القائمة
+
         var logs = new List<ItemDailyLog>
         {
             new ItemDailyLog { BOQItemId = itemId, LogDate = date, IsClosed = true }
@@ -34,7 +40,8 @@ public class DailyLogServiceTests
 
         _logRepoMock.Setup(r => r.AsQueryable()).Returns(logs);
 
-        var result = await _service.IsDayClosedForItemAsync(itemId, date);
+        var result = await CreateService().IsDayClosedForItemAsync(itemId, date);
+
         result.Should().BeTrue();
     }
 
@@ -43,12 +50,11 @@ public class DailyLogServiceTests
     {
         var itemId = 1;
         var date = DateTime.UtcNow.Date;
-        // تصحيح: BuildMock مباشرة على القائمة الفارغة
-        var emptyLogs = new List<ItemDailyLog>().BuildMock();
 
+        var emptyLogs = new List<ItemDailyLog>().BuildMock();
         _logRepoMock.Setup(r => r.AsQueryable()).Returns(emptyLogs);
 
-        await _service.GetOrCreateDailyLogIdAsync(itemId, date, 10);
+        await CreateService().GetOrCreateDailyLogIdAsync(itemId, date, 10);
 
         _logRepoMock.Verify(r => r.AddAsync(It.IsAny<ItemDailyLog>()), Times.Once());
         _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once());
@@ -59,50 +65,68 @@ public class DailyLogServiceTests
     {
         var existingId = 500;
         var date = DateTime.UtcNow.Date;
+
         var logs = new List<ItemDailyLog>
         {
             new ItemDailyLog { Id = existingId, BOQItemId = 1, LogDate = date }
-        }.BuildMock(); // تصحيح
+        }.BuildMock();
 
         _logRepoMock.Setup(r => r.AsQueryable()).Returns(logs);
 
-        var resultId = await _service.GetOrCreateDailyLogIdAsync(1, date, 10);
+        var resultId = await CreateService().GetOrCreateDailyLogIdAsync(1, date, 10);
 
         resultId.Should().Be(existingId);
     }
 
     [Fact]
-    public async Task CloseDailyLogAsync_ShouldUpdateLog_WhenValidRequest()
+    public async Task CloseDailyLogAsync_ShouldUpdateLogAndAddDelta_WhenValidRequest()
     {
-        var date = DateTime.UtcNow.Date;
-        var existingLog = new ItemDailyLog { BOQItemId = 1, LogDate = date, IsClosed = false };
-        var logs = new List<ItemDailyLog> { existingLog }.BuildMock(); // تصحيح
+        var itemId = 1;
+        var logDate = DateTime.UtcNow.Date;
+        var userId = 20;
 
+        var existingLog = new ItemDailyLog { BOQItemId = itemId, LogDate = logDate, IsClosed = false };
+
+        var logs = new List<ItemDailyLog> { existingLog }.BuildMock();
         _logRepoMock.Setup(r => r.AsQueryable()).Returns(logs);
 
-        var result = await _service.CloseDailyLogAsync(1, date, 20, new CloseDailyLogRequest(95.5m, "Work", "Good"));
+        var request = new CloseDailyLogRequest(95.5m, "Work done", "Closed successfully");
+
+        var result = await CreateService().CloseDailyLogAsync(itemId, logDate, userId, request);
 
         result.Should().BeTrue();
         existingLog.IsClosed.Should().BeTrue();
+        existingLog.ClosedByUserId.Should().Be(userId);
+
+        // Verify delta was added
+        _deltaRepoMock.Verify(r => r.AddAsync(It.Is<BOQExecutedDelta>(d =>
+            d.BOQItemId == itemId &&
+            d.DeltaQuantity > 0 &&          // adjust based on your real calculation
+            d.ChangeType == "DailyLog" &&
+            d.CreatedByUserId == userId
+        )), Times.Once());
+
         _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once());
     }
 
     [Fact]
     public async Task GetDailyLogHistoryAsync_ShouldReturnMappedDtos()
     {
+        var itemId = 1;
+
         var logs = new List<ItemDailyLog>
         {
             new ItemDailyLog
             {
-                BOQItemId = 1,
+                BOQItemId = itemId,
                 LogDate = DateTime.UtcNow,
                 ClosedByUser = new User { FullName = "Ahmed Ramadan" }
             }
-        }.BuildMock(); // تصحيح
+        }.BuildMock();
 
         _logRepoMock.Setup(r => r.AsQueryable()).Returns(logs);
 
-        var history = await _service.GetDailyLogHistoryAsync(1);
+        var history = await CreateService().GetDailyLogHistoryAsync(itemId);
 
         history.Should().NotBeEmpty();
         history.First().ClosedByFullName.Should().Be("Ahmed Ramadan");

@@ -48,6 +48,7 @@ builder.Services.AddScoped<IRepository<ProjectSettings>, Repository<ProjectSetti
 builder.Services.AddScoped<IRepository<EscalationLog>, Repository<EscalationLog>>();
 builder.Services.AddScoped<IRepository<Notification>, Repository<Notification>>();
 builder.Services.AddScoped<IRepository<ProjectTeamRole>, Repository<ProjectTeamRole>>();
+builder.Services.AddScoped<IRepository<BOQExecutedDelta>, Repository<BOQExecutedDelta>>();
 
 // 6. Services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -195,6 +196,12 @@ RecurringJob.AddOrUpdate<ApprovalEscalationJob>(
     "approval-escalation-check-hourly",
     job => job.CheckAndEscalateDelayedApprovalsAsync(),
     Cron.Hourly);  // Every hour
+
+// في Program.cs بعد AddHangfireServer()
+RecurringJob.AddOrUpdate<BOQProgressAggregationJob>(
+    "aggregate-boq-deltas",
+    job => job.AggregatePendingDeltas(),
+    Cron.Hourly);  // كل ساعة – أو Cron.Daily(3) لكل يوم الساعة 3 صباحًا
 
 app.Run();
 
