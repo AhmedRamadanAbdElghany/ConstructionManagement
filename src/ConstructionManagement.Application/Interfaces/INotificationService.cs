@@ -20,7 +20,7 @@ public interface INotificationService
         string? link = null,
         NotificationType type = NotificationType.General
     );
-
+    Task SendApprovalNeededNotificationAsync(ApprovalRequest request, ApprovalStep step);
     Task<List<NotificationDto>> GetUserNotificationsAsync(int userId, bool unreadOnly = false);
     Task MarkAsReadAsync(int notificationId, int userId);
     Task MarkAllAsReadAsync(int userId);

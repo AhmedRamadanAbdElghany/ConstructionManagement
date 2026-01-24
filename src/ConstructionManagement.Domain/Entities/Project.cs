@@ -35,6 +35,10 @@ public class Project : BaseEntity
     [ForeignKey(nameof(ClosedByUserId))]
     public virtual User? ClosedBy { get; set; }
 
+    // داخل كلاس Project
+    public int? PackageId { get; set; }
+    public virtual Package? Package { get; set; }
+
     public bool IsClosed { get; set; } = false;
     public DateTime? ClosedAt { get; set; }
 

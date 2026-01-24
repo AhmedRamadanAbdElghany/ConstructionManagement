@@ -2,6 +2,7 @@
 using ConstructionManagement.Application.Validators;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Authorization;
+using ConstructionManagement.Infrastructure.BackgroundJobs;
 using ConstructionManagement.Infrastructure.Persistence;
 using ConstructionManagement.Infrastructure.Persistence.Repositories;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
@@ -46,6 +47,7 @@ builder.Services.AddScoped<IRepository<BOQProfitabilityLog>, Repository<BOQProfi
 builder.Services.AddScoped<IRepository<ProjectSettings>, Repository<ProjectSettings>>();
 builder.Services.AddScoped<IRepository<EscalationLog>, Repository<EscalationLog>>();
 builder.Services.AddScoped<IRepository<Notification>, Repository<Notification>>();
+builder.Services.AddScoped<IRepository<ProjectTeamRole>, Repository<ProjectTeamRole>>();
 
 // 6. Services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -59,13 +61,16 @@ builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IProjectSettingsService, ProjectSettingsService>();
 builder.Services.AddScoped<IProjectApprovalRuleService, ProjectApprovalRuleService>();
-builder.Services.AddScoped<IEscalationService, EscalationService>();
+builder.Services.AddScoped<IProjectDelayEscalationService, ProjectDelayEscalationService>(); // renamed & kept
 builder.Services.AddScoped<IProjectTransactionService, ProjectTransactionService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Notification & Email
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+
+// Approval-specific escalation job
+builder.Services.AddScoped<ApprovalEscalationJob>();
 
 // 7. JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -111,7 +116,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("CanManageProjectSettings", policy => policy.AddRequirements(new ProjectRoleRequirement("Settings.Manage")));
 });
 
-// 9. Hangfire (using master DB for now – can be made tenant-aware later)
+// 9. Hangfire
 builder.Services.AddHangfire(config => config
     .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
     .UseSimpleAssemblyNameTypeSerializer()
@@ -164,7 +169,7 @@ app.UseMiddleware<TenantResolutionMiddleware>();
 
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
-// Hangfire Dashboard (secured)
+// Hangfire Dashboard (secured – only SuperAdmin)
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
     Authorization = new[] { new HangfireCustomAuthorizationFilter() }
@@ -177,11 +182,19 @@ app.UseStaticFiles(); // for uploaded files (photos, invoices, etc.)
 
 app.MapControllers();
 
-// Schedule background jobs (daily escalation check – runs on master DB)
-RecurringJob.AddOrUpdate<IEscalationService>(
-    "daily-delay-escalations",
-    service => service.CheckAndSendDelayEscalationsAsync(),
-    Cron.Daily(8));
+// Schedule background jobs
+
+// 1. Daily project/item delay & budget warnings (morning check)
+RecurringJob.AddOrUpdate<IProjectDelayEscalationService>(
+    "project-delay-escalation-daily",
+    service => service.CheckProjectAndItemDelaysAsync(),
+    Cron.Daily(8));  // Every day at 8:00 AM
+
+// 2. Hourly approval workflow timeouts
+RecurringJob.AddOrUpdate<ApprovalEscalationJob>(
+    "approval-escalation-check-hourly",
+    job => job.CheckAndEscalateDelayedApprovalsAsync(),
+    Cron.Hourly);  // Every hour
 
 app.Run();
 

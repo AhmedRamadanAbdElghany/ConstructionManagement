@@ -5,7 +5,6 @@ namespace ConstructionManagement.Infrastructure.Persistence.Repositories;
 
 public class UnitOfWork : IUnitOfWork
 {
-    // استبدل ApplicationDbContext باسم الكلاس الخاص بك إذا كان مختلفاً
     private readonly ApplicationDbContext _context;
     private IDbContextTransaction? _currentTransaction;
 

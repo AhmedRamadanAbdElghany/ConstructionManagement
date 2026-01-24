@@ -109,6 +109,12 @@ public class User : BaseEntity
     /// </summary>
     public virtual ICollection<ProjectTeamMember> ProjectMemberships { get; set; }
         = new List<ProjectTeamMember>();
+    // In User.cs – add these collections
+    
+    public virtual ICollection<ItemInvoice> CreatedInvoices { get; set; } = new List<ItemInvoice>();
+    // In User.cs – add this collection
+    public virtual ICollection<ProjectTeamMember> Subordinates { get; set; } = new List<ProjectTeamMember>();
+    // or name it ReportsFrom / ManagedTeamMembers / etc.
 
     // ── Optional helpers (not mapped) ─────────────────────────────────────────
     // [NotMapped]

@@ -3,8 +3,8 @@
 public interface IUnitOfWork : IDisposable
 {
     Task<int> SaveChangesAsync();
-    // لتجنب الاعتماد المباشر على EF في الـ Application
-    Task BeginTransactionAsync();
+
+    Task BeginTransactionAsync();     // ← no return type
     Task CommitAsync();
     Task RollbackAsync();
 }

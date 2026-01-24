@@ -93,6 +93,21 @@ public class NotificationService : INotificationService
         await _notificationRepository.UpdateAsync(notification);
         await _unitOfWork.SaveChangesAsync();
     }
+    public async Task SendApprovalNeededNotificationAsync(ApprovalRequest request, ApprovalStep step)
+    {
+        var title = $"موافقة مطلوبة - {request.Source}";
+        var message = $"يوجد {request.Source} جديد يحتاج موافقة في الخطوة {step.StepOrder} ({step.ApproverRole})";
+
+        // ابعت لكل المستخدمين اللي ليهم الدور ده في المشروع
+        // (هنا مجرد مثال بسيط – يفضل تستخدم UserRoles أو ProjectTeamRoles لتحديد المستلمين)
+        await CreateAndSendAsync(
+            userId: 1, // ← استبدل بقائمة المستلمين الحقيقية
+            title: title,
+            message: message,
+            link: $"/projects/{request.ProjectId}/approvals/{request.Id}",
+            type: NotificationType.MediaReview
+        );
+    }
 
     public async Task MarkAllAsReadAsync(int userId)
     {

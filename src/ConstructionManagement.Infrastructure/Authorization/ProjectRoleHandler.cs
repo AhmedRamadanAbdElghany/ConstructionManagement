@@ -37,7 +37,7 @@ public class ProjectRoleHandler : AuthorizationHandler<ProjectRoleRequirement>
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         // 4. البحث في شجرة الصلاحيات (User -> TeamMember -> Roles -> Permissions)
-        var hasPermission = await db.ProjectTeam
+        var hasPermission = await db.ProjectTeamMembers
             .Where(m => m.ProjectId == projectId && m.UserId == userId)
             .SelectMany(m => m.ProjectTeamRoles)
             .Select(tr => tr.ProjectRole)

@@ -1,7 +1,7 @@
 ﻿namespace ConstructionManagement.Application.Interfaces
 {
-    public interface IEscalationService
+    public interface IProjectDelayEscalationService
     {
-        Task CheckAndSendDelayEscalationsAsync();
+        Task CheckProjectAndItemDelaysAsync();
     }
 }

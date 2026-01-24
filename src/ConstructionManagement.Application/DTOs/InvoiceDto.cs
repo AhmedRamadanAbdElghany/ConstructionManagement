@@ -1,15 +1,26 @@
-﻿// Application/DTOs/InvoiceDto.cs
+﻿namespace ConstructionManagement.Application.DTOs;
+
 public record InvoiceDto(
     int InvoiceID,
     int ItemID,
-    string? InvoiceNumber,
+    string InvoiceNumber,
     DateTime InvoiceDate,
-    decimal Amount,
+    DateTime? DueDate,
+    decimal SubTotal,
+    decimal? TaxRate,
+    decimal? TaxAmount,
+    decimal? RetentionRate,
+    decimal? RetentionAmount,
+    decimal NetAmount,
+    string Currency,
     string? Description,
     string? SupplierVendor,
     string Status,
     string? RejectionReason,
     DateTime? ReviewDate,
-    string? AccountantFullName,
+    string? ReviewerFullName,
     string? AttachmentPath,
-    DateTime CreatedAt);
+    int CreatedByUserId,
+    string? CreatedByFullName,
+    DateTime CreatedAt
+);

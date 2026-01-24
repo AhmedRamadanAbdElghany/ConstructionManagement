@@ -1,113 +1,259 @@
 ﻿using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
-using ConstructionManagement.Infrastructure.Services;
-using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using MockQueryable;
-using Moq;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace ConstructionManagement.Tests.Unit.Services;
+namespace ConstructionManagement.Infrastructure.Services;
 
-public class SiteMediaServiceTests
+public class SiteMediaService : ISiteMediaService
 {
-    private readonly Mock<IRepository<SiteMedia>> _mediaRepo = new();
-    private readonly Mock<IRepository<ProjectSettings>> _settingsRepo = new();
-    private readonly Mock<IFileStorageService> _fileStorage = new();
-    private readonly Mock<IUnitOfWork> _unitOfWork = new();
+    private readonly IRepository<SiteMedia> _mediaRepository;
+    private readonly IRepository<ProjectSettings> _settingsRepository;
+    private readonly IRepository<ProjectApprovalRule> _ruleRepository;
+    private readonly IRepository<ApprovalRequest> _requestRepository;
+    private readonly IRepository<ApprovalStep> _stepRepository;
+    private readonly IFileStorageService _fileStorageService;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly INotificationService? _notificationService; // اختياري
 
-    private SiteMediaService CreateService() =>
-        new SiteMediaService(
-            _mediaRepo.Object,
-            _settingsRepo.Object,
-            _fileStorage.Object,
-            _unitOfWork.Object
-        );
-
-    [Fact]
-    public async Task UploadMediaAsync_ShouldCallUnitOfWorkSave_WhenSettingsExist()
+    public SiteMediaService(
+        IRepository<SiteMedia> mediaRepository,
+        IRepository<ProjectSettings> settingsRepository,
+        IRepository<ProjectApprovalRule> ruleRepository,
+        IRepository<ApprovalRequest> requestRepository,
+        IRepository<ApprovalStep> stepRepository,
+        IFileStorageService fileStorageService,
+        IUnitOfWork unitOfWork,
+        INotificationService? notificationService = null)
     {
-        // Arrange
-        const int projectId = 1;
-        const int userId = 10;
-        const string filePath = "path/to/file.jpg";
-
-        var fileMock = new Mock<IFormFile>();
-
-        // ProjectSettings with shared PK = projectId
-        var settingsList = new List<ProjectSettings>
-        {
-            new ProjectSettings
-            {
-                Id = projectId,               // ← shared PK = projectId
-                EnablePhotoUpload = true,
-                RequirePhotoReview = false
-            }
-        }.BuildMock();
-
-        _settingsRepo.Setup(r => r.AsQueryable())
-            .Returns(settingsList);
-
-        _fileStorage.Setup(f => f.UploadFileAsync(It.IsAny<IFormFile>(), It.IsAny<string>()))
-            .ReturnsAsync(filePath);
-
-        _mediaRepo.Setup(r => r.AddAsync(It.IsAny<SiteMedia>()))
-            .Callback<SiteMedia>(m => m.Id = 999) // Simulate DB-generated ID
-            .ReturnsAsync((SiteMedia m) => m);
-
-        var service = CreateService();
-
-        // Act
-        var result = await service.UploadMediaAsync(
-            boqItemId: null,
-            projectId: projectId,
-            mediaType: "Photo",
-            description: "Desc",
-            file: fileMock.Object,
-            uploaderUserId: userId,
-            source: SourceType.OnlineUpload
-        );
-
-        // Assert
-        result.Should().Be(999);
-
-        _mediaRepo.Verify(r => r.AddAsync(It.Is<SiteMedia>(m =>
-            m.ProjectId == projectId &&
-            m.UploaderUserId == userId &&
-            m.FilePath == filePath &&
-            m.MediaType == "Photo" &&
-            m.Source == SourceType.OnlineUpload
-        )), Times.Once());
-
-        _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once());
+        _mediaRepository = mediaRepository;
+        _settingsRepository = settingsRepository;
+        _ruleRepository = ruleRepository;
+        _requestRepository = requestRepository;
+        _stepRepository = stepRepository;
+        _fileStorageService = fileStorageService;
+        _unitOfWork = unitOfWork;
+        _notificationService = notificationService;
     }
 
-    [Fact]
-    public async Task UploadMediaAsync_ShouldThrowException_WhenSettingsNotFound()
+    public async Task<int> UploadMediaAsync(
+        int? boqItemId,
+        int projectId,
+        string mediaType,
+        string? description,
+        IFormFile file,
+        int uploaderUserId,
+        SourceType source)
     {
-        // Arrange
-        const int projectId = 99; // Non-existent project
+        try
+        {
+            // ابدأ الـ transaction
+            await _unitOfWork.BeginTransactionAsync();
 
-        var fileMock = new Mock<IFormFile>();
+            // 1. جلب إعدادات المشروع
+            var settings = await _settingsRepository.AsQueryable()
+                .FirstOrDefaultAsync(s => s.Id == projectId);
 
-        _settingsRepo.Setup(r => r.AsQueryable())
-            .Returns(new List<ProjectSettings>().BuildMock());
+            if (settings == null)
+                throw new InvalidOperationException("إعدادات المشروع غير موجودة.");
 
-        var service = CreateService();
+            // 2. رفع الملف
+            var filePath = await _fileStorageService.UploadFileAsync(file, "site-media");
 
-        // Act
-        var act = async () => await service.UploadMediaAsync(
-            boqItemId: null,
-            projectId: projectId,
-            mediaType: "Photo",
-            description: "Desc",
-            file: fileMock.Object,
-            uploaderUserId: 1,
-            source: SourceType.OnlineUpload
-        );
+            // 3. إنشاء كائن الوسائط
+            var media = new SiteMedia
+            {
+                ProjectId = projectId,
+                BOQItemId = boqItemId,
+                FilePath = filePath,
+                MediaType = mediaType,
+                Description = description,
+                UploaderUserId = uploaderUserId,
+                Source = source,
+                CreatedAt = DateTime.UtcNow,
+                Status = "Pending",
+                IsApproved = false
+            };
 
-        // Assert
-        await act.Should().ThrowAsync<InvalidOperationException>()
-            .WithMessage("إعدادات المشروع غير موجودة.");
+            await _mediaRepository.AddAsync(media);
+            await _unitOfWork.SaveChangesAsync(); // احفظ عشان نأخذ media.Id
+
+            // 4. التحقق هل يحتاج مراجعة؟
+            bool requiresReview = settings.RequirePhotoReview ?? true;
+
+            if (!requiresReview)
+            {
+                // لا يحتاج → اعتمد تلقائيًا
+                media.Status = "Approved";
+                media.IsApproved = true;
+                await _mediaRepository.UpdateAsync(media);
+            }
+            else
+            {
+                // ابحث عن القاعدة المناسبة
+                var rule = await _ruleRepository.AsQueryable()
+                    .FirstOrDefaultAsync(r =>
+                        r.ProjectId == projectId &&
+                        (r.BOQItemId == boqItemId || r.BOQItemId == null) &&
+                        r.Source == source);
+
+                if (rule == null)
+                {
+                    // مفيش قاعدة → اعتمد تلقائيًا (أو ارمي exception لو عايز سياسة صارمة)
+                    media.Status = "Approved";
+                    media.IsApproved = true;
+                    await _mediaRepository.UpdateAsync(media);
+                }
+                else
+                {
+                    // أنشئ طلب موافقة
+                    var approvalRequest = new ApprovalRequest
+                    {
+                        ProjectId = projectId,
+                        BOQItemId = boqItemId,
+                        ProjectApprovalRuleId = rule.Id,
+                        Source = source,
+                        SourceId = media.Id,
+                        RequestedByUserId = uploaderUserId,
+                        RequestedAt = DateTime.UtcNow,
+                        Status = "Pending"
+                    };
+
+                    // أنشئ الخطوة الأولى
+                    var firstStep = new ApprovalStep
+                    {
+                        StepOrder = 1,
+                        ApproverRole = rule.ApproverRole,
+                        IsActive = true,
+                        Status = "Pending"
+                    };
+
+                    approvalRequest.Steps.Add(firstStep);
+
+                    await _requestRepository.AddAsync(approvalRequest);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    // ابعت إشعار لو الخدمة موجودة
+                    if (_notificationService != null)
+                    {
+                        await _notificationService.SendApprovalNeededNotificationAsync(approvalRequest, firstStep);
+                    }
+                }
+            }
+
+            await _unitOfWork.CommitAsync();
+            return media.Id;
+        }
+        catch (Exception ex)
+        {
+            await _unitOfWork.RollbackAsync();
+            throw new Exception("فشل رفع الوسائط أو إنشاء طلب الموافقة.", ex);
+        }
+    }
+
+    public async Task<bool> ReviewMediaAsync(int mediaId, ReviewMediaRequest request, int reviewerUserId)
+    {
+        try
+        {
+            await _unitOfWork.BeginTransactionAsync();
+
+            var media = await _mediaRepository.AsQueryable()
+                .Include(m => m.Project)
+                .FirstOrDefaultAsync(m => m.Id == mediaId);
+
+            if (media == null) return false;
+
+            var approvalRequest = await _requestRepository.AsQueryable()
+                .Include(r => r.Steps)
+                .FirstOrDefaultAsync(r => r.SourceId == mediaId && r.Source == SourceType.OnlineUpload);
+
+            if (approvalRequest == null)
+            {
+                // مفيش طلب موافقة → مراجعة مباشرة (fallback)
+                media.Status = request.Status;
+                media.RejectionReason = request.RejectionReason;
+                media.ReviewerUserId = reviewerUserId;
+                media.ReviewDate = DateTime.UtcNow;
+                media.IsApproved = request.Status == "Approved";
+            }
+            else
+            {
+                var activeStep = approvalRequest.Steps.FirstOrDefault(s => s.IsActive);
+                if (activeStep == null)
+                    throw new InvalidOperationException("لا توجد خطوة موافقة نشطة.");
+
+                activeStep.Status = request.Status;
+                activeStep.ApproverUserId = reviewerUserId;
+                activeStep.ApprovedAt = DateTime.UtcNow;
+                activeStep.Notes = request.RejectionReason;
+                activeStep.IsActive = false;
+
+                if (request.Status == "Rejected")
+                {
+                    approvalRequest.Status = "Rejected";
+                    approvalRequest.RejectionReason = request.RejectionReason;
+                    media.Status = "Rejected";
+                    media.IsApproved = false;
+                }
+                else
+                {
+                    var nextStep = approvalRequest.Steps.FirstOrDefault(s => s.StepOrder == activeStep.StepOrder + 1);
+                    if (nextStep != null)
+                    {
+                        nextStep.IsActive = true;
+                        approvalRequest.Status = "InProgress";
+                    }
+                    else
+                    {
+                        approvalRequest.Status = "Approved";
+                        approvalRequest.FinalApprovedAt = DateTime.UtcNow;
+                        approvalRequest.FinalApprovedByUserId = reviewerUserId;
+
+                        media.Status = "Approved";
+                        media.IsApproved = true;
+                    }
+                }
+
+                await _requestRepository.UpdateAsync(approvalRequest);
+            }
+
+            await _mediaRepository.UpdateAsync(media);
+            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.CommitAsync();
+
+            return true;
+        }
+        catch
+        {
+            await _unitOfWork.RollbackAsync();
+            throw;
+        }
+    }
+
+    public async Task<SiteMedia?> GetMediaByIdAsync(int mediaId)
+    {
+        return await _mediaRepository.GetByIdAsync(mediaId);
+    }
+
+    public async Task<List<SiteMedia>> GetMediaForProjectAsync(int projectId, int? itemId = null, string? status = null)
+    {
+        var query = _mediaRepository.AsQueryable()
+            .Where(m => m.ProjectId == projectId);
+
+        if (itemId.HasValue)
+            query = query.Where(m => m.BOQItemId == itemId.Value);
+
+        if (!string.IsNullOrEmpty(status))
+            query = query.Where(m => m.Status == status);
+
+        return await query
+            .OrderByDescending(m => m.CreatedAt)
+            .Take(50)
+            .ToListAsync();
     }
 }

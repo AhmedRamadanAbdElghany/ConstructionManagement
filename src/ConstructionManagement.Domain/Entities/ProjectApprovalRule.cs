@@ -36,4 +36,7 @@ public class ProjectApprovalRule : BaseEntity
 
     // Optional: useful inverse navigation (if you frequently query rules from project)
     // public virtual ICollection<ApprovalRequest> RelatedRequests { get; set; } = new List<ApprovalRequest>();
+    // داخل كلاس ProjectApprovalRule (اللي عندك)
+    public virtual ICollection<ApprovalRequest> ApprovalRequests { get; set; }
+        = new List<ApprovalRequest>();
 }

@@ -3,6 +3,8 @@ using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 
 namespace ConstructionManagement.Infrastructure.Services;
 
@@ -31,13 +33,9 @@ public class BOQItemService : IBOQItemService
         _unitOfWork = unitOfWork;
     }
 
-
     public async Task<int> CreateBOQItemAsync(int projectId, CreateBOQItemRequest request, int creatorUserId)
     {
-        // تأكد من أن الـ request ليس null قبل البدء
         if (request == null) throw new ArgumentNullException(nameof(request));
-
-        // بدأ المعاملة إذا كنت تستخدمها
         if (_unitOfWork == null) throw new Exception("UnitOfWork is not initialized");
 
         await _unitOfWork.BeginTransactionAsync();
@@ -58,26 +56,29 @@ public class BOQItemService : IBOQItemService
                 Status = "جديد",
                 StartDate = request.StartDate,
                 EndDate = request.EndDate
-                // إذا كان هناك حقول أخرى مثل CreatedBy تأكد من تعبئتها
+                // إذا كان هناك حقول أخرى مثل CreatedBy أضفها هنا
             };
 
             await _itemRepository.AddAsync(boqItem);
             await _unitOfWork.SaveChangesAsync();
 
-            // منطق MeasuredData...
+            // منطق MeasuredData
             if (boqItem.AccountingType == "Measured" || boqItem.AccountingType == "Mixed")
             {
                 var measured = new BOQMeasured
                 {
-                    Id = boqItem.Id, // هذا يعتمد على SaveChanges السابقة
+                    Id = boqItem.Id, // يعتمد على SaveChanges السابقة لتوليد Id
                     AgreedQuantity = request.AgreedQuantity ?? 0,
                     UnitPrice = request.UnitPrice ?? 0
+                    // أضف باقي الحقول لو موجودة
                 };
+
                 await _measuredRepo.AddAsync(measured);
                 await _unitOfWork.SaveChangesAsync();
             }
 
             await _unitOfWork.CommitAsync();
+
             return boqItem.Id;
         }
         catch
@@ -96,7 +97,6 @@ public class BOQItemService : IBOQItemService
 
         if (item == null) return null;
 
-        // تم تغيير التعريف هنا من decimal? إلى decimal لحل خطأ CS0266
         decimal progress = 0;
 
         if (item.AccountingType == "Measured" && item.MeasuredData != null)
@@ -110,15 +110,15 @@ public class BOQItemService : IBOQItemService
         {
             if (item.SupervisionData.EstimatedTotalCost > 0)
             {
+                // ← الإصلاح الرئيسي هنا: استخدام NetAmount بدل Amount
                 var approvedSum = await _invoiceRepo.AsQueryable()
                     .Where(i => i.BOQItemId == itemId && i.Status == "Approved")
-                    .SumAsync(i => i.Amount);
+                    .SumAsync(i => i.NetAmount);
 
                 progress = (approvedSum / item.SupervisionData.EstimatedTotalCost) * 100;
             }
         }
 
-        // السطر 120: تمرير progress كـ decimal صريح
         return new BOQItemDto(
             item.Id,
             item.ItemCode ?? "",
@@ -128,6 +128,7 @@ public class BOQItemService : IBOQItemService
             item.StartDate,
             item.EndDate,
             progress,
-            null);
+            null // أضف حقول أخرى لو موجودة في الـ DTO
+        );
     }
 }

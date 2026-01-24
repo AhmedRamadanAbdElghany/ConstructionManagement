@@ -1,7 +1,16 @@
-﻿public record CreateInvoiceRequest(
-    string? InvoiceNumber,
+﻿namespace ConstructionManagement.Application.DTOs;
+
+public record CreateInvoiceRequest(
     DateTime InvoiceDate,
-    decimal Amount,
+    DateTime? DueDate,
+    decimal SubTotal,
+    decimal? TaxRate,
+    decimal? TaxAmount,
+    decimal? RetentionRate,
+    decimal? RetentionAmount,
+    decimal? NetAmount,
+    string? Currency,
     string? Description,
     string? SupplierVendor,
-    string? AttachmentPath);
+    string? AttachmentPath
+);

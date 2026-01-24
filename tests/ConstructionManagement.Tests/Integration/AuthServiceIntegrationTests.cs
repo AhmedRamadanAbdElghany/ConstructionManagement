@@ -5,6 +5,8 @@ using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Moq;
+using Xunit;
+using BCrypt.Net; // تأكد إن الحزمة مثبتة (BCrypt.Net-Next)
 
 namespace ConstructionManagement.Tests.Integration;
 
@@ -15,22 +17,20 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
 
     public AuthServiceIntegrationTests() : base()
     {
-        // 1. إعداد قاموس يحتوي على المفاتيح بالظبط كما يتوقعها كود الـ AuthService
-        // ملاحظة: تأكد هل الكود في AuthService يستخدم "Secret" أم "Key"
-        var testSettings = new Dictionary<string, string> {
-        {"Jwt:Key", "SuperSecretKey12345678901234567890"}, // استخدم مسمى Key إذا كان سطر 63 يطلبه
-        {"Jwt:Secret", "SuperSecretKey12345678901234567890"}, // أو Secret حسب الكود لديك
-        {"Jwt:Issuer", "TestIssuer"},
-        {"Jwt:Audience", "TestAudience"},
-        {"Jwt:ExpiryInMinutes", "60"}
-    };
+        // 1. Test JWT settings (must match what AuthService expects)
+        var testSettings = new Dictionary<string, string?>
+        {
+            { "Jwt:Key", "SuperSecretKey12345678901234567890" }, // 32+ chars
+            { "Jwt:Issuer", "TestIssuer" },
+            { "Jwt:Audience", "TestAudience" },
+            { "Jwt:ExpiryInMinutes", "60" }
+        };
 
-        // 2. بناء كائن Configuration حقيقي بدلاً من الـ Mock
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(testSettings)
             .Build();
 
-        // 3. حقن الإعدادات الحقيقية في الخدمة
+        // 2. Inject real config + mocked repo + unitOfWork
         _service = new AuthService(
             _userRepoMock.Object,
             configuration,
@@ -45,12 +45,15 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
         const string email = "auth@test.com";
         const string password = "Password123";
 
+        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+
         var user = new User
         {
             Id = 1,
             FullName = "Auth User",
             Email = email,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(password)
+            PasswordHash = hashedPassword
+            // أضف أي حقول أخرى مطلوبة مثل Role إذا كان AuthService يعتمد عليها
         };
 
         _userRepoMock
@@ -63,7 +66,9 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
         var result = await _service.LoginAsync(loginRequest);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Token.Should().NotBeNullOrEmpty();
+        result.Should().NotBeNull("يجب أن يرجع كائن LoginResponse");
+        result.Token.Should().NotBeNullOrEmpty("يجب أن يحتوي على JWT token صالح");
+        // اختبارات إضافية اختيارية
+        // result.ExpiresAt.Should().BeAfter(DateTime.UtcNow);
     }
 }

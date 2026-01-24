@@ -1,8 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
-
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
 namespace ConstructionManagement.Infrastructure.Migrations
 {
@@ -35,6 +34,42 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CompanySettings", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InvoiceSequences",
+                columns: table => new
+                {
+                    YearPart = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NextNumber = table.Column<int>(type: "int", nullable: false, defaultValue: 1)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InvoiceSequences", x => x.YearPart);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Packages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    MaxTeamMembers = table.Column<int>(type: "int", nullable: false),
+                    MaxDailyPhotos = table.Column<int>(type: "int", nullable: false),
+                    MaxBOQItems = table.Column<int>(type: "int", nullable: false),
+                    AllowAdvancedReports = table.Column<bool>(type: "bit", nullable: false),
+                    AllowCustomBranding = table.Column<bool>(type: "bit", nullable: false),
+                    AllowAIAssistance = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Packages", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -153,10 +188,14 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     OwnerUserId = table.Column<int>(type: "int", nullable: false),
                     GeneralManagerUserId = table.Column<int>(type: "int", nullable: true),
                     ClosedByUserId = table.Column<int>(type: "int", nullable: true),
+                    PackageId = table.Column<int>(type: "int", nullable: true),
                     IsClosed = table.Column<bool>(type: "bit", nullable: false),
                     ClosedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     AccountingSystem = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TotalContractValue = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    UserId1 = table.Column<int>(type: "int", nullable: true),
+                    UserId2 = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -164,23 +203,40 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Projects", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Projects_Packages_PackageId",
+                        column: x => x.PackageId,
+                        principalTable: "Packages",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_Projects_Users_ClosedByUserId",
                         column: x => x.ClosedByUserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Projects_Users_GeneralManagerUserId",
                         column: x => x.GeneralManagerUserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Projects_Users_OwnerUserId",
                         column: x => x.OwnerUserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Projects_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Projects_Users_UserId1",
+                        column: x => x.UserId1,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Projects_Users_UserId2",
+                        column: x => x.UserId2,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -233,8 +289,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         name: "FK_BOQItems_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -261,8 +316,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         name: "FK_ClientPayments_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -319,7 +373,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProjectTeam",
+                name: "ProjectTeamMembers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -332,25 +386,24 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProjectTeam", x => x.Id);
+                    table.PrimaryKey("PK_ProjectTeamMembers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProjectTeam_Projects_ProjectId",
+                        name: "FK_ProjectTeamMembers_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProjectTeam_Users_ReportsToUserId",
+                        name: "FK_ProjectTeamMembers_Users_ReportsToUserId",
                         column: x => x.ReportsToUserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_ProjectTeam_Users_UserId",
+                        name: "FK_ProjectTeamMembers_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -447,14 +500,12 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         name: "FK_EscalationLogs_BOQItems_BOQItemId",
                         column: x => x.BOQItemId,
                         principalTable: "BOQItems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_EscalationLogs_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_EscalationLogs_Users_RecipientUserId",
                         column: x => x.RecipientUserId,
@@ -478,6 +529,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     ClosedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedByUserId = table.Column<int>(type: "int", nullable: false),
                     ClosedByUserId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    UserId1 = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -494,14 +547,22 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         name: "FK_ItemDailyLogs_Users_ClosedByUserId",
                         column: x => x.ClosedByUserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ItemDailyLogs_Users_CreatedByUserId",
                         column: x => x.CreatedByUserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ItemDailyLogs_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ItemDailyLogs_Users_UserId1",
+                        column: x => x.UserId1,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -512,16 +573,26 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BOQItemId = table.Column<int>(type: "int", nullable: false),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
-                    InvoiceNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    InvoiceNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     InvoiceDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SupplierVendor = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RejectionReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DueDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    SubTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TaxRate = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    TaxAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    RetentionRate = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    RetentionAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    NetAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Currency = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    SupplierVendor = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    AttachmentPath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    RejectionReason = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     ReviewerUserId = table.Column<int>(type: "int", nullable: true),
                     ReviewDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    AttachmentPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedByUserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    UserId1 = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -533,16 +604,30 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         column: x => x.BOQItemId,
                         principalTable: "BOQItems",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ItemInvoices_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ItemInvoices_Users_CreatedByUserId",
+                        column: x => x.CreatedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ItemInvoices_Users_ReviewerUserId",
                         column: x => x.ReviewerUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ItemInvoices_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ItemInvoices_Users_UserId1",
+                        column: x => x.UserId1,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -597,6 +682,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Source = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    UserId1 = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -607,26 +694,32 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         name: "FK_SiteMedias_BOQItems_BOQItemId",
                         column: x => x.BOQItemId,
                         principalTable: "BOQItems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_SiteMedias_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_SiteMedias_Users_ReviewerUserId",
                         column: x => x.ReviewerUserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_SiteMedias_Users_UploaderUserId",
                         column: x => x.UploaderUserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_SiteMedias_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_SiteMedias_Users_UserId1",
+                        column: x => x.UserId1,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -649,6 +742,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     SupplierName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AttachmentPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    UserId1 = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -659,26 +754,33 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         name: "FK_Transactions_BOQItems_BOQItemId",
                         column: x => x.BOQItemId,
                         principalTable: "BOQItems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Transactions_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Transactions_Users_CreatedByUserId",
                         column: x => x.CreatedByUserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Transactions_Users_ReviewedByUserId",
                         column: x => x.ReviewedByUserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Transactions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Transactions_Users_UserId1",
+                        column: x => x.UserId1,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -723,14 +825,64 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         name: "FK_ProjectTeamRoles_ProjectRoles_ProjectRoleId",
                         column: x => x.ProjectRoleId,
                         principalTable: "ProjectRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_ProjectTeamRoles_ProjectTeam_ProjectTeamMemberId",
+                        name: "FK_ProjectTeamRoles_ProjectTeamMembers_ProjectTeamMemberId",
                         column: x => x.ProjectTeamMemberId,
-                        principalTable: "ProjectTeam",
+                        principalTable: "ProjectTeamMembers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ApprovalRequests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProjectId = table.Column<int>(type: "int", nullable: false),
+                    BOQItemId = table.Column<int>(type: "int", nullable: true),
+                    ProjectApprovalRuleId = table.Column<int>(type: "int", nullable: true),
+                    Source = table.Column<int>(type: "int", nullable: false),
+                    SourceId = table.Column<int>(type: "int", nullable: false),
+                    RequestedByUserId = table.Column<int>(type: "int", nullable: false),
+                    RequestedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FinalApprovedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    FinalApprovedByUserId = table.Column<int>(type: "int", nullable: true),
+                    RejectionReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApprovalRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ApprovalRequests_BOQItems_BOQItemId",
+                        column: x => x.BOQItemId,
+                        principalTable: "BOQItems",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_ApprovalRequests_ProjectApprovalRules_ProjectApprovalRuleId",
+                        column: x => x.ProjectApprovalRuleId,
+                        principalTable: "ProjectApprovalRules",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ApprovalRequests_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ApprovalRequests_Users_FinalApprovedByUserId",
+                        column: x => x.FinalApprovedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ApprovalRequests_Users_RequestedByUserId",
+                        column: x => x.RequestedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -777,237 +929,73 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "CompanySettings",
-                columns: new[] { "Id", "CreatedAt", "DelayGracePeriodDays", "DelayNotificationIntervalDays", "DelayNotificationIsOneTimeOnly", "DelayNotificationSendEmail", "EnableDelayNotification", "EnableInvoiceAggregation", "EnableInvoiceReview", "EnablePhotoUpload", "MaxPhotosPerUpload", "PhotoApproverRole", "RequirePhotoReview", "UpdatedAt" },
-                values: new object[] { 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 5, 7, false, true, true, true, true, true, 15, "مراجع فني", true, null });
-
-            migrationBuilder.InsertData(
-                table: "Permissions",
-                columns: new[] { "Id", "CreatedAt", "Description", "Name", "UpdatedAt" },
-                values: new object[,]
+            migrationBuilder.CreateTable(
+                name: "ApprovalSteps",
+                columns: table => new
                 {
-                    { 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "تعديل بيانات المشروع", "Project.Edit", null },
-                    { 2, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "إغلاق/إنهاء المشروع", "Project.Close", null },
-                    { 3, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "عرض الملخص المالي", "Financials.View", null },
-                    { 4, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "إضافة معاملة مالية", "Transaction.Add", null },
-                    { 5, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "مراجعة/اعتماد المعاملات", "Transaction.Review", null },
-                    { 6, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "مراجعة الصور والفيديوهات", "Media.Review", null },
-                    { 7, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "إغلاق السجل اليومي", "DailyLog.Close", null },
-                    { 8, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "اعتماد الفواتير", "Invoice.Approve", null },
-                    { 9, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "تعديل إعدادات المشروع", "Settings.Manage", null },
-                    { 10, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "إدارة المستخدمين (عالمي)", "Users.Manage", null }
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ApprovalRequestId = table.Column<int>(type: "int", nullable: false),
+                    StepOrder = table.Column<int>(type: "int", nullable: false),
+                    ApproverRole = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ApproverUserId = table.Column<int>(type: "int", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    ApprovedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApprovalSteps", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ApprovalSteps_ApprovalRequests_ApprovalRequestId",
+                        column: x => x.ApprovalRequestId,
+                        principalTable: "ApprovalRequests",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ApprovalSteps_Users_ApproverUserId",
+                        column: x => x.ApproverUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
-            migrationBuilder.InsertData(
-                table: "Roles",
-                columns: new[] { "Id", "CreatedAt", "Description", "Name", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "مدير النظام الكلي – كل الصلاحيات", "SuperAdmin", null },
-                    { 2, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "مدير الشركة – إدارة مستخدمين ومشاريع", "CompanyAdmin", null },
-                    { 3, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "مشاهد فقط – لا تعديل", "Viewer", null }
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_ApprovalRequests_BOQItemId",
+                table: "ApprovalRequests",
+                column: "BOQItemId");
 
-            migrationBuilder.InsertData(
-                table: "Users",
-                columns: new[] { "Id", "CreatedAt", "Email", "FullName", "PasswordHash", "Phone", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "super@company.com", "Super Admin", "hashed_super123", null, null },
-                    { 2, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@company.com", "Company Admin", "hashed_admin123", null, null },
-                    { 3, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "ahmed.pm1@demo.com", "Ahmed – Project Manager 1", "hashed_pm123", null, null },
-                    { 4, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "mohamed.engineer@demo.com", "Mohamed – Site Engineer", "hashed_eng123", null, null },
-                    { 5, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "sara.reviewer@demo.com", "Sara – Financial Reviewer", "hashed_rev123", null, null },
-                    { 6, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pm2@demo.com", "Project Manager 2", "hashed_pm223", null, null }
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_ApprovalRequests_FinalApprovedByUserId",
+                table: "ApprovalRequests",
+                column: "FinalApprovedByUserId");
 
-            migrationBuilder.InsertData(
-                table: "Notifications",
-                columns: new[] { "Id", "CreatedAt", "IsRead", "Link", "Message", "Priority", "ReadAt", "Title", "Type", "UpdatedAt", "UserId" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), false, null, "البند B-02 متأخر", 1, null, "تحذير تأخير", 1, null, 3 },
-                    { 2, new DateTime(2026, 1, 20, 14, 30, 0, 0, DateTimeKind.Utc), false, null, "صورة/فيديو جديد يحتاج مراجعة", 1, null, "مراجعة وسائط", 8, null, 5 }
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_ApprovalRequests_ProjectApprovalRuleId",
+                table: "ApprovalRequests",
+                column: "ProjectApprovalRuleId");
 
-            migrationBuilder.InsertData(
-                table: "Projects",
-                columns: new[] { "Id", "AccountingSystem", "ClosedAt", "ClosedByUserId", "CreatedAt", "Description", "EndDate", "GeneralManagerUserId", "IsClosed", "OwnerUserId", "ProjectName", "StartDate", "Status", "TotalContractValue", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, "Mixed", null, null, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "مشروع سكني لاختبار كامل النظام", new DateTime(2026, 6, 30, 0, 0, 0, 0, DateTimeKind.Utc), 3, false, 1, "فيلا القاهرة الجديدة – التجريبي", new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc), "جاري", 12000000m, null },
-                    { 2, "Measured", null, null, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "مشروع تجاري لاختبار تعدد المشاريع", null, 6, false, 2, "مبنى إداري – مدينة نصر", new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc), "جديد", 8500000m, null }
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_ApprovalRequests_ProjectId",
+                table: "ApprovalRequests",
+                column: "ProjectId");
 
-            migrationBuilder.InsertData(
-                table: "RolePermissions",
-                columns: new[] { "PermissionId", "RoleId" },
-                values: new object[,]
-                {
-                    { 3, 1 },
-                    { 9, 1 },
-                    { 10, 1 },
-                    { 3, 2 },
-                    { 9, 2 }
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_ApprovalRequests_RequestedByUserId",
+                table: "ApprovalRequests",
+                column: "RequestedByUserId");
 
-            migrationBuilder.InsertData(
-                table: "UserRoles",
-                columns: new[] { "RoleId", "UserId", "AssignedAt" },
-                values: new object[,]
-                {
-                    { 1, 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) },
-                    { 2, 2, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) },
-                    { 3, 3, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) },
-                    { 3, 6, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) }
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_ApprovalSteps_ApprovalRequestId",
+                table: "ApprovalSteps",
+                column: "ApprovalRequestId");
 
-            migrationBuilder.InsertData(
-                table: "BOQItems",
-                columns: new[] { "Id", "AccountingType", "CreatedAt", "Description", "EndDate", "ItemCode", "ItemName", "ProjectId", "StartDate", "Status", "Unit", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, "Measured", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(2026, 1, 16, 0, 0, 0, 0, DateTimeKind.Utc), "A-01", "حفر أساسات", 1, new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc), "جاري", "م³", null },
-                    { 2, "Measured", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "B-02", "صب خرسانة أساسات", 1, null, "جديد", "م³", null },
-                    { 3, "Supervision", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "C-01", "إشراف عام", 1, null, "جاري", null, null },
-                    { 4, "Measured", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "X-01", "بناء هيكل", 2, null, "جاري", "م²", null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ClientPayments",
-                columns: new[] { "Id", "Amount", "AttachmentPath", "CreatedAt", "Description", "IsConfirmed", "PaymentDate", "PaymentNumber", "PaymentType", "ProjectId", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, 2000000m, null, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, true, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, 1, null },
-                    { 2, 1000000m, null, new DateTime(2025, 12, 15, 0, 0, 0, 0, DateTimeKind.Utc), null, false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, 2, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProjectRoles",
-                columns: new[] { "Id", "CreatedAt", "Description", "Name", "ProjectId", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "كل الصلاحيات", "مدير المشروع", 1, null },
-                    { 2, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "رفع وسجل يومي", "مهندس ميداني", 1, null },
-                    { 3, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "مراجعة فقط", "مراجع فني", 1, null },
-                    { 4, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "كل الصلاحيات", "مدير المشروع 2", 2, null },
-                    { 5, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "إدارة معاملات وفواتير", "محاسب", 2, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProjectSettings",
-                columns: new[] { "Id", "CreatedAt", "DelayGracePeriodDays", "DelayNotificationIntervalDays", "DelayNotificationIsOneTimeOnly", "DelayNotificationSendEmail", "EnableDelayNotification", "EnableInvoiceAggregation", "EnableInvoiceReview", "EnablePhotoUpload", "MaxPhotosPerUpload", "PhotoApproverRole", "RequirePhotoReview", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, 5, null, null, true, null, null, null, 20, "مراجع فني", true, null },
-                    { 2, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, null, false, null, null, true, null, null, false, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProjectTeam",
-                columns: new[] { "Id", "CreatedAt", "ProjectId", "ReportsToUserId", "UpdatedAt", "UserId" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, null, 3 },
-                    { 2, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, 3, null, 4 },
-                    { 3, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, 3, null, 5 },
-                    { 4, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2, null, null, 6 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "BOQMeasured",
-                columns: new[] { "Id", "AgreedQuantity", "CreatedAt", "ExecutedQuantity", "UnitPrice", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, 1200m, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 600m, 450m, null },
-                    { 2, 800m, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 0m, 1850m, null },
-                    { 4, 5000m, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1200m, 320m, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "BOQSupervision",
-                columns: new[] { "Id", "BaseCalculation", "CreatedAt", "CustomBaseAmount", "EstimatedTotalCost", "SupervisionPercentage", "UpdatedAt" },
-                values: new object[] { 3, "AllProjectInvoices", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, 1020000m, 8.5m, null });
-
-            migrationBuilder.InsertData(
-                table: "EscalationLogs",
-                columns: new[] { "Id", "BOQItemId", "CreatedAt", "EscalationType", "Message", "ProjectId", "RecipientUserId", "SentAt", "SentByEmail", "UpdatedAt" },
-                values: new object[] { 1, 2, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "ItemStartDelay", "", 1, 3, new DateTime(2025, 12, 15, 0, 0, 0, 0, DateTimeKind.Utc), false, null });
-
-            migrationBuilder.InsertData(
-                table: "ItemInvoices",
-                columns: new[] { "Id", "Amount", "AttachmentPath", "BOQItemId", "CreatedAt", "Description", "InvoiceDate", "InvoiceNumber", "ProjectId", "RejectionReason", "ReviewDate", "ReviewerUserId", "Status", "SupplierVendor", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, 120000m, null, 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 1, null, null, null, "Pending", null, null },
-                    { 2, 300000m, null, 2, new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 1, null, null, 5, "Approved", null, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProjectRolePermissions",
-                columns: new[] { "PermissionId", "ProjectRoleId" },
-                values: new object[,]
-                {
-                    { 1, 1 },
-                    { 2, 1 },
-                    { 3, 1 },
-                    { 4, 1 },
-                    { 5, 1 },
-                    { 6, 1 },
-                    { 7, 1 },
-                    { 8, 1 },
-                    { 9, 1 },
-                    { 4, 2 },
-                    { 6, 2 },
-                    { 7, 2 },
-                    { 5, 3 },
-                    { 6, 3 },
-                    { 8, 3 },
-                    { 1, 4 },
-                    { 2, 4 },
-                    { 3, 4 },
-                    { 4, 4 },
-                    { 5, 4 },
-                    { 6, 4 },
-                    { 7, 4 },
-                    { 8, 4 },
-                    { 9, 4 },
-                    { 3, 5 },
-                    { 4, 5 },
-                    { 5, 5 },
-                    { 8, 5 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProjectTeamRoles",
-                columns: new[] { "ProjectRoleId", "ProjectTeamMemberId", "AssignedAt", "CreatedAt", "Id", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null },
-                    { 2, 2, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null },
-                    { 3, 3, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null },
-                    { 4, 4, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "SiteMedias",
-                columns: new[] { "Id", "BOQItemId", "CreatedAt", "Description", "FilePath", "IsApproved", "MediaType", "ProjectId", "RejectionReason", "ReviewDate", "ReviewerUserId", "Source", "Status", "UpdatedAt", "UploaderUserId" },
-                values: new object[,]
-                {
-                    { 1, 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "", false, "Photo", 1, null, null, null, 0, "Pending", null, 4 },
-                    { 2, 1, new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "", false, "Video", 1, null, null, 5, 0, "Approved", null, 4 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Transactions",
-                columns: new[] { "Id", "Amount", "AttachmentPath", "BOQItemId", "CreatedAt", "CreatedByUserId", "Description", "InvoiceNumber", "ProjectId", "ReviewDate", "ReviewNotes", "ReviewedByUserId", "Status", "SupplierName", "TransactionDate", "Type", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, 150000m, null, 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 4, null, null, 1, null, null, null, 1, null, new DateTime(2026, 1, 22, 23, 50, 47, 846, DateTimeKind.Utc).AddTicks(1713), 0, null },
-                    { 2, 80000m, null, 1, new DateTime(2025, 12, 15, 0, 0, 0, 0, DateTimeKind.Utc), 4, null, null, 1, null, null, null, 0, null, new DateTime(2026, 1, 22, 23, 50, 47, 846, DateTimeKind.Utc).AddTicks(2273), 0, null },
-                    { 3, 400000m, null, 4, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 6, null, null, 2, null, null, null, 1, null, new DateTime(2026, 1, 22, 23, 50, 47, 846, DateTimeKind.Utc).AddTicks(2275), 0, null }
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_ApprovalSteps_ApproverUserId",
+                table: "ApprovalSteps",
+                column: "ApproverUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BOQItemNotes_BOQItemId",
@@ -1045,12 +1033,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CompanySettings_Id",
-                table: "CompanySettings",
-                column: "Id",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_EscalationLogs_BOQItemId",
                 table: "EscalationLogs",
                 column: "BOQItemId");
@@ -1082,9 +1064,30 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "CreatedByUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ItemDailyLogs_UserId",
+                table: "ItemDailyLogs",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemDailyLogs_UserId1",
+                table: "ItemDailyLogs",
+                column: "UserId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemInvoice_InvoiceNumber_Unique",
+                table: "ItemInvoices",
+                column: "InvoiceNumber",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ItemInvoices_BOQItemId",
                 table: "ItemInvoices",
                 column: "BOQItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemInvoices_CreatedByUserId",
+                table: "ItemInvoices",
+                column: "CreatedByUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ItemInvoices_ProjectId",
@@ -1095,6 +1098,16 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "IX_ItemInvoices_ReviewerUserId",
                 table: "ItemInvoices",
                 column: "ReviewerUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemInvoices_UserId",
+                table: "ItemInvoices",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemInvoices_UserId1",
+                table: "ItemInvoices",
+                column: "UserId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_UserId",
@@ -1137,19 +1150,39 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "OwnerUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProjectTeam_ProjectId_UserId",
-                table: "ProjectTeam",
+                name: "IX_Projects_PackageId",
+                table: "Projects",
+                column: "PackageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Projects_UserId",
+                table: "Projects",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Projects_UserId1",
+                table: "Projects",
+                column: "UserId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Projects_UserId2",
+                table: "Projects",
+                column: "UserId2");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectTeamMembers_ProjectId_UserId",
+                table: "ProjectTeamMembers",
                 columns: new[] { "ProjectId", "UserId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProjectTeam_ReportsToUserId",
-                table: "ProjectTeam",
+                name: "IX_ProjectTeamMembers_ReportsToUserId",
+                table: "ProjectTeamMembers",
                 column: "ReportsToUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProjectTeam_UserId",
-                table: "ProjectTeam",
+                name: "IX_ProjectTeamMembers_UserId",
+                table: "ProjectTeamMembers",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -1183,6 +1216,16 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "UploaderUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SiteMedias_UserId",
+                table: "SiteMedias",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SiteMedias_UserId1",
+                table: "SiteMedias",
+                column: "UserId1");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Transactions_BOQItemId",
                 table: "Transactions",
                 column: "BOQItemId");
@@ -1203,6 +1246,16 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "ReviewedByUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Transactions_UserId",
+                table: "Transactions",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_UserId1",
+                table: "Transactions",
+                column: "UserId1");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserRoles_RoleId",
                 table: "UserRoles",
                 column: "RoleId");
@@ -1211,6 +1264,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "ApprovalSteps");
+
             migrationBuilder.DropTable(
                 name: "BOQItemNotes");
 
@@ -1233,6 +1289,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "EscalationLogs");
 
             migrationBuilder.DropTable(
+                name: "InvoiceSequences");
+
+            migrationBuilder.DropTable(
                 name: "ItemDailyLogs");
 
             migrationBuilder.DropTable(
@@ -1240,9 +1299,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Notifications");
-
-            migrationBuilder.DropTable(
-                name: "ProjectApprovalRules");
 
             migrationBuilder.DropTable(
                 name: "ProjectRolePermissions");
@@ -1263,13 +1319,16 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "UserRoles");
 
             migrationBuilder.DropTable(
+                name: "ApprovalRequests");
+
+            migrationBuilder.DropTable(
                 name: "SiteMedias");
 
             migrationBuilder.DropTable(
                 name: "ProjectRoles");
 
             migrationBuilder.DropTable(
-                name: "ProjectTeam");
+                name: "ProjectTeamMembers");
 
             migrationBuilder.DropTable(
                 name: "Permissions");
@@ -1278,10 +1337,16 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "Roles");
 
             migrationBuilder.DropTable(
+                name: "ProjectApprovalRules");
+
+            migrationBuilder.DropTable(
                 name: "BOQItems");
 
             migrationBuilder.DropTable(
                 name: "Projects");
+
+            migrationBuilder.DropTable(
+                name: "Packages");
 
             migrationBuilder.DropTable(
                 name: "Users");

@@ -2,10 +2,15 @@
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ConstructionManagement.Infrastructure.Services;
 
-public class EscalationService : IEscalationService
+public class ProjectDelayEscalationService : IProjectDelayEscalationService
 {
     private readonly IRepository<Project> _projectRepository;
     private readonly IRepository<EscalationLog> _escalationLogRepository;
@@ -16,8 +21,9 @@ public class EscalationService : IEscalationService
     private readonly IRepository<Transaction> _transactionRepository;
     private readonly IRepository<Notification> _notificationRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILogger<ProjectDelayEscalationService> _logger;
 
-    public EscalationService(
+    public ProjectDelayEscalationService(
         IRepository<Project> projectRepository,
         IRepository<EscalationLog> escalationLogRepository,
         IRepository<User> userRepository,
@@ -26,7 +32,8 @@ public class EscalationService : IEscalationService
         IRepository<ProjectTeamRole> projectTeamRoleRepository,
         IRepository<Transaction> transactionRepository,
         IRepository<Notification> notificationRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        ILogger<ProjectDelayEscalationService> logger)
     {
         _projectRepository = projectRepository;
         _escalationLogRepository = escalationLogRepository;
@@ -37,9 +44,10 @@ public class EscalationService : IEscalationService
         _transactionRepository = transactionRepository;
         _notificationRepository = notificationRepository;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
-    public async Task CheckAndSendDelayEscalationsAsync()
+    public async Task CheckProjectAndItemDelaysAsync()
     {
         var today = DateTime.UtcNow.Date;
 
@@ -56,7 +64,8 @@ public class EscalationService : IEscalationService
         foreach (var project in projects)
         {
             var settings = project.Settings;
-            if (settings == null || !(settings.EnableDelayNotification ?? false)) continue;
+            if (settings == null || !(settings.EnableDelayNotification ?? false))
+                continue;
 
             // تأخير بداية المشروع ككل
             if (project.StartDate.HasValue &&

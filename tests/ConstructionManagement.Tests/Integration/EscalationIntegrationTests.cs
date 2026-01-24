@@ -4,76 +4,78 @@ using ConstructionManagement.Infrastructure.Persistence.Repositories;
 using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
+using Xunit;
 
-namespace ConstructionManagement.Tests.Integration
+namespace ConstructionManagement.Tests.Integration;
+
+public class EscalationIntegrationTests : IntegrationTestBase
 {
-    public class EscalationIntegrationTests : IntegrationTestBase
+    private readonly ProjectDelayEscalationService _service;
+    private readonly Mock<INotificationService> _notifMock = new();
+    private readonly Mock<ILogger<ProjectDelayEscalationService>> _loggerMock = new(); // ← required now
+
+    public EscalationIntegrationTests() : base()
     {
-        private readonly EscalationService _service;
-        private readonly Mock<INotificationService> _notifMock = new();
+        _service = new ProjectDelayEscalationService(
+            new Repository<Project>(Context),               // 1
+            new Repository<EscalationLog>(Context),         // 2
+            new Repository<User>(Context),                  // 3
+            new Mock<IEmailService>().Object,               // 4
+            _notifMock.Object,                              // 5
+            new Repository<ProjectTeamRole>(Context),       // 6
+            new Repository<Transaction>(Context),           // 7
+            new Repository<Notification>(Context),          // 8
+            UnitOfWork,                                     // 9
+            _loggerMock.Object                              // 10 – logger was missing
+        );
+    }
 
-        public EscalationIntegrationTests() : base()
+    [Fact]
+    public async Task CheckProjectAndItemDelaysAsync_ShouldDetectDelayedProjects()
+    {
+        // 1. Arrange: إنشاء مستخدم
+        var user = new User
         {
-            // الترتيب الصحيح تمامًا مطابق لـ EscalationService constructor
-            _service = new EscalationService(
-                new Repository<Project>(Context),                     // 1: IRepository<Project>
-                new Repository<EscalationLog>(Context),               // 2: IRepository<EscalationLog>
-                new Repository<User>(Context),                        // 3: IRepository<User>
-                new Mock<IEmailService>().Object,                     // 4: IEmailService
-                _notifMock.Object,                                    // 5: INotificationService
-                new Repository<ProjectTeamRole>(Context),             // 6: IRepository<ProjectTeamRole>
-                new Repository<Transaction>(Context),                 // 7: IRepository<Transaction>
-                new Repository<Notification>(Context),                // 8: IRepository<Notification>
-                UnitOfWork                                            // 9: IUnitOfWork
-            );
-        }
+            FullName = "Manager",
+            Email = "m@m.com",
+            PasswordHash = "AnyHash123"
+        };
+        Context.Users.Add(user);
+        await Context.SaveChangesAsync();
 
-        [Fact]
-        public async Task CheckEscalations_ShouldDetectDelayedProjects()
+        // 2. Arrange: إنشاء مشروع متأخر
+        var project = new Project
         {
-            // 1. Arrange: إنشاء مستخدم
-            var user = new User
+            ProjectName = "Late Tower",
+            OwnerUserId = user.Id,
+            StartDate = DateTime.UtcNow.AddDays(-10),
+            Settings = new ProjectSettings
             {
-                FullName = "Manager",
-                Email = "m@m.com",
-                PasswordHash = "AnyHash123"
-            };
-            Context.Users.Add(user);
-            await Context.SaveChangesAsync();
+                EnableDelayNotification = true,
+                DelayNotificationIntervalDays = 1,
+                DelayGracePeriodDays = 0 // عشان يتفعل التأخير فورًا
+            }
+        };
+        Context.Projects.Add(project);
+        await Context.SaveChangesAsync();
 
-            // 2. Arrange: إنشاء مشروع متأخر
-            var project = new Project
-            {
-                ProjectName = "Late Tower",
-                OwnerUserId = user.Id,
-                StartDate = DateTime.UtcNow.AddDays(-10),
-                Settings = new ProjectSettings
-                {
-                    EnableDelayNotification = true,
-                    DelayNotificationIntervalDays = 1,
-                    DelayGracePeriodDays = 0 // عشان يتفعل التأخير فورًا
-                }
-            };
-            Context.Projects.Add(project);
-            await Context.SaveChangesAsync();
+        // 3. Act – الاسم الجديد الصحيح
+        await _service.CheckProjectAndItemDelaysAsync();
 
-            // 3. Act
-            await _service.CheckAndSendDelayEscalationsAsync();
+        // 4. Assert
+        var log = await Context.EscalationLogs
+            .FirstOrDefaultAsync(l => l.ProjectId == project.Id);
 
-            // 4. Assert
-            var log = await Context.EscalationLogs
-                .FirstOrDefaultAsync(l => l.ProjectId == project.Id);
+        log.Should().NotBeNull("يجب تسجيل التصعيد في جدول EscalationLogs");
 
-            log.Should().NotBeNull("يجب تسجيل التصعيد في جدول EscalationLogs");
-
-            _notifMock.Verify(n => n.CreateAndSendAsync(
-                user.Id,
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                NotificationType.ProjectDelay),
-                Times.Once());
-        }
+        _notifMock.Verify(n => n.CreateAndSendAsync(
+            user.Id,
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            NotificationType.ProjectDelay),
+            Times.Once());
     }
 }
