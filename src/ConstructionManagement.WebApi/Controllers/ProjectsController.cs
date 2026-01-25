@@ -56,4 +56,6 @@ public class ProjectsController : ControllerBase
         var projects = await _projectService.GetProjectsByUserAsync(userId);
         return Ok(projects);
     }
+
+    // NOTE: Add tests for close/update permission checks.
 }

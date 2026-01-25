@@ -37,6 +37,7 @@ public class ProjectServiceTests
         // Assert
         _uowMock.Verify(u => u.BeginTransactionAsync(), Times.Once());
         _uowMock.Verify(u => u.CommitAsync(), Times.Once());
+        _projectRepo.Verify(r => r.AddAsync(It.IsAny<Project>()), Times.Once());
     }
 
     [Fact]

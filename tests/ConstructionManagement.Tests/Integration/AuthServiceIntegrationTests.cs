@@ -1,5 +1,6 @@
 ﻿using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Infrastructure.Persistence.Repositories;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
@@ -38,6 +39,17 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
         );
     }
 
+    // DOCUMENTATION TABLES (replace with full 113 test-case tables):
+    // Test Case: <Name>
+    // Step # | Step Description | Expected Result
+    // 1      | ...              | ...
+    // 2      | ...              | ...
+    // 3      | ...              | ...
+    // 4      | ...              | ...
+
+    // Test case:
+    // 1) LoginAsync_WithValidCredentials_ReturnsToken
+    //    Steps: seed user with hashed password -> configure JWT -> call login -> assert token and user email.
     [Fact]
     public async Task LoginAsync_WithValidCredentials_ReturnsToken()
     {
@@ -68,7 +80,44 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
         // Assert
         result.Should().NotBeNull("يجب أن يرجع كائن LoginResponse");
         result.Token.Should().NotBeNullOrEmpty("يجب أن يحتوي على JWT token صالح");
+        result.Token.Should().Contain(".");
+        result.User.Should().NotBeNull();
+        result.User!.Email.Should().Be(email);
         // اختبارات إضافية اختيارية
         // result.ExpiresAt.Should().BeAfter(DateTime.UtcNow);
+    }
+
+    [Fact]
+    public async Task LoginAsync_WithValidCredentials_ReturnsToken_RealDB()
+    {
+        // Arrange
+        var config = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                { "Jwt:Key", "SuperSecretKey12345678901234567890" },
+                { "Jwt:Issuer", "TestIssuer" },
+                { "Jwt:Audience", "TestAudience" }
+            })
+            .Build();
+
+        const string password = "Password123";
+        var user = new User
+        {
+            FullName = "Auth User",
+            Email = "auth@test.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(password)
+        };
+        Context.Users.Add(user);
+        await Context.SaveChangesAsync();
+
+        var service = new AuthService(new UserRepository(Context), config, UnitOfWork);
+
+        // Act
+        var result = await service.LoginAsync(new LoginRequest("auth@test.com", password));
+
+        // Assert
+        result.Token.Should().NotBeNullOrEmpty();
+        result.User.Should().NotBeNull();
+        result.User!.Email.Should().Be("auth@test.com");
     }
 }

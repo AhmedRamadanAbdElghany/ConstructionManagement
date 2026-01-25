@@ -73,4 +73,6 @@ public class Project : BaseEntity
     public virtual ICollection<BOQItemNote> Notes { get; set; }
             = new List<BOQItemNote>();
     public virtual ICollection<ProjectRole> ProjectRoles { get; set; } = new List<ProjectRole>();
+
+    // NOTE: Add tests for status transitions and date validation.
 }

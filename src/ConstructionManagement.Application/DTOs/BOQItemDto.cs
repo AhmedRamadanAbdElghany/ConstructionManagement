@@ -10,4 +10,5 @@ public record BOQItemDto(
     DateTime? EndDate,
     decimal Progress, // تأكد أن الاسم مطابق لما تستخدمه في Assert
     string? Notes
+    // NOTE: Add tests for Progress mapping accuracy.
 );

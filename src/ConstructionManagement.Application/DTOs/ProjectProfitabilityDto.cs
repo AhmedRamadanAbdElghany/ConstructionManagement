@@ -6,5 +6,7 @@
         decimal TotalSpent,
         decimal TotalProfit,
         decimal ProfitPercentage,
-        int ItemsCount);
+        int ItemsCount
+    );
+    // NOTE: Add tests for rounding/percentage correctness.
 }

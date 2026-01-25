@@ -17,4 +17,6 @@ public class Package : BaseEntity
 
     // علاقة مع المشاريع
     public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
+
+    // NOTE: Add tests for limits enforcement in project creation.
 }

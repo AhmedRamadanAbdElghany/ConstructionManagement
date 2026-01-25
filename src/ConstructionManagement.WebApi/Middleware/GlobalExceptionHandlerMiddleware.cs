@@ -73,4 +73,6 @@ public class GlobalExceptionHandlerMiddleware
 
         await context.Response.WriteAsync(json);
     }
+
+    // NOTE: Add tests for status codes + problem details mapping.
 }

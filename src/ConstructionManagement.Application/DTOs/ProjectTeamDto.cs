@@ -19,5 +19,7 @@ namespace ConstructionManagement.Application.DTOs
             Roles = roles ?? new List<string>();
         }
         public ProjectTeamDto() { }
+
+        // NOTE: Add tests for mapping roles and reports-to.
     }
 }

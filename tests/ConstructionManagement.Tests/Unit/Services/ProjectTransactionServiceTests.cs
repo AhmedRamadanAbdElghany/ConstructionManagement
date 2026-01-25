@@ -102,6 +102,7 @@ public class ProjectTransactionServiceTests
         var service = CreateService();
         var result = await service.GetProjectProfitabilityAsync(projectId);
 
+        result.Should().NotBeNull();
         result.TotalEstimatedBudget.Should().Be(15000);
         result.TotalSpent.Should().Be(3000);
         result.TotalProfit.Should().Be(12000);

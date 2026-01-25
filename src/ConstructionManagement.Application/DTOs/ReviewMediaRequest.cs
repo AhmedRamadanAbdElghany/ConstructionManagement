@@ -3,4 +3,5 @@
     string? RejectionReason,    // سبب الرفض النصي (اختياري)
     string RejectionType,       // ← جديد: "WorkQuality" أو "ImageClarity" أو null
     int? ForwardToUserID = null
+    // NOTE: Add tests for RejectionType + Status combinations.
 );

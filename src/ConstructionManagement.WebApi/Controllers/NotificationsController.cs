@@ -66,4 +66,6 @@ public class NotificationsController : ControllerBase
         await _notificationService.MarkAllAsReadAsync(userId);
         return Ok();
     }
+
+    // NOTE: Add tests for unread count and mark read/all.
 }

@@ -28,7 +28,7 @@ public class BOQItemTests
     }
 
     [Fact]
-    public async Task EstimatedBudget_WhenMeasuredDataIsNull_ShouldReturnZero()
+    public void EstimatedBudget_WhenMeasuredDataIsNull_ShouldReturnZero()
     {
         // Arrange
         var item = new BOQItem

@@ -32,6 +32,19 @@ public class EscalationIntegrationTests : IntegrationTestBase
         );
     }
 
+    // DOCUMENTATION TABLES (replace with full 113 test-case tables):
+    // Test Case: <Name>
+    // Step # | Step Description | Expected Result
+    // 1      | ...              | ...
+    // 2      | ...              | ...
+    // 3      | ...              | ...
+
+    // Test Case: CheckProjectAndItemDelaysAsync_ShouldCreateEscalationLog
+    // Step # | Step Description                        | Expected Result
+    // 1      | Seed user + delayed project             | Data persisted
+    // 2      | Enable delay notifications              | Settings saved
+    // 3      | Run escalation service                  | Escalation log created
+
     [Fact]
     public async Task CheckProjectAndItemDelaysAsync_ShouldDetectDelayedProjects()
     {
@@ -78,4 +91,65 @@ public class EscalationIntegrationTests : IntegrationTestBase
             NotificationType.ProjectDelay),
             Times.Once());
     }
+
+    [Fact]
+    public async Task CheckProjectAndItemDelaysAsync_WhenNotificationsDisabled_DoesNothing()
+    {
+        var user = await SeedUserAsync("no@notify.com", "AnyHash123", "No Notify");
+
+        var project = new Project
+        {
+            ProjectName = "Late Tower 2",
+            OwnerUserId = user.Id,
+            StartDate = DateTime.UtcNow.AddDays(-10),
+            EndDate = DateTime.UtcNow.AddDays(-1),
+            Status = "Active"
+        };
+        Context.Projects.Add(project);
+        await Context.SaveChangesAsync();
+
+        Context.Set<ProjectSettings>().Add(new ProjectSettings
+        {
+            Id = project.Id,
+            EnableDelayNotification = false
+        });
+        await Context.SaveChangesAsync();
+
+        await _service.CheckProjectAndItemDelaysAsync();
+
+        var log = await Context.EscalationLogs.FirstOrDefaultAsync(l => l.ProjectId == project.Id);
+        log.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task CheckProjectAndItemDelaysAsync_ShouldCreateEscalationLog()
+    {
+        var user = await SeedUserAsync("m@m.com", "AnyHash123", "Manager");
+
+        var project = new Project
+        {
+            ProjectName = "Late Tower",
+            OwnerUserId = user.Id,
+            StartDate = DateTime.UtcNow.AddDays(-10),
+            Status = "جديد"
+        };
+        Context.Projects.Add(project);
+        await Context.SaveChangesAsync();
+
+        Context.Set<ProjectSettings>().Add(new ProjectSettings
+        {
+            Id = project.Id,
+            EnableDelayNotification = true,
+            DelayNotificationIntervalDays = 1,
+            DelayGracePeriodDays = 0
+        });
+        await Context.SaveChangesAsync();
+
+        await _service.CheckProjectAndItemDelaysAsync();
+
+        var log = await Context.EscalationLogs.FirstOrDefaultAsync(l => l.ProjectId == project.Id);
+        log.Should().NotBeNull();
+    }
+
+    // NOTE: No error-related changes required here.
 }

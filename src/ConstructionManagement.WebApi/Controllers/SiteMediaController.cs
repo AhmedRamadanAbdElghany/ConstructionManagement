@@ -131,4 +131,6 @@ public class SiteMediaController : ControllerBase
         var media = await _mediaService.GetMediaForProjectAsync(projectId, itemId, status);
         return Ok(media);
     }
+
+    // NOTE: Add tests for daily log closed, file validation, review statuses.
 }

@@ -61,4 +61,6 @@ public record ProjectSettingsDto
     /// null = no limit
     /// </summary>
     public int? MaxPhotosPerUpload { get; init; } = 10;
+
+    // NOTE: Add tests for default settings values.
 }

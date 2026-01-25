@@ -68,6 +68,7 @@ public class ProjectSettingsServiceTests
 
         // Assert
         settings.DelayNotificationIntervalDays.Should().Be(14);
+        settings.MaxPhotosPerUpload.Should().Be(50);
         _settingsRepo.Verify(r => r.UpdateAsync(settings), Times.Once());
         _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once());
     }

@@ -119,4 +119,6 @@ public class User : BaseEntity
     // ── Optional helpers (not mapped) ─────────────────────────────────────────
     // [NotMapped]
     // public bool IsAdmin => UserRoles.Any(ur => ur.Role.Name == "Admin");
+
+    // NOTE: Add tests for navigation consistency and role assignments.
 }

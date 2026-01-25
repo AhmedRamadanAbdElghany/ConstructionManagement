@@ -5,6 +5,8 @@ namespace ConstructionManagement.Tests.Unit.Domain;
 
 public class BOQMeasuredTests
 {
+    // TODO: add tests for negative quantities and rounding edge cases.
+
     [Fact]
     public void ExecutedValue_ShouldReturnCorrectProduct()
     {
@@ -74,6 +76,6 @@ public class BOQMeasuredTests
         var result = measured.ProgressPercentage;
 
         // Assert
-        result.Should().Be(0m);
+        result.Should().Be(0);
     }
 }

@@ -402,4 +402,6 @@ public class ApplicationDbContext : DbContext
         optionsBuilder.ConfigureWarnings(warnings =>
             warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
     }
+
+    // NOTE: Add tests for relationships/constraints and delete behaviors.
 }

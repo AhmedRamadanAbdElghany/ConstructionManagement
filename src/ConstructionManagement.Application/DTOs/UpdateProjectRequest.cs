@@ -7,4 +7,5 @@ public record UpdateProjectRequest(
     DateTime? EndDate,
     decimal? TotalContractValue,
     int? GeneralManagerUserId // أضفنا هذا الحقل لحل خطأ CS1061
+    // NOTE: Add validator tests for nullable combinations.
 );

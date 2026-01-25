@@ -23,5 +23,7 @@ namespace ConstructionManagement.Application.Interfaces
         /// Get all workers across all projects with their roles per project
         /// </summary>
         Task<List<WorkerWithProjectsDto>> GetAllWorkersWithRolesAsync();
+
+        // NOTE: Add tests for team membership + role assignment workflows.
     }
 }

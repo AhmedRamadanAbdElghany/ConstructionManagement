@@ -48,4 +48,6 @@ public class ProfitabilityController : ControllerBase
 
         return Ok(profitability);
     }
+
+    // NOTE: Add tests for project/item profitability endpoints.
 }

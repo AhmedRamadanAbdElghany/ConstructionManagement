@@ -115,6 +115,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("CanReviewSiteMedia", policy => policy.AddRequirements(new ProjectRoleRequirement("Media.Review")));
     options.AddPolicy("CanCloseDailyLog", policy => policy.AddRequirements(new ProjectRoleRequirement("DailyLog.Close")));
     options.AddPolicy("CanManageProjectSettings", policy => policy.AddRequirements(new ProjectRoleRequirement("Settings.Manage")));
+
+    // NOTE: Add policy tests for each permission.
 });
 
 // 9. Hangfire
