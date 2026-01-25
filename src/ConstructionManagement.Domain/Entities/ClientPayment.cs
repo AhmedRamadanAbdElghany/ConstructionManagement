@@ -22,7 +22,7 @@ public class ClientPayment : BaseEntity
     public DateTime PaymentDate { get; set; }           // actual date the money was received
 
     public decimal Amount { get; set; }                 // amount received in project currency
-
+    public string Currency { get; set; } = "EGP";
     public string? PaymentType { get; set; }            // "Advance", "Interim", "Retention Release", "Final", etc.
 
     public string? Description { get; set; }            // e.g. "Payment for 30% completion"
@@ -33,9 +33,8 @@ public class ClientPayment : BaseEntity
     // ── Evidence ──────────────────────────────────────────────────────────────
     public string? AttachmentPath { get; set; }         // path to bank receipt, transfer screenshot, cheque image...
 
-    // Optional future additions you might consider:
-    // public string? BankReference { get; set; }
-    // public DateTime? ConfirmedAt { get; set; }
-    // public int? ConfirmedByUserId { get; set; }
-    // public virtual User? ConfirmedBy { get; set; }
+     public string? BankReference { get; set; }
+     public DateTime? ConfirmedAt { get; set; }
+     public int? ConfirmedByUserId { get; set; }
+     public virtual User? ConfirmedBy { get; set; }
 }

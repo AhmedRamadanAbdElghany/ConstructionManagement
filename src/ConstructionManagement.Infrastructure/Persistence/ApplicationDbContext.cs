@@ -184,6 +184,15 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(cp => cp.ProjectId)
             .OnDelete(DeleteBehavior.NoAction);
 
+
+        // ClientPayment → ConfirmedBy (optional user who confirmed)
+        modelBuilder.Entity<ClientPayment>()
+            .HasOne(p => p.ConfirmedBy)
+            .WithMany()                           // or .WithMany(u => u.ConfirmedPayments) if you add collection to User
+            .HasForeignKey(p => p.ConfirmedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);   // prevent deleting user if they confirmed payments
+
+
         // ProjectTeamRoles bridge table – both sides NoAction
         modelBuilder.Entity<ProjectTeamRole>()
             .HasOne(ptr => ptr.ProjectTeamMember)
@@ -352,19 +361,245 @@ public class ApplicationDbContext : DbContext
 
     private void SeedData(ModelBuilder modelBuilder)
     {
-        // IMPORTANT: Do NOT use DateTime.UtcNow, Guid.NewGuid(), etc. here
-        // Example of correct fixed seed:
-        // modelBuilder.Entity<Role>().HasData(
-        //     new Role 
-        //     { 
-        //         Id = 1, 
-        //         Name = "Admin", 
-        //         Description = "Full access", 
-        //         CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) 
-        //     }
-        // );
+        var fixedDate = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-        // Add your real fixed seed data here...
+        // 1. CompanySettings (singleton – ID = 1)
+        modelBuilder.Entity<CompanySettings>().HasData(
+            new CompanySettings
+            {
+                Id = 1,
+                EnableDelayNotification = true,
+                DelayNotificationIsOneTimeOnly = false,
+                DelayNotificationIntervalDays = 7,
+                DelayNotificationSendEmail = true,
+                DelayGracePeriodDays = 3,
+                EnablePhotoUpload = true,
+                RequirePhotoReview = true,
+                PhotoApproverRole = "MediaReviewer",
+                EnableInvoiceReview = true,
+                EnableInvoiceAggregation = true,
+                MaxPhotosPerUpload = 10,
+                CreatedAt = fixedDate,
+                UpdatedAt = null
+            }
+        );
+
+        // 2. Packages
+        modelBuilder.Entity<Package>().HasData(
+            new Package
+            {
+                Id = 1,
+                Name = "Free",
+                Description = "Basic plan",
+                Price = 0m,
+                MaxTeamMembers = 3,
+                MaxDailyPhotos = 10,
+                MaxBOQItems = 20,
+                AllowAdvancedReports = false,
+                AllowCustomBranding = false,
+                AllowAIAssistance = false,
+                CreatedAt = fixedDate
+            },
+            new Package
+            {
+                Id = 2,
+                Name = "Pro",
+                Description = "Full features",
+                Price = 199.99m,
+                MaxTeamMembers = 10,
+                MaxDailyPhotos = 50,
+                MaxBOQItems = 100,
+                AllowAdvancedReports = true,
+                AllowCustomBranding = true,
+                AllowAIAssistance = true,
+                CreatedAt = fixedDate
+            }
+        );
+
+        // 3. Permissions (expanded from your list)
+        modelBuilder.Entity<Permission>().HasData(
+            new Permission { Id = 1, Name = "Project.Edit", Description = "تعديل بيانات المشروع", CreatedAt = fixedDate },
+            new Permission { Id = 2, Name = "Project.Close", Description = "إغلاق المشروع", CreatedAt = fixedDate },
+            new Permission { Id = 3, Name = "Financials.View", Description = "عرض الملخص المالي", CreatedAt = fixedDate },
+            new Permission { Id = 4, Name = "Transaction.Add", Description = "إضافة معاملة", CreatedAt = fixedDate },
+            new Permission { Id = 5, Name = "Transaction.Review", Description = "مراجعة المعاملات", CreatedAt = fixedDate },
+            new Permission { Id = 6, Name = "Media.Review", Description = "مراجعة الوسائط", CreatedAt = fixedDate },
+            new Permission { Id = 7, Name = "DailyLog.Close", Description = "إغلاق اليومية", CreatedAt = fixedDate },
+            new Permission { Id = 8, Name = "Invoice.Approve", Description = "اعتماد الفواتير", CreatedAt = fixedDate },
+            new Permission { Id = 9, Name = "Settings.Manage", Description = "إدارة الإعدادات", CreatedAt = fixedDate }
+        );
+
+        // 4. Roles
+        modelBuilder.Entity<Role>().HasData(
+            new Role { Id = 1, Name = "SuperAdmin", Description = "مدير النظام الكلي", CreatedAt = fixedDate },
+            new Role { Id = 2, Name = "CompanyAdmin", Description = "مدير الشركة", CreatedAt = fixedDate },
+            new Role { Id = 3, Name = "ProjectManager", Description = "مدير مشروع", CreatedAt = fixedDate },
+            new Role { Id = 4, Name = "SiteEngineer", Description = "مهندس ميداني", CreatedAt = fixedDate }
+        );
+
+        // 5. RolePermissions (assign permissions)
+        modelBuilder.Entity<RolePermission>().HasData(
+            // SuperAdmin → all
+            new RolePermission { RoleId = 1, PermissionId = 1 },
+            new RolePermission { RoleId = 1, PermissionId = 2 },
+            new RolePermission { RoleId = 1, PermissionId = 3 },
+            new RolePermission { RoleId = 1, PermissionId = 4 },
+            new RolePermission { RoleId = 1, PermissionId = 5 },
+            new RolePermission { RoleId = 1, PermissionId = 6 },
+            new RolePermission { RoleId = 1, PermissionId = 7 },
+            new RolePermission { RoleId = 1, PermissionId = 8 },
+            new RolePermission { RoleId = 1, PermissionId = 9 },
+
+            // ProjectManager → most
+            new RolePermission { RoleId = 3, PermissionId = 1 },
+            new RolePermission { RoleId = 3, PermissionId = 2 },
+            new RolePermission { RoleId = 3, PermissionId = 3 },
+            new RolePermission { RoleId = 3, PermissionId = 4 },
+            new RolePermission { RoleId = 3, PermissionId = 5 },
+            new RolePermission { RoleId = 3, PermissionId = 7 },
+            new RolePermission { RoleId = 3, PermissionId = 8 }
+        );
+
+        // 6. Users
+        modelBuilder.Entity<User>().HasData(
+            new User
+            {
+                Id = 1,
+                FullName = "Super Admin",
+                Email = "superadmin@demo.com",
+                PasswordHash = "$2a$11$7r6fX9k2YvQ8mP3nL5tJ2eW9xH4kR8vB2cN6jQ1pT5yU3mW9xK8v", // placeholder BCrypt
+                Phone = "0123456789",
+                CreatedAt = fixedDate
+            },
+            new User
+            {
+                Id = 2,
+                FullName = "أحمد مدير المشروع",
+                Email = "ahmed.pm@demo.com",
+                PasswordHash = "$2a$11$7r6fX9k2YvQ8mP3nL5tJ2eW9xH4kR8vB2cN6jQ1pT5yU3mW9xK8v",
+                Phone = "0109876543",
+                CreatedAt = fixedDate.AddDays(5)
+            },
+            new User
+            {
+                Id = 3,
+                FullName = "مهندس ميداني",
+                Email = "engineer@demo.com",
+                PasswordHash = "$2a$11$7r6fX9k2YvQ8mP3nL5tJ2eW9xH4kR8vB2cN6jQ1pT5yU3mW9xK8v",
+                Phone = "0112233445",
+                CreatedAt = fixedDate.AddDays(10)
+            }
+        );
+
+        // 7. UserRoles
+        modelBuilder.Entity<UserRole>().HasData(
+            new UserRole { UserId = 1, RoleId = 1, AssignedAt = fixedDate }, // SuperAdmin
+            new UserRole { UserId = 2, RoleId = 3, AssignedAt = fixedDate.AddDays(5) }, // ProjectManager
+            new UserRole { UserId = 3, RoleId = 4, AssignedAt = fixedDate.AddDays(10) } // SiteEngineer
+        );
+
+        // 8. One Test Project
+        modelBuilder.Entity<Project>().HasData(
+            new Project
+            {
+                Id = 1,
+                ProjectName = "مشروع تجريبي - فيلا القاهرة الجديدة",
+                Description = "مشروع سكني لاختبار النظام",
+                StartDate = fixedDate.AddMonths(-2),
+                EndDate = fixedDate.AddMonths(10),
+                Status = "جاري",
+                OwnerUserId = 1,
+                GeneralManagerUserId = 2,
+                AccountingSystem = "Mixed",
+                TotalContractValue = 8500000m,
+                CreatedAt = fixedDate.AddDays(15)
+            }
+        );
+
+        // 9. ProjectRoles (for the test project)
+        modelBuilder.Entity<ProjectRole>().HasData(
+            new ProjectRole { Id = 1, ProjectId = 1, Name = "مدير المشروع", Description = "له جميع الصلاحيات", CreatedAt = fixedDate },
+            new ProjectRole { Id = 2, ProjectId = 1, Name = "مهندس ميداني", Description = "رفع صور ويوميات", CreatedAt = fixedDate },
+            new ProjectRole { Id = 3, ProjectId = 1, Name = "مراجع فني", Description = "مراجعة التقدم", CreatedAt = fixedDate }
+        );
+
+        // 10. ProjectTeamMembers
+        modelBuilder.Entity<ProjectTeamMember>().HasData(
+            new ProjectTeamMember { Id = 1, ProjectId = 1, UserId = 2, ReportsToUserId = null, CreatedAt = fixedDate },
+            new ProjectTeamMember { Id = 2, ProjectId = 1, UserId = 3, ReportsToUserId = 2, CreatedAt = fixedDate }
+        );
+
+        // 11. ProjectTeamRoles
+        modelBuilder.Entity<ProjectTeamRole>().HasData(
+            new ProjectTeamRole { ProjectTeamMemberId = 1, ProjectRoleId = 1, AssignedAt = fixedDate },
+            new ProjectTeamRole { ProjectTeamMemberId = 2, ProjectRoleId = 2, AssignedAt = fixedDate }
+        );
+
+        // 12. ProjectSettings (for project 1)
+        modelBuilder.Entity<ProjectSettings>().HasData(
+            new ProjectSettings
+            {
+                Id = 1,
+                EnableDelayNotification = true,
+                DelayNotificationIsOneTimeOnly = false,
+                DelayNotificationIntervalDays = 5,
+                DelayNotificationSendEmail = true,
+                DelayGracePeriodDays = 3,
+                EnablePhotoUpload = true,
+                RequirePhotoReview = true,
+                PhotoApproverRole = "مراجع فني",
+                EnableInvoiceReview = true,
+                EnableInvoiceAggregation = true,
+                MaxPhotosPerUpload = 15,
+                CreatedAt = fixedDate
+            }
+        );
+
+        // 13. BOQItems (for project 1)
+        modelBuilder.Entity<BOQItem>().HasData(
+            new BOQItem
+            {
+                Id = 1,
+                ProjectId = 1,
+                ItemCode = "A-01",
+                ItemName = "حفر أساسات",
+                Unit = "م³",
+                AccountingType = "Measured",
+                Status = "جاري",
+                CreatedAt = fixedDate.AddDays(20)
+            },
+            new BOQItem
+            {
+                Id = 2,
+                ProjectId = 1,
+                ItemCode = "B-02",
+                ItemName = "صب خرسانة أساسات",
+                Unit = "م³",
+                AccountingType = "Measured",
+                Status = "جديد",
+                CreatedAt = fixedDate.AddDays(20)
+            }
+        );
+
+        // 14. BOQMeasured (for measured items)
+        modelBuilder.Entity<BOQMeasured>().HasData(
+            new BOQMeasured
+            {
+                Id = 1,
+                AgreedQuantity = 1200m,
+                UnitPrice = 450m,
+                ExecutedQuantity = 480m,
+                CreatedAt = fixedDate
+            },
+            new BOQMeasured
+            {
+                Id = 2,
+                AgreedQuantity = 800m,
+                UnitPrice = 1850m,
+                ExecutedQuantity = 0m,
+                CreatedAt = fixedDate
+            }
+        );
     }
 
     // ────────────────────────────────────────────────────────────────

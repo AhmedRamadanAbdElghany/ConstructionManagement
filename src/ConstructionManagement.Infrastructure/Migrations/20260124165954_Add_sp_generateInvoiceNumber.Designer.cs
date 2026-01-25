@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ConstructionManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260124160608_InitialWithSeed_Fixed")]
-    partial class InitialWithSeed_Fixed
+    [Migration("20260124165954_Add_sp_generateInvoiceNumber")]
+    partial class Add_sp_generateInvoiceNumber
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -234,6 +234,30 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("BOQItems");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AccountingType = "Measured",
+                            CreatedAt = new DateTime(2026, 1, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ItemCode = "A-01",
+                            ItemName = "حفر أساسات",
+                            ProjectId = 1,
+                            Status = "جاري",
+                            Unit = "م³"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AccountingType = "Measured",
+                            CreatedAt = new DateTime(2026, 1, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ItemCode = "B-02",
+                            ItemName = "صب خرسانة أساسات",
+                            ProjectId = 1,
+                            Status = "جديد",
+                            Unit = "م³"
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.BOQItemNote", b =>
@@ -310,6 +334,24 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BOQMeasured");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AgreedQuantity = 1200m,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExecutedQuantity = 480m,
+                            UnitPrice = 450m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AgreedQuantity = 800m,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExecutedQuantity = 0m,
+                            UnitPrice = 1850m
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.BOQProfitabilityLog", b =>
@@ -394,8 +436,21 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<string>("AttachmentPath")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("BankReference")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ConfirmedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ConfirmedByUserId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -419,6 +474,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ConfirmedByUserId");
 
                     b.HasIndex("ProjectId");
 
@@ -476,6 +533,24 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CompanySettings");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DelayGracePeriodDays = 3,
+                            DelayNotificationIntervalDays = 7,
+                            DelayNotificationIsOneTimeOnly = false,
+                            DelayNotificationSendEmail = true,
+                            EnableDelayNotification = true,
+                            EnableInvoiceAggregation = true,
+                            EnableInvoiceReview = true,
+                            EnablePhotoUpload = true,
+                            MaxPhotosPerUpload = 10,
+                            PhotoApproverRole = "MediaReviewer",
+                            RequirePhotoReview = true
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.EscalationLog", b =>
@@ -790,6 +865,71 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Permissions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "تعديل بيانات المشروع",
+                            Name = "Project.Edit"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "إغلاق المشروع",
+                            Name = "Project.Close"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "عرض الملخص المالي",
+                            Name = "Financials.View"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "إضافة معاملة",
+                            Name = "Transaction.Add"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "مراجعة المعاملات",
+                            Name = "Transaction.Review"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "مراجعة الوسائط",
+                            Name = "Media.Review"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "إغلاق اليومية",
+                            Name = "DailyLog.Close"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "اعتماد الفواتير",
+                            Name = "Invoice.Approve"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "إدارة الإعدادات",
+                            Name = "Settings.Manage"
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Project", b =>
@@ -874,6 +1014,23 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("UserId2");
 
                     b.ToTable("Projects");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AccountingSystem = "Mixed",
+                            CreatedAt = new DateTime(2026, 1, 16, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "مشروع سكني لاختبار النظام",
+                            EndDate = new DateTime(2026, 11, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GeneralManagerUserId = 2,
+                            IsClosed = false,
+                            OwnerUserId = 1,
+                            ProjectName = "مشروع تجريبي - فيلا القاهرة الجديدة",
+                            StartDate = new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "جاري",
+                            TotalContractValue = 8500000m
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectApprovalRule", b =>
@@ -952,6 +1109,32 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ProjectRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "له جميع الصلاحيات",
+                            Name = "مدير المشروع",
+                            ProjectId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "رفع صور ويوميات",
+                            Name = "مهندس ميداني",
+                            ProjectId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "مراجعة التقدم",
+                            Name = "مراجع فني",
+                            ProjectId = 1
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectRolePermission", b =>
@@ -1016,6 +1199,24 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ProjectSettings");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DelayGracePeriodDays = 3,
+                            DelayNotificationIntervalDays = 5,
+                            DelayNotificationIsOneTimeOnly = false,
+                            DelayNotificationSendEmail = true,
+                            EnableDelayNotification = true,
+                            EnableInvoiceAggregation = true,
+                            EnableInvoiceReview = true,
+                            EnablePhotoUpload = true,
+                            MaxPhotosPerUpload = 15,
+                            PhotoApproverRole = "مراجع فني",
+                            RequirePhotoReview = true
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectTeamMember", b =>
@@ -1051,6 +1252,23 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("ProjectTeamMembers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ProjectId = 1,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ProjectId = 1,
+                            ReportsToUserId = 2,
+                            UserId = 3
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectTeamRole", b =>
@@ -1078,6 +1296,24 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ProjectRoleId");
 
                     b.ToTable("ProjectTeamRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            ProjectTeamMemberId = 1,
+                            ProjectRoleId = 1,
+                            AssignedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0
+                        },
+                        new
+                        {
+                            ProjectTeamMemberId = 2,
+                            ProjectRoleId = 2,
+                            AssignedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Role", b =>
@@ -1104,6 +1340,36 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "مدير النظام الكلي",
+                            Name = "SuperAdmin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "مدير الشركة",
+                            Name = "CompanyAdmin"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "مدير مشروع",
+                            Name = "ProjectManager"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "مهندس ميداني",
+                            Name = "SiteEngineer"
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.RolePermission", b =>
@@ -1119,6 +1385,88 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("PermissionId");
 
                     b.ToTable("RolePermissions");
+
+                    b.HasData(
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 1
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 2
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 3
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 4
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 5
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 6
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 7
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 8
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 9
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 1
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 2
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 3
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 4
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 5
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 7
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 8
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.SiteMedia", b =>
@@ -1308,6 +1656,35 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "superadmin@demo.com",
+                            FullName = "Super Admin",
+                            PasswordHash = "$2a$11$7r6fX9k2YvQ8mP3nL5tJ2eW9xH4kR8vB2cN6jQ1pT5yU3mW9xK8v",
+                            Phone = "0123456789"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2026, 1, 6, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "ahmed.pm@demo.com",
+                            FullName = "أحمد مدير المشروع",
+                            PasswordHash = "$2a$11$7r6fX9k2YvQ8mP3nL5tJ2eW9xH4kR8vB2cN6jQ1pT5yU3mW9xK8v",
+                            Phone = "0109876543"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2026, 1, 11, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "engineer@demo.com",
+                            FullName = "مهندس ميداني",
+                            PasswordHash = "$2a$11$7r6fX9k2YvQ8mP3nL5tJ2eW9xH4kR8vB2cN6jQ1pT5yU3mW9xK8v",
+                            Phone = "0112233445"
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.UserRole", b =>
@@ -1326,6 +1703,26 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("UserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            RoleId = 1,
+                            AssignedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            RoleId = 3,
+                            AssignedAt = new DateTime(2026, 1, 6, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            UserId = 3,
+                            RoleId = 4,
+                            AssignedAt = new DateTime(2026, 1, 11, 0, 0, 0, 0, DateTimeKind.Utc)
+                        });
                 });
 
             modelBuilder.Entity("Package", b =>
@@ -1374,6 +1771,36 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Packages");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AllowAIAssistance = false,
+                            AllowAdvancedReports = false,
+                            AllowCustomBranding = false,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Basic plan",
+                            MaxBOQItems = 20,
+                            MaxDailyPhotos = 10,
+                            MaxTeamMembers = 3,
+                            Name = "Free",
+                            Price = 0m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AllowAIAssistance = true,
+                            AllowAdvancedReports = true,
+                            AllowCustomBranding = true,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Full features",
+                            MaxBOQItems = 100,
+                            MaxDailyPhotos = 50,
+                            MaxTeamMembers = 10,
+                            Name = "Pro",
+                            Price = 199.99m
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ApprovalRequest", b =>
@@ -1530,11 +1957,18 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ClientPayment", b =>
                 {
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "ConfirmedBy")
+                        .WithMany()
+                        .HasForeignKey("ConfirmedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("ConstructionManagement.Domain.Entities.Project", "Project")
                         .WithMany("ClientPayments")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("ConfirmedBy");
 
                     b.Navigation("Project");
                 });

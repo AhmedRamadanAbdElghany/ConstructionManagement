@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace ConstructionManagement.Infrastructure.Migrations
 {
     /// <inheritdoc />
@@ -302,10 +304,14 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     PaymentNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Currency = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PaymentType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     AttachmentPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BankReference = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConfirmedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ConfirmedByUserId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -317,6 +323,12 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         column: x => x.ProjectId,
                         principalTable: "Projects",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ClientPayments_Users_ConfirmedByUserId",
+                        column: x => x.ConfirmedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -995,6 +1007,146 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.InsertData(
+                table: "CompanySettings",
+                columns: new[] { "Id", "CreatedAt", "DelayGracePeriodDays", "DelayNotificationIntervalDays", "DelayNotificationIsOneTimeOnly", "DelayNotificationSendEmail", "EnableDelayNotification", "EnableInvoiceAggregation", "EnableInvoiceReview", "EnablePhotoUpload", "MaxPhotosPerUpload", "PhotoApproverRole", "RequirePhotoReview", "UpdatedAt" },
+                values: new object[] { 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 3, 7, false, true, true, true, true, true, 10, "MediaReviewer", true, null });
+
+            migrationBuilder.InsertData(
+                table: "Packages",
+                columns: new[] { "Id", "AllowAIAssistance", "AllowAdvancedReports", "AllowCustomBranding", "CreatedAt", "Description", "MaxBOQItems", "MaxDailyPhotos", "MaxTeamMembers", "Name", "Price", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, false, false, false, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Basic plan", 20, 10, 3, "Free", 0m, null },
+                    { 2, true, true, true, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Full features", 100, 50, 10, "Pro", 199.99m, null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Permissions",
+                columns: new[] { "Id", "CreatedAt", "Description", "Name", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "تعديل بيانات المشروع", "Project.Edit", null },
+                    { 2, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "إغلاق المشروع", "Project.Close", null },
+                    { 3, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "عرض الملخص المالي", "Financials.View", null },
+                    { 4, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "إضافة معاملة", "Transaction.Add", null },
+                    { 5, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "مراجعة المعاملات", "Transaction.Review", null },
+                    { 6, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "مراجعة الوسائط", "Media.Review", null },
+                    { 7, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "إغلاق اليومية", "DailyLog.Close", null },
+                    { 8, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "اعتماد الفواتير", "Invoice.Approve", null },
+                    { 9, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "إدارة الإعدادات", "Settings.Manage", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "Id", "CreatedAt", "Description", "Name", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "مدير النظام الكلي", "SuperAdmin", null },
+                    { 2, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "مدير الشركة", "CompanyAdmin", null },
+                    { 3, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "مدير مشروع", "ProjectManager", null },
+                    { 4, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "مهندس ميداني", "SiteEngineer", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "CreatedAt", "Email", "FullName", "PasswordHash", "Phone", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "superadmin@demo.com", "Super Admin", "$2a$11$7r6fX9k2YvQ8mP3nL5tJ2eW9xH4kR8vB2cN6jQ1pT5yU3mW9xK8v", "0123456789", null },
+                    { 2, new DateTime(2026, 1, 6, 0, 0, 0, 0, DateTimeKind.Utc), "ahmed.pm@demo.com", "أحمد مدير المشروع", "$2a$11$7r6fX9k2YvQ8mP3nL5tJ2eW9xH4kR8vB2cN6jQ1pT5yU3mW9xK8v", "0109876543", null },
+                    { 3, new DateTime(2026, 1, 11, 0, 0, 0, 0, DateTimeKind.Utc), "engineer@demo.com", "مهندس ميداني", "$2a$11$7r6fX9k2YvQ8mP3nL5tJ2eW9xH4kR8vB2cN6jQ1pT5yU3mW9xK8v", "0112233445", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Projects",
+                columns: new[] { "Id", "AccountingSystem", "ClosedAt", "ClosedByUserId", "CreatedAt", "Description", "EndDate", "GeneralManagerUserId", "IsClosed", "OwnerUserId", "PackageId", "ProjectName", "StartDate", "Status", "TotalContractValue", "UpdatedAt", "UserId", "UserId1", "UserId2" },
+                values: new object[] { 1, "Mixed", null, null, new DateTime(2026, 1, 16, 0, 0, 0, 0, DateTimeKind.Utc), "مشروع سكني لاختبار النظام", new DateTime(2026, 11, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2, false, 1, null, "مشروع تجريبي - فيلا القاهرة الجديدة", new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Utc), "جاري", 8500000m, null, null, null, null });
+
+            migrationBuilder.InsertData(
+                table: "RolePermissions",
+                columns: new[] { "PermissionId", "RoleId" },
+                values: new object[,]
+                {
+                    { 1, 1 },
+                    { 2, 1 },
+                    { 3, 1 },
+                    { 4, 1 },
+                    { 5, 1 },
+                    { 6, 1 },
+                    { 7, 1 },
+                    { 8, 1 },
+                    { 9, 1 },
+                    { 1, 3 },
+                    { 2, 3 },
+                    { 3, 3 },
+                    { 4, 3 },
+                    { 5, 3 },
+                    { 7, 3 },
+                    { 8, 3 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UserRoles",
+                columns: new[] { "RoleId", "UserId", "AssignedAt" },
+                values: new object[,]
+                {
+                    { 1, 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) },
+                    { 3, 2, new DateTime(2026, 1, 6, 0, 0, 0, 0, DateTimeKind.Utc) },
+                    { 4, 3, new DateTime(2026, 1, 11, 0, 0, 0, 0, DateTimeKind.Utc) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "BOQItems",
+                columns: new[] { "Id", "AccountingType", "CreatedAt", "Description", "EndDate", "ItemCode", "ItemName", "ProjectId", "StartDate", "Status", "Unit", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, "Measured", new DateTime(2026, 1, 21, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "A-01", "حفر أساسات", 1, null, "جاري", "م³", null },
+                    { 2, "Measured", new DateTime(2026, 1, 21, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "B-02", "صب خرسانة أساسات", 1, null, "جديد", "م³", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ProjectRoles",
+                columns: new[] { "Id", "CreatedAt", "Description", "Name", "ProjectId", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "له جميع الصلاحيات", "مدير المشروع", 1, null },
+                    { 2, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "رفع صور ويوميات", "مهندس ميداني", 1, null },
+                    { 3, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "مراجعة التقدم", "مراجع فني", 1, null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ProjectSettings",
+                columns: new[] { "Id", "CreatedAt", "DelayGracePeriodDays", "DelayNotificationIntervalDays", "DelayNotificationIsOneTimeOnly", "DelayNotificationSendEmail", "EnableDelayNotification", "EnableInvoiceAggregation", "EnableInvoiceReview", "EnablePhotoUpload", "MaxPhotosPerUpload", "PhotoApproverRole", "RequirePhotoReview", "UpdatedAt" },
+                values: new object[] { 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 3, 5, false, true, true, true, true, true, 15, "مراجع فني", true, null });
+
+            migrationBuilder.InsertData(
+                table: "ProjectTeamMembers",
+                columns: new[] { "Id", "CreatedAt", "ProjectId", "ReportsToUserId", "UpdatedAt", "UserId" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, null, 2 },
+                    { 2, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, 2, null, 3 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "BOQMeasured",
+                columns: new[] { "Id", "AgreedQuantity", "CreatedAt", "ExecutedQuantity", "UnitPrice", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, 1200m, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 480m, 450m, null },
+                    { 2, 800m, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 0m, 1850m, null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ProjectTeamRoles",
+                columns: new[] { "ProjectRoleId", "ProjectTeamMemberId", "AssignedAt", "CreatedAt", "Id", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null },
+                    { 2, 2, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_ApprovalRequests_BOQItemId",
                 table: "ApprovalRequests",
@@ -1074,6 +1226,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "IX_BOQProfitabilityLogs_BOQItemId",
                 table: "BOQProfitabilityLogs",
                 column: "BOQItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientPayments_ConfirmedByUserId",
+                table: "ClientPayments",
+                column: "ConfirmedByUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClientPayments_ProjectId",
