@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ConstructionManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260130175333_InitialCreate")]
+    [Migration("20260130183823_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -101,7 +101,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             FinalApprovedByUserId = 1,
                             ProjectApprovalRuleId = 1,
                             ProjectId = 1,
-                            RequestedAt = new DateTime(2026, 1, 30, 17, 53, 32, 21, DateTimeKind.Utc).AddTicks(219),
+                            RequestedAt = new DateTime(2026, 1, 30, 18, 38, 20, 122, DateTimeKind.Utc).AddTicks(6941),
                             RequestedByUserId = 2,
                             Source = 0,
                             SourceId = 1,
@@ -1124,6 +1124,62 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Name = "ViewProjects",
                             TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Project.Edit",
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Project.Close",
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Financials.View",
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Transaction.Add",
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Transaction.Review",
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Media.Review",
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "DailyLog.Close",
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Settings.Manage",
+                            TenantId = "ConstructionDB"
                         });
                 });
 
@@ -1365,6 +1421,22 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             Name = "Engineer",
                             ProjectId = 1,
                             TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "FinancialReviewer",
+                            ProjectId = 1,
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "MediaReviewer",
+                            ProjectId = 1,
+                            TenantId = "ConstructionDB"
                         });
                 });
 
@@ -1385,6 +1457,56 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("PermissionId");
 
                     b.ToTable("ProjectRolePermissions");
+
+                    b.HasData(
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            PermissionId = 10,
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            PermissionId = 11,
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            PermissionId = 17,
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            ProjectRoleId = 1,
+                            PermissionId = 16,
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            ProjectRoleId = 2,
+                            PermissionId = 13,
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            ProjectRoleId = 3,
+                            PermissionId = 12,
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            ProjectRoleId = 3,
+                            PermissionId = 14,
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            ProjectRoleId = 4,
+                            PermissionId = 15,
+                            TenantId = "ConstructionDB"
+                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectSettings", b =>
@@ -1514,7 +1636,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ProjectId = 1,
                             TenantId = "ConstructionDB",
-                            UserId = 1
+                            UserId = 2
                         },
                         new
                         {
@@ -1522,7 +1644,31 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ProjectId = 1,
                             TenantId = "ConstructionDB",
-                            UserId = 2
+                            UserId = 4
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ProjectId = 1,
+                            TenantId = "ConstructionDB",
+                            UserId = 5
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ProjectId = 1,
+                            TenantId = "ConstructionDB",
+                            UserId = 6
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ProjectId = 1,
+                            TenantId = "ConstructionDB",
+                            UserId = 7
                         });
                 });
 
@@ -1565,19 +1711,46 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            AssignedAt = new DateTime(2026, 1, 30, 17, 53, 32, 17, DateTimeKind.Utc).AddTicks(2150),
+                            AssignedAt = new DateTime(2026, 1, 30, 18, 38, 20, 114, DateTimeKind.Utc).AddTicks(9305),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ProjectRoleId = 1,
+                            ProjectRoleId = 2,
                             ProjectTeamMemberId = 1,
                             TenantId = "ConstructionDB"
                         },
                         new
                         {
                             Id = 2,
-                            AssignedAt = new DateTime(2026, 1, 30, 17, 53, 32, 17, DateTimeKind.Utc).AddTicks(3817),
+                            AssignedAt = new DateTime(2026, 1, 30, 18, 38, 20, 115, DateTimeKind.Utc).AddTicks(1144),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ProjectRoleId = 1,
+                            ProjectTeamMemberId = 2,
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AssignedAt = new DateTime(2026, 1, 30, 18, 38, 20, 115, DateTimeKind.Utc).AddTicks(1149),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             ProjectRoleId = 2,
-                            ProjectTeamMemberId = 2,
+                            ProjectTeamMemberId = 3,
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AssignedAt = new DateTime(2026, 1, 30, 18, 38, 20, 115, DateTimeKind.Utc).AddTicks(1152),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ProjectRoleId = 3,
+                            ProjectTeamMemberId = 4,
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AssignedAt = new DateTime(2026, 1, 30, 18, 38, 20, 115, DateTimeKind.Utc).AddTicks(1154),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ProjectRoleId = 4,
+                            ProjectTeamMemberId = 5,
                             TenantId = "ConstructionDB"
                         });
                 });
@@ -1616,14 +1789,21 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             Id = 1,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Administrator",
+                            Name = "SuperAdmin",
                             TenantId = "ConstructionDB"
                         },
                         new
                         {
                             Id = 2,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "ProjectManager",
+                            Name = "CompanyAdmin",
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "User",
                             TenantId = "ConstructionDB"
                         });
                 });
@@ -1656,6 +1836,12 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         new
                         {
                             RoleId = 2,
+                            PermissionId = 1,
+                            TenantId = "ConstructionDB"
+                        },
+                        new
+                        {
+                            RoleId = 3,
                             PermissionId = 2,
                             TenantId = "ConstructionDB"
                         });
@@ -1850,7 +2036,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             ProjectId = 1,
                             Status = 1,
                             TenantId = "ConstructionDB",
-                            TransactionDate = new DateTime(2026, 1, 30, 17, 53, 32, 18, DateTimeKind.Utc).AddTicks(7951),
+                            TransactionDate = new DateTime(2026, 1, 30, 18, 38, 20, 118, DateTimeKind.Utc).AddTicks(4652),
                             Type = 0
                         });
                 });
@@ -1908,7 +2094,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             Email = "admin@construction.com",
                             FirstName = "System",
                             LastName = "Admin",
-                            PasswordHash = "admin_hash",
+                            PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
                             TenantId = "ConstructionDB",
                             Username = "admin"
                         },
@@ -1919,9 +2105,64 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             Email = "ahmed@construction.com",
                             FirstName = "Ahmed",
                             LastName = "Ramadan",
-                            PasswordHash = "ahmed_hash",
+                            PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
                             TenantId = "ConstructionDB",
                             Username = "ahmed"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "company_admin@construction.com",
+                            FirstName = "Company",
+                            LastName = "Admin",
+                            PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
+                            TenantId = "ConstructionDB",
+                            Username = "company_admin"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "pm@construction.com",
+                            FirstName = "Project",
+                            LastName = "Manager",
+                            PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
+                            TenantId = "ConstructionDB",
+                            Username = "pm"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "engineer@construction.com",
+                            FirstName = "Site",
+                            LastName = "Engineer",
+                            PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
+                            TenantId = "ConstructionDB",
+                            Username = "engineer"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "accountant@construction.com",
+                            FirstName = "Project",
+                            LastName = "Accountant",
+                            PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
+                            TenantId = "ConstructionDB",
+                            Username = "accountant"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "consultant@construction.com",
+                            FirstName = "External",
+                            LastName = "Consultant",
+                            PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
+                            TenantId = "ConstructionDB",
+                            Username = "consultant"
                         });
                 });
 
@@ -1951,14 +2192,14 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             UserId = 1,
                             RoleId = 1,
-                            AssignedAt = new DateTime(2026, 1, 30, 17, 53, 32, 14, DateTimeKind.Utc).AddTicks(7301),
+                            AssignedAt = new DateTime(2026, 1, 30, 18, 38, 20, 107, DateTimeKind.Utc).AddTicks(4591),
                             TenantId = "ConstructionDB"
                         },
                         new
                         {
-                            UserId = 2,
+                            UserId = 3,
                             RoleId = 2,
-                            AssignedAt = new DateTime(2026, 1, 30, 17, 53, 32, 14, DateTimeKind.Utc).AddTicks(8018),
+                            AssignedAt = new DateTime(2026, 1, 30, 18, 38, 20, 107, DateTimeKind.Utc).AddTicks(6958),
                             TenantId = "ConstructionDB"
                         });
                 });

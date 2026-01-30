@@ -146,54 +146,56 @@ public class ApplicationDbContext : DbContext
     {
         var fixedDate = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         const string defaultTenant = "ConstructionDB";
+        const string passwordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6"; // Hash for "admin"
 
         // --- Users ---
         modelBuilder.Entity<User>().HasData(
-            new User 
-            { 
-                Id = 1, 
-                FirstName = "System", 
-                LastName = "Admin", 
-                Email = "admin@construction.com", 
-                Username = "admin",
-                PasswordHash = "admin_hash", 
-                TenantId = defaultTenant,
-                CreatedAt = fixedDate 
-            },
-            new User
-            {
-                Id = 2,
-                FirstName = "Ahmed",
-                LastName = "Ramadan",
-                Email = "ahmed@construction.com",
-                Username = "ahmed",
-                PasswordHash = "ahmed_hash",
-                TenantId = defaultTenant,
-                CreatedAt = fixedDate
-            }
+            new User { Id = 1, FirstName = "System", LastName = "Admin", Email = "admin@construction.com", Username = "admin", PasswordHash = passwordHash, TenantId = defaultTenant, CreatedAt = fixedDate },
+            new User { Id = 2, FirstName = "Ahmed", LastName = "Ramadan", Email = "ahmed@construction.com", Username = "ahmed", PasswordHash = passwordHash, TenantId = defaultTenant, CreatedAt = fixedDate },
+            new User { Id = 3, FirstName = "Company", LastName = "Admin", Email = "company_admin@construction.com", Username = "company_admin", PasswordHash = passwordHash, TenantId = defaultTenant, CreatedAt = fixedDate },
+            new User { Id = 4, FirstName = "Project", LastName = "Manager", Email = "pm@construction.com", Username = "pm", PasswordHash = passwordHash, TenantId = defaultTenant, CreatedAt = fixedDate },
+            new User { Id = 5, FirstName = "Site", LastName = "Engineer", Email = "engineer@construction.com", Username = "engineer", PasswordHash = passwordHash, TenantId = defaultTenant, CreatedAt = fixedDate },
+            new User { Id = 6, FirstName = "Project", LastName = "Accountant", Email = "accountant@construction.com", Username = "accountant", PasswordHash = passwordHash, TenantId = defaultTenant, CreatedAt = fixedDate },
+            new User { Id = 7, FirstName = "External", LastName = "Consultant", Email = "consultant@construction.com", Username = "consultant", PasswordHash = passwordHash, TenantId = defaultTenant, CreatedAt = fixedDate }
         );
 
-        // --- Roles & Permissions (Global) ---
+        // --- Global Roles ---
         modelBuilder.Entity<Role>().HasData(
-            new Role { Id = 1, Name = "Administrator", TenantId = defaultTenant, CreatedAt = fixedDate },
-            new Role { Id = 2, Name = "ProjectManager", TenantId = defaultTenant, CreatedAt = fixedDate }
+            new Role { Id = 1, Name = "SuperAdmin", TenantId = defaultTenant, CreatedAt = fixedDate },
+            new Role { Id = 2, Name = "CompanyAdmin", TenantId = defaultTenant, CreatedAt = fixedDate }, 
+            new Role { Id = 3, Name = "User", TenantId = defaultTenant, CreatedAt = fixedDate }
         );
 
-        // --- Permissions ---
+        // --- Global Permissions ---
+        // Basic permissions 1-9
         modelBuilder.Entity<Permission>().HasData(
             new Permission { Id = 1, Name = "All", TenantId = defaultTenant, CreatedAt = fixedDate },
             new Permission { Id = 2, Name = "ViewProjects", TenantId = defaultTenant, CreatedAt = fixedDate }
         );
 
-        // --- Junctions ---
-        modelBuilder.Entity<RolePermission>().HasData(
-            new RolePermission { RoleId = 1, PermissionId = 1, TenantId = defaultTenant },
-            new RolePermission { RoleId = 2, PermissionId = 2, TenantId = defaultTenant }
+        // Policy-Specific Permissions (Project Level) 10-20
+        modelBuilder.Entity<Permission>().HasData(
+            new Permission { Id = 10, Name = "Project.Edit", TenantId = defaultTenant, CreatedAt = fixedDate },
+            new Permission { Id = 11, Name = "Project.Close", TenantId = defaultTenant, CreatedAt = fixedDate },
+            new Permission { Id = 12, Name = "Financials.View", TenantId = defaultTenant, CreatedAt = fixedDate },
+            new Permission { Id = 13, Name = "Transaction.Add", TenantId = defaultTenant, CreatedAt = fixedDate },
+            new Permission { Id = 14, Name = "Transaction.Review", TenantId = defaultTenant, CreatedAt = fixedDate },
+            new Permission { Id = 15, Name = "Media.Review", TenantId = defaultTenant, CreatedAt = fixedDate },
+            new Permission { Id = 16, Name = "DailyLog.Close", TenantId = defaultTenant, CreatedAt = fixedDate },
+            new Permission { Id = 17, Name = "Settings.Manage", TenantId = defaultTenant, CreatedAt = fixedDate }
         );
 
+        // --- Global Role Permissions ---
+        modelBuilder.Entity<RolePermission>().HasData(
+            new RolePermission { RoleId = 1, PermissionId = 1, TenantId = defaultTenant }, // SuperAdmin -> All
+            new RolePermission { RoleId = 2, PermissionId = 1, TenantId = defaultTenant }, // CompanyAdmin -> All (simplified)
+            new RolePermission { RoleId = 3, PermissionId = 2, TenantId = defaultTenant }  // User -> ViewProjects
+        );
+
+        // --- User Global Roles Assignments ---
         modelBuilder.Entity<UserRole>().HasData(
-            new UserRole { UserId = 1, RoleId = 1, TenantId = defaultTenant },
-            new UserRole { UserId = 2, RoleId = 2, TenantId = defaultTenant }
+            new UserRole { UserId = 1, RoleId = 1, TenantId = defaultTenant }, // Admin -> SuperAdmin
+            new UserRole { UserId = 3, RoleId = 2, TenantId = defaultTenant }  // CompanyAdmin -> CompanyAdmin
         );
 
         // --- Packages ---
@@ -243,18 +245,46 @@ public class ApplicationDbContext : DbContext
         // --- Project Roles ---
         modelBuilder.Entity<ProjectRole>().HasData(
             new ProjectRole { Id = 1, ProjectId = 1, Name = "Manager", TenantId = defaultTenant, CreatedAt = fixedDate },
-            new ProjectRole { Id = 2, ProjectId = 1, Name = "Engineer", TenantId = defaultTenant, CreatedAt = fixedDate }
+            new ProjectRole { Id = 2, ProjectId = 1, Name = "Engineer", TenantId = defaultTenant, CreatedAt = fixedDate },
+            new ProjectRole { Id = 3, ProjectId = 1, Name = "FinancialReviewer", TenantId = defaultTenant, CreatedAt = fixedDate },
+            new ProjectRole { Id = 4, ProjectId = 1, Name = "MediaReviewer", TenantId = defaultTenant, CreatedAt = fixedDate }
         );
 
-        // --- Project Team ---
+        // --- Project Role Permissions Assignments ---
+        modelBuilder.Entity<ProjectRolePermission>().HasData(
+            // Manager: Edit, Close, Settings, DailyLog
+            new ProjectRolePermission { ProjectRoleId = 1, PermissionId = 10, TenantId = defaultTenant },
+            new ProjectRolePermission { ProjectRoleId = 1, PermissionId = 11, TenantId = defaultTenant },
+            new ProjectRolePermission { ProjectRoleId = 1, PermissionId = 17, TenantId = defaultTenant },
+            new ProjectRolePermission { ProjectRoleId = 1, PermissionId = 16, TenantId = defaultTenant },
+            
+            // Engineer: Add Transaction
+            new ProjectRolePermission { ProjectRoleId = 2, PermissionId = 13, TenantId = defaultTenant },
+
+            // FinancialReviewer: View Financials, Review Transaction
+            new ProjectRolePermission { ProjectRoleId = 3, PermissionId = 12, TenantId = defaultTenant },
+            new ProjectRolePermission { ProjectRoleId = 3, PermissionId = 14, TenantId = defaultTenant },
+
+            // MediaReviewer: Review Media
+            new ProjectRolePermission { ProjectRoleId = 4, PermissionId = 15, TenantId = defaultTenant }
+        );
+
+        // --- Project Team (Linking Users to Projects) ---
         modelBuilder.Entity<ProjectTeamMember>().HasData(
-            new ProjectTeamMember { Id = 1, ProjectId = 1, UserId = 1, TenantId = defaultTenant, CreatedAt = fixedDate },
-            new ProjectTeamMember { Id = 2, ProjectId = 1, UserId = 2, TenantId = defaultTenant, CreatedAt = fixedDate }
+            new ProjectTeamMember { Id = 1, ProjectId = 1, UserId = 2, TenantId = defaultTenant, CreatedAt = fixedDate }, // Ahmed (Old)
+            new ProjectTeamMember { Id = 2, ProjectId = 1, UserId = 4, TenantId = defaultTenant, CreatedAt = fixedDate }, // PM
+            new ProjectTeamMember { Id = 3, ProjectId = 1, UserId = 5, TenantId = defaultTenant, CreatedAt = fixedDate }, // Engineer
+            new ProjectTeamMember { Id = 4, ProjectId = 1, UserId = 6, TenantId = defaultTenant, CreatedAt = fixedDate }, // Accountant
+            new ProjectTeamMember { Id = 5, ProjectId = 1, UserId = 7, TenantId = defaultTenant, CreatedAt = fixedDate }  // Consultant
         );
 
+        // --- Project Team Roles (Assigning Roles to Team Members) ---
         modelBuilder.Entity<ProjectTeamRole>().HasData(
-            new ProjectTeamRole { Id = 1, ProjectTeamMemberId = 1, ProjectRoleId = 1, TenantId = defaultTenant, CreatedAt = fixedDate },
-            new ProjectTeamRole { Id = 2, ProjectTeamMemberId = 2, ProjectRoleId = 2, TenantId = defaultTenant, CreatedAt = fixedDate }
+            new ProjectTeamRole { Id = 1, ProjectTeamMemberId = 1, ProjectRoleId = 2, TenantId = defaultTenant, CreatedAt = fixedDate }, // Ahmed -> Engineer
+            new ProjectTeamRole { Id = 2, ProjectTeamMemberId = 2, ProjectRoleId = 1, TenantId = defaultTenant, CreatedAt = fixedDate }, // PM -> Manager
+            new ProjectTeamRole { Id = 3, ProjectTeamMemberId = 3, ProjectRoleId = 2, TenantId = defaultTenant, CreatedAt = fixedDate }, // Engineer -> Engineer
+            new ProjectTeamRole { Id = 4, ProjectTeamMemberId = 4, ProjectRoleId = 3, TenantId = defaultTenant, CreatedAt = fixedDate }, // Accountant -> FinancialReviewer
+            new ProjectTeamRole { Id = 5, ProjectTeamMemberId = 5, ProjectRoleId = 4, TenantId = defaultTenant, CreatedAt = fixedDate }  // Consultant -> MediaReviewer
         );
 
         // --- Approval Rules ---

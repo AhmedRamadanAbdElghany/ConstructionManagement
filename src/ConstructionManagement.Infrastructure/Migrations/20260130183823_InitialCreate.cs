@@ -1049,7 +1049,15 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 values: new object[,]
                 {
                     { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "All", "ConstructionDB", null },
-                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "ViewProjects", "ConstructionDB", null }
+                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "ViewProjects", "ConstructionDB", null },
+                    { 10, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Project.Edit", "ConstructionDB", null },
+                    { 11, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Project.Close", "ConstructionDB", null },
+                    { 12, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Financials.View", "ConstructionDB", null },
+                    { 13, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Transaction.Add", "ConstructionDB", null },
+                    { 14, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Transaction.Review", "ConstructionDB", null },
+                    { 15, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Media.Review", "ConstructionDB", null },
+                    { 16, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "DailyLog.Close", "ConstructionDB", null },
+                    { 17, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Settings.Manage", "ConstructionDB", null }
                 });
 
             migrationBuilder.InsertData(
@@ -1057,8 +1065,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 columns: new[] { "Id", "CreatedAt", "Description", "Name", "TenantId", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Administrator", "ConstructionDB", null },
-                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "ProjectManager", "ConstructionDB", null }
+                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "SuperAdmin", "ConstructionDB", null },
+                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "CompanyAdmin", "ConstructionDB", null },
+                    { 3, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "User", "ConstructionDB", null }
                 });
 
             migrationBuilder.InsertData(
@@ -1066,8 +1075,13 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 columns: new[] { "Id", "CreatedAt", "Email", "FirstName", "LastName", "PasswordHash", "Phone", "TenantId", "UpdatedAt", "Username" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@construction.com", "System", "Admin", "admin_hash", null, "ConstructionDB", null, "admin" },
-                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "ahmed@construction.com", "Ahmed", "Ramadan", "ahmed_hash", null, "ConstructionDB", null, "ahmed" }
+                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@construction.com", "System", "Admin", "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6", null, "ConstructionDB", null, "admin" },
+                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "ahmed@construction.com", "Ahmed", "Ramadan", "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6", null, "ConstructionDB", null, "ahmed" },
+                    { 3, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "company_admin@construction.com", "Company", "Admin", "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6", null, "ConstructionDB", null, "company_admin" },
+                    { 4, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "pm@construction.com", "Project", "Manager", "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6", null, "ConstructionDB", null, "pm" },
+                    { 5, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "engineer@construction.com", "Site", "Engineer", "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6", null, "ConstructionDB", null, "engineer" },
+                    { 6, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "accountant@construction.com", "Project", "Accountant", "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6", null, "ConstructionDB", null, "accountant" },
+                    { 7, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "consultant@construction.com", "External", "Consultant", "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6", null, "ConstructionDB", null, "consultant" }
                 });
 
             migrationBuilder.InsertData(
@@ -1091,7 +1105,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 values: new object[,]
                 {
                     { 1, 1, "ConstructionDB" },
-                    { 2, 2, "ConstructionDB" }
+                    { 1, 2, "ConstructionDB" },
+                    { 2, 3, "ConstructionDB" }
                 });
 
             migrationBuilder.InsertData(
@@ -1099,8 +1114,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 columns: new[] { "RoleId", "UserId", "AssignedAt", "TenantId" },
                 values: new object[,]
                 {
-                    { 1, 1, new DateTime(2026, 1, 30, 17, 53, 32, 14, DateTimeKind.Utc).AddTicks(7301), "ConstructionDB" },
-                    { 2, 2, new DateTime(2026, 1, 30, 17, 53, 32, 14, DateTimeKind.Utc).AddTicks(8018), "ConstructionDB" }
+                    { 1, 1, new DateTime(2026, 1, 30, 18, 38, 20, 107, DateTimeKind.Utc).AddTicks(4591), "ConstructionDB" },
+                    { 2, 3, new DateTime(2026, 1, 30, 18, 38, 20, 107, DateTimeKind.Utc).AddTicks(6958), "ConstructionDB" }
                 });
 
             migrationBuilder.InsertData(
@@ -1135,7 +1150,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 values: new object[,]
                 {
                     { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Manager", 1, "ConstructionDB", null },
-                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Engineer", 1, "ConstructionDB", null }
+                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Engineer", 1, "ConstructionDB", null },
+                    { 3, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "FinancialReviewer", 1, "ConstructionDB", null },
+                    { 4, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "MediaReviewer", 1, "ConstructionDB", null }
                 });
 
             migrationBuilder.InsertData(
@@ -1153,14 +1170,17 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 columns: new[] { "Id", "CreatedAt", "ProjectId", "ReportsToUserId", "TenantId", "UpdatedAt", "UserId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, "ConstructionDB", null, 1 },
-                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, "ConstructionDB", null, 2 }
+                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, "ConstructionDB", null, 2 },
+                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, "ConstructionDB", null, 4 },
+                    { 3, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, "ConstructionDB", null, 5 },
+                    { 4, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, "ConstructionDB", null, 6 },
+                    { 5, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, "ConstructionDB", null, 7 }
                 });
 
             migrationBuilder.InsertData(
                 table: "ApprovalRequests",
                 columns: new[] { "Id", "BOQItemId", "CreatedAt", "FinalApprovedAt", "FinalApprovedByUserId", "ProjectApprovalRuleId", "ProjectId", "RejectionReason", "RequestedAt", "RequestedByUserId", "Source", "SourceId", "Status", "TenantId", "UpdatedAt" },
-                values: new object[] { 1, 101, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, 1, 1, null, new DateTime(2026, 1, 30, 17, 53, 32, 21, DateTimeKind.Utc).AddTicks(219), 2, 0, 1, "Approved", "ConstructionDB", null });
+                values: new object[] { 1, 101, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, 1, 1, null, new DateTime(2026, 1, 30, 18, 38, 20, 122, DateTimeKind.Utc).AddTicks(6941), 2, 0, 1, "Approved", "ConstructionDB", null });
 
             migrationBuilder.InsertData(
                 table: "BOQExecutedDeltas",
@@ -1207,12 +1227,30 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 values: new object[] { 1, null, 101, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, "EGP", null, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "V-INV-001", 1000m, 1, null, null, null, null, null, "Approved", 1000m, null, null, null, "ConstructionDB", null, null, null });
 
             migrationBuilder.InsertData(
+                table: "ProjectRolePermissions",
+                columns: new[] { "PermissionId", "ProjectRoleId", "TenantId" },
+                values: new object[,]
+                {
+                    { 10, 1, "ConstructionDB" },
+                    { 11, 1, "ConstructionDB" },
+                    { 16, 1, "ConstructionDB" },
+                    { 17, 1, "ConstructionDB" },
+                    { 13, 2, "ConstructionDB" },
+                    { 12, 3, "ConstructionDB" },
+                    { 14, 3, "ConstructionDB" },
+                    { 15, 4, "ConstructionDB" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "ProjectTeamRoles",
                 columns: new[] { "Id", "AssignedAt", "CreatedAt", "ProjectRoleId", "ProjectTeamMemberId", "TenantId", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2026, 1, 30, 17, 53, 32, 17, DateTimeKind.Utc).AddTicks(2150), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, 1, "ConstructionDB", null },
-                    { 2, new DateTime(2026, 1, 30, 17, 53, 32, 17, DateTimeKind.Utc).AddTicks(3817), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2, 2, "ConstructionDB", null }
+                    { 1, new DateTime(2026, 1, 30, 18, 38, 20, 114, DateTimeKind.Utc).AddTicks(9305), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2, 1, "ConstructionDB", null },
+                    { 2, new DateTime(2026, 1, 30, 18, 38, 20, 115, DateTimeKind.Utc).AddTicks(1144), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, 2, "ConstructionDB", null },
+                    { 3, new DateTime(2026, 1, 30, 18, 38, 20, 115, DateTimeKind.Utc).AddTicks(1149), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2, 3, "ConstructionDB", null },
+                    { 4, new DateTime(2026, 1, 30, 18, 38, 20, 115, DateTimeKind.Utc).AddTicks(1152), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 3, 4, "ConstructionDB", null },
+                    { 5, new DateTime(2026, 1, 30, 18, 38, 20, 115, DateTimeKind.Utc).AddTicks(1154), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 4, 5, "ConstructionDB", null }
                 });
 
             migrationBuilder.InsertData(
@@ -1223,7 +1261,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "Transactions",
                 columns: new[] { "Id", "Amount", "AttachmentPath", "BOQItemId", "CreatedAt", "CreatedByUserId", "Description", "InvoiceNumber", "ProjectId", "ReviewDate", "ReviewNotes", "ReviewedByUserId", "Status", "SupplierName", "TenantId", "TransactionDate", "Type", "UpdatedAt", "UserId", "UserId1" },
-                values: new object[] { 1, 5000m, null, 101, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, null, 1, null, null, null, 1, null, "ConstructionDB", new DateTime(2026, 1, 30, 17, 53, 32, 18, DateTimeKind.Utc).AddTicks(7951), 0, null, null, null });
+                values: new object[] { 1, 5000m, null, 101, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, null, 1, null, null, null, 1, null, "ConstructionDB", new DateTime(2026, 1, 30, 18, 38, 20, 118, DateTimeKind.Utc).AddTicks(4652), 0, null, null, null });
 
             migrationBuilder.InsertData(
                 table: "ApprovalSteps",
