@@ -21,10 +21,10 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
         // 1. Test JWT settings (must match what AuthService expects)
         var testSettings = new Dictionary<string, string?>
         {
-            { "Jwt:Key", "SuperSecretKey12345678901234567890" }, // 32+ chars
-            { "Jwt:Issuer", "TestIssuer" },
-            { "Jwt:Audience", "TestAudience" },
-            { "Jwt:ExpiryInMinutes", "60" }
+            { "JwtSettings:Key", "SuperSecretKey12345678901234567890" }, // 32+ chars
+            { "JwtSettings:Issuer", "TestIssuer" },
+            { "JwtSettings:Audience", "TestAudience" },
+            { "JwtSettings:ExpiryInMinutes", "60" }
         };
 
         var configuration = new ConfigurationBuilder()
@@ -94,9 +94,9 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
         var config = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                { "Jwt:Key", "SuperSecretKey12345678901234567890" },
-                { "Jwt:Issuer", "TestIssuer" },
-                { "Jwt:Audience", "TestAudience" }
+                { "JwtSettings:Key", "SuperSecretKey12345678901234567890" },
+                { "JwtSettings:Issuer", "TestIssuer" },
+                { "JwtSettings:Audience", "TestAudience" }
             })
             .Build();
 

@@ -12,6 +12,14 @@ public class User : BaseEntity
     public string PasswordHash { get; set; } = string.Empty;
     public string? Phone { get; set; }
 
+
+    // ── Multi-Tenancy ──────────────────────────────────────────────────────────
+    /// <summary>
+    /// يمثل اسم قاعدة البيانات الخاصة بالمستأجر (مثلاً: Construction_ClientA)
+    /// </summary>
+    public string TenantId { get; set; } = "ConstructionDB";
+
+
     // ── Core Navigation Properties ────────────────────────────────────────────
 
     /// <summary>

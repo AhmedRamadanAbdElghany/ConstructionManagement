@@ -2,41 +2,34 @@
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence;
 using ConstructionManagement.Infrastructure.Persistence.Repositories;
+using ConstructionManagement.Infrastructure.Services; // أضف هذا لاستخدام TenantContext
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Net.Http.Headers;
-using System.IO;
 using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace ConstructionManagement.Tests.Integration
 {
-    /// <summary>
-    /// Test base setup:
-    /// Steps: create in-memory SQLite DB -> open connection -> ensure schema -> provide UnitOfWork -> helpers for seeding and file creation.
-    /// </summary>
-    // Test Setup: IntegrationTestBase
-    // Step # | Step Description                       | Expected Result
-    // 1      | Create in-memory SQLite DB             | Connection opened
-    // 2      | Ensure schema created                  | Tables available
-    // 3      | Initialize UnitOfWork                  | Ready for tests
-    // DOCUMENTATION TABLES (replace with full setup/fixture steps):
-    // Step # | Step Description | Expected Result
-    // 1      | ...              | ...
     public abstract class IntegrationTestBase : IDisposable
     {
         protected readonly ApplicationDbContext Context;
-        protected readonly IUnitOfWork UnitOfWork; // يجب أن يكون protected ليراه الـ Test
+        protected readonly IUnitOfWork UnitOfWork;
+        protected readonly ITenantContext TenantContext; // إضافة لتسهيل التحكم به أثناء التست
 
         protected IntegrationTestBase()
         {
+            // 1. إعداد الـ TenantContext (كقيمة بسيطة لا تفعل شيئاً في SQLite)
+            TenantContext = new TenantContext();
+
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseSqlite("DataSource=:memory:") // استخدام Sqlite في الذاكرة
+                .UseSqlite("DataSource=:memory:")
                 .Options;
 
-            Context = new ApplicationDbContext(options);
-            Context.Database.OpenConnection();
-            Context.Database.EnsureCreated(); // SQLite in-memory يحتاج إنشاء المخطط لكل اتصال
+            // 2. تمرير الـ TenantContext للـ Context (لحل مشكلة الـ Constructor)
+            Context = new ApplicationDbContext(options, TenantContext);
 
-            // السطر السحري: هنا يتم منع الـ NullReferenceException
+            Context.Database.OpenConnection();
+            Context.Database.EnsureCreated();
+
             UnitOfWork = new UnitOfWork(Context);
         }
 
@@ -46,13 +39,15 @@ namespace ConstructionManagement.Tests.Integration
             Context.Dispose();
         }
 
-        protected async Task<User> SeedUserAsync(string email, string passwordHash, string fullName = "Test User")
+        // تحديث SeedUser ليشمل الـ TenantId الجديد كـ string
+        protected async Task<User> SeedUserAsync(string email, string passwordHash, string fullName = "Test User", string tenantId = "TestTenantDB")
         {
             var user = new User
             {
                 FullName = fullName,
                 Email = email,
-                PasswordHash = passwordHash
+                PasswordHash = passwordHash,
+                TenantId = tenantId // إضافة الحقل الجديد
             };
             Context.Users.Add(user);
             await Context.SaveChangesAsync();
@@ -87,14 +82,5 @@ namespace ConstructionManagement.Tests.Integration
                 ContentType = contentType
             };
         }
-
-        // TODO (planned new files):
-        // - MediaUploadAndReviewIntegrationTests.cs
-        // - TransactionsReviewIntegrationTests.cs
-        // - FileStorageValidationIntegrationTests.cs
-
-        // NOTE: Integration tests should validate setup correctness before service behavior.
-        // NOTE: Prefer end-to-end flows that touch DB + service + validation.
-        // NOTE: No error-related changes required here.
     }
 }

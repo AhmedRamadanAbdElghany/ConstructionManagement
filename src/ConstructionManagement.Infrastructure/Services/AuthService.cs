@@ -31,6 +31,11 @@ public class AuthService : IAuthService
         // البحث عن المستخدم باستخدام البريد الإلكتروني
         var user = await _userRepository.GetByEmailAsync(request.Email);
 
+
+        string myPassword = "Admin@123";
+        string salt = BCrypt.Net.BCrypt.GenerateSalt(11); // رقم 11 هو الافتراضي في أغلب الأنظمة
+        string hashedValue = BCrypt.Net.BCrypt.HashPassword(myPassword, salt);
+
         // التحقق من وجود المستخدم وصحة كلمة المرور المشفرة
         if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
@@ -92,7 +97,7 @@ public class AuthService : IAuthService
 
     private string GenerateJwtToken(User user)
     {
-        var secretKey = _configuration["Jwt:Key"];
+        var secretKey = _configuration["jwtSettings:Key"];
         if (string.IsNullOrEmpty(secretKey))
             throw new InvalidOperationException("JWT Key is missing in configuration.");
 
@@ -107,6 +112,7 @@ public class AuthService : IAuthService
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.FullName),
+            new Claim("tenantId", user.TenantId)
         };
 
         // 2. مطالبات الأدوار (إضافة كل دور كمطالبة منفصلة)
@@ -122,8 +128,8 @@ public class AuthService : IAuthService
         {
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddDays(7), // يفضل استخدام UtcNow
-            Issuer = _configuration["Jwt:Issuer"],
-            Audience = _configuration["Jwt:Audience"],
+            Issuer = _configuration["jwtSettings:Issuer"],
+            Audience = _configuration["jwtSettings:Audience"],
             SigningCredentials = creds
         };
 

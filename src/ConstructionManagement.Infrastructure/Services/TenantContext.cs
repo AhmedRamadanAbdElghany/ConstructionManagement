@@ -4,5 +4,5 @@ namespace ConstructionManagement.Infrastructure.Services; // or Application.Comm
 
 public class TenantContext : ITenantContext
 {
-    public Guid? TenantId { get; set; }
+    public string? TenantId { get; set; }
 }

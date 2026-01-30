@@ -25,15 +25,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateProjectRequestValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<UpdateCompanySettingsRequestValidator>();
 
-// 2. Database (master context for login/tenant discovery)
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// 2. Database
+builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+{
+    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+    var connectionString = configuration.GetConnectionString("DefaultConnection");
+    options.UseSqlServer(connectionString);
+});
 
-// 3. Tenant-aware DbContext factory (for runtime tenant switching)
-builder.Services.AddDbContextFactory<ApplicationDbContext>();
-builder.Services.AddScoped(sp => sp.GetRequiredService<IDbContextFactory<ApplicationDbContext>>().CreateDbContext());
 
 // 4. Tenant context (scoped per request)
 builder.Services.AddScoped<ITenantContext, TenantContext>();
@@ -51,6 +51,7 @@ builder.Services.AddScoped<IRepository<ProjectTeamRole>, Repository<ProjectTeamR
 builder.Services.AddScoped<IRepository<BOQExecutedDelta>, Repository<BOQExecutedDelta>>();
 
 // 6. Services
+builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
@@ -156,9 +157,15 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowAll",
+        builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
+
 var app = builder.Build();
 
-// 11. Middleware Pipeline
+// --- 11. Middleware Pipeline (ترتيب Middleware مهم جداً) ---
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -166,6 +173,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+app.UseCors("AllowAll");
 
 // Tenant resolution middleware – MUST come early
 app.UseMiddleware<TenantResolutionMiddleware>();

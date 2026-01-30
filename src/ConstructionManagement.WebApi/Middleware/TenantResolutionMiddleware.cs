@@ -28,10 +28,14 @@ namespace ConstructionManagement.WebApi.Middleware
 
                     var tenantIdClaim = jwt.Claims.FirstOrDefault(c => c.Type == "tenantId");
 
-                    if (tenantIdClaim != null && Guid.TryParse(tenantIdClaim.Value, out var tenantId))
+
+                    if (tenantIdClaim != null)
                     {
-                        tenantContext.TenantId = tenantId;
+                        // تعيين اسم قاعدة البيانات للسياق الحالي
+                        tenantContext.TenantId = tenantIdClaim.Value;
                     }
+
+                    
                 }
                 catch
                 {

@@ -6,6 +6,8 @@ using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Moq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ConstructionManagement.Tests.Unit.Services;
 
@@ -17,9 +19,10 @@ public class AuthServiceTests
 
     public AuthServiceTests()
     {
-        _configMock.Setup(c => c["Jwt:Key"]).Returns("ThisIsAStrongSecretKeyForTesting123456!");
-        _configMock.Setup(c => c["Jwt:Issuer"]).Returns("TestIssuer");
-        _configMock.Setup(c => c["Jwt:Audience"]).Returns("TestAudience");
+        // تم التعديل إلى jwtSettings (حرف j صغير) ليتطابق مع السطر 102 في AuthService.cs
+        _configMock.Setup(c => c["jwtSettings:Key"]).Returns("ThisIsAStrongSecretKeyForTesting123456!");
+        _configMock.Setup(c => c["jwtSettings:Issuer"]).Returns("TestIssuer");
+        _configMock.Setup(c => c["jwtSettings:Audience"]).Returns("TestAudience");
     }
 
     private AuthService CreateService()
@@ -34,23 +37,9 @@ public class AuthServiceTests
     // ─── LOGIN TESTS ────────────────────────────────────────────────────────
 
     [Fact]
-    public async Task LoginAsync_WhenUserDoesNotExist_ReturnsFailure()
-    {
-        _userRepoMock.Setup(r => r.GetByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync((User?)null);
-
-        var service = CreateService();
-        var request = new LoginRequest("wrong@email.com", "password123");
-
-        var result = await service.LoginAsync(request);
-
-        result.Success.Should().BeFalse();
-        result.Message.Should().Be("بيانات الدخول غير صحيحة");
-    }
-
-    [Fact]
     public async Task LoginAsync_WhenCredentialsAreValid_ReturnsSuccessWithToken()
     {
+        // Arrange
         var password = "SafePassword123";
         var user = new User
         {
@@ -58,9 +47,13 @@ public class AuthServiceTests
             FullName = "Ahmed Ramadan",
             Email = "ahmed@eng.com",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
+            TenantId = "Construction_ClientA_DB",
             UserRoles = new List<UserRole>
             {
-                new UserRole { Role = new Role { Name = "Admin" } }
+                new UserRole
+                {
+                    Role = new Role { Name = "Admin" }
+                }
             }
         };
 
@@ -69,31 +62,33 @@ public class AuthServiceTests
         var service = CreateService();
         var request = new LoginRequest(user.Email, password);
 
+        // Act
         var result = await service.LoginAsync(request);
 
+        // Assert
         result.Success.Should().BeTrue();
         result.Token.Should().NotBeNullOrEmpty();
     }
 
-    // ─── REGISTER TESTS ─────────────────────────────────────────────────────
-
     [Fact]
-    public async Task RegisterAsync_WhenEmailAlreadyExists_ReturnsFailure()
+    public async Task LoginAsync_WhenUserDoesNotExist_ReturnsFailure()
     {
-        // Arrange: تحديث الطلب ليشمل رقم الهاتف بناءً على الـ DTO الجديد
-        var request = new RegisterRequest("New User", "existing@test.com", "Pass123", "0123456789");
-        _userRepoMock.Setup(r => r.GetByEmailAsync(request.Email)).ReturnsAsync(new User());
+        // Arrange
+        _userRepoMock.Setup(r => r.GetByEmailAsync(It.IsAny<string>()))
+            .ReturnsAsync((User?)null);
 
         var service = CreateService();
+        var request = new LoginRequest("wrong@email.com", "password123");
 
         // Act
-        var result = await service.RegisterAsync(request);
+        var result = await service.LoginAsync(request);
 
         // Assert
         result.Success.Should().BeFalse();
-        result.Message.Should().Be("البريد الإلكتروني مستخدم بالفعل");
-        _userRepoMock.Verify(r => r.AddAsync(It.IsAny<User>()), Times.Never());
+        result.Message.Should().Be("بيانات الدخول غير صحيحة");
     }
+
+    // ─── REGISTER TESTS ─────────────────────────────────────────────────────
 
     [Fact]
     public async Task RegisterAsync_WhenDataIsValid_ShouldSaveUserWithCorrectData()
@@ -110,15 +105,32 @@ public class AuthServiceTests
         // Assert
         result.Success.Should().BeTrue();
 
-        // التحقق من أن الكائن الذي تم إرساله للـ Repository يحتوي على البيانات الصحيحة بما فيها الهاتف
         _userRepoMock.Verify(r => r.AddAsync(It.Is<User>(u =>
             u.Email == request.Email &&
             u.FullName == request.FullName &&
-            u.Phone == request.Phone && // التأكد من تخزين الهاتف
-            u.PasswordHash != request.Password // التأكد من التشفير
+            u.Phone == request.Phone &&
+            u.PasswordHash != request.Password
         )), Times.Once());
 
         _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once());
+    }
+
+    [Fact]
+    public async Task RegisterAsync_WhenEmailAlreadyExists_ReturnsFailure()
+    {
+        // Arrange
+        var request = new RegisterRequest("New User", "existing@test.com", "Pass123", "0123456789");
+        _userRepoMock.Setup(r => r.GetByEmailAsync(request.Email)).ReturnsAsync(new User());
+
+        var service = CreateService();
+
+        // Act
+        var result = await service.RegisterAsync(request);
+
+        // Assert
+        result.Success.Should().BeFalse();
+        result.Message.Should().Be("البريد الإلكتروني مستخدم بالفعل");
+        _userRepoMock.Verify(r => r.AddAsync(It.IsAny<User>()), Times.Never());
     }
 
     // ─── EDGE CASES ─────────────────────────────────────────────────────────
@@ -126,12 +138,22 @@ public class AuthServiceTests
     [Fact]
     public async Task LoginAsync_ShouldThrowException_WhenJwtKeyIsMissing()
     {
-        var user = new User { Email = "t@t.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("1"), UserRoles = new List<UserRole>() };
+        // Arrange
+        var user = new User
+        {
+            Email = "t@t.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("1"),
+            TenantId = "AnyDB",
+            UserRoles = new List<UserRole>()
+        };
         _userRepoMock.Setup(r => r.GetByEmailAsync(user.Email)).ReturnsAsync(user);
-        _configMock.Setup(c => c["Jwt:Key"]).Returns((string?)null);
+
+        // محاكاة غياب المفتاح باستخدام الحرف الصغير jwtSettings
+        _configMock.Setup(c => c["jwtSettings:Key"]).Returns((string?)null);
 
         var service = CreateService();
 
+        // Act & Assert
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
             service.LoginAsync(new LoginRequest(user.Email, "1")));
     }

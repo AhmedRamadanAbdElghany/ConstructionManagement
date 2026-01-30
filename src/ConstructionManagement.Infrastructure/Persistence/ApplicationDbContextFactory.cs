@@ -8,8 +8,11 @@ namespace ConstructionManagement.Infrastructure.Persistence;
 /// Design-time factory for EF Core tools (migrations, dotnet ef commands, etc.).
 /// Uses the master database connection string (not tenant-specific).
 /// </summary>
+/// 
+/*
 public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
 {
+
     public ApplicationDbContext CreateDbContext(string[] args)
     {
         // Try to locate the WebApi project folder (where appsettings.json lives)
@@ -70,3 +73,4 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
         return new ApplicationDbContext(optionsBuilder.Options);
     }
 }
+*/
