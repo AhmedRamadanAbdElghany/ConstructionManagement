@@ -1,0 +1,7 @@
+﻿  Determining projects to restore...
+  All projects are up-to-date for restore.
+  ConstructionManagement.Domain -> C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\bin\Debug\net9.0\ConstructionManagement.Domain.dll
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Application\DTOs\UploadMediaRequest.cs(13,22): warning CS8618: Non-nullable property 'File' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable. [C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Application\ConstructionManagement.Application.csproj]
+  ConstructionManagement.Application -> C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Application\bin\Debug\net9.0\ConstructionManagement.Application.dll
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Persistence\ApplicationDbContext.cs(246,122): error CS1003: Syntax error, ',' expected [C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Persistence\ApplicationDbContext.cs(251,10): error CS1026: ) expected [C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]

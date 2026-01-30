@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.DTOs;
+using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using ConstructionManagement.Infrastructure.Services;
@@ -54,8 +54,8 @@ public class InvoiceServiceTests
             ReviewDate = reviewDate,
             AttachmentPath = "/uploads/inv1.pdf",
             CreatedAt = createdAt,
-            Reviewer = new User { FullName = "Ahmed Accountant" },
-            CreatedBy = new User { FullName = "Engineer Ali" }
+            Reviewer = new User { FirstName = "Ahmed", LastName = "Accountant" },
+            CreatedBy = new User { FirstName = "Engineer", LastName = "Ali" }
         };
 
         _invoiceRepoMock.Setup(r => r.AsQueryable())

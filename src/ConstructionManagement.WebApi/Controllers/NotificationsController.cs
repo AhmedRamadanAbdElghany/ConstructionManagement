@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.Interfaces;
+using ConstructionManagement.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

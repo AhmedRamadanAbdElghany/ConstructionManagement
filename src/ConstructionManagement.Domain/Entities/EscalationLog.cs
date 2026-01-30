@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
@@ -6,9 +6,14 @@ namespace ConstructionManagement.Domain.Entities;
 /// Log entry for escalation notifications sent due to delays, missing approvals,
 /// or other critical events (project-level or item-specific)
 /// </summary>
-public class EscalationLog : BaseEntity
+public class EscalationLog : BaseEntity, ITenantEntity
 {
-    // Primary Key inherited from BaseEntity → public int Id { get; set; }
+    // Primary Key inherited from BaseEntity ? public int Id { get; set; }
+
+    /// <summary>
+    /// Tenant identifier for data isolation
+    /// </summary>
+    public string TenantId { get; set; } = "ConstructionDB";
 
     // Required: every escalation belongs to a project
     public int ProjectId { get; set; }
@@ -17,13 +22,13 @@ public class EscalationLog : BaseEntity
     public virtual Project Project { get; set; } = null!;
 
     // Optional: specific BOQ item that caused the escalation
-    // null → escalation is for the entire project
+    // null ? escalation is for the entire project
     public int? BOQItemId { get; set; }
 
     [ForeignKey(nameof(BOQItemId))]
     public virtual BOQItem? BOQItem { get; set; }
 
-    // ── Escalation details ────────────────────────────────────────────────────
+    // -- Escalation details ----------------------------------------------------
     public string EscalationType { get; set; } = string.Empty;   // "StartDelay", "EndDelay", "ApprovalTimeout", "BudgetOverrun", etc.
 
     // Who was notified / escalated to

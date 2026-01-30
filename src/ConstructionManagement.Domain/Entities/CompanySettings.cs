@@ -1,8 +1,11 @@
-﻿namespace ConstructionManagement.Domain.Entities
+namespace ConstructionManagement.Domain.Entities
 {
-    public class CompanySettings : BaseEntity
+    public class CompanySettings : BaseEntity, ITenantEntity
     {
-        public int Id { get; set; } = 1; // Fixed single row (or use singleton pattern)
+        /// <summary>
+        /// Tenant identifier for data isolation
+        /// </summary>
+        public string TenantId { get; set; } = "ConstructionDB";
 
         // All the same settings as ProjectSettings
         public bool EnableDelayNotification { get; set; } = true;
@@ -23,3 +26,4 @@
         // You can add more global defaults here later
     }
 }
+

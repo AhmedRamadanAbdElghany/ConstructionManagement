@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
@@ -6,9 +6,14 @@ namespace ConstructionManagement.Domain.Entities;
 /// Records payments received from the client/owner for the project
 /// (advance payment, interim payments, final payment, etc.)
 /// </summary>
-public class ClientPayment : BaseEntity
+public class ClientPayment : BaseEntity, ITenantEntity
 {
-    // Primary Key inherited from BaseEntity → public int Id { get; set; }
+    /// <summary>
+    /// Tenant identifier for data isolation
+    /// </summary>
+    public string TenantId { get; set; } = "ConstructionDB";
+
+    // Primary Key inherited from BaseEntity ? public int Id { get; set; }
 
     // Required: every client payment belongs to one project
     public int ProjectId { get; set; }
@@ -16,7 +21,7 @@ public class ClientPayment : BaseEntity
     [ForeignKey(nameof(ProjectId))]
     public virtual Project Project { get; set; } = null!;
 
-    // ── Payment metadata ──────────────────────────────────────────────────────
+    // -- Payment metadata ------------------------------------------------------
     public string? PaymentNumber { get; set; }          // e.g. "ADV-001", "INT-2025-03", "FINAL-01"
 
     public DateTime PaymentDate { get; set; }           // actual date the money was received
@@ -27,10 +32,10 @@ public class ClientPayment : BaseEntity
 
     public string? Description { get; set; }            // e.g. "Payment for 30% completion"
 
-    // ── Status & Confirmation ─────────────────────────────────────────────────
+    // -- Status & Confirmation -------------------------------------------------
     public bool IsConfirmed { get; set; } = false;      // bank transfer confirmed, receipt verified, etc.
 
-    // ── Evidence ──────────────────────────────────────────────────────────────
+    // -- Evidence --------------------------------------------------------------
     public string? AttachmentPath { get; set; }         // path to bank receipt, transfer screenshot, cheque image...
 
     // Optional future additions you might consider:

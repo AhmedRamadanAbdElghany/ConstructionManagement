@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
@@ -6,8 +6,13 @@ namespace ConstructionManagement.Domain.Entities;
 /// Daily progress log / diary entry for a specific BOQ item
 /// Used to track actual progress, notes, and closing of daily work
 /// </summary>
-public class ItemDailyLog : BaseEntity
+public class ItemDailyLog : BaseEntity, ITenantEntity
 {
+    /// <summary>
+    /// Tenant identifier for data isolation
+    /// </summary>
+    public string TenantId { get; set; } = "ConstructionDB";
+
     // Which BOQ item this daily log belongs to
     public int BOQItemId { get; set; }
 
@@ -17,7 +22,7 @@ public class ItemDailyLog : BaseEntity
     // The date this log represents (usually one log per day per item)
     public DateTime LogDate { get; set; }
 
-    // ── Progress & Status ─────────────────────────────────────────────────────
+    // -- Progress & Status -----------------------------------------------------
     public decimal? DailyProgressPercentage { get; set; }   // e.g. 2.5%, 15%, null = not measured
 
     public string? ProgressNotes { get; set; }              // observations, issues, weather impact, etc.
@@ -28,7 +33,7 @@ public class ItemDailyLog : BaseEntity
 
     public DateTime? ClosedAt { get; set; }
 
-    // ── Audit / Responsibility ────────────────────────────────────────────────
+    // -- Audit / Responsibility ------------------------------------------------
     public int CreatedByUserId { get; set; }
 
     [ForeignKey(nameof(CreatedByUserId))]

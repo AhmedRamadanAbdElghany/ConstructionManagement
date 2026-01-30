@@ -1,0 +1,88 @@
+﻿Test run for C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\bin\Debug\net9.0\ConstructionManagement.Tests.dll (.NETCoreApp,Version=v9.0)
+VSTest version 17.14.1 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.12)
+[xUnit.net 00:00:00.08]   Discovering: ConstructionManagement.Tests
+[xUnit.net 00:00:00.13]   Discovered:  ConstructionManagement.Tests
+[xUnit.net 00:00:00.13]   Starting:    ConstructionManagement.Tests
+  Passed ConstructionManagement.Tests.Integration.FileStorageValidationIntegrationTests.DeleteFileAsync_ExistingFile_ShouldRemoveFile [30 ms]
+  Passed ConstructionManagement.Tests.Integration.FileStorageValidationIntegrationTests.UploadFileAsync_TooLarge_ShouldThrow [65 ms]
+  Passed ConstructionManagement.Tests.Integration.FileStorageValidationIntegrationTests.UploadFileAsync_InvalidExtension_ShouldThrow [5 ms]
+[xUnit.net 00:00:00.30]     ConstructionManagement.Tests.Integration.ProjectRolePermissionTests.Placeholder [SKIP]
+[xUnit.net 00:00:00.30]       TODO: add integration coverage for project-role permissions.
+  Passed ConstructionManagement.Tests.Integration.FileStorageValidationIntegrationTests.UploadFileAsync_ValidFile_ShouldReturnRelativePath [7 ms]
+  Skipped ConstructionManagement.Tests.Integration.ProjectRolePermissionTests.Placeholder [1 ms]
+  Passed ConstructionManagement.Tests.Integration.ProjectRolePermissionTests.Requirement_ShouldStorePermission [10 ms]
+  Passed ConstructionManagement.Tests.Integration.BOQAndTransactionIntegrationTests.CreateTransactionAsync_ShouldPersistTransaction [2 s]
+  Passed ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests.ReviewTransaction_ShouldUpdateReviewFields [2 s]
+  Passed ConstructionManagement.Tests.Integration.EscalationIntegrationTests.CheckProjectAndItemDelaysAsync_ShouldCreateEscalationLog [2 s]
+  Passed ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests.UploadMedia_WithApprovalRule_CreatesApprovalRequest [2 s]
+  Passed ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests.ReviewTransaction_Approve_ShouldUpdateFields [298 ms]
+  Passed ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests.UploadMedia_WhenReviewNotRequired_AutoApproves [223 ms]
+dotnet : [xUnit.net 
+00:00:02.65]     ConstructionMa
+nagement.Tests.Integration.Esca
+lationIntegrationTests.CheckPro
+jectAndItemDelaysAsync_ShouldDe
+tectDelayedProjects [FAIL]
+At line:1 char:1
++ dotnet test --no-build 
+--filter "FullyQualifiedName~In
+tegration" --lo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~
+    + CategoryInfo          :  
+   NotSpecified: ([xUnit.net   
+  00:0...Projects [FAIL]:Str   
+ ing) [], RemoteException
+    + FullyQualifiedErrorId :  
+   NativeCommandError
+ 
+[xUnit.net 00:00:02.65]       Expected object not to be <null> because ┘è╪¼╪¿ ╪¬╪│╪¼┘è┘ä ╪º┘ä╪¬╪╡╪╣┘è╪» ┘ü┘è ╪¼╪»┘ê┘ä EscalationLogs.
+[xUnit.net 00:00:02.65]       Stack Trace:
+[xUnit.net 00:00:02.65]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+[xUnit.net 00:00:02.65]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+[xUnit.net 00:00:02.65]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+[xUnit.net 00:00:02.66]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+[xUnit.net 00:00:02.66]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+[xUnit.net 00:00:02.66]            at FluentAssertions.Execution.AssertionScope.FailWith(String message)
+[xUnit.net 00:00:02.66]            at FluentAssertions.Primitives.ReferenceTypeAssertions`2.NotBeNull(String because, Object[] becauseArgs)
+[xUnit.net 00:00:02.66]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\EscalationIntegrationTests.cs(85,0): at ConstructionManagement.Tests.Integration.EscalationIntegrationTests.CheckProjectAndItemDelaysAsync_ShouldDetectDelayedProjects()
+[xUnit.net 00:00:02.66]         --- End of stack trace from previous location ---
+  Passed ConstructionManagement.Tests.Integration.BOQAndTransactionIntegrationTests.MultiStepProfitabilityScenario [353 ms]
+  Failed ConstructionManagement.Tests.Integration.EscalationIntegrationTests.CheckProjectAndItemDelaysAsync_ShouldDetectDelayedProjects [399 ms]
+  Error Message:
+   Expected object not to be <null> because ┘è╪¼╪¿ ╪¬╪│╪¼┘è┘ä ╪º┘ä╪¬╪╡╪╣┘è╪» ┘ü┘è ╪¼╪»┘ê┘ä EscalationLogs.
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message)
+   at FluentAssertions.Primitives.ReferenceTypeAssertions`2.NotBeNull(String because, Object[] becauseArgs)
+   at ConstructionManagement.Tests.Integration.EscalationIntegrationTests.CheckProjectAndItemDelaysAsync_ShouldDetectDelayedProjects() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\EscalationIntegrationTests.cs:line 85
+--- End of stack trace from previous location ---
+  Passed ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests.ReviewTransaction_WhenAlreadyReviewed_ShouldReturnFalse [241 ms]
+  Passed ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests.UploadAndReviewMedia_WithApprovalRule_CreatesAndProcessesApprovalRequest [286 ms]
+  Passed ConstructionManagement.Tests.Integration.BOQAndTransactionIntegrationTests.Transaction_ShouldAffect_ProjectProfitability [250 ms]
+  Passed ConstructionManagement.Tests.Integration.EscalationIntegrationTests.CheckProjectAndItemDelaysAsync_WhenNotificationsDisabled_DoesNothing [206 ms]
+  Passed ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests.ReviewTransaction_WhenAlreadyReviewed_ReturnsFalse [169 ms]
+  Passed ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests.ReviewMedia_Approve_SetsApprovedStatus [177 ms]
+  Passed ConstructionManagement.Tests.Integration.AuthServiceIntegrationTests.LoginAsync_WithValidCredentials_ReturnsToken [2 s]
+[xUnit.net 00:00:04.04]   Finished:    ConstructionManagement.Tests
+  Passed ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests.UploadAndReviewMedia_WhenReviewNotRequired_AutoApproves [148 ms]
+  Passed ConstructionManagement.Tests.Integration.FullSystemIntegrationTests.Auth_Project_BOQ_HappyPath_ShouldSucceed [2 s]
+  Passed ConstructionManagement.Tests.Integration.FullSystemIntegrationTests.BOQ_CreateAndProgress_ShouldPersistCorrectData [123 ms]
+  Passed ConstructionManagement.Tests.Integration.AuthServiceIntegrationTests.LoginAsync_WithValidCredentials_ReturnsToken_RealDB [841 ms]
+  Passed ConstructionManagement.Tests.Integration.FullSystemIntegrationTests.Auth_LoginFullProcess_ShouldSucceed [746 ms]
+
+Test Run Failed.
+Total tests: 26
+     Passed: 24
+     Failed: 1
+    Skipped: 1
+ Total time: 4.6297 Seconds

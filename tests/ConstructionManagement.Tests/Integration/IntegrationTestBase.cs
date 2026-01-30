@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.Interfaces;
+using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence;
 using ConstructionManagement.Infrastructure.Persistence.Repositories;
@@ -18,7 +18,7 @@ namespace ConstructionManagement.Tests.Integration
         protected IntegrationTestBase()
         {
             // 1. إعداد الـ TenantContext (كقيمة بسيطة لا تفعل شيئاً في SQLite)
-            TenantContext = new TenantContext();
+            TenantContext = new TenantContext { TenantId = "ConstructionDB" };
 
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseSqlite("DataSource=:memory:")
@@ -28,7 +28,19 @@ namespace ConstructionManagement.Tests.Integration
             Context = new ApplicationDbContext(options, TenantContext);
 
             Context.Database.OpenConnection();
-            Context.Database.EnsureCreated();
+            try 
+            {
+                Context.Database.EnsureCreated();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"FATAL: EnsureCreated failed: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+                }
+                throw;
+            }
 
             UnitOfWork = new UnitOfWork(Context);
         }
@@ -40,11 +52,13 @@ namespace ConstructionManagement.Tests.Integration
         }
 
         // تحديث SeedUser ليشمل الـ TenantId الجديد كـ string
-        protected async Task<User> SeedUserAsync(string email, string passwordHash, string fullName = "Test User", string tenantId = "TestTenantDB")
+        protected async Task<User> SeedUserAsync(string email, string passwordHash, string fullName = "Test User", string tenantId = "ConstructionDB")
         {
+            var nameParts = fullName.Split(' ', 2);
             var user = new User
             {
-                FullName = fullName,
+                FirstName = nameParts[0],
+                LastName = nameParts.Length > 1 ? nameParts[1] : string.Empty,
                 Email = email,
                 PasswordHash = passwordHash,
                 TenantId = tenantId // إضافة الحقل الجديد

@@ -1,28 +1,33 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
-public class BOQExecutedDelta : BaseEntity
+public class BOQExecutedDelta : BaseEntity, ITenantEntity
 {
+    /// <summary>
+    /// Tenant identifier for data isolation
+    /// </summary>
+    public string TenantId { get; set; } = "ConstructionDB";
+
     public int BOQItemId { get; set; }
 
     [ForeignKey(nameof(BOQItemId))]
     public virtual BOQItem BOQItem { get; set; } = null!;
 
     /// <summary>
-    /// الكمية الإضافية في هذا التغيير (ممكن تكون سالبة لو تصحيح)
+    /// ?????? ???????? ?? ??? ??????? (???? ???? ????? ?? ?????)
     /// </summary>
     public decimal DeltaQuantity { get; set; }
 
     public DateTime DeltaDate { get; set; } = DateTime.UtcNow.Date;
 
     /// <summary>
-    /// نوع التغيير: DailyLog, ManualAdjustment, Correction
+    /// ??? ???????: DailyLog, ManualAdjustment, Correction
     /// </summary>
     public string ChangeType { get; set; } = string.Empty;
 
     /// <summary>
-    /// مرجع التغيير (مثل ID اليومية أو التعديل)
+    /// ???? ??????? (??? ID ??????? ?? ???????)
     /// </summary>
     public int? ReferenceId { get; set; }
 
@@ -32,7 +37,7 @@ public class BOQExecutedDelta : BaseEntity
     public virtual User CreatedBy { get; set; } = null!;
 
     /// <summary>
-    /// وقت معالجة الـ Delta في الـ batch job (لمعرفة إيه اللي اتعالج وإيه لسه)
+    /// ??? ?????? ??? Delta ?? ??? batch job (?????? ??? ???? ?????? ???? ???)
     /// </summary>
     public DateTime? ProcessedAt { get; set; }
 }

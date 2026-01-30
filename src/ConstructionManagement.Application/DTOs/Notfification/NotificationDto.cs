@@ -1,4 +1,4 @@
-﻿namespace ConstructionManagement.Application.DTOs.Notfification
+namespace ConstructionManagement.Application.DTOs.Notfification
 {
     public record NotificationDto(
         int Id,

@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.Interfaces;
+using ConstructionManagement.Application.Interfaces;
 
 namespace ConstructionManagement.Infrastructure.Services; // or Application.Common
 

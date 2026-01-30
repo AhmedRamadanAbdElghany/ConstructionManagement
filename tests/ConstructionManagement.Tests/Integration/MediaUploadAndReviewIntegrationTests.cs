@@ -55,7 +55,7 @@ public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
     public async Task UploadMedia_WithApprovalRule_CreatesApprovalRequest()
     {
         // Arrange
-        var user = new User { FullName = "Uploader", Email = "u@u.com", PasswordHash = "x" };
+        var user = new User { FirstName = "Media", LastName = "Uploader", Email = "u@u.com", PasswordHash = "x" };
         Context.Users.Add(user);
         await Context.SaveChangesAsync();
 
@@ -122,7 +122,7 @@ public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
     public async Task ReviewMedia_Approve_SetsApprovedStatus()
     {
         // Arrange
-        var user = new User { FullName = "Reviewer", Email = "r@r.com", PasswordHash = "x" };
+        var user = new User { FirstName = "Media", LastName = "Reviewer", Email = "r@r.com", PasswordHash = "x" };
         Context.Users.Add(user);
         await Context.SaveChangesAsync();
 
@@ -174,7 +174,7 @@ public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
     [Fact]
     public async Task UploadMedia_WhenReviewNotRequired_AutoApproves()
     {
-        var user = new User { FullName = "Uploader2", Email = "u2@u.com", PasswordHash = "x" };
+        var user = new User { FirstName = "Media", LastName = "Uploader2", Email = "u2@u.com", PasswordHash = "x" };
         Context.Users.Add(user);
         await Context.SaveChangesAsync();
 
@@ -221,7 +221,7 @@ public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
     public async Task UploadAndReviewMedia_WithApprovalRule_CreatesAndProcessesApprovalRequest()
     {
         // Arrange
-        var user = new User { FullName = "Uploader", Email = "u@u.com", PasswordHash = "x" };
+        var user = new User { FirstName = "Media", LastName = "Uploader", Email = "u@u.com", PasswordHash = "x" };
         Context.Users.Add(user);
         await Context.SaveChangesAsync();
 
@@ -285,7 +285,7 @@ public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
     public async Task UploadAndReviewMedia_WhenReviewNotRequired_AutoApproves()
     {
         // Arrange
-        var user = new User { FullName = "Uploader2", Email = "u2@u.com", PasswordHash = "x" };
+        var user = new User { FirstName = "Media", LastName = "Uploader2", Email = "u2@u.com", PasswordHash = "x" };
         Context.Users.Add(user);
         await Context.SaveChangesAsync();
 

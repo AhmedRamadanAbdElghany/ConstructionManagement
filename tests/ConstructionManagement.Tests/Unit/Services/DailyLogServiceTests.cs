@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.DTOs;
+using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
@@ -120,7 +120,7 @@ public class DailyLogServiceTests
             {
                 BOQItemId = itemId,
                 LogDate = DateTime.UtcNow,
-                ClosedByUser = new User { FullName = "Ahmed Ramadan" }
+                ClosedByUser = new User { FirstName = "Ahmed", LastName = "Ramadan" }
             }
         }.BuildMock();
 

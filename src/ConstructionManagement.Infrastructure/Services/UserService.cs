@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.DTOs;
+using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
@@ -36,9 +36,12 @@ public class UserService : IUserService
         if (emailExists)
             throw new InvalidOperationException("البريد الإلكتروني مسجل بالفعل لمستخدم آخر");
 
+        // 2. إنشاء كائن المستخدم وتشفير كلمة المرور
+        var nameParts = request.FullName.Split(' ', 2);
         var user = new User
         {
-            FullName = request.FullName,
+            FirstName = nameParts[0],
+            LastName = nameParts.Length > 1 ? nameParts[1] : string.Empty,
             Email = request.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
             CreatedAt = DateTime.UtcNow

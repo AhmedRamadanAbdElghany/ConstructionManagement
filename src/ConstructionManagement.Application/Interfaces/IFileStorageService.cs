@@ -1,4 +1,4 @@
-﻿// Infrastructure/Services/IFileStorageService.cs
+// Infrastructure/Services/IFileStorageService.cs
 using Microsoft.AspNetCore.Http;
 
 namespace ConstructionManagement.Infrastructure.Services;

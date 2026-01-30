@@ -49,7 +49,7 @@ public class TransactionsReviewIntegrationTests : IntegrationTestBase
     public async Task ReviewTransaction_ShouldUpdateReviewFields()
     {
         // Arrange
-        var user = new User { FullName = "Reviewer", Email = "rev@test.com", PasswordHash = "x" };
+        var user = new User { FirstName = "Tx", LastName = "Reviewer", Email = "rev@test.com", PasswordHash = "x" };
         Context.Users.Add(user);
         await Context.SaveChangesAsync();
 
@@ -119,7 +119,7 @@ public class TransactionsReviewIntegrationTests : IntegrationTestBase
     [Fact]
     public async Task ReviewTransaction_WhenAlreadyReviewed_ReturnsFalse()
     {
-        var user = new User { FullName = "Reviewer", Email = "rev2@test.com", PasswordHash = "x" };
+        var user = new User { FirstName = "Tx", LastName = "Reviewer2", Email = "rev2@test.com", PasswordHash = "x" };
         Context.Users.Add(user);
         await Context.SaveChangesAsync();
 

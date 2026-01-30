@@ -1,8 +1,7 @@
-﻿using ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Domain.Entities;
 
 public class Package : BaseEntity
 {
-    public int Id { get; set; }
     public string Name { get; set; } = string.Empty; // "Super", "Super Lux", "Premium", "Free"
     public string Description { get; set; } = string.Empty;
     public decimal Price { get; set; } = 0m; // السعر (0 = مجاني)

@@ -1,4 +1,4 @@
-﻿namespace ConstructionManagement.Application.DTOs;
+namespace ConstructionManagement.Application.DTOs;
 
 /// <summary>
 /// DTO for returning project-specific settings to the client/application layer.

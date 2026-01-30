@@ -1,4 +1,4 @@
-﻿// Application/Interfaces/IBOQItemService.cs
+// Application/Interfaces/IBOQItemService.cs
 using ConstructionManagement.Application.DTOs;
 
 namespace ConstructionManagement.Application.Interfaces;

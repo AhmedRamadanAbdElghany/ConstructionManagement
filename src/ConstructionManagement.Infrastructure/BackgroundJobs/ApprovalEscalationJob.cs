@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.Interfaces;
+using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Hangfire;

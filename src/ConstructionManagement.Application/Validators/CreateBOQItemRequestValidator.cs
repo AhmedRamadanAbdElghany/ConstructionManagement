@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 namespace ConstructionManagement.Application.Validators;
 public class CreateBOQItemRequestValidator : AbstractValidator<CreateBOQItemRequest>
 {

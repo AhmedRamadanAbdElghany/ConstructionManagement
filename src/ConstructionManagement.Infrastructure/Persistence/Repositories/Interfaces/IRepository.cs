@@ -1,4 +1,4 @@
-﻿// Infrastructure/Persistence/Repositories/Interfaces/IRepository.cs
+// Infrastructure/Persistence/Repositories/Interfaces/IRepository.cs
 using System.Linq.Expressions;
 
 namespace ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;

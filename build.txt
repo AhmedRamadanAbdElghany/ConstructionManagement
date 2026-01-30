@@ -1,0 +1,21 @@
+﻿  Determining projects to restore...
+  All projects are up-to-date for restore.
+  ConstructionManagement.Domain -> C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\bin\Debug\net9.0\ConstructionManagement.Domain.dll
+  ConstructionManagement.Application -> C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Application\bin\Debug\net9.0\ConstructionManagement.Application.dll
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Persistence\ApplicationDbContext.cs(15,40): warning CS8625: Cannot convert null literal to non-nullable reference type. [C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Services\UserService.cs(46,29): error CS1061: 'AddUserRequest' does not contain a definition for 'Phone' and no accessible extension method 'Phone' accepting a first argument of type 'AddUserRequest' could be found (are you missing a using directive or an assembly reference?) [C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Services\SiteMediaService.cs(141,27): warning CS8602: Dereference of a possibly null reference. [C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Services\BOQItemService.cs(51,28): warning CS8601: Possible null reference assignment. [C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Services\ProjectApprovalRuleService.cs(44,30): warning CS8601: Possible null reference assignment. [C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
+
+Build FAILED.
+
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Persistence\ApplicationDbContext.cs(15,40): warning CS8625: Cannot convert null literal to non-nullable reference type. [C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Services\SiteMediaService.cs(141,27): warning CS8602: Dereference of a possibly null reference. [C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Services\BOQItemService.cs(51,28): warning CS8601: Possible null reference assignment. [C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Services\ProjectApprovalRuleService.cs(44,30): warning CS8601: Possible null reference assignment. [C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
+C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Services\UserService.cs(46,29): error CS1061: 'AddUserRequest' does not contain a definition for 'Phone' and no accessible extension method 'Phone' accepting a first argument of type 'AddUserRequest' could be found (are you missing a using directive or an assembly reference?) [C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
+    4 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:02.02

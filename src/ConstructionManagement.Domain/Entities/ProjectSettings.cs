@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
@@ -7,14 +7,16 @@ namespace ConstructionManagement.Domain.Entities;
 /// Project-specific configuration settings (1:1 relationship with Project)
 /// Uses shared primary key (ProjectId = PK + FK)
 /// </summary>
-public class ProjectSettings : BaseEntity
+public class ProjectSettings : BaseEntity, ITenantEntity
 {
-    [Key, ForeignKey(nameof(Project))]
-    public int Id { get; set; } // = Project.Id
-
     public virtual Project Project { get; set; } = null!;
 
-    // All fields are now nullable → null means "use global default"
+    /// <summary>
+    /// Tenant identifier for data isolation
+    /// </summary>
+    public string TenantId { get; set; } = "ConstructionDB";
+
+    // All fields are now nullable ? null means "use global default"
     public bool? EnableDelayNotification { get; set; }
     public bool? DelayNotificationIsOneTimeOnly { get; set; }
     public int? DelayNotificationIntervalDays { get; set; }

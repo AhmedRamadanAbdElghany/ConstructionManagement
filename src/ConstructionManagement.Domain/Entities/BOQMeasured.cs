@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
@@ -8,11 +8,12 @@ namespace ConstructionManagement.Domain.Entities;
 /// 1:1 dependent entity – shares primary key with BOQItem
 /// Only exists when AccountingType = "Measured" or "Mixed"
 /// </summary>
-public class BOQMeasured : BaseEntity
+public class BOQMeasured : BaseEntity, ITenantEntity
 {
-    [Key]
-    [ForeignKey(nameof(Item))]
-    public int Id { get; set; }           // ← most common naming in EF Core 1:1 shared PK
+    /// <summary>
+    /// Tenant identifier for data isolation
+    /// </summary>
+    public string TenantId { get; set; } = "ConstructionDB";
 
     public virtual BOQItem Item { get; set; } = null!;
 

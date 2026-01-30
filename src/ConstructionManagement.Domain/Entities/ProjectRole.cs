@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
@@ -6,9 +6,14 @@ namespace ConstructionManagement.Domain.Entities;
 /// Defines roles that can be assigned to users within a specific project
 /// (project-specific roles – different from global/system roles)
 /// </summary>
-public class ProjectRole : BaseEntity
+public class ProjectRole : BaseEntity, ITenantEntity
 {
-    // Primary Key inherited from BaseEntity → public int Id { get; set; }
+    /// <summary>
+    /// Tenant identifier for data isolation
+    /// </summary>
+    public string TenantId { get; set; } = "ConstructionDB";
+
+    // Primary Key inherited from BaseEntity ? public int Id { get; set; }
 
     // Which project owns this role definition
     public int ProjectId { get; set; }
@@ -22,7 +27,7 @@ public class ProjectRole : BaseEntity
     // Human-readable explanation (optional)
     public string? Description { get; set; }
 
-    // ── Navigation properties ───────────────────────────────────────────────
+    // -- Navigation properties -----------------------------------------------
 
     // All team members who have been assigned this role in this project
     public virtual ICollection<ProjectTeamRole> Assignments { get; set; }

@@ -1,4 +1,4 @@
-﻿public record CreateBOQItemRequest(
+public record CreateBOQItemRequest(
     string? ItemCode,
     string ItemName,
     string? Description,

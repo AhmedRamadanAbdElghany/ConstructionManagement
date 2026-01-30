@@ -1,4 +1,4 @@
-﻿public record SiteMediaDto(
+public record SiteMediaDto(
     int MediaID,
     int ProjectID,
     int? ItemID,

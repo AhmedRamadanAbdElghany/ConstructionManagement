@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.DTOs;
+using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.DTOs.Transaction;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
@@ -55,7 +55,8 @@ public class BOQAndTransactionIntegrationTests : IntegrationTestBase
         // ── 1. Create User (To avoid FK failure on UserId: 1) ─────────────────────
         var user = new User
         {
-            FullName = "Admin User",
+            FirstName = "Admin",
+            LastName = "User",
             Email = "admin@test.com",
             PasswordHash = "hashed_password"
         };
@@ -166,7 +167,8 @@ public class BOQAndTransactionIntegrationTests : IntegrationTestBase
         // ── 1. Create User ──────────────────────────────────────────────────────
         var user = new User
         {
-            FullName = "Admin User",
+            FirstName = "Admin",
+            LastName = "User",
             Email = "admin@test.com",
             PasswordHash = "hashed_password"
         };

@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Domain.Entities; // for TransactionType
+using ConstructionManagement.Domain.Entities; // for TransactionType
 using Microsoft.AspNetCore.Http;
 
 namespace ConstructionManagement.Application.DTOs.Transaction;

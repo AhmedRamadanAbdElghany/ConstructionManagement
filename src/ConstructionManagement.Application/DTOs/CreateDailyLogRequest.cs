@@ -1,2 +1,2 @@
-﻿public record CreateDailyLogRequest(
+public record CreateDailyLogRequest(
     DateTime LogDate);

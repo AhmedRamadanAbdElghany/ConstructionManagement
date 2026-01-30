@@ -1,4 +1,4 @@
-﻿// Application/DTOs/UpdateBOQItemRequest.cs
+// Application/DTOs/UpdateBOQItemRequest.cs
 public record UpdateBOQItemRequest(
     string? ItemName,
     string? Description,

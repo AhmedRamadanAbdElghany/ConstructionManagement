@@ -1,4 +1,4 @@
-﻿public record CreateClientPaymentRequest(
+public record CreateClientPaymentRequest(
     DateTime PaymentDate,
     decimal Amount,
     string? PaymentType,

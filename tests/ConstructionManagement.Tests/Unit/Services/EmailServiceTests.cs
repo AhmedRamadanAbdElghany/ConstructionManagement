@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Infrastructure.Services;
+using ConstructionManagement.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;

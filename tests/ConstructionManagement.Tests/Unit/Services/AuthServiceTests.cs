@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.DTOs;
+using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
@@ -44,7 +44,8 @@ public class AuthServiceTests
         var user = new User
         {
             Id = 1,
-            FullName = "Ahmed Ramadan",
+            FirstName = "Ahmed",
+            LastName = "Ramadan",
             Email = "ahmed@eng.com",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
             TenantId = "Construction_ClientA_DB",

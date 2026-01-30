@@ -1,4 +1,4 @@
-﻿// Application/DTOs/UploadMediaRequest.cs
+// Application/DTOs/UploadMediaRequest.cs
 using ConstructionManagement.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 

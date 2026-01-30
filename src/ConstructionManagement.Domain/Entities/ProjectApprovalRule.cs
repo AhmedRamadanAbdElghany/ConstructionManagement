@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
@@ -6,9 +6,14 @@ namespace ConstructionManagement.Domain.Entities;
 /// Approval rule for a specific source type (photo upload / field visit note)
 /// Can be project-wide (BOQItemId = null) or item-specific
 /// </summary>
-public class ProjectApprovalRule : BaseEntity
+public class ProjectApprovalRule : BaseEntity, ITenantEntity
 {
-    // Primary Key inherited from BaseEntity → public int Id { get; set; }
+    /// <summary>
+    /// Tenant identifier for data isolation
+    /// </summary>
+    public string TenantId { get; set; } = "ConstructionDB";
+
+    // Primary Key inherited from BaseEntity ? public int Id { get; set; }
 
     // The project this approval rule belongs to
     public int ProjectId { get; set; }
@@ -16,8 +21,8 @@ public class ProjectApprovalRule : BaseEntity
     [ForeignKey(nameof(ProjectId))]
     public virtual Project Project { get; set; } = null!;
 
-    // Optional: if null → rule applies to the entire project
-    // if set   → rule applies only to this specific BOQ item
+    // Optional: if null ? rule applies to the entire project
+    // if set   ? rule applies only to this specific BOQ item
     public int? BOQItemId { get; set; }
 
     [ForeignKey(nameof(BOQItemId))]
@@ -36,7 +41,7 @@ public class ProjectApprovalRule : BaseEntity
 
     // Optional: useful inverse navigation (if you frequently query rules from project)
     // public virtual ICollection<ApprovalRequest> RelatedRequests { get; set; } = new List<ApprovalRequest>();
-    // داخل كلاس ProjectApprovalRule (اللي عندك)
+    // ???? ???? ProjectApprovalRule (???? ????)
     public virtual ICollection<ApprovalRequest> ApprovalRequests { get; set; }
         = new List<ApprovalRequest>();
 }

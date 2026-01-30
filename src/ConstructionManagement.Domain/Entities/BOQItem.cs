@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
@@ -6,33 +6,38 @@ namespace ConstructionManagement.Domain.Entities;
 /// Core BOQ (Bill of Quantities) item – the main building block of the project cost structure
 /// Supports both Measured (quantity-based) and Supervision (percentage-based) accounting
 /// </summary>
-public class BOQItem : BaseEntity
+public class BOQItem : BaseEntity, ITenantEntity
 {
-    // ── Identification & Basic Info ───────────────────────────────────────────
+    /// <summary>
+    /// Tenant identifier for data isolation
+    /// </summary>
+    public string TenantId { get; set; } = "ConstructionDB";
+
+    // -- Identification & Basic Info -------------------------------------------
     public string ItemCode { get; set; } = string.Empty;        // unique code from BOQ/contract
     public string ItemName { get; set; } = string.Empty;
     public string? Description { get; set; }
     public string? Unit { get; set; }                           // m³, m², ton, lump sum, etc.
 
-    // ── Accounting & Status ───────────────────────────────────────────────────
+    // -- Accounting & Status ---------------------------------------------------
     public string AccountingType { get; set; } = "Measured";    // "Measured", "Supervision", "Mixed"
-    public string Status { get; set; } = "جديد";               // New, InProgress, Delayed, Completed, etc.
+    public string Status { get; set; } = "????";               // New, InProgress, Delayed, Completed, etc.
 
-    // ── Project Relationship ──────────────────────────────────────────────────
+    // -- Project Relationship --------------------------------------------------
     public int ProjectId { get; set; }
 
     [ForeignKey(nameof(ProjectId))]
     public virtual Project Project { get; set; } = null!;
 
-    // ── Schedule ──────────────────────────────────────────────────────────────
+    // -- Schedule --------------------------------------------------------------
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
 
-    // ── Dependent 1:1 Data (exist only when needed) ───────────────────────────
+    // -- Dependent 1:1 Data (exist only when needed) ---------------------------
     public virtual BOQMeasured? MeasuredData { get; set; }
     public virtual BOQSupervision? SupervisionData { get; set; }
 
-    // ── Navigation Collections ────────────────────────────────────────────────
+    // -- Navigation Collections ------------------------------------------------
     public virtual ICollection<SiteMedia> SiteMedias { get; set; }
         = new List<SiteMedia>();
 
@@ -51,7 +56,7 @@ public class BOQItem : BaseEntity
     public virtual ICollection<BOQProfitabilityLog> ProfitabilityLogs { get; set; }
         = new List<BOQProfitabilityLog>();
 
-    // ── Computed Properties (not stored in DB) ────────────────────────────────
+    // -- Computed Properties (not stored in DB) --------------------------------
     /// <summary>
     /// Contract value / estimated budget for this item
     /// Depends on AccountingType and child data

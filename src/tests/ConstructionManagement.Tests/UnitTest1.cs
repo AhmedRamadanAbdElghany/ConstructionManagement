@@ -1,4 +1,4 @@
-﻿namespace ConstructionManagement.Tests;
+namespace ConstructionManagement.Tests;
 
 public class UnitTest1
 {

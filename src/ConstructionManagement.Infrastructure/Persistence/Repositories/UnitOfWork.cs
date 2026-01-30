@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.Interfaces;
+using ConstructionManagement.Application.Interfaces;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace ConstructionManagement.Infrastructure.Persistence.Repositories;

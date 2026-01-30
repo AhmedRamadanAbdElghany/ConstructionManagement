@@ -1,10 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities
 {
-    // Project-specific: ProjectRole ↔ Permission
-    public class ProjectRolePermission
+    // Project-specific: ProjectRole ? Permission
+    public class ProjectRolePermission : ITenantEntity
     {
+        /// <summary>
+        /// Tenant identifier for data isolation
+        /// </summary>
+        public string TenantId { get; set; } = "ConstructionDB";
+
         [ForeignKey(nameof(ProjectRoleId))]
         public int ProjectRoleId { get; set; }
         [ForeignKey(nameof(PermissionId))]
@@ -14,3 +19,4 @@ namespace ConstructionManagement.Domain.Entities
         public virtual Permission Permission { get; set; } = null!;
     }
 }
+

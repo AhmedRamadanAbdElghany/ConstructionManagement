@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
@@ -6,9 +6,14 @@ namespace ConstructionManagement.Domain.Entities;
 /// Represents a user's membership in a specific project
 /// Links a user to a project, defines reporting line, and holds multiple roles
 /// </summary>
-public class ProjectTeamMember : BaseEntity
+public class ProjectTeamMember : BaseEntity, ITenantEntity
 {
-    // ── Project & User ────────────────────────────────────────────────────────
+    /// <summary>
+    /// Tenant identifier for data isolation
+    /// </summary>
+    public string TenantId { get; set; } = "ConstructionDB";
+
+    // -- Project & User --------------------------------------------------------
 
     /// <summary>
     /// The project this membership belongs to
@@ -26,7 +31,7 @@ public class ProjectTeamMember : BaseEntity
     [ForeignKey(nameof(UserId))]
     public virtual User User { get; set; } = null!;
 
-    // ── Reporting Structure ───────────────────────────────────────────────────
+    // -- Reporting Structure ---------------------------------------------------
 
     /// <summary>
     /// Optional: the user this team member reports to **within this project**
@@ -37,7 +42,7 @@ public class ProjectTeamMember : BaseEntity
     [ForeignKey(nameof(ReportsToUserId))]
     public virtual User? ReportsTo { get; set; }
 
-    // ── Roles (many-to-many via bridge table) ─────────────────────────────────
+    // -- Roles (many-to-many via bridge table) ---------------------------------
 
     /// <summary>
     /// All roles assigned to this user **in this specific project**
@@ -45,7 +50,7 @@ public class ProjectTeamMember : BaseEntity
     public virtual ICollection<ProjectTeamRole> ProjectTeamRoles { get; set; }
         = new List<ProjectTeamRole>();
 
-    // ── Computed / Helper Properties (not persisted) ──────────────────────────
+    // -- Computed / Helper Properties (not persisted) --------------------------
 
     /// <summary>
     /// Convenience property: all active roles for this membership

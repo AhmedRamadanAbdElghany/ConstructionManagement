@@ -1,4 +1,4 @@
-﻿namespace ConstructionManagement.Domain.Entities
+namespace ConstructionManagement.Domain.Entities
 {
     public abstract class BaseEntity : IAuditableEntity
     {

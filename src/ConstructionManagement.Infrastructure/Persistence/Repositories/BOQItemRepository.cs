@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

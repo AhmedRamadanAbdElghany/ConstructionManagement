@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Infrastructure.Services;
+using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;

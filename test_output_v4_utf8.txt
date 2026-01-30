@@ -1,0 +1,949 @@
+﻿Test run for C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\bin\Debug\net9.0\ConstructionManagement.Tests.dll (.NETCoreApp,Version=v9.0)
+VSTest version 17.14.1 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.12)
+[xUnit.net 00:00:00.15]   Discovering: ConstructionManagement.Tests
+[xUnit.net 00:00:00.23]   Discovered:  ConstructionManagement.Tests
+[xUnit.net 00:00:00.23]   Starting:    ConstructionManagement.Tests
+  Passed ConstructionManagement.Tests.Integration.FileStorageValidationIntegrationTests.DeleteFileAsync_ExistingFile_ShouldRemoveFile [64 ms]
+  Passed ConstructionManagement.Tests.Integration.FileStorageValidationIntegrationTests.UploadFileAsync_TooLarge_ShouldThrow [105 ms]
+  Passed ConstructionManagement.Tests.Integration.FileStorageValidationIntegrationTests.UploadFileAsync_InvalidExtension_ShouldThrow [7 ms]
+[xUnit.net 00:00:00.51]     ConstructionManagement.Tests.Integration.ProjectRolePermissionTests.Placeholder [SKIP]
+[xUnit.net 00:00:00.51]       TODO: add integration coverage for project-role permissions.
+  Passed ConstructionManagement.Tests.Integration.FileStorageValidationIntegrationTests.UploadFileAsync_ValidFile_ShouldReturnRelativePath [15 ms]
+  Skipped ConstructionManagement.Tests.Integration.ProjectRolePermissionTests.Placeholder [1 ms]
+  Passed ConstructionManagement.Tests.Integration.ProjectRolePermissionTests.Requirement_ShouldStorePermission [24 ms]
+dotnet : [xUnit.net 
+00:00:02.51]     ConstructionMa
+nagement.Tests.Integration.Medi
+aUploadAndReviewIntegrationTest
+s.UploadMedia_WithApprovalRule_
+CreatesApprovalRequest [FAIL]
+At line:1 char:1
++ dotnet test --no-build 
+--filter "FullyQualifiedName~In
+tegration" --lo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~
+    + CategoryInfo          :  
+   NotSpecified: ([xUnit.net   
+  00:0...lRequest [FAIL]:Str   
+ ing) [], RemoteException
+    + FullyQualifiedErrorId :  
+   NativeCommandError
+ 
+[xUnit.net 00:00:02.51]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:02.51]       Stack Trace:
+[xUnit.net 00:00:02.52]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:02.52]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:02.52]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:02.52]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:02.52]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:02.52]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:02.52]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:02.52]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:02.52]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:02.52]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:02.52]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:02.52]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:02.52]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:02.52]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:02.52]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:02.52]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\MediaUploadAndReviewIntegrationTests.cs(19,0): at ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests..ctor()
+[xUnit.net 00:00:02.52]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:02.52]     Con
+structionManagement.Tests.Integ
+ration.EscalationIntegrationTes
+ts.CheckProjectAndItemDelaysAsy
+nc_ShouldCreateEscalationLog 
+[FAIL]
+[xUnit.net 00:00:02.52]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:02.52]       Stack Trace:
+[xUnit.net 00:00:02.52]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:02.52]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:02.52]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:02.52]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:02.52]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:02.52]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:02.52]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:02.52]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:02.52]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:02.52]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:02.52]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:02.52]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:02.52]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:02.52]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:02.53]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:02.53]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\EscalationIntegrationTests.cs(19,0): at ConstructionManagement.Tests.Integration.EscalationIntegrationTests..ctor()
+[xUnit.net 00:00:02.53]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:02.53]     Con
+structionManagement.Tests.Integ
+ration.BOQAndTransactionIntegra
+tionTests.CreateTransactionAsyn
+c_ShouldPersistTransaction 
+[FAIL]
+[xUnit.net 00:00:02.53]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:02.53]       Stack Trace:
+[xUnit.net 00:00:02.53]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:02.53]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:02.53]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:02.53]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:02.53]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:02.53]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:02.53]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:02.53]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:02.53]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:02.53]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:02.53]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:02.53]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:02.53]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:02.53]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:02.53]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:02.53]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\BOQItemServiceIntegrationTests.cs(30,0): at ConstructionManagement.Tests.Integration.BOQAndTransactionIntegrationTests..ctor()
+[xUnit.net 00:00:02.53]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:02.54]     Con
+structionManagement.Tests.Integ
+ration.AuthServiceIntegrationTe
+sts.LoginAsync_WithValidCredent
+ials_ReturnsToken [FAIL]
+[xUnit.net 00:00:02.54]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:02.54]       Stack Trace:
+[xUnit.net 00:00:02.54]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:02.54]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:02.54]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:02.54]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:02.54]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:02.54]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:02.54]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:02.54]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:02.54]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:02.54]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:02.54]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:02.54]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:02.54]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:02.54]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:02.54]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:02.54]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\AuthServiceIntegrationTests.cs(19,0): at ConstructionManagement.Tests.Integration.AuthServiceIntegrationTests..ctor()
+[xUnit.net 00:00:02.54]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:02.54]     Con
+structionManagement.Tests.Integ
+ration.FullSystemIntegrationTes
+ts.Auth_Project_BOQ_HappyPath_S
+houldSucceed [FAIL]
+[xUnit.net 00:00:02.54]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:02.54]       Stack Trace:
+[xUnit.net 00:00:02.54]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:02.54]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:02.54]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:02.54]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:02.54]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:02.54]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:02.54]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:02.54]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:02.55]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:02.55]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:02.55]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:02.55]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:02.55]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:02.55]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:02.55]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:02.55]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\FullSystemIntegrationTests.cs(18,0): at ConstructionManagement.Tests.Integration.FullSystemIntegrationTests..ctor()
+[xUnit.net 00:00:02.55]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:02.55]     Con
+structionManagement.Tests.Integ
+ration.TransactionsReviewIntegr
+ationTests.ReviewTransaction_Sh
+ouldUpdateReviewFields [FAIL]
+[xUnit.net 00:00:02.55]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:02.55]       Stack Trace:
+[xUnit.net 00:00:02.55]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:02.55]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:02.55]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:02.55]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:02.55]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:02.55]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:02.55]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:02.55]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:02.55]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:02.55]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:02.55]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:02.55]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:02.55]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:02.55]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:02.55]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:02.55]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\TransactionsReviewIntegrationTests.cs(26,0): at ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests..ctor()
+[xUnit.net 00:00:02.55]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+  Failed ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests.UploadMedia_WithApprovalRule_CreatesApprovalRequest [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\MediaUploadAndReviewIntegrationTests.cs:line 19
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+  Failed ConstructionManagement.Tests.Integration.EscalationIntegrationTests.CheckProjectAndItemDelaysAsync_ShouldCreateEscalationLog [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.EscalationIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\EscalationIntegrationTests.cs:line 19
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+  Failed ConstructionManagement.Tests.Integration.BOQAndTransactionIntegrationTests.CreateTransactionAsync_ShouldPersistTransaction [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.BOQAndTransactionIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\BOQItemServiceIntegrationTests.cs:line 30
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+  Failed ConstructionManagement.Tests.Integration.AuthServiceIntegrationTests.LoginAsync_WithValidCredentials_ReturnsToken [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.AuthServiceIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\AuthServiceIntegrationTests.cs:line 19
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+  Failed ConstructionManagement.Tests.Integration.FullSystemIntegrationTests.Auth_Project_BOQ_HappyPath_ShouldSucceed [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.FullSystemIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\FullSystemIntegrationTests.cs:line 18
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+  Failed ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests.ReviewTransaction_ShouldUpdateReviewFields [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\TransactionsReviewIntegrationTests.cs:line 26
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:02.99]     Con
+structionManagement.Tests.Integ
+ration.EscalationIntegrationTes
+ts.CheckProjectAndItemDelaysAsy
+nc_ShouldDetectDelayedProjects 
+[FAIL]
+[xUnit.net 00:00:02.99]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:02.99]       Stack Trace:
+[xUnit.net 00:00:02.99]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:02.99]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:02.99]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:02.99]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:02.99]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:02.99]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:02.99]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:02.99]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:02.99]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:02.99]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:02.99]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:02.99]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:02.99]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:02.99]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:02.99]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:02.99]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\EscalationIntegrationTests.cs(19,0): at ConstructionManagement.Tests.Integration.EscalationIntegrationTests..ctor()
+[xUnit.net 00:00:02.99]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:02.99]     Con
+structionManagement.Tests.Integ
+ration.TransactionsReviewIntegr
+ationTests.ReviewTransaction_Ap
+prove_ShouldUpdateFields [FAIL]
+[xUnit.net 00:00:02.99]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:02.99]       Stack Trace:
+[xUnit.net 00:00:02.99]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:02.99]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:02.99]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:02.99]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:02.99]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:02.99]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:03.00]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:03.00]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.00]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:03.00]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:03.00]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.00]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:03.00]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:03.00]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:03.01]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:03.01]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\TransactionsReviewIntegrationTests.cs(26,0): at ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests..ctor()
+[xUnit.net 00:00:03.01]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:03.02]     Con
+structionManagement.Tests.Integ
+ration.AuthServiceIntegrationTe
+sts.LoginAsync_WithValidCredent
+ials_ReturnsToken_RealDB [FAIL]
+[xUnit.net 00:00:03.02]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:03.02]       Stack Trace:
+[xUnit.net 00:00:03.02]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:03.02]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:03.02]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:03.02]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:03.02]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:03.02]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:03.02]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:03.02]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.02]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:03.02]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:03.02]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.02]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:03.02]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:03.02]     Con
+structionManagement.Tests.Integ
+ration.MediaUploadAndReviewInte
+grationTests.UploadMedia_WhenRe
+viewNotRequired_AutoApproves 
+[FAIL]
+[xUnit.net 00:00:03.04]     Con
+structionManagement.Tests.Integ
+ration.FullSystemIntegrationTes
+ts.BOQ_CreateAndProgress_Should
+PersistCorrectData [FAIL]
+[xUnit.net 00:00:03.02]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:03.02]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:03.02]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\AuthServiceIntegrationTests.cs(19,0): at ConstructionManagement.Tests.Integration.AuthServiceIntegrationTests..ctor()
+[xUnit.net 00:00:03.02]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:03.02]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:03.03]       Stack Trace:
+[xUnit.net 00:00:03.03]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:03.03]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:03.03]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:03.03]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:03.03]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:03.03]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:03.03]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:03.03]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.03]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:03.03]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:03.03]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.03]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:03.03]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:03.03]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:03.03]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:03.03]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\MediaUploadAndReviewIntegrationTests.cs(19,0): at ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests..ctor()
+[xUnit.net 00:00:03.03]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:03.04]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:03.04]       Stack Trace:
+[xUnit.net 00:00:03.04]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:03.04]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:03.04]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:03.04]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:03.04]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:03.04]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:03.05]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:03.05]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.05]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:03.05]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:03.05]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.05]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:03.05]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:03.05]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:03.05]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:03.05]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\FullSystemIntegrationTests.cs(18,0): at ConstructionManagement.Tests.Integration.FullSystemIntegrationTests..ctor()
+[xUnit.net 00:00:03.05]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:03.13]     Con
+structionManagement.Tests.Integ
+ration.BOQAndTransactionIntegra
+tionTests.MultiStepProfitabilit
+yScenario [FAIL]
+[xUnit.net 00:00:03.14]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:03.14]       Stack Trace:
+[xUnit.net 00:00:03.14]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:03.14]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:03.14]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:03.14]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:03.14]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:03.14]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:03.14]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:03.14]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.14]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:03.14]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:03.14]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.14]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:03.14]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:03.14]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:03.14]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:03.14]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\BOQItemServiceIntegrationTests.cs(30,0): at ConstructionManagement.Tests.Integration.BOQAndTransactionIntegrationTests..ctor()
+[xUnit.net 00:00:03.14]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+  Failed ConstructionManagement.Tests.Integration.EscalationIntegrationTests.CheckProjectAndItemDelaysAsync_ShouldDetectDelayedProjects [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.EscalationIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\EscalationIntegrationTests.cs:line 19
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+  Failed ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests.ReviewTransaction_Approve_ShouldUpdateFields [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\TransactionsReviewIntegrationTests.cs:line 26
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+  Failed ConstructionManagement.Tests.Integration.AuthServiceIntegrationTests.LoginAsync_WithValidCredentials_ReturnsToken_RealDB [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.AuthServiceIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\AuthServiceIntegrationTests.cs:line 19
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+  Failed ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests.UploadMedia_WhenReviewNotRequired_AutoApproves [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\MediaUploadAndReviewIntegrationTests.cs:line 19
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+  Failed ConstructionManagement.Tests.Integration.FullSystemIntegrationTests.BOQ_CreateAndProgress_ShouldPersistCorrectData [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.FullSystemIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\FullSystemIntegrationTests.cs:line 18
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+  Failed ConstructionManagement.Tests.Integration.BOQAndTransactionIntegrationTests.MultiStepProfitabilityScenario [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.BOQAndTransactionIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\BOQItemServiceIntegrationTests.cs:line 30
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:03.32]     Con
+structionManagement.Tests.Integ
+ration.TransactionsReviewIntegr
+ationTests.ReviewTransaction_Wh
+enAlreadyReviewed_ShouldReturnF
+alse [FAIL]
+[xUnit.net 00:00:03.32]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:03.33]       Stack Trace:
+[xUnit.net 00:00:03.33]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:03.33]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:03.33]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:03.33]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:03.33]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:03.33]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:03.33]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:03.33]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.33]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:03.33]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:03.33]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.33]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:03.33]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:03.33]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:03.33]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:03.33]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\TransactionsReviewIntegrationTests.cs(26,0): at ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests..ctor()
+[xUnit.net 00:00:03.33]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:03.35]     Con
+structionManagement.Tests.Integ
+ration.EscalationIntegrationTes
+ts.CheckProjectAndItemDelaysAsy
+nc_WhenNotificationsDisabled_Do
+esNothing [FAIL]
+[xUnit.net 00:00:03.35]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:03.35]       Stack Trace:
+[xUnit.net 00:00:03.35]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:03.35]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:03.35]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:03.35]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:03.35]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:03.35]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:03.35]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:03.35]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.35]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:03.35]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:03.35]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.35]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:03.35]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:03.35]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:03.35]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:03.35]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\EscalationIntegrationTests.cs(19,0): at ConstructionManagement.Tests.Integration.EscalationIntegrationTests..ctor()
+[xUnit.net 00:00:03.35]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:03.43]     Con
+structionManagement.Tests.Integ
+ration.FullSystemIntegrationTes
+ts.Auth_LoginFullProcess_Should
+Succeed [FAIL]
+[xUnit.net 00:00:03.43]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:03.43]       Stack Trace:
+[xUnit.net 00:00:03.43]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:03.43]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:03.43]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:03.43]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:03.43]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:03.43]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:03.43]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:03.43]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.43]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:03.43]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:03.44]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.44]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:03.44]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:03.44]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:03.44]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:03.44]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\FullSystemIntegrationTests.cs(18,0): at ConstructionManagement.Tests.Integration.FullSystemIntegrationTests..ctor()
+[xUnit.net 00:00:03.44]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:03.44]     Con
+structionManagement.Tests.Integ
+ration.MediaUploadAndReviewInte
+grationTests.UploadAndReviewMed
+ia_WithApprovalRule_CreatesAndP
+rocessesApprovalRequest [FAIL]
+[xUnit.net 00:00:03.44]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:03.44]       Stack Trace:
+[xUnit.net 00:00:03.44]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:03.44]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:03.44]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:03.44]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:03.44]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:03.44]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:03.44]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:03.44]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.44]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:03.44]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:03.44]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.44]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:03.44]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:03.44]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:03.44]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:03.44]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\MediaUploadAndReviewIntegrationTests.cs(19,0): at ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests..ctor()
+[xUnit.net 00:00:03.44]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:03.50]     Con
+structionManagement.Tests.Integ
+ration.BOQAndTransactionIntegra
+tionTests.Transaction_ShouldAff
+ect_ProjectProfitability [FAIL]
+[xUnit.net 00:00:03.51]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:03.51]       Stack Trace:
+[xUnit.net 00:00:03.51]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:03.51]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:03.52]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:03.52]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:03.52]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:03.52]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:03.52]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:03.52]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.52]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:03.52]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:03.52]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.52]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:03.52]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:03.52]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:03.52]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:03.52]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\BOQItemServiceIntegrationTests.cs(30,0): at ConstructionManagement.Tests.Integration.BOQAndTransactionIntegrationTests..ctor()
+[xUnit.net 00:00:03.52]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:03.63]     Con
+structionManagement.Tests.Integ
+ration.TransactionsReviewIntegr
+ationTests.ReviewTransaction_Wh
+enAlreadyReviewed_ReturnsFalse 
+[FAIL]
+[xUnit.net 00:00:03.63]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:03.63]       Stack Trace:
+[xUnit.net 00:00:03.63]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:03.64]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:03.64]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:03.64]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:03.64]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:03.64]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:03.64]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:03.64]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.64]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:03.64]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:03.64]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.64]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:03.64]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:03.64]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:03.64]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:03.64]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\TransactionsReviewIntegrationTests.cs(26,0): at ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests..ctor()
+[xUnit.net 00:00:03.64]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:03.70]     Con
+structionManagement.Tests.Integ
+ration.MediaUploadAndReviewInte
+grationTests.ReviewMedia_Approv
+e_SetsApprovedStatus [FAIL]
+[xUnit.net 00:00:03.70]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:03.70]       Stack Trace:
+[xUnit.net 00:00:03.70]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:03.70]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:03.70]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:03.70]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:03.70]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:03.70]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:03.70]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:03.70]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.70]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:03.70]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:03.70]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.70]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:03.70]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:03.70]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:03.70]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:03.70]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\MediaUploadAndReviewIntegrationTests.cs(19,0): at ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests..ctor()
+[xUnit.net 00:00:03.70]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:03.94]     Con
+structionManagement.Tests.Integ
+ration.MediaUploadAndReviewInte
+grationTests.UploadAndReviewMed
+ia_WhenReviewNotRequired_AutoAp
+proves [FAIL]
+[xUnit.net 00:00:03.94]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[xUnit.net 00:00:03.94]       Stack Trace:
+[xUnit.net 00:00:03.94]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+[xUnit.net 00:00:03.94]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+[xUnit.net 00:00:03.94]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+[xUnit.net 00:00:03.94]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+[xUnit.net 00:00:03.94]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+[xUnit.net 00:00:03.94]            at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+[xUnit.net 00:00:03.94]            at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+[xUnit.net 00:00:03.94]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.94]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+[xUnit.net 00:00:03.94]            at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+[xUnit.net 00:00:03.94]            at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+[xUnit.net 00:00:03.94]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+[xUnit.net 00:00:03.94]            at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+[xUnit.net 00:00:03.94]            at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+[xUnit.net 00:00:03.94]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs(31,0): at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor()
+[xUnit.net 00:00:03.94]         C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\MediaUploadAndReviewIntegrationTests.cs(19,0): at ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests..ctor()
+[xUnit.net 00:00:03.94]            at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+[xUnit.net 00:00:03.95]   Finished:    ConstructionManagement.Tests
+  Failed ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests.ReviewTransaction_WhenAlreadyReviewed_ShouldReturnFalse [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\TransactionsReviewIntegrationTests.cs:line 26
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+  Failed ConstructionManagement.Tests.Integration.EscalationIntegrationTests.CheckProjectAndItemDelaysAsync_WhenNotificationsDisabled_DoesNothing [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.EscalationIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\EscalationIntegrationTests.cs:line 19
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+  Failed ConstructionManagement.Tests.Integration.FullSystemIntegrationTests.Auth_LoginFullProcess_ShouldSucceed [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.FullSystemIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\FullSystemIntegrationTests.cs:line 18
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+  Failed ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests.UploadAndReviewMedia_WithApprovalRule_CreatesAndProcessesApprovalRequest [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\MediaUploadAndReviewIntegrationTests.cs:line 19
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+  Failed ConstructionManagement.Tests.Integration.BOQAndTransactionIntegrationTests.Transaction_ShouldAffect_ProjectProfitability [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.BOQAndTransactionIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\BOQItemServiceIntegrationTests.cs:line 30
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+  Failed ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests.ReviewTransaction_WhenAlreadyReviewed_ReturnsFalse [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\TransactionsReviewIntegrationTests.cs:line 26
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+  Failed ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests.ReviewMedia_Approve_SetsApprovedStatus [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\MediaUploadAndReviewIntegrationTests.cs:line 19
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+  Failed ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests.UploadAndReviewMedia_WhenReviewNotRequired_AutoApproves [1 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'FOREIGN KEY constraint failed'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQuery(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Migrations.MigrationCommand.ExecuteNonQuery(IRelationalConnection connection, IReadOnlyDictionary`2 parameterValues)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.Execute(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.<>c.<ExecuteNonQuery>b__3_1(DbContext _, ValueTuple`6 s)
+   at Microsoft.EntityFrameworkCore.Storage.NonRetryingExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQuery(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.CreateTables()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabaseCreator.EnsureCreated()
+   at Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated()
+   at ConstructionManagement.Tests.Integration.IntegrationTestBase..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\IntegrationTestBase.cs:line 31
+   at ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests..ctor() in C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\MediaUploadAndReviewIntegrationTests.cs:line 19
+   at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean wrapExceptions)
+
+Test Run Failed.
+Total tests: 26
+     Passed: 5
+     Failed: 20
+    Skipped: 1
+ Total time: 4.9497 Seconds

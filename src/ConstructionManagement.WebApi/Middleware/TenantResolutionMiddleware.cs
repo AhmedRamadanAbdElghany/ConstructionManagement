@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.Interfaces;
+using ConstructionManagement.Application.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace ConstructionManagement.WebApi.Middleware

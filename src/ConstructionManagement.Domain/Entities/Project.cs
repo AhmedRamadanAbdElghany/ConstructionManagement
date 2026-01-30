@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
@@ -6,9 +6,15 @@ namespace ConstructionManagement.Domain.Entities;
 /// Represents a construction project with its core metadata, team, financials, 
 /// and related child entities (BOQ, payments, media, settings, rules, etc.)
 /// </summary>
-public class Project : BaseEntity
+public class Project : BaseEntity, ITenantEntity
 {
     public string ProjectName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Tenant identifier for data isolation
+    /// </summary>
+    public string TenantId { get; set; } = "ConstructionDB";
+
     public string? Description { get; set; }
 
     public DateTime? StartDate { get; set; }
@@ -20,9 +26,9 @@ public class Project : BaseEntity
     public virtual ICollection<ClientPayment> ClientPayments { get; set; }
         = new List<ClientPayment>();
 
-    public string Status { get; set; } = "جديد";  // New, InProgress, Delayed, Completed, Cancelled, etc.
+    public string Status { get; set; } = "????";  // New, InProgress, Delayed, Completed, Cancelled, etc.
 
-    // ── Ownership & Management ────────────────────────────────────────────────
+    // -- Ownership & Management ------------------------------------------------
     public int OwnerUserId { get; set; }
     [ForeignKey(nameof(OwnerUserId))]
     public virtual User? Owner { get; set; }
@@ -35,18 +41,18 @@ public class Project : BaseEntity
     [ForeignKey(nameof(ClosedByUserId))]
     public virtual User? ClosedBy { get; set; }
 
-    // داخل كلاس Project
+    // ???? ???? Project
     public int? PackageId { get; set; }
     public virtual Package? Package { get; set; }
 
     public bool IsClosed { get; set; } = false;
     public DateTime? ClosedAt { get; set; }
 
-    // ── Financial & Accounting ────────────────────────────────────────────────
+    // -- Financial & Accounting ------------------------------------------------
     public string AccountingSystem { get; set; } = "Mixed";  // Measured, Supervision, Mixed, Other
     public decimal? TotalContractValue { get; set; }
 
-    // ── Navigation Properties ─────────────────────────────────────────────────
+    // -- Navigation Properties -------------------------------------------------
 
     // BOQ (Bill of Quantities) items
     public virtual ICollection<BOQItem> BOQItems { get; set; }
@@ -68,7 +74,7 @@ public class Project : BaseEntity
     public virtual ICollection<SiteMedia> SiteMedias { get; set; }
         = new List<SiteMedia>();
 
-    // ── Recommended additional collections (add as you implement features) ─────
+    // -- Recommended additional collections (add as you implement features) -----
     public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
     public virtual ICollection<BOQItemNote> Notes { get; set; }
             = new List<BOQItemNote>();

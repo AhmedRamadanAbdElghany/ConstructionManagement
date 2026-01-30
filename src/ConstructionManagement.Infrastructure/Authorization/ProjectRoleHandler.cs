@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Infrastructure.Persistence;
+using ConstructionManagement.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;

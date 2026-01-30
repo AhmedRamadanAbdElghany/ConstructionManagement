@@ -1,12 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
-public class ItemInvoice : BaseEntity
+public class ItemInvoice : BaseEntity, ITenantEntity
 {
-    [Key]
-    public int Id { get; set; }
+    /// <summary>
+    /// Tenant identifier for data isolation
+    /// </summary>
+    public string TenantId { get; set; } = "ConstructionDB";
 
     [Required]
     public int BOQItemId { get; set; }

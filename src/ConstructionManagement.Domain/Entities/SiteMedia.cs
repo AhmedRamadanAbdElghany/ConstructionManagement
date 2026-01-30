@@ -1,10 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
-public class SiteMedia : BaseEntity
+public class SiteMedia : BaseEntity, ITenantEntity
 {
-    // Primary Key is inherited from BaseEntity → public int Id { get; set; }
+    /// <summary>
+    /// Tenant identifier for data isolation
+    /// </summary>
+    public string TenantId { get; set; } = "ConstructionDB";
+
+    // Primary Key is inherited from BaseEntity ? public int Id { get; set; }
 
     // Required: every media belongs to a project
     public int ProjectId { get; set; }

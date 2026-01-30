@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
@@ -6,8 +6,13 @@ namespace ConstructionManagement.Domain.Entities;
 /// Runtime instance of an approval request (created when something needs approval)
 /// Tracks the full lifecycle of an approval process (e.g., photo review, invoice approval, daily log close)
 /// </summary>
-public class ApprovalRequest : BaseEntity
+public class ApprovalRequest : BaseEntity, ITenantEntity
 {
+    /// <summary>
+    /// Tenant identifier for data isolation
+    /// </summary>
+    public string TenantId { get; set; } = "ConstructionDB";
+
     public int ProjectId { get; set; }
     [ForeignKey(nameof(ProjectId))]
     public virtual Project Project { get; set; } = null!;

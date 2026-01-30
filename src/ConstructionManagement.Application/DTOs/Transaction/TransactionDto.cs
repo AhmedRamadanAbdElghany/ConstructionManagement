@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Domain.Entities;
 
 namespace ConstructionManagement.Application.DTOs.Transaction
 {

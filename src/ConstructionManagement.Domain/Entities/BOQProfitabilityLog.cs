@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
@@ -6,15 +6,20 @@ namespace ConstructionManagement.Domain.Entities;
 /// Historical snapshot of profitability calculation for a specific BOQ item
 /// Used to track profit/loss trend over time (daily, weekly, or on-demand logs)
 /// </summary>
-public class BOQProfitabilityLog : BaseEntity
+public class BOQProfitabilityLog : BaseEntity, ITenantEntity
 {
+    /// <summary>
+    /// Tenant identifier for data isolation
+    /// </summary>
+    public string TenantId { get; set; } = "ConstructionDB";
+
     // Which BOQ item this profitability snapshot refers to
     public int BOQItemId { get; set; }
 
     [ForeignKey(nameof(BOQItemId))]
     public virtual BOQItem BOQItem { get; set; } = null!;
 
-    // ── Financial snapshot values ─────────────────────────────────────────────
+    // -- Financial snapshot values ---------------------------------------------
 
     /// <summary>
     /// Total approved/actual costs spent on this BOQ item up to LogDate
@@ -36,11 +41,11 @@ public class BOQProfitabilityLog : BaseEntity
 
     /// <summary>
     /// Profit margin percentage = (CurrentProfit / EstimatedBudget) × 100
-    /// Usually stored as 0–100 or -∞ to +∞ depending on loss
+    /// Usually stored as 0–100 or -8 to +8 depending on loss
     /// </summary>
     public decimal ProfitPercentage { get; set; }
 
-    // ── When this snapshot was taken ──────────────────────────────────────────
+    // -- When this snapshot was taken ------------------------------------------
     public DateTime LogDate { get; set; } = DateTime.UtcNow;
 
     // Optional – very useful for understanding context

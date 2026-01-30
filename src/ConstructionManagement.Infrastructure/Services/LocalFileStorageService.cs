@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 
 namespace ConstructionManagement.Infrastructure.Services;

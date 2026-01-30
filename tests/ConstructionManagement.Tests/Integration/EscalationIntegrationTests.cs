@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.Interfaces;
+using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories;
 using ConstructionManagement.Infrastructure.Services;
@@ -51,7 +51,8 @@ public class EscalationIntegrationTests : IntegrationTestBase
         // 1. Arrange: إنشاء مستخدم
         var user = new User
         {
-            FullName = "Manager",
+            FirstName = "Manager",
+            LastName = string.Empty,
             Email = "m@m.com",
             PasswordHash = "AnyHash123"
         };
@@ -64,14 +65,19 @@ public class EscalationIntegrationTests : IntegrationTestBase
             ProjectName = "Late Tower",
             OwnerUserId = user.Id,
             StartDate = DateTime.UtcNow.AddDays(-10),
-            Settings = new ProjectSettings
-            {
-                EnableDelayNotification = true,
-                DelayNotificationIntervalDays = 1,
-                DelayGracePeriodDays = 0 // عشان يتفعل التأخير فورًا
-            }
+            Status = "جديد"
         };
         Context.Projects.Add(project);
+        await Context.SaveChangesAsync();
+
+        var settings = new ProjectSettings
+        {
+            Id = project.Id,
+            EnableDelayNotification = true,
+            DelayNotificationIntervalDays = 1,
+            DelayGracePeriodDays = 0 // عشان يتفعل التأخير فورًا
+        };
+        Context.ProjectSettings.Add(settings);
         await Context.SaveChangesAsync();
 
         // 3. Act – الاسم الجديد الصحيح

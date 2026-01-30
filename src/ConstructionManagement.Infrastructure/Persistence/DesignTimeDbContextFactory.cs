@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Infrastructure.Persistence;
+using ConstructionManagement.Infrastructure.Persistence;
 using ConstructionManagement.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;

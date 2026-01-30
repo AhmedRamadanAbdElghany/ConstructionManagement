@@ -1,26 +1,28 @@
-﻿namespace ConstructionManagement.Domain.Entities;
+namespace ConstructionManagement.Domain.Entities;
 
 /// <summary>
 /// Represents a system user (employee, manager, engineer, client rep, etc.)
 /// Central entity for authentication, roles, project assignments, and audit trails
 /// </summary>
-public class User : BaseEntity
+public class User : BaseEntity, ITenantEntity
 {
-    // ── Basic Profile ─────────────────────────────────────────────────────────
-    public string FullName { get; set; } = string.Empty;
+    // -- Basic Profile ---------------------------------------------------------
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public string FullName => $"{FirstName} {LastName}".Trim();
+    public string Username { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public string? Phone { get; set; }
 
-
-    // ── Multi-Tenancy ──────────────────────────────────────────────────────────
+    // -- Multi-Tenancy ----------------------------------------------------------
     /// <summary>
-    /// يمثل اسم قاعدة البيانات الخاصة بالمستأجر (مثلاً: Construction_ClientA)
+    /// Logical tenant identifier for data isolation (all data in single database)
     /// </summary>
     public string TenantId { get; set; } = "ConstructionDB";
 
 
-    // ── Core Navigation Properties ────────────────────────────────────────────
+    // -- Core Navigation Properties --------------------------------------------
 
     /// <summary>
     /// Global/system roles assigned to this user (Admin, Accountant, etc.)
@@ -28,7 +30,7 @@ public class User : BaseEntity
     public virtual ICollection<UserRole> UserRoles { get; set; }
         = new List<UserRole>();
 
-    // ── Project Ownership & Management ────────────────────────────────────────
+    // -- Project Ownership & Management ----------------------------------------
 
     /// <summary>
     /// Projects where this user is the owner (usually the client or main contractor)
@@ -48,7 +50,7 @@ public class User : BaseEntity
     public virtual ICollection<Project> ClosedProjects { get; set; }
         = new List<Project>();
 
-    // ── Financial & Review Responsibilities ───────────────────────────────────
+    // -- Financial & Review Responsibilities -----------------------------------
 
     /// <summary>
     /// Transactions created by this user
@@ -68,7 +70,7 @@ public class User : BaseEntity
     public virtual ICollection<ItemInvoice> ReviewedInvoices { get; set; }
         = new List<ItemInvoice>();
 
-    // ── Media & Documentation ─────────────────────────────────────────────────
+    // -- Media & Documentation -------------------------------------------------
 
     /// <summary>
     /// Media (photos, videos, documents) uploaded by this user
@@ -82,7 +84,7 @@ public class User : BaseEntity
     public virtual ICollection<SiteMedia> ReviewedMedias { get; set; }
         = new List<SiteMedia>();
 
-    // ── Progress & Daily Logs ─────────────────────────────────────────────────
+    // -- Progress & Daily Logs -------------------------------------------------
 
     /// <summary>
     /// Daily logs created by this user
@@ -96,7 +98,7 @@ public class User : BaseEntity
     public virtual ICollection<ItemDailyLog> ClosedDailyLogs { get; set; }
         = new List<ItemDailyLog>();
 
-    // ── Notifications & Escalations ───────────────────────────────────────────
+    // -- Notifications & Escalations -------------------------------------------
 
     /// <summary>
     /// All in-app notifications sent to this user
@@ -110,7 +112,7 @@ public class User : BaseEntity
     public virtual ICollection<EscalationLog> ReceivedEscalations { get; set; }
         = new List<EscalationLog>();
 
-    // ── Project Memberships (optional but very useful) ────────────────────────
+    // -- Project Memberships (optional but very useful) ------------------------
 
     /// <summary>
     /// All projects this user is assigned to (as team member)
@@ -124,7 +126,7 @@ public class User : BaseEntity
     public virtual ICollection<ProjectTeamMember> Subordinates { get; set; } = new List<ProjectTeamMember>();
     // or name it ReportsFrom / ManagedTeamMembers / etc.
 
-    // ── Optional helpers (not mapped) ─────────────────────────────────────────
+    // -- Optional helpers (not mapped) -----------------------------------------
     // [NotMapped]
     // public bool IsAdmin => UserRoles.Any(ur => ur.Role.Name == "Admin");
 

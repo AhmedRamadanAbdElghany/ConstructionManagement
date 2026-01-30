@@ -1,4 +1,4 @@
-﻿namespace ConstructionManagement.Domain.Entities
+namespace ConstructionManagement.Domain.Entities
 {
     public enum NotificationPriority
     {

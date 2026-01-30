@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.DTOs.ProjectApprovalRule;
+using ConstructionManagement.Application.DTOs.ProjectApprovalRule;
 using ConstructionManagement.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

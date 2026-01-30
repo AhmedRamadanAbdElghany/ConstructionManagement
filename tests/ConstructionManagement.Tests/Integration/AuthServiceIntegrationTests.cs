@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.DTOs;
+using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
@@ -62,7 +62,8 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
         var user = new User
         {
             Id = 1,
-            FullName = "Auth User",
+            FirstName = "Auth",
+            LastName = "User",
             Email = email,
             PasswordHash = hashedPassword
             // أضف أي حقول أخرى مطلوبة مثل Role إذا كان AuthService يعتمد عليها
@@ -103,7 +104,8 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
         const string password = "Password123";
         var user = new User
         {
-            FullName = "Auth User",
+            FirstName = "Auth",
+            LastName = "User",
             Email = "auth@test.com",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(password)
         };

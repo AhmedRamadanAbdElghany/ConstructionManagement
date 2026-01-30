@@ -1,4 +1,4 @@
-﻿// Application/DTOs/AddTeamMemberRequest.cs
+// Application/DTOs/AddTeamMemberRequest.cs
 namespace ConstructionManagement.Application.DTOs
 {
     public record AddTeamMemberRequest(

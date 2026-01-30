@@ -1,4 +1,4 @@
-﻿namespace ConstructionManagement.Application.Interfaces;
+namespace ConstructionManagement.Application.Interfaces;
 
 public interface ITenantContext
 {

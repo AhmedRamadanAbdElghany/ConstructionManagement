@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.DTOs;
+using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories;
 using ConstructionManagement.Infrastructure.Services;
@@ -17,13 +17,13 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 
 	public FullSystemIntegrationTests()
 	{
-		// 1. إعداد الـ Configuration مع مراعاة حالة الأحرف (jwtSettings بحرف j صغير)
+		// 1. ????? ??? Configuration ?? ?????? ???? ?????? (jwtSettings ???? j ????)
 		var mockConfig = new Mock<IConfiguration>();
 		mockConfig.Setup(c => c["jwtSettings:Key"]).Returns("SuperSecretKeyForTesting1234567890123456");
 		mockConfig.Setup(c => c["jwtSettings:Issuer"]).Returns("TestIssuer");
 		mockConfig.Setup(c => c["jwtSettings:Audience"]).Returns("TestAudience");
 
-		// 2. إعداد الـ Repositories
+		// 2. ????? ??? Repositories
 		var userRepository = new UserRepository(Context);
 
 		_authService = new AuthService(
@@ -45,8 +45,8 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 	{
 		// Arrange
 		var password = "Password123!";
-		// تأكد من تمرير TenantId لأن الـ GenerateJwtToken يحتاجه
-		var user = await SeedUserAsync("test@system.com", BCrypt.Net.BCrypt.HashPassword(password), "Test User", "Test_Tenant_DB");
+		// ???? ?? ????? TenantId ??? ??? GenerateJwtToken ??????
+		var user = await SeedUserAsync("test@system.com", BCrypt.Net.BCrypt.HashPassword(password), "Test User", "ConstructionDB");
 
 		// Act
 		var result = await _authService.LoginAsync(new LoginRequest("test@system.com", password));
@@ -62,7 +62,7 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 	public async Task BOQ_CreateAndProgress_ShouldPersistCorrectData()
 	{
 		// Arrange
-		var user = await SeedUserAsync("boq@test.com", "any_hash", "BOQ User", "Test_DB");
+		var user = await SeedUserAsync("boq@test.com", "any_hash", "BOQ User", "ConstructionDB");
 
 		var project = new Project
 		{
@@ -96,7 +96,7 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 	[Fact]
 	public async Task Auth_Project_BOQ_HappyPath_ShouldSucceed()
 	{
-		// إعداد يدوي للـ Configuration داخل التست للتأكد من المسار الصغير jwtSettings
+		// ????? ???? ??? Configuration ???? ????? ?????? ?? ?????? ?????? jwtSettings
 		var config = new ConfigurationBuilder()
 			.AddInMemoryCollection(new Dictionary<string, string?>
 			{
@@ -107,7 +107,7 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 			.Build();
 
 		var password = "Password123";
-		var user = await SeedUserAsync("sys@test.com", BCrypt.Net.BCrypt.HashPassword(password), "System User", "Master_DB");
+		var user = await SeedUserAsync("sys@test.com", BCrypt.Net.BCrypt.HashPassword(password), "System User", "ConstructionDB");
 
 		var auth = new AuthService(new UserRepository(Context), config, UnitOfWork);
 		var login = await auth.LoginAsync(new LoginRequest("sys@test.com", password));

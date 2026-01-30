@@ -1,4 +1,4 @@
-﻿// Infrastructure/Persistence/Repositories/UserRepository.cs
+// Infrastructure/Persistence/Repositories/UserRepository.cs
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;

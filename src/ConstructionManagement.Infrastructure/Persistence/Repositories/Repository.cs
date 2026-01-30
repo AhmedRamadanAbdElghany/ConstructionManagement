@@ -1,4 +1,4 @@
-﻿// Infrastructure/Persistence/Repositories/Repository.cs
+// Infrastructure/Persistence/Repositories/Repository.cs
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;

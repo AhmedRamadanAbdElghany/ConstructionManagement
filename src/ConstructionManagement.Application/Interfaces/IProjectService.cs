@@ -1,4 +1,4 @@
-﻿// Application/Interfaces/IProjectService.cs
+// Application/Interfaces/IProjectService.cs
 using ConstructionManagement.Application.DTOs;
 
 namespace ConstructionManagement.Application.Interfaces;

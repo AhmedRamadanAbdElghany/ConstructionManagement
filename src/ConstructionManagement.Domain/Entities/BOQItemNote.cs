@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
@@ -7,8 +7,13 @@ namespace ConstructionManagement.Domain.Entities;
 /// Can come from site engineers, reviewers, managers, etc.
 /// Supports linking to related media (photos/videos) when rejection is based on evidence
 /// </summary>
-public class BOQItemNote : BaseEntity
+public class BOQItemNote : BaseEntity, ITenantEntity
 {
+    /// <summary>
+    /// Tenant identifier for data isolation
+    /// </summary>
+    public string TenantId { get; set; } = "ConstructionDB";
+
     // Required – the BOQ item this note belongs to
     public int BOQItemId { get; set; }
 
@@ -21,14 +26,14 @@ public class BOQItemNote : BaseEntity
     [ForeignKey(nameof(ProjectId))]
     public virtual Project Project { get; set; } = null!;
 
-    // ── Note content ──────────────────────────────────────────────────────────
+    // -- Note content ----------------------------------------------------------
     public string NoteText { get; set; } = string.Empty;
 
     // Category / purpose of the note
     public string NoteType { get; set; } = "General";
     // Common values: General, Comment, Rejection, QualityIssue, SafetyConcern, VariationRequest, etc.
 
-    // ── Creator & Visibility ──────────────────────────────────────────────────
+    // -- Creator & Visibility --------------------------------------------------
     public int CreatorUserId { get; set; }
 
     [ForeignKey(nameof(CreatorUserId))]
@@ -40,7 +45,7 @@ public class BOQItemNote : BaseEntity
     /// </summary>
     public string VisibleToRole { get; set; } = "SiteEngineer";
 
-    // ── Optional relation to evidence ─────────────────────────────────────────
+    // -- Optional relation to evidence -----------------------------------------
     public int? RelatedMediaId { get; set; }
 
     [ForeignKey(nameof(RelatedMediaId))]

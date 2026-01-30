@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Domain.Entities;
 using FluentAssertions;
 
 namespace ConstructionManagement.Tests.Unit.Domain;

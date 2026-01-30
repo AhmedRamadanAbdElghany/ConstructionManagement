@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
@@ -6,8 +6,13 @@ namespace ConstructionManagement.Domain.Entities;
 /// Many-to-Many relationship between ProjectTeamMember and ProjectRole
 /// Represents a specific role assignment for a team member in a project
 /// </summary>
-public class ProjectTeamRole : BaseEntity
+public class ProjectTeamRole : BaseEntity, ITenantEntity
 {
+    /// <summary>
+    /// Tenant identifier for data isolation
+    /// </summary>
+    public string TenantId { get; set; } = "ConstructionDB";
+
     public int ProjectTeamMemberId { get; set; }
 
     [ForeignKey(nameof(ProjectTeamMemberId))]

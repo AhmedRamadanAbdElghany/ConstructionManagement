@@ -1,4 +1,4 @@
-﻿using ConstructionManagement.Application.DTOs.ProjectApprovalRule;
+using ConstructionManagement.Application.DTOs.ProjectApprovalRule;
 using ConstructionManagement.Domain.Entities;
 
 namespace ConstructionManagement.Application.Interfaces;

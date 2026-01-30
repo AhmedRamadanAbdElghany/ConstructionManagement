@@ -1,4 +1,4 @@
-﻿// Infrastructure/Persistence/Repositories/Interfaces/IUserRepository.cs
+// Infrastructure/Persistence/Repositories/Interfaces/IUserRepository.cs
 using ConstructionManagement.Domain.Entities;
 
 namespace ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;

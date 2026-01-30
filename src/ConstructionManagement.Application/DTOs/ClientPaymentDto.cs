@@ -1,4 +1,4 @@
-﻿// Application/DTOs/ClientPaymentDto.cs
+// Application/DTOs/ClientPaymentDto.cs
 public record ClientPaymentDto(
     int PaymentID,
     DateTime PaymentDate,

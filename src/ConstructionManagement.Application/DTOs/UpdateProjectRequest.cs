@@ -1,4 +1,4 @@
-﻿namespace ConstructionManagement.Application.DTOs;
+namespace ConstructionManagement.Application.DTOs;
 
 public record UpdateProjectRequest(
     string? ProjectName,
