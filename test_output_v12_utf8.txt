@@ -1,0 +1,52 @@
+﻿  Determining projects to restore...
+  All projects are up-to-date for restore.
+  ConstructionManagement.Domain -> C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\bin\Debug\net9.0\ConstructionManagement.Domain.dll
+  ConstructionManagement.Application -> C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Application\bin\Debug\net9.0\ConstructionManagement.Application.dll
+  ConstructionManagement.Infrastructure -> C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\bin\Debug\net9.0\ConstructionManagement.Infrastructure.dll
+  ConstructionManagement.WebApi -> C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.WebApi\bin\Debug\net9.0\ConstructionManagement.WebApi.dll
+C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Integration\MediaUploadAndReviewIntegrationTests.cs(10,78): warning CS0436: The type 'SiteMediaService' in 'C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Unit\Services\SiteMediaServiceTests.cs' conflicts with the imported type 'SiteMediaService' in 'ConstructionManagement.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\Unit\Services\SiteMediaServiceTests.cs'. [C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\ConstructionManagement.Tests.csproj]
+  ConstructionManagement.Tests -> C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\bin\Debug\net9.0\ConstructionManagement.Tests.dll
+Test run for C:\Users\Ahmed.Ramadan\source\repos\Construction\tests\ConstructionManagement.Tests\bin\Debug\net9.0\ConstructionManagement.Tests.dll (.NETCoreApp,Version=v9.0)
+VSTest version 17.14.1 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.12)
+[xUnit.net 00:00:00.70]   Discovering: ConstructionManagement.Tests
+[xUnit.net 00:00:00.86]   Discovered:  ConstructionManagement.Tests
+[xUnit.net 00:00:00.87]   Starting:    ConstructionManagement.Tests
+[xUnit.net 00:00:00.99]     ConstructionManagement.Tests.Integration.ProjectRolePermissionTests.Placeholder [SKIP]
+[xUnit.net 00:00:00.99]       TODO: add integration coverage for project-role permissions.
+  Skipped ConstructionManagement.Tests.Integration.ProjectRolePermissionTests.Placeholder [1 ms]
+  Passed ConstructionManagement.Tests.Integration.ProjectRolePermissionTests.Requirement_ShouldStorePermission [183 ms]
+  Passed ConstructionManagement.Tests.Integration.FileStorageValidationIntegrationTests.DeleteFileAsync_ExistingFile_ShouldRemoveFile [53 ms]
+  Passed ConstructionManagement.Tests.Integration.FileStorageValidationIntegrationTests.UploadFileAsync_TooLarge_ShouldThrow [121 ms]
+  Passed ConstructionManagement.Tests.Integration.FileStorageValidationIntegrationTests.UploadFileAsync_InvalidExtension_ShouldThrow [11 ms]
+  Passed ConstructionManagement.Tests.Integration.FileStorageValidationIntegrationTests.UploadFileAsync_ValidFile_ShouldReturnRelativePath [13 ms]
+  Passed ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests.ReviewTransaction_ShouldUpdateReviewFields [4 s]
+  Passed ConstructionManagement.Tests.Integration.BOQAndTransactionIntegrationTests.CreateTransactionAsync_ShouldPersistTransaction [4 s]
+  Passed ConstructionManagement.Tests.Integration.EscalationIntegrationTests.CheckProjectAndItemDelaysAsync_ShouldCreateEscalationLog [4 s]
+  Passed ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests.UploadMedia_WithApprovalRule_CreatesApprovalRequest [4 s]
+  Passed ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests.ReviewTransaction_Approve_ShouldUpdateFields [547 ms]
+  Passed ConstructionManagement.Tests.Integration.BOQAndTransactionIntegrationTests.MultiStepProfitabilityScenario [564 ms]
+  Passed ConstructionManagement.Tests.Integration.EscalationIntegrationTests.CheckProjectAndItemDelaysAsync_ShouldDetectDelayedProjects [593 ms]
+  Passed ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests.UploadMedia_WhenReviewNotRequired_AutoApproves [383 ms]
+  Passed ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests.ReviewTransaction_WhenAlreadyReviewed_ShouldReturnFalse [301 ms]
+  Passed ConstructionManagement.Tests.Integration.BOQAndTransactionIntegrationTests.Transaction_ShouldAffect_ProjectProfitability [345 ms]
+  Passed ConstructionManagement.Tests.Integration.EscalationIntegrationTests.CheckProjectAndItemDelaysAsync_WhenNotificationsDisabled_DoesNothing [343 ms]
+  Passed ConstructionManagement.Tests.Integration.TransactionsReviewIntegrationTests.ReviewTransaction_WhenAlreadyReviewed_ReturnsFalse [283 ms]
+  Passed ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests.UploadAndReviewMedia_WithApprovalRule_CreatesAndProcessesApprovalRequest [433 ms]
+  Passed ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests.ReviewMedia_Approve_SetsApprovedStatus [267 ms]
+  Passed ConstructionManagement.Tests.Integration.MediaUploadAndReviewIntegrationTests.UploadAndReviewMedia_WhenReviewNotRequired_AutoApproves [234 ms]
+  Passed ConstructionManagement.Tests.Integration.AuthServiceIntegrationTests.LoginAsync_WithValidCredentials_ReturnsToken [6 s]
+  Passed ConstructionManagement.Tests.Integration.FullSystemIntegrationTests.Auth_Project_BOQ_HappyPath_ShouldSucceed [6 s]
+  Passed ConstructionManagement.Tests.Integration.FullSystemIntegrationTests.BOQ_CreateAndProgress_ShouldPersistCorrectData [358 ms]
+[xUnit.net 00:00:09.89]   Finished:    ConstructionManagement.Tests
+  Passed ConstructionManagement.Tests.Integration.AuthServiceIntegrationTests.LoginAsync_WithValidCredentials_ReturnsToken_RealDB [2 s]
+  Passed ConstructionManagement.Tests.Integration.FullSystemIntegrationTests.Auth_LoginFullProcess_ShouldSucceed [2 s]
+
+Test Run Successful.
+Total tests: 26
+     Passed: 25
+    Skipped: 1
+ Total time: 12.7972 Seconds

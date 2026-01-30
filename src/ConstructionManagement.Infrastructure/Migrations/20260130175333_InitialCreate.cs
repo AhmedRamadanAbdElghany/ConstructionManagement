@@ -1,12 +1,14 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace ConstructionManagement.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialWithSeed_Fixed : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,6 +19,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EnableDelayNotification = table.Column<bool>(type: "bit", nullable: false),
                     DelayNotificationIsOneTimeOnly = table.Column<bool>(type: "bit", nullable: false),
                     DelayNotificationIntervalDays = table.Column<int>(type: "int", nullable: false),
@@ -80,6 +83,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -96,6 +100,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -110,10 +115,13 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -127,7 +135,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 columns: table => new
                 {
                     RoleId = table.Column<int>(type: "int", nullable: false),
-                    PermissionId = table.Column<int>(type: "int", nullable: false)
+                    PermissionId = table.Column<int>(type: "int", nullable: false),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -152,6 +161,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -181,6 +191,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProjectName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -245,6 +256,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     UserId = table.Column<int>(type: "int", nullable: false),
                     RoleId = table.Column<int>(type: "int", nullable: false),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AssignedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -270,6 +282,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ItemCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ItemName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -298,6 +311,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
                     PaymentNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -325,6 +339,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -347,6 +362,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EnableDelayNotification = table.Column<bool>(type: "bit", nullable: true),
                     DelayNotificationIsOneTimeOnly = table.Column<bool>(type: "bit", nullable: true),
                     DelayNotificationIntervalDays = table.Column<int>(type: "int", nullable: true),
@@ -378,6 +394,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     ReportsToUserId = table.Column<int>(type: "int", nullable: true),
@@ -412,6 +429,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BOQItemId = table.Column<int>(type: "int", nullable: false),
                     DeltaQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     DeltaDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -444,6 +462,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AgreedQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ExecutedQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -467,6 +486,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BOQItemId = table.Column<int>(type: "int", nullable: false),
                     TotalSpent = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     EstimatedBudget = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -492,6 +512,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SupervisionPercentage = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     BaseCalculation = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CustomBaseAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
@@ -516,6 +537,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
                     BOQItemId = table.Column<int>(type: "int", nullable: true),
                     EscalationType = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -553,6 +575,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BOQItemId = table.Column<int>(type: "int", nullable: false),
                     LogDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DailyProgressPercentage = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
@@ -604,6 +627,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BOQItemId = table.Column<int>(type: "int", nullable: false),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
                     InvoiceNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
@@ -671,6 +695,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
                     BOQItemId = table.Column<int>(type: "int", nullable: true),
                     Source = table.Column<int>(type: "int", nullable: false),
@@ -703,6 +728,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
                     BOQItemId = table.Column<int>(type: "int", nullable: true),
                     UploaderUserId = table.Column<int>(type: "int", nullable: false),
@@ -761,6 +787,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
                     BOQItemId = table.Column<int>(type: "int", nullable: true),
                     Type = table.Column<int>(type: "int", nullable: false),
@@ -821,7 +848,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 columns: table => new
                 {
                     ProjectRoleId = table.Column<int>(type: "int", nullable: false),
-                    PermissionId = table.Column<int>(type: "int", nullable: false)
+                    PermissionId = table.Column<int>(type: "int", nullable: false),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -844,16 +872,18 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "ProjectTeamRoles",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProjectTeamMemberId = table.Column<int>(type: "int", nullable: false),
                     ProjectRoleId = table.Column<int>(type: "int", nullable: false),
                     AssignedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Id = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProjectTeamRoles", x => new { x.ProjectTeamMemberId, x.ProjectRoleId });
+                    table.PrimaryKey("PK_ProjectTeamRoles", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ProjectTeamRoles_ProjectRoles_ProjectRoleId",
                         column: x => x.ProjectRoleId,
@@ -872,6 +902,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
                     BOQItemId = table.Column<int>(type: "int", nullable: true),
                     ProjectApprovalRuleId = table.Column<int>(type: "int", nullable: true),
@@ -924,6 +955,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BOQItemId = table.Column<int>(type: "int", nullable: false),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
                     NoteText = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -968,6 +1000,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ApprovalRequestId = table.Column<int>(type: "int", nullable: false),
                     StepOrder = table.Column<int>(type: "int", nullable: false),
                     ApproverRole = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -994,6 +1027,208 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
+
+            migrationBuilder.InsertData(
+                table: "CompanySettings",
+                columns: new[] { "Id", "CreatedAt", "DelayGracePeriodDays", "DelayNotificationIntervalDays", "DelayNotificationIsOneTimeOnly", "DelayNotificationSendEmail", "EnableDelayNotification", "EnableInvoiceAggregation", "EnableInvoiceReview", "EnablePhotoUpload", "MaxPhotosPerUpload", "PhotoApproverRole", "RequirePhotoReview", "TenantId", "UpdatedAt" },
+                values: new object[] { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 3, 7, false, true, true, true, true, true, 10, "MediaReviewer", true, "ConstructionDB", null });
+
+            migrationBuilder.InsertData(
+                table: "Packages",
+                columns: new[] { "Id", "AllowAIAssistance", "AllowAdvancedReports", "AllowCustomBranding", "CreatedAt", "Description", "MaxBOQItems", "MaxDailyPhotos", "MaxTeamMembers", "Name", "Price", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, false, false, false, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Starter plan", 50, 20, 5, "Free", 0m, null },
+                    { 2, false, false, false, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Professional tracking", 200, 20, 20, "Pro", 1500m, null },
+                    { 3, true, false, false, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Full enterprise features", 1000, 20, 100, "Premium", 5000m, null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Permissions",
+                columns: new[] { "Id", "CreatedAt", "Description", "Name", "TenantId", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "All", "ConstructionDB", null },
+                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "ViewProjects", "ConstructionDB", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "Id", "CreatedAt", "Description", "Name", "TenantId", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Administrator", "ConstructionDB", null },
+                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "ProjectManager", "ConstructionDB", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "CreatedAt", "Email", "FirstName", "LastName", "PasswordHash", "Phone", "TenantId", "UpdatedAt", "Username" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@construction.com", "System", "Admin", "admin_hash", null, "ConstructionDB", null, "admin" },
+                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "ahmed@construction.com", "Ahmed", "Ramadan", "ahmed_hash", null, "ConstructionDB", null, "ahmed" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Notifications",
+                columns: new[] { "Id", "CreatedAt", "IsRead", "Link", "Message", "Priority", "ReadAt", "TenantId", "Title", "Type", "UpdatedAt", "UserId" },
+                values: new object[] { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), false, null, "Welcome to the system", 1, null, "ConstructionDB", "Welcome", 0, null, 2 });
+
+            migrationBuilder.InsertData(
+                table: "Projects",
+                columns: new[] { "Id", "AccountingSystem", "ClosedAt", "ClosedByUserId", "CreatedAt", "Description", "EndDate", "GeneralManagerUserId", "IsClosed", "OwnerUserId", "PackageId", "ProjectName", "StartDate", "Status", "TenantId", "TotalContractValue", "UpdatedAt", "UserId", "UserId1", "UserId2" },
+                values: new object[,]
+                {
+                    { 1, "Measured", null, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, false, 1, null, "Al-Massa Tower", null, "InProgress", "ConstructionDB", null, null, null, null, null },
+                    { 2, "Supervision", null, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, false, 2, null, "Coastal Supervision", null, "جديد", "ConstructionDB", null, null, null, null, null },
+                    { 3, "Mixed", null, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, false, 1, null, "Smart Mall Mixed", null, "InProgress", "ConstructionDB", null, null, null, null, null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "RolePermissions",
+                columns: new[] { "PermissionId", "RoleId", "TenantId" },
+                values: new object[,]
+                {
+                    { 1, 1, "ConstructionDB" },
+                    { 2, 2, "ConstructionDB" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UserRoles",
+                columns: new[] { "RoleId", "UserId", "AssignedAt", "TenantId" },
+                values: new object[,]
+                {
+                    { 1, 1, new DateTime(2026, 1, 30, 17, 53, 32, 14, DateTimeKind.Utc).AddTicks(7301), "ConstructionDB" },
+                    { 2, 2, new DateTime(2026, 1, 30, 17, 53, 32, 14, DateTimeKind.Utc).AddTicks(8018), "ConstructionDB" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "BOQItems",
+                columns: new[] { "Id", "AccountingType", "CreatedAt", "Description", "EndDate", "ItemCode", "ItemName", "ProjectId", "StartDate", "Status", "TenantId", "Unit", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 101, "Measured", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "CIV-01", "Excavation", 1, null, "InProgress", "ConstructionDB", null, null },
+                    { 102, "Measured", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "CIV-02", "Concrete Base", 1, null, "جديد", "ConstructionDB", null, null },
+                    { 201, "Supervision", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "SUP-01", "Structural Audit", 2, null, "جديد", "ConstructionDB", null, null },
+                    { 301, "Mixed", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "MIX-01", "MEP Installation", 3, null, "InProgress", "ConstructionDB", null, null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ClientPayments",
+                columns: new[] { "Id", "Amount", "AttachmentPath", "CreatedAt", "Description", "IsConfirmed", "PaymentDate", "PaymentNumber", "PaymentType", "ProjectId", "TenantId", "UpdatedAt" },
+                values: new object[] { 1, 50000m, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, true, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Advance", 1, "ConstructionDB", null });
+
+            migrationBuilder.InsertData(
+                table: "EscalationLogs",
+                columns: new[] { "Id", "BOQItemId", "CreatedAt", "EscalationType", "Message", "ProjectId", "RecipientUserId", "SentAt", "SentByEmail", "TenantId", "UpdatedAt" },
+                values: new object[] { 1, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "StartDelay", "Project delayed", 1, 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), false, "ConstructionDB", null });
+
+            migrationBuilder.InsertData(
+                table: "ProjectApprovalRules",
+                columns: new[] { "Id", "ApproverRole", "BOQItemId", "CreatedAt", "EscalationRole", "ProjectId", "ResponseTimeoutHours", "Source", "TenantId", "UpdatedAt", "UploaderRole" },
+                values: new object[] { 1, "Manager", null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "", 1, 0, 0, "ConstructionDB", null, "Engineer" });
+
+            migrationBuilder.InsertData(
+                table: "ProjectRoles",
+                columns: new[] { "Id", "CreatedAt", "Description", "Name", "ProjectId", "TenantId", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Manager", 1, "ConstructionDB", null },
+                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Engineer", 1, "ConstructionDB", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ProjectSettings",
+                columns: new[] { "Id", "CreatedAt", "DelayGracePeriodDays", "DelayNotificationIntervalDays", "DelayNotificationIsOneTimeOnly", "DelayNotificationSendEmail", "EnableDelayNotification", "EnableInvoiceAggregation", "EnableInvoiceReview", "EnablePhotoUpload", "MaxPhotosPerUpload", "PhotoApproverRole", "RequirePhotoReview", "TenantId", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, null, true, null, true, null, null, null, true, "ConstructionDB", null },
+                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, null, true, null, false, null, null, null, false, "ConstructionDB", null },
+                    { 3, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, null, false, null, true, null, null, null, true, "ConstructionDB", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ProjectTeamMembers",
+                columns: new[] { "Id", "CreatedAt", "ProjectId", "ReportsToUserId", "TenantId", "UpdatedAt", "UserId" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, "ConstructionDB", null, 1 },
+                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, "ConstructionDB", null, 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ApprovalRequests",
+                columns: new[] { "Id", "BOQItemId", "CreatedAt", "FinalApprovedAt", "FinalApprovedByUserId", "ProjectApprovalRuleId", "ProjectId", "RejectionReason", "RequestedAt", "RequestedByUserId", "Source", "SourceId", "Status", "TenantId", "UpdatedAt" },
+                values: new object[] { 1, 101, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, 1, 1, null, new DateTime(2026, 1, 30, 17, 53, 32, 21, DateTimeKind.Utc).AddTicks(219), 2, 0, 1, "Approved", "ConstructionDB", null });
+
+            migrationBuilder.InsertData(
+                table: "BOQExecutedDeltas",
+                columns: new[] { "Id", "BOQItemId", "ChangeType", "CreatedAt", "CreatedByUserId", "DeltaDate", "DeltaQuantity", "ProcessedAt", "ReferenceId", "TenantId", "UpdatedAt" },
+                values: new object[] { 1, 101, "DailyLog", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 100m, null, null, "ConstructionDB", null });
+
+            migrationBuilder.InsertData(
+                table: "BOQItemNotes",
+                columns: new[] { "Id", "BOQItemId", "CreatedAt", "CreatorUserId", "NoteText", "NoteType", "ProjectId", "RelatedMediaId", "TenantId", "UpdatedAt", "VisibleToRole" },
+                values: new object[] { 1, 101, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, "Initial kickoff", "General", 1, null, "ConstructionDB", null, "SiteEngineer" });
+
+            migrationBuilder.InsertData(
+                table: "BOQMeasured",
+                columns: new[] { "Id", "AgreedQuantity", "CreatedAt", "ExecutedQuantity", "TenantId", "UnitPrice", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 101, 5000m, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1200m, "ConstructionDB", 150m, null },
+                    { 102, 800m, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 0m, "ConstructionDB", 4200m, null },
+                    { 301, 1m, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 0.25m, "ConstructionDB", 500000m, null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "BOQProfitabilityLogs",
+                columns: new[] { "Id", "BOQItemId", "CreatedAt", "CurrentProfit", "EstimatedBudget", "LogDate", "ProfitPercentage", "TenantId", "TotalSpent", "UpdatedAt" },
+                values: new object[] { 1, 101, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 11000m, 15000m, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 73.33m, "ConstructionDB", 4000m, null });
+
+            migrationBuilder.InsertData(
+                table: "BOQSupervision",
+                columns: new[] { "Id", "BaseCalculation", "CreatedAt", "CustomBaseAmount", "EstimatedTotalCost", "SupervisionPercentage", "TenantId", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 201, "AllProjectInvoices", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, 25000m, 5.0m, "ConstructionDB", null },
+                    { 301, "ThisItemInvoices", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, 12500m, 2.5m, "ConstructionDB", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ItemDailyLogs",
+                columns: new[] { "Id", "BOQItemId", "ClosedAt", "ClosedByUserId", "ClosingNotes", "CreatedAt", "CreatedByUserId", "DailyProgressPercentage", "IsClosed", "LogDate", "ProgressNotes", "TenantId", "UpdatedAt", "UserId", "UserId1" },
+                values: new object[] { 1, 101, null, 1, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, true, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Testing seed data", "ConstructionDB", null, null, null });
+
+            migrationBuilder.InsertData(
+                table: "ItemInvoices",
+                columns: new[] { "Id", "AttachmentPath", "BOQItemId", "CreatedAt", "CreatedByUserId", "Currency", "Description", "DueDate", "InvoiceDate", "InvoiceNumber", "NetAmount", "ProjectId", "RejectionReason", "RetentionAmount", "RetentionRate", "ReviewDate", "ReviewerUserId", "Status", "SubTotal", "SupplierVendor", "TaxAmount", "TaxRate", "TenantId", "UpdatedAt", "UserId", "UserId1" },
+                values: new object[] { 1, null, 101, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, "EGP", null, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "V-INV-001", 1000m, 1, null, null, null, null, null, "Approved", 1000m, null, null, null, "ConstructionDB", null, null, null });
+
+            migrationBuilder.InsertData(
+                table: "ProjectTeamRoles",
+                columns: new[] { "Id", "AssignedAt", "CreatedAt", "ProjectRoleId", "ProjectTeamMemberId", "TenantId", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2026, 1, 30, 17, 53, 32, 17, DateTimeKind.Utc).AddTicks(2150), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, 1, "ConstructionDB", null },
+                    { 2, new DateTime(2026, 1, 30, 17, 53, 32, 17, DateTimeKind.Utc).AddTicks(3817), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2, 2, "ConstructionDB", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "SiteMedias",
+                columns: new[] { "Id", "BOQItemId", "CreatedAt", "Description", "FilePath", "IsApproved", "MediaType", "ProjectId", "RejectionReason", "ReviewDate", "ReviewerUserId", "Source", "Status", "TenantId", "UpdatedAt", "UploaderUserId", "UserId", "UserId1" },
+                values: new object[] { 1, 101, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "site1.jpg", true, "image/jpeg", 1, null, null, null, 0, "Approved", "ConstructionDB", null, 2, null, null });
+
+            migrationBuilder.InsertData(
+                table: "Transactions",
+                columns: new[] { "Id", "Amount", "AttachmentPath", "BOQItemId", "CreatedAt", "CreatedByUserId", "Description", "InvoiceNumber", "ProjectId", "ReviewDate", "ReviewNotes", "ReviewedByUserId", "Status", "SupplierName", "TenantId", "TransactionDate", "Type", "UpdatedAt", "UserId", "UserId1" },
+                values: new object[] { 1, 5000m, null, 101, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, null, 1, null, null, null, 1, null, "ConstructionDB", new DateTime(2026, 1, 30, 17, 53, 32, 18, DateTimeKind.Utc).AddTicks(7951), 0, null, null, null });
+
+            migrationBuilder.InsertData(
+                table: "ApprovalSteps",
+                columns: new[] { "Id", "ApprovalRequestId", "ApprovedAt", "ApproverRole", "ApproverUserId", "CreatedAt", "IsActive", "Notes", "Status", "StepOrder", "TenantId", "UpdatedAt" },
+                values: new object[] { 1, 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Manager", 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), false, null, "Approved", 1, "ConstructionDB", null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApprovalRequests_BOQItemId",
@@ -1239,6 +1474,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "ProjectRoleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProjectTeamRoles_ProjectTeamMemberId",
+                table: "ProjectTeamRoles",
+                column: "ProjectTeamMemberId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RolePermissions_PermissionId",
                 table: "RolePermissions",
                 column: "PermissionId");
@@ -1307,11 +1547,41 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "IX_UserRoles_RoleId",
                 table: "UserRoles",
                 column: "RoleId");
+
+            // --- ADDED STORED PROCEDURE ---
+            migrationBuilder.Sql(@"
+                CREATE PROCEDURE sp_generateInvoiceNumber
+                    @YearPart INT
+                AS
+                BEGIN
+                    SET NOCOUNT ON;
+                    DECLARE @NewNumber INT;
+
+                    BEGIN TRANSACTION;
+                        IF EXISTS (SELECT 1 FROM InvoiceSequences WITH (UPDLOCK, SERIALIZABLE) WHERE YearPart = @YearPart)
+                        BEGIN
+                            UPDATE InvoiceSequences
+                            SET @NewNumber = NextNumber, NextNumber = NextNumber + 1
+                            WHERE YearPart = @YearPart;
+                        END
+                        ELSE
+                        BEGIN
+                            SET @NewNumber = 1;
+                            INSERT INTO InvoiceSequences (YearPart, NextNumber) VALUES (@YearPart, 2);
+                        END
+                    COMMIT TRANSACTION;
+
+                    SELECT @NewNumber AS GeneratedNumber;
+                END
+            ");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            // --- DROP STORED PROCEDURE ---
+            migrationBuilder.Sql("DROP PROCEDURE IF EXISTS sp_generateInvoiceNumber");
+
             migrationBuilder.DropTable(
                 name: "ApprovalSteps");
 
