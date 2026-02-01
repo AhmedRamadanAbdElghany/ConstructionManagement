@@ -11,31 +11,31 @@ import { AuthService } from '../../../../core/auth/auth.service';
   standalone: true,
   imports: [CommonModule, RouterModule, TranslateModule],
   template: `
-    <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       @if (project) {
         <div class="max-w-7xl mx-auto">
           <!-- Header -->
-          <div class="flex items-start justify-between mb-8">
+          <div class="flex items-start justify-between mb-10">
             <div>
-              <div class="flex items-center space-x-4 mb-2">
-                <a routerLink="/admin/projects" class="p-2 rounded-lg hover:bg-slate-700/50 text-slate-400 hover:text-white transition-colors">
+              <div class="flex items-center space-x-4 mb-3">
+                <a routerLink="/admin/projects" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-slate-500 dark:text-slate-400 hover:text-cyan-500 dark:hover:text-cyan-400 hover:border-cyan-500/30 transition-all shadow-sm">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                   </svg>
                 </a>
-                <h1 class="text-3xl font-bold text-white">{{ project.name }}</h1>
-                <span class="px-4 py-2 rounded-xl text-sm font-medium"
+                <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight uppercase">{{ project.name }}</h1>
+                <span class="px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all"
                       [ngClass]="{
-                        'bg-cyan-500/20 text-cyan-400': project.status === 'Active',
-                        'bg-emerald-500/20 text-emerald-400': project.status === 'Completed',
-                        'bg-amber-500/20 text-amber-400': project.status === 'Delayed'
+                        'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/10': project.status === 'Active',
+                        'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/10': project.status === 'Completed',
+                        'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/10': project.status === 'Delayed'
                       }">
                   {{ project.status }}
                 </span>
               </div>
-              <p class="text-slate-400 flex items-center ml-11">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+              <p class="text-slate-500 dark:text-slate-400 font-medium flex items-center ml-14">
+                <svg class="w-4 h-4 mr-2 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                 </svg>
                 {{ project.location?.address }}
               </p>

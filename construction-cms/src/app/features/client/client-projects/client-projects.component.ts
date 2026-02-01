@@ -5,39 +5,41 @@ import { MockDataService } from '../../../core/mock/mock-data.service';
 import { Project, SiteMedia } from '../../../shared/interfaces';
 
 @Component({
-    selector: 'app-client-projects',
-    standalone: true,
-    imports: [CommonModule, TranslateModule],
-    template: `
-    <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+  selector: 'app-client-projects',
+  standalone: true,
+  imports: [CommonModule, TranslateModule],
+  template: `
+    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
-        <div class="mb-8">
-          <h1 class="text-3xl font-bold text-white mb-2">{{ 'client.my_projects' | translate }}</h1>
-          <p class="text-slate-400">{{ 'client.projects_subtitle' | translate }}</p>
+        <div class="mb-10">
+          <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight uppercase tracking-tight">{{ 'client.my_projects' | translate }}</h1>
+          <p class="text-slate-500 dark:text-slate-400 font-medium tracking-tight">{{ 'client.projects_subtitle' | translate }}</p>
         </div>
 
         <!-- Projects Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
           @for (project of projects; track project.id) {
-            <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-700/50 overflow-hidden">
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all group relative">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/15 transition-colors"></div>
+              
               <!-- Project Header -->
-              <div class="p-6 border-b border-slate-700/50">
+              <div class="p-8 border-b border-slate-100 dark:border-white/5 relative">
                 <div class="flex items-start justify-between mb-4">
                   <div>
-                    <h2 class="text-xl font-bold text-white mb-1">{{ project.name }}</h2>
-                    <p class="text-slate-400 text-sm flex items-center">
-                      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors uppercase tracking-tight">{{ project.name }}</h2>
+                    <p class="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest flex items-center">
+                      <svg class="w-4 h-4 mr-2 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                       </svg>
                       {{ project.location?.address }}
                     </p>
                   </div>
-                  <span class="px-4 py-2 rounded-xl text-sm font-medium"
+                  <span class="px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all"
                         [ngClass]="{
-                          'bg-cyan-500/20 text-cyan-400': project.status === 'Active',
-                          'bg-emerald-500/20 text-emerald-400': project.status === 'Completed',
+                          'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/10': project.status === 'Active',
+                          'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/10': project.status === 'Completed',
                           'bg-amber-500/20 text-amber-400': project.status === 'Delayed'
                         }">
                     {{ project.status }}
@@ -142,29 +144,29 @@ import { Project, SiteMedia } from '../../../shared/interfaces';
   `
 })
 export class ClientProjectsComponent implements OnInit {
-    projects: Project[] = [];
-    siteMedia: SiteMedia[] = [];
+  projects: Project[] = [];
+  siteMedia: SiteMedia[] = [];
 
-    recentUpdates = [
-        { message: 'Foundation work completed - Phase 1', date: '2 days ago' },
-        { message: 'Steel structure delivery on schedule', date: '5 days ago' },
-        { message: 'Site inspection passed successfully', date: '1 week ago' },
-    ];
+  recentUpdates = [
+    { message: 'Foundation work completed - Phase 1', date: '2 days ago' },
+    { message: 'Steel structure delivery on schedule', date: '5 days ago' },
+    { message: 'Site inspection passed successfully', date: '1 week ago' },
+  ];
 
-    constructor(private mockDataService: MockDataService) { }
+  constructor(private mockDataService: MockDataService) { }
 
-    ngOnInit() {
-        this.mockDataService.getProjects().subscribe(projects => {
-            this.projects = projects;
-        });
+  ngOnInit() {
+    this.mockDataService.getProjects().subscribe(projects => {
+      this.projects = projects;
+    });
 
-        // Load media for all projects
-        this.mockDataService.getSiteMedia(1).subscribe(media => {
-            this.siteMedia = media;
-        });
-    }
+    // Load media for all projects
+    this.mockDataService.getSiteMedia(1).subscribe(media => {
+      this.siteMedia = media;
+    });
+  }
 
-    getProjectMedia(projectId: number): SiteMedia[] {
-        return this.siteMedia.filter(m => m.projectId === projectId);
-    }
+  getProjectMedia(projectId: number): SiteMedia[] {
+    return this.siteMedia.filter(m => m.projectId === projectId);
+  }
 }

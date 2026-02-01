@@ -10,33 +10,34 @@ import { BOQItem, DailyLog, SiteMedia } from '../../../shared/interfaces';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   template: `
-    <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-6xl mx-auto">
         <!-- Header -->
         <div class="flex items-center justify-between mb-8">
           <div>
-            <h1 class="text-3xl font-bold text-white mb-2">{{ 'daily_log.title' | translate }}</h1>
-            <p class="text-slate-400">{{ currentDate | date:'fullDate' }}</p>
+            <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ 'daily_log.title' | translate }}</h1>
+            <p class="text-slate-500 dark:text-slate-400 font-medium uppercase tracking-widest text-[10px]">{{ currentDate | date:'fullDate' }}</p>
           </div>
           <div class="flex items-center space-x-4">
-            <span class="px-4 py-2 rounded-xl text-sm font-medium"
+            <span class="px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest border transition-all shadow-sm"
                   [ngClass]="{
-                    'bg-emerald-500/20 text-emerald-400': !isDayClosed,
-                    'bg-red-500/20 text-red-400': isDayClosed
+                    'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/10': !isDayClosed,
+                    'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/10': isDayClosed
                   }">
               {{ isDayClosed ? ('daily_log.day_locked' | translate) : ('daily_log.day_open' | translate) }}
             </span>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <!-- Main Form -->
-          <div class="lg:col-span-2 space-y-6">
+          <div class="lg:col-span-2 space-y-8">
             <!-- Progress Entry Card -->
-            <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
-              <h2 class="text-xl font-bold text-white mb-6 flex items-center">
-                <svg class="w-6 h-6 mr-2 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none transition-all group overflow-hidden relative">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/15 transition-colors"></div>
+              <h2 class="text-xl font-black text-slate-900 dark:text-white mb-8 flex items-center uppercase tracking-tight relative">
+                <svg class="w-6 h-6 mr-3 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                 </svg>
                 {{ 'daily_log.progress_entry' | translate }}
               </h2>
