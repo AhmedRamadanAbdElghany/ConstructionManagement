@@ -95,7 +95,7 @@ import { TranslateModule } from '@ngx-translate/core';
           <div class="overflow-x-auto">
             <table class="w-full">
               <thead>
-                <tr class="text-left text-slate-400 text-[10px] font-black uppercase tracking-widest bg-slate-50 dark:bg-slate-950/50">
+                <tr class="text-left text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-widest bg-slate-50 dark:bg-slate-950/50">
                   <th class="px-8 py-5 font-black">{{ 'hr.name' | translate }}</th>
                   <th class="px-8 py-5 font-black">{{ 'hr.role' | translate }}</th>
                   <th class="px-8 py-5 font-black">{{ 'hr.status' | translate }}</th>
@@ -112,13 +112,13 @@ import { TranslateModule } from '@ngx-translate/core';
                           {{ user.fullName.charAt(0) }}
                         </div>
                         <div>
-                          <p class="font-black text-slate-900 dark:text-white tracking-tight">{{ user.fullName }}</p>
-                          <p class="text-xs text-slate-400 font-bold">{{ user.email }}</p>
+                          <p class="text-base font-black text-slate-900 dark:text-white tracking-tight">{{ user.fullName }}</p>
+                          <p class="text-xs text-slate-500 font-black">{{ user.email }}</p>
                         </div>
                       </div>
                     </td>
                     <td class="px-8 py-5">
-                      <span class="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest"
+                      <span class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest"
                             [ngClass]="{
                               'bg-purple-500/10 text-purple-600 dark:text-purple-400': user.role === 'SuperAdmin',
                               'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400': user.role === 'CompanyAdmin',
@@ -137,7 +137,7 @@ import { TranslateModule } from '@ngx-translate/core';
                                 'bg-slate-400': user.status === 'Client'
                               }">
                         </span>
-                        <span class="text-xs font-black uppercase tracking-widest"
+                        <span class="text-sm font-black uppercase tracking-widest"
                               [ngClass]="{
                                 'text-emerald-600 dark:text-emerald-400': user.status === 'Working',
                                 'text-rose-600 dark:text-rose-400': user.status === 'Absent',
@@ -149,9 +149,9 @@ import { TranslateModule } from '@ngx-translate/core';
                     </td>
                     <td class="px-8 py-5">
                       @if (user.salary > 0) {
-                        <span class="font-black text-slate-900 dark:text-white">{{ user.salary | currency:'USD' }}</span>
+                        <p class="text-base font-black text-slate-900 dark:text-white tracking-tight">{{ user.salary | currency:'USD':'symbol':'1.0-0' }}</p>
                       } @else {
-                        <span class="text-slate-400 font-black text-[10px] uppercase tracking-widest leading-none">N/A</span>
+                        <span class="text-slate-400 font-black text-xs uppercase tracking-widest leading-none">N/A</span>
                       }
                     </td>
                     <td class="px-8 py-5">

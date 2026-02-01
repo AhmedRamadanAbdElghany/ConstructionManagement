@@ -178,64 +178,64 @@ import { TranslateModule } from '@ngx-translate/core';
 
         <!-- List View -->
         @if (viewMode === 'list') {
-          <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-700/50 overflow-hidden">
+          <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all">
             <table class="w-full">
               <thead>
-                <tr class="text-left text-slate-400 text-sm bg-slate-800/50">
-                  <th class="px-6 py-4 font-medium">Project</th>
-                  <th class="px-6 py-4 font-medium">Status</th>
-                  <th class="px-6 py-4 font-medium">Progress</th>
-                  <th class="px-6 py-4 font-medium">Earned</th>
-                  <th class="px-6 py-4 font-medium">Collected</th>
-                  <th class="px-6 py-4 font-medium">Action</th>
+                <tr class="text-left bg-slate-50/50 dark:bg-slate-950/30 text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-[0.2em]">
+                  <th class="px-8 py-5">Project</th>
+                  <th class="px-8 py-5">Status</th>
+                  <th class="px-8 py-5">Progress</th>
+                  <th class="px-8 py-5">Earned</th>
+                  <th class="px-8 py-5">Collected</th>
+                  <th class="px-8 py-5">Action</th>
                 </tr>
               </thead>
-              <tbody class="text-white">
+              <tbody class="divide-y divide-slate-100 dark:divide-white/5">
                 @for (project of filteredProjects; track project.id) {
-                  <tr class="border-t border-slate-700/30 hover:bg-slate-700/20 transition-colors">
-                    <td class="px-6 py-4">
-                      <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold">
+                  <tr class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
+                    <td class="px-8 py-6">
+                      <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-black text-lg shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform">
                           {{ project.name.charAt(0) }}
                         </div>
                         <div>
-                          <p class="font-medium">{{ project.name }}</p>
-                          <p class="text-sm text-slate-400">{{ project.location?.address }}</p>
+                          <p class="text-base font-black text-slate-900 dark:text-white tracking-tight">{{ project.name }}</p>
+                          <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{{ project.location?.address }}</p>
                         </div>
                       </div>
                     </td>
-                    <td class="px-6 py-4">
-                      <span class="px-3 py-1.5 rounded-lg text-xs font-medium"
+                    <td class="px-8 py-6">
+                      <span class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest border transition-all"
                             [ngClass]="{
-                              'bg-cyan-500/20 text-cyan-400': project.status === 'Active',
-                              'bg-emerald-500/20 text-emerald-400': project.status === 'Completed',
-                              'bg-amber-500/20 text-amber-400': project.status === 'Delayed'
+                              'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/10': project.status === 'Active',
+                              'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/10': project.status === 'Completed',
+                              'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/10': project.status === 'Delayed'
                             }">
                         {{ project.status }}
                       </span>
                     </td>
-                    <td class="px-6 py-4">
-                      <div class="flex items-center space-x-3">
-                        <div class="flex-1 h-2 bg-slate-700 rounded-full overflow-hidden max-w-[100px]">
+                    <td class="px-8 py-6">
+                      <div class="flex items-center space-x-4">
+                        <div class="flex-1 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden max-w-[100px]">
                           <div class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"
                                [style.width.%]="project.progress">
                           </div>
                         </div>
-                        <span class="text-sm text-slate-400">{{ project.progress }}%</span>
+                        <span class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">{{ project.progress }}%</span>
                       </div>
                     </td>
-                    <td class="px-6 py-4 text-emerald-400 font-medium">
+                    <td class="px-8 py-6 text-emerald-600 dark:text-emerald-400 text-base font-black tracking-tight">
                       {{ project.cashFlow.earned | currency:'USD':'symbol':'1.0-0' }}
                     </td>
-                    <td class="px-6 py-4 text-cyan-400 font-medium">
+                    <td class="px-8 py-6 text-cyan-600 dark:text-cyan-400 text-base font-black tracking-tight">
                       {{ project.cashFlow.collected | currency:'USD':'symbol':'1.0-0' }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-8 py-6">
                       <a [routerLink]="['/admin/projects', project.id]" 
-                         class="px-4 py-2 rounded-lg bg-cyan-500/20 text-cyan-400 text-sm font-medium hover:bg-cyan-500/30 transition-colors inline-flex items-center">
+                         class="px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg flex items-center w-fit">
                         View
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        <svg class="w-3.5 h-3.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path>
                         </svg>
                       </a>
                     </td>

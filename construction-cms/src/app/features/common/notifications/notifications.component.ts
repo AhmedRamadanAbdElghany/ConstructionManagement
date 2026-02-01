@@ -100,9 +100,9 @@ import { AppNotification } from '../../../shared/interfaces';
                       <span class="w-2.5 h-2.5 rounded-full bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.5)] flex-shrink-0 ml-4 mt-1.5 animate-pulse"></span>
                     }
                   </div>
-                  <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{{ getTimeAgo(notification.timestamp) }}</p>
+                  <p class="text-xs font-black text-slate-500 dark:text-slate-500 uppercase tracking-widest">{{ getTimeAgo(notification.timestamp) }}</p>
                   @if (notification.route) {
-                    <div class="mt-6 inline-flex items-center text-[10px] font-black text-cyan-600 dark:text-cyan-400 uppercase tracking-widest hover:translate-x-1 transition-transform">
+                    <div class="mt-6 inline-flex items-center text-xs font-black text-cyan-600 dark:text-cyan-400 uppercase tracking-widest hover:translate-x-1 transition-transform">
                       <span>{{ 'notifications.view_details' | translate }}</span>
                       <svg class="w-3.5 h-3.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path>

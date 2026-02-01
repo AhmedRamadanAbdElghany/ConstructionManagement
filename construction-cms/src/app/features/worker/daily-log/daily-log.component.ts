@@ -201,12 +201,12 @@ import { BOQItem, DailyLog, SiteMedia } from '../../../shared/interfaces';
               <h3 class="text-lg font-bold text-white mb-4">{{ 'daily_log.today_summary' | translate }}</h3>
               <div class="space-y-4">
                 <div class="flex items-center justify-between p-3 rounded-xl bg-slate-700/30">
-                  <span class="text-slate-400">{{ 'daily_log.items_logged' | translate }}</span>
-                  <span class="text-white font-bold">{{ todayLogItems.length }}</span>
+                  <span class="text-xs font-black text-slate-500 uppercase tracking-widest">{{ 'daily_log.items_logged' | translate }}</span>
+                  <span class="text-white font-black text-lg">{{ todayLogItems.length }}</span>
                 </div>
                 <div class="flex items-center justify-between p-3 rounded-xl bg-slate-700/30">
-                  <span class="text-slate-400">{{ 'daily_log.photos_uploaded' | translate }}</span>
-                  <span class="text-white font-bold">{{ uploadedFiles.length }}</span>
+                  <span class="text-xs font-black text-slate-500 uppercase tracking-widest">{{ 'daily_log.photos_uploaded' | translate }}</span>
+                  <span class="text-white font-black text-lg">{{ uploadedFiles.length }}</span>
                 </div>
               </div>
             </div>
@@ -262,9 +262,9 @@ import { BOQItem, DailyLog, SiteMedia } from '../../../shared/interfaces';
               <h3 class="text-lg font-bold text-white mb-4">{{ 'daily_log.recent_entries' | translate }}</h3>
               <div class="space-y-3">
                 @for (entry of todayLogItems; track entry.id) {
-                  <div class="p-3 rounded-xl bg-slate-700/30 border-l-4 border-cyan-500">
-                    <p class="text-white font-medium text-sm">{{ getBoqItemName(entry.boqItemId) }}</p>
-                    <p class="text-xs text-slate-400 mt-1">Qty: {{ entry.quantity }} | {{ entry.startTime | date:'shortTime' }}</p>
+                  <div class="p-4 rounded-xl bg-slate-700/30 border-l-4 border-cyan-500">
+                    <p class="text-white font-black text-base">{{ getBoqItemName(entry.boqItemId) }}</p>
+                    <p class="text-xs font-black text-slate-500 uppercase tracking-widest mt-1.5">Qty: {{ entry.quantity }} | {{ entry.startTime | date:'shortTime' }}</p>
                   </div>
                 }
                 @if (todayLogItems.length === 0) {

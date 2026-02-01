@@ -99,35 +99,35 @@ import { VacationRequest } from '../../../shared/interfaces';
 
         <!-- Salary Tab -->
         @if (activeTab === 'salary') {
-          <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-700/50 overflow-hidden">
-            <div class="p-6 border-b border-slate-700/50">
-              <h2 class="text-xl font-bold text-white">{{ 'personal_hr.salary_breakdown' | translate }}</h2>
+          <div class="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all">
+            <div class="px-8 py-6 border-b border-slate-100 dark:border-white/5 bg-slate-50/30 dark:bg-slate-950/20">
+              <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'personal_hr.salary_breakdown' | translate }}</h2>
             </div>
             <div class="overflow-x-auto">
               <table class="w-full">
                 <thead>
-                  <tr class="text-left text-slate-400 text-sm bg-slate-800/50">
-                    <th class="px-6 py-4 font-medium">{{ 'personal_hr.month' | translate }}</th>
-                    <th class="px-6 py-4 font-medium">{{ 'personal_hr.basic_salary' | translate }}</th>
-                    <th class="px-6 py-4 font-medium">{{ 'personal_hr.bonus' | translate }}</th>
-                    <th class="px-6 py-4 font-medium">{{ 'personal_hr.deductions' | translate }}</th>
-                    <th class="px-6 py-4 font-medium">{{ 'personal_hr.net_salary' | translate }}</th>
-                    <th class="px-6 py-4 font-medium">{{ 'personal_hr.status' | translate }}</th>
+                  <tr class="text-left bg-slate-50/50 dark:bg-slate-950/30 text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-[0.2em]">
+                    <th class="px-8 py-5">{{ 'personal_hr.month' | translate }}</th>
+                    <th class="px-8 py-5">{{ 'personal_hr.basic_salary' | translate }}</th>
+                    <th class="px-8 py-5">{{ 'personal_hr.bonus' | translate }}</th>
+                    <th class="px-8 py-5">{{ 'personal_hr.deductions' | translate }}</th>
+                    <th class="px-8 py-5">{{ 'personal_hr.net_salary' | translate }}</th>
+                    <th class="px-8 py-5">{{ 'personal_hr.status' | translate }}</th>
                   </tr>
                 </thead>
-                <tbody class="text-white">
+                <tbody class="divide-y divide-slate-100 dark:divide-white/5">
                   @for (record of salaryHistory; track record.month) {
-                    <tr class="border-t border-slate-700/30 hover:bg-slate-700/20 transition-colors">
-                      <td class="px-6 py-4 font-medium">{{ record.month }}</td>
-                      <td class="px-6 py-4">{{ record.basicSalary | currency:'USD' }}</td>
-                      <td class="px-6 py-4 text-emerald-400">+{{ record.bonus | currency:'USD' }}</td>
-                      <td class="px-6 py-4 text-red-400">-{{ record.deductions | currency:'USD' }}</td>
-                      <td class="px-6 py-4 font-bold text-cyan-400">{{ record.netSalary | currency:'USD' }}</td>
-                      <td class="px-6 py-4">
-                        <span class="px-3 py-1.5 rounded-lg text-xs font-medium"
+                    <tr class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
+                      <td class="px-8 py-6 text-sm font-black text-slate-900 dark:text-white tracking-tight">{{ record.month }}</td>
+                      <td class="px-8 py-6 text-sm font-black text-slate-600 dark:text-slate-300">{{ record.basicSalary | currency:'USD' }}</td>
+                      <td class="px-8 py-6 text-sm font-black text-emerald-600 dark:text-emerald-400 tracking-tight">+{{ record.bonus | currency:'USD' }}</td>
+                      <td class="px-8 py-6 text-sm font-black text-rose-600 dark:text-rose-400 tracking-tight">-{{ record.deductions | currency:'USD' }}</td>
+                      <td class="px-8 py-6 text-base font-black text-cyan-600 dark:text-cyan-400 tracking-tight">{{ record.netSalary | currency:'USD' }}</td>
+                      <td class="px-8 py-6">
+                        <span class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest border transition-all"
                               [ngClass]="{
-                                'bg-emerald-500/20 text-emerald-400': record.status === 'Paid',
-                                'bg-amber-500/20 text-amber-400': record.status === 'Pending'
+                                'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/10': record.status === 'Paid',
+                                'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/10': record.status === 'Pending'
                               }">
                           {{ record.status }}
                         </span>

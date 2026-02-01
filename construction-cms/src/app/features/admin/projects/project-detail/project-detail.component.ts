@@ -123,20 +123,20 @@ import { AuthService } from '../../../../core/auth/auth.service';
           <!-- Timeline Tab -->
           @if (activeTab === 'timeline') {
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
-                <h3 class="text-lg font-bold text-white mb-6">{{ 'project_detail.timeline' | translate }}</h3>
-                <div class="space-y-4">
-                  <div class="p-4 rounded-xl bg-slate-700/30">
-                    <p class="text-sm text-slate-400 mb-1">{{ 'project_detail.start_date' | translate }}</p>
-                    <p class="text-lg font-medium text-white">{{ project.startDate | date:'fullDate' }}</p>
+              <div class="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-white/5 shadow-xl transition-all">
+                <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'project_detail.timeline' | translate }}</h3>
+                <div class="space-y-6">
+                  <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                    <p class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">{{ 'project_detail.start_date' | translate }}</p>
+                    <p class="text-lg font-black text-slate-900 dark:text-white tracking-tight">{{ project.startDate | date:'fullDate' }}</p>
                   </div>
-                  <div class="p-4 rounded-xl bg-slate-700/30">
-                    <p class="text-sm text-slate-400 mb-1">{{ 'project_detail.end_date' | translate }}</p>
-                    <p class="text-lg font-medium text-white">{{ project.endDate ? (project.endDate | date:'fullDate') : 'Not Set' }}</p>
+                  <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                    <p class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">{{ 'project_detail.end_date' | translate }}</p>
+                    <p class="text-lg font-black text-slate-900 dark:text-white tracking-tight">{{ project.endDate ? (project.endDate | date:'fullDate') : 'Not Set' }}</p>
                   </div>
-                  <div class="p-4 rounded-xl bg-slate-700/30">
-                    <p class="text-sm text-slate-400 mb-1">Duration</p>
-                    <p class="text-lg font-medium text-white">{{ calculateDuration() }} days</p>
+                  <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                    <p class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Duration</p>
+                    <p class="text-lg font-black text-slate-900 dark:text-white tracking-tight">{{ calculateDuration() }} days</p>
                   </div>
                 </div>
               </div>
@@ -168,41 +168,41 @@ import { AuthService } from '../../../../core/auth/auth.service';
 
           <!-- Team Tab -->
           @if (activeTab === 'team') {
-            <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-700/50 overflow-hidden">
-              <div class="p-6 border-b border-slate-700/50 flex items-center justify-between">
-                <h3 class="text-lg font-bold text-white">{{ 'project_detail.team_members' | translate }}</h3>
-                <button class="px-4 py-2 rounded-xl bg-cyan-500/20 text-cyan-400 font-medium hover:bg-cyan-500/30 transition-colors">
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all">
+              <div class="px-8 py-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-slate-50/30 dark:bg-slate-950/20">
+                <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'project_detail.team_members' | translate }}</h3>
+                <button class="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl">
                   {{ 'project_detail.add_member' | translate }}
                 </button>
               </div>
-              <div class="divide-y divide-slate-700/30">
+              <div class="divide-y divide-slate-100 dark:divide-white/5">
                 @for (member of teamMembers; track member.id) {
-                  <div class="p-4 flex items-center justify-between hover:bg-slate-700/20 transition-colors">
+                  <div class="p-6 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
                     <div class="flex items-center space-x-4">
-                      <div class="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg">
+                      <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform">
                         {{ member.fullName.charAt(0) }}
                       </div>
                       <div>
-                        <p class="text-white font-medium">{{ member.fullName }}</p>
-                        <p class="text-sm text-slate-400">{{ member.email }}</p>
+                        <p class="text-base font-black text-slate-900 dark:text-white tracking-tight">{{ member.fullName }}</p>
+                        <p class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1">{{ member.email }}</p>
                       </div>
                     </div>
-                    <div class="flex items-center space-x-4">
-                      <span class="px-3 py-1.5 rounded-lg text-xs font-medium"
+                    <div class="flex items-center space-x-6">
+                      <span class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all"
                             [ngClass]="{
-                              'bg-cyan-500/20 text-cyan-400': member.role === 'CompanyAdmin',
-                              'bg-emerald-500/20 text-emerald-400': member.role === 'CompanyUser'
+                              'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/10': member.role === 'CompanyAdmin',
+                              'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/10': member.role === 'CompanyUser'
                             }">
                         {{ member.role }}
                       </span>
                       <button 
                         (click)="impersonate(member)"
-                        class="px-4 py-2 rounded-xl bg-purple-500/20 text-purple-400 text-sm font-medium hover:bg-purple-500/30 transition-colors">
+                        class="px-5 py-2.5 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 text-xs font-black uppercase tracking-widest hover:scale-105 transition-all">
                         {{ 'project_detail.impersonate' | translate }}
                       </button>
-                      <button class="p-2 rounded-lg hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-colors">
+                      <button class="p-3 rounded-xl hover:bg-rose-500/10 text-slate-400 hover:text-rose-500 transition-all border border-transparent hover:border-rose-500/20">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                         </svg>
                       </button>
                     </div>

@@ -47,13 +47,13 @@ import { Project, SiteMedia } from '../../../shared/interfaces';
                 </div>
 
                 <!-- Progress Bar -->
-                <div class="mb-4">
-                  <div class="flex justify-between text-sm mb-2">
-                    <span class="text-slate-400">{{ 'client.overall_progress' | translate }}</span>
-                    <span class="text-white font-medium">{{ project.progress }}%</span>
+                <div class="mb-6 mt-4">
+                  <div class="flex justify-between items-center mb-3">
+                    <span class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">{{ 'client.overall_progress' | translate }}</span>
+                    <span class="text-sm font-black text-slate-900 dark:text-cyan-400">{{ project.progress }}%</span>
                   </div>
-                  <div class="h-3 bg-slate-700 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full transition-all duration-1000 ease-out"
+                  <div class="h-2.5 bg-slate-100 dark:bg-slate-950 rounded-full overflow-hidden shadow-inner p-0.5 border border-slate-200 dark:border-white/5">
+                    <div class="h-full bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(34,211,238,0.3)]"
                          [style.width.%]="project.progress">
                     </div>
                   </div>
@@ -61,13 +61,13 @@ import { Project, SiteMedia } from '../../../shared/interfaces';
 
                 <!-- Timeline Info -->
                 <div class="grid grid-cols-2 gap-4">
-                  <div class="p-3 rounded-xl bg-slate-700/30">
-                    <p class="text-xs text-slate-400 mb-1">{{ 'client.start_date' | translate }}</p>
-                    <p class="text-white font-medium">{{ project.startDate | date:'mediumDate' }}</p>
+                  <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                    <p class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">{{ 'client.start_date' | translate }}</p>
+                    <p class="text-sm font-black text-slate-900 dark:text-white tracking-tight">{{ project.startDate | date:'mediumDate' }}</p>
                   </div>
-                  <div class="p-3 rounded-xl bg-slate-700/30">
-                    <p class="text-xs text-slate-400 mb-1">{{ 'client.expected_end' | translate }}</p>
-                    <p class="text-white font-medium">{{ project.endDate ? (project.endDate | date:'mediumDate') : 'In Progress' }}</p>
+                  <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                    <p class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">{{ 'client.expected_end' | translate }}</p>
+                    <p class="text-sm font-black text-slate-900 dark:text-white tracking-tight">{{ project.endDate ? (project.endDate | date:'mediumDate') : 'In Progress' }}</p>
                   </div>
                 </div>
               </div>

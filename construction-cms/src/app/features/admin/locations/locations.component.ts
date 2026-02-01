@@ -83,9 +83,9 @@ declare const L: any;
                     {{ project.location?.address }}
                   </p>
                   <div class="space-y-2">
-                    <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
-                      <span class="text-slate-400">Progress</span>
-                      <span class="text-cyan-600 dark:text-cyan-400">{{ project.progress }}%</span>
+                    <div class="flex items-center justify-between text-xs font-black uppercase tracking-widest">
+                      <span class="text-slate-500 dark:text-slate-400">Progress</span>
+                      <span class="text-cyan-600 dark:text-cyan-400 font-black">{{ project.progress }}%</span>
                     </div>
                     <div class="h-1.5 bg-slate-100 dark:bg-slate-950 rounded-full overflow-hidden shadow-inner p-0.5 border border-slate-200 dark:border-white/5">
                       <div class="h-full bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(34,211,238,0.3)]"
@@ -106,7 +106,7 @@ declare const L: any;
             <div class="flex items-center space-x-4">
               <input type="date" 
                      class="px-5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-black uppercase tracking-widest focus:ring-2 focus:ring-cyan-500 outline-none transition-all shadow-inner">
-              <button class="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl">
+              <button class="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 text-xs font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl">
                 {{ 'locations.view_history' | translate }}
               </button>
             </div>
@@ -129,12 +129,12 @@ declare const L: any;
                 <p class="text-slate-900 dark:text-white font-black text-xs truncate uppercase tracking-tight group-hover:text-cyan-500 transition-colors">{{ worker.fullName }}</p>
                 <div class="mt-2">
                   @if (worker.status === 'Working') {
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-500/10 text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest leading-none">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-emerald-500/10 text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest leading-none">
                       <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
                       {{ 'locations.online' | translate }}
                     </span>
                   } @else {
-                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">{{ 'locations.offline' | translate }}</span>
+                    <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest leading-none">{{ 'locations.offline' | translate }}</span>
                   }
                 </div>
               </div>
