@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MockDataService } from '../../../core/mock/mock-data.service';
-import { Project } from '../../../shared/interfaces';
+import { Project, WorkerPerformance } from '../../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../../core/auth/auth.service';
 
@@ -14,7 +14,7 @@ import { AuthService } from '../../../core/auth/auth.service';
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
-        <div class="mb-8">
+        <div class="mb-8 text-nowrap overflow-hidden">
           <div class="flex items-center space-x-2 mb-2">
             <span class="px-3 py-1 rounded-full bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 text-xs font-bold flex items-center border border-cyan-500/20">
               <span class="w-2 h-2 rounded-full bg-cyan-500 mr-2 animate-pulse"></span>
@@ -189,8 +189,79 @@ import { AuthService } from '../../../core/auth/auth.service';
           </div>
         </div>
 
+        @if (isAdmin) {
+          <!-- Worker Performance Table (Admin Only) -->
+          <div class="mt-8 bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all">
+            <div class="px-8 py-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between">
+              <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'dashboard.worker_performance' | translate }}</h2>
+              <div class="flex items-center space-x-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'dashboard.realtime_efficiency' | translate }}</span>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="text-left bg-slate-50/50 dark:bg-slate-950/30">
+                    <th class="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">{{ 'dashboard.worker' | translate }}</th>
+                    <th class="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">{{ 'dashboard.project' | translate }}</th>
+                    <th class="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">{{ 'dashboard.tasks' | translate }}</th>
+                    <th class="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">{{ 'dashboard.efficiency' | translate }}</th>
+                    <th class="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">{{ 'dashboard.attendance' | translate }}</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-white/5">
+                  @for (worker of workerPerformance; track worker.userId) {
+                    <tr class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
+                      <td class="px-8 py-6">
+                        <div class="flex items-center space-x-4">
+                          <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-900 dark:text-white font-black group-hover:bg-cyan-500 group-hover:text-white transition-all">
+                            {{ worker.userName.charAt(0) }}
+                          </div>
+                          <div>
+                            <p class="font-bold text-slate-900 dark:text-white tracking-tight">{{ worker.userName }}</p>
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 uppercase tracking-widest mt-1 inline-block">ID: #{{ worker.userId }}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-8 py-6">
+                        <p class="text-sm font-bold text-slate-600 dark:text-slate-300 tracking-tight">{{ worker.projectName }}</p>
+                      </td>
+                      <td class="px-8 py-6">
+                        <p class="text-sm font-black text-slate-900 dark:text-white tracking-tight">{{ worker.tasksCompleted }}</p>
+                      </td>
+                      <td class="px-8 py-6">
+                        <div class="flex items-center space-x-3">
+                          <div class="flex-1 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden min-w-[80px]">
+                            <div class="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-500" [style.width.%]="worker.efficiency"></div>
+                          </div>
+                          <span class="text-[10px] font-black" [ngClass]="{
+                            'text-emerald-500': worker.efficiency >= 90,
+                            'text-cyan-500': worker.efficiency < 90 && worker.efficiency >= 75,
+                            'text-rose-500': worker.efficiency < 75
+                          }">{{ worker.efficiency }}%</span>
+                        </div>
+                      </td>
+                      <td class="px-8 py-6">
+                        <div class="flex items-center space-x-2">
+                           <div class="w-2 h-2 rounded-full" [ngClass]="{
+                             'bg-emerald-500': worker.attendance >= 95,
+                             'bg-amber-500': worker.attendance < 95 && worker.attendance >= 85,
+                             'bg-rose-500': worker.attendance < 85
+                           }"></div>
+                           <span class="text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-widest">{{ worker.attendance }}%</span>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+
         <!-- Projects Table -->
-        <div class="mt-10 bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all">
+        <div class="mt-8 bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all">
           <div class="px-8 py-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between">
             <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'dashboard.projects_overview' | translate }}</h2>
             <a routerLink="/admin/projects" class="group flex items-center text-[10px] font-black text-cyan-600 dark:text-cyan-400 uppercase tracking-widest hover:translate-x-1 transition-transform">
@@ -278,12 +349,17 @@ import { AuthService } from '../../../core/auth/auth.service';
 export class DashboardComponent implements OnInit {
   currentUser: any;
   projects: Project[] = [];
+  workerPerformance: WorkerPerformance[] = [];
   stats = {
     activeProjects: 0,
     completedProjects: 0,
     delayedProjects: 0,
     totalRevenue: 0
   };
+
+  get isAdmin(): boolean {
+    return this.currentUser?.role === 'CompanyAdmin' || this.currentUser?.role === 'SuperAdmin';
+  }
 
   chartData = [
     { label: 'Jan', earned: 45, collected: 35 },
@@ -323,5 +399,11 @@ export class DashboardComponent implements OnInit {
     this.mockDataService.getDashboardStats().subscribe(stats => {
       this.stats = stats;
     });
+
+    if (this.isAdmin) {
+      this.mockDataService.getWorkerPerformance().subscribe(perf => {
+        this.workerPerformance = perf;
+      });
+    }
   }
 }

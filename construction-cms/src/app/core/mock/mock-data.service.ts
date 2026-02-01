@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { User, Project, BOQItem, DailyLog, SiteMedia, Transaction, VacationRequest, AppNotification } from '../../shared/interfaces';
+import { User, Project, BOQItem, DailyLog, SiteMedia, Transaction, VacationRequest, AppNotification, WorkerPerformance } from '../../shared/interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
@@ -138,6 +138,13 @@ export class MockDataService {
     { id: 5, type: 'info', message: 'Project milestone reached - 65% complete', route: '/admin/projects/1', timestamp: new Date(Date.now() - 172800000).toISOString(), read: true }
   ];
 
+  private workerPerformance: WorkerPerformance[] = [
+    { userId: 2, userName: 'Maria Hassan', projectName: 'Residential Tower Dubai', tasksCompleted: 45, efficiency: 92, attendance: 98, status: 'Peak' },
+    { userId: 4, userName: 'Omar Khalil', projectName: 'Residential Tower Dubai', tasksCompleted: 38, efficiency: 88, attendance: 95, status: 'Peak' },
+    { userId: 6, userName: 'Sara Ibrahim', projectName: 'Commercial Mall Cairo', tasksCompleted: 12, efficiency: 65, attendance: 60, status: 'Below Average' },
+    { userId: 7, userName: 'Mohamed Farid', projectName: 'Villa Complex Riyadh', tasksCompleted: 52, efficiency: 95, attendance: 100, status: 'Peak' }
+  ];
+
   getUsers(): Observable<User[]> { return of(this.users); }
   getProjects(): Observable<Project[]> { return of(this.projects); }
   getBOQItems(projectId: number): Observable<BOQItem[]> { return of(this.boqItems.filter(i => i.projectId === projectId)); }
@@ -147,6 +154,7 @@ export class MockDataService {
   getVacationRequests(userId: number): Observable<VacationRequest[]> { return of(this.vacationRequests.filter(r => r.userId === userId)); }
   getAllVacationRequests(): Observable<VacationRequest[]> { return of(this.vacationRequests); }
   getNotifications(): Observable<AppNotification[]> { return of(this.notifications); }
+  getWorkerPerformance(): Observable<WorkerPerformance[]> { return of(this.workerPerformance); }
 
   // Dashboard stats
   getDashboardStats(): Observable<{ activeProjects: number; completedProjects: number; delayedProjects: number; totalRevenue: number }> {

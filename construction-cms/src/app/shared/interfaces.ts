@@ -103,3 +103,12 @@ export interface SalaryRecord {
   netSalary: number;
   status: 'Paid' | 'Pending';
 }
+export interface WorkerPerformance {
+  userId: number;
+  userName: string;
+  projectName: string;
+  tasksCompleted: number;
+  efficiency: number;
+  attendance: number;
+  status: 'Peak' | 'Steady' | 'Below Average';
+}

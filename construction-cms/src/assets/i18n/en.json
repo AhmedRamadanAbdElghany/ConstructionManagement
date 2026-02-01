@@ -47,7 +47,14 @@
     "progress": "Progress",
     "cash_flow": "Cash Flow",
     "action": "Action",
-    "view": "View"
+    "view": "View",
+    "worker_performance": "Worker Performance Overall",
+    "realtime_efficiency": "Real-time Efficiency Tracking",
+    "worker": "Worker",
+    "project": "Project",
+    "tasks": "Tasks",
+    "efficiency": "Efficiency",
+    "attendance": "Attendance"
   },
   "hr": {
     "title": "HR & User Management",
