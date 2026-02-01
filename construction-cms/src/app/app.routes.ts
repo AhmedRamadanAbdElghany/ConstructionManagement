@@ -48,6 +48,12 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/admin/locations/locations.component').then(m => m.LocationsComponent),
                 canActivate: [roleGuard],
                 data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'company-settings',
+                loadComponent: () => import('./features/admin/company-settings/company-settings.component').then(m => m.CompanySettingsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
             }
         ]
     },

@@ -2,12 +2,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
-public class BOQExecutedDelta : BaseEntity, ITenantEntity
+public class BOQExecutedDelta : BaseEntity, ICompanyEntity
 {
-    /// <summary>
-    /// Tenant identifier for data isolation
-    /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
 
     public int BOQItemId { get; set; }
 

@@ -35,8 +35,8 @@ builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =
 });
 
 
-// 4. Tenant context (scoped per request)
-builder.Services.AddScoped<ITenantContext, TenantContext>();
+// 4. Company context (scoped per request)
+builder.Services.AddScoped<ICompanyContext, CompanyContext>();
 
 // 5. Repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -177,8 +177,8 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseCors("AllowAll");
 
-// Tenant resolution middleware – MUST come early
-app.UseMiddleware<TenantResolutionMiddleware>();
+// Company resolution middleware – MUST come early
+app.UseMiddleware<CompanyResolutionMiddleware>();
 
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 

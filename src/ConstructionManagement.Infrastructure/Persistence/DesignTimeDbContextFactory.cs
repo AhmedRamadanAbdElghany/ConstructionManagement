@@ -30,9 +30,9 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<Applicatio
 
         builder.UseSqlServer(connectionString);
 
-        // تأكد أن TenantContext هنا لا يحاول الوصول لـ HttpContext
-        var dummyTenantContext = new TenantContext();
+        // تأكد أن CompanyContext هنا لا يحاول الوصول لـ HttpContext
+        var dummyCompanyContext = new CompanyContext();
 
-        return new ApplicationDbContext(builder.Options, dummyTenantContext);
+        return new ApplicationDbContext(builder.Options, dummyCompanyContext);
     }
 }

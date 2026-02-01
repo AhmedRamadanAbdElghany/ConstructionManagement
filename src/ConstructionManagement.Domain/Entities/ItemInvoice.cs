@@ -3,12 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
-public class ItemInvoice : BaseEntity, ITenantEntity
+public class ItemInvoice : BaseEntity, ICompanyEntity
 {
-    /// <summary>
-    /// Tenant identifier for data isolation
-    /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
 
     [Required]
     public int BOQItemId { get; set; }

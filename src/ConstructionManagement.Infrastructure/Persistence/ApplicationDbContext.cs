@@ -8,17 +8,18 @@ namespace ConstructionManagement.Infrastructure.Persistence;
 
 public class ApplicationDbContext : DbContext
 {
-    private readonly ITenantContext _tenantContext;
+    private readonly ICompanyContext _companyContext;
 
     public ApplicationDbContext(
         DbContextOptions<ApplicationDbContext> options,
-        ITenantContext tenantContext = null)
+        ICompanyContext companyContext = null)
         : base(options)
     {
-        _tenantContext = tenantContext;
+        _companyContext = companyContext;
     }
 
     // ── DbSets ──────────────────────────────────────────────────────────────────
+    public DbSet<Company> Companies => Set<Company>();
     public DbSet<User> Users => Set<User>();
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<UserRole> UserRoles => Set<UserRole>();
@@ -57,10 +58,10 @@ public class ApplicationDbContext : DbContext
         // ── Automated SaaS Data Isolation ───────────────────────────────────────
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
-            if (typeof(ITenantEntity).IsAssignableFrom(entityType.ClrType))
+            if (typeof(ICompanyEntity).IsAssignableFrom(entityType.ClrType))
             {
                 var method = typeof(ApplicationDbContext)
-                    .GetMethod(nameof(SetTenantFilter), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    .GetMethod(nameof(SetCompanyFilter), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                     ?.MakeGenericMethod(entityType.ClrType);
                 method?.Invoke(this, new object[] { modelBuilder });
             }
@@ -138,6 +139,8 @@ public class ApplicationDbContext : DbContext
             property.SetColumnType("decimal(18,2)");
         }
 
+        modelBuilder.Entity<CompanySettings>().HasOne(cs => cs.Company).WithOne(c => c.Settings).HasForeignKey<CompanySettings>(cs => cs.CompanyId).OnDelete(DeleteBehavior.Cascade);
+        
         // 10. SEEDING
         SeedData(modelBuilder);
     }
@@ -145,57 +148,61 @@ public class ApplicationDbContext : DbContext
     private void SeedData(ModelBuilder modelBuilder)
     {
         var fixedDate = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        const string defaultTenant = "ConstructionDB";
         const string passwordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6"; // Hash for "admin"
+
+        // --- Companies ---
+        modelBuilder.Entity<Company>().HasData(
+            new Company { Id = 1, Name = "BuildIt Solutions", CreatedAt = fixedDate, PackageId = 3 }
+        );
 
         // --- Users ---
         modelBuilder.Entity<User>().HasData(
-            new User { Id = 1, FirstName = "System", LastName = "Admin", Email = "admin@construction.com", Username = "admin", PasswordHash = passwordHash, TenantId = defaultTenant, CreatedAt = fixedDate },
-            new User { Id = 2, FirstName = "Ahmed", LastName = "Ramadan", Email = "ahmed@construction.com", Username = "ahmed", PasswordHash = passwordHash, TenantId = defaultTenant, CreatedAt = fixedDate },
-            new User { Id = 3, FirstName = "Company", LastName = "Admin", Email = "company_admin@construction.com", Username = "company_admin", PasswordHash = passwordHash, TenantId = defaultTenant, CreatedAt = fixedDate },
-            new User { Id = 4, FirstName = "Project", LastName = "Manager", Email = "pm@construction.com", Username = "pm", PasswordHash = passwordHash, TenantId = defaultTenant, CreatedAt = fixedDate },
-            new User { Id = 5, FirstName = "Site", LastName = "Engineer", Email = "engineer@construction.com", Username = "engineer", PasswordHash = passwordHash, TenantId = defaultTenant, CreatedAt = fixedDate },
-            new User { Id = 6, FirstName = "Project", LastName = "Accountant", Email = "accountant@construction.com", Username = "accountant", PasswordHash = passwordHash, TenantId = defaultTenant, CreatedAt = fixedDate },
-            new User { Id = 7, FirstName = "External", LastName = "Consultant", Email = "consultant@construction.com", Username = "consultant", PasswordHash = passwordHash, TenantId = defaultTenant, CreatedAt = fixedDate }
+            new User { Id = 1, FirstName = "System", LastName = "Admin", Email = "admin@construction.com", Username = "admin", PasswordHash = passwordHash, CreatedAt = fixedDate, CompanyId = 1 },
+            new User { Id = 2, FirstName = "Ahmed", LastName = "Ramadan", Email = "ahmed@construction.com", Username = "ahmed", PasswordHash = passwordHash, CreatedAt = fixedDate, CompanyId = 1 },
+            new User { Id = 3, FirstName = "Company", LastName = "Admin", Email = "company_admin@construction.com", Username = "company_admin", PasswordHash = passwordHash, CreatedAt = fixedDate, CompanyId = 1 },
+            new User { Id = 4, FirstName = "Project", LastName = "Manager", Email = "pm@construction.com", Username = "pm", PasswordHash = passwordHash, CreatedAt = fixedDate, CompanyId = 1 },
+            new User { Id = 5, FirstName = "Site", LastName = "Engineer", Email = "engineer@construction.com", Username = "engineer", PasswordHash = passwordHash, CreatedAt = fixedDate, CompanyId = 1 },
+            new User { Id = 6, FirstName = "Project", LastName = "Accountant", Email = "accountant@construction.com", Username = "accountant", PasswordHash = passwordHash, CreatedAt = fixedDate, CompanyId = 1 },
+            new User { Id = 7, FirstName = "External", LastName = "Consultant", Email = "consultant@construction.com", Username = "consultant", PasswordHash = passwordHash, CreatedAt = fixedDate, CompanyId = 1 }
         );
 
         // --- Global Roles ---
         modelBuilder.Entity<Role>().HasData(
-            new Role { Id = 1, Name = "SuperAdmin", TenantId = defaultTenant, CreatedAt = fixedDate },
-            new Role { Id = 2, Name = "CompanyAdmin", TenantId = defaultTenant, CreatedAt = fixedDate }, 
-            new Role { Id = 3, Name = "User", TenantId = defaultTenant, CreatedAt = fixedDate }
+            new Role { Id = 1, Name = "SuperAdmin", CreatedAt = fixedDate },
+            new Role { Id = 2, Name = "CompanyAdmin", CreatedAt = fixedDate }, 
+            new Role { Id = 3, Name = "User", CreatedAt = fixedDate }
         );
 
         // --- Global Permissions ---
         // Basic permissions 1-9
         modelBuilder.Entity<Permission>().HasData(
-            new Permission { Id = 1, Name = "All", TenantId = defaultTenant, CreatedAt = fixedDate },
-            new Permission { Id = 2, Name = "ViewProjects", TenantId = defaultTenant, CreatedAt = fixedDate }
+            new Permission { Id = 1, Name = "All", CreatedAt = fixedDate },
+            new Permission { Id = 2, Name = "ViewProjects", CreatedAt = fixedDate }
         );
 
         // Policy-Specific Permissions (Project Level) 10-20
         modelBuilder.Entity<Permission>().HasData(
-            new Permission { Id = 10, Name = "Project.Edit", TenantId = defaultTenant, CreatedAt = fixedDate },
-            new Permission { Id = 11, Name = "Project.Close", TenantId = defaultTenant, CreatedAt = fixedDate },
-            new Permission { Id = 12, Name = "Financials.View", TenantId = defaultTenant, CreatedAt = fixedDate },
-            new Permission { Id = 13, Name = "Transaction.Add", TenantId = defaultTenant, CreatedAt = fixedDate },
-            new Permission { Id = 14, Name = "Transaction.Review", TenantId = defaultTenant, CreatedAt = fixedDate },
-            new Permission { Id = 15, Name = "Media.Review", TenantId = defaultTenant, CreatedAt = fixedDate },
-            new Permission { Id = 16, Name = "DailyLog.Close", TenantId = defaultTenant, CreatedAt = fixedDate },
-            new Permission { Id = 17, Name = "Settings.Manage", TenantId = defaultTenant, CreatedAt = fixedDate }
+            new Permission { Id = 10, Name = "Project.Edit", CreatedAt = fixedDate },
+            new Permission { Id = 11, Name = "Project.Close", CreatedAt = fixedDate },
+            new Permission { Id = 12, Name = "Financials.View", CreatedAt = fixedDate },
+            new Permission { Id = 13, Name = "Transaction.Add", CreatedAt = fixedDate },
+            new Permission { Id = 14, Name = "Transaction.Review", CreatedAt = fixedDate },
+            new Permission { Id = 15, Name = "Media.Review", CreatedAt = fixedDate },
+            new Permission { Id = 16, Name = "DailyLog.Close", CreatedAt = fixedDate },
+            new Permission { Id = 17, Name = "Settings.Manage", CreatedAt = fixedDate }
         );
 
         // --- Global Role Permissions ---
         modelBuilder.Entity<RolePermission>().HasData(
-            new RolePermission { RoleId = 1, PermissionId = 1, TenantId = defaultTenant }, // SuperAdmin -> All
-            new RolePermission { RoleId = 2, PermissionId = 1, TenantId = defaultTenant }, // CompanyAdmin -> All (simplified)
-            new RolePermission { RoleId = 3, PermissionId = 2, TenantId = defaultTenant }  // User -> ViewProjects
+            new RolePermission { RoleId = 1, PermissionId = 1 }, // SuperAdmin -> All
+            new RolePermission { RoleId = 2, PermissionId = 1 }, // CompanyAdmin -> All (simplified)
+            new RolePermission { RoleId = 3, PermissionId = 2 }  // User -> ViewProjects
         );
 
         // --- User Global Roles Assignments ---
         modelBuilder.Entity<UserRole>().HasData(
-            new UserRole { UserId = 1, RoleId = 1, TenantId = defaultTenant }, // Admin -> SuperAdmin
-            new UserRole { UserId = 3, RoleId = 2, TenantId = defaultTenant }  // CompanyAdmin -> CompanyAdmin
+            new UserRole { UserId = 1, RoleId = 1 }, // Admin -> SuperAdmin
+            new UserRole { UserId = 3, RoleId = 2 }  // CompanyAdmin -> CompanyAdmin
         );
 
         // --- Packages ---
@@ -207,154 +214,154 @@ public class ApplicationDbContext : DbContext
 
         // --- Projects ---
         modelBuilder.Entity<Project>().HasData(
-            new Project { Id = 1, ProjectName = "Al-Massa Tower", TenantId = defaultTenant, AccountingSystem = "Measured", Status = "InProgress", OwnerUserId = 1, CreatedAt = fixedDate },
-            new Project { Id = 2, ProjectName = "Coastal Supervision", TenantId = defaultTenant, AccountingSystem = "Supervision", Status = "جديد", OwnerUserId = 2, CreatedAt = fixedDate },
-            new Project { Id = 3, ProjectName = "Smart Mall Mixed", TenantId = defaultTenant, AccountingSystem = "Mixed", Status = "InProgress", OwnerUserId = 1, CreatedAt = fixedDate }
+            new Project { Id = 1, ProjectName = "Al-Massa Tower", CompanyId = 1, AccountingSystem = "Measured", Status = "InProgress", OwnerUserId = 1, CreatedAt = fixedDate },
+            new Project { Id = 2, ProjectName = "Coastal Supervision", CompanyId = 1, AccountingSystem = "Supervision", Status = "جديد", OwnerUserId = 2, CreatedAt = fixedDate },
+            new Project { Id = 3, ProjectName = "Smart Mall Mixed", CompanyId = 1, AccountingSystem = "Mixed", Status = "InProgress", OwnerUserId = 1, CreatedAt = fixedDate }
         );
 
         // --- Project Settings ---
         modelBuilder.Entity<ProjectSettings>().HasData(
-            new ProjectSettings { Id = 1, TenantId = defaultTenant, EnableDelayNotification = true, RequirePhotoReview = true, EnableInvoiceReview = true, CreatedAt = fixedDate },
-            new ProjectSettings { Id = 2, TenantId = defaultTenant, EnableDelayNotification = true, RequirePhotoReview = false, EnableInvoiceReview = false, CreatedAt = fixedDate },
-            new ProjectSettings { Id = 3, TenantId = defaultTenant, EnableDelayNotification = false, RequirePhotoReview = true, EnableInvoiceReview = true, CreatedAt = fixedDate }
+            new ProjectSettings { Id = 1, EnableDelayNotification = true, RequirePhotoReview = true, EnableInvoiceReview = true, CreatedAt = fixedDate },
+            new ProjectSettings { Id = 2, EnableDelayNotification = true, RequirePhotoReview = false, EnableInvoiceReview = false, CreatedAt = fixedDate },
+            new ProjectSettings { Id = 3, EnableDelayNotification = false, RequirePhotoReview = true, EnableInvoiceReview = true, CreatedAt = fixedDate }
         );
 
         // --- BOQ Items (Parent Items) ---
         modelBuilder.Entity<BOQItem>().HasData(
             // Measured Items
-            new BOQItem { Id = 101, ProjectId = 1, TenantId = defaultTenant, ItemCode = "CIV-01", ItemName = "Excavation", AccountingType = "Measured", Status = "InProgress", CreatedAt = fixedDate },
-            new BOQItem { Id = 102, ProjectId = 1, TenantId = defaultTenant, ItemCode = "CIV-02", ItemName = "Concrete Base", AccountingType = "Measured", Status = "جديد", CreatedAt = fixedDate },
+            new BOQItem { Id = 101, ProjectId = 1, ItemCode = "CIV-01", ItemName = "Excavation", AccountingType = "Measured", Status = "InProgress", CreatedAt = fixedDate },
+            new BOQItem { Id = 102, ProjectId = 1, ItemCode = "CIV-02", ItemName = "Concrete Base", AccountingType = "Measured", Status = "جديد", CreatedAt = fixedDate },
             // Supervision Items
-            new BOQItem { Id = 201, ProjectId = 2, TenantId = defaultTenant, ItemCode = "SUP-01", ItemName = "Structural Audit", AccountingType = "Supervision", Status = "جديد", CreatedAt = fixedDate },
+            new BOQItem { Id = 201, ProjectId = 2, ItemCode = "SUP-01", ItemName = "Structural Audit", AccountingType = "Supervision", Status = "جديد", CreatedAt = fixedDate },
             // Mixed Item
-            new BOQItem { Id = 301, ProjectId = 3, TenantId = defaultTenant, ItemCode = "MIX-01", ItemName = "MEP Installation", AccountingType = "Mixed", Status = "InProgress", CreatedAt = fixedDate }
+            new BOQItem { Id = 301, ProjectId = 3, ItemCode = "MIX-01", ItemName = "MEP Installation", AccountingType = "Mixed", Status = "InProgress", CreatedAt = fixedDate }
         );
 
         // --- 1:1 Dependent Data (BOQMeasured / BOQSupervision) ---
         modelBuilder.Entity<BOQMeasured>().HasData(
-            new BOQMeasured { Id = 101, TenantId = defaultTenant, AgreedQuantity = 5000, UnitPrice = 150, ExecutedQuantity = 1200, CreatedAt = fixedDate },
-            new BOQMeasured { Id = 102, TenantId = defaultTenant, AgreedQuantity = 800, UnitPrice = 4200, ExecutedQuantity = 0, CreatedAt = fixedDate },
-            new BOQMeasured { Id = 301, TenantId = defaultTenant, AgreedQuantity = 1, UnitPrice = 500000, ExecutedQuantity = 0.25m, CreatedAt = fixedDate } // Part of Mixed
+            new BOQMeasured { Id = 101, AgreedQuantity = 5000, UnitPrice = 150, ExecutedQuantity = 1200, CreatedAt = fixedDate },
+            new BOQMeasured { Id = 102, AgreedQuantity = 800, UnitPrice = 4200, ExecutedQuantity = 0, CreatedAt = fixedDate },
+            new BOQMeasured { Id = 301, AgreedQuantity = 1, UnitPrice = 500000, ExecutedQuantity = 0.25m, CreatedAt = fixedDate } // Part of Mixed
         );
 
         modelBuilder.Entity<BOQSupervision>().HasData(
-            new BOQSupervision { Id = 201, TenantId = defaultTenant, SupervisionPercentage = 5.0m, BaseCalculation = "AllProjectInvoices", EstimatedTotalCost = 25000, CreatedAt = fixedDate },
-            new BOQSupervision { Id = 301, TenantId = defaultTenant, SupervisionPercentage = 2.5m, BaseCalculation = "ThisItemInvoices", EstimatedTotalCost = 12500, CreatedAt = fixedDate } // Part of Mixed
+            new BOQSupervision { Id = 201, SupervisionPercentage = 5.0m, BaseCalculation = "AllProjectInvoices", EstimatedTotalCost = 25000, CreatedAt = fixedDate },
+            new BOQSupervision { Id = 301, SupervisionPercentage = 2.5m, BaseCalculation = "ThisItemInvoices", EstimatedTotalCost = 12500, CreatedAt = fixedDate } // Part of Mixed
         );
 
         // --- Project Roles ---
         modelBuilder.Entity<ProjectRole>().HasData(
-            new ProjectRole { Id = 1, ProjectId = 1, Name = "Manager", TenantId = defaultTenant, CreatedAt = fixedDate },
-            new ProjectRole { Id = 2, ProjectId = 1, Name = "Engineer", TenantId = defaultTenant, CreatedAt = fixedDate },
-            new ProjectRole { Id = 3, ProjectId = 1, Name = "FinancialReviewer", TenantId = defaultTenant, CreatedAt = fixedDate },
-            new ProjectRole { Id = 4, ProjectId = 1, Name = "MediaReviewer", TenantId = defaultTenant, CreatedAt = fixedDate }
+            new ProjectRole { Id = 1, ProjectId = 1, Name = "Manager", CreatedAt = fixedDate },
+            new ProjectRole { Id = 2, ProjectId = 1, Name = "Engineer", CreatedAt = fixedDate },
+            new ProjectRole { Id = 3, ProjectId = 1, Name = "FinancialReviewer", CreatedAt = fixedDate },
+            new ProjectRole { Id = 4, ProjectId = 1, Name = "MediaReviewer", CreatedAt = fixedDate }
         );
 
         // --- Project Role Permissions Assignments ---
         modelBuilder.Entity<ProjectRolePermission>().HasData(
             // Manager: Edit, Close, Settings, DailyLog
-            new ProjectRolePermission { ProjectRoleId = 1, PermissionId = 10, TenantId = defaultTenant },
-            new ProjectRolePermission { ProjectRoleId = 1, PermissionId = 11, TenantId = defaultTenant },
-            new ProjectRolePermission { ProjectRoleId = 1, PermissionId = 17, TenantId = defaultTenant },
-            new ProjectRolePermission { ProjectRoleId = 1, PermissionId = 16, TenantId = defaultTenant },
+            new ProjectRolePermission { ProjectRoleId = 1, PermissionId = 10 },
+            new ProjectRolePermission { ProjectRoleId = 1, PermissionId = 11 },
+            new ProjectRolePermission { ProjectRoleId = 1, PermissionId = 17 },
+            new ProjectRolePermission { ProjectRoleId = 1, PermissionId = 16 },
             
             // Engineer: Add Transaction
-            new ProjectRolePermission { ProjectRoleId = 2, PermissionId = 13, TenantId = defaultTenant },
+            new ProjectRolePermission { ProjectRoleId = 2, PermissionId = 13 },
 
             // FinancialReviewer: View Financials, Review Transaction
-            new ProjectRolePermission { ProjectRoleId = 3, PermissionId = 12, TenantId = defaultTenant },
-            new ProjectRolePermission { ProjectRoleId = 3, PermissionId = 14, TenantId = defaultTenant },
+            new ProjectRolePermission { ProjectRoleId = 3, PermissionId = 12 },
+            new ProjectRolePermission { ProjectRoleId = 3, PermissionId = 14 },
 
             // MediaReviewer: Review Media
-            new ProjectRolePermission { ProjectRoleId = 4, PermissionId = 15, TenantId = defaultTenant }
+            new ProjectRolePermission { ProjectRoleId = 4, PermissionId = 15 }
         );
 
         // --- Project Team (Linking Users to Projects) ---
         modelBuilder.Entity<ProjectTeamMember>().HasData(
-            new ProjectTeamMember { Id = 1, ProjectId = 1, UserId = 2, TenantId = defaultTenant, CreatedAt = fixedDate }, // Ahmed (Old)
-            new ProjectTeamMember { Id = 2, ProjectId = 1, UserId = 4, TenantId = defaultTenant, CreatedAt = fixedDate }, // PM
-            new ProjectTeamMember { Id = 3, ProjectId = 1, UserId = 5, TenantId = defaultTenant, CreatedAt = fixedDate }, // Engineer
-            new ProjectTeamMember { Id = 4, ProjectId = 1, UserId = 6, TenantId = defaultTenant, CreatedAt = fixedDate }, // Accountant
-            new ProjectTeamMember { Id = 5, ProjectId = 1, UserId = 7, TenantId = defaultTenant, CreatedAt = fixedDate }  // Consultant
+            new ProjectTeamMember { Id = 1, ProjectId = 1, UserId = 2, CreatedAt = fixedDate }, // Ahmed (Old)
+            new ProjectTeamMember { Id = 2, ProjectId = 1, UserId = 4, CreatedAt = fixedDate }, // PM
+            new ProjectTeamMember { Id = 3, ProjectId = 1, UserId = 5, CreatedAt = fixedDate }, // Engineer
+            new ProjectTeamMember { Id = 4, ProjectId = 1, UserId = 6, CreatedAt = fixedDate }, // Accountant
+            new ProjectTeamMember { Id = 5, ProjectId = 1, UserId = 7, CreatedAt = fixedDate }  // Consultant
         );
 
         // --- Project Team Roles (Assigning Roles to Team Members) ---
         modelBuilder.Entity<ProjectTeamRole>().HasData(
-            new ProjectTeamRole { Id = 1, ProjectTeamMemberId = 1, ProjectRoleId = 2, TenantId = defaultTenant, CreatedAt = fixedDate }, // Ahmed -> Engineer
-            new ProjectTeamRole { Id = 2, ProjectTeamMemberId = 2, ProjectRoleId = 1, TenantId = defaultTenant, CreatedAt = fixedDate }, // PM -> Manager
-            new ProjectTeamRole { Id = 3, ProjectTeamMemberId = 3, ProjectRoleId = 2, TenantId = defaultTenant, CreatedAt = fixedDate }, // Engineer -> Engineer
-            new ProjectTeamRole { Id = 4, ProjectTeamMemberId = 4, ProjectRoleId = 3, TenantId = defaultTenant, CreatedAt = fixedDate }, // Accountant -> FinancialReviewer
-            new ProjectTeamRole { Id = 5, ProjectTeamMemberId = 5, ProjectRoleId = 4, TenantId = defaultTenant, CreatedAt = fixedDate }  // Consultant -> MediaReviewer
+            new ProjectTeamRole { Id = 1, ProjectTeamMemberId = 1, ProjectRoleId = 2, CreatedAt = fixedDate }, // Ahmed -> Engineer
+            new ProjectTeamRole { Id = 2, ProjectTeamMemberId = 2, ProjectRoleId = 1, CreatedAt = fixedDate }, // PM -> Manager
+            new ProjectTeamRole { Id = 3, ProjectTeamMemberId = 3, ProjectRoleId = 2, CreatedAt = fixedDate }, // Engineer -> Engineer
+            new ProjectTeamRole { Id = 4, ProjectTeamMemberId = 4, ProjectRoleId = 3, CreatedAt = fixedDate }, // Accountant -> FinancialReviewer
+            new ProjectTeamRole { Id = 5, ProjectTeamMemberId = 5, ProjectRoleId = 4, CreatedAt = fixedDate }  // Consultant -> MediaReviewer
         );
 
         // --- Approval Rules ---
         modelBuilder.Entity<ProjectApprovalRule>().HasData(
-            new ProjectApprovalRule { Id = 1, ProjectId = 1, Source = SourceType.OnlineUpload, UploaderRole = "Engineer", ApproverRole = "Manager", TenantId = defaultTenant, CreatedAt = fixedDate }
+            new ProjectApprovalRule { Id = 1, ProjectId = 1, Source = SourceType.OnlineUpload, UploaderRole = "Engineer", ApproverRole = "Manager", CreatedAt = fixedDate }
         );
 
         // --- Site Media ---
         modelBuilder.Entity<SiteMedia>().HasData(
-            new SiteMedia { Id = 1, ProjectId = 1, BOQItemId = 101, MediaType = "image/jpeg", FilePath = "site1.jpg", UploaderUserId = 2, Status = "Approved", IsApproved = true, TenantId = defaultTenant, CreatedAt = fixedDate }
+            new SiteMedia { Id = 1, ProjectId = 1, BOQItemId = 101, MediaType = "image/jpeg", FilePath = "site1.jpg", UploaderUserId = 2, Status = "Approved", IsApproved = true, CreatedAt = fixedDate }
         );
 
         // --- Daily Logs ---
         modelBuilder.Entity<ItemDailyLog>().HasData(
-            new ItemDailyLog { Id = 1, BOQItemId = 101, LogDate = fixedDate, ProgressNotes = "Testing seed data", IsClosed = true, ClosedByUserId = 1, CreatedByUserId = 1, TenantId = defaultTenant, CreatedAt = fixedDate }
+            new ItemDailyLog { Id = 1, BOQItemId = 101, LogDate = fixedDate, ProgressNotes = "Testing seed data", IsClosed = true, ClosedByUserId = 1, CreatedByUserId = 1, CreatedAt = fixedDate }
         );
 
         // --- Invoices ---
         modelBuilder.Entity<ItemInvoice>().HasData(
-            new ItemInvoice { Id = 1, ProjectId = 1, BOQItemId = 101, InvoiceNumber = "V-INV-001", InvoiceDate = fixedDate, NetAmount = 1000, SubTotal = 1000, Status = "Approved", CreatedByUserId = 1, TenantId = defaultTenant, CreatedAt = fixedDate }
+            new ItemInvoice { Id = 1, ProjectId = 1, BOQItemId = 101, InvoiceNumber = "V-INV-001", InvoiceDate = fixedDate, NetAmount = 1000, SubTotal = 1000, Status = "Approved", CreatedByUserId = 1, CreatedAt = fixedDate }
         );
 
         // --- Transactions ---
         modelBuilder.Entity<Transaction>().HasData(
-            new Transaction { Id = 1, ProjectId = 1, BOQItemId = 101, Amount = 5000, Type = TransactionType.MaterialPurchase, Status = TransactionStatus.Approved, CreatedByUserId = 1, TenantId = defaultTenant, CreatedAt = fixedDate }
+            new Transaction { Id = 1, ProjectId = 1, BOQItemId = 101, Amount = 5000, Type = TransactionType.MaterialPurchase, Status = TransactionStatus.Approved, CreatedByUserId = 1, CreatedAt = fixedDate }
         );
 
         // --- Notifications ---
         modelBuilder.Entity<Notification>().HasData(
-            new Notification { Id = 1, UserId = 2, Title = "Welcome", Message = "Welcome to the system", Type = NotificationType.General, IsRead = false, TenantId = defaultTenant, CreatedAt = fixedDate }
+            new Notification { Id = 1, UserId = 2, Title = "Welcome", Message = "Welcome to the system", Type = NotificationType.General, IsRead = false, CreatedAt = fixedDate }
         );
 
         // --- Escalations ---
         modelBuilder.Entity<EscalationLog>().HasData(
-            new EscalationLog { Id = 1, ProjectId = 1, EscalationType = "StartDelay", RecipientUserId = 1, Message = "Project delayed", SentAt = fixedDate, TenantId = defaultTenant, CreatedAt = fixedDate }
+            new EscalationLog { Id = 1, ProjectId = 1, EscalationType = "StartDelay", RecipientUserId = 1, Message = "Project delayed", SentAt = fixedDate, CreatedAt = fixedDate }
         );
 
         // --- Deltas ---
         modelBuilder.Entity<BOQExecutedDelta>().HasData(
-            new BOQExecutedDelta { Id = 1, BOQItemId = 101, DeltaQuantity = 100, DeltaDate = fixedDate, ChangeType = "DailyLog", CreatedByUserId = 1, TenantId = defaultTenant, CreatedAt = fixedDate }
+            new BOQExecutedDelta { Id = 1, BOQItemId = 101, DeltaQuantity = 100, DeltaDate = fixedDate, ChangeType = "DailyLog", CreatedByUserId = 1, CreatedAt = fixedDate }
         );
 
         // --- Profitability ---
         modelBuilder.Entity<BOQProfitabilityLog>().HasData(
-            new BOQProfitabilityLog { Id = 1, BOQItemId = 101, TotalSpent = 4000, EstimatedBudget = 15000, CurrentProfit = 11000, ProfitPercentage = 73.33m, LogDate = fixedDate, TenantId = defaultTenant, CreatedAt = fixedDate }
+            new BOQProfitabilityLog { Id = 1, BOQItemId = 101, TotalSpent = 4000, EstimatedBudget = 15000, CurrentProfit = 11000, ProfitPercentage = 73.33m, LogDate = fixedDate, CreatedAt = fixedDate }
         );
 
         // --- Client Payments ---
         modelBuilder.Entity<ClientPayment>().HasData(
-            new ClientPayment { Id = 1, ProjectId = 1, Amount = 50000, PaymentDate = fixedDate, PaymentType = "Advance", IsConfirmed = true, TenantId = defaultTenant, CreatedAt = fixedDate }
+            new ClientPayment { Id = 1, ProjectId = 1, Amount = 50000, PaymentDate = fixedDate, PaymentType = "Advance", IsConfirmed = true, CreatedAt = fixedDate }
         );
 
         // --- Notes ---
         modelBuilder.Entity<BOQItemNote>().HasData(
-            new BOQItemNote { Id = 1, BOQItemId = 101, ProjectId = 1, NoteText = "Initial kickoff", NoteType = "General", CreatorUserId = 1, VisibleToRole = "SiteEngineer", TenantId = defaultTenant, CreatedAt = fixedDate }
+            new BOQItemNote { Id = 1, BOQItemId = 101, ProjectId = 1, NoteText = "Initial kickoff", NoteType = "General", CreatorUserId = 1, VisibleToRole = "SiteEngineer", CreatedAt = fixedDate }
         );
 
         // --- Company Settings ---
         modelBuilder.Entity<CompanySettings>().HasData(
-            new CompanySettings { Id = 1, TenantId = defaultTenant, EnableDelayNotification = true, CreatedAt = fixedDate }
+            new CompanySettings { Id = 1, CompanyId = 1, EnableDelayNotification = true, CreatedAt = fixedDate }
         );
 
         // --- Approval Requests ---
         modelBuilder.Entity<ApprovalRequest>().HasData(
-            new ApprovalRequest { Id = 1, ProjectId = 1, BOQItemId = 101, ProjectApprovalRuleId = 1, Source = SourceType.OnlineUpload, SourceId = 1, RequestedByUserId = 2, Status = "Approved", FinalApprovedByUserId = 1, FinalApprovedAt = fixedDate, TenantId = defaultTenant, CreatedAt = fixedDate }
+            new ApprovalRequest { Id = 1, ProjectId = 1, BOQItemId = 101, ProjectApprovalRuleId = 1, Source = SourceType.OnlineUpload, SourceId = 1, RequestedByUserId = 2, Status = "Approved", FinalApprovedByUserId = 1, FinalApprovedAt = fixedDate, CreatedAt = fixedDate }
         );
 
         // --- Approval Steps ---
         modelBuilder.Entity<ApprovalStep>().HasData(
-            new ApprovalStep { Id = 1, ApprovalRequestId = 1, StepOrder = 1, ApproverRole = "Manager", ApproverUserId = 1, Status = "Approved", ApprovedAt = fixedDate, TenantId = defaultTenant, CreatedAt = fixedDate }
+            new ApprovalStep { Id = 1, ApprovalRequestId = 1, StepOrder = 1, ApproverRole = "Manager", ApproverUserId = 1, Status = "Approved", ApprovedAt = fixedDate, CreatedAt = fixedDate }
         );
     }
 
@@ -374,16 +381,16 @@ public class ApplicationDbContext : DbContext
     {
         var now = DateTime.UtcNow;
 
-        // Auto-set TenantId for all ITenantEntity entries
-        if (!string.IsNullOrEmpty(_tenantContext?.TenantId))
+        // Auto-set CompanyId for all ICompanyEntity entries
+        if (_companyContext?.CompanyId != null)
         {
-            var tenantEntries = ChangeTracker.Entries<ITenantEntity>()
+            var companyEntries = ChangeTracker.Entries<ICompanyEntity>()
                 .Where(e => e.State == EntityState.Added);
 
-            foreach (var entry in tenantEntries)
+            foreach (var entry in companyEntries)
             {
-                if (string.IsNullOrEmpty(entry.Entity.TenantId))
-                    entry.Entity.TenantId = _tenantContext.TenantId;
+                if (entry.Entity.CompanyId == null)
+                    entry.Entity.CompanyId = _companyContext.CompanyId;
             }
         }
 
@@ -405,10 +412,10 @@ public class ApplicationDbContext : DbContext
             warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
     }
         // Single database mode - uses connection string from configuration only
-    private void SetTenantFilter<T>(ModelBuilder modelBuilder) where T : class, ITenantEntity
+    private void SetCompanyFilter<T>(ModelBuilder modelBuilder) where T : class, ICompanyEntity
     {
         modelBuilder.Entity<T>().HasQueryFilter(e => 
-            _tenantContext.TenantId == null || 
-            e.TenantId == _tenantContext.TenantId);
+            _companyContext.CompanyId == null || 
+            e.CompanyId == _companyContext.CompanyId);
     }
 }

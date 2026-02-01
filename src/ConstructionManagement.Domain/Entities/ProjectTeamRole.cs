@@ -6,12 +6,9 @@ namespace ConstructionManagement.Domain.Entities;
 /// Many-to-Many relationship between ProjectTeamMember and ProjectRole
 /// Represents a specific role assignment for a team member in a project
 /// </summary>
-public class ProjectTeamRole : BaseEntity, ITenantEntity
+public class ProjectTeamRole : BaseEntity, ICompanyEntity
 {
-    /// <summary>
-    /// Tenant identifier for data isolation
-    /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
 
     public int ProjectTeamMemberId { get; set; }
 

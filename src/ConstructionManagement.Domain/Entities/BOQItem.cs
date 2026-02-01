@@ -6,12 +6,9 @@ namespace ConstructionManagement.Domain.Entities;
 /// Core BOQ (Bill of Quantities) item – the main building block of the project cost structure
 /// Supports both Measured (quantity-based) and Supervision (percentage-based) accounting
 /// </summary>
-public class BOQItem : BaseEntity, ITenantEntity
+public class BOQItem : BaseEntity, ICompanyEntity
 {
-    /// <summary>
-    /// Tenant identifier for data isolation
-    /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
 
     // -- Identification & Basic Info -------------------------------------------
     public string ItemCode { get; set; } = string.Empty;        // unique code from BOQ/contract

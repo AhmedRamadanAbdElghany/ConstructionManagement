@@ -3,12 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ConstructionManagement.Domain.Entities
 {
     // Project-specific: ProjectRole ? Permission
-    public class ProjectRolePermission : ITenantEntity
+    public class ProjectRolePermission : ICompanyEntity
     {
-        /// <summary>
-        /// Tenant identifier for data isolation
-        /// </summary>
-        public string TenantId { get; set; } = "ConstructionDB";
+        public int? CompanyId { get; set; }
 
         [ForeignKey(nameof(ProjectRoleId))]
         public int ProjectRoleId { get; set; }

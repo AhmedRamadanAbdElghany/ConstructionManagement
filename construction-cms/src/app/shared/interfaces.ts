@@ -103,6 +103,7 @@ export interface SalaryRecord {
   netSalary: number;
   status: 'Paid' | 'Pending';
 }
+
 export interface WorkerPerformance {
   userId: number;
   userName: string;
@@ -111,4 +112,40 @@ export interface WorkerPerformance {
   efficiency: number;
   attendance: number;
   status: 'Peak' | 'Steady' | 'Below Average';
+}
+
+export interface CompanySettings {
+  enableDelayNotification: boolean;
+  delayNotificationIsOneTimeOnly: boolean;
+  delayNotificationIntervalDays: number;
+  delayNotificationSendEmail: boolean;
+  delayGracePeriodDays: number;
+  enablePhotoUpload: boolean;
+  requirePhotoReview: boolean;
+  photoApproverRole: string;
+  enableInvoiceReview: boolean;
+  enableInvoiceAggregation: boolean;
+  maxPhotosPerUpload: number | null;
+  clientCanSeeFinancials: boolean;
+  clientCanSeeMedia: boolean;
+  clientCanSeeBOQ: boolean;
+  defaultMoneyCalculationMethod: string;
+}
+
+export interface ProjectSettings {
+  enableDelayNotification: boolean | null;
+  delayNotificationIsOneTimeOnly: boolean | null;
+  delayNotificationIntervalDays: number | null;
+  delayNotificationSendEmail: boolean | null;
+  delayGracePeriodDays: number | null;
+  enablePhotoUpload: boolean | null;
+  requirePhotoReview: boolean | null;
+  photoApproverRole: string | null;
+  enableInvoiceReview: boolean | null;
+  enableInvoiceAggregation: boolean | null;
+  maxPhotosPerUpload: number | null;
+  clientCanSeeFinancials: boolean | null;
+  clientCanSeeMedia: boolean | null;
+  clientCanSeeBOQ: boolean | null;
+  moneyCalculationMethod: string | null;
 }

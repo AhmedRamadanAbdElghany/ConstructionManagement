@@ -2,12 +2,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 // many to many 
 namespace ConstructionManagement.Domain.Entities
 {
-    public class RolePermission : ITenantEntity
+    public class RolePermission : ICompanyEntity
     {
-        /// <summary>
-        /// Tenant identifier for data isolation
-        /// </summary>
-        public string TenantId { get; set; } = "ConstructionDB";
+        public int? CompanyId { get; set; }
 
         [ForeignKey(nameof(RoleId))]
         public int RoleId { get; set; }

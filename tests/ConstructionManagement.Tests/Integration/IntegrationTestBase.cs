@@ -13,19 +13,19 @@ namespace ConstructionManagement.Tests.Integration
     {
         protected readonly ApplicationDbContext Context;
         protected readonly IUnitOfWork UnitOfWork;
-        protected readonly ITenantContext TenantContext; // إضافة لتسهيل التحكم به أثناء التست
+        protected readonly ICompanyContext CompanyContext; // Support for ICompanyContext
 
         protected IntegrationTestBase()
         {
-            // 1. إعداد الـ TenantContext (كقيمة بسيطة لا تفعل شيئاً في SQLite)
-            TenantContext = new TenantContext { TenantId = "ConstructionDB" };
+            // 1. Setup CompanyContext
+            CompanyContext = new CompanyContext { CompanyId = 1 };
 
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseSqlite("DataSource=:memory:")
                 .Options;
 
-            // 2. تمرير الـ TenantContext للـ Context (لحل مشكلة الـ Constructor)
-            Context = new ApplicationDbContext(options, TenantContext);
+            // 2. Pass CompanyContext to Context
+            Context = new ApplicationDbContext(options, CompanyContext);
 
             Context.Database.OpenConnection();
             try 
@@ -51,8 +51,8 @@ namespace ConstructionManagement.Tests.Integration
             Context.Dispose();
         }
 
-        // تحديث SeedUser ليشمل الـ TenantId الجديد كـ string
-        protected async Task<User> SeedUserAsync(string email, string passwordHash, string fullName = "Test User", string tenantId = "ConstructionDB")
+        // Update SeedUser to include CompanyId
+        protected async Task<User> SeedUserAsync(string email, string passwordHash, string fullName = "Test User", int? companyId = 1)
         {
             var nameParts = fullName.Split(' ', 2);
             var user = new User
@@ -61,7 +61,7 @@ namespace ConstructionManagement.Tests.Integration
                 LastName = nameParts.Length > 1 ? nameParts[1] : string.Empty,
                 Email = email,
                 PasswordHash = passwordHash,
-                TenantId = tenantId // إضافة الحقل الجديد
+                CompanyId = companyId
             };
             Context.Users.Add(user);
             await Context.SaveChangesAsync();

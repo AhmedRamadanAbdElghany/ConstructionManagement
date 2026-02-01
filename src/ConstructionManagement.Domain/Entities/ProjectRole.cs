@@ -6,12 +6,9 @@ namespace ConstructionManagement.Domain.Entities;
 /// Defines roles that can be assigned to users within a specific project
 /// (project-specific roles – different from global/system roles)
 /// </summary>
-public class ProjectRole : BaseEntity, ITenantEntity
+public class ProjectRole : BaseEntity, ICompanyEntity
 {
-    /// <summary>
-    /// Tenant identifier for data isolation
-    /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
 
     // Primary Key inherited from BaseEntity ? public int Id { get; set; }
 

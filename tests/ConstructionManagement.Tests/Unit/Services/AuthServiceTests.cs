@@ -48,7 +48,7 @@ public class AuthServiceTests
             LastName = "Ramadan",
             Email = "ahmed@eng.com",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
-            TenantId = "Construction_ClientA_DB",
+            CompanyId = 1,
             UserRoles = new List<UserRole>
             {
                 new UserRole
@@ -144,7 +144,7 @@ public class AuthServiceTests
         {
             Email = "t@t.com",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("1"),
-            TenantId = "AnyDB",
+            CompanyId = 2,
             UserRoles = new List<UserRole>()
         };
         _userRepoMock.Setup(r => r.GetByEmailAsync(user.Email)).ReturnsAsync(user);

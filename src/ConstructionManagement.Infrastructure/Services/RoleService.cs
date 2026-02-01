@@ -30,8 +30,13 @@ namespace ConstructionManagement.Infrastructure.Services
             var exists = await _roleRepository.AsQueryable().AnyAsync(r => r.Name == request.RoleName);
             if (exists) throw new InvalidOperationException("هذا الدور موجود مسبقاً");
 
-            var role = new Role { Name = request.RoleName, Description = request.Description };
-
+            var role = new Role 
+            { 
+                Name = request.RoleName, 
+                Description = request.Description,
+                CompanyId = request.CompanyId
+            };
+ 
             await _roleRepository.AddAsync(role);
             await _unitOfWork.SaveChangesAsync(); // الحفظ النهائي
 

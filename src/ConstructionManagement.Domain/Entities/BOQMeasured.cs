@@ -8,12 +8,9 @@ namespace ConstructionManagement.Domain.Entities;
 /// 1:1 dependent entity – shares primary key with BOQItem
 /// Only exists when AccountingType = "Measured" or "Mixed"
 /// </summary>
-public class BOQMeasured : BaseEntity, ITenantEntity
+public class BOQMeasured : BaseEntity, ICompanyEntity
 {
-    /// <summary>
-    /// Tenant identifier for data isolation
-    /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
 
     public virtual BOQItem Item { get; set; } = null!;
 

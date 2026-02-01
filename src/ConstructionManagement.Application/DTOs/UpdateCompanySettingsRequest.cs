@@ -19,4 +19,9 @@ public class UpdateCompanySettingsRequest
     public bool? EnableInvoiceAggregation { get; set; }
 
     public int? MaxPhotosPerUpload { get; set; }
+
+    public bool? ClientCanSeeFinancials { get; set; }
+    public bool? ClientCanSeeMedia { get; set; }
+    public bool? ClientCanSeeBOQ { get; set; }
+    public string? DefaultMoneyCalculationMethod { get; set; }
 }

@@ -1,10 +1,11 @@
+using System.ComponentModel.DataAnnotations.Schema;
 namespace ConstructionManagement.Domain.Entities;
 
 /// <summary>
 /// Represents a system user (employee, manager, engineer, client rep, etc.)
 /// Central entity for authentication, roles, project assignments, and audit trails
 /// </summary>
-public class User : BaseEntity, ITenantEntity
+public class User : BaseEntity, ICompanyEntity
 {
     // -- Basic Profile ---------------------------------------------------------
     public string FirstName { get; set; } = string.Empty;
@@ -16,10 +17,11 @@ public class User : BaseEntity, ITenantEntity
     public string? Phone { get; set; }
 
     // -- Multi-Tenancy ----------------------------------------------------------
-    /// <summary>
     /// Logical tenant identifier for data isolation (all data in single database)
     /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
+    [ForeignKey(nameof(CompanyId))]
+    public virtual Company? Company { get; set; }
 
 
     // -- Core Navigation Properties --------------------------------------------

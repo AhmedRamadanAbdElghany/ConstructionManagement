@@ -46,6 +46,7 @@ public class ProjectService : IProjectService
         await _unitOfWork.BeginTransactionAsync();
         try
         {
+            var owner = await _userRepository.GetByIdAsync(ownerUserId);
             var project = new Project
             {
                 ProjectName = request.ProjectName,
@@ -54,6 +55,7 @@ public class ProjectService : IProjectService
                 EndDate = request.EndDate,
                 OwnerUserId = ownerUserId,
                 GeneralManagerUserId = request.GeneralManagerUserId,
+                CompanyId = owner?.CompanyId,
                 AccountingSystem = request.AccountingSystem ?? "Mixed",
                 TotalContractValue = request.TotalContractValue,
                 IsClosed = false
@@ -142,7 +144,7 @@ public class ProjectService : IProjectService
         // System-level admin check
         var isSystemAdmin = await _userRoleRepository.AsQueryable()
             .AnyAsync(ur => ur.UserId == userId &&
-                           (ur.Role.Name == "SuperAdmin" || ur.Role.Name == "ProjectAdmin"));
+                           (ur.Role.Name == "SuperAdmin" || ur.Role.Name == "CompanyAdmin"));
 
         if (isSystemAdmin) return true;
 

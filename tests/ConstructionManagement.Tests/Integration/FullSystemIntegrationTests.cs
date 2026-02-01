@@ -46,7 +46,7 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 		// Arrange
 		var password = "Password123!";
 		// ???? ?? ????? TenantId ??? ??? GenerateJwtToken ??????
-		var user = await SeedUserAsync("test@system.com", BCrypt.Net.BCrypt.HashPassword(password), "Test User", "ConstructionDB");
+		var user = await SeedUserAsync("test@system.com", BCrypt.Net.BCrypt.HashPassword(password), "Test User");
 
 		// Act
 		var result = await _authService.LoginAsync(new LoginRequest("test@system.com", password));
@@ -62,7 +62,7 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 	public async Task BOQ_CreateAndProgress_ShouldPersistCorrectData()
 	{
 		// Arrange
-		var user = await SeedUserAsync("boq@test.com", "any_hash", "BOQ User", "ConstructionDB");
+		var user = await SeedUserAsync("boq@test.com", "any_hash", "BOQ User");
 
 		var project = new Project
 		{
@@ -107,7 +107,7 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 			.Build();
 
 		var password = "Password123";
-		var user = await SeedUserAsync("sys@test.com", BCrypt.Net.BCrypt.HashPassword(password), "System User", "ConstructionDB");
+		var user = await SeedUserAsync("sys@test.com", BCrypt.Net.BCrypt.HashPassword(password), "System User");
 
 		var auth = new AuthService(new UserRepository(Context), config, UnitOfWork);
 		var login = await auth.LoginAsync(new LoginRequest("sys@test.com", password));

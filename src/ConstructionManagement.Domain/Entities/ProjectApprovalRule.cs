@@ -6,12 +6,9 @@ namespace ConstructionManagement.Domain.Entities;
 /// Approval rule for a specific source type (photo upload / field visit note)
 /// Can be project-wide (BOQItemId = null) or item-specific
 /// </summary>
-public class ProjectApprovalRule : BaseEntity, ITenantEntity
+public class ProjectApprovalRule : BaseEntity, ICompanyEntity
 {
-    /// <summary>
-    /// Tenant identifier for data isolation
-    /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
 
     // Primary Key inherited from BaseEntity ? public int Id { get; set; }
 

@@ -6,12 +6,9 @@ namespace ConstructionManagement.Domain.Entities;
 /// One step in an approval workflow
 /// Supports sequential multi-step approvals (e.g., Site Engineer ? Reviewer ? Manager)
 /// </summary>
-public class ApprovalStep : BaseEntity, ITenantEntity
+public class ApprovalStep : BaseEntity, ICompanyEntity
 {
-    /// <summary>
-    /// Tenant identifier for data isolation
-    /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
 
     public int ApprovalRequestId { get; set; }
     [ForeignKey(nameof(ApprovalRequestId))]

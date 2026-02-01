@@ -6,14 +6,16 @@ namespace ConstructionManagement.Domain.Entities;
 /// Represents a construction project with its core metadata, team, financials, 
 /// and related child entities (BOQ, payments, media, settings, rules, etc.)
 /// </summary>
-public class Project : BaseEntity, ITenantEntity
+public class Project : BaseEntity, ICompanyEntity
 {
     public string ProjectName { get; set; } = string.Empty;
 
     /// <summary>
     /// Tenant identifier for data isolation
     /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
+    [ForeignKey(nameof(CompanyId))]
+    public virtual Company? Company { get; set; }
 
     public string? Description { get; set; }
 

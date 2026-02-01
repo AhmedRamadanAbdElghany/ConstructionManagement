@@ -27,8 +27,10 @@ public class UserService : IUserService
 
     public async Task<int> AddUserAsync(AddUserRequest request, int adminId)
     {
-        if (!await HasSuperAdminPermissionAsync(adminId))
+        if (!await IsAuthorizedAdminAsync(adminId))
             throw new UnauthorizedAccessException("ليس لديك صلاحية لإضافة مستخدمين");
+
+        var admin = await _userRepository.GetByIdAsync(adminId);
 
         var emailExists = await _userRepository.AsQueryable()
             .AnyAsync(u => u.Email == request.Email);
@@ -44,7 +46,8 @@ public class UserService : IUserService
             LastName = nameParts.Length > 1 ? nameParts[1] : string.Empty,
             Email = request.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            CompanyId = admin?.CompanyId
         };
 
         await _userRepository.AddAsync(user);
@@ -54,7 +57,7 @@ public class UserService : IUserService
 
     public async Task<bool> DeleteUserAsync(int userId, int adminId)
     {
-        if (!await HasSuperAdminPermissionAsync(adminId))
+        if (!await IsAuthorizedAdminAsync(adminId))
             throw new UnauthorizedAccessException("ليس لديك صلاحية لحذف مستخدمين");
 
         if (userId == adminId)
@@ -70,7 +73,7 @@ public class UserService : IUserService
 
     public async Task<bool> AssignRoleToUserAsync(int userId, string roleName, int adminId)
     {
-        if (!await HasSuperAdminPermissionAsync(adminId))
+        if (!await IsAuthorizedAdminAsync(adminId))
             throw new UnauthorizedAccessException("ليس لديك صلاحية لتعيين أدوار");
 
         var role = await _roleRepository.AsQueryable()
@@ -99,7 +102,7 @@ public class UserService : IUserService
     // ميثودز الـ Get لا تحتاج لـ SaveChanges
     public async Task<UserDto?> GetUserByIdAsync(int userId, int adminId)
     {
-        if (!await HasSuperAdminPermissionAsync(adminId))
+        if (!await IsAuthorizedAdminAsync(adminId))
             throw new UnauthorizedAccessException("ليس لديك صلاحية لعرض تفاصيل المستخدمين");
 
         return await _userRepository.AsQueryable()
@@ -113,7 +116,7 @@ public class UserService : IUserService
 
     public async Task<List<UserDto>> GetAllUsersAsync(int adminId)
     {
-        if (!await HasSuperAdminPermissionAsync(adminId))
+        if (!await IsAuthorizedAdminAsync(adminId))
             throw new UnauthorizedAccessException("ليس لديك صلاحية لعرض قائمة المستخدمين");
 
         return await _userRepository.AsQueryable()
@@ -124,9 +127,9 @@ public class UserService : IUserService
             .ToListAsync();
     }
 
-    private async Task<bool> HasSuperAdminPermissionAsync(int userId)
+    private async Task<bool> IsAuthorizedAdminAsync(int userId)
     {
         return await _userRoleRepository.AsQueryable()
-            .AnyAsync(ur => ur.UserId == userId && ur.Role.Name == "SuperAdmin");
+            .AnyAsync(ur => ur.UserId == userId && (ur.Role.Name == "SuperAdmin" || ur.Role.Name == "CompanyAdmin"));
     }
 }

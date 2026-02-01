@@ -6,12 +6,9 @@ namespace ConstructionManagement.Domain.Entities;
 /// Daily progress log / diary entry for a specific BOQ item
 /// Used to track actual progress, notes, and closing of daily work
 /// </summary>
-public class ItemDailyLog : BaseEntity, ITenantEntity
+public class ItemDailyLog : BaseEntity, ICompanyEntity
 {
-    /// <summary>
-    /// Tenant identifier for data isolation
-    /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
 
     // Which BOQ item this daily log belongs to
     public int BOQItemId { get; set; }

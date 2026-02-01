@@ -61,6 +61,11 @@ public record ProjectSettingsDto
     /// null = no limit
     /// </summary>
     public int? MaxPhotosPerUpload { get; init; } = 10;
+    
+    public bool ClientCanSeeFinancials { get; init; } = false;
+    public bool ClientCanSeeMedia { get; init; } = true;
+    public bool ClientCanSeeBOQ { get; init; } = true;
+    public string MoneyCalculationMethod { get; init; } = "Measured";
 
     // NOTE: Add tests for default settings values.
 }

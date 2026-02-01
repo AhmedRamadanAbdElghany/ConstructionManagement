@@ -113,9 +113,13 @@ public class AuthService : IAuthService
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.FullName),
-            new Claim("tenantId", user.TenantId)
+            new Claim(ClaimTypes.Name, user.FullName)
         };
+
+        if (user.CompanyId.HasValue)
+        {
+            claims.Add(new Claim("companyId", user.CompanyId.Value.ToString()));
+        }
 
         // 2. مطالبات الأدوار (إضافة كل دور كمطالبة منفصلة)
         if (user.UserRoles != null)

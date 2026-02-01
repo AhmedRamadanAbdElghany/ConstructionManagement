@@ -2,12 +2,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
 
-public class Transaction : BaseEntity, ITenantEntity
+public class Transaction : BaseEntity, ICompanyEntity
 {
-    /// <summary>
-    /// Tenant identifier for data isolation
-    /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
 
     // Primary Key (inherited from BaseEntity ? public int Id { get; set; })
 

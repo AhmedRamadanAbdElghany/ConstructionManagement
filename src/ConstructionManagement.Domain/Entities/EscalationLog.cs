@@ -6,14 +6,14 @@ namespace ConstructionManagement.Domain.Entities;
 /// Log entry for escalation notifications sent due to delays, missing approvals,
 /// or other critical events (project-level or item-specific)
 /// </summary>
-public class EscalationLog : BaseEntity, ITenantEntity
+public class EscalationLog : BaseEntity, ICompanyEntity
 {
     // Primary Key inherited from BaseEntity ? public int Id { get; set; }
 
     /// <summary>
-    /// Tenant identifier for data isolation
+    /// Company identifier for data isolation
     /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
 
     // Required: every escalation belongs to a project
     public int ProjectId { get; set; }

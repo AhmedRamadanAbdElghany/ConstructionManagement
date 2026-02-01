@@ -56,7 +56,12 @@ public class ProjectSettingsService : IProjectSettingsService
             EnableInvoiceReview = projectSettings?.EnableInvoiceReview ?? companySettings.EnableInvoiceReview,
             EnableInvoiceAggregation = projectSettings?.EnableInvoiceAggregation ?? companySettings.EnableInvoiceAggregation,
 
-            MaxPhotosPerUpload = projectSettings?.MaxPhotosPerUpload ?? companySettings.MaxPhotosPerUpload
+            MaxPhotosPerUpload = projectSettings?.MaxPhotosPerUpload ?? companySettings.MaxPhotosPerUpload,
+            
+            ClientCanSeeFinancials = projectSettings?.ClientCanSeeFinancials ?? companySettings.ClientCanSeeFinancials,
+            ClientCanSeeMedia = projectSettings?.ClientCanSeeMedia ?? companySettings.ClientCanSeeMedia,
+            ClientCanSeeBOQ = projectSettings?.ClientCanSeeBOQ ?? companySettings.ClientCanSeeBOQ,
+            MoneyCalculationMethod = projectSettings?.MoneyCalculationMethod ?? companySettings.DefaultMoneyCalculationMethod
         };
 
         // Auto-create project settings if they don't exist (optional – lazy creation)
@@ -124,6 +129,18 @@ public class ProjectSettingsService : IProjectSettingsService
         if (request.MaxPhotosPerUpload.HasValue)
             settings.MaxPhotosPerUpload = request.MaxPhotosPerUpload.Value;
 
+        if (request.ClientCanSeeFinancials.HasValue)
+            settings.ClientCanSeeFinancials = request.ClientCanSeeFinancials.Value;
+        
+        if (request.ClientCanSeeMedia.HasValue)
+            settings.ClientCanSeeMedia = request.ClientCanSeeMedia.Value;
+            
+        if (request.ClientCanSeeBOQ.HasValue)
+            settings.ClientCanSeeBOQ = request.ClientCanSeeBOQ.Value;
+            
+        if (request.MoneyCalculationMethod is not null)
+            settings.MoneyCalculationMethod = request.MoneyCalculationMethod;
+
         await _projectSettingsRepository.UpdateAsync(settings);
         await _unitOfWork.SaveChangesAsync();
     }
@@ -145,7 +162,12 @@ public class ProjectSettingsService : IProjectSettingsService
             EnableInvoiceReview = settings.EnableInvoiceReview ?? global.EnableInvoiceReview,
             EnableInvoiceAggregation = settings.EnableInvoiceAggregation ?? global.EnableInvoiceAggregation,
 
-            MaxPhotosPerUpload = settings.MaxPhotosPerUpload ?? global.MaxPhotosPerUpload
+            MaxPhotosPerUpload = settings.MaxPhotosPerUpload ?? global.MaxPhotosPerUpload,
+
+            ClientCanSeeFinancials = settings.ClientCanSeeFinancials ?? global.ClientCanSeeFinancials,
+            ClientCanSeeMedia = settings.ClientCanSeeMedia ?? global.ClientCanSeeMedia,
+            ClientCanSeeBOQ = settings.ClientCanSeeBOQ ?? global.ClientCanSeeBOQ,
+            MoneyCalculationMethod = settings.MoneyCalculationMethod ?? global.DefaultMoneyCalculationMethod
         };
     }
 }

@@ -1,11 +1,16 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace ConstructionManagement.Domain.Entities
 {
-    public class CompanySettings : BaseEntity, ITenantEntity
+    public class CompanySettings : BaseEntity, ICompanyEntity
     {
         /// <summary>
         /// Tenant identifier for data isolation
         /// </summary>
-        public string TenantId { get; set; } = "ConstructionDB";
+            
+        public int? CompanyId { get; set; }
+        [ForeignKey(nameof(CompanyId))]
+        public virtual Company Company { get; set; } = null!;
 
         // All the same settings as ProjectSettings
         public bool EnableDelayNotification { get; set; } = true;
@@ -22,6 +27,14 @@ namespace ConstructionManagement.Domain.Entities
         public bool EnableInvoiceAggregation { get; set; } = true;
 
         public int? MaxPhotosPerUpload { get; set; } = 10;
+        
+        // Client Visibility Options
+        public bool ClientCanSeeFinancials { get; set; } = false;
+        public bool ClientCanSeeMedia { get; set; } = true;
+        public bool ClientCanSeeBOQ { get; set; } = true;
+
+        // Project Money Calculation Options
+        public string DefaultMoneyCalculationMethod { get; set; } = "Measured"; // Measured, Supervision, Mixed
 
         // You can add more global defaults here later
     }

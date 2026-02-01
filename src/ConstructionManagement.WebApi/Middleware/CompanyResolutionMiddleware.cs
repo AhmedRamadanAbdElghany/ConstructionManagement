@@ -1,19 +1,20 @@
 using ConstructionManagement.Application.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace ConstructionManagement.WebApi.Middleware
 {
-    // Middleware/TenantResolutionMiddleware.cs
-    public class TenantResolutionMiddleware
+    // Middleware/CompanyResolutionMiddleware.cs
+    public class CompanyResolutionMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public TenantResolutionMiddleware(RequestDelegate next)
+        public CompanyResolutionMiddleware(RequestDelegate next)
         {
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext httpContext, ITenantContext tenantContext)
+        public async Task InvokeAsync(HttpContext httpContext, ICompanyContext companyContext)
         {
             var token = httpContext.Request.Headers["Authorization"]
                 .FirstOrDefault()?
@@ -26,13 +27,17 @@ namespace ConstructionManagement.WebApi.Middleware
                     var handler = new JwtSecurityTokenHandler();
                     var jwt = handler.ReadJwtToken(token);
 
-                    var tenantIdClaim = jwt.Claims.FirstOrDefault(c => c.Type == "tenantId");
+                    var companyIdClaim = jwt.Claims.FirstOrDefault(c => c.Type == "companyId");
 
-
-                    if (tenantIdClaim != null)
+                    var roleClaim = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role || c.Type == "role");
+                    
+                    if (roleClaim?.Value == "SuperAdmin")
                     {
-                        // تعيين اسم قاعدة البيانات للسياق الحالي
-                        tenantContext.TenantId = tenantIdClaim.Value;
+                        companyContext.CompanyId = null; // Bypass filters
+                    }
+                    else if (companyIdClaim != null)
+                    {
+                        companyContext.CompanyId = int.Parse(companyIdClaim.Value);
                     }
 
                     

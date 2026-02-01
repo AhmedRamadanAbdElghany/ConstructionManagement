@@ -1,4 +1,4 @@
 namespace ConstructionManagement.Application.DTOs
 {
-    public record AddRoleRequest(string RoleName, string Description);
+    public record AddRoleRequest(string RoleName, string Description, int? CompanyId = null);
 }

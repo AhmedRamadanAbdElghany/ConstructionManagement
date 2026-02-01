@@ -6,12 +6,9 @@ namespace ConstructionManagement.Domain.Entities;
 /// Represents a user's membership in a specific project
 /// Links a user to a project, defines reporting line, and holds multiple roles
 /// </summary>
-public class ProjectTeamMember : BaseEntity, ITenantEntity
+public class ProjectTeamMember : BaseEntity, ICompanyEntity
 {
-    /// <summary>
-    /// Tenant identifier for data isolation
-    /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
 
     // -- Project & User --------------------------------------------------------
 

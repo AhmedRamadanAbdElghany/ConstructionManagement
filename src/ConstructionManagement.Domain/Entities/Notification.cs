@@ -6,12 +6,9 @@ namespace ConstructionManagement.Domain.Entities;
 /// In-app notification sent to a specific user
 /// Used for alerts about delays, approvals, budget issues, escalations, etc.
 /// </summary>
-public class Notification : BaseEntity, ITenantEntity
+public class Notification : BaseEntity, ICompanyEntity
 {
-    /// <summary>
-    /// Tenant identifier for data isolation
-    /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
 
     // The user who should receive/see this notification
     public int UserId { get; set; }

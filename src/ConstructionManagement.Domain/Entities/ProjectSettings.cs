@@ -7,14 +7,11 @@ namespace ConstructionManagement.Domain.Entities;
 /// Project-specific configuration settings (1:1 relationship with Project)
 /// Uses shared primary key (ProjectId = PK + FK)
 /// </summary>
-public class ProjectSettings : BaseEntity, ITenantEntity
+public class ProjectSettings : BaseEntity, ICompanyEntity
 {
     public virtual Project Project { get; set; } = null!;
 
-    /// <summary>
-    /// Tenant identifier for data isolation
-    /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
 
     // All fields are now nullable ? null means "use global default"
     public bool? EnableDelayNotification { get; set; }
@@ -31,4 +28,10 @@ public class ProjectSettings : BaseEntity, ITenantEntity
     public bool? EnableInvoiceAggregation { get; set; }
 
     public int? MaxPhotosPerUpload { get; set; }
+
+    public bool? ClientCanSeeFinancials { get; set; }
+    public bool? ClientCanSeeMedia { get; set; }
+    public bool? ClientCanSeeBOQ { get; set; }
+
+    public string? MoneyCalculationMethod { get; set; }
 }

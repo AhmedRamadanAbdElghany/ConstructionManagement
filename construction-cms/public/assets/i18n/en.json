@@ -185,5 +185,33 @@
     "loading": "Loading...",
     "error": "Error",
     "success": "Success"
+  },
+  "settings": {
+    "company_title": "Company Settings",
+    "company_subtitle": "Manage global defaults and client visibility for your entire company",
+    "delay_notifications": "Delay Notifications",
+    "enable_delay": "Enable Delay Notifications",
+    "one_time_only": "Send One Time Only",
+    "notification_interval": "Interval (Days)",
+    "send_email": "Send Email Notifications",
+    "grace_period": "Grace Period (Days)",
+    "media_photos": "Media & Photos",
+    "enable_photos": "Enable Photo Uploads",
+    "require_review": "Require Photo Review",
+    "approver_role": "Auto-Approver Role",
+    "max_photos": "Max Photos Per Upload",
+    "invoices_financials": "Invoices & Financials",
+    "invoice_review": "Enable Invoice Review",
+    "invoice_aggregation": "Enable Invoice Aggregation",
+    "client_visibility": "Client Visibility",
+    "see_financials": "Client Can See Financials",
+    "see_media": "Client Can See Site Media",
+    "see_boq": "Client Can See BOQ",
+    "calculations": "Calculations",
+    "money_method": "Default Money Calculation Method",
+    "measured": "Measured",
+    "supervision": "Supervision",
+    "mixed": "Mixed",
+    "save_success": "Company settings updated successfully"
   }
 }

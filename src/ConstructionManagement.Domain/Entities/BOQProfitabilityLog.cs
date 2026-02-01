@@ -6,12 +6,9 @@ namespace ConstructionManagement.Domain.Entities;
 /// Historical snapshot of profitability calculation for a specific BOQ item
 /// Used to track profit/loss trend over time (daily, weekly, or on-demand logs)
 /// </summary>
-public class BOQProfitabilityLog : BaseEntity, ITenantEntity
+public class BOQProfitabilityLog : BaseEntity, ICompanyEntity
 {
-    /// <summary>
-    /// Tenant identifier for data isolation
-    /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
 
     // Which BOQ item this profitability snapshot refers to
     public int BOQItemId { get; set; }

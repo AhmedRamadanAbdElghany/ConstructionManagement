@@ -7,12 +7,9 @@ namespace ConstructionManagement.Domain.Entities;
 /// Can come from site engineers, reviewers, managers, etc.
 /// Supports linking to related media (photos/videos) when rejection is based on evidence
 /// </summary>
-public class BOQItemNote : BaseEntity, ITenantEntity
+public class BOQItemNote : BaseEntity, ICompanyEntity
 {
-    /// <summary>
-    /// Tenant identifier for data isolation
-    /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
 
     // Required – the BOQ item this note belongs to
     public int BOQItemId { get; set; }

@@ -8,12 +8,9 @@ namespace ConstructionManagement.Domain.Entities;
 // =============================================
 // More explicit style with composite PK (no separate Id column)
 // More explicit style with composite PK (no separate Id column)
-public class UserRole : ITenantEntity
+public class UserRole : ICompanyEntity
 {
-    /// <summary>
-    /// Tenant identifier for data isolation
-    /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
 
     public int UserId { get; set; }
     public int RoleId { get; set; }

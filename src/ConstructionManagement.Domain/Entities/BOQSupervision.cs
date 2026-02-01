@@ -8,12 +8,9 @@ namespace ConstructionManagement.Domain.Entities;
 /// Exists only when AccountingType = "Supervision" or "Mixed"
 /// Uses shared primary key with BOQItem (ItemId = PK + FK)
 /// </summary>
-public class BOQSupervision : BaseEntity, ITenantEntity
+public class BOQSupervision : BaseEntity, ICompanyEntity
 {
-    /// <summary>
-    /// Tenant identifier for data isolation
-    /// </summary>
-    public string TenantId { get; set; } = "ConstructionDB";
+    public int? CompanyId { get; set; }
 
     public virtual BOQItem Item { get; set; } = null!;
 
