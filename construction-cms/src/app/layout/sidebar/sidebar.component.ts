@@ -10,19 +10,19 @@ import { RouterModule } from '@angular/router';
   imports: [CommonModule, TranslateModule, RouterModule],
   template: `
     <div [class.w-72]="!isCollapsed()" [class.w-24]="isCollapsed()" 
-         class="h-full flex flex-col bg-slate-900 border-r border-slate-800/60 shadow-2xl transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] relative group/sidebar overflow-hidden">
+         class="h-full flex flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800/60 shadow-2xl transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] relative group/sidebar overflow-hidden">
       
       <!-- Collapse Toggle -->
       <button 
         (click)="toggleCollapse()"
-        class="absolute -right-3 top-24 w-6 h-6 rounded-full bg-slate-800 border border-slate-700 text-slate-400 hover:text-cyan-400 flex items-center justify-center transition-all z-[60] shadow-xl hover:scale-110 active:scale-95">
+        class="absolute -right-3 top-24 w-6 h-6 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-cyan-500 transition-all z-[60] shadow-xl hover:scale-110 active:scale-95">
         <svg class="w-4 h-4 transition-transform duration-500" [class.rotate-180]="isCollapsed()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path>
         </svg>
       </button>
 
       <!-- Logo Section -->
-      <div class="h-24 flex items-center px-6 border-b border-slate-800/60 shrink-0">
+      <div class="h-24 flex items-center px-6 border-b border-slate-200 dark:border-slate-800/60 shrink-0">
         <div class="flex items-center space-x-4 min-w-max">
           <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-700 flex items-center justify-center shadow-lg shadow-cyan-500/20 ring-1 ring-white/10 shrink-0">
             <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -30,8 +30,8 @@ import { RouterModule } from '@angular/router';
             </svg>
           </div>
           <div class="transition-all duration-500 overflow-hidden" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">
-            <h1 class="text-white font-black text-xl leading-none tracking-tight">STRUC<span class="text-cyan-400">T</span></h1>
-            <p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-bold mt-1.5 truncate">{{ currentRole }}</p>
+            <h1 class="text-slate-900 dark:text-white font-black text-xl leading-none tracking-tight">STRUC<span class="text-cyan-500 dark:text-cyan-400">T</span></h1>
+            <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] font-bold mt-1.5 truncate">{{ currentRole }}</p>
           </div>
         </div>
       </div>
@@ -39,7 +39,7 @@ import { RouterModule } from '@angular/router';
       <!-- Navigation -->
       <nav class="flex-1 p-4 space-y-2 overflow-y-auto custom-scrollbar pt-8">
         <!-- Section Header -->
-        <p class="px-4 py-2 text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
+        <p class="px-4 py-2 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
            [class.opacity-0]="isCollapsed()">{{ 'sidebar.administration' | translate }}</p>
 
         <a routerLink="/dashboard" 
@@ -90,7 +90,7 @@ import { RouterModule } from '@angular/router';
           </a>
         }
 
-        <p class="px-4 py-6 text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
+        <p class="px-4 py-6 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
            [class.opacity-0]="isCollapsed()">{{ 'sidebar.operations' | translate }}</p>
 
         @if (isWorker || isAdmin) {
@@ -118,19 +118,19 @@ import { RouterModule } from '@angular/router';
         }
 
         <div class="my-6 px-4">
-          <div class="h-px bg-gradient-to-r from-transparent via-slate-800 to-transparent"></div>
+          <div class="h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent"></div>
         </div>
 
         <a routerLink="/notifications" 
            routerLinkActive="nav-active"
            class="nav-item group">
-          <div class="nav-icon-box relative">
+          <div class="nav-icon-box relative text-slate-400 group-hover:text-cyan-500 dark:group-hover:text-cyan-400">
             <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
             </svg>
-            <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-rose-500 ring-4 ring-slate-900 shadow-lg"></span>
+            <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-rose-500 ring-4 ring-white dark:ring-slate-900 shadow-lg"></span>
           </div>
-          <span class="nav-label text-slate-200" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.notifications' | translate }}</span>
+          <span class="nav-label text-slate-900 dark:text-slate-200" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.notifications' | translate }}</span>
           <div class="ml-auto" [class.hidden]="isCollapsed()">
              <div class="flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full bg-rose-500 text-white text-[10px] font-black shadow-lg shadow-rose-500/20">3</div>
           </div>
@@ -138,20 +138,20 @@ import { RouterModule } from '@angular/router';
       </nav>
 
       <!-- Role Selector -->
-      <div class="p-4 m-4 rounded-[2rem] bg-slate-950/40 border border-white/5 backdrop-blur-3xl transition-all duration-500 shrink-0 shadow-inner"
+      <div class="p-4 m-4 rounded-[2rem] bg-slate-100/50 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 backdrop-blur-3xl transition-all duration-500 shrink-0 shadow-inner"
            [class.mx-2]="isCollapsed()">
-        <label class="block text-[9px] font-black text-slate-600 uppercase tracking-[0.2em] mb-3 px-1 truncate" [class.text-center]="isCollapsed()">{{ 'sidebar.demo_role_switch' | translate }}</label>
+        <label class="block text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] mb-3 px-1 truncate" [class.text-center]="isCollapsed()">{{ 'sidebar.demo_role_switch' | translate }}</label>
         <div class="relative group/select">
           <select 
             (change)="switchRole($event)"
             [value]="currentRole"
-            class="w-full pl-3 pr-10 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-slate-300 text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-cyan-500/10 focus:border-cyan-500/30 transition-all cursor-pointer appearance-none outline-none shadow-xl">
+            class="w-full pl-3 pr-10 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-300 text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-cyan-500/10 focus:border-cyan-500/30 transition-all cursor-pointer appearance-none outline-none shadow-xl">
             <option value="SuperAdmin">Super</option>
             <option value="CompanyAdmin">Admin</option>
             <option value="CompanyUser">Worker</option>
             <option value="NormalUser">Client</option>
           </select>
-          <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-600 group-hover/select:text-cyan-400 transition-colors" [class.hidden]="isCollapsed()">
+          <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400 dark:text-slate-600 group-hover/select:text-cyan-500 dark:group-hover/select:text-cyan-400 transition-colors" [class.hidden]="isCollapsed()">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path>
             </svg>
@@ -160,19 +160,19 @@ import { RouterModule } from '@angular/router';
       </div>
 
       <!-- User Profile -->
-      <div class="p-6 bg-slate-950/40 border-t border-slate-800/60 mt-auto shrink-0 group/profile cursor-pointer hover:bg-slate-950/60 transition-colors">
+      <div class="p-6 bg-slate-100/30 dark:bg-slate-950/40 border-t border-slate-200 dark:border-slate-800/60 mt-auto shrink-0 group/profile cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-950/60 transition-colors">
         <div class="flex items-center space-x-4">
           <div class="relative flex-shrink-0">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white font-black text-lg ring-2 ring-slate-800 shadow-2xl transition-transform group-hover/profile:scale-110 group-hover/profile:rotate-3">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white font-black text-lg ring-2 ring-white dark:ring-slate-800 shadow-2xl transition-transform group-hover/profile:scale-110 group-hover/profile:rotate-3">
               {{ authService.getCurrentUser().fullName.charAt(0) }}
             </div>
-            <div class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-[3px] border-slate-900 shadow-lg animate-pulse"></div>
+            <div class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-[3px] border-white dark:border-slate-900 shadow-lg animate-pulse"></div>
           </div>
           <div class="flex-1 min-w-0 transition-all duration-500 overflow-hidden" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">
-            <p class="text-[15px] font-black text-white truncate leading-none mb-1.5">{{ authService.getCurrentUser().fullName }}</p>
-            <p class="text-[10px] text-slate-600 truncate font-black uppercase tracking-widest">{{ authService.getCurrentUser().email }}</p>
+            <p class="text-[15px] font-black text-slate-900 dark:text-white truncate leading-none mb-1.5">{{ authService.getCurrentUser().fullName }}</p>
+            <p class="text-[10px] text-slate-400 dark:text-slate-600 truncate font-black uppercase tracking-widest">{{ authService.getCurrentUser().email }}</p>
           </div>
-          <button class="p-3 rounded-2xl text-slate-600 hover:bg-rose-500/10 hover:text-rose-500 transition-all active:scale-90 group/logout" [class.hidden]="isCollapsed()">
+          <button class="p-3 rounded-2xl text-slate-400 dark:text-slate-600 hover:bg-rose-500/10 hover:text-rose-500 transition-all active:scale-90 group/logout" [class.hidden]="isCollapsed()">
             <svg class="w-6 h-6 transition-transform group-hover/logout:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
             </svg>
@@ -189,15 +189,14 @@ import { RouterModule } from '@angular/router';
       position: sticky;
       top: 0;
       z-index: 50;
-      background: #020617; /* Tailwind slate-950 fallback */
     }
 
     .nav-item {
-      @apply flex items-center space-x-4 px-4 py-3 rounded-2xl text-slate-400 transition-all duration-300 hover:bg-white/[0.03] hover:text-white outline-none;
+      @apply flex items-center space-x-4 px-4 py-3 rounded-2xl text-slate-500 dark:text-slate-400 transition-all duration-300 hover:bg-slate-100 dark:hover:bg-white/[0.03] hover:text-slate-900 dark:hover:text-white outline-none;
     }
 
     .nav-icon-box {
-      @apply w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-800/20 border border-white/[0.03] transition-all duration-300 shrink-0;
+      @apply w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800/20 border border-slate-200 dark:border-white/[0.03] transition-all duration-300 shrink-0;
     }
 
     .nav-label {
@@ -205,7 +204,7 @@ import { RouterModule } from '@angular/router';
     }
 
     .nav-active {
-      @apply bg-cyan-500/10 text-cyan-400 border-white/[0.05] shadow-2xl shadow-cyan-500/5 ring-1 ring-cyan-500/10;
+      @apply bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-transparent shadow-2xl shadow-cyan-500/5 ring-1 ring-cyan-500/10;
     }
 
     .nav-active .nav-icon-box {
@@ -213,7 +212,7 @@ import { RouterModule } from '@angular/router';
     }
 
     .nav-active .nav-label {
-      @apply text-white;
+      @apply text-slate-900 dark:text-white;
     }
 
     .custom-scrollbar::-webkit-scrollbar {
