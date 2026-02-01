@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { ThemeService } from '../../core/theme/theme.service';
 
 import { AppNotification } from '../../shared/interfaces';
 
@@ -12,22 +13,39 @@ import { AppNotification } from '../../shared/interfaces';
   standalone: true,
   imports: [CommonModule, RouterModule, LanguageSwitcherComponent, TranslateModule],
   template: `
-    <div class="h-16 bg-slate-900/95 backdrop-blur-xl border-b border-slate-700/50 flex items-center justify-between px-6">
+    <header class="h-20 bg-slate-950/50 dark:bg-slate-950/50 light:bg-white/80 backdrop-blur-2xl border-b border-white/5 dark:border-white/5 light:border-slate-200 flex items-center justify-between px-8 sticky top-0 z-[60] transition-colors duration-300">
       <!-- Search -->
-      <div class="flex-1 max-w-xl">
-        <div class="relative">
-          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
-          <input 
-            type="text" 
-            [placeholder]="'topbar.search_placeholder' | translate"
-            class="w-full pl-12 pr-4 py-2.5 rounded-xl bg-slate-800/50 border border-slate-700/50 text-white placeholder-slate-500 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all">
+      <div class="flex-1 max-w-2xl">
+        <div class="relative group">
+          <div class="absolute inset-0 bg-cyan-500/5 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity"></div>
+          <div class="relative">
+            <svg class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <input 
+              type="text" 
+              [placeholder]="'topbar.search_placeholder' | translate"
+              class="w-full pl-14 pr-6 py-3.5 rounded-2xl bg-slate-900/40 dark:bg-slate-900/40 light:bg-slate-100 border border-white/5 dark:border-white/5 light:border-slate-200 text-slate-200 dark:text-slate-200 light:text-slate-900 placeholder-slate-600 focus:border-cyan-500/30 focus:bg-slate-900 dark:focus:bg-slate-900 light:focus:bg-white focus:ring-4 focus:ring-cyan-500/5 transition-all outline-none text-sm font-medium">
+          </div>
         </div>
       </div>
 
       <!-- Right Side -->
       <div class="flex items-center space-x-4">
+        <!-- Theme Toggle -->
+        <button 
+          (click)="themeService.toggleTheme()"
+          class="w-12 h-12 rounded-2xl bg-slate-900/50 dark:bg-slate-900/50 light:bg-white border border-white/5 dark:border-white/5 light:border-slate-200 flex items-center justify-center text-slate-400 hover:text-cyan-400 transition-all active:scale-90 overflow-hidden relative group shadow-lg">
+          <div class="relative w-6 h-6">
+             <svg *ngIf="themeService.currentTheme() === 'dark'" class="w-6 h-6 transform transition-transform group-hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z"></path>
+             </svg>
+             <svg *ngIf="themeService.currentTheme() === 'light'" class="w-6 h-6 transform transition-transform group-hover:-rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+             </svg>
+          </div>
+        </button>
+
         <!-- Language Switcher -->
         <app-language-switcher></app-language-switcher>
 
@@ -35,12 +53,12 @@ import { AppNotification } from '../../shared/interfaces';
         <div class="relative">
           <button 
             (click)="toggleNotifications()"
-            class="relative p-2.5 rounded-xl hover:bg-slate-700/50 text-slate-400 hover:text-white transition-colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            class="group relative w-12 h-12 rounded-2xl bg-slate-900/50 dark:bg-slate-900/50 light:bg-white border border-white/5 dark:border-white/5 light:border-slate-200 flex items-center justify-center text-slate-400 hover:text-white hover:border-cyan-500/30 transition-all active:scale-90 shadow-lg">
+            <svg class="w-6 h-6 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
             </svg>
             @if (unreadCount > 0) {
-              <span class="absolute top-1 right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">
+              <span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 text-white text-[10px] font-black flex items-center justify-center shadow-lg shadow-rose-500/25 ring-2 ring-slate-950">
                 {{ unreadCount }}
               </span>
             }
@@ -48,53 +66,48 @@ import { AppNotification } from '../../shared/interfaces';
 
           <!-- Notifications Dropdown -->
           @if (showNotifications) {
-            <div class="absolute right-0 top-full mt-2 w-96 bg-slate-800 rounded-2xl shadow-xl border border-slate-700/50 overflow-hidden z-50">
-              <div class="p-4 border-b border-slate-700/50 flex items-center justify-between">
-                <h3 class="text-white font-semibold">{{ 'topbar.notifications' | translate }}</h3>
-                <button (click)="markAllRead()" class="text-xs text-cyan-400 hover:text-cyan-300 transition-colors">
+            <div class="absolute right-0 top-[calc(100%+12px)] w-[420px] bg-slate-900 dark:bg-slate-900 light:bg-white rounded-[2.5rem] shadow-3xl border border-white/10 dark:border-white/10 light:border-slate-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+              <div class="p-8 pb-4 flex items-center justify-between">
+                <h3 class="text-xl font-black text-white dark:text-white light:text-slate-900 tracking-tight">{{ 'topbar.notifications' | translate }}</h3>
+                <button (click)="markAllRead()" class="px-4 py-1.5 rounded-xl bg-slate-800 dark:bg-slate-800 light:bg-slate-100 text-[10px] font-black text-cyan-400 uppercase tracking-widest hover:bg-slate-700 transition-all">
                   {{ 'topbar.mark_all_read' | translate }}
                 </button>
               </div>
-              <div class="max-h-80 overflow-y-auto">
+              <div class="max-h-[480px] overflow-y-auto px-4 space-y-2 mb-4 custom-scrollbar">
                 @for (notification of notifications; track notification.id) {
                   <div 
-                    class="p-4 border-b border-slate-700/30 hover:bg-slate-700/30 transition-colors cursor-pointer"
+                    class="group p-5 rounded-[1.5rem] transition-all cursor-pointer border border-transparent hover:border-white/5 hover:bg-white/[0.03] dark:hover:bg-white/[0.03] light:hover:bg-slate-50"
                     [class.bg-cyan-500/5]="!notification.read">
-                    <div class="flex items-start space-x-3">
-                      <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                    <div class="flex items-start space-x-4">
+                      <div class="w-12 h-12 rounded-[1rem] flex items-center justify-center flex-shrink-0 shadow-inner"
                            [ngClass]="{
-                             'bg-amber-500/20 text-amber-400': notification.type === 'warning',
-                             'bg-cyan-500/20 text-cyan-400': notification.type === 'info',
-                             'bg-emerald-500/20 text-emerald-400': notification.type === 'success'
+                             'bg-amber-500/10 text-amber-500': notification.type === 'warning',
+                             'bg-cyan-500/10 text-cyan-400': notification.type === 'info',
+                             'bg-emerald-500/10 text-emerald-500': notification.type === 'success'
                            }">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          @if (notification.type === 'warning') {
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                          }
-                          @if (notification.type === 'info') {
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                          }
-                          @if (notification.type === 'success') {
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                          }
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          @if (notification.type === 'warning') { <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path> }
+                          @if (notification.type === 'info') { <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path> }
+                          @if (notification.type === 'success') { <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path> }
                         </svg>
                       </div>
                       <div class="flex-1 min-w-0">
-                        <p class="text-sm text-white" [class.font-medium]="!notification.read">{{ notification.message }}</p>
-                        <p class="text-xs text-slate-500 mt-1">{{ notification.timestamp }}</p>
+                        <div class="flex items-center justify-between mb-1">
+                           <p class="text-sm font-bold text-white dark:text-white light:text-slate-900 group-hover:text-cyan-400 transition-colors" [class.font-black]="!notification.read">{{ notification.message }}</p>
+                           @if (!notification.read) { <span class="w-2 h-2 rounded-full bg-cyan-500"></span> }
+                        </div>
+                        <p class="text-[11px] text-slate-500 font-bold uppercase tracking-widest">{{ notification.timestamp }}</p>
                       </div>
-                      @if (!notification.read) {
-                        <div class="w-2 h-2 rounded-full bg-cyan-500 flex-shrink-0"></div>
-                      }
                     </div>
                   </div>
                 }
               </div>
-              <div class="p-3 border-t border-slate-700/50">
+              <div class="p-6 bg-slate-950/50 dark:bg-slate-950/50 light:bg-slate-50 border-t border-white/5">
                 <a routerLink="/notifications" 
                    (click)="showNotifications = false"
-                   class="block w-full py-2 text-center text-sm text-cyan-400 hover:text-cyan-300 font-medium transition-colors">
-                  {{ 'topbar.view_all_notifications' | translate }}
+                   class="flex items-center justify-center space-x-2 w-full py-3 rounded-2xl bg-slate-900 dark:bg-slate-900 light:bg-white border border-white/5 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] hover:text-white hover:border-slate-700 transition-all">
+                  <span>{{ 'topbar.view_all_notifications' | translate }}</span>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5-5 5"></path></svg>
                 </a>
               </div>
             </div>
@@ -102,80 +115,80 @@ import { AppNotification } from '../../shared/interfaces';
         </div>
 
         <!-- Divider -->
-        <div class="w-px h-8 bg-slate-700/50"></div>
+        <div class="w-px h-8 bg-white/5 dark:bg-white/5 light:bg-slate-200"></div>
 
         <!-- User Profile -->
         <div class="relative">
           <button 
             (click)="toggleProfile()"
-            class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-700/50 transition-colors">
-            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold">
-              {{ authService.getCurrentUser().fullName.charAt(0) }}
+            class="group flex items-center space-x-4 p-1.5 pr-5 rounded-[1.5rem] bg-slate-900/40 dark:bg-slate-900/40 light:bg-white border border-white/5 dark:border-white/5 light:border-slate-200 hover:border-cyan-500/30 transition-all active:scale-95 shadow-lg">
+            <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-700 flex items-center justify-center text-white ring-2 ring-white/10 shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform overflow-hidden font-black">
+               {{ authService.getCurrentUser().fullName.charAt(0) }}
             </div>
-            <div class="hidden md:block text-left">
-              <p class="text-sm font-medium text-white">{{ authService.getCurrentUser().fullName }}</p>
-              <p class="text-xs text-slate-400">{{ authService.getCurrentUser().role }}</p>
+            <div class="hidden md:block text-left min-w-max">
+              <p class="text-sm font-black text-white dark:text-white light:text-slate-900 tracking-tight leading-none mb-1">{{ authService.getCurrentUser().fullName }}</p>
+              <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-none">{{ authService.getCurrentUser().role }}</p>
             </div>
-            <svg class="w-4 h-4 text-slate-400 hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            <svg class="w-4 h-4 text-slate-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path>
             </svg>
           </button>
 
           <!-- Profile Dropdown -->
           @if (showProfile) {
-            <div class="absolute right-0 top-full mt-2 w-56 bg-slate-800 rounded-2xl shadow-xl border border-slate-700/50 overflow-hidden z-50">
-              <div class="p-4 border-b border-slate-700/50">
-                <p class="text-white font-medium">{{ authService.getCurrentUser().fullName }}</p>
-                <p class="text-sm text-slate-400">{{ authService.getCurrentUser().email }}</p>
+            <div class="absolute right-0 top-[calc(100%+12px)] w-72 bg-slate-900 dark:bg-slate-900 light:bg-white rounded-[2rem] shadow-3xl border border-white/10 dark:border-white/10 light:border-slate-200 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+              <div class="p-8 border-b border-white/5 dark:border-white/5 light:border-slate-200 bg-slate-950/20 light:bg-slate-50">
+                <p class="text-lg font-black text-white dark:text-white light:text-slate-900 tracking-tight leading-none mb-2">{{ authService.getCurrentUser().fullName }}</p>
+                <p class="text-[11px] text-slate-500 font-bold break-all">{{ authService.getCurrentUser().email }}</p>
               </div>
-              <div class="p-2">
-                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-slate-700/50 text-slate-400 hover:text-white transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                  </svg>
-                  <span>{{ 'topbar.profile' | translate }}</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-slate-700/50 text-slate-400 hover:text-white transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                  </svg>
-                  <span>{{ 'topbar.settings' | translate }}</span>
+              <div class="p-3 space-y-1">
+                <a href="#" class="flex items-center space-x-4 px-5 py-3.5 rounded-2xl hover:bg-white/[0.03] dark:hover:bg-white/[0.03] light:hover:bg-slate-50 text-slate-400 hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-all group/item">
+                  <div class="w-10 h-10 rounded-xl bg-slate-800 dark:bg-slate-800 light:bg-slate-100 flex items-center justify-center group-hover/item:bg-cyan-500 transition-colors">
+                    <svg class="w-5 h-5 text-slate-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                  </div>
+                  <span class="text-sm font-bold">{{ 'topbar.profile' | translate }}</span>
                 </a>
               </div>
-              <div class="p-2 border-t border-slate-700/50">
-                <button class="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-red-500/10 text-red-400 hover:text-red-300 transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                  </svg>
-                  <span>{{ 'topbar.logout' | translate }}</span>
+              <div class="p-3 bg-slate-950/30 dark:bg-slate-950/30 light:bg-slate-50 border-t border-white/5 dark:border-white/5 light:border-slate-200">
+                <button class="w-full flex items-center space-x-4 px-5 py-4 rounded-2xl hover:bg-rose-500 bg-slate-800/50 dark:bg-slate-800/50 light:bg-slate-200/50 text-slate-400 hover:text-white transition-all group/item shadow-inner">
+                  <div class="w-10 h-10 rounded-xl bg-slate-900 dark:bg-slate-900 light:bg-white flex items-center justify-center group-hover/item:bg-white/20 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                  </div>
+                  <span class="text-[11px] font-black uppercase tracking-widest">{{ 'topbar.logout' | translate }}</span>
                 </button>
               </div>
             </div>
           }
         </div>
       </div>
-    </div>
+    </header>
 
     <!-- Overlay to close dropdowns -->
     @if (showNotifications || showProfile) {
       <div 
-        class="fixed inset-0 z-40"
+        class="fixed inset-0 z-40 bg-slate-950/20 backdrop-blur-sm transition-all animate-in fade-in duration-300"
         (click)="closeDropdowns()">
       </div>
     }
-  `
+  `,
+  styles: [`
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.05); border-radius: 10px; }
+    .shadow-3xl { box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.5); }
+  `]
 })
 export class TopbarComponent implements OnInit {
   showNotifications = false;
   showProfile = false;
   notifications: AppNotification[] = [];
 
+  public authService = inject(AuthService);
+  public themeService = inject(ThemeService);
+
   get unreadCount(): number {
     return this.notifications.filter(n => !n.read).length;
   }
-
-  constructor(public authService: AuthService) { }
 
   ngOnInit() {
     this.notifications = [
