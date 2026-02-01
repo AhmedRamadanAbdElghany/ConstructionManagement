@@ -1,0 +1,11 @@
+// App-level styles
+
+:host {
+    display: block;
+    height: 100%;
+}
+
+// Ensure the layout takes full height
+.flex.h-screen {
+    height: 100vh !important;
+}
