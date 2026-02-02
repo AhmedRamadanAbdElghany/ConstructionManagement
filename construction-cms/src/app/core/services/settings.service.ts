@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { CompanySettings, ProjectSettings } from '../../shared/interfaces';
 
 @Injectable({
@@ -29,6 +30,8 @@ export class SettingsService {
         allowMeasured: true,
         allowSupervision: true,
         allowPackages: true,
+        allowLocations: true,
+        allowHR: true,
         defaultSupervisionPercentage: 10
     };
 
@@ -50,21 +53,22 @@ export class SettingsService {
         moneyCalculationMethod: 'Measured'
     };
 
+    private settingsSubject = new BehaviorSubject<CompanySettings>(this.dummyCompanySettings);
+
     constructor(private http: HttpClient) { }
 
     getCompanySettings(): Observable<CompanySettings> {
-        // Real API Call (Commented out)
-        // return this.http.get<CompanySettings>(`${this.apiUrl}/company-settings`);
-
-        return of(this.dummyCompanySettings);
+        // Return as observable and clone to prevent direct pollution
+        return this.settingsSubject.asObservable().pipe(
+            map(s => JSON.parse(JSON.stringify(s)))
+        );
     }
 
     updateCompanySettings(settings: Partial<CompanySettings>): Observable<CompanySettings> {
-        // Real API Call (Commented out)
-        // return this.http.put<CompanySettings>(`${this.apiUrl}/company-settings`, settings);
-
-        this.dummyCompanySettings = { ...this.dummyCompanySettings, ...settings };
-        return of(this.dummyCompanySettings);
+        // In real app, this would be an API call
+        const updated = { ...this.settingsSubject.value, ...settings };
+        this.settingsSubject.next(updated);
+        return of(updated);
     }
 
     getProjectSettings(projectId: number): Observable<ProjectSettings> {

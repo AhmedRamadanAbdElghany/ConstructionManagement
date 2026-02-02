@@ -5,7 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { SettingsService } from '../../../core/services/settings.service';
 import { CompanyPackagesService } from '../../../core/services/company-packages.service';
-import { CompanySettings, CompanyPackage } from '../../../shared/interfaces';
+import { RolesService } from '../../../core/services/roles.service';
+import { CompanySettings, CompanyPackage, Role, Permission } from '../../../shared/interfaces';
 import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
@@ -83,6 +84,24 @@ import { AuthService } from '../../../core/auth/auth.service';
                              <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
                           </label>
                        </div>
+
+                       <!-- Allow Locations -->
+                       <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                          <span class="text-xs font-black text-slate-700 dark:text-slate-300">{{ 'allowLocations' | translate }}</span>
+                          <label class="relative inline-flex items-center cursor-pointer">
+                             <input type="checkbox" [(ngModel)]="settings.allowLocations" class="sr-only peer">
+                             <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
+                          </label>
+                       </div>
+
+                       <!-- Allow HR -->
+                       <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                          <span class="text-xs font-black text-slate-700 dark:text-slate-300">{{ 'allowHR' | translate }}</span>
+                          <label class="relative inline-flex items-center cursor-pointer">
+                             <input type="checkbox" [(ngModel)]="settings.allowHR" class="sr-only peer">
+                             <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
+                          </label>
+                       </div>
                     </div>
                  </div>
               </div>
@@ -153,35 +172,138 @@ import { AuthService } from '../../../core/auth/auth.service';
                     </div>
                  </div>
               </div>
+
+               <!-- SECTION: Master Setup (Super Admin ONLY) -->
+               <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
+                  <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl"></div>
+                   <div class="flex items-center justify-between mb-8">
+                      <div class="flex items-center space-x-4">
+                         <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A10.003 10.003 0 0022 10V3l-7 3-7-3v7c0 1.259.231 2.464.653 3.571"></path>
+                            </svg>
+                         </div>
+                         <div>
+                            <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Master Structure Setup</h3>
+                            <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">Global Definition</p>
+                         </div>
+                      </div>
+                      <div class="flex space-x-2">
+                        <button (click)="openPermissionModal()" class="px-5 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-black text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all">
+                           + {{ 'addPermission' | translate }}
+                        </button>
+                        <button (click)="openRoleModal()" class="px-5 py-3 rounded-xl bg-indigo-500 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all">
+                           + {{ 'addRole' | translate }}
+                        </button>
+                      </div>
+                   </div>
+
+                   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <!-- Roles List (Master) -->
+                      <div class="space-y-4">
+                         <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Master Roles</h4>
+                         <div class="space-y-3">
+                            @for (role of companyRoles; track role.id) {
+                            <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 flex items-center justify-between group/role hover:border-indigo-500/30 transition-all">
+                               <div>
+                                  <h5 class="font-bold text-slate-900 dark:text-white text-sm">{{ role.name }}</h5>
+                                  <p class="text-[10px] text-slate-500 font-medium">{{ role.description || 'Global System Role' }}</p>
+                               </div>
+                               <div class="flex space-x-1 opacity-0 group-hover/role:opacity-100 transition-opacity">
+                                  <button (click)="openRoleModal(role)" class="p-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-500 transition-all">
+                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                  </button>
+                                  <button (click)="deleteRole(role.id)" class="p-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-400 hover:text-red-500 transition-all">
+                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                  </button>
+                               </div>
+                            </div>
+                            }
+                         </div>
+                      </div>
+
+                      <!-- Permissions List (Master) -->
+                      <div class="space-y-4">
+                         <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Master Permissions</h4>
+                         <div class="flex flex-wrap gap-2">
+                            @for (perm of companyPermissions; track perm.id) {
+                            <div class="px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 flex items-center space-x-3 group/perm hover:border-indigo-500/50 transition-all shadow-sm">
+                               <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300">{{ perm.name }}</span>
+                               <button (click)="deletePermission(perm.id)" class="p-1 rounded-md text-slate-300 hover:text-red-500 transition-colors">
+                                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                               </button>
+                            </div>
+                            }
+                         </div>
+                      </div>
+                   </div>
+               </div>
             </section>
             }
 
             <!-- SECTION 2: MODULE CONFIGURATION (Company Admin ONLY) -->
             @if (isOnlyCompanyAdmin) {
             <section class="space-y-8">
-               <!-- Supervision Config -->
-               @if (settings.allowSupervision) {
-               <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
-                  <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl"></div>
-                  <div class="flex items-center space-x-4 mb-6">
-                     <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
-                     </div>
-                     <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'supervision' | translate }}</h3>
-                  </div>
+                <!-- Role-Permission Mapping (Company Admin) -->
+                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
+                   <div class="absolute top-0 right-0 w-32 h-32 bg-fuchsia-500/5 rounded-full blur-3xl"></div>
+                   <div class="flex items-center space-x-4 mb-8">
+                      <div class="w-12 h-12 rounded-2xl bg-fuchsia-500/10 flex items-center justify-center text-fuchsia-500">
+                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                         </svg>
+                      </div>
+                      <div>
+                         <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'rolePermissionMapping' | translate }}</h3>
+                         <p class="text-[10px] text-fuchsia-500 font-bold uppercase tracking-widest">Operation Linkage</p>
+                      </div>
+                   </div>
 
-                  <div class="space-y-2 max-w-md">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{{ 'defaultSupervisionPercentage' | translate }}</label>
-                    <div class="relative">
-                       <input type="number" [(ngModel)]="settings.defaultSupervisionPercentage" 
-                              class="w-full px-5 py-4 pl-5 pr-12 rounded-2xl bg-white dark:bg-slate-950/50 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-black text-sm outline-none transition-all focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 shadow-inner">
-                       <span class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">%</span>
-                    </div>
-                  </div>
-               </div>
-               }
+                   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      @for (role of companyRoles; track role.id) {
+                      <div class="p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 flex flex-col justify-between hover:border-fuchsia-500/50 transition-all">
+                         <div class="mb-4">
+                            <h4 class="font-bold text-slate-900 dark:text-white mb-2">{{ role.name }}</h4>
+                            <div class="flex flex-wrap gap-1">
+                               @for (p of role.permissions?.slice(0, 3); track p.id) {
+                                  <span class="px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 text-[9px] font-bold text-slate-400">{{ p.name }}</span>
+                               }
+                               @if ((role.permissions?.length || 0) > 3) {
+                                  <span class="px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 text-[9px] font-bold text-slate-400">+{{ (role.permissions?.length || 0) - 3 }}</span>
+                               }
+                            </div>
+                         </div>
+                         <button (click)="openLinkModal(role)" class="w-full py-3 rounded-xl bg-white dark:bg-slate-800 text-fuchsia-500 font-black text-[10px] uppercase tracking-widest border border-slate-200 dark:border-white/5 hover:bg-fuchsia-500 hover:text-white transition-all">
+                            {{ 'configureRolePermissions' | translate }}
+                         </button>
+                      </div>
+                      }
+                   </div>
+                </div>
+
+                <!-- Supervision Config -->
+                @if (settings.allowSupervision) {
+                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
+                   <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl"></div>
+                   <div class="flex items-center space-x-4 mb-6">
+                      <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                         </svg>
+                      </div>
+                      <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'supervision' | translate }}</h3>
+                   </div>
+
+                   <div class="space-y-2 max-w-md">
+                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{{ 'defaultSupervisionPercentage' | translate }}</label>
+                     <div class="relative">
+                        <input type="number" [(ngModel)]="settings.defaultSupervisionPercentage" 
+                               class="w-full px-5 py-4 pl-5 pr-12 rounded-2xl bg-white dark:bg-slate-950/50 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-black text-sm outline-none transition-all focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 shadow-inner">
+                        <span class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">%</span>
+                     </div>
+                   </div>
+                </div>
+                }
 
                <!-- Package Management -->
                @if (settings.allowPackages) {
@@ -239,7 +361,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 
       <!-- Package Modal (Shared Logic) -->
       @if (showPackageModal) {
-      <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
          <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative overflow-hidden">
             <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-6">
                {{ (selectedPackage ? 'editPackage' : 'addPackage') | translate }}
@@ -260,7 +382,7 @@ import { AuthService } from '../../../core/auth/auth.service';
                </div>
                <div>
                   <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'variationCalc' | translate }}</label>
-                  <select [(ngModel)]="packageForm.variationCalculation" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold">
+                  <select [(ngModel)]="packageForm.variationCalculation" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold text-slate-900 dark:text-white appearance-none">
                      <option value="AddFullCost">Add Full Cost</option>
                      <option value="AddDifference">Add Difference</option>
                   </select>
@@ -272,6 +394,110 @@ import { AuthService } from '../../../core/auth/auth.service';
                   {{ 'common.cancel' | translate }}
                </button>
                <button (click)="savePackage()" class="flex-1 py-4 rounded-2xl bg-amber-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-amber-500/20">
+                  {{ 'common.save' | translate }}
+               </button>
+            </div>
+         </div>
+      </div>
+      }
+
+      <!-- Role Modal -->
+      @if (showRoleModal) {
+      <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+         <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative overflow-hidden">
+            <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-6">
+               {{ (selectedRole ? 'editRole' : 'addRole') | translate }}
+            </h2>
+
+            <div class="space-y-4">
+               <div>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'roleName' | translate }}</label>
+                  <input type="text" [(ngModel)]="roleForm.name" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold">
+               </div>
+               <div>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'roleDesc' | translate }}</label>
+                  <textarea [(ngModel)]="roleForm.description" rows="2" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-medium"></textarea>
+               </div>
+            </div>
+
+            <div class="flex space-x-4 mt-8">
+               <button (click)="showRoleModal = false" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest">
+                  {{ 'common.cancel' | translate }}
+               </button>
+               <button (click)="saveRole()" class="flex-1 py-4 rounded-2xl bg-indigo-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20">
+                  {{ 'common.save' | translate }}
+               </button>
+            </div>
+         </div>
+      </div>
+      }
+
+      <!-- Role-Permission Linking Modal (Company Admin ONLY) -->
+      @if (showLinkModal) {
+      <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+         <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative overflow-hidden">
+            <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-2">{{ 'linkPermissionsTo' | translate }}</h2>
+            <p class="text-[10px] font-black text-fuchsia-500 uppercase tracking-widest mb-8">{{ selectedRole?.name }}</p>
+
+            <div class="space-y-6">
+               <div class="p-6 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">{{ 'selectPermissions' | translate }}</label>
+                  <div class="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                     @for (perm of companyPermissions; track perm.id) {
+                     <button 
+                        (click)="togglePermissionInMapping(perm)"
+                        [class.ring-2]="isPermissionSelectedInMapping(perm.id)"
+                        [class.ring-fuchsia-500]="isPermissionSelectedInMapping(perm.id)"
+                        [class.bg-white]="!isPermissionSelectedInMapping(perm.id)"
+                        [class.dark:bg-slate-800]="!isPermissionSelectedInMapping(perm.id)"
+                        [class.bg-fuchsia-500/5]="isPermissionSelectedInMapping(perm.id)"
+                        class="p-4 rounded-xl text-left transition-all border border-slate-200 dark:border-white/5 hover:border-fuchsia-500/30 group/p">
+                        <div class="flex items-center justify-between">
+                           <span class="text-xs font-bold text-slate-900 dark:text-white">{{ perm.name }}</span>
+                           @if (isPermissionSelectedInMapping(perm.id)) {
+                              <svg class="w-4 h-4 text-fuchsia-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                           }
+                        </div>
+                     </button>
+                     }
+                  </div>
+               </div>
+            </div>
+
+            <div class="flex space-x-4 mt-8">
+               <button (click)="showLinkModal = false" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest">
+                  {{ 'common.cancel' | translate }}
+               </button>
+               <button (click)="saveLink()" class="flex-1 py-4 rounded-2xl bg-fuchsia-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-fuchsia-500/20">
+                  {{ 'common.save' | translate }}
+               </button>
+            </div>
+         </div>
+      </div>
+      }
+
+      <!-- Permission Modal -->
+      @if (showPermissionModal) {
+      <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+         <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 relative overflow-hidden">
+            <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-6">{{ 'addPermission' | translate }}</h2>
+
+            <div class="space-y-4">
+               <div>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'permissionName' | translate }}</label>
+                  <input type="text" [(ngModel)]="permissionForm.name" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold">
+               </div>
+               <div>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'permissionDesc' | translate }}</label>
+                  <textarea [(ngModel)]="permissionForm.description" rows="2" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-medium"></textarea>
+               </div>
+            </div>
+
+            <div class="flex space-x-4 mt-8">
+               <button (click)="showPermissionModal = false" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest">
+                  {{ 'common.cancel' | translate }}
+               </button>
+               <button (click)="savePermission()" class="flex-1 py-4 rounded-2xl bg-indigo-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20">
                   {{ 'common.save' | translate }}
                </button>
             </div>
@@ -295,8 +521,17 @@ export class CompanySettingsComponent implements OnInit {
    loading = false;
 
    companyPackages: CompanyPackage[] = [];
+   companyRoles: Role[] = [];
+   companyPermissions: Permission[] = [];
+
    showPackageModal = false;
+   showRoleModal = false;
+   showPermissionModal = false;
+   showLinkModal = false;
+
    selectedPackage?: CompanyPackage;
+   selectedRole?: Role;
+
    packageForm: Partial<CompanyPackage> = {
       name: '',
       description: '',
@@ -305,9 +540,22 @@ export class CompanySettingsComponent implements OnInit {
       variationCalculation: 'AddFullCost'
    };
 
+   roleForm: Partial<Role> = {
+      name: '',
+      description: ''
+   };
+
+   permissionForm: Partial<Permission> = {
+      name: '',
+      description: ''
+   };
+
+   linkForm: Permission[] = [];
+
    constructor(
       private settingsService: SettingsService,
       private packageService: CompanyPackagesService,
+      private rolesService: RolesService,
       private authService: AuthService
    ) { }
 
@@ -333,6 +581,7 @@ export class CompanySettingsComponent implements OnInit {
       this.loadSettings();
       // Assuming companyId 1 or fetching from context
       this.loadPackages(1);
+      this.loadRolesAndPermissions();
    }
 
    loadSettings() {
@@ -344,6 +593,11 @@ export class CompanySettingsComponent implements OnInit {
 
    loadPackages(companyId: number) {
       this.packageService.getPackages(companyId).subscribe(pkgs => this.companyPackages = pkgs);
+   }
+
+   loadRolesAndPermissions() {
+      this.rolesService.getRoles().subscribe(roles => this.companyRoles = roles);
+      this.rolesService.getPermissions().subscribe(perms => this.companyPermissions = perms);
    }
 
    saveSettings() {
@@ -403,6 +657,85 @@ export class CompanySettingsComponent implements OnInit {
    deletePackage(id: number) {
       if (confirm('Are you sure?')) {
          this.packageService.deletePackage(id).subscribe(() => this.loadPackages(1));
+      }
+   }
+
+   // Roles Management
+   openRoleModal(role?: Role) {
+      this.selectedRole = role;
+      if (role) {
+         this.roleForm = { ...role, permissions: [...(role.permissions || [])] };
+      } else {
+         this.roleForm = { name: '', description: '', permissions: [] };
+      }
+      this.showRoleModal = true;
+   }
+
+   saveRole() {
+      if (this.selectedRole) {
+         this.rolesService.updateRole(this.selectedRole.id, this.roleForm).subscribe(() => {
+            this.loadRolesAndPermissions();
+            this.showRoleModal = false;
+         });
+      } else {
+         this.rolesService.createRole(this.roleForm).subscribe(() => {
+            this.loadRolesAndPermissions();
+            this.showRoleModal = false;
+         });
+      }
+   }
+
+   deleteRole(id: number) {
+      if (confirm('Delete this role?')) {
+         this.rolesService.deleteRole(id).subscribe(() => this.loadRolesAndPermissions());
+      }
+   }
+
+   // Permissions Management
+   openPermissionModal() {
+      this.permissionForm = { name: '', description: '' };
+      this.showPermissionModal = true;
+   }
+
+   savePermission() {
+      this.rolesService.createPermission(this.permissionForm).subscribe(() => {
+         this.loadRolesAndPermissions();
+         this.showPermissionModal = false;
+      });
+   }
+
+   deletePermission(id: number) {
+      if (confirm('Delete this permission? It will be removed from all roles.')) {
+         this.rolesService.deletePermission(id).subscribe(() => this.loadRolesAndPermissions());
+      }
+   }
+
+   // Linking UI (Company Admin)
+   openLinkModal(role: Role) {
+      this.selectedRole = role;
+      this.linkForm = [...(role.permissions || [])];
+      this.showLinkModal = true;
+   }
+
+   saveLink() {
+      if (this.selectedRole) {
+         this.rolesService.updateRole(this.selectedRole.id, { permissions: this.linkForm }).subscribe(() => {
+            this.loadRolesAndPermissions();
+            this.showLinkModal = false;
+         });
+      }
+   }
+
+   isPermissionSelectedInMapping(permissionId: number): boolean {
+      return this.linkForm.some(p => p.id === permissionId);
+   }
+
+   togglePermissionInMapping(permission: Permission) {
+      const index = this.linkForm.findIndex(p => p.id === permission.id);
+      if (index === -1) {
+         this.linkForm.push(permission);
+      } else {
+         this.linkForm.splice(index, 1);
       }
    }
 }

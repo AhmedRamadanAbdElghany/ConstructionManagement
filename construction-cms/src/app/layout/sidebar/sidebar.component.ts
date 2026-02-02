@@ -1,6 +1,8 @@
 import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/auth/auth.service';
+import { SettingsService } from '../../core/services/settings.service';
+import { CompanySettings } from '../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
 
@@ -55,6 +57,7 @@ import { RouterModule } from '@angular/router';
         </a>
 
         @if (isAdmin) {
+          @if (settings?.allowHR) {
           <a routerLink="/admin/hr" 
              routerLinkActive="nav-active"
              class="nav-item group">
@@ -65,6 +68,7 @@ import { RouterModule } from '@angular/router';
             </div>
             <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.hr_settings' | translate }}</span>
           </a>
+          }
 
           <a routerLink="/admin/projects" 
              routerLinkActive="nav-active"
@@ -77,6 +81,7 @@ import { RouterModule } from '@angular/router';
             <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.projects' | translate }}</span>
           </a>
 
+          @if (settings?.allowLocations) {
           <a routerLink="/admin/locations" 
              routerLinkActive="nav-active"
              class="nav-item group">
@@ -88,6 +93,7 @@ import { RouterModule } from '@angular/router';
             </div>
             <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.locations' | translate }}</span>
           </a>
+          }
 
           <a routerLink="/admin/company-settings" 
              routerLinkActive="nav-active"
@@ -98,7 +104,7 @@ import { RouterModule } from '@angular/router';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'settings.company_title' | translate }}</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'companyTitle' | translate }}</span>
           </a>
         }
 
@@ -117,6 +123,7 @@ import { RouterModule } from '@angular/router';
             <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.daily_log' | translate }}</span>
           </a>
 
+          @if (settings?.allowHR) {
           <a routerLink="/worker/personal-hr" 
              routerLinkActive="nav-active"
              class="nav-item group">
@@ -127,6 +134,7 @@ import { RouterModule } from '@angular/router';
             </div>
             <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.personal_hr' | translate }}</span>
           </a>
+          }
         }
 
         <div class="my-6 px-4">
@@ -241,8 +249,14 @@ import { RouterModule } from '@angular/router';
 })
 export class SidebarComponent {
   isCollapsed = signal(false);
+  settings?: CompanySettings;
 
-  constructor(public authService: AuthService) { }
+  constructor(
+    public authService: AuthService,
+    private settingsService: SettingsService
+  ) {
+    this.settingsService.getCompanySettings().subscribe(s => this.settings = s);
+  }
 
   get currentRole(): string {
     return this.authService.getCurrentUser()?.role || 'CompanyUser';

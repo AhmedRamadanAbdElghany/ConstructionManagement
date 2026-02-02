@@ -134,6 +134,8 @@ export interface CompanySettings {
   allowMeasured: boolean;
   allowSupervision: boolean;
   allowPackages: boolean;
+  allowLocations: boolean;
+  allowHR: boolean;
   defaultSupervisionPercentage?: number;
 }
 
@@ -239,3 +241,36 @@ export interface CompanyPackage {
   includedItemsDescription: string;
   variationCalculation: 'AddFullCost' | 'AddDifference';
 }
+
+export interface Role {
+  id: number;
+  name: string;
+  description?: string;
+  companyId?: number;
+  permissions?: Permission[];
+}
+
+export interface Permission {
+  id: number;
+  name: string;
+  description?: string;
+  companyId?: number;
+}
+
+export interface RolePermission {
+  roleId: number;
+  permissionId: number;
+  companyId?: number;
+}
+
+export interface CatalogItem {
+  id: number;
+  companyId?: number;
+  projectId?: number; // If null, it's a company-wide general item
+  name: string;
+  description?: string;
+  unit: string;
+  defaultRate?: number;
+  category?: string;
+}
+

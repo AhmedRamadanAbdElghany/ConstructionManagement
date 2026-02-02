@@ -191,7 +191,8 @@
     "remove": "Remove",
     "loading": "Loading...",
     "error": "Error",
-    "success": "Success"
+    "success": "Success",
+    "add_new": "Add New"
   },
   "companyTitle": "Company Configuration",
   "companySubtitle": "Manage system-wide defaults",
@@ -199,6 +200,8 @@
   "allowMeasured": "Allow Measured (Unit Price)",
   "allowSupervision": "Allow Supervision (Cost + %)",
   "allowPackages": "Allow Packages (Lump Sum)",
+  "allowLocations": "Allow Locations Tracking",
+  "allowHR": "Allow HR Management",
   "configuration": "Company Configuration",
   "defaultMethod": "Default Calculation Method",
   "measured": "Measured",
@@ -229,5 +232,22 @@
   "packagePrice": "Price",
   "packageDesc": "Description",
   "packageItems": "Included Items",
-  "variationCalc": "Variation Calculation"
+  "variationCalc": "Variation Calculation",
+  "rolesAndPermissions": "Roles & Permissions",
+  "manageCompanyRoles": "Manage Company Roles",
+  "manageCompanyPermissions": "Manage Company Permissions",
+  "addRole": "Add New Role",
+  "editRole": "Edit Role",
+  "roleName": "Role Name",
+  "roleDesc": "Role Description",
+  "selectPermissions": "Select Permissions",
+  "addPermission": "Add New Permission",
+  "permissionName": "Permission Name",
+  "permissionDesc": "Permission Description",
+  "noRoles": "No roles defined yet.",
+  "noPermissions": "No permissions defined yet.",
+  "permissionsAssigned": "Permissions Assigned",
+  "rolePermissionMapping": "Role & Authority Mapping",
+  "configureRolePermissions": "Configure Permissions",
+  "linkPermissionsTo": "Link Permissions to"
 }
