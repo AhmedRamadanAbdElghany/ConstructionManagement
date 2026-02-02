@@ -218,6 +218,7 @@ import { map } from 'rxjs/operators';
                 </div>
               </div>
               <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
+                @if (companySettings?.delayNotificationSendEmail || companySettings?.autoCloseDay || companySettings?.allowAddProgressEntry || companySettings?.allowReopenClosedDay) {
                 <h3 class="text-lg font-bold text-white mb-6">Project Settings</h3>
                 <div class="space-y-4">
                   <!-- Email Settings (Only if allowed by company) -->
@@ -245,29 +246,98 @@ import { map } from 'rxjs/operators';
                     </div>
                   }
 
-                  <!-- Auto Close Settings -->
+                  <!-- Auto Close Day Settings -->
+                  @if (companySettings?.autoCloseDay) {
+                  <div class="p-4 rounded-xl bg-slate-700/30 space-y-4">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="text-white font-medium">Auto-close Daily Logs</p>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
+                          {{ projectSettings?.autoCloseDay === null ? 'Inherited from Company' : 'Local Override' }}
+                        </p>
+                      </div>
+                      <div class="flex items-center space-x-3">
+                        @if (projectSettings?.autoCloseDay !== null) {
+                          <button (click)="resetAutoClose()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
+                        }
+                        <button (click)="toggleAutoClose()" 
+                                [class.bg-fuchsia-500]="projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay"
+                                [class.bg-slate-600]="!(projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay)"
+                                class="w-12 h-6 rounded-full relative transition-all">
+                          <span [class.right-1]="projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay"
+                                [class.left-1]="!(projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay)"
+                                class="absolute top-1 w-4 h-4 rounded-full bg-white transition-all"></span>
+                        </button>
+                      </div>
+                    </div>
+
+                    @if (projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay) {
+                      <div class="pt-4 border-t border-slate-600/30">
+                        <div class="flex items-center justify-between">
+                          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Auto Close Time</p>
+                          @if (projectSettings?.autoCloseDayTime !== null) {
+                            <button (click)="resetAutoCloseTime()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
+                          }
+                        </div>
+                        <input type="time" [ngModel]="projectSettings?.autoCloseDayTime ?? companySettings?.autoCloseDayTime"
+                               (ngModelChange)="updateAutoCloseTime($event)"
+                               class="w-full mt-2 p-2 rounded-lg bg-slate-800 border border-slate-600 text-white text-xs font-bold outline-none">
+                      </div>
+                    }
+                  </div>
+                  }
+
+                  <!-- Log Progress Settings -->
+                  @if (companySettings?.allowAddProgressEntry) {
                   <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
                     <div>
-                      <p class="text-white font-medium">Auto-close Daily Logs</p>
+                      <p class="text-white font-medium">Allow Add Progress Entry</p>
                       <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
-                        {{ projectSettings?.autoCloseDay === null ? 'Inherited from Company' : 'Local Override' }}
+                        {{ projectSettings?.allowAddProgressEntry === null ? 'Inherited from Company' : 'Local Override' }}
                       </p>
                     </div>
                     <div class="flex items-center space-x-3">
-                      @if (projectSettings?.autoCloseDay !== null) {
-                        <button (click)="resetAutoClose()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
+                      @if (projectSettings?.allowAddProgressEntry !== null) {
+                        <button (click)="resetProgressEntry()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
                       }
-                      <button (click)="toggleAutoClose()" 
-                              [class.bg-fuchsia-500]="projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay"
-                              [class.bg-slate-600]="!(projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay)"
+                      <button (click)="toggleProgressEntry()" 
+                              [class.bg-cyan-500]="projectSettings?.allowAddProgressEntry ?? companySettings?.allowAddProgressEntry"
+                              [class.bg-slate-600]="!(projectSettings?.allowAddProgressEntry ?? companySettings?.allowAddProgressEntry)"
                               class="w-12 h-6 rounded-full relative transition-all">
-                        <span [class.right-1]="projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay"
-                              [class.left-1]="!(projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay)"
+                        <span [class.right-1]="projectSettings?.allowAddProgressEntry ?? companySettings?.allowAddProgressEntry"
+                              [class.left-1]="!(projectSettings?.allowAddProgressEntry ?? companySettings?.allowAddProgressEntry)"
                               class="absolute top-1 w-4 h-4 rounded-full bg-white transition-all"></span>
                       </button>
                     </div>
                   </div>
+                  }
+
+                  <!-- Reopen Settings -->
+                  @if (companySettings?.allowReopenClosedDay) {
+                  <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
+                    <div>
+                      <p class="text-white font-medium">Allow Reopen Closed Day</p>
+                      <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
+                        {{ projectSettings?.allowReopenClosedDay === null ? 'Inherited from Company' : 'Local Override' }}
+                      </p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                      @if (projectSettings?.allowReopenClosedDay !== null) {
+                        <button (click)="resetReopenDay()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
+                      }
+                      <button (click)="toggleReopenDay()" 
+                              [class.bg-emerald-500]="projectSettings?.allowReopenClosedDay ?? companySettings?.allowReopenClosedDay"
+                              [class.bg-slate-600]="!(projectSettings?.allowReopenClosedDay ?? companySettings?.allowReopenClosedDay)"
+                              class="w-12 h-6 rounded-full relative transition-all">
+                        <span [class.right-1]="projectSettings?.allowReopenClosedDay ?? companySettings?.allowReopenClosedDay"
+                              [class.left-1]="!(projectSettings?.allowReopenClosedDay ?? companySettings?.allowReopenClosedDay)"
+                              class="absolute top-1 w-4 h-4 rounded-full bg-white transition-all"></span>
+                      </button>
+                    </div>
+                  </div>
+                  }
                 </div>
+                }
               </div>
             </div>
           }
@@ -1360,6 +1430,9 @@ export class ProjectDetailComponent implements OnInit {
       lat: 0 as number | null,
       lng: 0 as number | null,
       autoCloseDay: null as boolean | null,
+      autoCloseDayTime: null as string | null,
+      allowAddProgressEntry: null as boolean | null,
+      allowReopenClosedDay: null as boolean | null,
       delayNotificationSendEmail: null as boolean | null
    };
 
@@ -1458,6 +1531,9 @@ export class ProjectDetailComponent implements OnInit {
          lat: this.project.location?.lat ?? null,
          lng: this.project.location?.lng ?? null,
          autoCloseDay: this.projectSettings?.autoCloseDay ?? null,
+         autoCloseDayTime: this.projectSettings?.autoCloseDayTime ?? null,
+         allowAddProgressEntry: this.projectSettings?.allowAddProgressEntry ?? null,
+         allowReopenClosedDay: this.projectSettings?.allowReopenClosedDay ?? null,
          delayNotificationSendEmail: this.projectSettings?.delayNotificationSendEmail ?? null
       };
       this.showEditModal = true;
@@ -1490,6 +1566,9 @@ export class ProjectDetailComponent implements OnInit {
       // Update settings if changed
       if (this.projectSettings) {
          this.projectSettings.autoCloseDay = this.editForm.autoCloseDay;
+         this.projectSettings.autoCloseDayTime = this.editForm.autoCloseDayTime;
+         this.projectSettings.allowAddProgressEntry = this.editForm.allowAddProgressEntry;
+         this.projectSettings.allowReopenClosedDay = this.editForm.allowReopenClosedDay;
          this.projectSettings.delayNotificationSendEmail = this.editForm.delayNotificationSendEmail;
          this.saveProjectSettings();
       }
@@ -1707,6 +1786,44 @@ export class ProjectDetailComponent implements OnInit {
    saveProjectSettings() {
       if (!this.projectSettings || !this.project) return;
       this.settingsService.updateProjectSettings(this.project.id, this.projectSettings).subscribe();
+   }
+
+   toggleProgressEntry() {
+      if (!this.projectSettings || !this.companySettings) return;
+      const current = this.projectSettings.allowAddProgressEntry ?? this.companySettings.allowAddProgressEntry;
+      this.projectSettings.allowAddProgressEntry = !current;
+      this.saveProjectSettings();
+   }
+
+   resetProgressEntry() {
+      if (!this.projectSettings) return;
+      this.projectSettings.allowAddProgressEntry = null;
+      this.saveProjectSettings();
+   }
+
+   toggleReopenDay() {
+      if (!this.projectSettings || !this.companySettings) return;
+      const current = this.projectSettings.allowReopenClosedDay ?? this.companySettings.allowReopenClosedDay;
+      this.projectSettings.allowReopenClosedDay = !current;
+      this.saveProjectSettings();
+   }
+
+   resetReopenDay() {
+      if (!this.projectSettings) return;
+      this.projectSettings.allowReopenClosedDay = null;
+      this.saveProjectSettings();
+   }
+
+   updateAutoCloseTime(time: string) {
+      if (!this.projectSettings) return;
+      this.projectSettings.autoCloseDayTime = time;
+      this.saveProjectSettings();
+   }
+
+   resetAutoCloseTime() {
+      if (!this.projectSettings) return;
+      this.projectSettings.autoCloseDayTime = null;
+      this.saveProjectSettings();
    }
 
 }

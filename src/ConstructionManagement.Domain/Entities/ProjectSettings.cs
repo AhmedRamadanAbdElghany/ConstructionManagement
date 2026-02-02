@@ -34,4 +34,10 @@ public class ProjectSettings : BaseEntity, ICompanyEntity
     public bool? ClientCanSeeBOQ { get; set; }
 
     public ConstructionManagement.Domain.Enums.CalculationMethod? MoneyCalculationMethod { get; set; }
+
+    // Daily Log Settings (null = inherit from Company)
+    public bool? AllowAddProgressEntry { get; set; }
+    public bool? AllowReopenClosedDay { get; set; }
+    public bool? AutoCloseDay { get; set; }
+    public TimeSpan? AutoCloseDayTime { get; set; }
 }

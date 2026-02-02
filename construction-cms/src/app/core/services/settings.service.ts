@@ -33,7 +33,10 @@ export class SettingsService {
         allowLocations: true,
         allowHR: true,
         defaultSupervisionPercentage: 10,
-        autoCloseDay: false
+        allowAddProgressEntry: true,
+        allowReopenClosedDay: false,
+        autoCloseDay: false,
+        autoCloseDayTime: '18:00'
     };
 
     private dummyCompanyPackages: CompanyPackage[] = [
@@ -57,7 +60,10 @@ export class SettingsService {
         clientCanSeeMedia: true,
         clientCanSeeBOQ: true,
         moneyCalculationMethod: 'Measured',
-        autoCloseDay: null
+        allowAddProgressEntry: null,
+        allowReopenClosedDay: null,
+        autoCloseDay: null,
+        autoCloseDayTime: null
     };
 
     private settingsSubject = new BehaviorSubject<CompanySettings>(this.dummyCompanySettings);

@@ -45,4 +45,14 @@ public class ItemDailyLog : BaseEntity, ICompanyEntity
     // public int? VerifiedByUserId { get; set; }
     // public virtual User? VerifiedByUser { get; set; }
     // public DateTime? VerifiedAt { get; set; }
+
+    // -- Reopen Closed Day Support -----------------------------------------------
+    public int? ReopenedByUserId { get; set; }
+
+    [ForeignKey(nameof(ReopenedByUserId))]
+    public virtual User? ReopenedByUser { get; set; }
+
+    public DateTime? ReopenedAt { get; set; }
+
+    public string? ReopenReason { get; set; }
 }

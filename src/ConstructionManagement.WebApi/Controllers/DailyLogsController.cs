@@ -18,9 +18,10 @@ public class DailyLogsController : ControllerBase
         _dailyLogService = dailyLogService;
     }
 
-    // 1. إنشاء أو جلب يومية اليوم
+    // 1. إنشاء أو جلب يومية اليوم (إضافة مدخل تقدم)
     // المسار النهائي: POST api/items/{itemId}/dailylogs
     [HttpPost]
+    [Authorize(Policy = "CanAddProgressEntry")]
     public async Task<IActionResult> CreateOrGet(int itemId, [FromBody] CreateDailyLogRequest request)
     {
         var userId = GetUserId();
@@ -31,7 +32,7 @@ public class DailyLogsController : ControllerBase
     // 2. تقفيل اليوم + تحديد نسبة الإنجاز
     // المسار النهائي: PUT api/items/{itemId}/dailylogs/{logDate}/close
     [HttpPut("{logDate:datetime}/close")] // إضافة datetime constraint للحماية
-    [Authorize(Policy = "CanCloseDaily")]
+    [Authorize(Policy = "CanCloseDailyLog")]
     public async Task<IActionResult> Close(int itemId, DateTime logDate, [FromBody] CloseDailyLogRequest request)
     {
         var userId = GetUserId();
@@ -53,6 +54,21 @@ public class DailyLogsController : ControllerBase
         return Ok(history);
     }
 
+    // 4. إعادة فتح يوم مقفول (مع الصلاحيات اللازمة)
+    // المسار النهائي: PUT api/items/{itemId}/dailylogs/{logDate}/reopen
+    [HttpPut("{logDate:datetime}/reopen")]
+    [Authorize(Policy = "CanReopenClosedDaily")]
+    public async Task<IActionResult> ReopenClosedDay(int itemId, DateTime logDate, [FromBody] ReopenDailyLogRequest request)
+    {
+        var userId = GetUserId();
+        var success = await _dailyLogService.ReopenClosedDayAsync(itemId, logDate, userId, request.Reason, request.NotifyRoleIds);
+
+        if (!success)
+            return BadRequest(new { message = "Cannot reopen this day. Ensure you have permission and the day exists." });
+
+        return Ok(new { message = "Day reopened successfully. Relevant roles have been notified." });
+    }
+
     // Helper method لتجنب تكرار الكود
     private int GetUserId()
     {
@@ -60,3 +76,5 @@ public class DailyLogsController : ControllerBase
         return claim != null ? int.Parse(claim.Value) : 0;
     }
 }
+
+public record ReopenDailyLogRequest(string Reason, List<int>? NotifyRoleIds);

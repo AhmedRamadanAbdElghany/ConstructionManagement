@@ -67,5 +67,9 @@ public record ProjectSettingsDto
     public bool ClientCanSeeBOQ { get; init; } = true;
     public string MoneyCalculationMethod { get; init; } = "Measured";
 
-    // NOTE: Add tests for default settings values.
+    // ── Daily Log ─────────────────────────────────────────────────────────────
+    public bool AllowAddProgressEntry { get; init; } = true;
+    public bool AllowReopenClosedDay { get; init; } = false;
+    public bool AutoCloseDay { get; init; } = false;
+    public TimeSpan? AutoCloseDayTime { get; init; }
 }

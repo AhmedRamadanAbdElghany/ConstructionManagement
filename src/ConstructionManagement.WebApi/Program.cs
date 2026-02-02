@@ -117,6 +117,11 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("CanReviewSiteMedia", policy => policy.AddRequirements(new ProjectRoleRequirement("Media.Review")));
     options.AddPolicy("CanCloseDailyLog", policy => policy.AddRequirements(new ProjectRoleRequirement("DailyLog.Close")));
     options.AddPolicy("CanManageProjectSettings", policy => policy.AddRequirements(new ProjectRoleRequirement("Settings.Manage")));
+    
+    // Daily Log specific permissions
+    options.AddPolicy("CanAddProgressEntry", policy => policy.AddRequirements(new ProjectRoleRequirement("DailyLog.AddEntry")));
+    options.AddPolicy("CanReopenClosedDaily", policy => policy.AddRequirements(new ProjectRoleRequirement("DailyLog.Reopen")));
+    options.AddPolicy("CanApproveProgressEntry", policy => policy.AddRequirements(new ProjectRoleRequirement("DailyLog.Approve")));
 
     // NOTE: Add policy tests for each permission.
 });

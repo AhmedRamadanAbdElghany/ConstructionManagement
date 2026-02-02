@@ -483,12 +483,82 @@ import { map } from 'rxjs/operators';
                                    class="w-16 p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 rounded-lg text-[10px] outline-none font-bold text-center text-slate-900 dark:text-white">
                             <button (click)="addCustomItem(cName.value, cUnit.value); cName.value=''; cUnit.value=''" 
                                     class="p-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg hover:bg-cyan-500 dark:hover:bg-cyan-500 transition-all">
-                               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                            </button>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                             </button>
                          </div>
                       </div>
                    </div>
                 </div>
+
+                <!-- NEW: Daily Log Settings Overrides -->
+                @if (companySettings?.allowAddProgressEntry || companySettings?.allowReopenClosedDay || companySettings?.autoCloseDay) {
+                <div class="mt-12 p-8 rounded-[2.5rem] bg-indigo-50/30 dark:bg-indigo-500/5 border border-indigo-100 dark:border-indigo-500/10">
+                   <div class="flex items-center space-x-3 mb-8">
+                      <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
+                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                         </svg>
+                      </div>
+                      <div>
+                         <h3 class="text-base font-black text-slate-900 dark:text-white uppercase tracking-tight">Daily Log Overrides</h3>
+                         <p class="text-[9px] text-indigo-500 font-bold uppercase tracking-widest">Project-specific configurations</p>
+                      </div>
+                   </div>
+
+                   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                      <!-- Allow Add Progress Entry -->
+                      @if (companySettings?.allowAddProgressEntry) {
+                      <div class="flex items-center justify-between p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/5">
+                         <div>
+                            <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block leading-none mb-1">Log Progress</span>
+                            <span class="text-[8px] text-slate-400 font-medium tracking-tight">Workers can add entries</span>
+                         </div>
+                         <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="createForm.allowAddProgressEntry" class="sr-only peer">
+                            <div class="w-10 h-5 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
+                         </label>
+                      </div>
+                      }
+
+                      <!-- Allow Reopen Closed Day -->
+                      @if (companySettings?.allowReopenClosedDay) {
+                      <div class="flex items-center justify-between p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/5">
+                         <div>
+                            <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block leading-none mb-1">Reopen Days</span>
+                            <span class="text-[8px] text-slate-400 font-medium tracking-tight">Admins can unlock days</span>
+                         </div>
+                         <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="createForm.allowReopenClosedDay" class="sr-only peer">
+                            <div class="w-10 h-5 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
+                         </label>
+                      </div>
+                      }
+
+                      <!-- Auto Close Day -->
+                      @if (companySettings?.autoCloseDay) {
+                      <div class="flex items-center justify-between p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/5">
+                         <div>
+                            <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block leading-none mb-1">Auto Close</span>
+                            <span class="text-[8px] text-slate-400 font-medium tracking-tight">Automatic day locking</span>
+                         </div>
+                         <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="createForm.autoCloseDay" class="sr-only peer">
+                            <div class="w-10 h-5 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
+                         </label>
+                      </div>
+
+                      <!-- Auto Close Time -->
+                      <div class="p-3 rounded-2xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/5 transition-opacity"
+                           [class.opacity-40]="!createForm.autoCloseDay">
+                         <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1">Close Time</label>
+                         <input type="time" [(ngModel)]="createForm.autoCloseDayTime" 
+                                [disabled]="!createForm.autoCloseDay"
+                                class="w-full px-2 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-white/5 text-[11px] font-bold text-slate-900 dark:text-white outline-none disabled:cursor-not-allowed">
+                      </div>
+                      }
+                   </div>
+                </div>
+                }
              </div>
 
              <!-- Validation Feedback (Fixed above footer) -->
@@ -552,7 +622,12 @@ export class ProjectsComponent implements OnInit {
     deductedAmount: 0,
     deductedAmountDescription: '',
     lat: 0 as number | null,
-    lng: 0 as number | null
+    lng: 0 as number | null,
+    // Daily Log Overrides
+    allowAddProgressEntry: true,
+    allowReopenClosedDay: false,
+    autoCloseDay: false,
+    autoCloseDayTime: '18:00'
   };
   selectedCatalogItems: CatalogItem[] = [];
   customProjectItems: CatalogItem[] = [];
@@ -653,7 +728,12 @@ export class ProjectsComponent implements OnInit {
       deductedAmount: 0,
       deductedAmountDescription: '',
       lat: null,
-      lng: null
+      lng: null,
+      // Initialize with Company Defaults
+      allowAddProgressEntry: this.companySettings?.allowAddProgressEntry ?? true,
+      allowReopenClosedDay: this.companySettings?.allowReopenClosedDay ?? false,
+      autoCloseDay: this.companySettings?.autoCloseDay ?? false,
+      autoCloseDayTime: this.companySettings?.autoCloseDayTime ?? '18:00'
     };
     // Pre-select ALL catalog items by default as requested
     this.selectedCatalogItems = [...this.catalogItems];

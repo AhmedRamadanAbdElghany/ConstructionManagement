@@ -103,7 +103,53 @@ import { AuthService } from '../../../core/auth/auth.service';
                              <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
                           </label>
                        </div>
+
+                       <!-- Allow Add Progress Entry -->
+                       <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                          <div>
+                             <span class="text-xs font-black text-slate-700 dark:text-slate-300 block">Progress Entry</span>
+                             <span class="text-[8px] text-slate-400">Workers can log progress</span>
+                          </div>
+                          <label class="relative inline-flex items-center cursor-pointer">
+                             <input type="checkbox" [(ngModel)]="settings.allowAddProgressEntry" class="sr-only peer">
+                             <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
+                          </label>
+                       </div>
+
+                       <!-- Allow Reopen Closed Day -->
+                       <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                          <div>
+                             <span class="text-xs font-black text-slate-700 dark:text-slate-300 block">Reopen Closed Day</span>
+                             <span class="text-[8px] text-slate-400">Admins can unlock days</span>
+                          </div>
+                          <label class="relative inline-flex items-center cursor-pointer">
+                             <input type="checkbox" [(ngModel)]="settings.allowReopenClosedDay" class="sr-only peer">
+                             <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
+                          </label>
+                       </div>
+
+                       <!-- Auto Close Day -->
+                       <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                          <div>
+                             <span class="text-xs font-black text-slate-700 dark:text-slate-300 block">Auto Close Day</span>
+                             <span class="text-[8px] text-slate-400">Auto-lock at scheduled time</span>
+                          </div>
+                          <label class="relative inline-flex items-center cursor-pointer">
+                             <input type="checkbox" [(ngModel)]="settings.autoCloseDay" class="sr-only peer">
+                             <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
+                          </label>
+                       </div>
                     </div>
+
+                    <!-- Auto Close Time (only shown if Auto Close is enabled) -->
+                    @if (settings.autoCloseDay) {
+                    <div class="mt-6 p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20">
+                       <label class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest block mb-2">Default Auto Close Time</label>
+                       <input type="time" [(ngModel)]="settings.autoCloseDayTime" 
+                              class="w-full max-w-xs px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-500/30 text-slate-900 dark:text-white font-bold text-sm outline-none focus:ring-4 focus:ring-indigo-500/10">
+                       <p class="text-[9px] text-slate-500 mt-2">Company Admin can override this per project</p>
+                    </div>
+                    }
                  </div>
               </div>
 
@@ -174,6 +220,40 @@ import { AuthService } from '../../../core/auth/auth.service';
                  </div>
               </div>
 
+              <!-- Daily Log Settings (Super Admin) -->
+              <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
+                 <h2 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">Daily Log Settings</h2>
+                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
+                       <div>
+                          <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block">Progress Entry</span>
+                          <span class="text-[8px] text-slate-400">Allow workers to add progress</span>
+                       </div>
+                       <input type="checkbox" [(ngModel)]="settings.allowAddProgressEntry" class="w-5 h-5 accent-indigo-500">
+                    </div>
+                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
+                       <div>
+                          <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block">Reopen Closed</span>
+                          <span class="text-[8px] text-slate-400">Allow reopening days</span>
+                       </div>
+                       <input type="checkbox" [(ngModel)]="settings.allowReopenClosedDay" class="w-5 h-5 accent-indigo-500">
+                    </div>
+                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
+                       <div>
+                          <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block">Auto Close</span>
+                          <span class="text-[8px] text-slate-400">Close day automatically</span>
+                       </div>
+                       <input type="checkbox" [(ngModel)]="settings.autoCloseDay" class="w-5 h-5 accent-indigo-500">
+                    </div>
+                    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 transition-opacity" [class.opacity-40]="!settings.autoCloseDay">
+                       <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block mb-2">Close Time</span>
+                       <input type="time" [(ngModel)]="settings.autoCloseDayTime" 
+                              [disabled]="!settings.autoCloseDay"
+                              class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold text-xs outline-none disabled:cursor-not-allowed">
+                    </div>
+                 </div>
+              </div>
+
                <!-- SECTION: Master Setup (Super Admin ONLY) -->
                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl"></div>
@@ -235,6 +315,7 @@ import { AuthService } from '../../../core/auth/auth.service';
                                </button>
                             </div>
                             }
+
                          </div>
                       </div>
                    </div>
@@ -245,33 +326,6 @@ import { AuthService } from '../../../core/auth/auth.service';
             <!-- SECTION 2: MODULE CONFIGURATION (Company Admin ONLY) -->
             @if (isOnlyCompanyAdmin) {
             <section class="space-y-8">
-                <!-- Operations Config -->
-                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
-                   <div class="absolute top-0 right-0 w-32 h-32 bg-fuchsia-500/5 rounded-full blur-3xl"></div>
-                   <div class="flex items-center space-x-4 mb-8">
-                      <div class="w-12 h-12 rounded-2xl bg-fuchsia-500/10 flex items-center justify-center text-fuchsia-500">
-                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                         </svg>
-                      </div>
-                      <div>
-                         <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'dailyOperations' | translate }}</h3>
-                         <p class="text-[10px] text-fuchsia-500 font-bold uppercase tracking-widest">{{ 'systemAutomation' | translate }}</p>
-                      </div>
-                   </div>
-
-                   <div class="flex items-center justify-between p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <div>
-                         <span class="text-xs font-black text-slate-700 dark:text-slate-300">{{ 'autoCloseDay' | translate }}</span>
-                         <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-1">{{ 'autoCloseDesc' | translate }}</p>
-                      </div>
-                      <label class="relative inline-flex items-center cursor-pointer">
-                         <input type="checkbox" [(ngModel)]="settings.autoCloseDay" class="sr-only peer">
-                         <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-fuchsia-500 transition-all"></div>
-                      </label>
-                   </div>
-                </div>
-
                 <!-- General Items Catalog (Company Admin) -->
                 <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-3xl"></div>

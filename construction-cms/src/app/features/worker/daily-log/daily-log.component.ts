@@ -1,303 +1,362 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { MockDataService } from '../../../core/mock/mock-data.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { BOQItem, DailyLog, SiteMedia } from '../../../shared/interfaces';
+import { AuthService } from '../../../core/auth/auth.service';
+
+interface WorkTask {
+  id: number;
+  boqItemId: number;
+  boqItemName: string;
+  assignedQuantity: number;
+  unit: string;
+  status: 'Pending' | 'InProgress' | 'Completed' | 'Approved' | 'Rejected';
+  notes?: string;
+  photos: string[];
+}
 
 @Component({
   selector: 'app-daily-log',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, TranslateModule],
   template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
-        <!-- Header -->
-        <div class="flex items-center justify-between mb-8">
+        <!-- Header with Date Navigation -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
-            <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ 'daily_log.title' | translate }}</h1>
-            <p class="text-slate-500 dark:text-slate-400 font-medium uppercase tracking-widest text-[10px]">{{ currentDate | date:'fullDate' }}</p>
+            <h1 class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tight uppercase">Daily Work Log</h1>
+            <p class="text-slate-500 dark:text-slate-400 font-medium">Task management and progress tracking for field operations</p>
           </div>
-          <div class="flex items-center space-x-4">
-            <span class="px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest border transition-all shadow-sm"
-                  [ngClass]="{
-                    'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/10': !isDayClosed,
-                    'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/10': isDayClosed
-                  }">
-              {{ isDayClosed ? ('daily_log.day_locked' | translate) : ('daily_log.day_open' | translate) }}
-            </span>
+          
+          <!-- Date Navigation -->
+          <div class="flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-200 dark:border-white/5 shadow-xl">
+            <button (click)="navigateDay(-1)" class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-indigo-500 hover:text-white transition-all">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path>
+              </svg>
+            </button>
+            
+            <div class="px-6 py-3 text-center min-w-[200px]">
+              <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Selected Date</p>
+              <input type="date" [(ngModel)]="selectedDateString" (change)="onDateChange()" 
+                     class="bg-transparent text-sm font-black text-indigo-600 dark:text-indigo-400 border-none outline-none text-center cursor-pointer">
+            </div>
+            
+            <button (click)="navigateDay(1)" class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-indigo-500 hover:text-white transition-all">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+            
+            <button (click)="goToToday()" class="px-5 py-3 rounded-xl bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/20">
+              Today
+            </button>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <!-- Main Form -->
-          <div class="lg:col-span-2 space-y-8">
-            <!-- Progress Entry Card -->
-            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none transition-all group overflow-hidden relative">
-              <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/15 transition-colors"></div>
-              <h2 class="text-xl font-black text-slate-900 dark:text-white mb-8 flex items-center uppercase tracking-tight relative">
-                <svg class="w-6 h-6 mr-3 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                </svg>
-                {{ 'daily_log.progress_entry' | translate }}
-              </h2>
-
-              <form [formGroup]="dailyLogForm" class="space-y-5">
-                <!-- BOQ Item Selection -->
-                <div>
-                  <label class="block text-sm font-medium text-slate-400 mb-2">{{ 'daily_log.boq_item' | translate }}</label>
-                  <select formControlName="boqItemId" 
-                          [disabled]="isDayClosed"
-                          class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600/50 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors disabled:opacity-50">
-                    <option value="">{{ 'daily_log.select_item' | translate }}</option>
-                    @for (item of boqItems; track item.id) {
-                      <option [value]="item.id">{{ item.description }} ({{ item.unit }})</option>
-                    }
-                  </select>
-                </div>
-
-                <!-- Start Work Button -->
-                @if (!workStarted && dailyLogForm.get('boqItemId')?.value && !isDayClosed) {
-                  <button 
-                    type="button"
-                    (click)="startWork()"
-                    class="w-full py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-medium hover:from-emerald-400 hover:to-emerald-500 transition-all flex items-center justify-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    {{ 'daily_log.start_work' | translate }}
-                  </button>
-                }
-
-                @if (workStarted) {
-                  <div class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
-                    <div class="flex items-center justify-between">
-                      <div class="flex items-center">
-                        <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse mr-3"></div>
-                        <span class="text-emerald-400 font-medium">{{ 'daily_log.work_in_progress' | translate }}</span>
-                      </div>
-                      <span class="text-emerald-400">Started: {{ workStartTime | date:'shortTime' }}</span>
-                    </div>
-                  </div>
-                }
-
-                <!-- Quantity Input -->
-                <div>
-                  <label class="block text-sm font-medium text-slate-400 mb-2">{{ 'daily_log.quantity' | translate }}</label>
-                  <div class="relative">
-                    <input type="number" 
-                           formControlName="quantity" 
-                           min="0"
-                           [disabled]="isDayClosed"
-                           class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600/50 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors disabled:opacity-50"
-                           placeholder="Enter completed quantity">
-                    @if (selectedBoqItem) {
-                      <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">{{ selectedBoqItem.unit }}</span>
-                    }
-                  </div>
-                  @if (selectedBoqItem) {
-                    <div class="mt-2 flex items-center justify-between text-sm">
-                      <span class="text-slate-500">{{ 'daily_log.remaining' | translate }}: {{ selectedBoqItem.totalQuantity - selectedBoqItem.executedQuantity }} {{ selectedBoqItem.unit }}</span>
-                    </div>
-                  }
-                </div>
-
-                <!-- Notes -->
-                <div>
-                  <label class="block text-sm font-medium text-slate-400 mb-2">{{ 'daily_log.notes' | translate }}</label>
-                  <textarea formControlName="notes" 
-                            rows="3"
-                            [disabled]="isDayClosed"
-                            class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600/50 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors resize-none disabled:opacity-50"
-                            placeholder="Add notes about the work..."></textarea>
-                </div>
-
-                <!-- Submit Button -->
-                <button 
-                  type="button"
-                  (click)="submitDailyLog()"
-                  [disabled]="dailyLogForm.invalid || isDayClosed || !workStarted"
-                  class="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-medium hover:from-cyan-400 hover:to-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                  {{ 'daily_log.submit' | translate }}
-                </button>
-              </form>
+        <!-- Status Banner -->
+        <div class="mb-8 p-4 rounded-2xl flex items-center justify-between"
+             [ngClass]="{
+               'bg-emerald-500/10 border border-emerald-500/20': !isDayClosed,
+               'bg-rose-500/10 border border-rose-500/20': isDayClosed
+             }">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
+                 [ngClass]="isDayClosed ? 'bg-rose-500/20 text-rose-500' : 'bg-emerald-500/20 text-emerald-500'">
+              {{ isDayClosed ? '🔒' : '🟢' }}
             </div>
+            <div>
+              <p class="text-sm font-black" [ngClass]="isDayClosed ? 'text-rose-600' : 'text-emerald-600'">
+                {{ isDayClosed ? 'Day Closed' : 'Day Open for Entries' }}
+              </p>
+              <p class="text-xs text-slate-500">{{ selectedDate | date:'fullDate' }}</p>
+            </div>
+          </div>
+          
+          @if (isDayClosed && canReopenDay) {
+            <button (click)="openReopenModal()" class="px-6 py-3 rounded-xl bg-amber-500 text-white text-[10px] font-black uppercase tracking-widest hover:bg-amber-400 transition-all">
+              Reopen Day
+            </button>
+          }
+        </div>
 
-            <!-- Media Upload Card -->
-            <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
-              <h2 class="text-xl font-bold text-white mb-6 flex items-center">
-                <svg class="w-6 h-6 mr-2 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                </svg>
-                {{ 'daily_log.upload_media' | translate }}
-              </h2>
-
-              <!-- Drag & Drop Zone -->
-              <div 
-                class="border-2 border-dashed border-slate-600/50 rounded-xl p-8 text-center transition-colors"
-                [class.border-cyan-500/50]="isDragOver"
-                [class.bg-cyan-500/5]="isDragOver"
-                (dragover)="onDragOver($event)"
-                (dragleave)="onDragLeave($event)"
-                (drop)="onDrop($event)">
-                <svg class="w-12 h-12 mx-auto mb-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                </svg>
-                <p class="text-slate-400 mb-2">{{ 'daily_log.drag_drop_files' | translate }}</p>
-                <p class="text-sm text-slate-500 mb-4">{{ 'daily_log.or' | translate }}</p>
-                <label class="inline-block px-6 py-3 rounded-xl bg-cyan-500/20 text-cyan-400 font-medium cursor-pointer hover:bg-cyan-500/30 transition-colors">
-                  {{ 'daily_log.browse_files' | translate }}
-                  <input type="file" 
-                         multiple 
-                         accept="image/*,video/*" 
-                         class="hidden"
-                         [disabled]="isDayClosed"
-                         (change)="onFileSelect($event)">
-                </label>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Main Content - Today's Tasks -->
+          <div class="lg:col-span-2 space-y-8">
+            <!-- Assigned Tasks Card -->
+            <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-8 border border-slate-200 dark:border-white/5 shadow-2xl">
+              <div class="flex items-center justify-between mb-8">
+                <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-3">
+                  <span class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center text-lg">📋</span>
+                  Your Tasks for This Day
+                </h2>
+                <span class="text-[10px] font-black text-slate-400 bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-xl">
+                  {{ assignedTasks.length }} Items
+                </span>
               </div>
 
-              <!-- Upload Progress -->
-              @if (uploadProgress > 0 && uploadProgress < 100) {
-                <div class="mt-4">
-                  <div class="flex items-center justify-between text-sm mb-2">
-                    <span class="text-slate-400">{{ 'daily_log.uploading' | translate }}...</span>
-                    <span class="text-cyan-400">{{ uploadProgress }}%</span>
-                  </div>
-                  <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full transition-all duration-300"
-                         [style.width.%]="uploadProgress">
-                    </div>
-                  </div>
-                </div>
-              }
-
-              <!-- Uploaded Files -->
-              @if (uploadedFiles.length > 0) {
-                <div class="mt-6 grid grid-cols-3 gap-3">
-                  @for (file of uploadedFiles; track file.name) {
-                    <div class="relative aspect-square rounded-xl overflow-hidden group">
-                      <img [src]="file.preview" class="w-full h-full object-cover">
-                      <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <button (click)="removeFile(file)" class="p-2 rounded-full bg-red-500/80 text-white hover:bg-red-500 transition-colors">
-                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                          </svg>
-                        </button>
+              <div class="space-y-6">
+                @for (task of assignedTasks; track task.id) {
+                  <div class="p-6 rounded-[2rem] border-2 transition-all hover:shadow-lg"
+                       [ngClass]="{
+                         'bg-slate-50 dark:bg-slate-800/30 border-slate-200 dark:border-white/5': task.status === 'Pending',
+                         'bg-amber-50 dark:bg-amber-500/5 border-amber-200 dark:border-amber-500/20': task.status === 'InProgress',
+                         'bg-emerald-50 dark:bg-emerald-500/5 border-emerald-200 dark:border-emerald-500/20': task.status === 'Completed' || task.status === 'Approved',
+                         'bg-rose-50 dark:bg-rose-500/5 border-rose-200 dark:border-rose-500/20': task.status === 'Rejected'
+                       }">
+                    <div class="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 class="text-lg font-black text-slate-900 dark:text-white tracking-tight">{{ task.boqItemName }}</h3>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">
+                          Target: {{ task.assignedQuantity }} {{ task.unit }}
+                        </p>
                       </div>
-                      <span class="absolute bottom-2 left-2 right-2 px-2 py-1 rounded-lg bg-slate-900/80 text-white text-xs truncate">
-                        {{ file.name }}
+                      <span class="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest"
+                            [ngClass]="{
+                              'bg-slate-200 text-slate-600': task.status === 'Pending',
+                              'bg-amber-500 text-white': task.status === 'InProgress',
+                              'bg-emerald-500 text-white': task.status === 'Completed' || task.status === 'Approved',
+                              'bg-rose-500 text-white': task.status === 'Rejected'
+                            }">
+                        {{ task.status }}
                       </span>
                     </div>
-                  }
-                </div>
-              }
+
+                    <!-- Photo Upload for Task -->
+                    <div class="mb-4">
+                      <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Site Photos ({{ task.photos.length }})</p>
+                      <div class="flex gap-2 flex-wrap">
+                        @for (photo of task.photos; track photo) {
+                          <div class="w-16 h-16 rounded-xl overflow-hidden border-2 border-white shadow-lg">
+                            <img [src]="photo" class="w-full h-full object-cover">
+                          </div>
+                        }
+                        @if (!isDayClosed) {
+                          <label class="w-16 h-16 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center cursor-pointer hover:border-indigo-500 transition-colors">
+                            <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            <input type="file" accept="image/*" class="hidden" (change)="uploadTaskPhoto(task, $event)">
+                          </label>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    @if (!isDayClosed) {
+                      <div class="flex gap-3 pt-4 border-t border-slate-100 dark:border-white/5">
+                        @if (task.status === 'Pending') {
+                          <button (click)="startTask(task)" class="flex-1 py-3 rounded-xl bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 transition-all">
+                            Start Work
+                          </button>
+                        }
+                        @if (task.status === 'InProgress') {
+                          <button (click)="completeTask(task)" class="flex-1 py-3 rounded-xl bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 transition-all">
+                            Mark Complete
+                          </button>
+                        }
+                        @if (canApprove && task.status === 'Completed') {
+                          <button (click)="approveTask(task)" class="flex-1 py-3 rounded-xl bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 transition-all">
+                            Approve
+                          </button>
+                          <button (click)="rejectTask(task)" class="flex-1 py-3 rounded-xl bg-rose-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-rose-500 transition-all">
+                            Reject
+                          </button>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+
+                @if (assignedTasks.length === 0) {
+                  <div class="text-center py-16 text-slate-400">
+                    <p class="text-4xl mb-4 opacity-40">📭</p>
+                    <p class="text-sm font-black uppercase tracking-widest">No tasks assigned for this date</p>
+                  </div>
+                }
+              </div>
             </div>
+
+            <!-- Add New Entry (if day is open and user has permission) -->
+            @if (!isDayClosed && canAddEntry) {
+              <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-8 border border-slate-200 dark:border-white/5 shadow-2xl">
+                <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8 flex items-center gap-3">
+                  <span class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center text-lg">➕</span>
+                  Add Progress Entry
+                </h2>
+
+                <form [formGroup]="dailyLogForm" (ngSubmit)="submitDailyLog()" class="space-y-6">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                      <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">BOQ Item</label>
+                      <select formControlName="boqItemId" 
+                              class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none font-bold text-slate-950 dark:text-white">
+                        <option value="">Select an item...</option>
+                        @for (item of boqItems; track item.id) {
+                          <option [value]="item.id">{{ item.description }} ({{ item.unit }})</option>
+                        }
+                      </select>
+                    </div>
+                    <div class="space-y-2">
+                      <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Completed Quantity</label>
+                      <input type="number" formControlName="quantity" min="0"
+                             class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none font-bold text-slate-950 dark:text-white"
+                             placeholder="0">
+                    </div>
+                  </div>
+                  
+                  <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Notes</label>
+                    <textarea formControlName="notes" rows="3"
+                              class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none font-bold text-slate-950 dark:text-white resize-none"
+                              placeholder="Add any notes about this work..."></textarea>
+                  </div>
+
+                  <button type="submit" [disabled]="dailyLogForm.invalid"
+                          class="w-full py-5 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-xs uppercase tracking-[0.2em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-30">
+                    Submit Entry
+                  </button>
+                </form>
+              </div>
+            }
           </div>
 
           <!-- Sidebar -->
-          <div class="space-y-6">
-            <!-- Today's Summary -->
-            <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
-              <h3 class="text-lg font-bold text-white mb-4">{{ 'daily_log.today_summary' | translate }}</h3>
+          <div class="space-y-8">
+            <!-- Day Summary -->
+            <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-8 border border-slate-200 dark:border-white/5 shadow-2xl">
+              <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-6">Day Summary</h3>
               <div class="space-y-4">
-                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-700/30">
-                  <span class="text-xs font-black text-slate-500 uppercase tracking-widest">{{ 'daily_log.items_logged' | translate }}</span>
-                  <span class="text-white font-black text-lg">{{ todayLogItems.length }}</span>
+                <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
+                  <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Total Tasks</span>
+                  <span class="text-xl font-black text-slate-900 dark:text-white">{{ assignedTasks.length }}</span>
                 </div>
-                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-700/30">
-                  <span class="text-xs font-black text-slate-500 uppercase tracking-widest">{{ 'daily_log.photos_uploaded' | translate }}</span>
-                  <span class="text-white font-black text-lg">{{ uploadedFiles.length }}</span>
+                <div class="flex items-center justify-between p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10">
+                  <span class="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Completed</span>
+                  <span class="text-xl font-black text-emerald-600">{{ getTaskCount('Completed') + getTaskCount('Approved') }}</span>
+                </div>
+                <div class="flex items-center justify-between p-4 rounded-2xl bg-amber-50 dark:bg-amber-500/10">
+                  <span class="text-[9px] font-black text-amber-600 uppercase tracking-widest">In Progress</span>
+                  <span class="text-xl font-black text-amber-600">{{ getTaskCount('InProgress') }}</span>
                 </div>
               </div>
             </div>
 
-            <!-- Close Day Card -->
-            <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
-              <h3 class="text-lg font-bold text-white mb-4">{{ 'daily_log.close_day' | translate }}</h3>
-              <p class="text-sm text-slate-400 mb-4">{{ 'daily_log.close_day_warning' | translate }}</p>
-              
-              <!-- Validation Checklist -->
-              <div class="space-y-3 mb-6">
-                <div class="flex items-center space-x-3">
-                  <div class="w-5 h-5 rounded-full flex items-center justify-center"
-                       [ngClass]="todayLogItems.length > 0 ? 'bg-emerald-500' : 'bg-slate-600'">
-                    @if (todayLogItems.length > 0) {
-                      <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
-                      </svg>
-                    }
-                  </div>
-                  <span class="text-sm" [class.text-slate-400]="todayLogItems.length === 0" [class.text-white]="todayLogItems.length > 0">
-                    {{ 'daily_log.has_log_entries' | translate }}
-                  </span>
-                </div>
-                <div class="flex items-center space-x-3">
-                  <div class="w-5 h-5 rounded-full flex items-center justify-center"
-                       [ngClass]="uploadedFiles.length > 0 ? 'bg-emerald-500' : 'bg-slate-600'">
-                    @if (uploadedFiles.length > 0) {
-                      <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
-                      </svg>
-                    }
-                  </div>
-                  <span class="text-sm" [class.text-slate-400]="uploadedFiles.length === 0" [class.text-white]="uploadedFiles.length > 0">
-                    {{ 'daily_log.has_media_uploads' | translate }}
-                  </span>
-                </div>
+            <!-- Close Day Action -->
+            @if (!isDayClosed && isToday) {
+              <div class="bg-gradient-to-br from-rose-600 to-pink-700 rounded-[3rem] p-8 text-white shadow-2xl shadow-rose-500/20">
+                <h3 class="text-lg font-black uppercase tracking-tight mb-4">Close This Day</h3>
+                <p class="text-sm font-medium text-white/70 mb-6">Once closed, no more entries can be added unless reopened by an authorized user.</p>
+                <button (click)="closeDay()" 
+                        [disabled]="assignedTasks.length === 0"
+                        class="w-full py-4 rounded-2xl bg-white text-rose-600 font-black text-xs uppercase tracking-widest hover:bg-rose-100 transition-all disabled:opacity-50">
+                  Close & Lock Day
+                </button>
               </div>
-
-              <button 
-                (click)="closeDay()"
-                [disabled]="isDayClosed || todayLogItems.length === 0"
-                class="w-full py-4 rounded-xl bg-gradient-to-r from-red-500 to-rose-600 text-white font-medium hover:from-red-400 hover:to-rose-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                </svg>
-                {{ 'daily_log.close_day' | translate }}
-              </button>
-            </div>
+            }
 
             <!-- Recent History -->
-            <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
-              <h3 class="text-lg font-bold text-white mb-4">{{ 'daily_log.recent_entries' | translate }}</h3>
+            <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-8 border border-slate-200 dark:border-white/5 shadow-2xl">
+              <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-6">Recent Days</h3>
               <div class="space-y-3">
-                @for (entry of todayLogItems; track entry.id) {
-                  <div class="p-4 rounded-xl bg-slate-700/30 border-l-4 border-cyan-500">
-                    <p class="text-white font-black text-base">{{ getBoqItemName(entry.boqItemId) }}</p>
-                    <p class="text-xs font-black text-slate-500 uppercase tracking-widest mt-1.5">Qty: {{ entry.quantity }} | {{ entry.startTime | date:'shortTime' }}</p>
-                  </div>
-                }
-                @if (todayLogItems.length === 0) {
-                  <p class="text-center text-slate-500 py-4">{{ 'daily_log.no_entries_yet' | translate }}</p>
+                @for (day of recentDays; track day.date) {
+                  <button (click)="selectDate(day.date)" 
+                          class="w-full p-4 rounded-2xl text-left transition-all hover:scale-[1.02]"
+                          [ngClass]="isSameDay(day.date, selectedDate) ? 'bg-indigo-500 text-white' : 'bg-slate-50 dark:bg-slate-800/50'">
+                    <p class="text-sm font-black">{{ day.date | date:'EEE, MMM d' }}</p>
+                    <p class="text-[10px] font-bold uppercase tracking-widest mt-1"
+                       [ngClass]="isSameDay(day.date, selectedDate) ? 'text-indigo-200' : 'text-slate-400'">
+                      {{ day.taskCount }} tasks · {{ day.isClosed ? 'Closed' : 'Open' }}
+                    </p>
+                  </button>
                 }
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- Reopen Modal -->
+      @if (showReopenModal) {
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
+          <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-10 max-w-lg w-full shadow-2xl">
+            <h2 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-6">Reopen Closed Day</h2>
+            <p class="text-sm text-slate-500 mb-8">This action will notify selected project roles and log the reopening for audit purposes.</p>
+            
+            <div class="space-y-6 mb-8">
+              <div class="space-y-2">
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Reason for Reopening</label>
+                <textarea [(ngModel)]="reopenReason" rows="3"
+                          class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none font-bold text-slate-950 dark:text-white resize-none"
+                          placeholder="Explain why this day needs to be reopened..."></textarea>
+              </div>
+              
+              <div class="space-y-2">
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Notify Roles</label>
+                <div class="flex flex-wrap gap-2">
+                  @for (role of projectRoles; track role.id) {
+                    <button (click)="toggleRoleNotification(role.id)"
+                            class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest border-2 transition-all"
+                            [ngClass]="selectedNotifyRoles.includes(role.id) ? 'bg-indigo-500 border-indigo-500 text-white' : 'border-slate-200 dark:border-slate-700 text-slate-500'">
+                      {{ role.name }}
+                    </button>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-4">
+              <button (click)="closeReopenModal()" class="flex-1 py-4 rounded-2xl border-2 border-slate-200 dark:border-slate-700 text-slate-600 font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-all">
+                Cancel
+              </button>
+              <button (click)="confirmReopenDay()" [disabled]="!reopenReason" class="flex-1 py-4 rounded-2xl bg-amber-500 text-white font-black text-xs uppercase tracking-widest hover:bg-amber-400 transition-all disabled:opacity-50">
+                Reopen Day
+              </button>
+            </div>
+          </div>
+        </div>
+      }
     </div>
   `
 })
 export class DailyLogComponent implements OnInit {
   dailyLogForm: FormGroup;
   boqItems: BOQItem[] = [];
-  todayLogItems: any[] = [];
-  uploadedFiles: { name: string; preview: string }[] = [];
-  uploadProgress = 0;
+  assignedTasks: WorkTask[] = [];
+  selectedDate = new Date();
+  selectedDateString = '';
   isDayClosed = false;
-  workStarted = false;
-  workStartTime: Date | null = null;
-  currentDate = new Date();
-  isDragOver = false;
 
-  get selectedBoqItem(): BOQItem | undefined {
-    const selectedId = this.dailyLogForm.get('boqItemId')?.value;
-    return this.boqItems.find(item => item.id === Number(selectedId));
+  // Permission flags
+  canApprove = false;
+  canReopenDay = false;
+  canAddEntry = false;
+
+  // Reopen modal
+  showReopenModal = false;
+  reopenReason = '';
+  selectedNotifyRoles: number[] = [];
+  projectRoles = [
+    { id: 1, name: 'Project Manager' },
+    { id: 2, name: 'Site Engineer' },
+    { id: 3, name: 'Supervisor' },
+    { id: 4, name: 'Quality Control' }
+  ];
+
+  // Recent days history
+  recentDays: { date: Date; taskCount: number; isClosed: boolean }[] = [];
+
+  get isToday(): boolean {
+    return this.isSameDay(this.selectedDate, new Date());
   }
 
   constructor(
     private fb: FormBuilder,
-    private mockDataService: MockDataService
+    private mockDataService: MockDataService,
+    private authService: AuthService
   ) {
     this.dailyLogForm = this.fb.group({
       boqItemId: ['', Validators.required],
@@ -307,127 +366,170 @@ export class DailyLogComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Load BOQ items for a project (using project 1 as default)
+    this.selectedDateString = this.formatDateForInput(this.selectedDate);
+    this.loadData();
+    this.loadRecentDays();
+    this.checkPermissions();
+  }
+
+  loadData() {
     this.mockDataService.getBOQItems(1).subscribe(items => {
       this.boqItems = items;
     });
-
-    // Check if today's log exists and its status
-    this.mockDataService.getDailyLogs(1).subscribe(logs => {
-      const todayLog = logs.find(log => {
-        const logDate = new Date(log.date).toDateString();
-        return logDate === new Date().toDateString();
-      });
-      if (todayLog) {
-        this.isDayClosed = todayLog.isClosed;
-        this.todayLogItems = todayLog.items;
-      }
-    });
+    this.loadTasksForDate(this.selectedDate);
   }
 
-  startWork() {
-    this.workStarted = true;
-    this.workStartTime = new Date();
+  loadTasksForDate(date: Date) {
+    // Simulate loading tasks for the selected date
+    this.assignedTasks = [
+      { id: 1, boqItemId: 1, boqItemName: 'Concrete Foundation Work', assignedQuantity: 50, unit: 'm³', status: 'Completed', photos: [] },
+      { id: 2, boqItemId: 2, boqItemName: 'Steel Reinforcement', assignedQuantity: 2000, unit: 'kg', status: 'InProgress', photos: [] },
+      { id: 3, boqItemId: 3, boqItemName: 'Formwork Installation', assignedQuantity: 100, unit: 'm²', status: 'Pending', photos: [] }
+    ];
+
+    // Simulate if day is closed for past dates
+    this.isDayClosed = date < new Date(new Date().setHours(0, 0, 0, 0)) && !this.isToday;
+  }
+
+  loadRecentDays() {
+    const today = new Date();
+    this.recentDays = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      this.recentDays.push({
+        date: d,
+        taskCount: Math.floor(Math.random() * 5) + 1,
+        isClosed: i > 0
+      });
+    }
+  }
+
+  checkPermissions() {
+    const role = this.authService.getCurrentUser()?.role;
+    // In a real app, these would be fetched from the backend based on the user's project-specific permissions
+    this.canApprove = role === 'CompanyAdmin' || role === 'SuperAdmin';
+    this.canReopenDay = role === 'CompanyAdmin' || role === 'SuperAdmin';
+    // All workers can add entries by default; this can be restricted per project role
+    this.canAddEntry = role === 'CompanyUser' || role === 'CompanyAdmin' || role === 'SuperAdmin';
+  }
+
+  // Date Navigation
+  navigateDay(delta: number) {
+    const newDate = new Date(this.selectedDate);
+    newDate.setDate(newDate.getDate() + delta);
+    this.selectedDate = newDate;
+    this.selectedDateString = this.formatDateForInput(newDate);
+    this.loadTasksForDate(newDate);
+  }
+
+  goToToday() {
+    this.selectedDate = new Date();
+    this.selectedDateString = this.formatDateForInput(this.selectedDate);
+    this.loadTasksForDate(this.selectedDate);
+  }
+
+  onDateChange() {
+    this.selectedDate = new Date(this.selectedDateString);
+    this.loadTasksForDate(this.selectedDate);
+  }
+
+  selectDate(date: Date) {
+    this.selectedDate = date;
+    this.selectedDateString = this.formatDateForInput(date);
+    this.loadTasksForDate(date);
+  }
+
+  formatDateForInput(date: Date): string {
+    return date.toISOString().split('T')[0];
+  }
+
+  isSameDay(d1: Date, d2: Date): boolean {
+    return d1.toDateString() === d2.toDateString();
+  }
+
+  // Task Actions
+  startTask(task: WorkTask) {
+    task.status = 'InProgress';
+  }
+
+  completeTask(task: WorkTask) {
+    task.status = 'Completed';
+  }
+
+  approveTask(task: WorkTask) {
+    task.status = 'Approved';
+  }
+
+  rejectTask(task: WorkTask) {
+    task.status = 'Rejected';
+  }
+
+  uploadTaskPhoto(task: WorkTask, event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        task.photos.push(e.target?.result as string);
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  getTaskCount(status: string): number {
+    return this.assignedTasks.filter(t => t.status === status).length;
   }
 
   submitDailyLog() {
-    if (this.dailyLogForm.valid && !this.isDayClosed && this.workStarted) {
-      const newEntry = {
+    if (this.dailyLogForm.valid) {
+      const newTask: WorkTask = {
         id: Date.now(),
-        boqItemId: Number(this.dailyLogForm.get('boqItemId')?.value),
-        quantity: this.dailyLogForm.get('quantity')?.value,
-        notes: this.dailyLogForm.get('notes')?.value,
-        startTime: this.workStartTime?.toISOString()
+        boqItemId: Number(this.dailyLogForm.value.boqItemId),
+        boqItemName: this.boqItems.find(i => i.id === Number(this.dailyLogForm.value.boqItemId))?.description || 'Unknown',
+        assignedQuantity: this.dailyLogForm.value.quantity,
+        unit: this.boqItems.find(i => i.id === Number(this.dailyLogForm.value.boqItemId))?.unit || '',
+        status: 'Pending',
+        notes: this.dailyLogForm.value.notes,
+        photos: []
       };
-
-      this.todayLogItems.push(newEntry);
+      this.assignedTasks.push(newTask);
       this.dailyLogForm.reset();
-      this.workStarted = false;
-      this.workStartTime = null;
-
-      alert('Entry submitted successfully!');
     }
   }
 
   closeDay() {
-    if (this.todayLogItems.length === 0) {
-      alert('Please add at least one log entry before closing the day.');
-      return;
-    }
-
-    if (confirm('Are you sure you want to close the day? This action cannot be undone.')) {
+    if (confirm('Are you sure you want to close this day? This will lock all entries.')) {
       this.isDayClosed = true;
-      alert('Day closed successfully! The log is now read-only.');
     }
   }
 
-  getBoqItemName(boqItemId: number): string {
-    const item = this.boqItems.find(i => i.id === boqItemId);
-    return item?.description || 'Unknown';
+  // Reopen Modal
+  openReopenModal() {
+    this.showReopenModal = true;
+    this.reopenReason = '';
+    this.selectedNotifyRoles = [];
   }
 
-  // File handling
-  onDragOver(event: DragEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.isDragOver = true;
+  closeReopenModal() {
+    this.showReopenModal = false;
   }
 
-  onDragLeave(event: DragEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.isDragOver = false;
-  }
-
-  onDrop(event: DragEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.isDragOver = false;
-
-    if (this.isDayClosed) return;
-
-    const files = event.dataTransfer?.files;
-    if (files) {
-      this.processFiles(files);
+  toggleRoleNotification(roleId: number) {
+    const idx = this.selectedNotifyRoles.indexOf(roleId);
+    if (idx > -1) {
+      this.selectedNotifyRoles.splice(idx, 1);
+    } else {
+      this.selectedNotifyRoles.push(roleId);
     }
   }
 
-  onFileSelect(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files) {
-      this.processFiles(input.files);
+  confirmReopenDay() {
+    if (this.reopenReason) {
+      // In a real app, this would call the backend API
+      console.log('Reopening day with reason:', this.reopenReason, 'Notifying roles:', this.selectedNotifyRoles);
+      this.isDayClosed = false;
+      this.showReopenModal = false;
+      alert('Day reopened successfully! Selected roles have been notified.');
     }
-  }
-
-  private processFiles(files: FileList) {
-    this.uploadProgress = 0;
-
-    // Simulate upload progress
-    const interval = setInterval(() => {
-      this.uploadProgress += 10;
-      if (this.uploadProgress >= 100) {
-        clearInterval(interval);
-
-        // Add files to gallery
-        Array.from(files).forEach(file => {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            this.uploadedFiles.push({
-              name: file.name,
-              preview: e.target?.result as string
-            });
-          };
-          reader.readAsDataURL(file);
-        });
-
-        setTimeout(() => {
-          this.uploadProgress = 0;
-        }, 500);
-      }
-    }, 200);
-  }
-
-  removeFile(file: { name: string; preview: string }) {
-    this.uploadedFiles = this.uploadedFiles.filter(f => f.name !== file.name);
   }
 }

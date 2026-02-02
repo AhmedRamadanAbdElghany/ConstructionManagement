@@ -198,7 +198,10 @@ public class ApplicationDbContext : DbContext
             new Permission { Id = 14, Name = "Transaction.Review", CreatedAt = fixedDate },
             new Permission { Id = 15, Name = "Media.Review", CreatedAt = fixedDate },
             new Permission { Id = 16, Name = "DailyLog.Close", CreatedAt = fixedDate },
-            new Permission { Id = 17, Name = "Settings.Manage", CreatedAt = fixedDate }
+            new Permission { Id = 17, Name = "Settings.Manage", CreatedAt = fixedDate },
+            new Permission { Id = 18, Name = "DailyLog.AddEntry", CreatedAt = fixedDate },
+            new Permission { Id = 19, Name = "DailyLog.Reopen", CreatedAt = fixedDate },
+            new Permission { Id = 20, Name = "DailyLog.Approve", CreatedAt = fixedDate }
         );
 
         // --- Global Role Permissions ---

@@ -42,6 +42,12 @@ namespace ConstructionManagement.Domain.Entities
 
         public ConstructionManagement.Domain.Enums.CalculationMethod DefaultMoneyCalculationMethod { get; set; } = ConstructionManagement.Domain.Enums.CalculationMethod.Measured;
 
+        // Daily Log Settings
+        public bool AllowAddProgressEntry { get; set; } = true;
+        public bool AllowReopenClosedDay { get; set; } = false;
+        public bool AutoCloseDay { get; set; } = false;
+        public TimeSpan? AutoCloseDayTime { get; set; } // e.g., 18:00 (6 PM)
+
         // You can add more global defaults here later
     }
 }

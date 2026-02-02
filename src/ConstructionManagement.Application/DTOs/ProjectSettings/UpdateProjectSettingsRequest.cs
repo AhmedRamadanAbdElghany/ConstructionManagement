@@ -75,4 +75,25 @@ public record UpdateProjectSettingsRequest
     public bool? ClientCanSeeMedia { get; init; }
     public bool? ClientCanSeeBOQ { get; init; }
     public string? MoneyCalculationMethod { get; init; }
+
+    // ── Daily Log ─────────────────────────────────────────────────────────────
+    /// <summary>
+    /// Allow workers to add progress entries to the daily log
+    /// </summary>
+    public bool? AllowAddProgressEntry { get; init; }
+
+    /// <summary>
+    /// Allow admins to reopen a closed daily log
+    /// </summary>
+    public bool? AllowReopenClosedDay { get; init; }
+
+    /// <summary>
+    /// Enable automatic daily closing of logs
+    /// </summary>
+    public bool? AutoCloseDay { get; init; }
+
+    /// <summary>
+    /// Time of day to automatically close logs (e.g., "18:00")
+    /// </summary>
+    public TimeSpan? AutoCloseDayTime { get; init; }
 }

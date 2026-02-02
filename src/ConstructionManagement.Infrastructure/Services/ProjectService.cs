@@ -84,6 +84,10 @@ public class ProjectService : IProjectService
                 settings.ClientCanSeeFinancials = request.Settings.ClientCanSeeFinancials;
                 settings.ClientCanSeeMedia = request.Settings.ClientCanSeeMedia;
                 settings.ClientCanSeeBOQ = request.Settings.ClientCanSeeBOQ;
+                settings.AllowAddProgressEntry = request.Settings.AllowAddProgressEntry;
+                settings.AllowReopenClosedDay = request.Settings.AllowReopenClosedDay;
+                settings.AutoCloseDay = request.Settings.AutoCloseDay;
+                settings.AutoCloseDayTime = request.Settings.AutoCloseDayTime;
 
                 if (!string.IsNullOrEmpty(request.Settings.MoneyCalculationMethod) && 
                     Enum.TryParse<CalculationMethod>(request.Settings.MoneyCalculationMethod, true, out var method))

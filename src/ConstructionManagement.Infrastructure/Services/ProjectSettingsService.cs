@@ -63,7 +63,13 @@ public class ProjectSettingsService : IProjectSettingsService
             ClientCanSeeFinancials = projectSettings?.ClientCanSeeFinancials ?? companySettings.ClientCanSeeFinancials,
             ClientCanSeeMedia = projectSettings?.ClientCanSeeMedia ?? companySettings.ClientCanSeeMedia,
             ClientCanSeeBOQ = projectSettings?.ClientCanSeeBOQ ?? companySettings.ClientCanSeeBOQ,
-            MoneyCalculationMethod = (projectSettings?.MoneyCalculationMethod ?? companySettings.DefaultMoneyCalculationMethod).ToString()
+            MoneyCalculationMethod = (projectSettings?.MoneyCalculationMethod ?? companySettings.DefaultMoneyCalculationMethod).ToString(),
+            
+            // Daily Log Settings
+            AllowAddProgressEntry = projectSettings?.AllowAddProgressEntry ?? companySettings.AllowAddProgressEntry,
+            AllowReopenClosedDay = projectSettings?.AllowReopenClosedDay ?? companySettings.AllowReopenClosedDay,
+            AutoCloseDay = projectSettings?.AutoCloseDay ?? companySettings.AutoCloseDay,
+            AutoCloseDayTime = projectSettings?.AutoCloseDayTime ?? companySettings.AutoCloseDayTime
         };
 
         // Auto-create project settings if they don't exist (optional – lazy creation)
@@ -143,6 +149,18 @@ public class ProjectSettingsService : IProjectSettingsService
         if (request.MoneyCalculationMethod is not null)
              settings.MoneyCalculationMethod = Enum.TryParse<CalculationMethod>(request.MoneyCalculationMethod, true, out var m) ? m : null;
 
+        if (request.AllowAddProgressEntry.HasValue)
+            settings.AllowAddProgressEntry = request.AllowAddProgressEntry.Value;
+
+        if (request.AllowReopenClosedDay.HasValue)
+            settings.AllowReopenClosedDay = request.AllowReopenClosedDay.Value;
+
+        if (request.AutoCloseDay.HasValue)
+            settings.AutoCloseDay = request.AutoCloseDay.Value;
+
+        if (request.AutoCloseDayTime.HasValue)
+            settings.AutoCloseDayTime = request.AutoCloseDayTime.Value;
+
         await _projectSettingsRepository.UpdateAsync(settings);
         await _unitOfWork.SaveChangesAsync();
     }
@@ -169,7 +187,12 @@ public class ProjectSettingsService : IProjectSettingsService
             ClientCanSeeFinancials = settings.ClientCanSeeFinancials ?? global.ClientCanSeeFinancials,
             ClientCanSeeMedia = settings.ClientCanSeeMedia ?? global.ClientCanSeeMedia,
             ClientCanSeeBOQ = settings.ClientCanSeeBOQ ?? global.ClientCanSeeBOQ,
-            MoneyCalculationMethod = (settings.MoneyCalculationMethod ?? global.DefaultMoneyCalculationMethod).ToString()
+            MoneyCalculationMethod = (settings.MoneyCalculationMethod ?? global.DefaultMoneyCalculationMethod).ToString(),
+            
+            AllowAddProgressEntry = settings.AllowAddProgressEntry ?? global.AllowAddProgressEntry,
+            AllowReopenClosedDay = settings.AllowReopenClosedDay ?? global.AllowReopenClosedDay,
+            AutoCloseDay = settings.AutoCloseDay ?? global.AutoCloseDay,
+            AutoCloseDayTime = settings.AutoCloseDayTime ?? global.AutoCloseDayTime
         };
     }
 }

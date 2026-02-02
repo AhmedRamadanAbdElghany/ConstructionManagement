@@ -154,7 +154,11 @@ export interface CompanySettings {
   allowLocations: boolean;
   allowHR: boolean;
   defaultSupervisionPercentage?: number;
+  // Daily Log Settings
+  allowAddProgressEntry: boolean;
+  allowReopenClosedDay: boolean;
   autoCloseDay: boolean;
+  autoCloseDayTime?: string; // HH:mm format, e.g., "18:00"
 }
 
 export interface ProjectSettings {
@@ -173,7 +177,11 @@ export interface ProjectSettings {
   clientCanSeeMedia: boolean | null;
   clientCanSeeBOQ: boolean | null;
   moneyCalculationMethod: string | null;
+  // Daily Log Settings (null = inherit from Company)
+  allowAddProgressEntry: boolean | null;
+  allowReopenClosedDay: boolean | null;
   autoCloseDay: boolean | null;
+  autoCloseDayTime: string | null;
 }
 
 export interface Package {

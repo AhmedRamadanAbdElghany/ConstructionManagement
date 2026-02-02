@@ -139,36 +139,141 @@ import { RouterLink } from '@angular/router';
                 </div>
               </section>
 
-              <!-- Calculation Methods -->
-              <section class="pt-6">
+               <!-- Module Entitlements -->
+               <section class="pt-6">
                  <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
-                   <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                   Allowed Calculation Methods
+                   <span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
+                   Module Entitlements
                  </h3>
-                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
                     <div (click)="toggleFormControl('allowMeasured')" 
                          [ngClass]="companyForm.get('allowMeasured')?.value ? 'border-amber-500 bg-amber-50/40 text-amber-900 dark:text-amber-100' : 'border-slate-100 dark:border-slate-800 text-slate-400'"
-                         class="p-8 border-2 rounded-[2.5rem] cursor-pointer transition-all flex flex-col items-center group/card hover:scale-[1.02]">
-                        <span class="text-4xl mb-4 grayscale group-hover/card:grayscale-0 transition-all" [class.grayscale-0]="companyForm.get('allowMeasured')?.value">📏</span>
-                        <span class="font-black text-xs uppercase tracking-widest">Measured</span>
-                        <p class="text-[8px] font-bold uppercase mt-2 opacity-60">Accuracy Based</p>
+                         class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center group/card hover:scale-[1.02]">
+                        <span class="text-2xl mb-2">📏</span>
+                        <span class="font-black text-[10px] uppercase tracking-widest text-center">Measured</span>
                     </div>
                     <div (click)="toggleFormControl('allowSupervision')" 
                          [ngClass]="companyForm.get('allowSupervision')?.value ? 'border-purple-500 bg-purple-50/40 text-purple-900 dark:text-purple-100' : 'border-slate-100 dark:border-slate-800 text-slate-400'"
-                         class="p-8 border-2 rounded-[2.5rem] cursor-pointer transition-all flex flex-col items-center group/card hover:scale-[1.02]">
-                        <span class="text-4xl mb-4 grayscale group-hover/card:grayscale-0 transition-all" [class.grayscale-0]="companyForm.get('allowSupervision')?.value">👁️</span>
-                        <span class="font-black text-xs uppercase tracking-widest">Supervision</span>
-                        <p class="text-[8px] font-bold uppercase mt-2 opacity-60">Overhead Logic</p>
+                         class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center group/card hover:scale-[1.02]">
+                        <span class="text-2xl mb-2">👁️</span>
+                        <span class="font-black text-[10px] uppercase tracking-widest text-center">Supervision</span>
                     </div>
                     <div (click)="toggleFormControl('allowPackages')" 
                          [ngClass]="companyForm.get('allowPackages')?.value ? 'border-orange-500 bg-orange-50/40 text-orange-900 dark:text-orange-100' : 'border-slate-100 dark:border-slate-800 text-slate-400'"
-                         class="p-6 border-2 rounded-[2.5rem] cursor-pointer transition-all flex flex-col items-center group/card hover:scale-[1.02]">
-                        <span class="text-4xl mb-4 grayscale group-hover/card:grayscale-0 transition-all" [class.grayscale-0]="companyForm.get('allowPackages')?.value">📦</span>
-                        <span class="font-black text-xs uppercase tracking-widest leading-none text-center">Fixed Package</span>
-                        <p class="text-[8px] font-bold uppercase mt-2 opacity-60">Lump Sum Flow</p>
+                         class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center group/card hover:scale-[1.02]">
+                        <span class="text-2xl mb-2">📦</span>
+                        <span class="font-black text-[10px] uppercase tracking-widest text-center leading-none">Packages</span>
+                    </div>
+                    <div (click)="toggleFormControl('allowLocations')" 
+                         [ngClass]="companyForm.get('allowLocations')?.value ? 'border-blue-500 bg-blue-50/40 text-blue-900 dark:text-blue-100' : 'border-slate-100 dark:border-slate-800 text-slate-400'"
+                         class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center group/card hover:scale-[1.02]">
+                        <span class="text-2xl mb-2">📍</span>
+                        <span class="font-black text-[10px] uppercase tracking-widest text-center">Locations</span>
+                    </div>
+                    <div (click)="toggleFormControl('allowHR')" 
+                         [ngClass]="companyForm.get('allowHR')?.value ? 'border-pink-500 bg-pink-50/40 text-pink-900 dark:text-pink-100' : 'border-slate-100 dark:border-slate-800 text-slate-400'"
+                         class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center group/card hover:scale-[1.02]">
+                        <span class="text-2xl mb-2">👥</span>
+                        <span class="font-black text-[10px] uppercase tracking-widest text-center">HR & Payroll</span>
                     </div>
                  </div>
-              </section>
+               </section>
+
+               <!-- Daily Log Policy -->
+               <section class="pt-6">
+                 <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
+                   <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                   Daily Log Policy
+                 </h3>
+                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div (click)="toggleFormControl('allowAddProgressEntry')" 
+                         [ngClass]="companyForm.get('allowAddProgressEntry')?.value ? 'border-emerald-500 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-400'"
+                         class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm">📝</div>
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Log Progress</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Allow Workers to Log</p>
+                        </div>
+                    </div>
+                    <div (click)="toggleFormControl('allowReopenClosedDay')" 
+                         [ngClass]="companyForm.get('allowReopenClosedDay')?.value ? 'border-rose-500 bg-rose-50/40 text-rose-900 dark:text-rose-100' : 'border-slate-100 dark:border-slate-800 text-slate-400'"
+                         class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm">🔓</div>
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Reopen Day</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Unlock Closed Logs</p>
+                        </div>
+                    </div>
+                    <div (click)="toggleFormControl('autoCloseDay')" 
+                         [ngClass]="companyForm.get('autoCloseDay')?.value ? 'border-indigo-500 bg-indigo-50/40 text-indigo-900 dark:text-indigo-100' : 'border-slate-100 dark:border-slate-800 text-slate-400'"
+                         class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm">⏰</div>
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Auto Close</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Schedule-based Locking</p>
+                        </div>
+                    </div>
+                 </div>
+               </section>
+
+               <!-- Reviews & Visibility -->
+               <section class="pt-6 pb-4">
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <!-- Governance -->
+                    <div>
+                       <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+                         <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+                         Governance & Reviews
+                       </h3>
+                       <div class="space-y-4">
+                          <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
+                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Require Photo Approval</span>
+                             <label class="relative inline-flex items-center cursor-pointer">
+                               <input type="checkbox" formControlName="requirePhotoReview" class="sr-only peer">
+                               <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
+                             </label>
+                          </div>
+                          <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
+                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Require Invoice Approval</span>
+                             <label class="relative inline-flex items-center cursor-pointer">
+                               <input type="checkbox" formControlName="enableInvoiceReview" class="sr-only peer">
+                               <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
+                             </label>
+                          </div>
+                       </div>
+                    </div>
+                    <!-- Client Edge -->
+                    <div>
+                       <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+                         <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                         Client Visibility
+                       </h3>
+                       <div class="space-y-4">
+                          <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
+                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Share Financial Status</span>
+                             <label class="relative inline-flex items-center cursor-pointer">
+                               <input type="checkbox" formControlName="clientCanSeeFinancials" class="sr-only peer">
+                               <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500"></div>
+                             </label>
+                          </div>
+                          <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
+                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Share Site Media</span>
+                             <label class="relative inline-flex items-center cursor-pointer">
+                               <input type="checkbox" formControlName="clientCanSeeMedia" class="sr-only peer">
+                               <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500"></div>
+                             </label>
+                          </div>
+                          <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
+                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Share BOQ Details</span>
+                             <label class="relative inline-flex items-center cursor-pointer">
+                               <input type="checkbox" formControlName="clientCanSeeBOQ" class="sr-only peer">
+                               <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500"></div>
+                             </label>
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+               </section>
 
               <div class="pt-10 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
                   <div class="flex items-center gap-4">
@@ -246,9 +351,17 @@ export class CompaniesComponent implements OnInit {
       enableDelayNotification: [true],
       requirePhotoReview: [true],
       clientCanSeeFinancials: [false],
+      clientCanSeeMedia: [false],
+      clientCanSeeBOQ: [false],
       allowMeasured: [true],
       allowSupervision: [true],
       allowPackages: [false],
+      allowLocations: [true],
+      allowHR: [true],
+      allowAddProgressEntry: [true],
+      allowReopenClosedDay: [false],
+      autoCloseDay: [false],
+      enableInvoiceReview: [false],
       adminName: [''],
       adminEmail: ['']
     });
@@ -278,9 +391,17 @@ export class CompaniesComponent implements OnInit {
       enableDelayNotification: true,
       requirePhotoReview: true,
       clientCanSeeFinancials: false,
+      clientCanSeeMedia: false,
+      clientCanSeeBOQ: false,
       allowMeasured: true,
       allowSupervision: true,
       allowPackages: false,
+      allowLocations: true,
+      allowHR: true,
+      allowAddProgressEntry: true,
+      allowReopenClosedDay: false,
+      autoCloseDay: false,
+      enableInvoiceReview: false,
       adminName: '',
       adminEmail: ''
     });
@@ -309,9 +430,15 @@ export class CompaniesComponent implements OnInit {
         enableDelayNotification: company.settings.enableDelayNotification,
         requirePhotoReview: company.settings.requirePhotoReview,
         clientCanSeeFinancials: company.settings.clientCanSeeFinancials,
-        allowMeasured: company.settings.allowMeasured,
-        allowSupervision: company.settings.allowSupervision,
-        allowPackages: company.settings.allowPackages
+        allowPackages: company.settings.allowPackages,
+        allowLocations: company.settings.allowLocations,
+        allowHR: company.settings.allowHR,
+        allowAddProgressEntry: company.settings.allowAddProgressEntry,
+        allowReopenClosedDay: company.settings.allowReopenClosedDay,
+        autoCloseDay: company.settings.autoCloseDay,
+        enableInvoiceReview: company.settings.enableInvoiceReview,
+        clientCanSeeMedia: company.settings.clientCanSeeMedia,
+        clientCanSeeBOQ: company.settings.clientCanSeeBOQ
       });
     }
 
