@@ -12,236 +12,258 @@ import { VacationRequest } from '../../../shared/interfaces';
   imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
-      <div class="max-w-6xl mx-auto">
+      <div class="max-w-7xl mx-auto">
         <!-- Header -->
-        <div class="mb-10">
-          <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight uppercase tracking-tight">{{ 'personal_hr.title' | translate }}</h1>
-          <p class="text-slate-500 dark:text-slate-400 font-medium tracking-tight">{{ 'personal_hr.subtitle' | translate }}</p>
-        </div>
-
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-          <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-8 border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none transition-all group overflow-hidden relative">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/15 transition-colors"></div>
-            <div class="relative">
-              <div class="flex items-center justify-between mb-6">
-                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform">
-                  <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                </div>
-              </div>
-              <p class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ monthlySalary | currency:'USD':'symbol':'1.0-0' }}</p>
-              <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] leading-none">{{ 'personal_hr.monthly_salary' | translate }}</p>
-            </div>
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+          <div class="space-y-1">
+            <h1 class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tight flex items-center gap-4">
+              <span class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white flex items-center justify-center text-xl shadow-lg shadow-indigo-500/20">👤</span>
+              Personal HQ & Finance
+            </h1>
+            <p class="text-slate-500 dark:text-slate-400 font-medium tracking-tight">Access your corporate identity, financial records, and operational leave requests</p>
           </div>
-
-          <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-8 border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none transition-all group overflow-hidden relative">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/15 transition-colors"></div>
-            <div class="relative">
-              <div class="flex items-center justify-between mb-6">
-                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform">
-                  <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v12a2 2 0 002 2z"></path>
-                  </svg>
-                </div>
-              </div>
-            <p class="text-3xl font-bold text-white">{{ annualLeaveDays }}</p>
-            <p class="text-sm text-slate-400">{{ 'personal_hr.annual_leave_remaining' | translate }}</p>
-          </div>
-
-          <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
-            <div class="flex items-center justify-between mb-3">
-              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-              </div>
-            </div>
-            <p class="text-3xl font-bold text-white">{{ pendingRequests }}</p>
-            <p class="text-sm text-slate-400">{{ 'personal_hr.pending_requests' | translate }}</p>
-          </div>
-
-          <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
-            <div class="flex items-center justify-between mb-3">
-              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/30">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                </svg>
-              </div>
-            </div>
-            <p class="text-3xl font-bold text-white">{{ workDaysThisMonth }}</p>
-            <p class="text-sm text-slate-400">{{ 'personal_hr.work_days_this_month' | translate }}</p>
+          <div class="flex items-center gap-3">
+             <div class="px-6 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 shadow-sm text-slate-500">
+               <span class="text-[9px] font-black uppercase tracking-[0.2em] block leading-none mb-1 opacity-60">Status</span>
+               <span class="text-xs font-black text-emerald-500 uppercase tracking-widest">Active Associate</span>
+             </div>
           </div>
         </div>
 
-        <!-- Tabs -->
-        <div class="flex space-x-2 mb-6">
-          <button 
-            (click)="activeTab = 'salary'"
-            [class.bg-cyan-500]="activeTab === 'salary'"
-            [class.text-white]="activeTab === 'salary'"
-            [class.bg-slate-700/50]="activeTab !== 'salary'"
-            [class.text-slate-400]="activeTab !== 'salary'"
-            class="px-6 py-3 rounded-xl text-sm font-medium transition-all">
-            {{ 'personal_hr.salary_history' | translate }}
+        <!-- Metric Engine -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+          <!-- Monthly Compensation -->
+          <div class="premium-card group">
+            <div class="flex items-center justify-between mb-8">
+              <div class="w-16 h-16 rounded-[1.5rem] bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">💰</div>
+              <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl">Financial</div>
+            </div>
+            <p class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tighter">{{ monthlySalary | currency:'USD':'symbol':'1.0-0' }}</p>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.2em]">Monthly Compensation</p>
+          </div>
+
+          <!-- Leave Allowance -->
+          <div class="premium-card group">
+            <div class="flex items-center justify-between mb-8">
+              <div class="w-16 h-16 rounded-[1.5rem] bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">📅</div>
+              <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl">Allowance</div>
+            </div>
+            <p class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tighter">{{ annualLeaveDays }}</p>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.2em]">Annual Leave Remaining</p>
+          </div>
+
+          <!-- Active Requests -->
+          <div class="premium-card group">
+            <div class="flex items-center justify-between mb-8">
+              <div class="w-16 h-16 rounded-[1.5rem] bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">⏳</div>
+              <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl">Pending</div>
+            </div>
+            <p class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tighter">{{ pendingRequests }}</p>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.2em]">Awaiting Authorization</p>
+          </div>
+
+          <!-- Utilization -->
+          <div class="premium-card group">
+            <div class="flex items-center justify-between mb-8">
+              <div class="w-16 h-16 rounded-[1.5rem] bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">📊</div>
+              <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl">Work Days</div>
+            </div>
+            <p class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tighter">{{ workDaysThisMonth }}</p>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.2em]">Cycle Performance</p>
+          </div>
+        </div>
+
+        <!-- Navigation Hub -->
+        <div class="flex items-center space-x-2 bg-slate-200/50 dark:bg-white/5 rounded-[2rem] p-2 mb-10 w-fit backdrop-blur-md">
+          <button (click)="activeTab = 'salary'"
+                  [class.bg-white]="activeTab === 'salary'"
+                  [class.dark:bg-slate-800]="activeTab === 'salary'"
+                  [class.shadow-xl]="activeTab === 'salary'"
+                  [class.text-indigo-600]="activeTab === 'salary'"
+                  [class.dark:text-white]="activeTab === 'salary'"
+                  class="px-10 py-4 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest transition-all">
+            Financial Ledger
           </button>
-          <button 
-            (click)="activeTab = 'vacation'"
-            [class.bg-cyan-500]="activeTab === 'vacation'"
-            [class.text-white]="activeTab === 'vacation'"
-            [class.bg-slate-700/50]="activeTab !== 'vacation'"
-            [class.text-slate-400]="activeTab !== 'vacation'"
-            class="px-6 py-3 rounded-xl text-sm font-medium transition-all">
-            {{ 'personal_hr.vacation_requests' | translate }}
+          <button (click)="activeTab = 'vacation'"
+                  [class.bg-white]="activeTab === 'vacation'"
+                  [class.dark:bg-slate-800]="activeTab === 'vacation'"
+                  [class.shadow-xl]="activeTab === 'vacation'"
+                  [class.text-indigo-600]="activeTab === 'vacation'"
+                  [class.dark:text-white]="activeTab === 'vacation'"
+                  class="px-10 py-4 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest transition-all text-slate-400 hover:text-slate-600">
+            Leave Architecture
           </button>
         </div>
 
-        <!-- Salary Tab -->
-        @if (activeTab === 'salary') {
-          <div class="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all">
-            <div class="px-8 py-6 border-b border-slate-100 dark:border-white/5 bg-slate-50/30 dark:bg-slate-950/20">
-              <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'personal_hr.salary_breakdown' | translate }}</h2>
-            </div>
-            <div class="overflow-x-auto">
-              <table class="w-full">
-                <thead>
-                  <tr class="text-left bg-slate-50/50 dark:bg-slate-950/30 text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-[0.2em]">
-                    <th class="px-8 py-5">{{ 'personal_hr.month' | translate }}</th>
-                    <th class="px-8 py-5">{{ 'personal_hr.basic_salary' | translate }}</th>
-                    <th class="px-8 py-5">{{ 'personal_hr.bonus' | translate }}</th>
-                    <th class="px-8 py-5">{{ 'personal_hr.deductions' | translate }}</th>
-                    <th class="px-8 py-5">{{ 'personal_hr.net_salary' | translate }}</th>
-                    <th class="px-8 py-5">{{ 'personal_hr.status' | translate }}</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100 dark:divide-white/5">
-                  @for (record of salaryHistory; track record.month) {
-                    <tr class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
-                      <td class="px-8 py-6 text-sm font-black text-slate-900 dark:text-white tracking-tight">{{ record.month }}</td>
-                      <td class="px-8 py-6 text-sm font-black text-slate-600 dark:text-slate-300">{{ record.basicSalary | currency:'USD' }}</td>
-                      <td class="px-8 py-6 text-sm font-black text-emerald-600 dark:text-emerald-400 tracking-tight">+{{ record.bonus | currency:'USD' }}</td>
-                      <td class="px-8 py-6 text-sm font-black text-rose-600 dark:text-rose-400 tracking-tight">-{{ record.deductions | currency:'USD' }}</td>
-                      <td class="px-8 py-6 text-base font-black text-cyan-600 dark:text-cyan-400 tracking-tight">{{ record.netSalary | currency:'USD' }}</td>
-                      <td class="px-8 py-6">
-                        <span class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest border transition-all"
-                              [ngClass]="{
-                                'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/10': record.status === 'Paid',
-                                'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/10': record.status === 'Pending'
-                              }">
-                          {{ record.status }}
-                        </span>
-                      </td>
+        <!-- Viewport -->
+        <main class="animate-in slide-in-from-bottom-5 duration-700">
+          <!-- Ledger View -->
+          @if (activeTab === 'salary') {
+            <div class="bg-white dark:bg-slate-900 rounded-[3rem] shadow-2xl overflow-hidden border border-slate-100 dark:border-white/5">
+              <div class="px-10 py-10 flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/20">
+                <div>
+                   <h2 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Monthly Salary Breakdown</h2>
+                   <p class="text-xs text-slate-500 font-medium">Verified corporate financial records from the last accounting cycle</p>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm border border-slate-100 dark:border-white/5 outline-none cursor-pointer hover:bg-slate-50 transition-colors">📄</div>
+              </div>
+              
+              <div class="overflow-x-auto">
+                <table class="w-full">
+                  <thead>
+                    <tr class="text-left bg-slate-50/30 dark:bg-slate-950/40 text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">
+                      <th class="px-10 py-6 italic">Billing Period</th>
+                      <th class="px-10 py-6">Base Salary</th>
+                      <th class="px-10 py-6">Bonus/Reward</th>
+                      <th class="px-10 py-6 text-rose-500">Deductions</th>
+                      <th class="px-10 py-6">Net Dispersion</th>
+                      <th class="px-10 py-6">Audit Status</th>
                     </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
-          </div>
-        }
-
-        <!-- Vacation Tab -->
-        @if (activeTab === 'vacation') {
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- New Request Form -->
-            <div class="lg:col-span-1 bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
-              <h2 class="text-xl font-bold text-white mb-6">{{ 'personal_hr.new_request' | translate }}</h2>
-              
-              <form [formGroup]="vacationForm" (ngSubmit)="submitVacationRequest()" class="space-y-5">
-                <div>
-                  <label class="block text-sm font-medium text-slate-400 mb-2">{{ 'personal_hr.leave_type' | translate }}</label>
-                  <select formControlName="type" 
-                          class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600/50 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors">
-                    <option value="Annual">{{ 'personal_hr.annual_leave' | translate }}</option>
-                    <option value="Sick">{{ 'personal_hr.sick_leave' | translate }}</option>
-                    <option value="Emergency">{{ 'personal_hr.emergency_leave' | translate }}</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label class="block text-sm font-medium text-slate-400 mb-2">{{ 'personal_hr.start_date' | translate }}</label>
-                  <input type="date" formControlName="startDate" 
-                         class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600/50 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors">
-                </div>
-
-                <div>
-                  <label class="block text-sm font-medium text-slate-400 mb-2">{{ 'personal_hr.end_date' | translate }}</label>
-                  <input type="date" formControlName="endDate" 
-                         class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600/50 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors">
-                </div>
-
-                <div>
-                  <label class="block text-sm font-medium text-slate-400 mb-2">{{ 'personal_hr.reason' | translate }}</label>
-                  <textarea formControlName="reason" rows="3"
-                            class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600/50 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors resize-none"
-                            placeholder="Optional reason for leave..."></textarea>
-                </div>
-
-                <button 
-                  type="submit"
-                  [disabled]="vacationForm.invalid"
-                  class="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-medium hover:from-cyan-400 hover:to-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                  {{ 'personal_hr.submit_request' | translate }}
-                </button>
-              </form>
-            </div>
-
-            <!-- Request History -->
-            <div class="lg:col-span-2 bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
-              <h2 class="text-xl font-bold text-white mb-6">{{ 'personal_hr.request_history' | translate }}</h2>
-              
-              <div class="space-y-4">
-                @for (request of vacationRequests; track request.id) {
-                  <div class="p-4 rounded-xl bg-slate-700/30 border-l-4 transition-colors"
-                       [class.border-emerald-500]="request.status === 'Approved'"
-                       [class.border-amber-500]="request.status === 'Pending'"
-                       [class.border-red-500]="request.status === 'Rejected'">
-                    <div class="flex items-center justify-between">
-                      <div>
-                        <div class="flex items-center space-x-3 mb-2">
-                          <span class="px-3 py-1 rounded-lg text-xs font-medium"
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 dark:divide-white/5">
+                    @for (record of salaryHistory; track record.month) {
+                      <tr class="group hover:bg-slate-50/80 dark:hover:bg-white/[0.01] transition-all">
+                        <td class="px-10 py-8">
+                           <p class="text-base font-black text-slate-900 dark:text-white tracking-tight">{{ record.month }}</p>
+                        </td>
+                        <td class="px-10 py-8 text-sm font-bold text-slate-600 dark:text-slate-400 capitalize">{{ record.basicSalary | currency:'USD' }}</td>
+                        <td class="px-10 py-8 text-sm font-black text-emerald-500">+{{ record.bonus | currency:'USD' }}</td>
+                        <td class="px-10 py-8 text-sm font-black text-rose-500">-{{ record.deductions | currency:'USD' }}</td>
+                        <td class="px-10 py-8">
+                           <span class="text-lg font-black text-indigo-600 dark:text-indigo-400 tracking-tighter">{{ record.netSalary | currency:'USD' }}</span>
+                        </td>
+                        <td class="px-10 py-8">
+                          <span class="px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all"
                                 [ngClass]="{
-                                  'bg-cyan-500/20 text-cyan-400': request.type === 'Annual',
-                                  'bg-purple-500/20 text-purple-400': request.type === 'Sick',
-                                  'bg-red-500/20 text-red-400': request.type === 'Emergency'
+                                  'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/10': record.status === 'Paid',
+                                  'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/10': record.status === 'Pending'
                                 }">
-                            {{ request.type }}
+                            {{ record.status }}
                           </span>
-                          <span class="text-white font-medium">
-                            {{ request.startDate | date:'mediumDate' }} - {{ request.endDate | date:'mediumDate' }}
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          }
+
+          <!-- Leave Architecture View -->
+          @if (activeTab === 'vacation') {
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+              <!-- Form -->
+              <div class="lg:col-span-4 bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-100 dark:border-white/5 shadow-2xl h-fit">
+                <div class="mb-10">
+                   <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Initialize Leave Request</h2>
+                   <p class="text-xs text-slate-500 mt-1">Submit your request for manager authorization</p>
+                </div>
+                
+                <form [formGroup]="vacationForm" (ngSubmit)="submitVacationRequest()" class="space-y-8">
+                  <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Leave Archetype</label>
+                    <div class="relative">
+                      <select formControlName="type" 
+                              class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none font-bold text-slate-950 dark:text-white appearance-none cursor-pointer">
+                        <option value="Annual">Annual Paid Leave</option>
+                        <option value="Sick">Medical/Sick Leave</option>
+                        <option value="Emergency">Urgent Emergency</option>
+                      </select>
+                      <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">⌄</div>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                      <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Commencement</label>
+                      <input type="date" formControlName="startDate" 
+                             class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none font-bold text-slate-950 dark:text-white">
+                    </div>
+                    <div class="space-y-2">
+                      <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Conclusion</label>
+                      <input type="date" formControlName="endDate" 
+                             class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none font-bold text-slate-950 dark:text-white">
+                    </div>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Justification (Optional)</label>
+                    <textarea formControlName="reason" rows="4"
+                              class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none font-bold text-slate-950 dark:text-white resize-none"
+                              placeholder="Brief description of reasoning..."></textarea>
+                  </div>
+
+                  <button type="submit" [disabled]="vacationForm.invalid"
+                          class="w-full py-5 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-xs uppercase tracking-[0.2em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-30 disabled:grayscale">
+                    Execute Request Flow
+                  </button>
+                </form>
+              </div>
+
+              <!-- History -->
+              <div class="lg:col-span-8 space-y-6">
+                @for (request of vacationRequests; track request.id) {
+                  <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-100 dark:border-white/5 shadow-xl transition-all hover:scale-[1.01] hover:shadow-2xl group relative overflow-hidden">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                       <div class="flex items-center gap-6">
+                         <div class="w-20 h-20 rounded-[1.5rem] flex flex-col items-center justify-center border-2"
+                              [ngClass]="{
+                                'bg-indigo-50 border-indigo-100 text-indigo-600': request.type === 'Annual',
+                                'bg-purple-50 border-purple-100 text-purple-600': request.type === 'Sick',
+                                'bg-rose-50 border-rose-100 text-rose-600': request.type === 'Emergency'
+                              }">
+                           <span class="text-2xl">{{ request.type === 'Annual' ? '🌴' : request.type === 'Sick' ? '🏥' : '🚨' }}</span>
+                           <span class="text-[8px] font-black uppercase tracking-tighter mt-1">{{ request.type }}</span>
+                         </div>
+                         <div>
+                            <p class="text-xl font-black text-slate-900 dark:text-white tracking-tight">
+                              {{ request.startDate | date:'MMM d, y' }} &mdash; {{ request.endDate | date:'MMM d, y' }}
+                            </p>
+                            <p class="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest flex items-center gap-2">
+                              Duration: <span class="text-indigo-600 dark:text-indigo-400 capitalize">{{ calculateDays(request.startDate, request.endDate) }} Business Days</span>
+                            </p>
+                            @if (request.reason) {
+                              <p class="text-xs italic text-slate-500 mt-4 leading-relaxed group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">"{{ request.reason }}"</p>
+                            }
+                         </div>
+                       </div>
+                       
+                       <div class="flex items-center gap-4">
+                          <span class="px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest border-2 transition-all"
+                                [ngClass]="{
+                                  'bg-emerald-500/10 text-emerald-600 border-emerald-500/10': request.status === 'Approved',
+                                  'bg-amber-500/10 text-amber-600 border-amber-500/10': request.status === 'Pending',
+                                  'bg-rose-500/10 text-rose-600 border-rose-500/10': request.status === 'Rejected'
+                                }">
+                            Status: {{ request.status }}
                           </span>
-                        </div>
-                        <p class="text-sm text-slate-400">
-                          {{ calculateDays(request.startDate, request.endDate) }} days requested
-                        </p>
-                      </div>
-                      <span class="px-4 py-2 rounded-xl text-sm font-medium"
-                            [ngClass]="{
-                              'bg-emerald-500/20 text-emerald-400': request.status === 'Approved',
-                              'bg-amber-500/20 text-amber-400': request.status === 'Pending',
-                              'bg-red-500/20 text-red-400': request.status === 'Rejected'
-                            }">
-                        {{ request.status }}
-                      </span>
+                       </div>
                     </div>
                   </div>
                 }
 
                 @if (vacationRequests.length === 0) {
-                  <div class="text-center py-12 text-slate-400">
-                    <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                    <p>No vacation requests yet</p>
+                  <div class="bg-slate-50 dark:bg-white/5 rounded-[3rem] p-24 text-center border-2 border-dashed border-slate-200 dark:border-white/5">
+                     <p class="text-4xl mb-6 grayscale opacity-40">📭</p>
+                     <p class="text-lg font-black text-slate-400 uppercase tracking-widest">No Leave Records Found</p>
                   </div>
                 }
               </div>
             </div>
-          </div>
-        }
+          }
+        </main>
       </div>
     </div>
-  `
+  `,
+  styles: [`
+    .premium-card {
+      @apply bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 shadow-xl hover:shadow-2xl transition-all duration-500 relative overflow-hidden;
+    }
+    .premium-card:after {
+      content: ''; @apply absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent translate-y-full transition-transform duration-700;
+    }
+    .premium-card:hover:after { @apply translate-y-0; }
+  `]
 })
 export class PersonalHrComponent implements OnInit {
   activeTab: 'salary' | 'vacation' = 'salary';

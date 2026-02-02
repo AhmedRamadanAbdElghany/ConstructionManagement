@@ -39,7 +39,7 @@ import { RouterModule } from '@angular/router';
       </div>
 
       <!-- Navigation -->
-      <nav class="flex-1 p-4 space-y-2 overflow-y-auto custom-scrollbar pt-8">
+      <nav class="flex-1 p-4 space-y-2 overflow-y-auto overflow-x-hidden custom-scrollbar pt-8">
         <!-- Section Header -->
         <p class="px-4 py-2 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
            [class.opacity-0]="isCollapsed()">{{ 'sidebar.administration' | translate }}</p>
@@ -275,14 +275,17 @@ import { RouterModule } from '@angular/router';
     }
 
     .custom-scrollbar::-webkit-scrollbar {
-      width: 4px;
+      width: 8px;
     }
     .custom-scrollbar::-webkit-scrollbar-track {
       background: transparent;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.05);
+      @apply bg-slate-300 dark:bg-slate-700;
       border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      @apply bg-cyan-500;
     }
   `]
 })

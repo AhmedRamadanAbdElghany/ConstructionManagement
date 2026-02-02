@@ -11,7 +11,7 @@ import { BOQItem, DailyLog, SiteMedia } from '../../../shared/interfaces';
   imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
-      <div class="max-w-6xl mx-auto">
+      <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="flex items-center justify-between mb-8">
           <div>

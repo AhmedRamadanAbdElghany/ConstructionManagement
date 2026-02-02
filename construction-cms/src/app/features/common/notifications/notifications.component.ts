@@ -11,7 +11,7 @@ import { AppNotification } from '../../../shared/interfaces';
   imports: [CommonModule, RouterModule, TranslateModule],
   template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
-      <div class="max-w-4xl mx-auto">
+      <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="flex items-center justify-between mb-10">
           <div>
