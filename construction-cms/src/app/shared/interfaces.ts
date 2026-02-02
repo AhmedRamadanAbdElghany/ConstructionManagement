@@ -284,3 +284,29 @@ export interface CatalogItem {
   category?: string;
 }
 
+export interface ProjectBill {
+  id: number;
+  projectId: number;
+  billNumber: string;
+  amount: number;
+  date: string; // ISO string
+  status: 'Pending' | 'Approved' | 'Rejected';
+  actionBy?: string; // Full name of the user who approved/rejected
+  actionAt?: string; // ISO string
+  notes?: string;
+  photoUrl?: string; // URL to the bill image
+}
+
+export interface ClientPayment {
+  id: number;
+  projectId: number;
+  amount: number;
+  date: string; // ISO string
+  method: 'Bank Transfer' | 'Cash' | 'Cheque';
+  referenceNumber: string;
+  status: 'Received' | 'Pending' | 'Bounced';
+  notes?: string;
+  photoUrl?: string;
+  actionBy?: string;
+}
+

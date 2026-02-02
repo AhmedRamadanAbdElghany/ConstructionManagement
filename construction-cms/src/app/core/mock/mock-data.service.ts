@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { User, Project, BOQItem, DailyLog, SiteMedia, Transaction, VacationRequest, AppNotification, WorkerPerformance } from '../../shared/interfaces';
+import { User, Project, BOQItem, DailyLog, SiteMedia, Transaction, VacationRequest, AppNotification, WorkerPerformance, Role, ProjectBill, ClientPayment } from '../../shared/interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
@@ -145,6 +145,27 @@ export class MockDataService {
     { userId: 7, userName: 'Mohamed Farid', projectName: 'Villa Complex Riyadh', tasksCompleted: 52, efficiency: 95, attendance: 100, status: 'Peak' }
   ];
 
+  private roles: Role[] = [
+    { id: 1, name: 'CompanyAdmin', description: 'Full access to all company projects and settings' },
+    { id: 2, name: 'CompanyUser', description: 'Access to assigned projects and daily logs' },
+    { id: 3, name: 'SiteManager', description: 'Management of site operations and worker logs' },
+    { id: 4, name: 'Accountant', description: 'Access to financial records and project budgets' },
+    { id: 5, name: 'SiteEngineer', description: 'Technical oversight and BOQ management' }
+  ];
+
+  private bills: ProjectBill[] = [
+    { id: 1, projectId: 1, billNumber: 'INV-2024-001', amount: 15000, date: '2024-01-20T10:00:00Z', status: 'Approved', actionBy: 'Ahmed Ali', actionAt: '2024-01-22T09:30:00Z', photoUrl: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800' },
+    { id: 2, projectId: 1, billNumber: 'INV-2024-005', amount: 8500, date: '2024-02-15T14:20:00Z', status: 'Pending', photoUrl: 'https://images.unsplash.com/photo-1586486855514-8c633cc6fd38?w=800' },
+    { id: 3, projectId: 1, billNumber: 'INV-2024-002', amount: 4200, date: '2024-01-25T11:00:00Z', status: 'Rejected', actionBy: 'Maria Hassan', actionAt: '2024-01-26T15:45:00Z', notes: 'Incomplete documentation', photoUrl: 'https://images.unsplash.com/photo-1554672408-730436b60dde?w=800' },
+    { id: 4, projectId: 2, billNumber: 'INV-2024-C01', amount: 25000, date: '2024-02-01T08:00:00Z', status: 'Approved', actionBy: 'Ahmed Ali', actionAt: '2024-02-03T10:00:00Z', photoUrl: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800' }
+  ];
+
+  private clientPayments: ClientPayment[] = [
+    { id: 1, projectId: 1, amount: 50000, date: '2024-01-25T10:00:00Z', method: 'Bank Transfer', referenceNumber: 'TX-9821-001', status: 'Received' },
+    { id: 2, projectId: 1, amount: 25000, date: '2024-02-10T11:30:00Z', method: 'Cash', referenceNumber: 'RCP-552', status: 'Received' },
+    { id: 3, projectId: 1, amount: 15000, date: '2024-02-28T09:15:00Z', method: 'Bank Transfer', referenceNumber: 'TX-9950-042', status: 'Pending' }
+  ];
+
   getUsers(): Observable<User[]> { return of(this.users); }
   getProjects(): Observable<Project[]> { return of(this.projects); }
   getBOQItems(projectId: number): Observable<BOQItem[]> { return of(this.boqItems.filter(i => i.projectId === projectId)); }
@@ -155,6 +176,9 @@ export class MockDataService {
   getAllVacationRequests(): Observable<VacationRequest[]> { return of(this.vacationRequests); }
   getNotifications(): Observable<AppNotification[]> { return of(this.notifications); }
   getWorkerPerformance(): Observable<WorkerPerformance[]> { return of(this.workerPerformance); }
+  getRoles(): Observable<Role[]> { return of(this.roles); }
+  getBills(projectId: number): Observable<ProjectBill[]> { return of(this.bills.filter(b => b.projectId === projectId)); }
+  getClientPayments(projectId: number): Observable<ClientPayment[]> { return of(this.clientPayments.filter(p => p.projectId === projectId)); }
 
   // Dashboard stats
   getDashboardStats(): Observable<{ activeProjects: number; completedProjects: number; delayedProjects: number; totalRevenue: number }> {
