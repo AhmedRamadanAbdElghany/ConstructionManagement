@@ -77,7 +77,7 @@ public class BOQItemService : IBOQItemService
                 };
                 await _measuredRepo.AddAsync(measured);
             }
-            else if (boqItem.AccountingType == CalculationMethod.Package)
+            else if (boqItem.AccountingType == CalculationMethod.Packages)
             {
                  var packageData = new BOQPackage
                  {
@@ -142,7 +142,7 @@ public class BOQItemService : IBOQItemService
                 progress = (approvedSum / item.SupervisionData.EstimatedTotalCost) * 100;
             }
         }
-        else if (item.AccountingType == CalculationMethod.Package && item.PackageData != null)
+        else if (item.AccountingType == CalculationMethod.Packages && item.PackageData != null)
         {
             progress = item.PackageData.CompletionPercentage;
         }

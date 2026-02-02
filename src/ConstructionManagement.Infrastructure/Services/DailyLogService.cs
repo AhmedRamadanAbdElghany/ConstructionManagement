@@ -99,6 +99,34 @@ public class DailyLogService : IDailyLogService
         return true;
     }
 
+    public async Task<bool> ReopenClosedDayAsync(int itemId, DateTime logDate, int userId, string reason, List<int>? notifyRoleIds)
+    {
+        var log = await _logRepository.AsQueryable()
+            .FirstOrDefaultAsync(l => l.BOQItemId == itemId && l.LogDate.Date == logDate.Date);
+
+        if (log == null || !log.IsClosed)
+            return false;
+
+        // Find associated delta and remove it
+        var associatedDelta = await _deltaRepository.AsQueryable()
+            .FirstOrDefaultAsync(d => d.BOQItemId == itemId && d.ReferenceId == log.Id && d.ChangeType == "DailyLog");
+        
+        if (associatedDelta != null)
+        {
+            await _deltaRepository.DeleteAsync(associatedDelta);
+        }
+
+        log.IsClosed = false;
+        log.ClosedAt = null;
+        log.ClosedByUserId = null;
+        // logic to use reason and notifyRoleIds could be added here (e.g. Activity Log or Notifications)
+
+        await _logRepository.UpdateAsync(log);
+        await _unitOfWork.SaveChangesAsync();
+
+        return true;
+    }
+
     public async Task<List<DailyLogDto>> GetDailyLogHistoryAsync(int itemId)
     {
         var logs = await _logRepository.AsQueryable()

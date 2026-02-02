@@ -13,10 +13,13 @@ public class RoleServiceTests
 {
     private readonly Mock<IRepository<Role>> _roleRepo = new();
     private readonly Mock<IRepository<UserRole>> _userRoleRepo = new();
-    private readonly Mock<IUnitOfWork> _unitOfWork = new(); // إضافة الموك
+    private readonly Mock<IRepository<Permission>> _permRepo = new();
+    private readonly Mock<IRepository<RolePermission>> _rolePermRepo = new();
+    private readonly Mock<IRepository<User>> _userRepo = new();
+    private readonly Mock<IUnitOfWork> _unitOfWork = new();
 
     private RoleService CreateService() =>
-        new(_roleRepo.Object, _userRoleRepo.Object, _unitOfWork.Object);
+        new(_roleRepo.Object, _userRoleRepo.Object, _permRepo.Object, _rolePermRepo.Object, _userRepo.Object, _unitOfWork.Object);
 
     private void SetupAdmin(int adminId, bool isSuper)
     {
@@ -24,6 +27,11 @@ public class RoleServiceTests
             ? new List<UserRole> { new UserRole { UserId = adminId, Role = new Role { Name = "SuperAdmin" } } }
             : new List<UserRole>();
         _userRoleRepo.Setup(r => r.AsQueryable()).Returns(roles.BuildMock());
+        
+        // Setup initial user state
+        var users = new List<User> { new User { Id = adminId, CompanyId = 1 } };
+        _userRepo.Setup(r => r.AsQueryable()).Returns(users.BuildMock());
+        _userRepo.Setup(r => r.GetByIdAsync(adminId)).ReturnsAsync(users[0]);
     }
 
     [Fact]
@@ -88,7 +96,7 @@ public class RoleServiceTests
 
         // Act & Assert
         await service.Invoking(s => s.DeleteRoleAsync(10, 1))
-            .Should().ThrowAsync<InvalidOperationException>().WithMessage("*مدير النظام الأساسي*");
+            .Should().ThrowAsync<InvalidOperationException>().WithMessage("*system roles*");
 
         _unitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never());
     }

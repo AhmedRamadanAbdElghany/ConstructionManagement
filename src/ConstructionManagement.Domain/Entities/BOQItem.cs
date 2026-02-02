@@ -67,7 +67,7 @@ public class BOQItem : BaseEntity, ICompanyEntity
             {
                 return (MeasuredData?.AgreedQuantity ?? 0) * (MeasuredData?.UnitPrice ?? 0);
             }
-            else if (AccountingType == ConstructionManagement.Domain.Enums.CalculationMethod.Package)
+            else if (AccountingType == ConstructionManagement.Domain.Enums.CalculationMethod.Packages)
             {
                  return PackageData?.TotalPackageValue ?? 0;
             }
