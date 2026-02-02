@@ -24,7 +24,8 @@ export class MockDataService {
       cashFlow: { earned: 1200000, collected: 900000 },
       location: { lat: 25.2048, lng: 55.2708, address: 'Downtown Dubai, UAE' },
       startDate: '2024-01-15T00:00:00Z',
-      endDate: '2025-06-30T00:00:00Z'
+      endDate: '2025-06-30T00:00:00Z',
+      generalManagerUserId: 2
     },
     {
       id: 2,
@@ -34,7 +35,8 @@ export class MockDataService {
       cashFlow: { earned: 500000, collected: 300000 },
       location: { lat: 30.0444, lng: 31.2357, address: 'New Cairo, Egypt' },
       startDate: '2024-03-01T00:00:00Z',
-      endDate: '2025-12-31T00:00:00Z'
+      endDate: '2025-12-31T00:00:00Z',
+      generalManagerUserId: 2
     },
     {
       id: 3,
@@ -44,7 +46,8 @@ export class MockDataService {
       cashFlow: { earned: 850000, collected: 650000 },
       location: { lat: 24.7136, lng: 46.6753, address: 'Al Olaya District, Riyadh' },
       startDate: '2024-02-01T00:00:00Z',
-      endDate: '2025-08-15T00:00:00Z'
+      endDate: '2025-08-15T00:00:00Z',
+      generalManagerUserId: 4
     },
     {
       id: 4,
@@ -54,7 +57,8 @@ export class MockDataService {
       cashFlow: { earned: 2500000, collected: 2400000 },
       location: { lat: 24.4539, lng: 54.3773, address: 'ADGM, Abu Dhabi' },
       startDate: '2023-01-01T00:00:00Z',
-      endDate: '2024-06-30T00:00:00Z'
+      endDate: '2024-06-30T00:00:00Z',
+      generalManagerUserId: 4
     },
     {
       id: 5,
@@ -64,7 +68,19 @@ export class MockDataService {
       cashFlow: { earned: 1800000, collected: 1500000 },
       location: { lat: 29.3759, lng: 47.9774, address: 'Kuwait City, Kuwait' },
       startDate: '2023-09-01T00:00:00Z',
-      endDate: '2025-03-31T00:00:00Z'
+      endDate: '2025-03-31T00:00:00Z',
+      generalManagerUserId: 7
+    },
+    {
+      id: 6,
+      name: 'Airport Extension Phase 1',
+      status: 'Delayed',
+      progress: 15,
+      cashFlow: { earned: 200000, collected: 50000 },
+      location: { lat: 29.3759, lng: 47.9774, address: 'Kuwait City, Kuwait' },
+      startDate: '2024-05-01T00:00:00Z',
+      endDate: '2026-03-31T00:00:00Z',
+      generalManagerUserId: 2
     }
   ];
 
@@ -139,10 +155,10 @@ export class MockDataService {
   ];
 
   private workerPerformance: WorkerPerformance[] = [
-    { userId: 2, userName: 'Maria Hassan', projectName: 'Residential Tower Dubai', tasksCompleted: 45, efficiency: 92, attendance: 98, status: 'Peak' },
-    { userId: 4, userName: 'Omar Khalil', projectName: 'Residential Tower Dubai', tasksCompleted: 38, efficiency: 88, attendance: 95, status: 'Peak' },
-    { userId: 6, userName: 'Sara Ibrahim', projectName: 'Commercial Mall Cairo', tasksCompleted: 12, efficiency: 65, attendance: 60, status: 'Below Average' },
-    { userId: 7, userName: 'Mohamed Farid', projectName: 'Villa Complex Riyadh', tasksCompleted: 52, efficiency: 95, attendance: 100, status: 'Peak' }
+    { userId: 2, userName: 'Maria Hassan', projectName: 'Residential Tower Dubai', tasksCompleted: 45, efficiency: 92, attendance: 98, approvedItems: 42, rejectedItems: 3, status: 'Peak' },
+    { userId: 4, userName: 'Omar Khalil', projectName: 'Residential Tower Dubai', tasksCompleted: 38, efficiency: 88, attendance: 95, approvedItems: 35, rejectedItems: 3, status: 'Peak' },
+    { userId: 6, userName: 'Sara Ibrahim', projectName: 'Commercial Mall Cairo', tasksCompleted: 12, efficiency: 65, attendance: 60, approvedItems: 8, rejectedItems: 4, status: 'Below Average' },
+    { userId: 7, userName: 'Mohamed Farid', projectName: 'Villa Complex Riyadh', tasksCompleted: 52, efficiency: 95, attendance: 100, approvedItems: 50, rejectedItems: 2, status: 'Peak' }
   ];
 
   private roles: Role[] = [
@@ -230,9 +246,7 @@ export class MockDataService {
   markAllNotificationsRead(): Observable<boolean> {
     this.notifications.forEach(n => n.read = true);
     return of(true);
-  }
-
-  // SuperAdmin specialized stats
+  }  // SuperAdmin specialized stats
   getSuperAdminStats(): Observable<{
     totalCompanies: number;
     activeSubscriptions: number;
@@ -255,5 +269,60 @@ export class MockDataService {
       { id: 4, companyName: 'Urban Development', plan: 'Enterprise', status: 'Active', nextPayment: '2024-03-10', amount: 5000 },
       { id: 5, companyName: 'Desert Rock Ltd', plan: 'Professional', status: 'Active', nextPayment: '2024-03-25', amount: 1500 }
     ]);
+  }
+
+
+  getDelayedProjectsStats(): Observable<{ managerName: string, count: number }[]> {
+    const delayedProjects = this.projects.filter(p => p.status === 'Delayed');
+    const stats = new Map<string, number>();
+
+    delayedProjects.forEach(p => {
+      if (p.generalManagerUserId) {
+        const manager = this.users.find(u => u.id === p.generalManagerUserId);
+        if (manager) {
+          const count = stats.get(manager.fullName) || 0;
+          stats.set(manager.fullName, count + 1);
+        }
+      }
+    });
+
+    const result = Array.from(stats, ([managerName, count]) => ({ managerName, count }));
+    // Add dummy data for visual balance if needed
+    if (result.length === 0) {
+      result.push({ managerName: 'Maria Hassan', count: 2 });
+    }
+    return of(result);
+  }
+
+  getWorkerProjectStats(userId: number): Observable<{
+    totalProjects: number,
+    active: number,
+    completed: number,
+    delayed: number,
+    causedDelayCount: number,
+    projects: { project: Project, role: string, causedDelay: boolean }[]
+  }> {
+    // Simulate user involvement in projects
+    // For demo purposes, we'll assign the user to all projects but with different statuses
+    const userProjects = this.projects.map((p, index) => {
+      // Mock some logic for "Reason for Delay" - Assign specifically to Project ID 2 for demo
+      const causedDelay = p.status === 'Delayed' && (p.id === 2 || p.id === 6) && userId === 2; // Maria Hassan caused delay in Cairo & Airport
+      return {
+        project: p,
+        role: 'Site Engineer',
+        causedDelay: causedDelay
+      };
+    });
+
+    const stats = {
+      totalProjects: userProjects.length,
+      active: userProjects.filter(up => up.project.status === 'Active').length,
+      completed: userProjects.filter(up => up.project.status === 'Completed').length,
+      delayed: userProjects.filter(up => up.project.status === 'Delayed').length,
+      causedDelayCount: userProjects.filter(up => up.causedDelay).length,
+      projects: userProjects
+    };
+
+    return of(stats);
   }
 }

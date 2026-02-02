@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MockDataService } from '../../../../core/mock/mock-data.service';
-import { Project, User, DailyLog, BOQItem, CompanySettings, ProjectSettings, Role, Transaction, ProjectBill, ClientPayment } from '../../../../shared/interfaces';
+import { Project, User, DailyLog, BOQItem, CompanySettings, ProjectSettings, Role, Transaction, ProjectBill, ClientPayment, ProjectActivity } from '../../../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -55,8 +55,18 @@ import { map } from 'rxjs/operators';
                 {{ project.location?.address }}
               </p>
             </div>
-            <div class="flex space-x-3">
-              <!-- Edit button removed as requested -->
+            <div class="flex items-center space-x-6 bg-white dark:bg-slate-900 rounded-2xl p-2 pr-6 border border-slate-200 dark:border-white/5 shadow-sm">
+               <div class="relative w-12 h-12 flex items-center justify-center">
+                  <svg class="w-full h-full transform -rotate-90">
+                     <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" fill="transparent" class="text-slate-100 dark:text-slate-800" />
+                     <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" fill="transparent" stroke-dasharray="125.6" stroke-dashoffset="12.56" class="text-emerald-500" />
+                  </svg>
+                  <span class="absolute text-[10px] font-black text-slate-900 dark:text-white">98%</span>
+               </div>
+               <div>
+                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Health Score</p>
+                  <p class="text-sm font-black text-emerald-500 uppercase tracking-tight">Excellent</p>
+               </div>
             </div>
           </div>
 
@@ -131,7 +141,7 @@ import { map } from 'rxjs/operators';
               [class.border-slate-200]="activeTab !== 'history'"
               [class.dark:border-white/5]="activeTab !== 'history'"
               class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-              {{ 'project_detail.daily_history' | translate }}
+              Activity & Logs
             </button>
             <button 
               (click)="activeTab = 'boq'"
@@ -528,51 +538,83 @@ import { map } from 'rxjs/operators';
             </div>
           }
 
-          <!-- History Tab -->
+          <!-- Activity Tab -->
           @if (activeTab === 'history') {
-            <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
-              <h3 class="text-lg font-bold text-white mb-6">{{ 'project_detail.daily_logs' | translate }}</h3>
-              <div class="space-y-4">
-                @for (log of dailyLogs; track log.id) {
-                  <div class="p-4 rounded-xl bg-slate-700/30 border-l-4 transition-colors"
-                       [class.border-emerald-500]="log.isClosed"
-                       [class.border-amber-500]="!log.isClosed">
-                    <div class="flex items-center justify-between">
-                      <div class="flex items-center space-x-4">
-                        <div class="w-12 h-12 rounded-xl flex items-center justify-center"
-                             [class.bg-emerald-500/20]="log.isClosed"
-                             [class.bg-amber-500/20]="!log.isClosed">
-                          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                               [class.text-emerald-400]="log.isClosed"
-                               [class.text-amber-400]="!log.isClosed">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                          </svg>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <!-- Activity Feed -->
+              <div class="lg:col-span-2 space-y-4">
+                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 p-8">
+                  <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">Pulse Activity Feed</h3>
+                  <div class="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:h-full before:w-0.5 before:-translate-x-px before:bg-gradient-to-b before:from-slate-200 before:via-slate-200 before:to-transparent dark:before:from-white/10 dark:before:to-transparent">
+                    @for (activity of activities; track activity.id) {
+                      <div class="relative flex items-start group">
+                        <div class="absolute left-0 flex h-10 w-10 items-center justify-center rounded-full border-4 border-white dark:border-slate-900 transition-all group-hover:scale-110"
+                             [ngClass]="{
+                               'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20': activity.type === 'Log',
+                               'bg-cyan-500 text-white shadow-lg shadow-cyan-500/20': activity.type === 'Finance',
+                               'bg-purple-500 text-white shadow-lg shadow-purple-500/20': activity.type === 'Team',
+                               'bg-amber-500 text-white shadow-lg shadow-amber-500/20': activity.type === 'Setting',
+                               'bg-rose-500 text-white shadow-lg shadow-rose-500/20': activity.type === 'Media'
+                             }">
+                          @if (activity.type === 'Log') { <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> }
+                          @if (activity.type === 'Finance') { <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> }
+                          @if (activity.type === 'Team') { <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg> }
+                          @if (activity.type === 'Setting') { <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> }
                         </div>
-                        <div>
-                          <p class="text-white font-medium">{{ log.date | date:'fullDate' }}</p>
-                          <p class="text-sm text-slate-400">{{ log.items.length }} items logged</p>
+                        <div class="flex-1 ml-16 bg-slate-50 dark:bg-white/[0.02] rounded-3xl p-6 border border-slate-100 dark:border-white/5 transition-all hover:bg-white dark:hover:bg-white/5 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none">
+                          <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-black text-slate-900 dark:text-white">{{ activity.userName }}</span>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ activity.timestamp | date:'shortTime' }}</span>
+                          </div>
+                          <p class="text-sm font-black text-slate-600 dark:text-cyan-400 mb-1">{{ activity.action }}</p>
+                          <p class="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">{{ activity.details }}</p>
+                          @if (activity.timestamp) {
+                            <p class="mt-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ activity.timestamp | date:'longDate' }}</p>
+                          }
                         </div>
                       </div>
-                      <div class="flex items-center space-x-3">
-                        <span class="px-3 py-1.5 rounded-lg text-xs font-medium"
-                              [class.bg-emerald-500/20]="log.isClosed"
-                              [class.text-emerald-400]="log.isClosed"
-                              [class.bg-amber-500/20]="!log.isClosed"
-                              [class.text-amber-400]="!log.isClosed">
-                          {{ log.isClosed ? 'Closed' : 'Open' }}
-                        </span>
-                        <button class="px-4 py-2 rounded-xl bg-cyan-500/20 text-cyan-400 text-sm font-medium hover:bg-cyan-500/30 transition-colors">
-                          View Details
-                        </button>
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <!-- Secondary Section: Daily Logs Summary -->
+              <div class="space-y-6">
+                <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[2.5rem] p-8 text-white shadow-xl shadow-indigo-500/20">
+                  <h4 class="text-xs font-black uppercase tracking-[0.2em] opacity-60 mb-6">Historical Logs</h4>
+                  <div class="space-y-3">
+                    @for (log of dailyLogs.slice(0, 5); track log.id) {
+                      <div class="flex items-center justify-between p-3 rounded-2xl bg-white/10 hover:bg-white/20 transition-all cursor-pointer">
+                        <span class="text-xs font-bold">{{ log.date | date:'mediumDate' }}</span>
+                        <span class="px-2 py-1 rounded-lg bg-white/10 text-[9px] font-black uppercase">{{ log.items.length }} Items</span>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 p-8">
+                  <h4 class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-6">Quick Stats</h4>
+                  <div class="space-y-6">
+                    <div>
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-[10px] font-black text-slate-400 uppercase">Log Accuracy</span>
+                        <span class="text-sm font-black text-slate-900 dark:text-white">94%</span>
+                      </div>
+                      <div class="h-1.5 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                        <div class="h-full bg-emerald-500" style="width: 94%"></div>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-[10px] font-black text-slate-400 uppercase">Approval Speed</span>
+                        <span class="text-sm font-black text-slate-900 dark:text-white">2.4h</span>
+                      </div>
+                      <div class="h-1.5 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                        <div class="h-full bg-cyan-500" style="width: 70%"></div>
                       </div>
                     </div>
                   </div>
-                }
-                @if (dailyLogs.length === 0) {
-                  <div class="text-center py-12 text-slate-400">
-                    <p>No daily logs found for this project.</p>
-                  </div>
-                }
+                </div>
               </div>
             </div>
           }
@@ -1489,6 +1531,7 @@ export class ProjectDetailComponent implements OnInit {
    companyUsers: User[] = [];
    dailyLogs: DailyLog[] = [];
    boqItems: BOQItem[] = [];
+   activities: ProjectActivity[] = [];
 
    get totalCollected(): number {
       return this.clientPayments.reduce((sum, p) => sum + p.amount, 0);
@@ -1615,6 +1658,15 @@ export class ProjectDetailComponent implements OnInit {
          this.mockDataService.getClientPayments(projectId).subscribe(payments => {
             this.clientPayments = payments;
          });
+
+         // Mock Activities
+         this.activities = [
+            { id: 1, projectId, userId: 1, userName: 'Ahmed Ramadan', type: 'Log', action: 'Daily Log Sealed', details: 'Phase 1 - Concrete pouring for foundation was verified and closed.', timestamp: new Date(Date.now() - 3600000).toISOString() },
+            { id: 2, projectId, userId: 2, userName: 'Sarah Khalil', type: 'Finance', action: 'New Invoice Issued', details: 'Client Bill #2026-004 for $15,000 has been sent for approval.', timestamp: new Date(Date.now() - 86400000).toISOString() },
+            { id: 3, projectId, userId: 1, userName: 'Ahmed Ramadan', type: 'Team', action: 'Assigned New Engineer', details: 'Basem Ali was added to the project as a Company User.', timestamp: new Date(Date.now() - 172800000).toISOString() },
+            { id: 4, projectId, userId: 3, userName: 'System Bot', type: 'Setting', action: 'Auto-Close Enabled', details: 'Project was updated to automatically close daily logs at 18:00.', timestamp: new Date(Date.now() - 259200000).toISOString() },
+            { id: 5, projectId, userId: 2, userName: 'Sarah Khalil', type: 'Media', action: 'Site Photos Uploaded', details: '4 New photos of the electrical installations were added to the site media.', timestamp: new Date(Date.now() - 432000000).toISOString() }
+         ];
       }
    }
 

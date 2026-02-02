@@ -54,7 +54,13 @@
     "project": "Project",
     "tasks": "Tasks",
     "efficiency": "Efficiency",
-    "attendance": "Attendance"
+    "assigned_projects": "Assigned Projects",
+    "involved_delayed": "Involved in Delayed",
+    "caused_delays": "Caused Delays",
+    "my_projects_status": "My Projects Status",
+    "delayed_responsibility": "Delay Responsibility Breakdown",
+    "attendance": "Attendance",
+    "team_performance": "Team Performance Overview"
   },
   "hr": {
     "title": "HR & User Management",

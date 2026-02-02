@@ -44,6 +44,7 @@ export interface Project {
   extraFeesDescription?: string;
   deductedAmount?: number;
   deductedAmountDescription?: string;
+  generalManagerUserId?: number;
 }
 
 export interface BOQItem {
@@ -129,6 +130,8 @@ export interface WorkerPerformance {
   tasksCompleted: number;
   efficiency: number;
   attendance: number;
+  approvedItems: number;
+  rejectedItems: number;
   status: 'Peak' | 'Steady' | 'Below Average';
 }
 
@@ -327,3 +330,13 @@ export interface ClientPayment {
   actionBy?: string;
 }
 
+export interface ProjectActivity {
+  id: number;
+  projectId: number;
+  userId: number;
+  userName: string;
+  type: 'Log' | 'Finance' | 'Team' | 'Setting' | 'Media';
+  action: string;
+  details: string;
+  timestamp: string; // ISO string
+}
