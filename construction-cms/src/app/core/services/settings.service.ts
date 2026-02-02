@@ -23,7 +23,7 @@ export class SettingsService {
         enableInvoiceReview: true,
         enableInvoiceAggregation: true,
         maxPhotosPerUpload: 10,
-        clientCanSeeFinancials: false,
+        clientCanSeeFinancials: true,
         clientCanSeeMedia: true,
         clientCanSeeBOQ: true,
         defaultMoneyCalculationMethod: 'Measured',
@@ -34,8 +34,8 @@ export class SettingsService {
         allowHR: true,
         defaultSupervisionPercentage: 10,
         allowAddProgressEntry: true,
-        allowReopenClosedDay: false,
-        autoCloseDay: false,
+        allowReopenClosedDay: true,
+        autoCloseDay: true,
         autoCloseDayTime: '18:00'
     };
 

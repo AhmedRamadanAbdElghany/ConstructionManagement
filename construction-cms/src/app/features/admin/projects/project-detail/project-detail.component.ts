@@ -218,7 +218,9 @@ import { map } from 'rxjs/operators';
                 </div>
               </div>
               <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
-                @if (companySettings?.delayNotificationSendEmail || companySettings?.autoCloseDay || companySettings?.allowAddProgressEntry || companySettings?.allowReopenClosedDay) {
+                @if (companySettings?.delayNotificationSendEmail || companySettings?.autoCloseDay || companySettings?.allowAddProgressEntry || companySettings?.allowReopenClosedDay || 
+                    companySettings?.clientCanSeeFinancials || companySettings?.clientCanSeeMedia || companySettings?.clientCanSeeBOQ || 
+                    companySettings?.requirePhotoReview || companySettings?.enableInvoiceReview) {
                 <h3 class="text-lg font-bold text-white mb-6">Project Settings</h3>
                 <div class="space-y-4">
                   <!-- Email Settings (Only if allowed by company) -->
@@ -335,6 +337,132 @@ import { map } from 'rxjs/operators';
                       </button>
                     </div>
                   </div>
+                  }
+
+                  <!-- Governance Overrides -->
+                  @if (companySettings?.requirePhotoReview || companySettings?.enableInvoiceReview) {
+                    <div class="pt-4 mt-2 border-t border-white/5">
+                      <p class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Governance & Reviews</p>
+                      <div class="space-y-3">
+                        @if (companySettings?.requirePhotoReview) {
+                          <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
+                            <div>
+                              <p class="text-white text-xs font-bold">Photo Approval</p>
+                              <p class="text-[8px] text-slate-400 font-bold uppercase">{{ projectSettings?.requirePhotoReview === null ? 'Inherited' : 'Override' }}</p>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                              @if (projectSettings?.requirePhotoReview !== null) {
+                                <button (click)="resetPhotoReview()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
+                              }
+                              <button (click)="togglePhotoReview()" 
+                                      [class.bg-orange-500]="projectSettings?.requirePhotoReview ?? companySettings?.requirePhotoReview"
+                                      [class.bg-slate-600]="!(projectSettings?.requirePhotoReview ?? companySettings?.requirePhotoReview)"
+                                      class="w-10 h-5 rounded-full relative transition-all">
+                                <span [class.right-1]="projectSettings?.requirePhotoReview ?? companySettings?.requirePhotoReview"
+                                      [class.left-1]="!(projectSettings?.requirePhotoReview ?? companySettings?.requirePhotoReview)"
+                                      class="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"></span>
+                              </button>
+                            </div>
+                          </div>
+                        }
+
+                        @if (companySettings?.enableInvoiceReview) {
+                          <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
+                            <div>
+                              <p class="text-white text-xs font-bold">Invoice Approval</p>
+                              <p class="text-[8px] text-slate-400 font-bold uppercase">{{ projectSettings?.enableInvoiceReview === null ? 'Inherited' : 'Override' }}</p>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                              @if (projectSettings?.enableInvoiceReview !== null) {
+                                <button (click)="resetInvoiceReview()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
+                              }
+                              <button (click)="toggleInvoiceReview()" 
+                                      [class.bg-orange-500]="projectSettings?.enableInvoiceReview ?? companySettings?.enableInvoiceReview"
+                                      [class.bg-slate-600]="!(projectSettings?.enableInvoiceReview ?? companySettings?.enableInvoiceReview)"
+                                      class="w-10 h-5 rounded-full relative transition-all">
+                                <span [class.right-1]="projectSettings?.enableInvoiceReview ?? companySettings?.enableInvoiceReview"
+                                      [class.left-1]="!(projectSettings?.enableInvoiceReview ?? companySettings?.enableInvoiceReview)"
+                                      class="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"></span>
+                              </button>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
+
+                  <!-- Client Visibility Overrides -->
+                  @if (companySettings?.clientCanSeeFinancials || companySettings?.clientCanSeeMedia || companySettings?.clientCanSeeBOQ) {
+                    <div class="pt-4 mt-2 border-t border-white/5">
+                      <p class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Client Portal Visibility</p>
+                      <div class="space-y-3">
+                        @if (companySettings?.clientCanSeeFinancials) {
+                          <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
+                            <div>
+                              <p class="text-white text-xs font-bold">Financial Status</p>
+                              <p class="text-[8px] text-slate-400 font-bold uppercase">{{ projectSettings?.clientCanSeeFinancials === null ? 'Inherited' : 'Override' }}</p>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                              @if (projectSettings?.clientCanSeeFinancials !== null) {
+                                <button (click)="resetClientFinancials()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
+                              }
+                              <button (click)="toggleClientFinancials()" 
+                                      [class.bg-blue-500]="projectSettings?.clientCanSeeFinancials ?? companySettings?.clientCanSeeFinancials"
+                                      [class.bg-slate-600]="!(projectSettings?.clientCanSeeFinancials ?? companySettings?.clientCanSeeFinancials)"
+                                      class="w-10 h-5 rounded-full relative transition-all">
+                                <span [class.right-1]="projectSettings?.clientCanSeeFinancials ?? companySettings?.clientCanSeeFinancials"
+                                      [class.left-1]="!(projectSettings?.clientCanSeeFinancials ?? companySettings?.clientCanSeeFinancials)"
+                                      class="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"></span>
+                              </button>
+                            </div>
+                          </div>
+                        }
+
+                        @if (companySettings?.clientCanSeeMedia) {
+                          <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
+                            <div>
+                              <p class="text-white text-xs font-bold">Site Media</p>
+                              <p class="text-[8px] text-slate-400 font-bold uppercase">{{ projectSettings?.clientCanSeeMedia === null ? 'Inherited' : 'Override' }}</p>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                              @if (projectSettings?.clientCanSeeMedia !== null) {
+                                <button (click)="resetClientMedia()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
+                              }
+                              <button (click)="toggleClientMedia()" 
+                                      [class.bg-blue-500]="projectSettings?.clientCanSeeMedia ?? companySettings?.clientCanSeeMedia"
+                                      [class.bg-slate-600]="!(projectSettings?.clientCanSeeMedia ?? companySettings?.clientCanSeeMedia)"
+                                      class="w-10 h-5 rounded-full relative transition-all">
+                                <span [class.right-1]="projectSettings?.clientCanSeeMedia ?? companySettings?.clientCanSeeMedia"
+                                      [class.left-1]="!(projectSettings?.clientCanSeeMedia ?? companySettings?.clientCanSeeMedia)"
+                                      class="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"></span>
+                              </button>
+                            </div>
+                          </div>
+                        }
+
+                        @if (companySettings?.clientCanSeeBOQ) {
+                          <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
+                            <div>
+                              <p class="text-white text-xs font-bold">BOQ Details</p>
+                              <p class="text-[8px] text-slate-400 font-bold uppercase">{{ projectSettings?.clientCanSeeBOQ === null ? 'Inherited' : 'Override' }}</p>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                              @if (projectSettings?.clientCanSeeBOQ !== null) {
+                                <button (click)="resetClientBOQ()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
+                              }
+                              <button (click)="toggleClientBOQ()" 
+                                      [class.bg-blue-500]="projectSettings?.clientCanSeeBOQ ?? companySettings?.clientCanSeeBOQ"
+                                      [class.bg-slate-600]="!(projectSettings?.clientCanSeeBOQ ?? companySettings?.clientCanSeeBOQ)"
+                                      class="w-10 h-5 rounded-full relative transition-all">
+                                <span [class.right-1]="projectSettings?.clientCanSeeBOQ ?? companySettings?.clientCanSeeBOQ"
+                                      [class.left-1]="!(projectSettings?.clientCanSeeBOQ ?? companySettings?.clientCanSeeBOQ)"
+                                      class="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"></span>
+                              </button>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    </div>
                   }
                 </div>
                 }
@@ -1823,6 +1951,71 @@ export class ProjectDetailComponent implements OnInit {
    resetAutoCloseTime() {
       if (!this.projectSettings) return;
       this.projectSettings.autoCloseDayTime = null;
+      this.saveProjectSettings();
+   }
+
+   toggleClientFinancials() {
+      if (!this.projectSettings || !this.companySettings) return;
+      const current = this.projectSettings.clientCanSeeFinancials ?? this.companySettings.clientCanSeeFinancials;
+      this.projectSettings.clientCanSeeFinancials = !current;
+      this.saveProjectSettings();
+   }
+
+   resetClientFinancials() {
+      if (!this.projectSettings) return;
+      this.projectSettings.clientCanSeeFinancials = null;
+      this.saveProjectSettings();
+   }
+
+   toggleClientMedia() {
+      if (!this.projectSettings || !this.companySettings) return;
+      const current = this.projectSettings.clientCanSeeMedia ?? this.companySettings.clientCanSeeMedia;
+      this.projectSettings.clientCanSeeMedia = !current;
+      this.saveProjectSettings();
+   }
+
+   resetClientMedia() {
+      if (!this.projectSettings) return;
+      this.projectSettings.clientCanSeeMedia = null;
+      this.saveProjectSettings();
+   }
+
+   toggleClientBOQ() {
+      if (!this.projectSettings || !this.companySettings) return;
+      const current = this.projectSettings.clientCanSeeBOQ ?? this.companySettings.clientCanSeeBOQ;
+      this.projectSettings.clientCanSeeBOQ = !current;
+      this.saveProjectSettings();
+   }
+
+   resetClientBOQ() {
+      if (!this.projectSettings) return;
+      this.projectSettings.clientCanSeeBOQ = null;
+      this.saveProjectSettings();
+   }
+
+   togglePhotoReview() {
+      if (!this.projectSettings || !this.companySettings) return;
+      const current = this.projectSettings.requirePhotoReview ?? this.companySettings.requirePhotoReview;
+      this.projectSettings.requirePhotoReview = !current;
+      this.saveProjectSettings();
+   }
+
+   resetPhotoReview() {
+      if (!this.projectSettings) return;
+      this.projectSettings.requirePhotoReview = null;
+      this.saveProjectSettings();
+   }
+
+   toggleInvoiceReview() {
+      if (!this.projectSettings || !this.companySettings) return;
+      const current = this.projectSettings.enableInvoiceReview ?? this.companySettings.enableInvoiceReview;
+      this.projectSettings.enableInvoiceReview = !current;
+      this.saveProjectSettings();
+   }
+
+   resetInvoiceReview() {
+      if (!this.projectSettings) return;
+      this.projectSettings.enableInvoiceReview = null;
       this.saveProjectSettings();
    }
 
