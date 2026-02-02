@@ -65,6 +65,7 @@ builder.Services.AddScoped<IProjectSettingsService, ProjectSettingsService>();
 builder.Services.AddScoped<IProjectApprovalRuleService, ProjectApprovalRuleService>();
 builder.Services.AddScoped<IProjectDelayEscalationService, ProjectDelayEscalationService>(); // renamed & kept
 builder.Services.AddScoped<IProjectTransactionService, ProjectTransactionService>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Notification & Email

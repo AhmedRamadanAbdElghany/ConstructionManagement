@@ -1,5 +1,13 @@
 export type UserRole = 'SuperAdmin' | 'CompanyAdmin' | 'CompanyUser' | 'NormalUser';
 
+export interface Company {
+  id: number;
+  name: string;
+  isActive: boolean;
+  packageId?: number;
+  settings?: any;
+}
+
 export interface User {
   id: number;
   fullName: string;

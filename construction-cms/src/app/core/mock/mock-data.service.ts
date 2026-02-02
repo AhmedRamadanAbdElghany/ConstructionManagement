@@ -231,4 +231,29 @@ export class MockDataService {
     this.notifications.forEach(n => n.read = true);
     return of(true);
   }
+
+  // SuperAdmin specialized stats
+  getSuperAdminStats(): Observable<{
+    totalCompanies: number;
+    activeSubscriptions: number;
+    monthlyRecurringRevenue: number;
+    pendingOnboardings: number
+  }> {
+    return of({
+      totalCompanies: 45,
+      activeSubscriptions: 42,
+      monthlyRecurringRevenue: 125000,
+      pendingOnboardings: 3
+    });
+  }
+
+  getCompanySubscriptions(): Observable<any[]> {
+    return of([
+      { id: 1, companyName: 'Al-Massa Construction', plan: 'Enterprise', status: 'Active', nextPayment: '2024-03-15', amount: 5000 },
+      { id: 2, companyName: 'BuildIt Solutions', plan: 'Professional', status: 'Active', nextPayment: '2024-03-20', amount: 1500 },
+      { id: 3, companyName: 'Skyline Architects', plan: 'Starter', status: 'Canceled', nextPayment: '-', amount: 0 },
+      { id: 4, companyName: 'Urban Development', plan: 'Enterprise', status: 'Active', nextPayment: '2024-03-10', amount: 5000 },
+      { id: 5, companyName: 'Desert Rock Ltd', plan: 'Professional', status: 'Active', nextPayment: '2024-03-25', amount: 1500 }
+    ]);
+  }
 }

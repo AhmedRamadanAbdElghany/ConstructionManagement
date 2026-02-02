@@ -26,6 +26,18 @@ export const routes: Routes = [
         path: 'admin',
         children: [
             {
+                path: 'companies',
+                loadComponent: () => import('./features/admin/companies/companies.component').then(m => m.CompaniesComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin'] }
+            },
+            {
+                path: 'companies/:id',
+                loadComponent: () => import('./features/admin/companies/company-detail/company-detail.component').then(m => m.CompanyDetailComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin'] }
+            },
+            {
                 path: 'hr',
                 loadComponent: () => import('./features/admin/hr/hr.component').then(m => m.HrComponent),
                 canActivate: [roleGuard],
@@ -52,6 +64,18 @@ export const routes: Routes = [
             {
                 path: 'company-settings',
                 loadComponent: () => import('./features/admin/company-settings/company-settings.component').then(m => m.CompanySettingsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'access-control/permissions',
+                loadComponent: () => import('./features/admin/access-control/permissions/permissions.component').then(m => m.PermissionsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin'] }
+            },
+            {
+                path: 'access-control/roles',
+                loadComponent: () => import('./features/admin/access-control/roles/roles.component').then(m => m.RolesComponent),
                 canActivate: [roleGuard],
                 data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
             }

@@ -384,7 +384,7 @@ import { map } from 'rxjs/operators';
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all animate-in fade-in duration-500">
               <div class="px-8 py-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-slate-50/30 dark:bg-slate-950/20">
                 <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Bill of Quantities</h3>
-                <button class="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl">
+                <button (click)="showAddBoqModal = true" class="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl">
                   Add Item
                 </button>
               </div>
@@ -399,6 +399,7 @@ import { map } from 'rxjs/operators';
                       <th class="px-8 py-5">Progress</th>
                       <th class="px-8 py-5">Rate</th>
                       <th class="px-8 py-5">Total Value</th>
+                      <th class="px-8 py-5 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-slate-100 dark:divide-white/5 text-slate-900 dark:text-white">
@@ -420,6 +421,23 @@ import { map } from 'rxjs/operators';
                         </td>
                         <td class="px-8 py-6 text-sm font-bold text-slate-500">{{ item.rate | currency:'USD' }}</td>
                         <td class="px-8 py-6 font-black text-emerald-600 dark:text-emerald-400">{{ item.totalQuantity * item.rate | currency:'USD' }}</td>
+                        <td class="px-8 py-6 text-right">
+                          <div class="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button class="p-2 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all" (click)="deleteBoqItem(item.id)">
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    } @empty {
+                      <tr>
+                        <td colspan="8" class="px-8 py-20 text-center">
+                          <div class="w-16 h-16 rounded-[2rem] bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-4 opacity-50">
+                            <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                          </div>
+                          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">No BOQ Items Yet</p>
+                          <p class="text-xs text-slate-400">Click "Add Item" to create your first Bill of Quantity item</p>
+                        </td>
                       </tr>
                     }
                   </tbody>
@@ -595,6 +613,7 @@ import { map } from 'rxjs/operators';
                               <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Amount</th>
                               <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
                               <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Audit Trail</th>
+                              <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
                            </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 dark:divide-white/5">
@@ -994,6 +1013,68 @@ import { map } from 'rxjs/operators';
             </div>
           }
 
+          <!-- Add BOQ Item Modal -->
+          @if (showAddBoqModal) {
+            <div class="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xl animate-in fade-in duration-300">
+               <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[3rem] shadow-2xl flex flex-col relative overflow-hidden animate-in scale-in-95 duration-500 border border-white/10">
+                  <div class="p-10 pb-6 flex items-center justify-between bg-slate-50/50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
+                     <div>
+                        <h3 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Add BOQ Item</h3>
+                        <p class="text-[10px] text-cyan-500 font-bold uppercase tracking-widest mt-1">New work item definition</p>
+                     </div>
+                     <button (click)="showAddBoqModal = false" class="p-4 rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition-all shadow-sm">
+                        <svg class="w-5 h-5 text-slate-400 font-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                     </button>
+                  </div>
+
+                  <div class="p-10 pt-6 space-y-6">
+                     <div class="relative group">
+                        <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Description</label>
+                        <input type="text" [(ngModel)]="boqForm.description" placeholder="e.g. Excavation Works"
+                               class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 outline-none transition-all">
+                     </div>
+                     <div class="grid grid-cols-2 gap-4">
+                        <div class="relative group">
+                           <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Unit</label>
+                           <select [(ngModel)]="boqForm.unit" 
+                                   class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none appearance-none">
+                              <option value="">Select Unit</option>
+                              <option value="m³">m³ (Cubic Meter)</option>
+                              <option value="m²">m² (Square Meter)</option>
+                              <option value="m">m (Meter)</option>
+                              <option value="ton">Ton</option>
+                              <option value="kg">kg (Kilogram)</option>
+                              <option value="pcs">Pieces</option>
+                              <option value="L.S.">Lump Sum</option>
+                           </select>
+                        </div>
+                        <div class="relative group">
+                           <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Total Quantity</label>
+                           <input type="number" [(ngModel)]="boqForm.totalQuantity" 
+                                  class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none">
+                        </div>
+                     </div>
+                     <div class="relative group">
+                        <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Unit Rate ($)</label>
+                        <input type="number" [(ngModel)]="boqForm.rate" 
+                               class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none">
+                     </div>
+                     @if (boqForm.totalQuantity > 0 && boqForm.rate > 0) {
+                        <div class="p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+                           <p class="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-1">Estimated Total Value</p>
+                           <p class="text-xl font-black text-emerald-600">{{ boqForm.totalQuantity * boqForm.rate | currency:'USD' }}</p>
+                        </div>
+                     }
+                  </div>
+
+                  <div class="p-10 pt-4 flex space-x-4 shrink-0 bg-slate-50/50 dark:bg-white/5">
+                     <button (click)="showAddBoqModal = false" class="flex-1 py-5 rounded-[1.5rem] bg-white dark:bg-slate-800 text-slate-500 font-black text-[11px] uppercase tracking-widest border border-slate-200 dark:border-white/5">Cancel</button>
+                     <button (click)="addBoqItem()" [disabled]="!boqForm.description || !boqForm.unit || boqForm.totalQuantity <= 0" class="flex-[2] py-5 rounded-[1.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-[11px] uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50">Add Item</button>
+                  </div>
+               </div>
+            </div>
+          }
+
           <!-- Add Bill Modal -->
           @if (showAddBillModal) {
             <div class="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xl animate-in fade-in duration-300">
@@ -1028,6 +1109,24 @@ import { map } from 'rxjs/operators';
                         <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Notes</label>
                         <textarea [(ngModel)]="billForm.notes" 
                                   class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none focus:border-cyan-500"></textarea>
+                     </div>
+                     <div class="relative group">
+                        <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Bill Photo</label>
+                        <div class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 border-dashed flex flex-col items-center justify-center text-center group-hover:border-cyan-500/50 transition-colors cursor-pointer relative">
+                           <input type="file" (change)="onFileSelected($event, 'bill')" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                           @if (!billForm.photoUrl) {
+                              <div class="space-y-2">
+                                 <svg class="w-8 h-8 text-slate-300 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                 <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Click to Upload Image</p>
+                              </div>
+                           }
+                           @if (billForm.photoUrl) {
+                              <div class="relative z-20 w-full">
+                                 <img [src]="billForm.photoUrl" class="h-32 mx-auto rounded-xl shadow-lg object-contain bg-white dark:bg-black/20">
+                                 <p class="text-[9px] text-emerald-500 font-black uppercase tracking-widest mt-2">Image Selected</p>
+                              </div>
+                           }
+                        </div>
                      </div>
                   </div>
 
@@ -1107,7 +1206,7 @@ import { map } from 'rxjs/operators';
 
                   <div class="p-10 pt-4 flex space-x-4 shrink-0 bg-slate-50/50 dark:bg-white/5">
                      <button (click)="showAddPaymentModal = false" class="flex-1 py-5 rounded-[1.5rem] bg-white dark:bg-slate-800 text-slate-500 font-black text-[11px] uppercase tracking-widest border border-slate-200 dark:border-white/5">Cancel</button>
-                     <button (click)="addPayment()" [disabled]="paymentForm.amount <= 0 || !paymentForm.referenceNumber" class="flex-[2] py-5 rounded-[1.5rem] bg-emerald-500 text-white font-black text-[11px] uppercase tracking-widest shadow-xl shadow-emerald-500/20 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50">Confirm Payment</button>
+                     <button (click)="addPayment()" [disabled]="paymentForm.amount <= 0 || (paymentForm.method !== 'Cash' && !paymentForm.referenceNumber)" class="flex-[2] py-5 rounded-[1.5rem] bg-emerald-500 text-white font-black text-[11px] uppercase tracking-widest shadow-xl shadow-emerald-500/20 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50">Confirm Payment</button>
                   </div>
                </div>
             </div>
@@ -1216,6 +1315,14 @@ export class ProjectDetailComponent implements OnInit {
    // Add Bill/Payment Modal State
    showAddBillModal = false;
    showAddPaymentModal = false;
+   showAddBoqModal = false;
+
+   boqForm = {
+      description: '',
+      unit: '',
+      totalQuantity: 0,
+      rate: 0
+   };
 
    billForm = {
       billNumber: '',
@@ -1484,6 +1591,67 @@ export class ProjectDetailComponent implements OnInit {
          photoUrl: '',
          actionBy: ''
       };
+   }
+
+   addBoqItem() {
+      if (!this.project) return;
+      const newItem: BOQItem = {
+         id: Math.floor(Math.random() * 10000),
+         projectId: this.project.id,
+         description: this.boqForm.description,
+         unit: this.boqForm.unit,
+         totalQuantity: this.boqForm.totalQuantity,
+         executedQuantity: 0,
+         rate: this.boqForm.rate
+      };
+      this.boqItems.push(newItem);
+      this.showAddBoqModal = false;
+      this.resetBoqForm();
+   }
+
+   resetBoqForm() {
+      this.boqForm = {
+         description: '',
+         unit: '',
+         totalQuantity: 0,
+         rate: 0
+      };
+   }
+
+   deleteBoqItem(id: number) {
+      if (confirm('Are you sure you want to delete this BOQ item?')) {
+         this.boqItems = this.boqItems.filter(item => item.id !== id);
+      }
+   }
+
+   approveBill(id: number) {
+      const bill = this.bills.find(b => b.id === id);
+      if (bill) {
+         bill.status = 'Approved';
+         bill.actionBy = 'Admin';
+         bill.actionAt = new Date().toISOString();
+      }
+   }
+
+   rejectBill(id: number) {
+      const bill = this.bills.find(b => b.id === id);
+      if (bill) {
+         bill.status = 'Rejected';
+         bill.actionBy = 'Admin';
+         bill.actionAt = new Date().toISOString();
+      }
+   }
+
+   deleteBill(id: number) {
+      if (confirm('Are you sure you want to delete this bill?')) {
+         this.bills = this.bills.filter(bill => bill.id !== id);
+      }
+   }
+
+   deletePayment(id: number) {
+      if (confirm('Are you sure you want to delete this payment?')) {
+         this.clientPayments = this.clientPayments.filter(p => p.id !== id);
+      }
    }
 
    onFileSelected(event: any, type: 'bill' | 'payment') {
