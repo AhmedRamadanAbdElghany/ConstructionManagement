@@ -7,6 +7,7 @@ using FluentAssertions;
 using MockQueryable;
 using Moq;
 
+using ConstructionManagement.Domain.Enums;
 namespace ConstructionManagement.Tests.Unit.Services;
 
 public class ProjectTransactionServiceTests
@@ -62,7 +63,7 @@ public class ProjectTransactionServiceTests
         {
             Id = boqItemId,
             ProjectId = projectId, // هام: ربط البند بالمشروع
-            AccountingType = "Measured",
+            AccountingType = CalculationMethod.Measured,
             MeasuredData = new BOQMeasured { AgreedQuantity = 10, UnitPrice = 400 }, // الميزانية 4000
             Project = new Project { Id = projectId, ProjectName = "Test", OwnerUserId = 5 }
         };
@@ -88,8 +89,8 @@ public class ProjectTransactionServiceTests
         int projectId = 1;
         var items = new List<BOQItem>
         {
-            new BOQItem { Id = 10, ProjectId = projectId, AccountingType = "Measured", MeasuredData = new BOQMeasured { AgreedQuantity = 100, UnitPrice = 100 } }, // 10,000
-            new BOQItem { Id = 20, ProjectId = projectId, AccountingType = "Measured", MeasuredData = new BOQMeasured { AgreedQuantity = 50, UnitPrice = 100 } }  // 5,000
+            new BOQItem { Id = 10, ProjectId = projectId, AccountingType = CalculationMethod.Measured, MeasuredData = new BOQMeasured { AgreedQuantity = 100, UnitPrice = 100 } }, // 10,000
+            new BOQItem { Id = 20, ProjectId = projectId, AccountingType = CalculationMethod.Measured, MeasuredData = new BOQMeasured { AgreedQuantity = 50, UnitPrice = 100 } }  // 5,000
         };
         var transactions = new List<Transaction>
         {

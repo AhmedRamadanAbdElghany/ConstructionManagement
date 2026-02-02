@@ -4,6 +4,7 @@ using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
+using ConstructionManagement.Domain.Enums;
 namespace ConstructionManagement.Infrastructure.Services;
 
 public class ProjectService : IProjectService
@@ -56,7 +57,7 @@ public class ProjectService : IProjectService
                 OwnerUserId = ownerUserId,
                 GeneralManagerUserId = request.GeneralManagerUserId,
                 CompanyId = owner?.CompanyId,
-                AccountingSystem = request.AccountingSystem ?? "Mixed",
+                AccountingSystem = Enum.TryParse<CalculationMethod>(request.AccountingSystem, true, out var parsedMethod) ? parsedMethod : CalculationMethod.Measured,
                 TotalContractValue = request.TotalContractValue,
                 IsClosed = false
             };
@@ -64,8 +65,34 @@ public class ProjectService : IProjectService
             await _projectRepository.AddAsync(project);
             await _unitOfWork.SaveChangesAsync(); // Get project.Id
 
-            // Create default settings (shared PK = project.Id)
-            await _settingsRepository.AddAsync(new ProjectSettings { Id = project.Id });
+            // Create project settings
+            var settings = new ProjectSettings { Id = project.Id };
+            
+            if (request.Settings != null)
+            {
+                settings.EnableDelayNotification = request.Settings.EnableDelayNotification;
+                settings.DelayNotificationIsOneTimeOnly = request.Settings.DelayNotificationIsOneTimeOnly;
+                settings.DelayNotificationIntervalDays = request.Settings.DelayNotificationIntervalDays;
+                settings.DelayNotificationSendEmail = request.Settings.DelayNotificationSendEmail;
+                settings.DelayGracePeriodDays = request.Settings.DelayGracePeriodDays;
+                settings.EnablePhotoUpload = request.Settings.EnablePhotoUpload;
+                settings.RequirePhotoReview = request.Settings.RequirePhotoReview;
+                settings.PhotoApproverRole = request.Settings.PhotoApproverRole;
+                settings.EnableInvoiceReview = request.Settings.EnableInvoiceReview;
+                settings.EnableInvoiceAggregation = request.Settings.EnableInvoiceAggregation;
+                settings.MaxPhotosPerUpload = request.Settings.MaxPhotosPerUpload;
+                settings.ClientCanSeeFinancials = request.Settings.ClientCanSeeFinancials;
+                settings.ClientCanSeeMedia = request.Settings.ClientCanSeeMedia;
+                settings.ClientCanSeeBOQ = request.Settings.ClientCanSeeBOQ;
+
+                if (!string.IsNullOrEmpty(request.Settings.MoneyCalculationMethod) && 
+                    Enum.TryParse<CalculationMethod>(request.Settings.MoneyCalculationMethod, true, out var method))
+                {
+                    settings.MoneyCalculationMethod = method;
+                }
+            }
+
+            await _settingsRepository.AddAsync(settings);
             await _unitOfWork.SaveChangesAsync();
 
             await _unitOfWork.CommitAsync();
@@ -165,7 +192,7 @@ public class ProjectService : IProjectService
         p.EndDate,
         p.OwnerUserId,
         p.GeneralManagerUserId,
-        p.AccountingSystem,
+        p.AccountingSystem.ToString(),
         p.TotalContractValue,
         p.CreatedAt,
         p.IsClosed,

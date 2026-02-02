@@ -7,6 +7,7 @@ using MockQueryable;
 using Moq;
 using Xunit;
 
+using ConstructionManagement.Domain.Enums;
 namespace ConstructionManagement.Tests.Unit.Services;
 
 public class BOQItemServiceTests
@@ -14,6 +15,7 @@ public class BOQItemServiceTests
     private readonly Mock<IRepository<BOQItem>> _itemRepo = new();
     private readonly Mock<IRepository<BOQMeasured>> _measuredRepo = new();
     private readonly Mock<IRepository<BOQSupervision>> _supervisionRepo = new();
+    private readonly Mock<IRepository<BOQPackage>> _packageRepo = new();
     private readonly Mock<IRepository<ItemInvoice>> _invoiceRepo = new();
     private readonly Mock<IRepository<Project>> _projectRepo = new();
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
@@ -22,6 +24,7 @@ public class BOQItemServiceTests
         _itemRepo.Object,
         _measuredRepo.Object,
         _supervisionRepo.Object,
+        _packageRepo.Object,
         _invoiceRepo.Object,
         _projectRepo.Object,
         _unitOfWork.Object);
@@ -46,7 +49,9 @@ public class BOQItemServiceTests
             SupervisionPercentage: null,
             BaseCalculation: null,
             CustomBaseAmount: null,
-            EstimatedTotalCost: null
+            EstimatedTotalCost: null,
+            TotalPackageValue: null,
+            PaymentTerms: null
         );
 
         _projectRepo.Setup(r => r.GetByIdAsync(projectId))
@@ -83,7 +88,9 @@ public class BOQItemServiceTests
             SupervisionPercentage: null,
             BaseCalculation: null,
             CustomBaseAmount: null,
-            EstimatedTotalCost: null
+            EstimatedTotalCost: null,
+            TotalPackageValue: null,
+            PaymentTerms: null
         );
 
         _projectRepo.Setup(r => r.GetByIdAsync(projectId))
@@ -119,7 +126,9 @@ public class BOQItemServiceTests
             SupervisionPercentage: null,
             BaseCalculation: null,
             CustomBaseAmount: null,
-            EstimatedTotalCost: null
+            EstimatedTotalCost: null,
+            TotalPackageValue: null,
+            PaymentTerms: null
         );
 
         _projectRepo.Setup(r => r.GetByIdAsync(projectId))
@@ -152,7 +161,7 @@ public class BOQItemServiceTests
         var item = new BOQItem
         {
             Id = itemId,
-            AccountingType = "Measured",
+            AccountingType = CalculationMethod.Measured,
             MeasuredData = new BOQMeasured
             {
                 AgreedQuantity = 200,
@@ -181,7 +190,7 @@ public class BOQItemServiceTests
         var item = new BOQItem
         {
             Id = itemId,
-            AccountingType = "Supervision",
+            AccountingType = CalculationMethod.Supervision,
             SupervisionData = new BOQSupervision { EstimatedTotalCost = 10000m }
         };
 
@@ -235,7 +244,7 @@ public class BOQItemServiceTests
         var item = new BOQItem
         {
             Id = 1,
-            AccountingType = "Measured",
+            AccountingType = CalculationMethod.Measured,
             MeasuredData = new BOQMeasured { AgreedQuantity = 0, ExecutedQuantity = 10 }
         };
 
@@ -258,7 +267,7 @@ public class BOQItemServiceTests
         var item = new BOQItem
         {
             Id = 1,
-            AccountingType = "Measured",
+            AccountingType = CalculationMethod.Measured,
             MeasuredData = null
         };
 

@@ -17,7 +17,7 @@ public class BOQItem : BaseEntity, ICompanyEntity
     public string? Unit { get; set; }                           // m³, m², ton, lump sum, etc.
 
     // -- Accounting & Status ---------------------------------------------------
-    public string AccountingType { get; set; } = "Measured";    // "Measured", "Supervision", "Mixed"
+    public ConstructionManagement.Domain.Enums.CalculationMethod AccountingType { get; set; } = ConstructionManagement.Domain.Enums.CalculationMethod.Measured;
     public string Status { get; set; } = "????";               // New, InProgress, Delayed, Completed, etc.
 
     // -- Project Relationship --------------------------------------------------
@@ -33,6 +33,7 @@ public class BOQItem : BaseEntity, ICompanyEntity
     // -- Dependent 1:1 Data (exist only when needed) ---------------------------
     public virtual BOQMeasured? MeasuredData { get; set; }
     public virtual BOQSupervision? SupervisionData { get; set; }
+    public virtual BOQPackage? PackageData { get; set; } // New detail for "Package" type
 
     // -- Navigation Collections ------------------------------------------------
     public virtual ICollection<SiteMedia> SiteMedias { get; set; }
@@ -62,9 +63,13 @@ public class BOQItem : BaseEntity, ICompanyEntity
     {
         get
         {
-            if (AccountingType == "Measured")
+            if (AccountingType == ConstructionManagement.Domain.Enums.CalculationMethod.Measured)
             {
                 return (MeasuredData?.AgreedQuantity ?? 0) * (MeasuredData?.UnitPrice ?? 0);
+            }
+            else if (AccountingType == ConstructionManagement.Domain.Enums.CalculationMethod.Package)
+            {
+                 return PackageData?.TotalPackageValue ?? 0;
             }
 
             return SupervisionData?.EstimatedTotalCost ?? 0;
@@ -74,5 +79,6 @@ public class BOQItem : BaseEntity, ICompanyEntity
     // Optional helpers – very useful in UI / reports
     public bool HasMeasuredData => MeasuredData != null;
     public bool HasSupervisionData => SupervisionData != null;
-    public bool IsMixedAccounting => AccountingType == "Mixed";
+    public bool HasPackageData => PackageData != null;
+
 }

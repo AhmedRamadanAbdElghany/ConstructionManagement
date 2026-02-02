@@ -5,6 +5,8 @@ using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+
+using ConstructionManagement.Domain.Enums;
 namespace ConstructionManagement.WebApi.Controllers;
 
 [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
@@ -65,8 +67,19 @@ public class CompanySettingsController : ControllerBase
             settings.ClientCanSeeMedia = request.ClientCanSeeMedia.Value;
         if (request.ClientCanSeeBOQ.HasValue)
             settings.ClientCanSeeBOQ = request.ClientCanSeeBOQ.Value;
+        
+        if (request.AllowMeasured.HasValue)
+            settings.AllowMeasured = request.AllowMeasured.Value;
+        if (request.AllowSupervision.HasValue)
+            settings.AllowSupervision = request.AllowSupervision.Value;
+        if (request.AllowPackages.HasValue)
+            settings.AllowPackages = request.AllowPackages.Value;
+        
+        if (request.DefaultSupervisionPercentage.HasValue)
+            settings.DefaultSupervisionPercentage = request.DefaultSupervisionPercentage.Value;
+
         if (request.DefaultMoneyCalculationMethod is not null)
-            settings.DefaultMoneyCalculationMethod = request.DefaultMoneyCalculationMethod;
+            settings.DefaultMoneyCalculationMethod = Enum.TryParse<CalculationMethod>(request.DefaultMoneyCalculationMethod, true, out var m) ? m : CalculationMethod.Measured;
 
         await _repo.UpdateAsync(settings);
         await _uow.SaveChangesAsync();

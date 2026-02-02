@@ -3,6 +3,8 @@ using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 
+using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
+using ConstructionManagement.Domain.Enums;
 namespace ConstructionManagement.Infrastructure.Services;
 
 public class ProjectSettingsService : IProjectSettingsService
@@ -61,7 +63,7 @@ public class ProjectSettingsService : IProjectSettingsService
             ClientCanSeeFinancials = projectSettings?.ClientCanSeeFinancials ?? companySettings.ClientCanSeeFinancials,
             ClientCanSeeMedia = projectSettings?.ClientCanSeeMedia ?? companySettings.ClientCanSeeMedia,
             ClientCanSeeBOQ = projectSettings?.ClientCanSeeBOQ ?? companySettings.ClientCanSeeBOQ,
-            MoneyCalculationMethod = projectSettings?.MoneyCalculationMethod ?? companySettings.DefaultMoneyCalculationMethod
+            MoneyCalculationMethod = (projectSettings?.MoneyCalculationMethod ?? companySettings.DefaultMoneyCalculationMethod).ToString()
         };
 
         // Auto-create project settings if they don't exist (optional – lazy creation)
@@ -139,7 +141,7 @@ public class ProjectSettingsService : IProjectSettingsService
             settings.ClientCanSeeBOQ = request.ClientCanSeeBOQ.Value;
             
         if (request.MoneyCalculationMethod is not null)
-            settings.MoneyCalculationMethod = request.MoneyCalculationMethod;
+             settings.MoneyCalculationMethod = Enum.TryParse<CalculationMethod>(request.MoneyCalculationMethod, true, out var m) ? m : null;
 
         await _projectSettingsRepository.UpdateAsync(settings);
         await _unitOfWork.SaveChangesAsync();
@@ -167,7 +169,7 @@ public class ProjectSettingsService : IProjectSettingsService
             ClientCanSeeFinancials = settings.ClientCanSeeFinancials ?? global.ClientCanSeeFinancials,
             ClientCanSeeMedia = settings.ClientCanSeeMedia ?? global.ClientCanSeeMedia,
             ClientCanSeeBOQ = settings.ClientCanSeeBOQ ?? global.ClientCanSeeBOQ,
-            MoneyCalculationMethod = settings.MoneyCalculationMethod ?? global.DefaultMoneyCalculationMethod
+            MoneyCalculationMethod = (settings.MoneyCalculationMethod ?? global.DefaultMoneyCalculationMethod).ToString()
         };
     }
 }

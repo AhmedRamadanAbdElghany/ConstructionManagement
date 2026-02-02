@@ -34,7 +34,13 @@ namespace ConstructionManagement.Domain.Entities
         public bool ClientCanSeeBOQ { get; set; } = true;
 
         // Project Money Calculation Options
-        public string DefaultMoneyCalculationMethod { get; set; } = "Measured"; // Measured, Supervision, Mixed
+        public bool AllowMeasured { get; set; } = true;
+        public bool AllowSupervision { get; set; } = true;
+        public bool AllowPackages { get; set; } = false; // "Packages" calculation method
+        
+        public decimal? DefaultSupervisionPercentage { get; set; }
+
+        public ConstructionManagement.Domain.Enums.CalculationMethod DefaultMoneyCalculationMethod { get; set; } = ConstructionManagement.Domain.Enums.CalculationMethod.Measured;
 
         // You can add more global defaults here later
     }

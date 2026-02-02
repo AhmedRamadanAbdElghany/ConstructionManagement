@@ -47,11 +47,24 @@ public class Project : BaseEntity, ICompanyEntity
     public int? PackageId { get; set; }
     public virtual Package? Package { get; set; }
 
+    /// <summary>
+    /// Selected finishing package for the client (if applicable).
+    /// </summary>
+    public int? CompanyPackageId { get; set; }
+    [ForeignKey(nameof(CompanyPackageId))]
+    public virtual CompanyPackage? CompanyPackage { get; set; }
+
+    /// <summary>
+    /// Method to calculate costs when a client requests a change in the package.
+    /// </summary>
+    public ConstructionManagement.Domain.Enums.PackageVariationCalculation VariationCalculation { get; set; } 
+        = ConstructionManagement.Domain.Enums.PackageVariationCalculation.AddFullCost;
+
     public bool IsClosed { get; set; } = false;
     public DateTime? ClosedAt { get; set; }
 
     // -- Financial & Accounting ------------------------------------------------
-    public string AccountingSystem { get; set; } = "Mixed";  // Measured, Supervision, Mixed, Other
+    public ConstructionManagement.Domain.Enums.CalculationMethod AccountingSystem { get; set; } = ConstructionManagement.Domain.Enums.CalculationMethod.Measured;
     public decimal? TotalContractValue { get; set; }
 
     // -- Navigation Properties -------------------------------------------------

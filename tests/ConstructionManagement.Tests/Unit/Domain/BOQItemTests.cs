@@ -1,6 +1,7 @@
 using ConstructionManagement.Domain.Entities;
 using FluentAssertions;
 
+using ConstructionManagement.Domain.Enums;
 namespace ConstructionManagement.Tests.Unit.Domain;
 
 public class BOQItemTests
@@ -11,7 +12,7 @@ public class BOQItemTests
         // Arrange
         var item = new BOQItem
         {
-            AccountingType = "Measured",
+            AccountingType = CalculationMethod.Measured,
             MeasuredData = new BOQMeasured
             {
                 AgreedQuantity = 100,
@@ -33,7 +34,7 @@ public class BOQItemTests
         // Arrange
         var item = new BOQItem
         {
-            AccountingType = "Measured",
+            AccountingType = CalculationMethod.Measured,
             MeasuredData = null
         };
 
@@ -50,7 +51,7 @@ public class BOQItemTests
         // Arrange
         var item = new BOQItem
         {
-            AccountingType = "Supervision",
+            AccountingType = CalculationMethod.Supervision,
             SupervisionData = new BOQSupervision
             {
                 EstimatedTotalCost = 75000
@@ -65,16 +66,16 @@ public class BOQItemTests
     }
 
     [Theory]
-    [InlineData("Measured", true, false)]
-    [InlineData("Supervision", false, true)]
-    public void HelperProperties_ShouldReturnCorrectStatus(string type, bool expectedMeasured, bool expectedSupervision)
+    [InlineData(CalculationMethod.Measured, true, false)]
+    [InlineData(CalculationMethod.Supervision, false, true)]
+    public void HelperProperties_ShouldReturnCorrectStatus(CalculationMethod type, bool expectedMeasured, bool expectedSupervision)
     {
         // Arrange
         var item = new BOQItem
         {
             AccountingType = type,
-            MeasuredData = type == "Measured" ? new BOQMeasured() : null,
-            SupervisionData = type == "Supervision" ? new BOQSupervision() : null
+            MeasuredData = type == CalculationMethod.Measured ? new BOQMeasured() : null,
+            SupervisionData = type == CalculationMethod.Supervision ? new BOQSupervision() : null
         };
 
         // Assert

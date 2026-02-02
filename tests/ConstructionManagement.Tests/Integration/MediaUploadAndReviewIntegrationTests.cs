@@ -9,6 +9,7 @@ using Moq;
 using Xunit;
 using InfraSiteMediaService = ConstructionManagement.Infrastructure.Services.SiteMediaService;
 
+using ConstructionManagement.Domain.Enums;
 namespace ConstructionManagement.Tests.Integration;
 
 public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
@@ -63,7 +64,7 @@ public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
         {
             ProjectName = "Media Project",
             OwnerUserId = user.Id,
-            AccountingSystem = "Measured",
+            AccountingSystem = CalculationMethod.Measured,
             Status = "Active"
         };
         Context.Projects.Add(project);
@@ -130,7 +131,7 @@ public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
         {
             ProjectName = "Review Project",
             OwnerUserId = user.Id,
-            AccountingSystem = "Measured",
+            AccountingSystem = CalculationMethod.Measured,
             Status = "Active"
         };
         Context.Projects.Add(project);
@@ -182,7 +183,7 @@ public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
         {
             ProjectName = "Media Project 2",
             OwnerUserId = user.Id,
-            AccountingSystem = "Measured",
+            AccountingSystem = CalculationMethod.Measured,
             Status = "Active"
         };
         Context.Projects.Add(project);
@@ -229,7 +230,7 @@ public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
         {
             ProjectName = "Media Project",
             OwnerUserId = user.Id,
-            AccountingSystem = "Measured",
+            AccountingSystem = CalculationMethod.Measured,
             Status = "Active"
         };
         Context.Projects.Add(project);
@@ -293,7 +294,7 @@ public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
         {
             ProjectName = "Media Project 2",
             OwnerUserId = user.Id,
-            AccountingSystem = "Measured",
+            AccountingSystem = CalculationMethod.Measured,
             Status = "Active"
         };
         Context.Projects.Add(project);

@@ -9,6 +9,7 @@ using Moq;
 using System.Reflection;
 using Xunit;
 
+using ConstructionManagement.Domain.Enums;
 namespace ConstructionManagement.Tests.Integration;
 
 /// <summary>
@@ -57,7 +58,7 @@ public class TransactionsReviewIntegrationTests : IntegrationTestBase
         {
             ProjectName = "Tx Project",
             OwnerUserId = user.Id,
-            AccountingSystem = "Measured",
+            AccountingSystem = CalculationMethod.Measured,
             Status = "Active"
         };
         Context.Projects.Add(project);
@@ -75,7 +76,7 @@ public class TransactionsReviewIntegrationTests : IntegrationTestBase
 			ItemCode = "T1",
 			ItemName = "Item",
 			ProjectId = project.Id,
-			AccountingType = "Measured",
+			AccountingType = CalculationMethod.Measured,
 			Status = "Active",
 		};
 
@@ -127,7 +128,7 @@ public class TransactionsReviewIntegrationTests : IntegrationTestBase
         {
             ProjectName = "Tx Project 2",
             OwnerUserId = user.Id,
-            AccountingSystem = "Measured",
+            AccountingSystem = CalculationMethod.Measured,
             Status = "Active"
         };
         Context.Projects.Add(project);
@@ -141,7 +142,7 @@ public class TransactionsReviewIntegrationTests : IntegrationTestBase
             ItemCode = "T2",
             ItemName = "Item 2",
             ProjectId = project.Id,
-            AccountingType = "Measured",
+            AccountingType = CalculationMethod.Measured,
             Status = "Active",
         };
         Context.BOQItems.Add(item);
@@ -184,7 +185,7 @@ public class TransactionsReviewIntegrationTests : IntegrationTestBase
             ItemCode = "T1",
             ItemName = "Item",
             ProjectId = project.Id,
-            AccountingType = "Measured",
+            AccountingType = CalculationMethod.Measured,
             Status = "Active"
         };
         Context.BOQItems.Add(item);
@@ -232,7 +233,7 @@ public class TransactionsReviewIntegrationTests : IntegrationTestBase
             ItemCode = "T2",
             ItemName = "Item 2",
             ProjectId = project.Id,
-            AccountingType = "Measured",
+            AccountingType = CalculationMethod.Measured,
             Status = "Active"
         };
         Context.BOQItems.Add(item);

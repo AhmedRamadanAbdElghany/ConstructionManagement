@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Moq;
 using Xunit;
 
+using ConstructionManagement.Domain.Enums;
 namespace ConstructionManagement.Tests.Integration;
 
 public class FullSystemIntegrationTests : IntegrationTestBase
@@ -35,6 +36,7 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 			new Repository<BOQItem>(Context),
 			new Repository<BOQMeasured>(Context),
 			new Repository<BOQSupervision>(Context),
+			new Repository<BOQPackage>(Context),
 			new Repository<ItemInvoice>(Context),
 			new Repository<Project>(Context),
 			UnitOfWork);
@@ -68,7 +70,7 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 		{
 			ProjectName = "Project 1",
 			OwnerUserId = user.Id,
-			AccountingSystem = "Measured",
+			AccountingSystem = CalculationMethod.Measured,
 			Status = "Active"
 		};
 		Context.Projects.Add(project);
@@ -76,7 +78,8 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 
 		var request = new CreateBOQItemRequest(
 			"C1", "Item 1", "Desc", "Unit", null, null,
-			"Measured", 100, 50, null, null, null, null
+			"Measured", 100, 50, null, null, null, null,
+            null, null
 		);
 
 		// Act
@@ -117,7 +120,7 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 		var project = await SeedProjectAsync("Project 1", user.Id);
 
 		var itemId = await _boqService.CreateBOQItemAsync(project.Id, new CreateBOQItemRequest(
-			"C1", "Item 1", "Desc", "Unit", null, null, "Measured", 100m, 50m, null, null, null, null
+			"C1", "Item 1", "Desc", "Unit", null, null, "Measured", 100m, 50m, null, null, null, null, null, null
 		), user.Id);
 
 		var saved = await Context.BOQItems.Include(i => i.MeasuredData).FirstAsync(i => i.Id == itemId);

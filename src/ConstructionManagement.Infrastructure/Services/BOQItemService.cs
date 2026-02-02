@@ -1,6 +1,7 @@
 using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Domain.Enums;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -13,6 +14,7 @@ public class BOQItemService : IBOQItemService
     private readonly IRepository<BOQItem> _itemRepository;
     private readonly IRepository<BOQMeasured> _measuredRepo;
     private readonly IRepository<BOQSupervision> _supervisionRepo;
+    private readonly IRepository<BOQPackage> _packageRepo; // New Repo
     private readonly IRepository<ItemInvoice> _invoiceRepo;
     private readonly IRepository<Project> _projectRepo;
     private readonly IUnitOfWork _unitOfWork;
@@ -21,6 +23,7 @@ public class BOQItemService : IBOQItemService
         IRepository<BOQItem> itemRepository,
         IRepository<BOQMeasured> measuredRepo,
         IRepository<BOQSupervision> supervisionRepo,
+        IRepository<BOQPackage> packageRepo, // Inject
         IRepository<ItemInvoice> invoiceRepo,
         IRepository<Project> projectRepo,
         IUnitOfWork unitOfWork)
@@ -28,6 +31,7 @@ public class BOQItemService : IBOQItemService
         _itemRepository = itemRepository;
         _measuredRepo = measuredRepo;
         _supervisionRepo = supervisionRepo;
+        _packageRepo = packageRepo;
         _invoiceRepo = invoiceRepo;
         _projectRepo = projectRepo;
         _unitOfWork = unitOfWork;
@@ -52,18 +56,17 @@ public class BOQItemService : IBOQItemService
                 ItemName = request.ItemName,
                 Description = request.Description,
                 Unit = request.Unit,
-                AccountingType = request.AccountingType ?? "Measured",
+                AccountingType = project.AccountingSystem,
                 Status = "جديد",
                 StartDate = request.StartDate,
                 EndDate = request.EndDate
-                // إذا كان هناك حقول أخرى مثل CreatedBy أضفها هنا
             };
 
             await _itemRepository.AddAsync(boqItem);
             await _unitOfWork.SaveChangesAsync();
 
             // منطق MeasuredData
-            if (boqItem.AccountingType == "Measured" || boqItem.AccountingType == "Mixed")
+            if (boqItem.AccountingType == CalculationMethod.Measured)
             {
                 var measured = new BOQMeasured
                 {
@@ -72,10 +75,30 @@ public class BOQItemService : IBOQItemService
                     UnitPrice = request.UnitPrice ?? 0
                     // أضف باقي الحقول لو موجودة
                 };
-
                 await _measuredRepo.AddAsync(measured);
-                await _unitOfWork.SaveChangesAsync();
             }
+            else if (boqItem.AccountingType == CalculationMethod.Package)
+            {
+                 var packageData = new BOQPackage
+                 {
+                     Id = boqItem.Id,
+                     TotalPackageValue = request.TotalPackageValue ?? 0,
+                     PaymentTerms = request.PaymentTerms,
+                     CompletionPercentage = 0
+                 };
+                 await _packageRepo.AddAsync(packageData);
+            }
+            else if (boqItem.AccountingType == CalculationMethod.Supervision)
+            {
+                var supervision = new BOQSupervision
+                {
+                    Id = boqItem.Id,
+                     SupervisionPercentage = request.SupervisionPercentage ?? 10m, // Default or fetch from settings
+                    EstimatedTotalCost = request.EstimatedTotalCost ?? 0
+                };
+                await _supervisionRepo.AddAsync(supervision);
+            }
+            await _unitOfWork.SaveChangesAsync();
 
             await _unitOfWork.CommitAsync();
 
@@ -93,20 +116,21 @@ public class BOQItemService : IBOQItemService
         var item = await _itemRepository.AsQueryable()
             .Include(i => i.MeasuredData)
             .Include(i => i.SupervisionData)
+            .Include(i => i.PackageData)
             .FirstOrDefaultAsync(i => i.Id == itemId);
 
         if (item == null) return null;
 
         decimal progress = 0;
 
-        if (item.AccountingType == "Measured" && item.MeasuredData != null)
+        if (item.AccountingType == CalculationMethod.Measured && item.MeasuredData != null)
         {
             if (item.MeasuredData.AgreedQuantity > 0)
             {
                 progress = (item.MeasuredData.ExecutedQuantity / item.MeasuredData.AgreedQuantity) * 100;
             }
         }
-        else if (item.AccountingType == "Supervision" && item.SupervisionData != null)
+        else if (item.AccountingType == CalculationMethod.Supervision && item.SupervisionData != null)
         {
             if (item.SupervisionData.EstimatedTotalCost > 0)
             {
@@ -118,12 +142,16 @@ public class BOQItemService : IBOQItemService
                 progress = (approvedSum / item.SupervisionData.EstimatedTotalCost) * 100;
             }
         }
+        else if (item.AccountingType == CalculationMethod.Package && item.PackageData != null)
+        {
+            progress = item.PackageData.CompletionPercentage;
+        }
 
         return new BOQItemDto(
             item.Id,
             item.ItemCode ?? "",
             item.ItemName,
-            item.AccountingType,
+            item.AccountingType.ToString(),
             item.Status,
             item.StartDate,
             item.EndDate,

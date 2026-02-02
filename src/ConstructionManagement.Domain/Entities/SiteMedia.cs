@@ -8,10 +8,10 @@ public class SiteMedia : BaseEntity, ICompanyEntity
 
     // Primary Key is inherited from BaseEntity ? public int Id { get; set; }
 
-    // Required: every media belongs to a project
-    public int ProjectId { get; set; }
+    // Optional: every media belongs to a project (usually), but package images might not
+    public int? ProjectId { get; set; }
     [ForeignKey(nameof(ProjectId))]
-    public virtual Project Project { get; set; } = null!;
+    public virtual Project? Project { get; set; }
 
     // Optional: can be linked to a specific BOQ item
     public int? BOQItemId { get; set; }

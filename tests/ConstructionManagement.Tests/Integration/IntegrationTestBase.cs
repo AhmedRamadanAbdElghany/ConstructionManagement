@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 
+using ConstructionManagement.Domain.Enums;
 namespace ConstructionManagement.Tests.Integration
 {
     public abstract class IntegrationTestBase : IDisposable
@@ -74,7 +75,7 @@ namespace ConstructionManagement.Tests.Integration
             {
                 ProjectName = name,
                 OwnerUserId = ownerUserId,
-                AccountingSystem = "Measured",
+                AccountingSystem = CalculationMethod.Measured,
                 Status = "Active"
             };
 

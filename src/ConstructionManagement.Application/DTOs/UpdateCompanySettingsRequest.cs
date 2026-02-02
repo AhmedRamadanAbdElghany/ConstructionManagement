@@ -23,5 +23,12 @@ public class UpdateCompanySettingsRequest
     public bool? ClientCanSeeFinancials { get; set; }
     public bool? ClientCanSeeMedia { get; set; }
     public bool? ClientCanSeeBOQ { get; set; }
+    
+    public bool? AllowMeasured { get; set; }
+    public bool? AllowSupervision { get; set; }
+    public bool? AllowPackages { get; set; }
+    
+    public decimal? DefaultSupervisionPercentage { get; set; }
+
     public string? DefaultMoneyCalculationMethod { get; set; }
 }

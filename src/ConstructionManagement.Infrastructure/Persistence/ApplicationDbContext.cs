@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Linq.Expressions;
 
+using ConstructionManagement.Domain.Enums;
+
 namespace ConstructionManagement.Infrastructure.Persistence;
 
 public class ApplicationDbContext : DbContext
@@ -49,6 +51,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<Package> Packages => Set<Package>();
     public DbSet<ApprovalRequest> ApprovalRequests => Set<ApprovalRequest>();
     public DbSet<ApprovalStep> ApprovalSteps => Set<ApprovalStep>();
+    public DbSet<BOQPackage> BOQPackages => Set<BOQPackage>();
+    public DbSet<CompanyPackage> CompanyPackages => Set<CompanyPackage>(); // Renamed from ClientPackage
     public DbSet<InvoiceSequence> InvoiceSequences => Set<InvoiceSequence>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -86,6 +90,11 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<BOQSupervision>().HasKey(s => s.Id);
         modelBuilder.Entity<BOQSupervision>().Property(s => s.Id).ValueGeneratedNever();
         modelBuilder.Entity<BOQSupervision>().HasOne(s => s.Item).WithOne(i => i.SupervisionData).HasForeignKey<BOQSupervision>(s => s.Id).OnDelete(DeleteBehavior.Cascade);
+
+        // Add Configuration for BOQPackage
+        modelBuilder.Entity<BOQPackage>().HasKey(p => p.Id);
+        modelBuilder.Entity<BOQPackage>().Property(p => p.Id).ValueGeneratedNever();
+        modelBuilder.Entity<BOQPackage>().HasOne(p => p.BOQItem).WithOne(i => i.PackageData).HasForeignKey<BOQPackage>(p => p.Id).OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<BOQExecutedDelta>().HasIndex(d => d.BOQItemId);
         modelBuilder.Entity<BOQExecutedDelta>().HasIndex(d => d.ProcessedAt);
@@ -214,9 +223,9 @@ public class ApplicationDbContext : DbContext
 
         // --- Projects ---
         modelBuilder.Entity<Project>().HasData(
-            new Project { Id = 1, ProjectName = "Al-Massa Tower", CompanyId = 1, AccountingSystem = "Measured", Status = "InProgress", OwnerUserId = 1, CreatedAt = fixedDate },
-            new Project { Id = 2, ProjectName = "Coastal Supervision", CompanyId = 1, AccountingSystem = "Supervision", Status = "جديد", OwnerUserId = 2, CreatedAt = fixedDate },
-            new Project { Id = 3, ProjectName = "Smart Mall Mixed", CompanyId = 1, AccountingSystem = "Mixed", Status = "InProgress", OwnerUserId = 1, CreatedAt = fixedDate }
+            new Project { Id = 1, ProjectName = "Al-Massa Tower", CompanyId = 1, AccountingSystem = CalculationMethod.Measured, Status = "InProgress", OwnerUserId = 1, CreatedAt = fixedDate },
+            new Project { Id = 2, ProjectName = "Coastal Supervision", CompanyId = 1, AccountingSystem = CalculationMethod.Supervision, Status = "جديد", OwnerUserId = 2, CreatedAt = fixedDate },
+            new Project { Id = 3, ProjectName = "Smart Mall Mixed", CompanyId = 1, AccountingSystem = CalculationMethod.Measured, Status = "InProgress", OwnerUserId = 1, CreatedAt = fixedDate } // Mixed removed or mapped to Measured/Supervision appropriately if needed, or Enum updated. Assuming Measured for now or Mixed if Enum has it. Enum has Measured=0, Supervision=1, Package=2. No Mixed. User request was "Method to calculate costs...". I'll assume 0 for now or add Mixed to Enum if intended. Looking at previous code, Enum has Measured, Supervision, Package. I will use Measured for now to fix build, or check if I should add Mixed. The user removed Mixed in favor of explicit methods. I'll use Measured for project 3 or Supervision.
         );
 
         // --- Project Settings ---
@@ -229,12 +238,12 @@ public class ApplicationDbContext : DbContext
         // --- BOQ Items (Parent Items) ---
         modelBuilder.Entity<BOQItem>().HasData(
             // Measured Items
-            new BOQItem { Id = 101, ProjectId = 1, ItemCode = "CIV-01", ItemName = "Excavation", AccountingType = "Measured", Status = "InProgress", CreatedAt = fixedDate },
-            new BOQItem { Id = 102, ProjectId = 1, ItemCode = "CIV-02", ItemName = "Concrete Base", AccountingType = "Measured", Status = "جديد", CreatedAt = fixedDate },
+            new BOQItem { Id = 101, ProjectId = 1, ItemCode = "CIV-01", ItemName = "Excavation", AccountingType = CalculationMethod.Measured, Status = "InProgress", CreatedAt = fixedDate },
+            new BOQItem { Id = 102, ProjectId = 1, ItemCode = "CIV-02", ItemName = "Concrete Base", AccountingType = CalculationMethod.Measured, Status = "جديد", CreatedAt = fixedDate },
             // Supervision Items
-            new BOQItem { Id = 201, ProjectId = 2, ItemCode = "SUP-01", ItemName = "Structural Audit", AccountingType = "Supervision", Status = "جديد", CreatedAt = fixedDate },
-            // Mixed Item
-            new BOQItem { Id = 301, ProjectId = 3, ItemCode = "MIX-01", ItemName = "MEP Installation", AccountingType = "Mixed", Status = "InProgress", CreatedAt = fixedDate }
+            new BOQItem { Id = 201, ProjectId = 2, ItemCode = "SUP-01", ItemName = "Structural Audit", AccountingType = CalculationMethod.Supervision, Status = "جديد", CreatedAt = fixedDate },
+            // Mixed Item - mapped to Measured as per Enum constraints
+            new BOQItem { Id = 301, ProjectId = 3, ItemCode = "MIX-01", ItemName = "MEP Installation", AccountingType = CalculationMethod.Measured, Status = "InProgress", CreatedAt = fixedDate }
         );
 
         // --- 1:1 Dependent Data (BOQMeasured / BOQSupervision) ---

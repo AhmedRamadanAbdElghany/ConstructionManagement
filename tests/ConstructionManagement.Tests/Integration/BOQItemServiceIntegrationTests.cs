@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
 
+using ConstructionManagement.Domain.Enums;
+using ConstructionManagement.Domain.Enums;
 namespace ConstructionManagement.Tests.Integration;
 
 // DOCUMENTATION TABLES (replace with full 113 test-case tables):
@@ -36,6 +38,7 @@ public class BOQAndTransactionIntegrationTests : IntegrationTestBase
             new Repository<BOQItem>(Context),
             new Repository<BOQMeasured>(Context),
             new Repository<BOQSupervision>(Context),
+            new Repository<BOQPackage>(Context),
             new Repository<ItemInvoice>(Context),
             new Repository<Project>(Context),
             base.UnitOfWork); // تأكد أن هذا المتغير يحمل قيمة داخل IntegrationTestBase
@@ -67,7 +70,7 @@ public class BOQAndTransactionIntegrationTests : IntegrationTestBase
         var project = new Project
         {
             ProjectName = "Bridge Project",
-            AccountingSystem = "Measured",
+            AccountingSystem = CalculationMethod.Measured,
             Status = "Active",
             TotalContractValue = 10000m,
             OwnerUserId = user.Id // ربط المشروع بالمستخدم الفعلي
@@ -95,7 +98,8 @@ public class BOQAndTransactionIntegrationTests : IntegrationTestBase
             AccountingType: "Measured",
             AgreedQuantity: 100m,
             UnitPrice: 10m,
-            SupervisionPercentage: null, BaseCalculation: null, CustomBaseAmount: null, EstimatedTotalCost: null
+            SupervisionPercentage: null, BaseCalculation: null, CustomBaseAmount: null, EstimatedTotalCost: null,
+            TotalPackageValue: null, PaymentTerms: null
         );
 
         var itemId = await _boqService.CreateBOQItemAsync(project.Id, createItemRequest, user.Id);
@@ -137,7 +141,7 @@ public class BOQAndTransactionIntegrationTests : IntegrationTestBase
         var project = new Project
         {
             ProjectName = "Tx Project",
-            AccountingSystem = "Measured",
+            AccountingSystem = CalculationMethod.Measured,
             Status = "Active",
             TotalContractValue = 10000m,
             OwnerUserId = user.Id
@@ -149,7 +153,7 @@ public class BOQAndTransactionIntegrationTests : IntegrationTestBase
         await Context.SaveChangesAsync();
 
         var itemId = await _boqService.CreateBOQItemAsync(project.Id, new CreateBOQItemRequest(
-            "B2", "Item 2", "Desc", "Unit", null, null, "Measured", 10, 10, null, null, null, null
+            "B2", "Item 2", "Desc", "Unit", null, null, "Measured", 10, 10, null, null, null, null, null, null
         ), user.Id);
 
         await _transService.CreateTransactionAsync(project.Id, new CreateTransactionRequest(
@@ -179,7 +183,7 @@ public class BOQAndTransactionIntegrationTests : IntegrationTestBase
         var project = new Project
         {
             ProjectName = "Bridge Project",
-            AccountingSystem = "Measured",
+            AccountingSystem = CalculationMethod.Measured,
             Status = "Active",
             TotalContractValue = 10000m,
             OwnerUserId = user.Id
@@ -197,7 +201,7 @@ public class BOQAndTransactionIntegrationTests : IntegrationTestBase
 
         // ── 3. Create BOQ Item ───────────────────────────────────────────────────
         var itemId = await _boqService.CreateBOQItemAsync(project.Id, new CreateBOQItemRequest(
-            "B1", "Steel", "Bars", "Ton", null, null, "Measured", 100m, 10m, null, null, null, null
+            "B1", "Steel", "Bars", "Ton", null, null, "Measured", 100m, 10m, null, null, null, null, null, null
         ), user.Id);
 
         // ── 4. Initial Transaction ───────────────────────────────────────────────

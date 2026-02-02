@@ -26,6 +26,7 @@ export interface Project {
   };
   startDate: string; // ISO string
   endDate?: string; // ISO string
+  packageId?: number;
 }
 
 export interface BOQItem {
@@ -130,6 +131,10 @@ export interface CompanySettings {
   clientCanSeeMedia: boolean;
   clientCanSeeBOQ: boolean;
   defaultMoneyCalculationMethod: string;
+  allowMeasured: boolean;
+  allowSupervision: boolean;
+  allowPackages: boolean;
+  defaultSupervisionPercentage?: number;
 }
 
 export interface ProjectSettings {
@@ -148,4 +153,89 @@ export interface ProjectSettings {
   clientCanSeeMedia: boolean | null;
   clientCanSeeBOQ: boolean | null;
   moneyCalculationMethod: string | null;
+}
+
+export interface Package {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  maxTeamMembers: number;
+  maxDailyPhotos: number;
+  maxBOQItems: number;
+  allowAdvancedReports: boolean;
+  allowCustomBranding: boolean;
+  allowAIAssistance: boolean;
+}
+
+export interface CreateProjectRequest {
+  projectName: string;
+  description?: string;
+  startDate?: string;
+  endDate?: string;
+  generalManagerUserId?: number;
+  accountingSystem: string;
+  totalContractValue?: number;
+  settings?: Partial<ProjectSettings>;
+}
+
+export interface UpdateProjectRequest {
+  projectName?: string;
+  description?: string;
+  startDate?: string;
+  endDate?: string;
+  totalContractValue?: number;
+  generalManagerUserId?: number;
+}
+
+export interface ProjectProfitability {
+  projectId: number;
+  totalEstimatedBudget: number;
+  totalSpent: number;
+  totalProfit: number;
+  profitPercentage: number;
+  itemsCount: number;
+}
+
+export interface ItemProfitability {
+  boqItemId: number;
+  itemName: string;
+  estimatedBudget: number;
+  totalSpent: number;
+  currentProfit: number;
+  profitPercentage: number;
+}
+
+export interface CreateBOQItemRequest {
+  itemCode?: string;
+  itemName: string;
+  description?: string;
+  unit?: string;
+  startDate?: string;
+  endDate?: string;
+  accountingType: string;
+  agreedQuantity?: number;
+  unitPrice?: number;
+  supervisionPercentage?: number;
+  baseCalculation?: string;
+  customBaseAmount?: number;
+  estimatedTotalCost?: number;
+}
+
+export interface UpdateBOQItemRequest {
+  itemName?: string;
+  description?: string;
+  status?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+export interface CompanyPackage {
+  id: number;
+  companyId?: number;
+  name: string;
+  description: string;
+  price: number;
+  includedItemsDescription: string;
+  variationCalculation: 'AddFullCost' | 'AddDifference';
 }

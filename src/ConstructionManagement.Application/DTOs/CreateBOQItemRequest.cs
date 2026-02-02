@@ -15,4 +15,8 @@ public record CreateBOQItemRequest(
     decimal? SupervisionPercentage,
     string? BaseCalculation,             // AllProjectInvoices, ThisItemInvoices, CustomAmount
     decimal? CustomBaseAmount,
-    decimal? EstimatedTotalCost);
+    decimal? EstimatedTotalCost,
+    
+    // Package fields (optional)
+    decimal? TotalPackageValue,
+    string? PaymentTerms);
