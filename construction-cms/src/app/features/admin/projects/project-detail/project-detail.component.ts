@@ -1090,9 +1090,18 @@ import { map } from 'rxjs/operators';
                       </div>
 
                       <div class="relative group">
-                         <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Photo Attachment URL</label>
-                         <input type="text" [(ngModel)]="paymentForm.photoUrl" placeholder="https://..."
-                                class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-xs outline-none">
+                         <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Payment Proof</label>
+                         <div class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 border-dashed flex flex-col items-center justify-center text-center group-hover:border-emerald-500/50 transition-colors cursor-pointer relative">
+                           <input type="file" (change)="onFileSelected($event, 'payment')" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                           <div class="spacing-y-2" *ngIf="!paymentForm.photoUrl">
+                              <svg class="w-8 h-8 text-slate-300 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                              <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Upload Receipt / Cheque</p>
+                           </div>
+                           <div *ngIf="paymentForm.photoUrl" class="relative z-20 w-full">
+                              <img [src]="paymentForm.photoUrl" class="h-32 mx-auto rounded-xl shadow-lg object-contain bg-white dark:bg-black/20">
+                              <p class="text-[9px] text-emerald-500 font-black uppercase tracking-widest mt-2">Proof Attached</p>
+                           </div>
+                        </div>
                       </div>
                   </div>
 
@@ -1476,6 +1485,22 @@ export class ProjectDetailComponent implements OnInit {
          actionBy: ''
       };
    }
+
+   onFileSelected(event: any, type: 'bill' | 'payment') {
+      const file = event.target.files[0];
+      if (file) {
+         const reader = new FileReader();
+         reader.onload = (e: any) => {
+            if (type === 'bill') {
+               this.billForm.photoUrl = e.target.result;
+            } else {
+               this.paymentForm.photoUrl = e.target.result;
+            }
+         };
+         reader.readAsDataURL(file);
+      }
+   }
+
 
 
    calculateDuration(): number {
