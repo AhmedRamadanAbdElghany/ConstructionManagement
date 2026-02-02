@@ -230,17 +230,17 @@ import { PackagesService } from '../../../../core/services/packages.service';
                       </div>
                     </div>
                     
-                    <div class="flex items-center justify-between pt-4 border-t border-slate-100/50">
-                       <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Login: {{ user.lastLogin }}</span>
-                       <div class="flex gap-4">
-                          <button (click)="impersonateUser(user)" class="text-indigo-600 font-black text-[9px] uppercase tracking-widest border-b-2 border-transparent hover:border-indigo-600 transition-all flex items-center gap-1">
-                            <span class="text-xs">👤</span> Impersonate
-                          </button>
-                          <button (click)="terminateSession(user)" class="text-rose-500 font-black text-[9px] uppercase tracking-widest border-b-2 border-transparent hover:border-rose-500 transition-all">
-                            Terminate
-                          </button>
-                       </div>
-                    </div>
+                     <div class="flex items-center justify-between pt-4 border-t border-slate-100/50">
+                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Login: {{ user.lastLogin }}</span>
+                        <div class="flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                           <button (click)="impersonateUser(user)" class="text-indigo-600 font-black text-[9px] uppercase tracking-widest border-b-2 border-transparent hover:border-indigo-600 transition-all flex items-center gap-1">
+                             <span class="text-xs">👤</span> Impersonate
+                           </button>
+                           <button (click)="terminateSession(user)" class="text-rose-500 font-black text-[9px] uppercase tracking-widest border-b-2 border-transparent hover:border-rose-500 transition-all">
+                             Terminate
+                           </button>
+                        </div>
+                     </div>
                   </div>
                </div>
              </div>
@@ -307,7 +307,13 @@ import { PackagesService } from '../../../../core/services/packages.service';
                         <p class="font-black text-sm uppercase mb-1" [class.text-indigo-600]="selectedRole?.id !== role.id">{{ role.name }}</p>
                         <p class="text-[10px] font-medium opacity-60 italic">{{ role.desc }}</p>
                       </div>
-                      <span *ngIf="selectedRole?.id === role.id" class="text-xl">&rarr;</span>
+                       <div class="flex items-center gap-3">
+                         <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                           <button (click)="$event.stopPropagation(); openEditRole(role)" class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-400 hover:text-indigo-600 transition-all">✎</button>
+                           <button (click)="$event.stopPropagation(); deleteRole(role.id)" class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-400 hover:text-rose-500 transition-all">×</button>
+                         </div>
+                         <span *ngIf="selectedRole?.id === role.id" class="text-xl">&rarr;</span>
+                       </div>
                     </div>
                     <button (click)="showRoleModal = true" class="w-full py-6 border-2 border-dashed border-slate-200 dark:border-white/5 rounded-[2rem] text-[10px] font-black text-slate-400 uppercase tracking-widest hover:border-indigo-500 hover:text-indigo-600 transition-all">+ Define Custom Archetype</button>
                   </div>
@@ -541,6 +547,7 @@ export class CompanyDetailComponent implements OnInit {
   permForm: FormGroup;
   showRoleModal = false;
   roleAddForm: FormGroup;
+  editingRole: any = null;
   showProjectModal = false;
   projectForm: FormGroup;
 
@@ -725,18 +732,41 @@ export class CompanyDetailComponent implements OnInit {
     }
   }
 
+  openEditRole(role: any) {
+    this.editingRole = role;
+    this.roleAddForm.patchValue({
+      name: role.name,
+      desc: role.desc
+    });
+    this.showRoleModal = true;
+  }
+
+  deleteRole(id: number) {
+    if (confirm('CRITICAL: Removing this role will revoke access for all associated personnel in this organization. Proceed?')) {
+      this.mockRoles = this.mockRoles.filter(r => r.id !== id);
+      if (this.selectedRole?.id === id) {
+        this.selectedRole = this.mockRoles.length > 0 ? this.mockRoles[0] : null;
+      }
+    }
+  }
+
   addRole() {
     if (this.roleAddForm.valid) {
-      const newRole = {
-        id: Math.max(...this.mockRoles.map(r => r.id)) + 1,
-        ...this.roleAddForm.value,
-        perms: [] as string[]
-      };
-      this.mockRoles.push(newRole);
-      this.selectedRole = newRole; // Automatically select the new role for permission mapping
+      if (this.editingRole) {
+        this.editingRole.name = this.roleAddForm.value.name;
+        this.editingRole.desc = this.roleAddForm.value.desc;
+        this.editingRole = null;
+      } else {
+        const newRole = {
+          id: Math.max(...this.mockRoles.map(r => r.id)) + 1,
+          ...this.roleAddForm.value,
+          perms: [] as string[]
+        };
+        this.mockRoles.push(newRole);
+        this.selectedRole = newRole; // Automatically select the new role for permission mapping
+      }
       this.roleAddForm.reset();
       this.showRoleModal = false;
-      alert(`Archetype '${newRole.name}' initialized. You can now map its engine capabilities.`);
     }
   }
 

@@ -18,6 +18,8 @@ public class CompaniesController : ControllerBase
     private readonly IRepository<Permission> _permissionRepo;
     private readonly IRepository<Role> _roleRepo;
     private readonly IRepository<RolePermission> _rolePermissionRepo;
+    private readonly IRepository<User> _userRepo;
+    private readonly IRepository<UserRole> _userRoleRepo;
     private readonly IUnitOfWork _uow;
 
     public CompaniesController(
@@ -26,6 +28,8 @@ public class CompaniesController : ControllerBase
         IRepository<Permission> permissionRepo,
         IRepository<Role> roleRepo,
         IRepository<RolePermission> rolePermissionRepo,
+        IRepository<User> userRepo,
+        IRepository<UserRole> userRoleRepo,
         IUnitOfWork uow)
     {
         _companyRepo = companyRepo;
@@ -33,6 +37,8 @@ public class CompaniesController : ControllerBase
         _permissionRepo = permissionRepo;
         _roleRepo = roleRepo;
         _rolePermissionRepo = rolePermissionRepo;
+        _userRepo = userRepo;
+        _userRoleRepo = userRoleRepo;
         _uow = uow;
     }
 
@@ -72,9 +78,41 @@ public class CompaniesController : ControllerBase
         await _settingsRepo.AddAsync(settings);
         await _uow.SaveChangesAsync();
 
-        // Seed Company-Specific Permissions
+        // Seed Company-Specific Permissions & Admin Role
         await SyncCompanyPermissions(company.Id, request);
         await _uow.SaveChangesAsync();
+
+        // Create Company Admin User
+        var nameParts = request.AdminName.Split(' ', 2);
+        var adminUser = new User
+        {
+            FirstName = nameParts[0],
+            LastName = nameParts.Length > 1 ? nameParts[1] : string.Empty,
+            Email = request.AdminEmail,
+            Username = request.AdminEmail, // Using email as username for simplicity
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Construction@2026"), // Standard default password
+            CompanyId = company.Id,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        await _userRepo.AddAsync(adminUser);
+        await _uow.SaveChangesAsync();
+
+        // Assign CompanyAdmin Role to the new User
+        var adminRole = await _roleRepo.AsQueryable()
+            .FirstOrDefaultAsync(r => r.CompanyId == company.Id && r.Name == "CompanyAdmin");
+
+        if (adminRole != null)
+        {
+            await _userRoleRepo.AddAsync(new UserRole
+            {
+                UserId = adminUser.Id,
+                RoleId = adminRole.Id,
+                CompanyId = company.Id,
+                AssignedAt = DateTime.UtcNow
+            });
+            await _uow.SaveChangesAsync();
+        }
         
         return Ok(company);
     }

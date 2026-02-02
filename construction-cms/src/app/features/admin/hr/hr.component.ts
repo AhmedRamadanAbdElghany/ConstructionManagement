@@ -113,7 +113,10 @@ import { TranslateModule } from '@ngx-translate/core';
                         </div>
                         <div>
                           <p class="text-base font-black text-slate-900 dark:text-white tracking-tight">{{ user.fullName }}</p>
-                          <p class="text-xs text-slate-500 font-black">{{ user.email }}</p>
+                          <p class="text-[10px] text-slate-500 font-bold uppercase tracking-tight">{{ user.email }}</p>
+                          @if (user.reportsToId) {
+                            <p class="text-[9px] text-indigo-500 font-black uppercase tracking-tighter mt-1 italic">Reports to: {{ getUserName(user.reportsToId) }}</p>
+                          }
                         </div>
                       </div>
                     </td>
@@ -155,7 +158,7 @@ import { TranslateModule } from '@ngx-translate/core';
                       }
                     </td>
                     <td class="px-8 py-5">
-                      <div class="flex items-center space-x-2">
+                      <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
                         <button 
                           (click)="openNotes(user)" 
                           class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-cyan-500 transition-all active:scale-90"
@@ -163,9 +166,9 @@ import { TranslateModule } from '@ngx-translate/core';
                           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                         </button>
                         <button 
-                          class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all active:scale-90"
-                          title="Edit User">
-                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                          class="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-900/20 text-rose-400 hover:text-rose-600 transition-all active:scale-90"
+                          title="Remove Associate">
+                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                       </div>
                     </td>
@@ -292,6 +295,14 @@ import { TranslateModule } from '@ngx-translate/core';
                 <option value="NormalUser">Normal User (Client)</option>
               </select>
             </div>
+            <div>
+              <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1 italic">Directly Reports To</label>
+              <select formControlName="reportsToId" 
+                      class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600/50 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors font-bold text-xs uppercase tracking-widest appearance-none cursor-pointer">
+                <option [ngValue]="null">Organizational Admin / None</option>
+                <option *ngFor="let u of users" [value]="u.id">{{ u.fullName }}</option>
+              </select>
+            </div>
             <div class="flex justify-end space-x-3 pt-4">
               <button type="button" (click)="showAddUserModal = false" 
                       class="px-6 py-3 rounded-xl bg-slate-700/50 text-slate-400 font-medium hover:bg-slate-700 hover:text-white transition-colors">
@@ -365,7 +376,8 @@ export class HrComponent implements OnInit {
     this.addUserForm = this.fb.group({
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      role: ['CompanyUser', Validators.required]
+      role: ['CompanyUser', Validators.required],
+      reportsToId: [null]
     });
   }
 
@@ -387,12 +399,18 @@ export class HrComponent implements OnInit {
         email: this.addUserForm.value.email,
         role: this.addUserForm.value.role,
         status: 'Working',
-        salary: 3000
+        salary: 3000,
+        reportsToId: this.addUserForm.value.reportsToId
       };
-      this.users.push(newUser);
+      this.users.unshift(newUser);
       this.showAddUserModal = false;
-      this.addUserForm.reset({ role: 'CompanyUser' });
+      this.addUserForm.reset({ role: 'CompanyUser', reportsToId: null });
     }
+  }
+
+  getUserName(id: number): string {
+    const u = this.users.find(x => x.id === id);
+    return u ? u.fullName : 'Unknown';
   }
 
   openNotes(user: User) {

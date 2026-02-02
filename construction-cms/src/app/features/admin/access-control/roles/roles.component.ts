@@ -6,211 +6,231 @@ import { Role, Permission } from '../../../../shared/interfaces';
 import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
-    selector: 'app-roles',
-    standalone: true,
-    imports: [CommonModule, FormsModule],
-    template: `
-    <div class="roles-container p-6">
-      <div class="header mb-8 flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-        <div>
-          <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Company Roles</h1>
-          <p class="text-slate-500 mt-1">Define roles and assign granular permissions for your organization</p>
-        </div>
-        <button (click)="openCreateModal()" 
-                class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-xl transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-emerald-200 transform hover:-translate-y-1 font-bold">
-          <span class="text-2xl leading-none">+</span> New Role
-        </button>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div *ngFor="let role of roles" 
-             class="role-card bg-white rounded-3xl shadow-sm border border-slate-100 hover:shadow-2xl transition-all duration-500 overflow-hidden group">
-          <div class="p-8">
-            <div class="flex justify-between items-start mb-4">
-              <h3 class="text-xl font-bold text-slate-800">{{ role.name }}</h3>
-              <div class="flex gap-1">
-                <button (click)="openEditPermissions(role)" 
-                        class="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
-                        title="Edit Permissions">
-                  <span>🔒</span>
-                </button>
-                <button (click)="deleteRole(role.id)" 
-                        class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
-                        title="Delete Role">
-                  <span>🗑</span>
-                </button>
-              </div>
+  selector: 'app-roles',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  template: `
+    <div class="roles-container p-6 lg:p-10 bg-slate-50 dark:bg-slate-950 min-h-screen">
+      <div class="max-w-7xl mx-auto">
+        <!-- Dashboard Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
+          <div class="space-y-2">
+            <div class="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.25em] text-indigo-500">
+              <span class="w-8 h-[1px] bg-indigo-500"></span>
+              Security Infrastructure
             </div>
-            <p class="text-slate-500 text-sm mb-6 line-clamp-2">{{ role.description || 'No description provided for this role.' }}</p>
-            
-            <div class="permissions-list flex flex-wrap gap-2">
-              <span *ngFor="let perm of role.permissions" 
-                    class="px-3 py-1 bg-slate-100 text-slate-600 text-[11px] font-bold rounded-full border border-slate-200 group-hover:bg-emerald-50 group-hover:text-emerald-700 group-hover:border-emerald-100 transition-colors duration-300">
-                {{ perm.name }}
-              </span>
-              <span *ngIf="!role.permissions?.length" class="text-slate-400 text-xs italic">No permissions assigned</span>
-            </div>
+            <h1 class="text-5xl font-black text-slate-900 dark:text-white tracking-tighter italic">Manage Roles</h1>
+            <p class="text-slate-500 dark:text-slate-400 font-medium">Configure organizational archetypes and granular engine capabilities.</p>
           </div>
-          <div class="px-8 py-4 bg-slate-50/50 border-t border-slate-50 flex justify-between items-center">
-            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Permissions: {{ role.permissions?.length || 0 }}</span>
-            <button (click)="openEditPermissions(role)" class="text-emerald-600 text-xs font-bold hover:underline">Manage Access &rarr;</button>
-          </div>
+          <button (click)="openCreateModal()" 
+                  class="bg-indigo-600 text-white px-10 py-5 rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-2xl shadow-indigo-500/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-4">
+            <span class="text-xl leading-none font-light">+</span> Define Archetype
+          </button>
         </div>
-      </div>
 
-      <!-- Create/Edit Role Modal -->
-      <div *ngIf="showRoleModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-lg overflow-hidden animate-in slide-in-from-bottom-8 duration-500">
-          <div class="p-8">
-            <h2 class="text-2xl font-black text-slate-800 mb-6">Create New Role</h2>
-            <div class="space-y-6">
-              <div>
-                <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Role Name</label>
-                <input [(ngModel)]="newRole.name" 
-                       placeholder="e.g., Senior Engineer" 
-                       class="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium text-slate-700">
-              </div>
-              <div>
-                <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Role Description</label>
-                <textarea [(ngModel)]="newRole.description" 
-                          placeholder="Describe the responsibilities..." 
-                          rows="3"
-                          class="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl outline-none transition-all font-medium text-slate-700"></textarea>
-              </div>
-              <div class="flex gap-3 pt-4">
-                <button (click)="showRoleModal = false" 
-                        class="flex-1 py-4 text-slate-500 font-bold hover:bg-slate-50 rounded-2xl transition-all">Cancel</button>
-                <button (click)="saveRole()" 
-                        [disabled]="!newRole.name"
-                        class="flex-[2] bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white py-4 rounded-2xl font-black shadow-lg shadow-emerald-200 transition-all active:scale-95">
-                  Confirm & Create
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Edit Permissions Modal -->
-      <div *ngIf="showPermissionsModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-          <div class="p-8">
-            <div class="flex justify-between items-center mb-8">
-              <div>
-                <h2 class="text-2xl font-black text-slate-800">Manage Permissions</h2>
-                <p class="text-slate-500 text-sm">Role: <span class="font-bold text-emerald-600">{{ selectedRole?.name }}</span></p>
-              </div>
-              <button (click)="showPermissionsModal = false" class="text-slate-300 hover:text-slate-600 text-3xl">&times;</button>
-            </div>
-            
-            <div class="grid grid-cols-2 gap-4 max-h-[400px] overflow-y-auto p-2">
-              <div *ngFor="let perm of allPermissions" 
-                   (click)="togglePermission(perm.id)"
-                   class="p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between group"
-                   [ngClass]="isPermissionSelected(perm.id) ? 'border-emerald-500 bg-emerald-50/30' : 'border-slate-100 hover:border-slate-200 bg-white'">
-                <div class="flex flex-col">
-                  <span class="font-bold text-sm" [ngClass]="isPermissionSelected(perm.id) ? 'text-emerald-900' : 'text-slate-700'">{{ perm.name }}</span>
-                  <span class="text-[10px] text-slate-400 line-clamp-1 group-hover:line-clamp-none transition-all">{{ perm.description || 'No description' }}</span>
-                </div>
-                <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all"
-                     [ngClass]="isPermissionSelected(perm.id) ? 'bg-emerald-500 border-emerald-500' : 'border-slate-200'">
-                  <span *ngIf="isPermissionSelected(perm.id)" class="text-white text-xs">✓</span>
+        <!-- Role Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+          <div *ngFor="let role of mockRoles" 
+               class="bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-100 dark:border-white/5 shadow-2xl shadow-slate-200/50 dark:shadow-none hover:shadow-indigo-500/10 transition-all duration-500 overflow-hidden group">
+            <div class="p-10">
+              <div class="flex justify-between items-start mb-6">
+                <div class="w-16 h-16 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">🎭</div>
+                <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button (click)="openEditModal(role)" class="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-indigo-600 transition-all flex items-center justify-center">✎</button>
+                  <button (click)="deleteRole(role.id)" class="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-900/20 text-rose-500 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center">×</button>
                 </div>
               </div>
+              
+              <h3 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-3 italic">{{ role.name }}</h3>
+              <p class="text-slate-500 dark:text-slate-400 text-xs font-medium leading-relaxed mb-8 line-clamp-2">{{ role.description }}</p>
+              
+              <div class="flex flex-wrap gap-2 mb-8">
+                <span *ngFor="let permName of role.perms" 
+                      class="px-3 py-1 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 text-[9px] font-black uppercase tracking-widest rounded-full border border-indigo-100 dark:border-indigo-800">
+                  {{ permName }}
+                </span>
+                <span *ngIf="!role.perms.length" class="text-slate-400 text-[10px] italic">No permissions assigned</span>
+              </div>
             </div>
 
-            <div class="flex gap-3 mt-10">
-              <button (click)="showPermissionsModal = false" 
-                      class="flex-1 py-4 text-slate-500 font-bold hover:bg-slate-50 rounded-2xl transition-all">Discard</button>
-              <button (click)="savePermissions()" 
-                      class="flex-[2] bg-slate-900 hover:bg-black text-white py-4 rounded-2xl font-black shadow-2xl shadow-slate-200 transition-all active:scale-95">
-                Save Access Configuration
+            <div class="px-10 py-6 bg-slate-50/50 dark:bg-white/5 border-t border-slate-50 dark:border-white/5 flex justify-between items-center group/btn">
+              <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Capabilities: {{ role.perms.length }}</span>
+              <button (click)="openEditPermissions(role)" class="text-indigo-600 font-black text-[10px] uppercase tracking-widest flex items-center gap-2 group-hover/btn:gap-4 transition-all">
+                Config Matrix &rarr;
               </button>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- Role Metadata Modal (Create/Edit) -->
+      <div *ngIf="showRoleModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[110] p-4 animate-in fade-in duration-300">
+         <div class="bg-white dark:bg-slate-900 rounded-[3rem] shadow-2xl w-full max-w-xl p-10 transform animate-in zoom-in-95 duration-500 relative border border-white/10">
+            <button (click)="showRoleModal = false" class="absolute top-8 right-8 text-slate-400 hover:text-slate-600 text-3xl font-light">&times;</button>
+            
+            <h3 class="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-2 italic">{{ editingRole ? 'Update' : 'New' }} Archetype</h3>
+            <p class="text-slate-500 dark:text-slate-400 font-medium text-xs mb-10">Define the identification model and operational scope.</p>
+
+            <div class="space-y-6">
+               <div class="space-y-2">
+                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Archetype Name</label>
+                 <input [(ngModel)]="roleForm.name" placeholder="e.g., Regional Supervisor" class="w-full p-5 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-3xl outline-none font-bold text-slate-900 dark:text-white transition-all">
+               </div>
+               <div class="space-y-2">
+                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Identity Description</label>
+                 <textarea [(ngModel)]="roleForm.description" placeholder="Explain the responsibilities..." rows="3" class="w-full p-5 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-3xl outline-none font-bold text-slate-900 dark:text-white resize-none transition-all"></textarea>
+               </div>
+
+               <div class="pt-6 flex gap-4">
+                  <button (click)="showRoleModal = false" class="flex-1 py-4 text-slate-500 font-black uppercase tracking-widest text-[10px] border border-slate-200 dark:border-white/5 rounded-2xl hover:bg-slate-50 transition-all">Abort</button>
+                  <button (click)="saveRole()" [disabled]="!roleForm.name" class="flex-[2] py-4 bg-indigo-600 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl shadow-xl shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-40">Save Identity Model</button>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <!-- Permission Matrix Modal -->
+      <div *ngIf="showPermissionsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[110] p-4 animate-in fade-in duration-300">
+        <div class="bg-white dark:bg-slate-900 rounded-[3rem] shadow-2xl w-full max-w-2xl transform animate-in zoom-in-95 duration-300 relative border border-white/10 overflow-hidden">
+          <div class="p-10 border-b border-slate-50 dark:border-white/5">
+             <div class="flex justify-between items-start">
+                <div>
+                  <h3 class="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-1 italic">Capability Matrix</h3>
+                  <p class="text-slate-500 font-medium text-xs">Mapping permissions for: <span class="text-indigo-600 font-black">{{ selectedRole?.name }}</span></p>
+                </div>
+                <button (click)="showPermissionsModal = false" class="text-slate-400 hover:text-slate-600 text-3xl font-light">&times;</button>
+             </div>
+          </div>
+          
+          <div class="p-10 bg-slate-50/30 dark:bg-white/5 max-h-[500px] overflow-y-auto custom-scrollbar">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+               <div *ngFor="let perm of mockPermissions" 
+                    (click)="togglePermission(perm.name)"
+                    class="p-5 bg-white dark:bg-slate-900 border rounded-2xl flex items-center justify-between cursor-pointer group transition-all"
+                    [class.border-indigo-500]="isPermissionSelected(perm.name)"
+                    [class.bg-indigo-50/20]="isPermissionSelected(perm.name)"
+                    [class.border-slate-100]="!isPermissionSelected(perm.name)">
+                 <div class="flex items-center gap-4">
+                   <div class="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">⚙️</div>
+                   <div>
+                     <p class="text-[11px] font-black text-slate-800 dark:text-slate-200 tracking-tight mb-0.5">{{ perm.name }}</p>
+                     <p class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">{{ perm.desc }}</p>
+                   </div>
+                 </div>
+                 <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all"
+                      [class.bg-indigo-600]="isPermissionSelected(perm.name)"
+                      [class.border-indigo-600]="isPermissionSelected(perm.name)"
+                      [class.border-slate-200]="!isPermissionSelected(perm.name)">
+                    <span *ngIf="isPermissionSelected(perm.name)" class="text-white text-[10px]">✓</span>
+                 </div>
+               </div>
+            </div>
+          </div>
+
+          <div class="p-10 flex gap-4 bg-white dark:bg-slate-900 border-t border-slate-50 dark:border-white/5">
+            <button (click)="showPermissionsModal = false" class="flex-1 py-4 text-slate-500 font-black uppercase tracking-widest text-[10px] border border-slate-200 dark:border-white/5 rounded-2xl hover:bg-slate-50 transition-all">Abort Changes</button>
+            <button (click)="savePermissions()" class="flex-[2] py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black uppercase tracking-widest text-[10px] rounded-2xl shadow-2xl transition-all active:scale-95">Commit Architecture Update</button>
+          </div>
+        </div>
+      </div>
     </div>
   `,
-    styles: [`
-    :host { display: block; background: #fdfdfd; min-height: 100vh; }
-    .role-card { border-top: 6px solid #10b981; }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+  styles: [`
+    :host { display: block; }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
   `]
 })
 export class RolesComponent implements OnInit {
-    roles: Role[] = [];
-    allPermissions: Permission[] = [];
+  mockPermissions = [
+    { name: 'Project.Audit', desc: 'Full architectural oversight and compliance review' },
+    { name: 'Finance.Release', desc: 'Authorization of high-value capital expenditures' },
+    { name: 'Media.Approve', desc: 'Final certification for on-site progress assets' },
+    { name: 'Asset.Manage', desc: 'Fleet and equipment lifecycle management' },
+    { name: 'Personnel.Onboard', desc: 'Provisioning new identity models into the engine' },
+    { name: 'Analytics.Export', desc: 'Generation of enterprise-level operational reports' }
+  ];
 
-    showRoleModal = false;
-    showPermissionsModal = false;
+  mockRoles: any[] = [
+    { id: 1, name: 'General Manager', description: 'Enterprise-level strategic oversight with full capital control.', perms: ['Project.Audit', 'Finance.Release', 'Analytics.Export'] },
+    { id: 2, name: 'Project Lead', description: 'Execution oversight for regional mission-critical infrastructure.', perms: ['Project.Audit', 'Media.Approve'] },
+    { id: 3, name: 'Financial Auditor', description: 'Specialized ledger oversight and expenditure verification.', perms: ['Finance.Release', 'Analytics.Export'] }
+  ];
 
-    newRole: Partial<Role> = {};
-    selectedRole: Role | null = null;
-    selectedPermissionIds: number[] = [];
+  showRoleModal = false;
+  showPermissionsModal = false;
+  editingRole: any = null;
+  selectedRole: any = null;
+  tempPermissions: string[] = [];
 
-    constructor(
-        private rolesService: RolesService,
-        private authService: AuthService
-    ) { }
+  roleForm = {
+    name: '',
+    description: ''
+  };
 
-    ngOnInit() {
-        this.loadData();
+  constructor() { }
+
+  ngOnInit() { }
+
+  openCreateModal() {
+    this.editingRole = null;
+    this.roleForm = { name: '', description: '' };
+    this.showRoleModal = true;
+  }
+
+  openEditModal(role: any) {
+    this.editingRole = role;
+    this.roleForm = { name: role.name, description: role.description };
+    this.showRoleModal = true;
+  }
+
+  saveRole() {
+    if (this.editingRole) {
+      this.editingRole.name = this.roleForm.name;
+      this.editingRole.description = this.roleForm.description;
+    } else {
+      const nextId = Math.max(...this.mockRoles.map(r => r.id)) + 1;
+      this.mockRoles.push({
+        id: nextId,
+        name: this.roleForm.name,
+        description: this.roleForm.description,
+        perms: []
+      });
     }
+    this.showRoleModal = false;
+  }
 
-    loadData() {
-        const user = this.authService.getCurrentUser();
-        this.rolesService.getRoles().subscribe(roles => this.roles = roles);
-        this.rolesService.getPermissions().subscribe(perms => this.allPermissions = perms);
+  deleteRole(id: number) {
+    if (confirm('CRITICAL: Removing this role will revoke access for all associated personnel. Proceed?')) {
+      this.mockRoles = this.mockRoles.filter(r => r.id !== id);
     }
+  }
 
-    openCreateModal() {
-        this.newRole = {};
-        this.showRoleModal = true;
-    }
+  openEditPermissions(role: any) {
+    this.selectedRole = role;
+    this.tempPermissions = [...role.perms];
+    this.showPermissionsModal = true;
+  }
 
-    saveRole() {
-        const user = this.authService.getCurrentUser();
-        this.newRole.companyId = user?.id; // Simplified, usually it's companyId field on user
-        this.rolesService.createRole(this.newRole).subscribe(() => {
-            this.loadData();
-            this.showRoleModal = false;
-        });
+  togglePermission(permName: string) {
+    const index = this.tempPermissions.indexOf(permName);
+    if (index === -1) {
+      this.tempPermissions.push(permName);
+    } else {
+      this.tempPermissions.splice(index, 1);
     }
+  }
 
-    deleteRole(id: number) {
-        if (confirm('Are you sure you want to delete this role?')) {
-            this.rolesService.deleteRole(id).subscribe(() => this.loadData());
-        }
-    }
+  isPermissionSelected(permName: string): boolean {
+    return this.tempPermissions.includes(permName);
+  }
 
-    openEditPermissions(role: Role) {
-        this.selectedRole = role;
-        this.selectedPermissionIds = (role.permissions || []).map(p => p.id);
-        this.showPermissionsModal = true;
+  savePermissions() {
+    if (this.selectedRole) {
+      this.selectedRole.perms = [...this.tempPermissions];
+      this.showPermissionsModal = false;
+      alert(`Architecture Updated: ${this.selectedRole.name} now has ${this.selectedRole.perms.length} active capabilities.`);
     }
-
-    togglePermission(id: number) {
-        const index = this.selectedPermissionIds.indexOf(id);
-        if (index === -1) {
-            this.selectedPermissionIds.push(id);
-        } else {
-            this.selectedPermissionIds.splice(index, 1);
-        }
-    }
-
-    isPermissionSelected(id: number): boolean {
-        return this.selectedPermissionIds.includes(id);
-    }
-
-    savePermissions() {
-        if (this.selectedRole) {
-            this.rolesService.updateRolePermissions(this.selectedRole.id, this.selectedPermissionIds).subscribe(() => {
-                this.loadData();
-                this.showPermissionsModal = false;
-            });
-        }
-    }
+  }
 }

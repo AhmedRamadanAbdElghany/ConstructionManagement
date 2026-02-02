@@ -7,6 +7,9 @@ public class CreateCompanyRequest
     public string Name { get; set; } = string.Empty;
     public int? PackageId { get; set; }
     
+    public string AdminName { get; set; } = string.Empty;
+    public string AdminEmail { get; set; } = string.Empty;
+    
     // Toggles for features
     public bool EnableDelayNotification { get; set; } = true;
     public bool EnablePhotoUpload { get; set; } = true;

@@ -118,6 +118,27 @@ import { RouterLink } from '@angular/router';
                 </div>
               </section>
 
+              <!-- Admin Architecture (Only for New Onboarding) -->
+              <section *ngIf="!isEdit" class="pt-6">
+                <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
+                   <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                   Primary Administrator Architecture
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div class="space-y-2">
+                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Admin Full Name</label>
+                    <input formControlName="adminName" placeholder="e.g., Omar Mokhtar" 
+                           class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-slate-900 dark:text-white">
+                  </div>
+                  <div class="space-y-2">
+                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Admin Corporate Email</label>
+                    <input formControlName="adminEmail" type="email" placeholder="admin@organization.com" 
+                           class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-slate-900 dark:text-white">
+                    <p class="text-[9px] text-slate-400 font-bold uppercase mt-2 italic px-1">Note: A temporary password 'Construction@2026' will be assigned automatically.</p>
+                  </div>
+                </div>
+              </section>
+
               <!-- Calculation Methods -->
               <section class="pt-6">
                  <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
@@ -227,7 +248,9 @@ export class CompaniesComponent implements OnInit {
       clientCanSeeFinancials: [false],
       allowMeasured: [true],
       allowSupervision: [true],
-      allowPackages: [false]
+      allowPackages: [false],
+      adminName: [''],
+      adminEmail: ['']
     });
   }
 
@@ -257,8 +280,16 @@ export class CompaniesComponent implements OnInit {
       clientCanSeeFinancials: false,
       allowMeasured: true,
       allowSupervision: true,
-      allowPackages: false
+      allowPackages: false,
+      adminName: '',
+      adminEmail: ''
     });
+
+    this.companyForm.get('adminName')?.setValidators([Validators.required, Validators.minLength(3)]);
+    this.companyForm.get('adminEmail')?.setValidators([Validators.required, Validators.email]);
+    this.companyForm.get('adminName')?.updateValueAndValidity();
+    this.companyForm.get('adminEmail')?.updateValueAndValidity();
+
     this.showModal = true;
   }
 
@@ -283,6 +314,11 @@ export class CompaniesComponent implements OnInit {
         allowPackages: company.settings.allowPackages
       });
     }
+
+    this.companyForm.get('adminName')?.clearValidators();
+    this.companyForm.get('adminEmail')?.clearValidators();
+    this.companyForm.get('adminName')?.updateValueAndValidity();
+    this.companyForm.get('adminEmail')?.updateValueAndValidity();
 
     this.showModal = true;
   }

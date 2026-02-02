@@ -74,50 +74,22 @@ export class CompaniesService {
     constructor(private http: HttpClient) { }
 
     getCompanies(): Observable<Company[]> {
-        // Return mock data with a small delay for realism
-        return of([...this.mockCompanies]).pipe(delay(300));
+        return this.http.get<Company[]>(this.apiUrl);
     }
 
     getCompany(id: number): Observable<Company> {
-        const company = this.mockCompanies.find(c => c.id === id);
-        if (company) return of({ ...company }).pipe(delay(200));
-        throw new Error('Company not found');
+        return this.http.get<Company>(`${this.apiUrl}/${id}`);
     }
 
     createCompany(request: any): Observable<Company> {
-        const newId = this.mockCompanies.length > 0 ? Math.max(...this.mockCompanies.map(c => c.id)) + 1 : 1;
-        const newCompany: Company = {
-            id: newId,
-            name: request.name,
-            isActive: true,
-            packageId: Number(request.packageId),
-            settings: { ...request }
-        };
-        this.mockCompanies.push(newCompany);
-        return of(newCompany).pipe(delay(400));
+        return this.http.post<Company>(this.apiUrl, request);
     }
 
     updateCompany(id: number, request: any): Observable<Company> {
-        const idx = this.mockCompanies.findIndex(c => c.id === id);
-        if (idx !== -1) {
-            this.mockCompanies[idx] = {
-                ...this.mockCompanies[idx],
-                name: request.name,
-                isActive: request.isActive,
-                packageId: Number(request.packageId),
-                settings: { ...request }
-            };
-            return of(this.mockCompanies[idx]).pipe(delay(400));
-        }
-        throw new Error('Company not found');
+        return this.http.put<Company>(`${this.apiUrl}/${id}`, request);
     }
 
     deleteCompany(id: number): Observable<any> {
-        const idx = this.mockCompanies.findIndex(c => c.id === id);
-        if (idx !== -1) {
-            this.mockCompanies.splice(idx, 1);
-            return of({ success: true }).pipe(delay(300));
-        }
-        throw new Error('Company not found');
+        return this.http.delete(`${this.apiUrl}/${id}`);
     }
 }

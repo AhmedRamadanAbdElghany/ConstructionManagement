@@ -16,6 +16,7 @@ export interface User {
   status: 'Working' | 'Absent' | 'Client';
   salary: number;
   notes?: string; // Admin private notes
+  reportsToId?: number;
 }
 
 export interface Project {
