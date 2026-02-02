@@ -249,5 +249,16 @@
   "permissionsAssigned": "Permissions Assigned",
   "rolePermissionMapping": "Role & Authority Mapping",
   "configureRolePermissions": "Configure Permissions",
-  "linkPermissionsTo": "Link Permissions to"
+  "linkPermissionsTo": "Link Permissions to",
+  "generalCatalog": "General Items Catalog",
+  "manageCatalog": "Manage Company Standards",
+  "addItem": "Add Catalog Item",
+  "editItem": "Edit Item",
+  "itemName": "Item Name",
+  "itemUnit": "Unit",
+  "itemRate": "Default Rate",
+  "itemCategory": "Category",
+  "noCatalogItems": "No items in catalog yet.",
+  "companyGlobal": "Company Global",
+  "projectSpecific": "Project Specific"
 }

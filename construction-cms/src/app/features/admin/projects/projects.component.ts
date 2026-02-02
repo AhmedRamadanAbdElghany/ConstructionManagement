@@ -2,13 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MockDataService } from '../../../core/mock/mock-data.service';
-import { Project } from '../../../shared/interfaces';
+import { Project, CatalogItem, User, CompanyPackage, CompanySettings } from '../../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
+import { CatalogService } from '../../../core/services/catalog.service';
+import { SettingsService } from '../../../core/services/settings.service';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-projects',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule],
+  imports: [CommonModule, RouterModule, TranslateModule, FormsModule],
   template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
@@ -18,7 +22,7 @@ import { TranslateModule } from '@ngx-translate/core';
             <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ 'projects.title' | translate }}</h1>
             <p class="text-slate-500 dark:text-slate-400 font-medium tracking-tight">Manage and track your construction projects</p>
           </div>
-          <button class="px-6 py-3 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-all flex items-center group">
+          <button (click)="openCreateModal()" class="px-6 py-3 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-all flex items-center group">
             <svg class="w-5 h-5 mr-2 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
             </svg>
@@ -258,14 +262,300 @@ import { TranslateModule } from '@ngx-translate/core';
           </div>
         }
       </div>
+
+      <!-- Create Project Modal -->
+      @if (showCreateModal) {
+       <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div class="bg-white dark:bg-slate-900 w-full max-w-4xl max-h-[90vh] rounded-[2.5rem] shadow-2xl flex flex-col relative overflow-hidden animate-in zoom-in-95 duration-300">
+             <!-- Modal Header (Fixed) -->
+             <div class="p-8 pb-4 flex items-center justify-between shrink-0 border-b border-slate-50 dark:border-white/5">
+                <div>
+                   <h2 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'projects.create_new' | translate }}</h2>
+                   <p class="text-[10px] text-cyan-500 font-bold uppercase tracking-widest">Setup Configuration</p>
+                </div>
+                <button (click)="showCreateModal = false" class="p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                   <svg class="w-6 h-6 text-slate-400 font-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+             </div>
+
+             <!-- Modal Body (Scrollable) -->
+             <div class="p-8 overflow-y-auto grow custom-scrollbar">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                   <!-- Left Column: Operations & Info -->
+                   <div class="space-y-8">
+                      <!-- General Info Section -->
+                      <div class="space-y-4 p-6 rounded-3xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+                         <p class="text-[10px] font-black text-cyan-500 uppercase tracking-widest mb-4">Project Identity</p>
+                         <div>
+                            <input type="text" [(ngModel)]="createForm.name" placeholder="Project Name" 
+                                   class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-sm">
+                         </div>
+                         <div>
+                            <input type="text" [(ngModel)]="createForm.address" placeholder="Location Address" 
+                                   class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-sm">
+                         </div>
+                         <div class="grid grid-cols-2 gap-4">
+                            <div class="relative">
+                               <label class="absolute -top-2 left-4 px-2 bg-slate-50 dark:bg-slate-900 text-[8px] font-black text-slate-400 uppercase tracking-widest">Start</label>
+                               <input type="date" [(ngModel)]="createForm.startDate" 
+                                      class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-xs">
+                            </div>
+                            <div class="relative">
+                               <label class="absolute -top-2 left-4 px-2 bg-slate-50 dark:bg-slate-900 text-[8px] font-black text-slate-400 uppercase tracking-widest">Target End</label>
+                               <input type="date" [(ngModel)]="createForm.endDate" 
+                                      class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-xs">
+                            </div>
+                         </div>
+
+                         @if (companySettings?.allowLocations) {
+                            <div class="grid grid-cols-2 gap-4 animate-in slide-in-from-top-2 duration-300">
+                               <div class="relative">
+                                  <label class="absolute -top-2 left-4 px-2 bg-slate-50 dark:bg-slate-900 text-[8px] font-black text-slate-400 uppercase tracking-widest">Latitude</label>
+                                  <input type="number" [(ngModel)]="createForm.lat" step="any" placeholder="0.0000"
+                                         class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-xs">
+                               </div>
+                               <div class="relative">
+                                  <label class="absolute -top-2 left-4 px-2 bg-slate-50 dark:bg-slate-900 text-[8px] font-black text-slate-400 uppercase tracking-widest">Longitude</label>
+                                  <input type="number" [(ngModel)]="createForm.lng" step="any" placeholder="0.0000"
+                                         class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-xs">
+                               </div>
+                            </div>
+                         }
+                      </div>
+
+                      <!-- Financial Logic Section -->
+                      <div class="space-y-6 p-6 rounded-3xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+                         <p class="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-4">Calculation Method</p>
+                         
+                         <!-- Method Switcher -->
+                         <div class="flex p-1.5 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5">
+                            <button (click)="createForm.calculationMethod = 'Measured'" 
+                                    [class]="createForm.calculationMethod === 'Measured' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'"
+                                    class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Measured</button>
+                            <button (click)="createForm.calculationMethod = 'Supervision'" 
+                                    [class]="createForm.calculationMethod === 'Supervision' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'"
+                                    class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Supervision</button>
+                            <button (click)="createForm.calculationMethod = 'Packages'" 
+                                    [class]="createForm.calculationMethod === 'Packages' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'"
+                                    class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Packages</button>
+                         </div>
+
+                         <!-- Dynamic Fields based on Method -->
+                         @if (createForm.calculationMethod === 'Measured') {
+                            <div class="animate-in slide-in-from-top-2 duration-300">
+                               <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Total Project Cost (Measured Value)</label>
+                               <div class="relative">
+                                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                                  <input type="number" [(ngModel)]="createForm.totalContractValue" 
+                                         class="w-full p-4 pl-10 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all">
+                               </div>
+                            </div>
+                         }
+
+                         @if (createForm.calculationMethod === 'Supervision') {
+                            <div class="space-y-4 animate-in slide-in-from-top-2 duration-300">
+                               <div class="flex items-center justify-between p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5">
+                                  <div>
+                                     <p class="text-xs font-bold text-slate-900 dark:text-white">Use Company Default %</p>
+                                     <p class="text-[9px] text-slate-400 font-bold uppercase tracking-tight">Current standard: {{ companySettings?.defaultSupervisionPercentage }}%</p>
+                                  </div>
+                                  <button (click)="createForm.useCompanyPercentage = !createForm.useCompanyPercentage" 
+                                          [class]="createForm.useCompanyPercentage ? 'bg-cyan-500' : 'bg-slate-200 dark:bg-slate-800'"
+                                          class="w-12 h-6 rounded-full relative transition-colors">
+                                     <div [class]="createForm.useCompanyPercentage ? 'translate-x-7' : 'translate-x-1'"
+                                          class="absolute top-1 w-4 h-4 bg-white rounded-full transition-transform"></div>
+                                  </button>
+                               </div>
+                               
+                               @if (!createForm.useCompanyPercentage) {
+                                  <div class="animate-in zoom-in-95 duration-200">
+                                     <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Project Supervision Override %</label>
+                                     <div class="relative">
+                                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">%</span>
+                                        <input type="number" [(ngModel)]="createForm.supervisionPercentage" 
+                                               class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-rose-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all">
+                                     </div>
+                                  </div>
+                               }
+                            </div>
+                         }
+
+                         @if (createForm.calculationMethod === 'Packages') {
+                            <div class="animate-in slide-in-from-top-2 duration-300">
+                               <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Contract Package</label>
+                               <select [(ngModel)]="createForm.packageId" 
+                                       class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 outline-none font-bold text-slate-900 dark:text-white transition-all appearance-none cursor-pointer">
+                                  <option [ngValue]="null">Select a package...</option>
+                                  @for (pkg of availablePackages; track pkg.id) {
+                                     <option [value]="pkg.id">{{ pkg.name }} - {{ pkg.price | currency }}</option>
+                                  }
+                               </select>
+                            </div>
+                         }
+                      </div>
+                   </div>
+
+                   <!-- Right Column: Special Items & BOQ -->
+                   <div class="space-y-8">
+                      <!-- Mandatory Adjustments Section -->
+                      <div class="space-y-6 p-6 rounded-3xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+                         <p class="text-[10px] font-black text-orange-500 uppercase tracking-widest mb-4">Financial Adjustments</p>
+                         
+                         <!-- Extra Fees -->
+                         <div class="space-y-3">
+                            <div class="grid grid-cols-3 gap-2">
+                               <div class="col-span-1 relative z-10">
+                                  <label class="text-[8px] font-black text-slate-400 uppercase tracking-[0.15em] block mb-1">Extra Fees</label>
+                                  <input type="number" [(ngModel)]="createForm.extraFees" 
+                                         class="w-full p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-cyan-500/50 outline-none font-black text-sm text-slate-900 dark:text-white">
+                               </div>
+                               <div class="col-span-2">
+                                  <label class="text-[8px] font-black text-slate-400 uppercase tracking-[0.15em] block mb-1">Fee Description</label>
+                                  <input type="text" [(ngModel)]="createForm.extraFeesDescription" 
+                                         [placeholder]="createForm.extraFees > 0 ? 'Description Required...' : 'Reason for extra fees'"
+                                         [class.border-rose-500]="createForm.extraFees > 0 && !createForm.extraFeesDescription"
+                                         class="w-full p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-xs text-slate-900 dark:text-white transition-all">
+                               </div>
+                            </div>
+                         </div>
+
+                         <!-- Deducted Amount -->
+                         <div class="space-y-3">
+                            <div class="grid grid-cols-3 gap-2">
+                               <div class="col-span-1 relative z-10">
+                                  <label class="text-[8px] font-black text-rose-500/70 uppercase tracking-[0.15em] block mb-1">Deducted</label>
+                                  <input type="number" [(ngModel)]="createForm.deductedAmount" 
+                                         class="w-full p-3 rounded-xl bg-white dark:bg-slate-950 border border-rose-500/10 dark:border-rose-500/10 focus:border-rose-500/50 outline-none font-black text-sm text-rose-500 dark:text-rose-400">
+                               </div>
+                               <div class="col-span-2">
+                                  <label class="text-[8px] font-black text-slate-400 uppercase tracking-[0.15em] block mb-1">Deduction Reason</label>
+                                  <input type="text" [(ngModel)]="createForm.deductedAmountDescription" 
+                                         [placeholder]="createForm.deductedAmount > 0 ? 'Description Required...' : 'Reason for deduction'"
+                                         [class.border-rose-500]="createForm.deductedAmount > 0 && !createForm.deductedAmountDescription"
+                                         class="w-full p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-rose-500/50 outline-none font-bold text-xs text-slate-900 dark:text-white transition-all">
+                               </div>
+                            </div>
+                         </div>
+                      </div>
+
+                      <!-- Catalog Items Section (Condensed) -->
+                      <div class="p-6 rounded-3xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+                         <div class="flex items-center justify-between mb-4">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Initial BOQ Template</label>
+                            <button (click)="toggleAllCatalog(true)" class="text-[9px] font-black text-cyan-500 uppercase hover:underline">Reset All</button>
+                         </div>
+                         <div class="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
+                            @for (item of catalogItems; track item.id) {
+                               <label class="flex items-center space-x-3 p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/5 cursor-pointer hover:border-cyan-500/30 transition-all">
+                                  <div class="relative flex items-center">
+                                     <input type="checkbox" [checked]="isCatalogItemSelected(item.id)" (change)="toggleCatalogItem(item)"
+                                            class="w-4 h-4 rounded-md border-2 border-slate-200 dark:border-slate-800 appearance-none checked:bg-cyan-500 checked:border-cyan-500 transition-all cursor-pointer">
+                                  </div>
+                                  <div class="flex-1 min-w-0">
+                                     <p class="text-[11px] font-bold text-slate-900 dark:text-white truncate">{{ item.name }}</p>
+                                     <p class="text-[8px] text-slate-400 font-black tracking-widest">{{ item.unit }}</p>
+                                  </div>
+                               </label>
+                            }
+                         </div>
+                         
+                         <!-- List of already added Custom Items -->
+                         @if (customProjectItems.length > 0) {
+                            <div class="mt-4 space-y-2 max-h-32 overflow-y-auto pr-1 custom-scrollbar">
+                               <p class="text-[8px] font-black text-cyan-500 uppercase tracking-widest mb-2">Project-Specific Items</p>
+                               @for (item of customProjectItems; track item.id) {
+                                  <div class="flex items-center justify-between p-2 rounded-xl bg-cyan-500/5 border border-cyan-500/10">
+                                     <div class="flex-1 min-w-0">
+                                        <p class="text-[10px] font-bold text-cyan-600 dark:text-cyan-400 truncate">{{ item.name }}</p>
+                                        <p class="text-[8px] text-cyan-500/60 font-black uppercase">{{ item.unit }}</p>
+                                     </div>
+                                     <button (click)="removeCustomItem(item.id)" class="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                     </button>
+                                  </div>
+                               }
+                            </div>
+                         }
+                         <div class="mt-4 pt-4 border-t border-slate-100 dark:border-white/5 flex items-center space-x-2">
+                            <input #cName type="text" placeholder="Add Custom Item..." 
+                                   class="flex-1 p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 rounded-lg text-[10px] outline-none font-bold text-slate-900 dark:text-white">
+                            <input #cUnit type="text" placeholder="Unit" 
+                                   class="w-16 p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 rounded-lg text-[10px] outline-none font-bold text-center text-slate-900 dark:text-white">
+                            <button (click)="addCustomItem(cName.value, cUnit.value); cName.value=''; cUnit.value=''" 
+                                    class="p-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg hover:bg-cyan-500 dark:hover:bg-cyan-500 transition-all">
+                               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                            </button>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+             </div>
+
+             <!-- Validation Feedback (Fixed above footer) -->
+             @if (!isFormValid) {
+                <div class="px-8 py-3 bg-rose-500/5 border-t border-rose-500/10 shrink-0">
+                   <div class="flex items-center space-x-2 mb-1">
+                      <svg class="w-3 h-3 text-rose-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                      <span class="text-[9px] font-black text-rose-500 uppercase tracking-widest">Missing Required Information:</span>
+                   </div>
+                   <div class="flex flex-wrap gap-2">
+                      @for (error of validationErrors; track error) {
+                         <span class="text-[8px] font-bold bg-rose-500 text-white px-2 py-0.5 rounded-full uppercase">{{ error }}</span>
+                      }
+                   </div>
+                </div>
+             }
+
+             <!-- Modal Footer (Fixed) -->
+             <div class="p-8 pt-6 flex space-x-4 shrink-0 border-t border-slate-50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
+                <button (click)="showCreateModal = false" class="flex-1 py-4 rounded-2xl bg-white dark:bg-slate-800 text-slate-500 font-black text-[10px] uppercase tracking-widest transition-all hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-white/5">
+                   {{ 'common.cancel' | translate }}
+                </button>
+                <button (click)="createProject()" 
+                        [disabled]="!isFormValid"
+                        [class.opacity-40]="!isFormValid"
+                        [class.grayscale]="!isFormValid"
+                        class="flex-[2] py-4 rounded-2xl bg-slate-900 dark:bg-cyan-500 text-white font-black text-[10px] uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed">
+                   Confirm & Create Project
+                </button>
+             </div>
+          </div>
+       </div>
+      }
     </div>
   `
 })
 export class ProjectsComponent implements OnInit {
   projects: Project[] = [];
+  catalogItems: CatalogItem[] = [];
   filterStatus: 'all' | 'Active' | 'Completed' | 'Delayed' = 'all';
   viewMode: 'grid' | 'list' = 'grid';
   sparklineData = [30, 50, 40, 70, 60, 80, 90];
+
+  // Create Project State
+  showCreateModal = false;
+  companySettings?: CompanySettings;
+  availablePackages: CompanyPackage[] = [];
+
+  createForm = {
+    name: '',
+    address: '',
+    startDate: '',
+    endDate: '',
+    calculationMethod: 'Measured' as 'Measured' | 'Supervision' | 'Packages',
+    totalContractValue: 0,
+    supervisionPercentage: 0,
+    useCompanyPercentage: true,
+    packageId: null as number | null,
+    extraFees: 0,
+    extraFeesDescription: '',
+    deductedAmount: 0,
+    deductedAmountDescription: '',
+    lat: 0 as number | null,
+    lng: 0 as number | null
+  };
+  selectedCatalogItems: CatalogItem[] = [];
+  customProjectItems: CatalogItem[] = [];
 
   get filteredProjects(): Project[] {
     if (this.filterStatus === 'all') {
@@ -274,11 +564,179 @@ export class ProjectsComponent implements OnInit {
     return this.projects.filter(p => p.status === this.filterStatus);
   }
 
-  constructor(private mockDataService: MockDataService) { }
+  get isFormValid(): boolean {
+    const f = this.createForm;
+    // Basic Info
+    if (!f.name || !f.address || !f.startDate || !f.endDate) return false;
+
+    // Location
+    if (this.companySettings?.allowLocations) {
+      if (f.lat === null || f.lng === null) return false;
+    }
+
+    // Calculation Method
+    if (f.calculationMethod === 'Measured' && (!f.totalContractValue || f.totalContractValue <= 0)) return false;
+    if (f.calculationMethod === 'Packages' && !f.packageId) return false;
+
+    // Financial Adjustments
+    if (f.extraFees > 0 && !f.extraFeesDescription) return false;
+    if (f.deductedAmount > 0 && !f.deductedAmountDescription) return false;
+
+    return true;
+  }
+
+  get validationErrors(): string[] {
+    const f = this.createForm;
+    const errors: string[] = [];
+
+    if (!f.name) errors.push('Project Name');
+    if (!f.address) errors.push('Location Address');
+    if (!f.startDate) errors.push('Start Date');
+    if (!f.endDate) errors.push('Target End Date');
+
+    if (this.companySettings?.allowLocations) {
+      if (f.lat === null || f.lng === null) errors.push('GPS Coordinates (Lat/Lng)');
+    }
+
+    if (f.calculationMethod === 'Measured' && (!f.totalContractValue || f.totalContractValue <= 0)) {
+      errors.push('Total Project Cost');
+    }
+
+    if (f.calculationMethod === 'Packages' && !f.packageId) {
+      errors.push('Contract Package selection');
+    }
+
+    if (f.extraFees > 0 && !f.extraFeesDescription) errors.push('Extra Fees Description');
+    if (f.deductedAmount > 0 && !f.deductedAmountDescription) errors.push('Deduction Reason (وصف الخصم)');
+
+    return errors;
+  }
+
+  isCatalogItemSelected(id: number): boolean {
+    return !!this.selectedCatalogItems.find(i => i.id === id);
+  }
+
+  constructor(
+    private mockDataService: MockDataService,
+    private catalogService: CatalogService,
+    private settingsService: SettingsService
+  ) { }
 
   ngOnInit() {
     this.mockDataService.getProjects().subscribe(projects => {
       this.projects = projects;
+    });
+    this.catalogService.getCatalogItems().subscribe(items => {
+      this.catalogItems = items;
+    });
+    this.settingsService.getCompanySettings().subscribe(settings => {
+      this.companySettings = settings;
+    });
+    this.settingsService.getCompanyPackages().subscribe(packages => {
+      this.availablePackages = packages;
+    });
+  }
+
+  openCreateModal() {
+    this.createForm = {
+      name: '',
+      address: '',
+      startDate: new Date().toISOString().split('T')[0],
+      endDate: '',
+      calculationMethod: 'Measured',
+      totalContractValue: 0,
+      supervisionPercentage: this.companySettings?.defaultSupervisionPercentage || 0,
+      useCompanyPercentage: true,
+      packageId: null,
+      extraFees: 0,
+      extraFeesDescription: '',
+      deductedAmount: 0,
+      deductedAmountDescription: '',
+      lat: null,
+      lng: null
+    };
+    // Pre-select ALL catalog items by default as requested
+    this.selectedCatalogItems = [...this.catalogItems];
+    this.customProjectItems = [];
+    this.showCreateModal = true;
+  }
+
+  toggleCatalogItem(item: CatalogItem) {
+    const index = this.selectedCatalogItems.findIndex(i => i.id === item.id);
+    if (index > -1) {
+      this.selectedCatalogItems = this.selectedCatalogItems.filter(i => i.id !== item.id);
+    } else {
+      this.selectedCatalogItems = [...this.selectedCatalogItems, { ...item }];
+    }
+  }
+
+  toggleAllCatalog(select: boolean) {
+    if (select) {
+      this.selectedCatalogItems = [...this.catalogItems];
+    } else {
+      this.selectedCatalogItems = [];
+    }
+  }
+
+  addCustomItem(name: string, unit: string) {
+    if (!name || !unit) return;
+    const newItem: CatalogItem = {
+      id: -Math.floor(Math.random() * 10000), // Negative ID for temp items
+      name,
+      unit,
+      defaultRate: 0,
+      category: 'Other'
+    };
+    this.customProjectItems = [...this.customProjectItems, newItem];
+  }
+
+  removeCustomItem(id: number) {
+    this.customProjectItems = this.customProjectItems.filter(i => i.id !== id);
+  }
+
+  createProject() {
+    const isExtraFeesValid = !this.createForm.extraFees || (this.createForm.extraFees > 0 && this.createForm.extraFeesDescription);
+    const isDeductionsValid = !this.createForm.deductedAmount || (this.createForm.deductedAmount > 0 && this.createForm.deductedAmountDescription);
+
+    if (!isExtraFeesValid || !isDeductionsValid) {
+      alert('Please provide descriptions for extra fees or deductions.');
+      return;
+    }
+
+    const newProject: Project = {
+      id: Math.max(0, ...this.projects.map(p => p.id)) + 1,
+      name: this.createForm.name,
+      status: 'Active',
+      progress: 0,
+      cashFlow: { earned: 0, collected: 0 },
+      location: {
+        lat: Number(this.createForm.lat) || 0,
+        lng: Number(this.createForm.lng) || 0,
+        address: this.createForm.address
+      },
+      startDate: this.createForm.startDate,
+      endDate: this.createForm.endDate,
+      packageId: this.createForm.calculationMethod === 'Packages' ? Number(this.createForm.packageId) : undefined
+    };
+
+    this.projects.unshift(newProject);
+    this.showCreateModal = false;
+
+    // Combine Catalog and Custom items for the final BOQ initialization
+    const allInitialItems = [...this.selectedCatalogItems, ...this.customProjectItems];
+    console.log('Project created with config:', {
+      project: newProject,
+      calculation: {
+        method: this.createForm.calculationMethod,
+        value: this.createForm.calculationMethod === 'Measured' ? this.createForm.totalContractValue :
+          this.createForm.calculationMethod === 'Supervision' ? (this.createForm.useCompanyPercentage ? 'Default' : this.createForm.supervisionPercentage) :
+            this.createForm.packageId
+      },
+      adjustments: {
+        extra: { amount: this.createForm.extraFees, desc: this.createForm.extraFeesDescription },
+        deducted: { amount: this.createForm.deductedAmount, desc: this.createForm.deductedAmountDescription }
+      },
+      initialBOQ: allInitialItems
     });
   }
 }

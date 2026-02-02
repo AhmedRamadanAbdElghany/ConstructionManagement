@@ -6,7 +6,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SettingsService } from '../../../core/services/settings.service';
 import { CompanyPackagesService } from '../../../core/services/company-packages.service';
 import { RolesService } from '../../../core/services/roles.service';
-import { CompanySettings, CompanyPackage, Role, Permission } from '../../../shared/interfaces';
+import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '../../../shared/interfaces';
+import { CatalogService } from '../../../core/services/catalog.service';
 import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
@@ -244,44 +245,62 @@ import { AuthService } from '../../../core/auth/auth.service';
             <!-- SECTION 2: MODULE CONFIGURATION (Company Admin ONLY) -->
             @if (isOnlyCompanyAdmin) {
             <section class="space-y-8">
-                <!-- Role-Permission Mapping (Company Admin) -->
+                <!-- General Items Catalog (Company Admin) -->
                 <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
-                   <div class="absolute top-0 right-0 w-32 h-32 bg-fuchsia-500/5 rounded-full blur-3xl"></div>
-                   <div class="flex items-center space-x-4 mb-8">
-                      <div class="w-12 h-12 rounded-2xl bg-fuchsia-500/10 flex items-center justify-center text-fuchsia-500">
-                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                         </svg>
+                   <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-3xl"></div>
+                   <div class="flex items-center justify-between mb-8">
+                      <div class="flex items-center space-x-4">
+                         <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-500">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                            </svg>
+                         </div>
+                         <div>
+                            <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'generalCatalog' | translate }}</h3>
+                            <p class="text-[10px] text-cyan-500 font-bold uppercase tracking-widest">{{ 'manageCatalog' | translate }}</p>
+                         </div>
                       </div>
-                      <div>
-                         <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'rolePermissionMapping' | translate }}</h3>
-                         <p class="text-[10px] text-fuchsia-500 font-bold uppercase tracking-widest">Operation Linkage</p>
-                      </div>
+                      <button (click)="openCatalogModal()" class="px-6 py-3 rounded-2xl bg-cyan-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-cyan-500/20 hover:scale-105 active:scale-95 transition-all">
+                         + {{ 'addItem' | translate }}
+                      </button>
                    </div>
 
-                   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      @for (role of companyRoles; track role.id) {
-                      <div class="p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 flex flex-col justify-between hover:border-fuchsia-500/50 transition-all">
-                         <div class="mb-4">
-                            <h4 class="font-bold text-slate-900 dark:text-white mb-2">{{ role.name }}</h4>
-                            <div class="flex flex-wrap gap-1">
-                               @for (p of role.permissions?.slice(0, 3); track p.id) {
-                                  <span class="px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 text-[9px] font-bold text-slate-400">{{ p.name }}</span>
-                               }
-                               @if ((role.permissions?.length || 0) > 3) {
-                                  <span class="px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 text-[9px] font-bold text-slate-400">+{{ (role.permissions?.length || 0) - 3 }}</span>
-                               }
+                   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      @for (item of catalogItems; track item.id) {
+                      <div class="p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 hover:border-cyan-500/50 transition-all group/catalogItem">
+                         <div class="flex justify-between items-start mb-4">
+                            <div>
+                               <div class="flex items-center space-x-2 mb-1">
+                                  <span class="px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-500 text-[8px] font-black uppercase tracking-widest">{{ item.category || 'Other' }}</span>
+                                  @if (item.projectId) {
+                                     <span class="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-500 text-[8px] font-black uppercase tracking-widest">Project #{{item.projectId}}</span>
+                                  } @else {
+                                     <span class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-500 text-[8px] font-black uppercase tracking-widest">{{ 'companyGlobal' | translate }}</span>
+                                  }
+                               </div>
+                               <h4 class="font-bold text-slate-900 dark:text-white">{{ item.name }}</h4>
+                               <p class="text-[10px] text-slate-500 font-medium">{{ item.unit }} • {{ item.defaultRate | currency }}</p>
+                            </div>
+                            <div class="flex space-x-1 opacity-0 group-hover/catalogItem:opacity-100 transition-opacity">
+                               <button (click)="openCatalogModal(item)" class="p-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-400 hover:text-cyan-500 transition-all">
+                                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                               </button>
+                               <button (click)="deleteCatalogItem(item.id)" class="p-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-400 hover:text-red-500 transition-all">
+                                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                               </button>
                             </div>
                          </div>
-                         <button (click)="openLinkModal(role)" class="w-full py-3 rounded-xl bg-white dark:bg-slate-800 text-fuchsia-500 font-black text-[10px] uppercase tracking-widest border border-slate-200 dark:border-white/5 hover:bg-fuchsia-500 hover:text-white transition-all">
-                            {{ 'configureRolePermissions' | translate }}
-                         </button>
+                         <p class="text-[11px] text-slate-500 line-clamp-2 italic">{{ item.description || 'No description provided' }}</p>
                       </div>
+                      } @empty {
+                         <div class="col-span-full py-12 text-center border-2 border-dashed border-slate-100 dark:border-white/5 rounded-[2.5rem]">
+                            <p class="text-slate-400 font-bold text-sm uppercase tracking-widest">{{ 'noCatalogItems' | translate }}</p>
+                         </div>
                       }
                    </div>
                 </div>
 
-                <!-- Supervision Config -->
+               <!-- Supervision Config -->
                 @if (settings.allowSupervision) {
                 <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
                    <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl"></div>
@@ -476,6 +495,71 @@ import { AuthService } from '../../../core/auth/auth.service';
       </div>
       }
 
+      <!-- Catalog Modal -->
+      @if (showCatalogModal) {
+      <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+         <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative overflow-hidden">
+            <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-6">
+               {{ (selectedCatalogItem ? 'editItem' : 'addItem') | translate }}
+            </h2>
+
+            <div class="grid grid-cols-2 gap-4">
+               <div class="col-span-2">
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'itemName' | translate }}</label>
+                  <input type="text" [(ngModel)]="catalogForm.name" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold">
+               </div>
+               <div>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'itemUnit' | translate }}</label>
+                  <input type="text" [(ngModel)]="catalogForm.unit" placeholder="e.g. m3, Ton, LS" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold">
+               </div>
+               <div>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'itemRate' | translate }}</label>
+                  <input type="number" [(ngModel)]="catalogForm.defaultRate" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold">
+               </div>
+               <div class="col-span-2">
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'itemCategory' | translate }}</label>
+                  <select [(ngModel)]="catalogForm.category" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold appearance-none">
+                     <option value="Preliminaries">Preliminaries</option>
+                     <option value="Labor">Labor</option>
+                     <option value="Material">Material</option>
+                     <option value="Equipment">Equipment</option>
+                     <option value="Other">Other</option>
+                  </select>
+               </div>
+               <div class="col-span-2">
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Assignment</label>
+                  <div class="flex space-x-2">
+                     <button (click)="catalogForm.projectId = undefined" 
+                             [class.bg-cyan-500]="!catalogForm.projectId"
+                             [class.text-white]="!catalogForm.projectId"
+                             [class.bg-slate-100]="catalogForm.projectId"
+                             [class.dark:bg-slate-800]="catalogForm.projectId"
+                             class="flex-1 py-3 rounded-xl font-bold text-[10px] uppercase transition-all">
+                        {{ 'companyGlobal' | translate }}
+                     </button>
+                     <div class="flex-1 relative">
+                        <input type="number" [(ngModel)]="catalogForm.projectId" placeholder="Project ID"
+                               class="w-full py-3 px-4 rounded-xl bg-slate-100 dark:bg-slate-950 font-bold text-[10px] outline-none">
+                        @if (catalogForm.projectId) {
+                           <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[8px] font-black text-amber-500 uppercase">{{ 'projectSpecific' | translate }}</span>
+                        }
+                     </div>
+                  </div>
+               </div>
+            </div>
+
+            <div class="flex space-x-4 mt-8">
+               <button (click)="showCatalogModal = false" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest">
+                  {{ 'common.cancel' | translate }}
+               </button>
+               <button (click)="saveCatalogItem()" class="flex-1 py-4 rounded-2xl bg-cyan-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-cyan-500/20">
+                  {{ 'common.save' | translate }}
+               </button>
+            </div>
+         </div>
+      </div>
+      }
+
       <!-- Permission Modal -->
       @if (showPermissionModal) {
       <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -523,14 +607,17 @@ export class CompanySettingsComponent implements OnInit {
    companyPackages: CompanyPackage[] = [];
    companyRoles: Role[] = [];
    companyPermissions: Permission[] = [];
+   catalogItems: CatalogItem[] = [];
 
    showPackageModal = false;
    showRoleModal = false;
    showPermissionModal = false;
    showLinkModal = false;
+   showCatalogModal = false;
 
    selectedPackage?: CompanyPackage;
    selectedRole?: Role;
+   selectedCatalogItem?: CatalogItem;
 
    packageForm: Partial<CompanyPackage> = {
       name: '',
@@ -550,12 +637,20 @@ export class CompanySettingsComponent implements OnInit {
       description: ''
    };
 
+   catalogForm: Partial<CatalogItem> = {
+      name: '',
+      unit: '',
+      defaultRate: 0,
+      category: 'Other'
+   };
+
    linkForm: Permission[] = [];
 
    constructor(
       private settingsService: SettingsService,
       private packageService: CompanyPackagesService,
       private rolesService: RolesService,
+      private catalogService: CatalogService,
       private authService: AuthService
    ) { }
 
@@ -582,6 +677,7 @@ export class CompanySettingsComponent implements OnInit {
       // Assuming companyId 1 or fetching from context
       this.loadPackages(1);
       this.loadRolesAndPermissions();
+      this.loadCatalogItems();
    }
 
    loadSettings() {
@@ -598,6 +694,10 @@ export class CompanySettingsComponent implements OnInit {
    loadRolesAndPermissions() {
       this.rolesService.getRoles().subscribe(roles => this.companyRoles = roles);
       this.rolesService.getPermissions().subscribe(perms => this.companyPermissions = perms);
+   }
+
+   loadCatalogItems() {
+      this.catalogService.getCatalogItems().subscribe(items => this.catalogItems = items);
    }
 
    saveSettings() {
@@ -736,6 +836,37 @@ export class CompanySettingsComponent implements OnInit {
          this.linkForm.push(permission);
       } else {
          this.linkForm.splice(index, 1);
+      }
+   }
+
+   // Catalog Management
+   openCatalogModal(item?: CatalogItem) {
+      this.selectedCatalogItem = item;
+      if (item) {
+         this.catalogForm = { ...item };
+      } else {
+         this.catalogForm = { name: '', unit: '', defaultRate: 0, category: 'Other' };
+      }
+      this.showCatalogModal = true;
+   }
+
+   saveCatalogItem() {
+      if (this.selectedCatalogItem) {
+         this.catalogService.updateCatalogItem(this.selectedCatalogItem.id, this.catalogForm).subscribe(() => {
+            this.loadCatalogItems();
+            this.showCatalogModal = false;
+         });
+      } else {
+         this.catalogService.addCatalogItem(this.catalogForm).subscribe(() => {
+            this.loadCatalogItems();
+            this.showCatalogModal = false;
+         });
+      }
+   }
+
+   deleteCatalogItem(id: number) {
+      if (confirm('Delete this item from catalog?')) {
+         this.catalogService.deleteCatalogItem(id).subscribe(() => this.loadCatalogItems());
       }
    }
 }

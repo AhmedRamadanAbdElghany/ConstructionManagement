@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { CompanySettings, ProjectSettings } from '../../shared/interfaces';
+import { CompanySettings, ProjectSettings, CompanyPackage } from '../../shared/interfaces';
 
 @Injectable({
     providedIn: 'root'
@@ -35,6 +35,11 @@ export class SettingsService {
         defaultSupervisionPercentage: 10
     };
 
+    private dummyCompanyPackages: CompanyPackage[] = [
+        { id: 1, name: 'Basic Finish', description: 'Standard painting and flooring', price: 50000, includedItemsDescription: 'Walls, Tiles, Basic Plumbing', variationCalculation: 'AddFullCost' },
+        { id: 2, name: 'Premium Luxury', description: 'Italian marble and smart home', price: 150000, includedItemsDescription: 'Marble, Smart Home, Custom Cabinetry', variationCalculation: 'AddDifference' }
+    ];
+
     private dummyProjectSettings: ProjectSettings = {
         enableDelayNotification: true,
         delayNotificationIsOneTimeOnly: false,
@@ -62,6 +67,10 @@ export class SettingsService {
         return this.settingsSubject.asObservable().pipe(
             map(s => JSON.parse(JSON.stringify(s)))
         );
+    }
+
+    getCompanyPackages(): Observable<CompanyPackage[]> {
+        return of([...this.dummyCompanyPackages]);
     }
 
     updateCompanySettings(settings: Partial<CompanySettings>): Observable<CompanySettings> {
