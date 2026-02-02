@@ -174,6 +174,30 @@ import { RouterModule } from '@angular/router';
           }
         }
 
+        @if (isClient) {
+          <a routerLink="/client/projects" 
+             routerLinkActive="nav-active"
+             class="nav-item group">
+            <div class="nav-icon-box">
+              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+              </svg>
+            </div>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">My Portfolio</span>
+          </a>
+
+          <a routerLink="/client/reports" 
+             routerLinkActive="nav-active"
+             class="nav-item group">
+            <div class="nav-icon-box">
+              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 17v-2m3 2v-4m3 2v-6m-8-4h8a2 2 0 012 2v11a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z"></path>
+              </svg>
+            </div>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Executive Reports</span>
+          </a>
+        }
+
         <div class="my-6 px-4">
           <div class="h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent"></div>
         </div>

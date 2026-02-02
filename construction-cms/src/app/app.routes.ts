@@ -110,6 +110,12 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/client/client-projects/client-projects.component').then(m => m.ClientProjectsComponent),
                 canActivate: [roleGuard],
                 data: { roles: ['NormalUser'] }
+            },
+            {
+                path: 'reports',
+                loadComponent: () => import('./features/client/reports/client-reports.component').then(m => m.ClientReportsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['NormalUser'] }
             }
         ]
     },

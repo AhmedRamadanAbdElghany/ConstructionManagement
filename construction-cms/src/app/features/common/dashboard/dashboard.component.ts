@@ -189,6 +189,138 @@ import { AuthService } from '../../../core/auth/auth.service';
         } 
         
         <!-- ──────────────────────────────────────────────────────────────────
+             CLIENT DASHBOARD (NormalUser / Apartment Owner)
+             ────────────────────────────────────────────────────────────────── -->
+        @else if (isClient) {
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
+            <!-- Left Side: Financial Status & Progress -->
+            <div class="lg:col-span-4 space-y-8">
+              <!-- Payment Doughnut Card -->
+              <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-200 dark:border-white/5 shadow-2xl relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-3xl"></div>
+                
+                <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-10 flex items-center gap-2">
+                  <span class="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center text-sm">💳</span>
+                  Investment Status
+                </h3>
+
+                <div class="relative w-64 h-64 mx-auto mb-10">
+                  <!-- SVG Doughnut Chart -->
+                  <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                    <!-- Background Circle -->
+                    <circle cx="50" cy="50" r="40" fill="transparent" stroke="currentColor" stroke-width="12" class="text-slate-100 dark:text-slate-800/50" />
+                    <!-- Progress Circle -->
+                    <circle cx="50" cy="50" r="40" fill="transparent" stroke="url(#cyanGradient)" stroke-width="12" 
+                            stroke-dasharray="251.2" 
+                            [attr.stroke-dashoffset]="251.2 * (1 - clientStats.totalPaid / clientStats.totalContract)"
+                            stroke-linecap="round" 
+                            class="transition-all duration-1000 ease-out" />
+                    
+                    <defs>
+                      <linearGradient id="cyanGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#06b6d4" />
+                        <stop offset="100%" stop-color="#3b82f6" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <!-- Center Overlay -->
+                  <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] leading-none mb-1">Paid</p>
+                    <p class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{{ (clientStats.totalPaid / clientStats.totalContract * 100) | number:'1.0-0' }}%</p>
+                  </div>
+                </div>
+
+                <div class="space-y-4">
+                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                    <div class="flex items-center gap-3">
+                      <div class="w-2 h-2 rounded-full bg-cyan-500"></div>
+                      <span class="text-xs font-black text-slate-500 uppercase tracking-widest">Total Paid</span>
+                    </div>
+                    <span class="text-sm font-black text-slate-900 dark:text-white">{{ clientStats.totalPaid | currency }}</span>
+                  </div>
+                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                    <div class="flex items-center gap-3">
+                      <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700"></div>
+                      <span class="text-xs font-black text-slate-500 uppercase tracking-widest">Remaining</span>
+                    </div>
+                    <span class="text-sm font-black text-slate-900 dark:text-white">{{ (clientStats.totalContract - clientStats.totalPaid) | currency }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Project Health Card -->
+              <div class="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-[3rem] p-10 text-white shadow-2xl shadow-indigo-500/20 relative overflow-hidden group">
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-110 transition-transform"></div>
+                <h3 class="text-lg font-black uppercase tracking-widest mb-8 opacity-80">Unit Progress</h3>
+                <div class="flex items-end gap-4 mb-4">
+                  <span class="text-6xl font-black tracking-tighter">{{ clientStats.projectProgress }}%</span>
+                  <span class="mb-2 text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full">Phase 3: Finishing</span>
+                </div>
+                <div class="h-2 w-full bg-white/20 rounded-full overflow-hidden">
+                   <div class="h-full bg-white transition-all duration-1000" [style.width.%]="clientStats.projectProgress"></div>
+                </div>
+                <p class="mt-6 text-sm font-medium text-white/70 italic">"{{ clientStats.currentStatusNote }}"</p>
+              </div>
+            </div>
+
+            <!-- Right Side: Project Portfolio & Milestones -->
+            <div class="lg:col-span-8 space-y-8">
+              <!-- Projects Activity Chart -->
+              <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-200 dark:border-white/5 shadow-2xl relative overflow-hidden">
+                <div class="flex items-center justify-between mb-10">
+                  <div>
+                    <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight leading-none">Portfolio Momentum</h3>
+                    <p class="text-xs text-slate-500 font-medium mt-1">Monthly completion velocity of your apartment complex</p>
+                  </div>
+                  <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xl">📈</div>
+                </div>
+
+                <div class="h-64 flex items-end justify-between gap-6 px-4">
+                  @for (data of chartData.slice(6); track data.label) {
+                    <div class="flex-1 flex flex-col items-center group/bar cursor-pointer h-full relative">
+                      <div class="relative w-full flex items-end justify-center h-full pb-6">
+                        <div class="w-full max-w-[24px] bg-gradient-to-t from-indigo-600 to-cyan-400 rounded-2xl transition-all duration-1000 ease-out shadow-lg shadow-indigo-500/10 group-hover/bar:brightness-110 group-hover/bar:scale-x-110"
+                             [style.height.%]="data.collected + 10">
+                             <div class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap bg-slate-900 text-white text-[10px] px-2 py-1 rounded font-black">{{ data.collected + 10 }}%</div>
+                        </div>
+                      </div>
+                      <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">{{ data.label }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- Real Estate Milestones -->
+              <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-200 dark:border-white/5 shadow-2xl relative">
+                <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">Executive Milestones</h3>
+                <div class="space-y-6">
+                  @for (m of clientStats.milestones; track m.label) {
+                    <div class="flex gap-6 p-6 rounded-[2rem] hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors border border-transparent hover:border-slate-100">
+                      <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 transition-transform">
+                        <span class="text-2xl">{{ m.done ? '✅' : '🕙' }}</span>
+                      </div>
+                      <div class="flex-1">
+                        <div class="flex items-center justify-between mb-1">
+                          <h4 class="text-lg font-black text-slate-900 dark:text-white tracking-tight">{{ m.label }}</h4>
+                          <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ m.date }}</span>
+                        </div>
+                        <p class="text-sm text-slate-500 font-medium leading-relaxed">{{ m.desc }}</p>
+                        @if (m.done) {
+                          <div class="mt-4 flex items-center gap-2">
+                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                             <span class="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Verified by Site Audit</span>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+        
+        <!-- ──────────────────────────────────────────────────────────────────
              STANDARD DASHBOARD (Admin/Worker)
              ────────────────────────────────────────────────────────────────── -->
         @else {
@@ -375,9 +507,22 @@ export class DashboardComponent implements OnInit {
     return this.currentUser?.role === 'SuperAdmin';
   }
 
-  get isAdmin(): boolean {
-    return this.currentUser?.role === 'CompanyAdmin' || this.currentUser?.role === 'SuperAdmin';
+  get isClient(): boolean {
+    return this.currentUser?.role === 'NormalUser';
   }
+
+  clientStats = {
+    totalContract: 250000,
+    totalPaid: 185000,
+    projectProgress: 74,
+    currentStatusNote: 'Plumbing rough-in completed. Interior masonry workflow initiating next week.',
+    milestones: [
+      { label: 'Structural Shell', date: 'Oct 2025', desc: 'Main frame and slab casting finalized for all floors.', done: true },
+      { label: 'Exterior Glazing', date: 'Dec 2025', desc: 'Installation of high-efficiency thermal windows and glass facades.', done: true },
+      { label: 'MEP Infrastructure', date: 'Jan 2026', desc: 'Mechanical, electrical and plumbing arterial systems integration.', done: true },
+      { label: 'Finishing Phase', date: 'March 2026', desc: 'Execution of premium tiling, paintwork and fixture installation.', done: false }
+    ]
+  };
 
   chartData = [
     { label: 'Jan', earned: 45, collected: 35 },
