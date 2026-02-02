@@ -32,7 +32,8 @@ export class SettingsService {
         allowPackages: true,
         allowLocations: true,
         allowHR: true,
-        defaultSupervisionPercentage: 10
+        defaultSupervisionPercentage: 10,
+        autoCloseDay: false
     };
 
     private dummyCompanyPackages: CompanyPackage[] = [
@@ -55,7 +56,8 @@ export class SettingsService {
         clientCanSeeFinancials: false,
         clientCanSeeMedia: true,
         clientCanSeeBOQ: true,
-        moneyCalculationMethod: 'Measured'
+        moneyCalculationMethod: 'Measured',
+        autoCloseDay: null
     };
 
     private settingsSubject = new BehaviorSubject<CompanySettings>(this.dummyCompanySettings);

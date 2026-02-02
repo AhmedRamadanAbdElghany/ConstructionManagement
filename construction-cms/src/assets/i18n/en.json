@@ -260,5 +260,9 @@
   "itemCategory": "Category",
   "noCatalogItems": "No items in catalog yet.",
   "companyGlobal": "Company Global",
-  "projectSpecific": "Project Specific"
+  "projectSpecific": "Project Specific",
+  "dailyOperations": "Daily Operations",
+  "systemAutomation": "System Automation Settings",
+  "autoCloseDay": "Auto Close Day",
+  "autoCloseDesc": "Automatically close daily logs at 12:00 AM"
 }

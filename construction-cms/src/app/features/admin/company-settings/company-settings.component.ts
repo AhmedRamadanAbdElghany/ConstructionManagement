@@ -245,6 +245,33 @@ import { AuthService } from '../../../core/auth/auth.service';
             <!-- SECTION 2: MODULE CONFIGURATION (Company Admin ONLY) -->
             @if (isOnlyCompanyAdmin) {
             <section class="space-y-8">
+                <!-- Operations Config -->
+                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
+                   <div class="absolute top-0 right-0 w-32 h-32 bg-fuchsia-500/5 rounded-full blur-3xl"></div>
+                   <div class="flex items-center space-x-4 mb-8">
+                      <div class="w-12 h-12 rounded-2xl bg-fuchsia-500/10 flex items-center justify-center text-fuchsia-500">
+                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                         </svg>
+                      </div>
+                      <div>
+                         <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'dailyOperations' | translate }}</h3>
+                         <p class="text-[10px] text-fuchsia-500 font-bold uppercase tracking-widest">{{ 'systemAutomation' | translate }}</p>
+                      </div>
+                   </div>
+
+                   <div class="flex items-center justify-between p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <div>
+                         <span class="text-xs font-black text-slate-700 dark:text-slate-300">{{ 'autoCloseDay' | translate }}</span>
+                         <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-1">{{ 'autoCloseDesc' | translate }}</p>
+                      </div>
+                      <label class="relative inline-flex items-center cursor-pointer">
+                         <input type="checkbox" [(ngModel)]="settings.autoCloseDay" class="sr-only peer">
+                         <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-fuchsia-500 transition-all"></div>
+                      </label>
+                   </div>
+                </div>
+
                 <!-- General Items Catalog (Company Admin) -->
                 <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-3xl"></div>

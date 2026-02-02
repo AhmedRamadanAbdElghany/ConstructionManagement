@@ -27,6 +27,14 @@ export interface Project {
   startDate: string; // ISO string
   endDate?: string; // ISO string
   packageId?: number;
+  calculationMethod?: 'Measured' | 'Supervision' | 'Packages';
+  totalContractValue?: number;
+  supervisionPercentage?: number;
+  useCompanyPercentage?: boolean;
+  extraFees?: number;
+  extraFeesDescription?: string;
+  deductedAmount?: number;
+  deductedAmountDescription?: string;
 }
 
 export interface BOQItem {
@@ -137,6 +145,7 @@ export interface CompanySettings {
   allowLocations: boolean;
   allowHR: boolean;
   defaultSupervisionPercentage?: number;
+  autoCloseDay: boolean;
 }
 
 export interface ProjectSettings {
@@ -155,6 +164,7 @@ export interface ProjectSettings {
   clientCanSeeMedia: boolean | null;
   clientCanSeeBOQ: boolean | null;
   moneyCalculationMethod: string | null;
+  autoCloseDay: boolean | null;
 }
 
 export interface Package {
