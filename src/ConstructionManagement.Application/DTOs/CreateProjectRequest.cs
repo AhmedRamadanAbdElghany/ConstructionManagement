@@ -1,4 +1,6 @@
 
+using ConstructionManagement.Application.DTOs;
+
 public record CreateProjectRequest(
     string ProjectName,
     string? Description,
