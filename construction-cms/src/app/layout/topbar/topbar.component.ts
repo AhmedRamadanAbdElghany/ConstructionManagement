@@ -127,7 +127,11 @@ import { AppNotification } from '../../shared/interfaces';
             </div>
             <div class="hidden md:block text-left min-w-max">
               <p class="text-sm font-black text-slate-900 dark:text-white tracking-tight leading-none mb-1">{{ authService.getCurrentUser().fullName }}</p>
-              <p class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none">{{ authService.getCurrentUser().role }}</p>
+              <p class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none">
+                {{ 'sidebar.role_' + (authService.getCurrentUser().role === 'SuperAdmin' ? 'super' : 
+                   authService.getCurrentUser().role === 'CompanyAdmin' ? 'admin' : 
+                   authService.getCurrentUser().role === 'CompanyUser' ? 'worker' : 'client') | translate }}
+              </p>
             </div>
             <svg class="w-4 h-4 text-slate-400 group-hover:text-cyan-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path>

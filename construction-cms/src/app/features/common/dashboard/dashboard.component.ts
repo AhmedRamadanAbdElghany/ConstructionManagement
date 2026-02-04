@@ -18,13 +18,13 @@ import { AuthService } from '../../../core/auth/auth.service';
           <div class="flex items-center space-x-2 mb-2">
             <span class="px-3 py-1 rounded-full bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-xs font-bold flex items-center border border-indigo-500/20">
               <span class="w-2 h-2 rounded-full bg-indigo-500 mr-2 animate-pulse"></span>
-              {{ isSuperAdmin ? 'Platform Management' : ('dashboard.live' | translate) }}
+              {{ isSuperAdmin ? ('dashboard.platform_management' | translate) : ('dashboard.live' | translate) }}
             </span>
           </div>
           <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">
             {{ 'dashboard.welcome' | translate }}, {{ currentUser.fullName }}! <span class="text-indigo-500">🏢</span>
           </h1>
-          <p class="text-slate-500 dark:text-slate-400 font-medium">{{ isSuperAdmin ? 'Enterprise Platform Performance & Subscriptions' : ('dashboard.overview_subtitle' | translate) }}</p>
+          <p class="text-slate-500 dark:text-slate-400 font-medium">{{ isSuperAdmin ? ('dashboard.revenue_analytics' | translate) : ('dashboard.overview_subtitle' | translate) }}</p>
         </div>
 
         <!-- ──────────────────────────────────────────────────────────────────
@@ -43,10 +43,10 @@ import { AuthService } from '../../../core/auth/auth.service';
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                     </svg>
                   </div>
-                  <span class="text-emerald-500 text-sm font-black">+4 new</span>
+                   <span class="text-emerald-500 text-sm font-black">+4 {{ 'common.new' | translate }}</span>
                 </div>
                 <p class="text-4xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ saStats.totalCompanies }}</p>
-                <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">Global Companies</p>
+                <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{{ 'dashboard.global_companies' | translate }}</p>
               </div>
             </div>
 
@@ -60,10 +60,10 @@ import { AuthService } from '../../../core/auth/auth.service';
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                     </svg>
                   </div>
-                  <span class="text-emerald-500 text-sm font-black">93% Health</span>
+                   <span class="text-emerald-500 text-sm font-black">93% {{ 'project_detail.health_score' | translate }}</span>
                 </div>
                 <p class="text-4xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ saStats.activeSubscriptions }}</p>
-                <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">Active Licenses</p>
+                <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{{ 'dashboard.active_licenses' | translate }}</p>
               </div>
             </div>
 
@@ -80,7 +80,7 @@ import { AuthService } from '../../../core/auth/auth.service';
                   <span class="text-emerald-500 text-sm font-black">+18% MoM</span>
                 </div>
                 <p class="text-4xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ saStats.monthlyRecurringRevenue / 1000 | number:'1.0-0' }}K</p>
-                <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">Monthly Revenue (MRR)</p>
+                <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{{ 'dashboard.mrr' | translate }}</p>
               </div>
             </div>
 
@@ -94,10 +94,10 @@ import { AuthService } from '../../../core/auth/auth.service';
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                   </div>
-                  <span class="px-2 py-1 bg-rose-500 text-white rounded text-[10px] font-black tracking-tighter uppercase animate-pulse">Action Required</span>
+                  <span class="px-2 py-1 bg-rose-500 text-white rounded text-[10px] font-black tracking-tighter uppercase animate-pulse">{{ 'dashboard.action_required' | translate }}</span>
                 </div>
                 <p class="text-4xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ saStats.pendingOnboardings }}</p>
-                <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">Pending Onboardings</p>
+                <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{{ 'dashboard.pending_onboardings' | translate }}</p>
               </div>
             </div>
           </div>
@@ -106,10 +106,10 @@ import { AuthService } from '../../../core/auth/auth.service';
             <!-- Subscription Growth Chart -->
             <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none">
               <div class="flex items-center justify-between mb-8">
-                <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none uppercase">Enterprise Revenue Analytics</h2>
+                 <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none uppercase">{{ 'dashboard.revenue_analytics' | translate }}</h2>
                 <div class="flex bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-white/5">
-                  <button class="px-4 py-2 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-black shadow-sm">Monthly</button>
-                  <button class="px-4 py-2 rounded-lg text-slate-400 text-xs font-black uppercase">Annual</button>
+                  <button class="px-4 py-2 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-black shadow-sm">{{ 'dashboard.monthly' | translate }}</button>
+                  <button class="px-4 py-2 rounded-lg text-slate-400 text-xs font-black uppercase">{{ 'dashboard.yearly' | translate }}</button>
                 </div>
               </div>
               
@@ -129,7 +129,7 @@ import { AuthService } from '../../../core/auth/auth.service';
             <!-- Platform Activity -->
             <div class="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none">
               <div class="flex items-center justify-between mb-8">
-                <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none uppercase">System Activity</h2>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none uppercase">{{ 'dashboard.system_activity' | translate }}</h2>
               </div>
               
               <div class="space-y-6">
@@ -151,9 +151,9 @@ import { AuthService } from '../../../core/auth/auth.service';
           <!-- Active Subscriptions Table -->
           <div class="mt-8 bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden">
             <div class="px-8 py-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between">
-              <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Active Company Subscriptions</h2>
+              <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'dashboard.active_subscriptions' | translate }}</h2>
               <a routerLink="/admin/companies" class="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] hover:translate-x-1 transition-transform inline-flex items-center">
-                MANAGE ORGANIZATIONS 
+                {{ 'dashboard.manage_orgs' | translate }} 
                 <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
               </a>
             </div>
@@ -161,11 +161,11 @@ import { AuthService } from '../../../core/auth/auth.service';
               <table class="w-full">
                 <thead>
                   <tr class="text-left bg-slate-50/50 dark:bg-slate-950/30">
-                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Organization</th>
-                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">License Plan</th>
-                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Billing Status</th>
-                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Next Payment</th>
-                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">MRR Share</th>
+                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">{{ 'dashboard.organization' | translate }}</th>
+                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">{{ 'dashboard.license_plan' | translate }}</th>
+                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">{{ 'dashboard.billing_status' | translate }}</th>
+                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">{{ 'dashboard.next_payment' | translate }}</th>
+                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">{{ 'dashboard.mrr_share' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-white/5">
@@ -175,7 +175,7 @@ import { AuthService } from '../../../core/auth/auth.service';
                       <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-indigo-50 text-indigo-600 border border-indigo-100">{{ sub.plan }}</span>
                     </td>
                     <td class="px-8 py-6">
-                      <span class="text-xs font-bold" [ngClass]="sub.status === 'Active' ? 'text-emerald-500' : 'text-rose-500'">{{ sub.status }}</span>
+                       <span class="text-xs font-bold" [ngClass]="sub.status === 'Active' ? 'text-emerald-500' : 'text-rose-500'">{{ 'projects.' + sub.status.toLowerCase() | translate }}</span>
                     </td>
                     <td class="px-8 py-6 text-sm text-slate-500 font-medium">{{ sub.nextPayment }}</td>
                     <td class="px-8 py-6">
@@ -201,7 +201,7 @@ import { AuthService } from '../../../core/auth/auth.service';
                 
                 <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-10 flex items-center gap-2">
                   <span class="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center text-sm">💳</span>
-                  Investment Status
+                  {{ 'dashboard.investment_status' | translate }}
                 </h3>
 
                 <div class="relative w-64 h-64 mx-auto mb-10">
@@ -225,7 +225,7 @@ import { AuthService } from '../../../core/auth/auth.service';
                   </svg>
                   <!-- Center Overlay -->
                   <div class="absolute inset-0 flex flex-col items-center justify-center">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] leading-none mb-1">Paid</p>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] leading-none mb-1">{{ 'daily_log.remaining' | translate }}</p>
                     <p class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{{ (clientStats.totalPaid / clientStats.totalContract * 100) | number:'1.0-0' }}%</p>
                   </div>
                 </div>
@@ -234,14 +234,14 @@ import { AuthService } from '../../../core/auth/auth.service';
                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
                     <div class="flex items-center gap-3">
                       <div class="w-2 h-2 rounded-full bg-cyan-500"></div>
-                      <span class="text-xs font-black text-slate-500 uppercase tracking-widest">Total Paid</span>
+                      <span class="text-xs font-black text-slate-500 uppercase tracking-widest">{{ 'dashboard.total_paid' | translate }}</span>
                     </div>
                     <span class="text-sm font-black text-slate-900 dark:text-white">{{ clientStats.totalPaid | currency }}</span>
                   </div>
                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
                     <div class="flex items-center gap-3">
                       <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700"></div>
-                      <span class="text-xs font-black text-slate-500 uppercase tracking-widest">Remaining</span>
+                      <span class="text-xs font-black text-slate-500 uppercase tracking-widest">{{ 'daily_log.remaining' | translate }}</span>
                     </div>
                     <span class="text-sm font-black text-slate-900 dark:text-white">{{ (clientStats.totalContract - clientStats.totalPaid) | currency }}</span>
                   </div>
@@ -251,10 +251,10 @@ import { AuthService } from '../../../core/auth/auth.service';
               <!-- Project Health Card -->
               <div class="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-[3rem] p-10 text-white shadow-2xl shadow-indigo-500/20 relative overflow-hidden group">
                 <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-110 transition-transform"></div>
-                <h3 class="text-lg font-black uppercase tracking-widest mb-8 opacity-80">Unit Progress</h3>
+                <h3 class="text-lg font-black uppercase tracking-widest mb-8 opacity-80">{{ 'dashboard.unit_progress' | translate }}</h3>
                 <div class="flex items-end gap-4 mb-4">
                   <span class="text-6xl font-black tracking-tighter">{{ clientStats.projectProgress }}%</span>
-                  <span class="mb-2 text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full">Phase 3: Finishing</span>
+                   <span class="mb-2 text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full">Phase 3: Finishing</span>
                 </div>
                 <div class="h-2 w-full bg-white/20 rounded-full overflow-hidden">
                    <div class="h-full bg-white transition-all duration-1000" [style.width.%]="clientStats.projectProgress"></div>
@@ -269,8 +269,8 @@ import { AuthService } from '../../../core/auth/auth.service';
               <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-200 dark:border-white/5 shadow-2xl relative overflow-hidden">
                 <div class="flex items-center justify-between mb-10">
                   <div>
-                    <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight leading-none">Portfolio Momentum</h3>
-                    <p class="text-xs text-slate-500 font-medium mt-1">Monthly completion velocity of your apartment complex</p>
+                    <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight leading-none">{{ 'dashboard.portfolio_momentum' | translate }}</h3>
+                    <p class="text-xs text-slate-500 font-medium mt-1">{{ 'dashboard.momentum_desc' | translate }}</p>
                   </div>
                   <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xl">📈</div>
                 </div>
@@ -292,7 +292,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 
               <!-- Real Estate Milestones -->
               <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-200 dark:border-white/5 shadow-2xl relative">
-                <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">Executive Milestones</h3>
+                <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'dashboard.milestones' | translate }}</h3>
                 <div class="space-y-6">
                   @for (m of clientStats.milestones; track m.label) {
                     <div class="flex gap-6 p-6 rounded-[2rem] hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors border border-transparent hover:border-slate-100">
@@ -308,7 +308,7 @@ import { AuthService } from '../../../core/auth/auth.service';
                         @if (m.done) {
                           <div class="mt-4 flex items-center gap-2">
                              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                             <span class="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Verified by Site Audit</span>
+                              <span class="text-[9px] font-black text-emerald-500 uppercase tracking-widest">{{ 'dashboard.verified_audit' | translate }}</span>
                           </div>
                         }
                       </div>
@@ -346,18 +346,20 @@ import { AuthService } from '../../../core/auth/auth.service';
                     </div>
 
                     <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ currentUser?.fullName }}</h2>
-                    <p class="text-[10px] font-black text-indigo-500 uppercase tracking-[0.3em] mb-8 px-4 py-1.5 bg-indigo-500/5 rounded-full inline-block">{{ currentUser?.role }} • Senior Grade</p>
+                    <p class="text-[10px] font-black text-indigo-500 uppercase tracking-[0.3em] mb-8 px-4 py-1.5 bg-indigo-500/5 rounded-full inline-block">
+                      {{ 'sidebar.role_' + (currentUser?.role === 'SuperAdmin' ? 'super' : currentUser?.role === 'CompanyAdmin' ? 'admin' : currentUser?.role === 'CompanyUser' ? 'worker' : 'client') | translate }} • {{ 'dashboard.senior_grade' | translate }}
+                    </p>
                     
                     <div class="grid grid-cols-2 gap-8 w-full">
                       <div class="text-center">
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Efficiency</p>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ 'dashboard.efficiency' | translate }}</p>
                         <div class="flex items-end justify-center space-x-1">
                           <span class="text-3xl font-black text-slate-900 dark:text-white leading-none">94</span>
                           <span class="text-xs font-black text-emerald-500 mb-0.5">%</span>
                         </div>
                       </div>
                       <div class="text-center">
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Projects</p>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ 'sidebar.projects' | translate }}</p>
                         <div class="flex items-end justify-center space-x-1">
                           <span class="text-3xl font-black text-slate-900 dark:text-white leading-none">{{ workerProjectStats?.active }}</span>
                           <span class="text-xs font-black text-slate-400 mb-0.5">/{{ workerProjectStats?.totalProjects }}</span>
@@ -381,8 +383,8 @@ import { AuthService } from '../../../core/auth/auth.service';
                     </div>
                     
                     <div>
-                      <h3 class="text-white/40 text-[10px] font-black uppercase tracking-[0.3em] mb-4">Operations Status</h3>
-                      <p class="text-2xl font-black text-white leading-tight">Your productivity signal is <span class="text-emerald-400">Optimal</span> today.</p>
+                      <h3 class="text-white/40 text-[10px] font-black uppercase tracking-[0.3em] mb-4">{{ 'dashboard.operations_status' | translate }}</h3>
+                      <p class="text-2xl font-black text-white leading-tight">{{ 'dashboard.productivity_optimal' | translate }}</p>
                     </div>
 
                     <div class="flex items-center space-x-6 mt-10">
@@ -392,7 +394,7 @@ import { AuthService } from '../../../core/auth/auth.service';
                         }
                         <div class="w-10 h-10 rounded-xl bg-indigo-500 border-2 border-slate-900 flex items-center justify-center text-[10px] font-black text-white">+12</div>
                       </div>
-                      <p class="text-xs font-medium text-slate-400">Team interaction frequency: <span class="text-white font-bold">High</span></p>
+                      <p class="text-xs font-medium text-slate-400">{{ 'dashboard.team_interaction' | translate }}: <span class="text-white font-bold">{{ 'dashboard.interaction_high' | translate }}</span></p>
                     </div>
                   </div>
 
@@ -400,11 +402,11 @@ import { AuthService } from '../../../core/auth/auth.service';
                   <div class="grid grid-cols-2 gap-6">
                     <div routerLink="/worker/daily-log" class="bg-indigo-600 rounded-[2.5rem] p-8 flex flex-col justify-between hover:scale-[1.02] active:scale-95 transition-all cursor-pointer shadow-xl shadow-indigo-600/20 group">
                       <svg class="w-8 h-8 text-white/50 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-                      <p class="text-white font-black text-sm leading-tight">Log Today's<br>Progress</p>
+                      <p class="text-white font-black text-sm leading-tight">{{ 'dashboard.log_today' | translate }}</p>
                     </div>
                     <div routerLink="/worker/personal-hr" class="bg-white dark:bg-white/5 rounded-[2.5rem] p-8 flex flex-col justify-between border border-slate-200 dark:border-white/10 hover:border-indigo-500/50 transition-all cursor-pointer shadow-xl group">
                       <svg class="w-8 h-8 text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                      <p class="text-slate-900 dark:text-white font-black text-sm leading-tight">Finance &<br>Vacation</p>
+                      <p class="text-slate-900 dark:text-white font-black text-sm leading-tight">{{ 'dashboard.finance_vacation' | translate }}</p>
                     </div>
                   </div>
                </div>
@@ -421,7 +423,7 @@ import { AuthService } from '../../../core/auth/auth.service';
                           <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                        </div>
                        <div>
-                          <h3 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight uppercase leading-none mb-2">Urgent Intervention Required</h3>
+                          <h3 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight uppercase leading-none mb-2">{{ 'dashboard.urgent_intervention' | translate }}</h3>
                           <p class="text-rose-600 dark:text-rose-500 font-bold text-sm tracking-tight">{{ 'dashboard.intervention_desc' | translate }}</p>
                        </div>
                     </div>
@@ -443,8 +445,8 @@ import { AuthService } from '../../../core/auth/auth.service';
             <div class="space-y-6">
               <div class="flex items-end justify-between px-6">
                 <div>
-                  <h3 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">Strategic Portfolio</h3>
-                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Managed Enterprise Assets</p>
+                  <h3 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{{ 'dashboard.strategic_portfolio' | translate }}</h3>
+                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">{{ 'dashboard.worker_projects_status' | translate }}</p>
                 </div>
                 <div class="flex space-x-2">
                    <div class="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 flex items-center justify-center text-slate-400 shadow-sm cursor-pointer hover:text-indigo-500 transition-colors">
@@ -472,8 +474,7 @@ import { AuthService } from '../../../core/auth/auth.service';
                           }
                        </div>
                        <div class="text-right">
-                          <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Status</span>
-                          <span [class]="item.project.status === 'Delayed' ? 'text-rose-500' : 'text-emerald-500'" class="text-xs font-black uppercase tracking-tight">{{ item.project.status }}</span>
+                           <span [class]="item.project.status === 'Delayed' ? 'text-rose-500' : 'text-emerald-500'" class="text-xs font-black uppercase tracking-tight">{{ 'projects.' + item.project.status.toLowerCase() | translate }}</span>
                        </div>
                     </div>
 
@@ -492,18 +493,18 @@ import { AuthService } from '../../../core/auth/auth.service';
 
                        <div class="space-y-2">
                           <div class="flex justify-between items-end">
-                             <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Global Completion</p>
+                             <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{{ 'dashboard.global_completion' | translate }}</p>
                              <p class="text-lg font-black text-slate-900 dark:text-white leading-none tracking-tighter">{{ item.project.progress }}%</p>
                           </div>
                           <div class="h-2.5 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
-                             <div class="h-full bg-gradient-to-r from-indigo-500 to-cyan-400 rounded-full transition-all duration-1000 group-hover/tile:scale-x-105 origin-left" [style.width.%]="item.project.progress"></div>
+                             <div class="h-full bg-gradient-to-r from-indigo-500 to-cyan-400 rounded-full transition-all duration-1000 group-hover/tile:scale-105 origin-left" [style.width.%]="item.project.progress"></div>
                           </div>
                        </div>
                     </div>
 
                     <!-- Tile Footer -->
                     <div class="px-8 py-5 bg-slate-50 dark:bg-white/[0.02] border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
-                       <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Est. Completion: <span class="text-slate-900 dark:text-slate-200">{{ item.project.endDate | date:'MMM yyyy' }}</span></p>
+                       <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'dashboard.est_completion' | translate }}: <span class="text-slate-900 dark:text-slate-200">{{ item.project.endDate | date:'MMM yyyy' }}</span></p>
                        <button [routerLink]="['/admin/projects', item.project.id]" class="w-10 h-10 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-400 hover:text-indigo-500 hover:border-indigo-500 hover:scale-110 transition-all">
                           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                        </button>
@@ -637,7 +638,7 @@ import { AuthService } from '../../../core/auth/auth.service';
             <div class="mt-8 bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none p-8">
               <div class="flex items-center justify-between mb-8">
                 <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'dashboard.team_performance' | translate }}</h2>
-                <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Direct Reports Activity</span>
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">{{ 'dashboard.direct_reports_activity' | translate }}</span>
               </div>
               
               <div class="h-64 flex items-end justify-between px-4 gap-8">
@@ -645,7 +646,7 @@ import { AuthService } from '../../../core/auth/auth.service';
                   <div class="flex-1 flex flex-col items-center group/bar cursor-pointer h-full relative">
                     <!-- Tooltip -->
                     <div class="absolute -top-12 opacity-0 group-hover/bar:opacity-100 transition-opacity bg-slate-900 text-white text-[10px] font-bold py-1 px-2 rounded-lg pointer-events-none mb-2 z-10 whitespace-nowrap">
-                      {{ worker.approvedItems }} Approved • {{ worker.rejectedItems }} Rejected
+                      {{ worker.approvedItems }} {{ 'common.approved' | translate }} • {{ worker.rejectedItems }} {{ 'common.rejected' | translate }}
                     </div>
 
                     <div class="relative w-full flex items-end justify-center space-x-2 h-full pb-6">
@@ -661,7 +662,7 @@ import { AuthService } from '../../../core/auth/auth.service';
                     
                     <div class="text-center">
                       <p class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-tighter truncate max-w-[80px]">{{ worker.userName }}</p>
-                      <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{{ worker.efficiency }}% Eff.</p>
+                      <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{{ worker.efficiency }}% {{ 'dashboard.eff' | translate }}</p>
                     </div>
                   </div>
                 }
@@ -686,7 +687,7 @@ import { AuthService } from '../../../core/auth/auth.service';
                 <tbody class="divide-y divide-slate-100 dark:divide-white/5">
                   <tr *ngFor="let p of projects" class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
                     <td class="px-8 py-6 font-black text-slate-900 dark:text-white">{{ p.name }}</td>
-                    <td class="px-8 py-6"><span class="px-3 py-1 bg-cyan-50 text-cyan-600 rounded-lg text-xs font-black tracking-widest">{{ p.status }}</span></td>
+                     <td class="px-8 py-6"><span class="px-3 py-1 bg-cyan-50 text-cyan-600 rounded-lg text-xs font-black tracking-widest">{{ 'projects.' + p.status.toLowerCase() | translate }}</span></td>
                     <td class="px-8 py-6 font-bold">{{ p.progress }}%</td>
                     <td class="px-8 py-6 font-black text-emerald-500 tracking-tight">{{ p.cashFlow.earned | currency }}</td>
                   </tr>

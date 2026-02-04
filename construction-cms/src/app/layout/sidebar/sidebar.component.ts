@@ -217,10 +217,10 @@ import { RouterModule } from '@angular/router';
             (change)="switchRole($event)"
             [value]="currentRole"
             class="w-full pl-3 pr-10 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-300 text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-cyan-500/10 focus:border-cyan-500/30 transition-all cursor-pointer appearance-none outline-none shadow-xl">
-            <option value="SuperAdmin">Super</option>
-            <option value="CompanyAdmin">Admin</option>
-            <option value="CompanyUser">Worker</option>
-            <option value="NormalUser">Client</option>
+            <option value="SuperAdmin">{{ 'sidebar.role_super' | translate }}</option>
+            <option value="CompanyAdmin">{{ 'sidebar.role_admin' | translate }}</option>
+            <option value="CompanyUser">{{ 'sidebar.role_worker' | translate }}</option>
+            <option value="NormalUser">{{ 'sidebar.role_client' | translate }}</option>
           </select>
           <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400 dark:text-slate-600 group-hover/select:text-cyan-500 dark:group-hover/select:text-cyan-400 transition-colors" [class.hidden]="isCollapsed()">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

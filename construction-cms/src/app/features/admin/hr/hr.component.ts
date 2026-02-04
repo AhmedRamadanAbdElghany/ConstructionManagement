@@ -16,7 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
         <div class="flex items-center justify-between mb-8">
           <div>
             <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ 'hr.title' | translate }}</h1>
-            <p class="text-slate-500 dark:text-slate-400 font-medium">Manage your team and configure role permissions</p>
+            <p class="text-slate-500 dark:text-slate-400 font-medium">{{ 'hr.manage_team_subtitle' | translate }}</p>
           </div>
           <button 
             (click)="openAddUserModal()" 
@@ -39,7 +39,7 @@ import { TranslateModule } from '@ngx-translate/core';
               </div>
               <div>
                 <p class="text-2xl font-black text-slate-900 dark:text-white leading-none mb-1">{{ users.length }}</p>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-nowrap">Total Users</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-nowrap">{{ 'hr.total_users' | translate }}</p>
               </div>
             </div>
           </div>
@@ -53,7 +53,7 @@ import { TranslateModule } from '@ngx-translate/core';
               </div>
               <div>
                 <p class="text-2xl font-black text-slate-900 dark:text-white leading-none mb-1">{{ workingCount }}</p>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-nowrap">Working</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-nowrap">{{ 'hr.working' | translate }}</p>
               </div>
             </div>
           </div>
@@ -67,7 +67,7 @@ import { TranslateModule } from '@ngx-translate/core';
               </div>
               <div>
                 <p class="text-2xl font-black text-slate-900 dark:text-white leading-none mb-1">{{ absentCount }}</p>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-nowrap">Absent</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-nowrap">{{ 'hr.absent' | translate }}</p>
               </div>
             </div>
           </div>
@@ -81,7 +81,7 @@ import { TranslateModule } from '@ngx-translate/core';
               </div>
               <div>
                 <p class="text-2xl font-black text-slate-900 dark:text-white leading-none mb-1">{{ totalSalary | currency:'USD':'symbol':'1.0-0' }}</p>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-nowrap">Total Payroll</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-nowrap">{{ 'hr.total_payroll' | translate }}</p>
               </div>
             </div>
           </div>
@@ -90,7 +90,7 @@ import { TranslateModule } from '@ngx-translate/core';
         <!-- Users Table -->
         <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden mb-8 transition-all">
           <div class="p-8 border-b border-slate-100 dark:border-white/5">
-            <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Team Members</h2>
+            <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'hr.team_members' | translate }}</h2>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full">
@@ -115,7 +115,7 @@ import { TranslateModule } from '@ngx-translate/core';
                           <p class="text-base font-black text-slate-900 dark:text-white tracking-tight">{{ user.fullName }}</p>
                           <p class="text-[10px] text-slate-500 font-bold uppercase tracking-tight">{{ user.email }}</p>
                           @if (user.reportsToId) {
-                            <p class="text-[9px] text-indigo-500 font-black uppercase tracking-tighter mt-1 italic">Reports to: {{ getUserName(user.reportsToId) }}</p>
+                            <p class="text-[9px] text-indigo-500 font-black uppercase tracking-tighter mt-1 italic">{{ 'hr.reports_to' | translate }}: {{ getUserName(user.reportsToId) }}</p>
                           }
                         </div>
                       </div>
@@ -128,7 +128,7 @@ import { TranslateModule } from '@ngx-translate/core';
                               'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400': user.role === 'CompanyUser',
                               'bg-slate-500/10 text-slate-600 dark:text-slate-400': user.role === 'NormalUser'
                             }">
-                        {{ user.role }}
+                        {{ 'sidebar.role_' + (user.role === 'SuperAdmin' ? 'super' : user.role === 'CompanyAdmin' ? 'admin' : user.role === 'CompanyUser' ? 'worker' : 'client') | translate }}
                       </span>
                     </td>
                     <td class="px-8 py-5">
@@ -146,7 +146,7 @@ import { TranslateModule } from '@ngx-translate/core';
                                 'text-rose-600 dark:text-rose-400': user.status === 'Absent',
                                 'text-slate-500': user.status === 'Client'
                               }">
-                          {{ user.status }}
+                          {{ (user.status === 'Working' ? 'hr.working' : user.status === 'Absent' ? 'hr.absent' : 'sidebar.role_client') | translate }}
                         </span>
                       </div>
                     </td>
@@ -162,12 +162,12 @@ import { TranslateModule } from '@ngx-translate/core';
                         <button 
                           (click)="openNotes(user)" 
                           class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-cyan-500 transition-all active:scale-90"
-                          title="View Notes">
+                           [title]="'hr.view_notes' | translate">
                           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                         </button>
                         <button 
                           class="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-900/20 text-rose-400 hover:text-rose-600 transition-all active:scale-90"
-                          title="Remove Associate">
+                           [title]="'hr.remove_associate' | translate">
                           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                       </div>
@@ -187,16 +187,16 @@ import { TranslateModule } from '@ngx-translate/core';
               <thead>
                 <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                   <th class="text-left px-6 py-4">{{ 'hr.permission' | translate }}</th>
-                  <th class="text-center px-6 py-4">Super Admin</th>
-                  <th class="text-center px-6 py-4">Company Admin</th>
-                  <th class="text-center px-6 py-4">Company User</th>
-                  <th class="text-center px-6 py-4">Normal User</th>
+                   <th class="text-center px-6 py-4">{{ 'sidebar.role_super' | translate }}</th>
+                   <th class="text-center px-6 py-4">{{ 'sidebar.role_admin' | translate }}</th>
+                   <th class="text-center px-6 py-4">{{ 'sidebar.role_worker' | translate }}</th>
+                   <th class="text-center px-6 py-4">{{ 'sidebar.role_client' | translate }}</th>
                 </tr>
               </thead>
               <tbody class="text-slate-700 dark:text-slate-200">
                 @for (permission of permissions; track permission.name) {
                   <tr class="border-t border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/[0.01] transition-colors">
-                    <td class="px-6 py-4 text-sm font-bold tracking-tight">{{ permission.name }}</td>
+                    <td class="px-6 py-4 text-sm font-bold tracking-tight">{{ 'hr.permission_' + permission.name.toLowerCase().replace(' ', '_') | translate }}</td>
                     <td class="px-4 py-3 text-center">
                       @if (permission.superAdmin) {
                         <span class="inline-flex w-6 h-6 rounded-full bg-emerald-500/20 items-center justify-center">
@@ -278,28 +278,28 @@ import { TranslateModule } from '@ngx-translate/core';
               <label class="block text-sm font-medium text-slate-400 mb-2">{{ 'hr.full_name' | translate }}</label>
               <input formControlName="fullName" type="text" 
                      class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600/50 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors"
-                     placeholder="Enter full name">
+                     [placeholder]="'hr.enter_full_name' | translate">
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-400 mb-2">{{ 'hr.email' | translate }}</label>
               <input formControlName="email" type="email" 
                      class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600/50 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors"
-                     placeholder="Enter email address">
+                     [placeholder]="'hr.enter_email_address' | translate">
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-400 mb-2">{{ 'hr.role' | translate }}</label>
               <select formControlName="role" 
                       class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600/50 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors">
-                <option value="CompanyAdmin">Company Admin</option>
-                <option value="CompanyUser">Company User (Worker)</option>
-                <option value="NormalUser">Normal User (Client)</option>
+                <option value="CompanyAdmin">{{ 'sidebar.role_admin' | translate }}</option>
+                <option value="CompanyUser">{{ 'sidebar.role_worker' | translate }}</option>
+                <option value="NormalUser">{{ 'sidebar.role_client' | translate }}</option>
               </select>
             </div>
             <div>
-              <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1 italic">Directly Reports To</label>
+               <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1 italic">{{ 'hr.directly_reports_to' | translate }}</label>
               <select formControlName="reportsToId" 
                       class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600/50 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors font-bold text-xs uppercase tracking-widest appearance-none cursor-pointer">
-                <option [ngValue]="null">Organizational Admin / None</option>
+                 <option [ngValue]="null">{{ 'hr.no_reports_none' | translate }}</option>
                 <option *ngFor="let u of users" [value]="u.id">{{ u.fullName }}</option>
               </select>
             </div>
@@ -334,7 +334,7 @@ import { TranslateModule } from '@ngx-translate/core';
         <div class="p-6">
           <textarea 
             class="w-full h-64 px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600/50 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors resize-none"
-            [value]="selectedUserForNotes.notes || 'No notes available.'"
+            [value]="selectedUserForNotes.notes || ('hr.no_notes_available' | translate)"
             readonly>
           </textarea>
           <p class="text-xs text-slate-500 mt-4">{{ 'hr.notes_readonly_hint' | translate }}</p>

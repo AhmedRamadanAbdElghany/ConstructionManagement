@@ -48,7 +48,7 @@ import { map } from 'rxjs/operators';
                         'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/10': project.status === 'Completed',
                         'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/10': project.status === 'Delayed'
                       }">
-                  {{ project.status }}
+                  {{ 'projects.' + project.status.toLowerCase() | translate }}
                 </span>
               </div>
               <p class="text-slate-500 dark:text-slate-400 font-medium flex items-center ml-14">
@@ -67,8 +67,8 @@ import { map } from 'rxjs/operators';
                   <span class="absolute text-[10px] font-black text-slate-900 dark:text-white">98%</span>
                </div>
                <div>
-                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Health Score</p>
-                  <p class="text-sm font-black text-emerald-500 uppercase tracking-tight">Excellent</p>
+                   <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ 'project_detail.health_score' | translate }}</p>
+                   <p class="text-sm font-black text-emerald-500 uppercase tracking-tight">{{ 'project_detail.excellent' | translate }}</p>
                </div>
             </div>
           </div>
@@ -76,7 +76,7 @@ import { map } from 'rxjs/operators';
           <!-- Stats -->
           <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-5 border border-slate-700/50">
-              <p class="text-sm text-slate-400 mb-1">Progress</p>
+               <p class="text-sm text-slate-400 mb-1">{{ 'dashboard.progress' | translate }}</p>
               <div class="flex items-center justify-between">
                 <p class="text-3xl font-bold text-white">{{ project.progress }}%</p>
                 <div class="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center">
@@ -87,15 +87,15 @@ import { map } from 'rxjs/operators';
               </div>
             </div>
             <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-5 border border-slate-700/50">
-              <p class="text-sm text-slate-400 mb-1">Earned</p>
+               <p class="text-sm text-slate-400 mb-1">{{ 'projects.earned' | translate }}</p>
               <p class="text-3xl font-bold text-emerald-400">{{ project.cashFlow.earned | currency:'USD':'symbol':'1.0-0' }}</p>
             </div>
             <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-5 border border-slate-700/50">
-              <p class="text-sm text-slate-400 mb-1">Collected</p>
+               <p class="text-sm text-slate-400 mb-1">{{ 'projects.collected' | translate }}</p>
               <p class="text-3xl font-bold text-cyan-400">{{ totalCollected | currency:'USD':'symbol':'1.0-0' }}</p>
             </div>
             <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-5 border border-slate-700/50">
-              <p class="text-sm text-slate-400 mb-1">Team Size</p>
+               <p class="text-sm text-slate-400 mb-1">{{ 'project_detail.team_size' | translate }}</p>
               <p class="text-3xl font-bold text-white">{{ teamMembers.length }}</p>
             </div>
           </div>
@@ -144,7 +144,7 @@ import { map } from 'rxjs/operators';
               [class.border-slate-200]="activeTab !== 'history'"
               [class.dark:border-white/5]="activeTab !== 'history'"
               class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-              Activity & Logs
+               {{ 'project_detail.activity_logs' | translate }}
             </button>
             <button 
               (click)="activeTab = 'boq'"
@@ -159,7 +159,7 @@ import { map } from 'rxjs/operators';
               [class.border-slate-200]="activeTab !== 'boq'"
               [class.dark:border-white/5]="activeTab !== 'boq'"
               class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-              BOQ Progress
+               {{ 'project_detail.boq_progress' | translate }}
             </button>
             <button 
               (click)="activeTab = 'finances'"
@@ -174,7 +174,7 @@ import { map } from 'rxjs/operators';
               [class.border-slate-200]="activeTab !== 'finances'"
               [class.dark:border-white/5]="activeTab !== 'finances'"
               class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-              Financial Overview
+               {{ 'project_detail.financial_overview' | translate }}
             </button>
             <button 
               (click)="activeTab = 'bills'"
@@ -189,7 +189,7 @@ import { map } from 'rxjs/operators';
               [class.border-slate-200]="activeTab !== 'bills'"
               [class.dark:border-white/5]="activeTab !== 'bills'"
               class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-              Bills
+               {{ 'sidebar.bills' | translate }}
             </button>
             <button 
               (click)="activeTab = 'phases'"
@@ -204,7 +204,7 @@ import { map } from 'rxjs/operators';
               [class.border-slate-200]="activeTab !== 'phases'"
               [class.dark:border-white/5]="activeTab !== 'phases'"
               class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-              Phases Hierarchy
+               {{ 'project_detail.phases_hierarchy' | translate }}
             </button>
             <button 
               (click)="activeTab = 'payments'"
@@ -219,7 +219,7 @@ import { map } from 'rxjs/operators';
               [class.border-slate-200]="activeTab !== 'payments'"
               [class.dark:border-white/5]="activeTab !== 'payments'"
               class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-              Client Payments
+               {{ 'project_detail.client_payments' | translate }}
             </button>
           </div>
 
@@ -240,8 +240,8 @@ import { map } from 'rxjs/operators';
                     <p class="text-lg font-black text-slate-900 dark:text-white tracking-tight">{{ project.endDate ? (project.endDate | date:'fullDate') : 'Not Set' }}</p>
                   </div>
                   <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                    <p class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Duration</p>
-                    <p class="text-lg font-black text-slate-900 dark:text-white tracking-tight">{{ calculateDuration() }} days</p>
+                     <p class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">{{ 'personal_hr.duration' | translate }}</p>
+                     <p class="text-lg font-black text-slate-900 dark:text-white tracking-tight">{{ calculateDuration() }} {{ 'personal_hr.business_days' | translate }}</p>
                   </div>
                 </div>
               </div>
@@ -249,20 +249,20 @@ import { map } from 'rxjs/operators';
                 @if (companySettings?.delayNotificationSendEmail || companySettings?.autoCloseDay || companySettings?.allowAddProgressEntry || companySettings?.allowReopenClosedDay || 
                     companySettings?.clientCanSeeFinancials || companySettings?.clientCanSeeMedia || companySettings?.clientCanSeeBOQ || 
                     companySettings?.requirePhotoReview || companySettings?.enableInvoiceReview) {
-                <h3 class="text-lg font-bold text-white mb-6">Project Settings</h3>
+                 <h3 class="text-lg font-bold text-white mb-6">{{ 'sidebar.settings' | translate }}</h3>
                 <div class="space-y-4">
                   <!-- Email Settings (Only if allowed by company) -->
                   @if (companySettings?.delayNotificationSendEmail) {
                     <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
                       <div>
-                        <p class="text-white font-medium">Email Notifications</p>
+                         <p class="text-white font-medium">{{ 'project_detail.email_notifications' | translate }}</p>
                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
-                          {{ projectSettings?.delayNotificationSendEmail === null ? 'Inherited from Company' : 'Local Override' }}
+                           {{ projectSettings?.delayNotificationSendEmail === null ? ('project_detail.inherited_from_company' | translate) : ('project_detail.local_override' | translate) }}
                         </p>
                       </div>
                       <div class="flex items-center space-x-3">
                         @if (projectSettings?.delayNotificationSendEmail !== null) {
-                          <button (click)="resetEmailNotify()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
+                           <button (click)="resetEmailNotify()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
                         }
                         <button (click)="toggleEmailNotify()" 
                                 [class.bg-cyan-500]="projectSettings?.delayNotificationSendEmail ?? companySettings?.delayNotificationSendEmail"
@@ -281,14 +281,14 @@ import { map } from 'rxjs/operators';
                   <div class="p-4 rounded-xl bg-slate-700/30 space-y-4">
                     <div class="flex items-center justify-between">
                       <div>
-                        <p class="text-white font-medium">Auto-close Daily Logs</p>
+                         <p class="text-white font-medium">{{ 'project_detail.auto_close_logs' | translate }}</p>
                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
-                          {{ projectSettings?.autoCloseDay === null ? 'Inherited from Company' : 'Local Override' }}
+                           {{ projectSettings?.autoCloseDay === null ? ('project_detail.inherited_from_company' | translate) : ('project_detail.local_override' | translate) }}
                         </p>
                       </div>
                       <div class="flex items-center space-x-3">
                         @if (projectSettings?.autoCloseDay !== null) {
-                          <button (click)="resetAutoClose()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
+                           <button (click)="resetAutoClose()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
                         }
                         <button (click)="toggleAutoClose()" 
                                 [class.bg-fuchsia-500]="projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay"
@@ -304,9 +304,9 @@ import { map } from 'rxjs/operators';
                     @if (projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay) {
                       <div class="pt-4 border-t border-slate-600/30">
                         <div class="flex items-center justify-between">
-                          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Auto Close Time</p>
+                           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'projects.close_time' | translate }}</p>
                           @if (projectSettings?.autoCloseDayTime !== null) {
-                            <button (click)="resetAutoCloseTime()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
+                             <button (click)="resetAutoCloseTime()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
                           }
                         </div>
                         <input type="time" [ngModel]="projectSettings?.autoCloseDayTime ?? companySettings?.autoCloseDayTime"
@@ -321,14 +321,14 @@ import { map } from 'rxjs/operators';
                   @if (companySettings?.allowAddProgressEntry) {
                   <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
                     <div>
-                      <p class="text-white font-medium">Allow Add Progress Entry</p>
+                       <p class="text-white font-medium">{{ 'project_detail.allow_add_progress' | translate }}</p>
                       <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
-                        {{ projectSettings?.allowAddProgressEntry === null ? 'Inherited from Company' : 'Local Override' }}
+                         {{ projectSettings?.allowAddProgressEntry === null ? ('project_detail.inherited_from_company' | translate) : ('project_detail.local_override' | translate) }}
                       </p>
                     </div>
                     <div class="flex items-center space-x-3">
                       @if (projectSettings?.allowAddProgressEntry !== null) {
-                        <button (click)="resetProgressEntry()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
+                         <button (click)="resetProgressEntry()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
                       }
                       <button (click)="toggleProgressEntry()" 
                               [class.bg-cyan-500]="projectSettings?.allowAddProgressEntry ?? companySettings?.allowAddProgressEntry"
@@ -346,14 +346,14 @@ import { map } from 'rxjs/operators';
                   @if (companySettings?.allowReopenClosedDay) {
                   <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
                     <div>
-                      <p class="text-white font-medium">Allow Reopen Closed Day</p>
+                       <p class="text-white font-medium">{{ 'project_detail.allow_reopen_day' | translate }}</p>
                       <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
-                        {{ projectSettings?.allowReopenClosedDay === null ? 'Inherited from Company' : 'Local Override' }}
+                         {{ projectSettings?.allowReopenClosedDay === null ? ('project_detail.inherited_from_company' | translate) : ('project_detail.local_override' | translate) }}
                       </p>
                     </div>
                     <div class="flex items-center space-x-3">
                       @if (projectSettings?.allowReopenClosedDay !== null) {
-                        <button (click)="resetReopenDay()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
+                         <button (click)="resetReopenDay()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
                       }
                       <button (click)="toggleReopenDay()" 
                               [class.bg-emerald-500]="projectSettings?.allowReopenClosedDay ?? companySettings?.allowReopenClosedDay"
@@ -370,17 +370,17 @@ import { map } from 'rxjs/operators';
                   <!-- Governance Overrides -->
                   @if (companySettings?.requirePhotoReview || companySettings?.enableInvoiceReview) {
                     <div class="pt-4 mt-2 border-t border-white/5">
-                      <p class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Governance & Reviews</p>
+                       <p class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">{{ 'project_detail.governance_reviews' | translate }}</p>
                       <div class="space-y-3">
                         @if (companySettings?.requirePhotoReview) {
                           <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
                             <div>
-                              <p class="text-white text-xs font-bold">Photo Approval</p>
+                               <p class="text-white text-xs font-bold">{{ 'project_detail.photo_approval' | translate }}</p>
                               <p class="text-[8px] text-slate-400 font-bold uppercase">{{ projectSettings?.requirePhotoReview === null ? 'Inherited' : 'Override' }}</p>
                             </div>
                             <div class="flex items-center space-x-3">
                               @if (projectSettings?.requirePhotoReview !== null) {
-                                <button (click)="resetPhotoReview()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
+                                 <button (click)="resetPhotoReview()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
                               }
                               <button (click)="togglePhotoReview()" 
                                       [class.bg-orange-500]="projectSettings?.requirePhotoReview ?? companySettings?.requirePhotoReview"
@@ -397,12 +397,12 @@ import { map } from 'rxjs/operators';
                         @if (companySettings?.enableInvoiceReview) {
                           <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
                             <div>
-                              <p class="text-white text-xs font-bold">Invoice Approval</p>
+                               <p class="text-white text-xs font-bold">{{ 'project_detail.invoice_approval' | translate }}</p>
                               <p class="text-[8px] text-slate-400 font-bold uppercase">{{ projectSettings?.enableInvoiceReview === null ? 'Inherited' : 'Override' }}</p>
                             </div>
                             <div class="flex items-center space-x-3">
                               @if (projectSettings?.enableInvoiceReview !== null) {
-                                <button (click)="resetInvoiceReview()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
+                                 <button (click)="resetInvoiceReview()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
                               }
                               <button (click)="toggleInvoiceReview()" 
                                       [class.bg-orange-500]="projectSettings?.enableInvoiceReview ?? companySettings?.enableInvoiceReview"
@@ -422,17 +422,17 @@ import { map } from 'rxjs/operators';
                   <!-- Client Visibility Overrides -->
                   @if (companySettings?.clientCanSeeFinancials || companySettings?.clientCanSeeMedia || companySettings?.clientCanSeeBOQ) {
                     <div class="pt-4 mt-2 border-t border-white/5">
-                      <p class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Client Portal Visibility</p>
+                       <p class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">{{ 'project_detail.client_portal_visibility' | translate }}</p>
                       <div class="space-y-3">
                         @if (companySettings?.clientCanSeeFinancials) {
                           <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
                             <div>
-                              <p class="text-white text-xs font-bold">Financial Status</p>
+                               <p class="text-white text-xs font-bold">{{ 'project_detail.financial_status' | translate }}</p>
                               <p class="text-[8px] text-slate-400 font-bold uppercase">{{ projectSettings?.clientCanSeeFinancials === null ? 'Inherited' : 'Override' }}</p>
                             </div>
                             <div class="flex items-center space-x-3">
                               @if (projectSettings?.clientCanSeeFinancials !== null) {
-                                <button (click)="resetClientFinancials()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
+                                 <button (click)="resetClientFinancials()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
                               }
                               <button (click)="toggleClientFinancials()" 
                                       [class.bg-blue-500]="projectSettings?.clientCanSeeFinancials ?? companySettings?.clientCanSeeFinancials"
@@ -449,12 +449,12 @@ import { map } from 'rxjs/operators';
                         @if (companySettings?.clientCanSeeMedia) {
                           <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
                             <div>
-                              <p class="text-white text-xs font-bold">Site Media</p>
+                               <p class="text-white text-xs font-bold">{{ 'daily_log.site_photos' | translate }}</p>
                               <p class="text-[8px] text-slate-400 font-bold uppercase">{{ projectSettings?.clientCanSeeMedia === null ? 'Inherited' : 'Override' }}</p>
                             </div>
                             <div class="flex items-center space-x-3">
                               @if (projectSettings?.clientCanSeeMedia !== null) {
-                                <button (click)="resetClientMedia()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
+                                 <button (click)="resetClientMedia()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
                               }
                               <button (click)="toggleClientMedia()" 
                                       [class.bg-blue-500]="projectSettings?.clientCanSeeMedia ?? companySettings?.clientCanSeeMedia"
@@ -471,12 +471,12 @@ import { map } from 'rxjs/operators';
                         @if (companySettings?.clientCanSeeBOQ) {
                           <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
                             <div>
-                              <p class="text-white text-xs font-bold">BOQ Details</p>
+                               <p class="text-white text-xs font-bold">{{ 'project_detail.boq_details' | translate }}</p>
                               <p class="text-[8px] text-slate-400 font-bold uppercase">{{ projectSettings?.clientCanSeeBOQ === null ? 'Inherited' : 'Override' }}</p>
                             </div>
                             <div class="flex items-center space-x-3">
                               @if (projectSettings?.clientCanSeeBOQ !== null) {
-                                <button (click)="resetClientBOQ()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">Reset</button>
+                                 <button (click)="resetClientBOQ()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
                               }
                               <button (click)="toggleClientBOQ()" 
                                       [class.bg-blue-500]="projectSettings?.clientCanSeeBOQ ?? companySettings?.clientCanSeeBOQ"
@@ -533,7 +533,7 @@ import { map } from 'rxjs/operators';
                           @if (roleOverrides[member.id]) {
                             <div class="ml-3 px-2 py-1 rounded-md bg-purple-500/10 border border-purple-500/20 flex items-center shadow-sm animate-in fade-in slide-in-from-right-2 duration-300">
                               <span class="w-1.5 h-1.5 rounded-full bg-purple-500 mr-2 animate-pulse"></span>
-                              <span class="text-[8px] font-black text-purple-600 dark:text-purple-400 uppercase tracking-tighter">Override</span>
+                               <span class="text-[8px] font-black text-purple-600 dark:text-purple-400 uppercase tracking-tighter">{{ 'project_detail.override' | translate }}</span>
                             </div>
                           }
                         </div>
@@ -542,7 +542,7 @@ import { map } from 'rxjs/operators';
                         (click)="openRoleModal(member)"
                         class="px-5 py-2.5 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 text-xs font-black uppercase tracking-widest hover:scale-105 transition-all flex items-center">
                         <svg class="w-3.5 h-3.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                        Change Role
+                         {{ 'project_detail.change_role' | translate }}
                       </button>
                       <button class="p-3 rounded-xl hover:bg-rose-500/10 text-slate-400 hover:text-rose-500 transition-all border border-transparent hover:border-rose-500/20">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -562,7 +562,7 @@ import { map } from 'rxjs/operators';
               <!-- Activity Feed -->
               <div class="lg:col-span-2 space-y-4">
                 <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 p-8">
-                  <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">Pulse Activity Feed</h3>
+                   <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'project_detail.pulse_activity' | translate }}</h3>
                   <div class="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:h-full before:w-0.5 before:-translate-x-px before:bg-gradient-to-b before:from-slate-200 before:via-slate-200 before:to-transparent dark:before:from-white/10 dark:before:to-transparent">
                     @for (activity of activities; track activity.id) {
                       <div class="relative flex items-start group">
@@ -599,13 +599,13 @@ import { map } from 'rxjs/operators';
               <!-- Secondary Section: Daily Logs Summary -->
               <div class="space-y-6">
                 <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[2.5rem] p-8 text-white shadow-xl shadow-indigo-500/20">
-                  <h4 class="text-xs font-black uppercase tracking-[0.2em] opacity-60 mb-6">Historical Logs</h4>
+                   <h4 class="text-xs font-black uppercase tracking-[0.2em] opacity-60 mb-6">{{ 'project_detail.historical_logs' | translate }}</h4>
                   <div class="space-y-3">
                      @for (log of dailyLogs.slice(0, 5); track log.id) {
                        <div (click)="openLogDetails(log)" class="flex items-center justify-between p-3 rounded-2xl bg-white/10 hover:bg-white/20 transition-all cursor-pointer group">
                          <div class="flex flex-col">
                             <span class="text-xs font-bold">{{ log.date | date:'mediumDate' }}</span>
-                            <span class="text-[8px] font-black uppercase opacity-60 tracking-widest mt-0.5">{{ log.isClosed ? 'Verified & Sealed' : 'Draft' }}</span>
+                             <span class="text-[8px] font-black uppercase opacity-60 tracking-widest mt-0.5">{{ log.isClosed ? ('project_detail.verified_sealed' | translate) : ('project_detail.draft' | translate) }}</span>
                          </div>
                          <div class="flex items-center space-x-2">
                             <span class="px-2 py-1 rounded-lg bg-white/10 text-[9px] font-black uppercase">{{ log.items.length }} Items</span>
@@ -617,11 +617,11 @@ import { map } from 'rxjs/operators';
                 </div>
 
                 <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 p-8">
-                  <h4 class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-6">Quick Stats</h4>
+                   <h4 class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-6">{{ 'dashboard.quick_stats' | translate }}</h4>
                   <div class="space-y-6">
                     <div>
                       <div class="flex items-center justify-between mb-2">
-                        <span class="text-[10px] font-black text-slate-400 uppercase">Log Accuracy</span>
+                         <span class="text-[10px] font-black text-slate-400 uppercase">{{ 'project_detail.log_accuracy' | translate }}</span>
                         <span class="text-sm font-black text-slate-900 dark:text-white">94%</span>
                       </div>
                       <div class="h-1.5 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
@@ -648,12 +648,12 @@ import { map } from 'rxjs/operators';
              <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all animate-in fade-in duration-500">
                <div class="px-8 py-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-slate-50/30 dark:bg-slate-950/20">
                  <div>
-                    <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">BOQ Progress Dashboard</h3>
-                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Hierarchical financial and execution tracking</p>
+                     <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'project_detail.boq_progress_dashboard' | translate }}</h3>
+                     <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">{{ 'project_detail.boq_progress_desc' | translate }}</p>
                  </div>
                  <div class="flex items-center space-x-6">
                     <div class="text-right">
-                       <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Total Project value</div>
+                        <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{{ 'project_detail.total_project_value' | translate }}</div>
                        <div class="text-lg font-black text-emerald-600 dark:text-emerald-400">{{ totalProjectValue | currency:'USD' }}</div>
                     </div>
                  </div>
@@ -670,8 +670,8 @@ import { map } from 'rxjs/operators';
                            <div class="w-16 h-16 rounded-[2rem] bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-4 opacity-50">
                               <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                            </div>
-                           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Hierarchy Structure Required</p>
-                           <p class="text-xs text-slate-400">Please initialize your project hierarchy in the "Phases Hierarchy" tab first.</p>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ 'project_detail.init_hierarchy' | translate }}</p>
+                            <p class="text-xs text-slate-400">{{ 'project_detail.hierarchy_required_desc' | translate }}</p>
                         </div>
                      }
                   </div>
@@ -683,17 +683,17 @@ import { map } from 'rxjs/operators';
            @if (activeTab === 'phases') {
              <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all animate-in fade-in duration-500">
                <div class="px-8 py-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-slate-50/30 dark:bg-slate-950/20">
-                 <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Project Phase Hierarchy</h3>
+                  <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'project_detail.phase_hierarchy_title' | translate }}</h3>
                  <div class="flex items-center space-x-4">
                     @if (isPhasesInitialized) {
                         <button (click)="useGlobalTemplate()" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/5 transition-all">
-                            Switch to Global
+                             {{ 'project_detail.switch_global' | translate }}
                         </button>
                         <button (click)="resetHierarchy()" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/5 transition-all">
-                            Start Over (Empty)
+                             {{ 'project_detail.start_over' | translate }}
                         </button>
                         <button (click)="openPhaseModal()" class="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl">
-                            Add Phase
+                            {{ 'HR.add_worker' | translate }}
                         </button>
                     }
                  </div>
@@ -704,7 +704,7 @@ import { map } from 'rxjs/operators';
                            <div class="w-16 h-16 rounded-[1.5rem] bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-6 opacity-50">
                               <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                            </div>
-                           <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">Initialize Hierarchy</h3>
+                            <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">{{ 'project_detail.init_hierarchy' | translate }}</h3>
                            <p class="text-slate-500 text-sm font-bold max-w-md mx-auto mb-10">Choose how you want to structure your project phases and tasks.</p>
                            
                            <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 px-8">
@@ -712,16 +712,16 @@ import { map } from 'rxjs/operators';
                                  <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 flex items-center justify-center text-cyan-600 mb-4 group-hover:bg-cyan-500 group-hover:text-white transition-all">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
                                  </div>
-                                 <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">Global Template</h4>
-                                 <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Import standard company structure</p>
+                                  <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">{{ 'project_detail.global_template' | translate }}</h4>
+                                  <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{{ 'project_detail.import_standard' | translate }}</p>
                               </button>
 
                               <button (click)="startEmptyHierarchy()" class="w-full sm:w-80 p-8 rounded-[2.5rem] bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-white/5 hover:border-emerald-500 text-left transition-all hover:scale-[1.02] active:scale-98 group">
                                  <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/10 flex items-center justify-center text-slate-500 mb-4 group-hover:bg-emerald-500 group-hover:text-white transition-all">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                                  </div>
-                                 <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">Empty Hierarchy</h4>
-                                 <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Build from scratch your own way</p>
+                                  <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">{{ 'project_detail.empty_hierarchy' | translate }}</h4>
+                                  <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{{ 'project_detail.build_from_scratch' | translate }}</p>
                               </button>
                            </div>
                       </div>
@@ -749,7 +749,7 @@ import { map } from 'rxjs/operators';
 
           <!-- Finances Tab -->
           @if (activeTab === 'finances' && project) {
-            <div class="animate-in fade-in slide-in-from-bottom-4 duration-500 mt-4 space-y-8">
+            <div class="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
                   <!-- Sidebar: Configuration -->
                   <div class="space-y-6">
@@ -758,27 +758,27 @@ import { map } from 'rxjs/operators';
                            <div class="w-10 h-10 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-500">
                               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                            </div>
-                           <h4 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">Billing Parameters</h4>
+                            <h4 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'project_detail.billing_parameters' | translate }}</h4>
                         </div>
                         
                         <div class="space-y-6">
                            <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                              <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Calculation Model</p>
+                               <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ 'projects.financial_model' | translate }}</p>
                               <p class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ project.calculationMethod || 'Measured' }}</p>
                            </div>
 
                            <div class="p-5 rounded-2xl bg-emerald-500/5 border border-emerald-500/10">
-                              <p class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-2">Total Contract</p>
+                               <p class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-2">{{ 'projects.contract_cost' | translate }}</p>
                               <p class="text-lg font-black text-slate-900 dark:text-white">{{ (project.totalContractValue || 0) | currency }}</p>
                            </div>
 
                            <div class="grid grid-cols-1 gap-4">
                               <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                                 <p class="text-[8px] font-black text-amber-600 uppercase tracking-widest mb-1">Extra Fees</p>
+                                  <p class="text-[8px] font-black text-amber-600 uppercase tracking-widest mb-1">{{ 'projects.extra_fees' | translate }}</p>
                                  <p class="text-xs font-black text-slate-900 dark:text-white">{{ (project.extraFees || 0) | currency }}</p>
                               </div>
                               <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                                 <p class="text-[8px] font-black text-rose-500 uppercase tracking-widest mb-1">Deductions</p>
+                                  <p class="text-[8px] font-black text-rose-500 uppercase tracking-widest mb-1">{{ 'projects.deducted' | translate }}</p>
                                  <p class="text-xs font-black text-slate-900 dark:text-white">{{ (project.deductedAmount || 0) | currency }}</p>
                               </div>
                            </div>
@@ -792,7 +792,7 @@ import { map } from 'rxjs/operators';
                      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl relative overflow-hidden group hover:scale-[1.02] transition-all">
                            <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl group-hover:bg-emerald-500/10 transition-colors"></div>
-                           <p class="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-4">Total Earned</p>
+                            <p class="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-4">{{ 'project_detail.total_earned' | translate }}</p>
                            <h3 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{{ project.cashFlow.earned | currency }}</h3>
                         </div>
                         <div class="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl relative overflow-hidden group hover:scale-[1.02] transition-all">

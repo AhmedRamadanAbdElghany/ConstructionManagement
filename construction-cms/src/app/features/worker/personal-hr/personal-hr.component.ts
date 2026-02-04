@@ -18,14 +18,14 @@ import { VacationRequest } from '../../../shared/interfaces';
           <div class="space-y-1">
             <h1 class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tight flex items-center gap-4">
               <span class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white flex items-center justify-center text-xl shadow-lg shadow-indigo-500/20">👤</span>
-              Personal HQ & Finance
+              {{ 'personal_hr.title' | translate }}
             </h1>
-            <p class="text-slate-500 dark:text-slate-400 font-medium tracking-tight">Access your corporate identity, financial records, and operational leave requests</p>
+            <p class="text-slate-500 dark:text-slate-400 font-medium tracking-tight">{{ 'personal_hr.subtitle' | translate }}</p>
           </div>
           <div class="flex items-center gap-3">
              <div class="px-6 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 shadow-sm text-slate-500">
-               <span class="text-[9px] font-black uppercase tracking-[0.2em] block leading-none mb-1 opacity-60">Status</span>
-               <span class="text-xs font-black text-emerald-500 uppercase tracking-widest">Active Associate</span>
+               <span class="text-[9px] font-black uppercase tracking-[0.2em] block leading-none mb-1 opacity-60">{{ 'dashboard.status' | translate }}</span>
+               <span class="text-xs font-black text-emerald-500 uppercase tracking-widest">{{ 'personal_hr.active_associate' | translate }}</span>
              </div>
           </div>
         </div>
@@ -36,40 +36,40 @@ import { VacationRequest } from '../../../shared/interfaces';
           <div class="premium-card group">
             <div class="flex items-center justify-between mb-8">
               <div class="w-16 h-16 rounded-[1.5rem] bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">💰</div>
-              <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl">Financial</div>
+              <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl">{{ 'personal_hr.financial_label' | translate }}</div>
             </div>
             <p class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tighter">{{ monthlySalary | currency:'USD':'symbol':'1.0-0' }}</p>
-            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.2em]">Monthly Compensation</p>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.2em]">{{ 'personal_hr.monthly_compensation' | translate }}</p>
           </div>
 
           <!-- Leave Allowance -->
           <div class="premium-card group">
             <div class="flex items-center justify-between mb-8">
               <div class="w-16 h-16 rounded-[1.5rem] bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">📅</div>
-              <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl">Allowance</div>
+              <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl">{{ 'personal_hr.allowance_label' | translate }}</div>
             </div>
             <p class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tighter">{{ annualLeaveDays }}</p>
-            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.2em]">Annual Leave Remaining</p>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.2em]">{{ 'personal_hr.annual_leave_remaining' | translate }}</p>
           </div>
 
           <!-- Active Requests -->
           <div class="premium-card group">
             <div class="flex items-center justify-between mb-8">
               <div class="w-16 h-16 rounded-[1.5rem] bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">⏳</div>
-              <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl">Pending</div>
+              <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl">{{ 'dashboard.pending' | translate }}</div>
             </div>
             <p class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tighter">{{ pendingRequests }}</p>
-            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.2em]">Awaiting Authorization</p>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.2em]">{{ 'personal_hr.awaiting_authorization' | translate }}</p>
           </div>
 
           <!-- Utilization -->
           <div class="premium-card group">
             <div class="flex items-center justify-between mb-8">
               <div class="w-16 h-16 rounded-[1.5rem] bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">📊</div>
-              <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl">Work Days</div>
+              <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl">{{ 'personal_hr.work_days_label' | translate }}</div>
             </div>
             <p class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tighter">{{ workDaysThisMonth }}</p>
-            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.2em]">Cycle Performance</p>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.2em]">{{ 'personal_hr.cycle_performance' | translate }}</p>
           </div>
         </div>
 
@@ -82,7 +82,7 @@ import { VacationRequest } from '../../../shared/interfaces';
                   [class.text-indigo-600]="activeTab === 'salary'"
                   [class.dark:text-white]="activeTab === 'salary'"
                   class="px-10 py-4 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest transition-all">
-            Financial Ledger
+            {{ 'personal_hr.financial_ledger' | translate }}
           </button>
           <button (click)="activeTab = 'vacation'"
                   [class.bg-white]="activeTab === 'vacation'"
@@ -91,7 +91,7 @@ import { VacationRequest } from '../../../shared/interfaces';
                   [class.text-indigo-600]="activeTab === 'vacation'"
                   [class.dark:text-white]="activeTab === 'vacation'"
                   class="px-10 py-4 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest transition-all text-slate-400 hover:text-slate-600">
-            Leave Architecture
+            {{ 'personal_hr.leave_architecture' | translate }}
           </button>
         </div>
 
@@ -102,8 +102,8 @@ import { VacationRequest } from '../../../shared/interfaces';
             <div class="bg-white dark:bg-slate-900 rounded-[3rem] shadow-2xl overflow-hidden border border-slate-100 dark:border-white/5">
               <div class="px-10 py-10 flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/20">
                 <div>
-                   <h2 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Monthly Salary Breakdown</h2>
-                   <p class="text-xs text-slate-500 font-medium">Verified corporate financial records from the last accounting cycle</p>
+                   <h2 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'personal_hr.salary_breakdown' | translate }}</h2>
+                   <p class="text-xs text-slate-500 font-medium">{{ 'personal_hr.salary_desc' | translate }}</p>
                 </div>
                 <div class="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm border border-slate-100 dark:border-white/5 outline-none cursor-pointer hover:bg-slate-50 transition-colors">📄</div>
               </div>
@@ -112,12 +112,12 @@ import { VacationRequest } from '../../../shared/interfaces';
                 <table class="w-full">
                   <thead>
                     <tr class="text-left bg-slate-50/30 dark:bg-slate-950/40 text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">
-                      <th class="px-10 py-6 italic">Billing Period</th>
-                      <th class="px-10 py-6">Base Salary</th>
-                      <th class="px-10 py-6">Bonus/Reward</th>
-                      <th class="px-10 py-6 text-rose-500">Deductions</th>
-                      <th class="px-10 py-6">Net Dispersion</th>
-                      <th class="px-10 py-6">Audit Status</th>
+                      <th class="px-10 py-6 italic">{{ 'personal_hr.billing_period' | translate }}</th>
+                      <th class="px-10 py-6">{{ 'personal_hr.base_salary' | translate }}</th>
+                      <th class="px-10 py-6">{{ 'personal_hr.bonus_reward' | translate }}</th>
+                      <th class="px-10 py-6 text-rose-500">{{ 'personal_hr.deductions' | translate }}</th>
+                      <th class="px-10 py-6">{{ 'personal_hr.net_dispersion' | translate }}</th>
+                      <th class="px-10 py-6">{{ 'personal_hr.audit_status' | translate }}</th>
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-slate-100 dark:divide-white/5">
@@ -155,19 +155,19 @@ import { VacationRequest } from '../../../shared/interfaces';
               <!-- Form -->
               <div class="lg:col-span-4 bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-100 dark:border-white/5 shadow-2xl h-fit">
                 <div class="mb-10">
-                   <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Initialize Leave Request</h2>
-                   <p class="text-xs text-slate-500 mt-1">Submit your request for manager authorization</p>
+                   <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'personal_hr.init_leave_request' | translate }}</h2>
+                   <p class="text-xs text-slate-500 mt-1">{{ 'personal_hr.leave_request_desc' | translate }}</p>
                 </div>
                 
                 <form [formGroup]="vacationForm" (ngSubmit)="submitVacationRequest()" class="space-y-8">
                   <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Leave Archetype</label>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ 'personal_hr.leave_archetype' | translate }}</label>
                     <div class="relative">
                       <select formControlName="type" 
                               class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none font-bold text-slate-950 dark:text-white appearance-none cursor-pointer">
-                        <option value="Annual">Annual Paid Leave</option>
-                        <option value="Sick">Medical/Sick Leave</option>
-                        <option value="Emergency">Urgent Emergency</option>
+                        <option value="Annual">{{ 'personal_hr.annual_paid_leave' | translate }}</option>
+                        <option value="Sick">{{ 'personal_hr.medical_sick_leave' | translate }}</option>
+                        <option value="Emergency">{{ 'personal_hr.urgent_emergency' | translate }}</option>
                       </select>
                       <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">⌄</div>
                     </div>
@@ -175,27 +175,27 @@ import { VacationRequest } from '../../../shared/interfaces';
 
                   <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-2">
-                      <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Commencement</label>
+                      <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ 'personal_hr.commencement' | translate }}</label>
                       <input type="date" formControlName="startDate" 
                              class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none font-bold text-slate-950 dark:text-white">
                     </div>
                     <div class="space-y-2">
-                      <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Conclusion</label>
+                      <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ 'personal_hr.conclusion' | translate }}</label>
                       <input type="date" formControlName="endDate" 
                              class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none font-bold text-slate-950 dark:text-white">
                     </div>
                   </div>
 
                   <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Justification (Optional)</label>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ 'personal_hr.justification' | translate }}</label>
                     <textarea formControlName="reason" rows="4"
                               class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none font-bold text-slate-950 dark:text-white resize-none"
-                              placeholder="Brief description of reasoning..."></textarea>
+                              [placeholder]="'personal_hr.reasoning_hint' | translate"></textarea>
                   </div>
 
                   <button type="submit" [disabled]="vacationForm.invalid"
                           class="w-full py-5 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-xs uppercase tracking-[0.2em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-30 disabled:grayscale">
-                    Execute Request Flow
+                    {{ 'personal_hr.execute_request' | translate }}
                   </button>
                 </form>
               </div>
@@ -220,7 +220,7 @@ import { VacationRequest } from '../../../shared/interfaces';
                               {{ request.startDate | date:'MMM d, y' }} &mdash; {{ request.endDate | date:'MMM d, y' }}
                             </p>
                             <p class="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest flex items-center gap-2">
-                              Duration: <span class="text-indigo-600 dark:text-indigo-400 capitalize">{{ calculateDays(request.startDate, request.endDate) }} Business Days</span>
+                              {{ 'personal_hr.duration' | translate }}: <span class="text-indigo-600 dark:text-indigo-400 capitalize">{{ calculateDays(request.startDate, request.endDate) }} {{ 'personal_hr.business_days' | translate }}</span>
                             </p>
                             @if (request.reason) {
                               <p class="text-xs italic text-slate-500 mt-4 leading-relaxed group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">"{{ request.reason }}"</p>
@@ -235,7 +235,7 @@ import { VacationRequest } from '../../../shared/interfaces';
                                   'bg-amber-500/10 text-amber-600 border-amber-500/10': request.status === 'Pending',
                                   'bg-rose-500/10 text-rose-600 border-rose-500/10': request.status === 'Rejected'
                                 }">
-                            Status: {{ request.status }}
+                            {{ 'dashboard.status' | translate }}: {{ request.status | translate }}
                           </span>
                        </div>
                     </div>
@@ -245,7 +245,7 @@ import { VacationRequest } from '../../../shared/interfaces';
                 @if (vacationRequests.length === 0) {
                   <div class="bg-slate-50 dark:bg-white/5 rounded-[3rem] p-24 text-center border-2 border-dashed border-slate-200 dark:border-white/5">
                      <p class="text-4xl mb-6 grayscale opacity-40">📭</p>
-                     <p class="text-lg font-black text-slate-400 uppercase tracking-widest">No Leave Records Found</p>
+                     <p class="text-lg font-black text-slate-400 uppercase tracking-widest">{{ 'personal_hr.no_leave_records' | translate }}</p>
                   </div>
                 }
               </div>

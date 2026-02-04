@@ -27,8 +27,8 @@ interface WorkTask {
         <!-- Header with Date Navigation -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
-            <h1 class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tight uppercase">Daily Work Log</h1>
-            <p class="text-slate-500 dark:text-slate-400 font-medium">Task management and progress tracking for field operations</p>
+            <h1 class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tight uppercase">{{ 'daily_log.title' | translate }}</h1>
+            <p class="text-slate-500 dark:text-slate-400 font-medium">{{ 'daily_log.subtitle' | translate }}</p>
           </div>
           
           <!-- Date Navigation -->
@@ -40,7 +40,7 @@ interface WorkTask {
             </button>
             
             <div class="px-6 py-3 text-center min-w-[200px]">
-              <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Selected Date</p>
+               <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ 'daily_log.selected_date' | translate }}</p>
               <input type="date" [(ngModel)]="selectedDateString" (change)="onDateChange()" 
                      class="bg-transparent text-sm font-black text-indigo-600 dark:text-indigo-400 border-none outline-none text-center cursor-pointer">
             </div>
@@ -52,7 +52,7 @@ interface WorkTask {
             </button>
             
             <button (click)="goToToday()" class="px-5 py-3 rounded-xl bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/20">
-              Today
+               {{ 'daily_log.today' | translate }}
             </button>
           </div>
         </div>
@@ -70,7 +70,7 @@ interface WorkTask {
             </div>
             <div>
               <p class="text-sm font-black" [ngClass]="isDayClosed ? 'text-rose-600' : 'text-emerald-600'">
-                {{ isDayClosed ? 'Day Closed' : 'Day Open for Entries' }}
+                {{ isDayClosed ? ('daily_log.day_locked' | translate) : ('daily_log.day_open' | translate) }}
               </p>
               <p class="text-xs text-slate-500">{{ selectedDate | date:'fullDate' }}</p>
             </div>
@@ -78,7 +78,7 @@ interface WorkTask {
           
           @if (isDayClosed && canReopenDay) {
             <button (click)="openReopenModal()" class="px-6 py-3 rounded-xl bg-amber-500 text-white text-[10px] font-black uppercase tracking-widest hover:bg-amber-400 transition-all">
-              Reopen Day
+              {{ 'daily_log.reopen_day' | translate }}
             </button>
           }
         </div>
@@ -91,10 +91,10 @@ interface WorkTask {
               <div class="flex items-center justify-between mb-8">
                 <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-3">
                   <span class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center text-lg">📋</span>
-                  Your Tasks for This Day
+                  {{ 'daily_log.tasks_for_day' | translate }}
                 </h2>
                 <span class="text-[10px] font-black text-slate-400 bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-xl">
-                  {{ assignedTasks.length }} Items
+                  {{ assignedTasks.length }} {{ 'daily_log.items' | translate }}
                 </span>
               </div>
 
@@ -111,7 +111,7 @@ interface WorkTask {
                       <div>
                         <h3 class="text-lg font-black text-slate-900 dark:text-white tracking-tight">{{ task.boqItemName }}</h3>
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">
-                          Target: {{ task.assignedQuantity }} {{ task.unit }}
+                          {{ 'daily_log.target' | translate }}: {{ task.assignedQuantity }} {{ task.unit }}
                         </p>
                       </div>
                       <span class="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest"
@@ -121,13 +121,13 @@ interface WorkTask {
                               'bg-emerald-500 text-white': task.status === 'Completed' || task.status === 'Approved',
                               'bg-rose-500 text-white': task.status === 'Rejected'
                             }">
-                        {{ task.status }}
+                        {{ 'common.' + (task.status === 'InProgress' ? 'work_in_progress' : task.status.toLowerCase()) | translate }}
                       </span>
                     </div>
 
                     <!-- Photo Upload for Task -->
                     <div class="mb-4">
-                      <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Site Photos ({{ task.photos.length }})</p>
+                       <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ 'daily_log.site_photos' | translate }} ({{ task.photos.length }})</p>
                       <div class="flex gap-2 flex-wrap">
                         @for (photo of task.photos; track photo) {
                           <div class="w-16 h-16 rounded-xl overflow-hidden border-2 border-white shadow-lg">
@@ -150,20 +150,20 @@ interface WorkTask {
                       <div class="flex gap-3 pt-4 border-t border-slate-100 dark:border-white/5">
                         @if (task.status === 'Pending') {
                           <button (click)="startTask(task)" class="flex-1 py-3 rounded-xl bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 transition-all">
-                            Start Work
+                            {{ 'daily_log.start_work' | translate }}
                           </button>
                         }
                         @if (task.status === 'InProgress') {
                           <button (click)="completeTask(task)" class="flex-1 py-3 rounded-xl bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 transition-all">
-                            Mark Complete
+                            {{ 'daily_log.mark_complete' | translate }}
                           </button>
                         }
                         @if (canApprove && task.status === 'Completed') {
                           <button (click)="approveTask(task)" class="flex-1 py-3 rounded-xl bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 transition-all">
-                            Approve
+                            {{ 'common.approved' | translate }}
                           </button>
                           <button (click)="rejectTask(task)" class="flex-1 py-3 rounded-xl bg-rose-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-rose-500 transition-all">
-                            Reject
+                            {{ 'common.rejected' | translate }}
                           </button>
                         }
                       </div>
@@ -174,7 +174,7 @@ interface WorkTask {
                 @if (assignedTasks.length === 0) {
                   <div class="text-center py-16 text-slate-400">
                     <p class="text-4xl mb-4 opacity-40">📭</p>
-                    <p class="text-sm font-black uppercase tracking-widest">No tasks assigned for this date</p>
+                    <p class="text-sm font-black uppercase tracking-widest">{{ 'daily_log.no_entries_yet' | translate }}</p>
                   </div>
                 }
               </div>
@@ -185,23 +185,23 @@ interface WorkTask {
               <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-8 border border-slate-200 dark:border-white/5 shadow-2xl">
                 <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8 flex items-center gap-3">
                   <span class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center text-lg">➕</span>
-                  Add Progress Entry
+                  {{ 'daily_log.progress_entry' | translate }}
                 </h2>
 
                 <form [formGroup]="dailyLogForm" (ngSubmit)="submitDailyLog()" class="space-y-6">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-2">
-                      <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">BOQ Item</label>
+                      <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'daily_log.boq_item' | translate }}</label>
                       <select formControlName="boqItemId" 
                               class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none font-bold text-slate-950 dark:text-white">
-                        <option value="">Select an item...</option>
+                        <option value="">{{ 'daily_log.select_item' | translate }}</option>
                         @for (item of boqItems; track item.id) {
                           <option [value]="item.id">{{ item.description }} ({{ item.unit }})</option>
                         }
                       </select>
                     </div>
                     <div class="space-y-2">
-                      <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Completed Quantity</label>
+                      <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'daily_log.quantity' | translate }}</label>
                       <input type="number" formControlName="quantity" min="0"
                              class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none font-bold text-slate-950 dark:text-white"
                              placeholder="0">
@@ -209,15 +209,15 @@ interface WorkTask {
                   </div>
                   
                   <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Notes</label>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'daily_log.notes' | translate }}</label>
                     <textarea formControlName="notes" rows="3"
                               class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none font-bold text-slate-950 dark:text-white resize-none"
-                              placeholder="Add any notes about this work..."></textarea>
+                              [placeholder]="'daily_log.notes_hint' | translate"></textarea>
                   </div>
 
                   <button type="submit" [disabled]="dailyLogForm.invalid"
                           class="w-full py-5 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-xs uppercase tracking-[0.2em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-30">
-                    Submit Entry
+                    {{ 'daily_log.submit' | translate }}
                   </button>
                 </form>
               </div>
@@ -228,18 +228,18 @@ interface WorkTask {
           <div class="space-y-8">
             <!-- Day Summary -->
             <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-8 border border-slate-200 dark:border-white/5 shadow-2xl">
-              <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-6">Day Summary</h3>
+               <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-6">{{ 'daily_log.today_summary' | translate }}</h3>
               <div class="space-y-4">
                 <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
-                  <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Total Tasks</span>
+                   <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'daily_log.total_tasks' | translate }}</span>
                   <span class="text-xl font-black text-slate-900 dark:text-white">{{ assignedTasks.length }}</span>
                 </div>
                 <div class="flex items-center justify-between p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10">
-                  <span class="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Completed</span>
+                   <span class="text-[9px] font-black text-emerald-600 uppercase tracking-widest">{{ 'projects.completed' | translate }}</span>
                   <span class="text-xl font-black text-emerald-600">{{ getTaskCount('Completed') + getTaskCount('Approved') }}</span>
                 </div>
                 <div class="flex items-center justify-between p-4 rounded-2xl bg-amber-50 dark:bg-amber-500/10">
-                  <span class="text-[9px] font-black text-amber-600 uppercase tracking-widest">In Progress</span>
+                   <span class="text-[9px] font-black text-amber-600 uppercase tracking-widest">{{ 'daily_log.work_in_progress' | translate }}</span>
                   <span class="text-xl font-black text-amber-600">{{ getTaskCount('InProgress') }}</span>
                 </div>
               </div>
@@ -248,19 +248,19 @@ interface WorkTask {
             <!-- Close Day Action -->
             @if (!isDayClosed && isToday) {
               <div class="bg-gradient-to-br from-rose-600 to-pink-700 rounded-[3rem] p-8 text-white shadow-2xl shadow-rose-500/20">
-                <h3 class="text-lg font-black uppercase tracking-tight mb-4">Close This Day</h3>
-                <p class="text-sm font-medium text-white/70 mb-6">Once closed, no more entries can be added unless reopened by an authorized user.</p>
+                 <h3 class="text-lg font-black uppercase tracking-tight mb-4">{{ 'daily_log.close_day_title' | translate }}</h3>
+                 <p class="text-sm font-medium text-white/70 mb-6">{{ 'daily_log.close_day_desc' | translate }}</p>
                 <button (click)="closeDay()" 
                         [disabled]="assignedTasks.length === 0"
                         class="w-full py-4 rounded-2xl bg-white text-rose-600 font-black text-xs uppercase tracking-widest hover:bg-rose-100 transition-all disabled:opacity-50">
-                  Close & Lock Day
+                   {{ 'daily_log.close_day' | translate }}
                 </button>
               </div>
             }
 
             <!-- Recent History -->
             <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-8 border border-slate-200 dark:border-white/5 shadow-2xl">
-              <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-6">Recent Days</h3>
+               <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-6">{{ 'daily_log.recent_days' | translate }}</h3>
               <div class="space-y-3">
                 @for (day of recentDays; track day.date) {
                   <button (click)="selectDate(day.date)" 
@@ -269,7 +269,7 @@ interface WorkTask {
                     <p class="text-sm font-black">{{ day.date | date:'EEE, MMM d' }}</p>
                     <p class="text-[10px] font-bold uppercase tracking-widest mt-1"
                        [ngClass]="isSameDay(day.date, selectedDate) ? 'text-indigo-200' : 'text-slate-400'">
-                      {{ day.taskCount }} tasks · {{ day.isClosed ? 'Closed' : 'Open' }}
+                      {{ day.taskCount }} {{ 'daily_log.tasks_label' | translate }} · {{ day.isClosed ? ('daily_log.day_locked' | translate) : ('daily_log.day_open' | translate) }}
                     </p>
                   </button>
                 }
@@ -283,19 +283,19 @@ interface WorkTask {
       @if (showReopenModal) {
         <div class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
           <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-10 max-w-lg w-full shadow-2xl">
-            <h2 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-6">Reopen Closed Day</h2>
-            <p class="text-sm text-slate-500 mb-8">This action will notify selected project roles and log the reopening for audit purposes.</p>
+            <h2 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-6">{{ 'daily_log.reopen_closed_day' | translate }}</h2>
+            <p class="text-sm text-slate-500 mb-8">{{ 'daily_log.reopen_desc' | translate }}</p>
             
             <div class="space-y-6 mb-8">
               <div class="space-y-2">
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Reason for Reopening</label>
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'daily_log.reopen_reason' | translate }}</label>
                 <textarea [(ngModel)]="reopenReason" rows="3"
                           class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none font-bold text-slate-950 dark:text-white resize-none"
-                          placeholder="Explain why this day needs to be reopened..."></textarea>
+                          [placeholder]="'daily_log.reopen_hint' | translate"></textarea>
               </div>
               
               <div class="space-y-2">
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Notify Roles</label>
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'daily_log.notify_roles' | translate }}</label>
                 <div class="flex flex-wrap gap-2">
                   @for (role of projectRoles; track role.id) {
                     <button (click)="toggleRoleNotification(role.id)"
@@ -310,10 +310,10 @@ interface WorkTask {
 
             <div class="flex gap-4">
               <button (click)="closeReopenModal()" class="flex-1 py-4 rounded-2xl border-2 border-slate-200 dark:border-slate-700 text-slate-600 font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-all">
-                Cancel
+                {{ 'common.cancel' | translate }}
               </button>
               <button (click)="confirmReopenDay()" [disabled]="!reopenReason" class="flex-1 py-4 rounded-2xl bg-amber-500 text-white font-black text-xs uppercase tracking-widest hover:bg-amber-400 transition-all disabled:opacity-50">
-                Reopen Day
+                {{ 'daily_log.reopen_day' | translate }}
               </button>
             </div>
           </div>

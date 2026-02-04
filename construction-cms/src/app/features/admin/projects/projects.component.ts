@@ -20,7 +20,7 @@ import { map } from 'rxjs/operators';
         <div class="flex items-center justify-between mb-8">
           <div>
             <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ 'projects.title' | translate }}</h1>
-            <p class="text-slate-500 dark:text-slate-400 font-medium tracking-tight">Manage and track your construction projects</p>
+            <p class="text-slate-500 dark:text-slate-400 font-medium tracking-tight">{{ 'projects.subtitle' | translate }}</p>
           </div>
           <button (click)="openCreateModal()" class="px-6 py-3 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-all flex items-center group">
             <svg class="w-5 h-5 mr-2 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -41,7 +41,7 @@ import { map } from 'rxjs/operators';
               [class.dark:text-slate-950]="filterStatus === 'all'"
               [class.text-slate-500]="filterStatus !== 'all'"
               class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
-              All
+              {{ 'projects.all' | translate }}
             </button>
             <button 
               (click)="filterStatus = 'Active'"
@@ -49,7 +49,7 @@ import { map } from 'rxjs/operators';
               [class.text-cyan-600]="filterStatus === 'Active'"
               [class.text-slate-500]="filterStatus !== 'Active'"
               class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
-              Active
+              {{ 'projects.active' | translate }}
             </button>
             <button 
               (click)="filterStatus = 'Completed'"
@@ -57,7 +57,7 @@ import { map } from 'rxjs/operators';
               [class.text-emerald-600]="filterStatus === 'Completed'"
               [class.text-slate-500]="filterStatus !== 'Completed'"
               class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
-              Completed
+              {{ 'projects.completed' | translate }}
             </button>
             <button 
               (click)="filterStatus = 'Delayed'"
@@ -65,7 +65,7 @@ import { map } from 'rxjs/operators';
               [class.text-rose-600]="filterStatus === 'Delayed'"
               [class.text-slate-500]="filterStatus !== 'Delayed'"
               class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
-              Delayed
+              {{ 'projects.delayed' | translate }}
             </button>
           </div>
 
@@ -126,7 +126,7 @@ import { map } from 'rxjs/operators';
                             'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400': project.status === 'Completed',
                             'bg-rose-500/10 text-rose-600 dark:text-rose-400': project.status === 'Delayed'
                           }">
-                      {{ project.status }}
+                      {{ 'projects.' + project.status.toLowerCase() | translate }}
                     </span>
                   </div>
 
@@ -152,11 +152,11 @@ import { map } from 'rxjs/operators';
                   <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 mb-8">
                      <div class="flex justify-between mb-4">
                         <div>
-                           <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Earned</p>
+                           <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ 'projects.earned' | translate }}</p>
                            <p class="text-sm font-black text-emerald-600 dark:text-emerald-400">{{ project.cashFlow.earned | currency:'USD':'symbol':'1.0-0' }}</p>
                         </div>
                         <div class="text-right">
-                           <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Collected</p>
+                           <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ 'projects.collected' | translate }}</p>
                            <p class="text-sm font-black text-cyan-600 dark:text-cyan-400">{{ project.cashFlow.collected | currency:'USD':'symbol':'1.0-0' }}</p>
                         </div>
                      </div>
@@ -186,12 +186,12 @@ import { map } from 'rxjs/operators';
             <table class="w-full">
               <thead>
                 <tr class="text-left bg-slate-50/50 dark:bg-slate-950/30 text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-[0.2em]">
-                  <th class="px-8 py-5">Project</th>
-                  <th class="px-8 py-5">Status</th>
-                  <th class="px-8 py-5">Progress</th>
-                  <th class="px-8 py-5">Earned</th>
-                  <th class="px-8 py-5">Collected</th>
-                  <th class="px-8 py-5">Action</th>
+                  <th class="px-8 py-5">{{ 'sidebar.projects' | translate | slice:0:-1 }}</th>
+                  <th class="px-8 py-5">{{ 'dashboard.status' | translate }}</th>
+                  <th class="px-8 py-5">{{ 'dashboard.progress' | translate }}</th>
+                  <th class="px-8 py-5">{{ 'projects.earned' | translate }}</th>
+                  <th class="px-8 py-5">{{ 'projects.collected' | translate }}</th>
+                  <th class="px-8 py-5">{{ 'dashboard.action' | translate }}</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 dark:divide-white/5">
@@ -215,7 +215,7 @@ import { map } from 'rxjs/operators';
                               'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/10': project.status === 'Completed',
                               'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/10': project.status === 'Delayed'
                             }">
-                        {{ project.status }}
+                        {{ 'projects.' + project.status.toLowerCase() | translate }}
                       </span>
                     </td>
                     <td class="px-8 py-6">
@@ -237,7 +237,7 @@ import { map } from 'rxjs/operators';
                     <td class="px-8 py-6">
                       <a [routerLink]="['/admin/projects', project.id]" 
                          class="px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg flex items-center w-fit">
-                        View
+                        {{ 'dashboard.view' | translate }}
                         <svg class="w-3.5 h-3.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path>
                         </svg>
@@ -257,8 +257,8 @@ import { map } from 'rxjs/operators';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
               </svg>
             </div>
-            <h3 class="text-xl font-bold text-white mb-2">No Projects Found</h3>
-            <p class="text-slate-400">No projects match the current filter.</p>
+            <h3 class="text-xl font-bold text-white mb-2">{{ 'projects.no_projects' | translate }}</h3>
+            <p class="text-slate-400">{{ 'projects.no_projects_desc' | translate }}</p>
           </div>
         }
       </div>
@@ -281,10 +281,10 @@ import { map } from 'rxjs/operators';
                       </svg>
                    </div>
                    <div>
-                      <h2 class="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight leading-none mb-1">Create New Project</h2>
+                      <h2 class="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight leading-none mb-1">{{ 'projects.create_title' | translate }}</h2>
                       <div class="flex items-center space-x-2">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">Project Genesis & Configuration</p>
+                        <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">{{ 'projects.create_subtitle' | translate }}</p>
                       </div>
                    </div>
                 </div>
@@ -307,7 +307,7 @@ import { map } from 'rxjs/operators';
                          </div>
 
                          <div class="flex items-center space-x-3 mb-8">
-                            <p class="text-[11px] font-black text-cyan-500 uppercase tracking-[0.3em]">Project Identity</p>
+                             <p class="text-[11px] font-black text-cyan-500 uppercase tracking-[0.3em]">{{ 'projects.identity' | translate }}</p>
                             <div class="h-px flex-1 bg-gradient-to-r from-cyan-500/20 to-transparent"></div>
                          </div>
 
@@ -315,25 +315,25 @@ import { map } from 'rxjs/operators';
                             <div class="relative group/field">
                                <input type="text" [(ngModel)]="createForm.name" placeholder=" "
                                       class="peer w-full p-5 pt-7 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-sm shadow-inner">
-                               <label class="absolute left-5 top-5 text-[10px] font-black text-slate-400 uppercase tracking-widest transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-5 peer-focus:top-2 peer-focus:text-[9px] peer-focus:text-cyan-500 pointer-events-none">Project Full Title</label>
+                               <label class="absolute left-5 top-5 text-[10px] font-black text-slate-400 uppercase tracking-widest transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-5 peer-focus:top-2 peer-focus:text-[9px] peer-focus:text-rose-500 pointer-events-none">{{ 'projects.project_title' | translate }}</label>
                             </div>
 
                             <div class="relative group/field">
                                <input type="text" [(ngModel)]="createForm.address" placeholder=" "
                                       class="peer w-full p-5 pt-7 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-sm shadow-inner">
-                               <label class="absolute left-5 top-5 text-[10px] font-black text-slate-400 uppercase tracking-widest transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-5 peer-focus:top-2 peer-focus:text-[9px] peer-focus:text-cyan-500 pointer-events-none">Site Location Address</label>
+                               <label class="absolute left-5 top-5 text-[10px] font-black text-slate-400 uppercase tracking-widest transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-5 peer-focus:top-2 peer-focus:text-[9px] peer-focus:text-cyan-500 pointer-events-none">{{ 'projects.site_address' | translate }}</label>
                             </div>
 
                             <div class="grid grid-cols-2 gap-5">
                                <div class="relative group/field">
-                                  <input type="date" [(ngModel)]="createForm.startDate" 
+                                  <input type="date" [(ngModel)]="createForm.startDate"
                                          class="w-full p-5 pt-7 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-xs shadow-inner">
-                                  <label class="absolute left-5 top-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">Kickoff Date</label>
+                                  <label class="absolute left-5 top-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'projects.kickoff_date' | translate }}</label>
                                </div>
                                <div class="relative group/field">
-                                  <input type="date" [(ngModel)]="createForm.endDate" 
+                                  <input type="date" [(ngModel)]="createForm.endDate"
                                          class="w-full p-5 pt-7 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-xs shadow-inner">
-                                  <label class="absolute left-5 top-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">Handover Target</label>
+                                  <label class="absolute left-5 top-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'projects.handover_target' | translate }}</label>
                                </div>
                             </div>
 
@@ -342,12 +342,12 @@ import { map } from 'rxjs/operators';
                                   <div class="relative group/field">
                                      <input type="number" [(ngModel)]="createForm.lat" step="any" placeholder="0.0000"
                                             class="w-full p-5 pt-7 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-xs shadow-inner">
-                                     <label class="absolute left-5 top-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">GPS Latitude</label>
+                                     <label class="absolute left-5 top-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'projects.gps_lat' | translate }}</label>
                                   </div>
                                   <div class="relative group/field">
                                      <input type="number" [(ngModel)]="createForm.lng" step="any" placeholder="0.0000"
                                             class="w-full p-5 pt-7 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-xs shadow-inner">
-                                     <label class="absolute left-5 top-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">GPS Longitude</label>
+                                     <label class="absolute left-5 top-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'projects.gps_lng' | translate }}</label>
                                   </div>
                                </div>
                             }
@@ -361,7 +361,7 @@ import { map } from 'rxjs/operators';
                          </div>
 
                          <div class="flex items-center space-x-3 mb-8">
-                            <p class="text-[11px] font-black text-indigo-500 uppercase tracking-[0.3em]">Operational Logic</p>
+                             <p class="text-[11px] font-black text-indigo-500 uppercase tracking-[0.3em]">{{ 'projects.ops_logic' | translate }}</p>
                             <div class="h-px flex-1 bg-gradient-to-r from-indigo-500/20 to-transparent"></div>
                          </div>
 
@@ -374,7 +374,7 @@ import { map } from 'rxjs/operators';
                                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
                                   <div class="w-2 h-2 rounded-full" [class]="createForm.allowAddProgressEntry ? 'bg-white animate-pulse' : 'bg-slate-300'"></div>
                                </div>
-                               <p class="text-[9px] font-black uppercase tracking-widest">Enable Logging</p>
+                               <p class="text-[9px] font-black uppercase tracking-widest">{{ 'projects.enable_logging' | translate }}</p>
                             </div>
 
                             <div (click)="createForm.allowReopenClosedDay = !createForm.allowReopenClosedDay"
@@ -384,7 +384,7 @@ import { map } from 'rxjs/operators';
                                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
                                   <div class="w-2 h-2 rounded-full" [class]="createForm.allowReopenClosedDay ? 'bg-white animate-pulse' : 'bg-slate-300'"></div>
                                </div>
-                               <p class="text-[9px] font-black uppercase tracking-widest">Reopen Days</p>
+                               <p class="text-[9px] font-black uppercase tracking-widest">{{ 'projects.reopen_days' | translate }}</p>
                             </div>
 
                             <div (click)="createForm.autoCloseDay = !createForm.autoCloseDay"
@@ -394,11 +394,11 @@ import { map } from 'rxjs/operators';
                                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                   <div class="w-2 h-2 rounded-full" [class]="createForm.autoCloseDay ? 'bg-white animate-pulse' : 'bg-slate-300'"></div>
                                </div>
-                               <p class="text-[9px] font-black uppercase tracking-widest">Auto Locking</p>
+                               <p class="text-[9px] font-black uppercase tracking-widest">{{ 'projects.auto_locking' | translate }}</p>
                             </div>
 
                             <div [class.opacity-40]="!createForm.autoCloseDay" class="p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/5 transition-all">
-                               <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Close Time</p>
+                               <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ 'projects.close_time' | translate }}</p>
                                <input type="time" [(ngModel)]="createForm.autoCloseDayTime" [disabled]="!createForm.autoCloseDay"
                                       class="w-full bg-transparent text-slate-900 dark:text-white font-black text-sm outline-none cursor-pointer">
                             </div>
@@ -408,7 +408,7 @@ import { map } from 'rxjs/operators';
 
                    <!-- Right Column (Financial Wing) -->
                    <div class="lg:col-span-6 space-y-10">
-                      
+
                       <!-- Calculation Hub -->
                       <div class="p-8 rounded-[2.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-2xl relative overflow-hidden group">
                          <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -416,27 +416,27 @@ import { map } from 'rxjs/operators';
                          </div>
 
                          <div class="flex items-center space-x-3 mb-8">
-                            <p class="text-[11px] font-black uppercase tracking-[0.3em]">Financial Calculation Model</p>
-                            <div class="h-px flex-1 bg-gradient-to-r from-white/20 to-transparent"></div>
+                            <p class="text-[11px] font-black text-rose-500 uppercase tracking-[0.3em]">{{ 'projects.financial_model' | translate }}</p>
+                            <div class="h-px flex-1 bg-gradient-to-r from-rose-500/20 to-transparent"></div>
                          </div>
 
                          <div class="space-y-8">
                             <!-- Premium Switcher -->
                             <div class="flex p-2 rounded-[1.5rem] bg-white/10 dark:bg-slate-900/10 border border-white/5">
                                @for (method of calculationMethods; track method) {
-                                  <button (click)="createForm.calculationMethod = method" 
+                                  <button (click)="createForm.calculationMethod = method"
                                           [class]="createForm.calculationMethod === method ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl scale-100' : 'text-white/50 dark:text-slate-500 hover:text-white hover:bg-white/5 scale-95'"
-                                          class="flex-1 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300">{{ method }}</button>
+                                          class="flex-1 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300">{{ 'projects.' + method.toLowerCase() | translate }}</button>
                                }
                             </div>
 
                             <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
                                @if (createForm.calculationMethod === 'Measured') {
                                   <div class="p-6 rounded-3xl bg-white/5 border border-white/10">
-                                     <label class="text-[10px] font-black uppercase tracking-widest block mb-4 opacity-60">Total Contractual Project Cost</label>
+                                     <label class="text-[10px] font-black uppercase tracking-widest block mb-4 opacity-60">{{ 'projects.contract_cost' | translate }}</label>
                                      <div class="relative group/val">
                                         <span class="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-cyan-500 group-focus-within/val:scale-125 transition-transform">$</span>
-                                        <input type="number" [(ngModel)]="createForm.totalContractValue" 
+                                        <input type="number" [(ngModel)]="createForm.totalContractValue"
                                                class="w-full p-6 pl-12 rounded-2xl bg-white/10 border border-white/10 focus:border-cyan-500/50 outline-none font-black text-2xl text-white transition-all shadow-inner">
                                      </div>
                                   </div>
@@ -448,20 +448,20 @@ import { map } from 'rxjs/operators';
                                           [class]="createForm.useCompanyPercentage ? 'bg-cyan-500 border-transparent' : 'bg-white/5 border-white/10'"
                                           class="flex items-center justify-between p-6 rounded-3xl border transition-all cursor-pointer">
                                         <div>
-                                           <p class="text-xs font-black uppercase tracking-tight">Standard Company Default</p>
-                                           <p class="text-[10px] opacity-60 font-medium">Currently configured at {{ companySettings?.defaultSupervisionPercentage }}%</p>
+                                           <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{{ 'projects.company_default' | translate }}</p>
+                                           <p class="text-[9px] text-slate-400 font-bold">{{ 'projects.configured_at' | translate }} {{ (companySettings?.defaultSupervisionPercentage || 0) }}%</p>
                                         </div>
                                         <div class="w-10 h-10 rounded-full flex items-center justify-center bg-white/20">
                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" [attr.d]="createForm.useCompanyPercentage ? 'M5 13l4 4L19 7' : 'M12 4v16m8-8H4'"></path></svg>
                                         </div>
                                      </div>
-                                     
+
                                      @if (!createForm.useCompanyPercentage) {
                                         <div class="p-6 rounded-3xl bg-white/5 border border-white/10 animate-in zoom-in-95 duration-300">
-                                           <label class="text-[10px] font-black uppercase tracking-widest block mb-4 opacity-60">Custom Project Override %</label>
+                                           <label class="text-[10px] font-black uppercase tracking-widest block mb-4 opacity-60">{{ 'projects.custom_override' | translate }}</label>
                                            <div class="relative">
                                               <span class="absolute right-6 top-1/2 -translate-y-1/2 text-2xl font-black text-cyan-400">%</span>
-                                              <input type="number" [(ngModel)]="createForm.supervisionPercentage" 
+                                              <input type="number" [(ngModel)]="createForm.supervisionPercentage"
                                                      class="w-full p-6 rounded-2xl bg-white/10 border border-white/10 focus:border-cyan-500 outline-none font-black text-2xl text-white">
                                            </div>
                                         </div>
@@ -471,11 +471,11 @@ import { map } from 'rxjs/operators';
 
                                @if (createForm.calculationMethod === 'Packages') {
                                   <div class="p-6 rounded-3xl bg-white/5 border border-white/10">
-                                     <label class="text-[10px] font-black uppercase tracking-widest block mb-4 opacity-60">Enterprise Service Package</label>
+                                     <label class="text-[10px] font-black uppercase tracking-widest block mb-4 opacity-60">{{ 'projects.service_package' | translate }}</label>
                                      <div class="relative">
-                                        <select [(ngModel)]="createForm.packageId" 
+                                        <select [(ngModel)]="createForm.packageId"
                                                 class="w-full p-6 pr-12 rounded-2xl bg-white/10 border border-white/10 focus:border-cyan-500 outline-none font-black text-lg text-white appearance-none cursor-pointer">
-                                           <option [ngValue]="null" class="text-slate-900">Select standard package...</option>
+                                           <option [ngValue]="null" class="text-slate-900">{{ 'projects.select_package' | translate }}</option>
                                            @for (pkg of availablePackages; track pkg.id) {
                                               <option [value]="pkg.id" class="text-slate-900">{{ pkg.name }} — {{ pkg.price | currency }}</option>
                                            }
@@ -495,23 +495,23 @@ import { map } from 'rxjs/operators';
                          </div>
 
                          <div class="flex items-center space-x-3 mb-8">
-                            <p class="text-[11px] font-black text-orange-600 uppercase tracking-[0.3em]">Financial Overlays</p>
-                            <div class="h-px flex-1 bg-gradient-to-r from-orange-500/20 to-transparent"></div>
+                             <p class="text-[11px] font-black text-emerald-500 uppercase tracking-[0.3em]">{{ 'projects.financial_overlays' | translate }}</p>
+                            <div class="h-px flex-1 bg-gradient-to-r from-emerald-500/20 to-transparent"></div>
                          </div>
 
                          <div class="space-y-6">
                             <div class="grid grid-cols-12 gap-4">
                                <div class="col-span-4">
-                                  <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Extra Fees</label>
+                                  <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">{{ 'projects.extra_fees' | translate }}</label>
                                   <div class="relative">
                                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500 font-bold">$</span>
-                                    <input type="number" [(ngModel)]="createForm.extraFees" 
+                                    <input type="number" [(ngModel)]="createForm.extraFees"
                                            class="w-full p-4 pl-8 rounded-2xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/5 outline-none font-black text-sm text-slate-900 dark:text-white">
                                   </div>
                                </div>
                                <div class="col-span-8">
-                                  <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Reason</label>
-                                  <input type="text" [(ngModel)]="createForm.extraFeesDescription" 
+                                  <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">{{ 'projects.reason' | translate }}</label>
+                                  <input type="text" [(ngModel)]="createForm.extraFeesDescription"
                                          placeholder="Infrastructure, insurance, etc..."
                                          class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/5 outline-none font-bold text-sm text-slate-900 dark:text-white transition-all focus:ring-4 focus:ring-emerald-500/5">
                                </div>
@@ -519,16 +519,16 @@ import { map } from 'rxjs/operators';
 
                             <div class="grid grid-cols-12 gap-4">
                                <div class="col-span-4">
-                                  <label class="text-[9px] font-black text-rose-500 uppercase tracking-widest block mb-2">Deducted</label>
+                                  <label class="text-[9px] font-black text-rose-500 uppercase tracking-widest block mb-2">{{ 'projects.deducted' | translate }}</label>
                                   <div class="relative">
                                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-rose-500 font-bold">$</span>
-                                    <input type="number" [(ngModel)]="createForm.deductedAmount" 
+                                    <input type="number" [(ngModel)]="createForm.deductedAmount"
                                            class="w-full p-4 pl-8 rounded-2xl bg-white dark:bg-slate-950 border border-rose-500/10 outline-none font-black text-sm text-rose-500">
                                   </div>
                                </div>
                                <div class="col-span-8">
-                                  <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Deduction Reason</label>
-                                  <input type="text" [(ngModel)]="createForm.deductedAmountDescription" 
+                                  <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">{{ 'projects.deduction_reason' | translate }}</label>
+                                  <input type="text" [(ngModel)]="createForm.deductedAmountDescription"
                                          placeholder="Down payment, security, etc..."
                                          class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/5 outline-none font-bold text-sm text-slate-900 dark:text-white transition-all focus:ring-4 focus:ring-rose-500/5">
                                </div>
@@ -548,7 +548,7 @@ import { map } from 'rxjs/operators';
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                          </div>
                          <div>
-                            <p class="text-[11px] font-black text-rose-500 uppercase tracking-[0.2em] mb-1">Configuration Audit Pending</p>
+                             <p class="text-[11px] font-black text-rose-500 uppercase tracking-[0.2em] mb-1">{{ 'projects.audit_pending' | translate }}</p>
                             <div class="flex flex-wrap gap-2">
                                @for (error of validationErrors; track error) {
                                   <span class="px-3 py-1 bg-rose-500/20 text-rose-600 dark:text-rose-400 text-[8px] font-black uppercase tracking-widest rounded-lg border border-rose-500/20">{{ error }}</span>
@@ -563,16 +563,16 @@ import { map } from 'rxjs/operators';
              <!-- Modal Footer (Premium Actions) -->
              <div class="p-10 shrink-0 bg-slate-50 dark:bg-white/[0.02] border-t border-slate-100 dark:border-white/5 relative z-10 flex items-center justify-between">
                 <div class="text-left hidden md:block">
-                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Current Creation Status</p>
-                  <p class="text-xs font-black text-slate-900 dark:text-white" [class.text-rose-500]="!isFormValid">{{ isFormValid ? 'Configuration Verified' : 'Incomplete Fields' }}</p>
+                   <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ 'projects.creation_status' | translate }}</p>
+                   <p class="text-xs font-black text-slate-900 dark:text-white" [class.text-rose-500]="!isFormValid">{{ isFormValid ? ('projects.verified_config' | translate) : ('projects.incomplete_fields' | translate) }}</p>
                 </div>
 
                 <div class="flex space-x-6 w-full md:w-auto">
-                   <button (click)="showCreateModal = false" class="px-10 py-5 rounded-[1.5rem] text-slate-500 font-black text-[11px] uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-white/5 transition-all active:scale-95">Discard</button>
-                   <button (click)="createProject()" 
+                   <button (click)="showCreateModal = false" class="px-10 py-5 rounded-[1.5rem] text-slate-500 font-black text-[11px] uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-white/5 transition-all active:scale-95">{{ 'projects.discard' | translate }}</button>
+                   <button (click)="createProject()"
                            [disabled]="!isFormValid"
                            class="flex items-center space-x-3 px-12 py-5 rounded-[1.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[11px] uppercase tracking-widest shadow-2xl shadow-slate-900/40 hover:scale-105 active:scale-95 transition-all disabled:opacity-20 disabled:grayscale disabled:cursor-not-allowed group">
-                      <span>Establish Project</span>
+                      <span>{{ 'projects.establish' | translate }}</span>
                       <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                       </svg>

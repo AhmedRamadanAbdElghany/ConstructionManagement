@@ -84,7 +84,7 @@ declare const L: any;
                   </p>
                   <div class="space-y-2">
                     <div class="flex items-center justify-between text-xs font-black uppercase tracking-widest">
-                      <span class="text-slate-500 dark:text-slate-400">Progress</span>
+                      <span class="text-slate-500 dark:text-slate-400">{{ 'locations.progress' | translate }}</span>
                       <span class="text-cyan-600 dark:text-cyan-400 font-black">{{ project.progress }}%</span>
                     </div>
                     <div class="h-1.5 bg-slate-100 dark:bg-slate-950 rounded-full overflow-hidden shadow-inner p-0.5 border border-slate-200 dark:border-white/5">
