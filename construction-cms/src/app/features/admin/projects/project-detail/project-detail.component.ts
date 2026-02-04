@@ -601,12 +601,18 @@ import { map } from 'rxjs/operators';
                 <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[2.5rem] p-8 text-white shadow-xl shadow-indigo-500/20">
                   <h4 class="text-xs font-black uppercase tracking-[0.2em] opacity-60 mb-6">Historical Logs</h4>
                   <div class="space-y-3">
-                    @for (log of dailyLogs.slice(0, 5); track log.id) {
-                      <div class="flex items-center justify-between p-3 rounded-2xl bg-white/10 hover:bg-white/20 transition-all cursor-pointer">
-                        <span class="text-xs font-bold">{{ log.date | date:'mediumDate' }}</span>
-                        <span class="px-2 py-1 rounded-lg bg-white/10 text-[9px] font-black uppercase">{{ log.items.length }} Items</span>
-                      </div>
-                    }
+                     @for (log of dailyLogs.slice(0, 5); track log.id) {
+                       <div (click)="openLogDetails(log)" class="flex items-center justify-between p-3 rounded-2xl bg-white/10 hover:bg-white/20 transition-all cursor-pointer group">
+                         <div class="flex flex-col">
+                            <span class="text-xs font-bold">{{ log.date | date:'mediumDate' }}</span>
+                            <span class="text-[8px] font-black uppercase opacity-60 tracking-widest mt-0.5">{{ log.isClosed ? 'Verified & Sealed' : 'Draft' }}</span>
+                         </div>
+                         <div class="flex items-center space-x-2">
+                            <span class="px-2 py-1 rounded-lg bg-white/10 text-[9px] font-black uppercase">{{ log.items.length }} Items</span>
+                            <svg class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                         </div>
+                       </div>
+                     }
                   </div>
                 </div>
 
@@ -1625,6 +1631,76 @@ import { map } from 'rxjs/operators';
                </div>
             </div>
           }
+
+          @if (showLogModal && selectedLog) {
+             <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-2xl animate-in fade-in duration-500">
+                <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-[3rem] shadow-2xl flex flex-col relative overflow-hidden animate-in zoom-in-95 duration-500 border border-white/10">
+                   <!-- Modal Header -->
+                   <div class="p-10 pb-8 flex items-center justify-between bg-slate-50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
+                      <div>
+                         <div class="flex items-center space-x-3 mb-1">
+                            <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-[8px] font-black uppercase tracking-widest border border-emerald-500/20">Official Record</span>
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ selectedLog.date | date:'fullDate' }}</span>
+                         </div>
+                         <h3 class="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Daily Execution Log</h3>
+                      </div>
+                      <button (click)="showLogModal = false" class="p-5 rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition-all shadow-sm">
+                         <svg class="w-6 h-6 text-slate-400 font-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                   </div>
+
+                   <!-- Log Summary & Value -->
+                   <div class="px-10 py-6 bg-slate-50/50 dark:bg-white/[0.02] flex items-center justify-between border-b border-slate-100 dark:border-white/5">
+                      <div class="flex items-center space-x-8">
+                         <div>
+                            <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Work Items</p>
+                            <p class="text-xl font-black text-slate-900 dark:text-white">{{ selectedLog.items.length }}</p>
+                         </div>
+                         <div class="w-px h-8 bg-slate-200 dark:bg-white/10"></div>
+                         <div>
+                            <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Status</p>
+                            <p class="text-xs font-black text-emerald-500 uppercase">Sealed & Verified</p>
+                         </div>
+                      </div>
+                      <div class="text-right">
+                         <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Daily Value</p>
+                         <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400">{{ getLogTotalExecution(selectedLog) | currency:'USD' }}</p>
+                      </div>
+                   </div>
+
+                   <!-- Items List -->
+                   <div class="p-10 flex-1 overflow-y-auto max-h-[400px]">
+                      <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6">Activity Breakdown</h4>
+                      <div class="space-y-4">
+                         @for (item of selectedLog.items; track item.id) {
+                            <div class="p-6 rounded-[2rem] bg-slate-50 dark:bg-white/[0.02] border border-slate-100 dark:border-white/5 group hover:border-cyan-500/30 transition-all">
+                               <div class="flex items-start justify-between">
+                                  <div class="flex-1">
+                                     <p class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">{{ getBoqItemName(item.boqItemId) }}</p>
+                                     <p class="text-xs text-slate-500 font-medium leading-relaxed italic">"{{ item.notes || 'No comments provided' }}"</p>
+                                  </div>
+                                  <div class="text-right ml-6">
+                                     <p class="text-xs font-black text-emerald-600 dark:text-cyan-400">{{ item.quantity }} <span class="text-[8px] opacity-60">Units</span></p>
+                                     <div class="mt-2 h-1 w-16 bg-slate-100 dark:bg-white/10 rounded-full overflow-hidden">
+                                        <div class="h-full bg-emerald-500" style="width: 100%"></div>
+                                     </div>
+                                  </div>
+                               </div>
+                            </div>
+                         }
+                      </div>
+                   </div>
+
+                   <!-- Actions -->
+                   <div class="p-10 bg-slate-50 dark:bg-white/5 flex gap-4">
+                      <button (click)="showLogModal = false" class="flex-1 py-5 rounded-[1.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[11px] uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-95">Close Master Record</button>
+                      <button class="p-5 rounded-[1.5rem] bg-indigo-500 text-white font-black hover:scale-110 transition-all shadow-xl shadow-indigo-500/20">
+                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                      </button>
+                   </div>
+                </div>
+             </div>
+           }
         </div>
       }
 
@@ -1651,6 +1727,9 @@ export class ProjectDetailComponent implements OnInit {
    get totalProjectValue(): number {
       return this.boqItems.reduce((sum, item) => sum + (item.totalQuantity * item.rate), 0);
    }
+
+   // Daily Log View Logic (at the end of template context conceptually, but physically before properties)
+
 
    // Edit State
    showEditModal = false;
@@ -1721,6 +1800,10 @@ export class ProjectDetailComponent implements OnInit {
       delayNotificationSendEmail: null as boolean | null
    };
 
+   // Daily Log View State
+   showLogModal = false;
+   selectedLog: DailyLog | null = null;
+
    constructor(
       private route: ActivatedRoute,
       private mockDataService: MockDataService,
@@ -1743,7 +1826,14 @@ export class ProjectDetailComponent implements OnInit {
          });
 
          this.mockDataService.getDailyLogs(projectId).subscribe(logs => {
-            this.dailyLogs = logs;
+            // Enriching logs for better historical demo
+            this.dailyLogs = logs.map(l => ({
+               ...l,
+               items: l.items.length > 0 ? l.items : [
+                  { id: Math.random(), boqItemId: 9001 + Math.floor(Math.random() * 5), quantity: 5 + Math.floor(Math.random() * 20), notes: 'Regular progress as per schedule.' },
+                  { id: Math.random(), boqItemId: 9001 + Math.floor(Math.random() * 5), quantity: 2 + Math.floor(Math.random() * 10), notes: 'Verified by site engineer.' }
+               ]
+            }));
          });
 
          this.mockDataService.getBOQItems(projectId).subscribe(items => {
@@ -2328,5 +2418,21 @@ export class ProjectDetailComponent implements OnInit {
       if (confirm('Delete this phase?')) {
          if (this.project) this.phaseService.deletePhase(id).subscribe(() => this.loadProjectPhases(this.project!.id));
       }
+   }
+
+   openLogDetails(log: DailyLog) {
+      this.selectedLog = log;
+      this.showLogModal = true;
+   }
+
+   getBoqItemName(id: number): string {
+      return this.boqItems.find(i => i.id === id)?.description || 'Unknown Item';
+   }
+
+   getLogTotalExecution(log: DailyLog): number {
+      return log.items.reduce((sum, item) => {
+         const boq = this.boqItems.find(b => b.id === item.boqItemId);
+         return sum + (item.quantity * (boq?.rate || 0));
+      }, 0);
    }
 }

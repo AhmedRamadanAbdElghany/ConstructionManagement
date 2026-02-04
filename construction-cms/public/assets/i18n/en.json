@@ -2,7 +2,7 @@
   "sidebar": {
     "company_name": "Construction CMS",
     "dashboard": "Dashboard",
-    "hr_settings": "HR & Settings",
+    "hr_settings": "User Management",
     "projects": "Projects",
     "locations": "Locations",
     "daily_log": "Daily Log",
@@ -13,6 +13,10 @@
     "operations": "Operations",
     "client": "Client Portal",
     "other": "Other",
+    "configurations": "Enterprise Settings",
+    "companies": "Companies",
+    "portfolio": "My Portfolio",
+    "reports": "Executive Reports",
     "demo_role_switch": "Demo Role Switch"
   },
   "topbar": {

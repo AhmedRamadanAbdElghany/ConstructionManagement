@@ -265,329 +265,319 @@ import { map } from 'rxjs/operators';
 
       <!-- Create Project Modal -->
       @if (showCreateModal) {
-       <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div class="bg-white dark:bg-slate-900 w-full max-w-4xl max-h-[90vh] rounded-[2.5rem] shadow-2xl flex flex-col relative overflow-hidden animate-in zoom-in-95 duration-300">
-             <!-- Modal Header (Fixed) -->
-             <div class="p-8 pb-4 flex items-center justify-between shrink-0 border-b border-slate-50 dark:border-white/5">
-                <div>
-                   <h2 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'projects.create_new' | translate }}</h2>
-                   <p class="text-[10px] text-cyan-500 font-bold uppercase tracking-widest">Setup Configuration</p>
+       <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md animate-in fade-in duration-500">
+          <div class="bg-white dark:bg-slate-900 w-full max-w-5xl max-h-[90vh] rounded-[3.5rem] shadow-[0_32px_120px_-15px_rgba(0,0,0,0.5)] flex flex-col relative overflow-hidden animate-in zoom-in-95 duration-500 border border-white/10">
+             
+             <!-- Decorative Background elements -->
+             <div class="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2"></div>
+             <div class="absolute bottom-0 left-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/2"></div>
+
+             <!-- Modal Header (Premium fixed header) -->
+             <div class="p-10 pb-6 flex items-center justify-between shrink-0 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border-b border-slate-100 dark:border-white/5 relative z-10">
+                <div class="flex items-center space-x-5">
+                   <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-700 flex items-center justify-center shadow-2xl shadow-cyan-500/20 ring-1 ring-white/20">
+                      <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                      </svg>
+                   </div>
+                   <div>
+                      <h2 class="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight leading-none mb-1">Create New Project</h2>
+                      <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">Project Genesis & Configuration</p>
+                      </div>
+                   </div>
                 </div>
-                <button (click)="showCreateModal = false" class="p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                   <svg class="w-6 h-6 text-slate-400 font-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                <button (click)="showCreateModal = false" class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-all shadow-sm active:scale-95 group">
+                   <svg class="w-6 h-6 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
              </div>
 
-             <!-- Modal Body (Scrollable) -->
-             <div class="p-8 overflow-y-auto grow custom-scrollbar">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-                   <!-- Left Column: Operations & Info -->
-                   <div class="space-y-8">
-                      <!-- General Info Section -->
-                      <div class="space-y-4 p-6 rounded-3xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
-                         <p class="text-[10px] font-black text-cyan-500 uppercase tracking-widest mb-4">Project Identity</p>
-                         <div>
-                            <input type="text" [(ngModel)]="createForm.name" placeholder="Project Name" 
-                                   class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-sm">
-                         </div>
-                         <div>
-                            <input type="text" [(ngModel)]="createForm.address" placeholder="Location Address" 
-                                   class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-sm">
-                         </div>
-                         <div class="grid grid-cols-2 gap-4">
-                            <div class="relative">
-                               <label class="absolute -top-2 left-4 px-2 bg-slate-50 dark:bg-slate-900 text-[8px] font-black text-slate-400 uppercase tracking-widest">Start</label>
-                               <input type="date" [(ngModel)]="createForm.startDate" 
-                                      class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-xs">
-                            </div>
-                            <div class="relative">
-                               <label class="absolute -top-2 left-4 px-2 bg-slate-50 dark:bg-slate-900 text-[8px] font-black text-slate-400 uppercase tracking-widest">Target End</label>
-                               <input type="date" [(ngModel)]="createForm.endDate" 
-                                      class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-xs">
-                            </div>
+             <!-- Modal Body (Optimized Scroll View) -->
+             <div class="p-10 overflow-y-auto grow custom-scrollbar relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                   
+                   <!-- Left Primary Column (Operational Wing) -->
+                   <div class="lg:col-span-6 space-y-10">
+                      
+                      <!-- Identity & Logistics -->
+                      <div class="p-8 rounded-[2.5rem] bg-white dark:bg-white/[0.03] border border-slate-100 dark:border-white/5 shadow-xl relative overflow-hidden group">
+                         <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <svg class="w-24 h-24 text-cyan-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
                          </div>
 
-                         @if (companySettings?.allowLocations) {
-                            <div class="grid grid-cols-2 gap-4 animate-in slide-in-from-top-2 duration-300">
-                               <div class="relative">
-                                  <label class="absolute -top-2 left-4 px-2 bg-slate-50 dark:bg-slate-900 text-[8px] font-black text-slate-400 uppercase tracking-widest">Latitude</label>
-                                  <input type="number" [(ngModel)]="createForm.lat" step="any" placeholder="0.0000"
-                                         class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-xs">
+                         <div class="flex items-center space-x-3 mb-8">
+                            <p class="text-[11px] font-black text-cyan-500 uppercase tracking-[0.3em]">Project Identity</p>
+                            <div class="h-px flex-1 bg-gradient-to-r from-cyan-500/20 to-transparent"></div>
+                         </div>
+
+                         <div class="space-y-5">
+                            <div class="relative group/field">
+                               <input type="text" [(ngModel)]="createForm.name" placeholder=" "
+                                      class="peer w-full p-5 pt-7 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-sm shadow-inner">
+                               <label class="absolute left-5 top-5 text-[10px] font-black text-slate-400 uppercase tracking-widest transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-5 peer-focus:top-2 peer-focus:text-[9px] peer-focus:text-cyan-500 pointer-events-none">Project Full Title</label>
+                            </div>
+
+                            <div class="relative group/field">
+                               <input type="text" [(ngModel)]="createForm.address" placeholder=" "
+                                      class="peer w-full p-5 pt-7 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-sm shadow-inner">
+                               <label class="absolute left-5 top-5 text-[10px] font-black text-slate-400 uppercase tracking-widest transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-5 peer-focus:top-2 peer-focus:text-[9px] peer-focus:text-cyan-500 pointer-events-none">Site Location Address</label>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-5">
+                               <div class="relative group/field">
+                                  <input type="date" [(ngModel)]="createForm.startDate" 
+                                         class="w-full p-5 pt-7 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-xs shadow-inner">
+                                  <label class="absolute left-5 top-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">Kickoff Date</label>
                                </div>
-                               <div class="relative">
-                                  <label class="absolute -top-2 left-4 px-2 bg-slate-50 dark:bg-slate-900 text-[8px] font-black text-slate-400 uppercase tracking-widest">Longitude</label>
-                                  <input type="number" [(ngModel)]="createForm.lng" step="any" placeholder="0.0000"
-                                         class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-xs">
-                               </div>
-                            </div>
-                         }
-                      </div>
-
-                      <!-- Financial Logic Section -->
-                      <div class="space-y-6 p-6 rounded-3xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
-                         <p class="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-4">Calculation Method</p>
-                         
-                         <!-- Method Switcher -->
-                         <div class="flex p-1.5 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5">
-                            <button (click)="createForm.calculationMethod = 'Measured'" 
-                                    [class]="createForm.calculationMethod === 'Measured' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'"
-                                    class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Measured</button>
-                            <button (click)="createForm.calculationMethod = 'Supervision'" 
-                                    [class]="createForm.calculationMethod === 'Supervision' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'"
-                                    class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Supervision</button>
-                            <button (click)="createForm.calculationMethod = 'Packages'" 
-                                    [class]="createForm.calculationMethod === 'Packages' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-50'"
-                                    class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Packages</button>
-                         </div>
-
-                         <!-- Dynamic Fields based on Method -->
-                         @if (createForm.calculationMethod === 'Measured') {
-                            <div class="animate-in slide-in-from-top-2 duration-300">
-                               <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Total Project Cost (Measured Value)</label>
-                               <div class="relative">
-                                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
-                                  <input type="number" [(ngModel)]="createForm.totalContractValue" 
-                                         class="w-full p-4 pl-10 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all">
+                               <div class="relative group/field">
+                                  <input type="date" [(ngModel)]="createForm.endDate" 
+                                         class="w-full p-5 pt-7 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-xs shadow-inner">
+                                  <label class="absolute left-5 top-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">Handover Target</label>
                                </div>
                             </div>
-                         }
 
-                         @if (createForm.calculationMethod === 'Supervision') {
-                            <div class="space-y-4 animate-in slide-in-from-top-2 duration-300">
-                               <div class="flex items-center justify-between p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5">
-                                  <div>
-                                     <p class="text-xs font-bold text-slate-900 dark:text-white">Use Company Default %</p>
-                                     <p class="text-[9px] text-slate-400 font-bold uppercase tracking-tight">Current standard: {{ companySettings?.defaultSupervisionPercentage }}%</p>
+                            @if (companySettings?.allowLocations) {
+                               <div class="grid grid-cols-2 gap-5 pt-2">
+                                  <div class="relative group/field">
+                                     <input type="number" [(ngModel)]="createForm.lat" step="any" placeholder="0.0000"
+                                            class="w-full p-5 pt-7 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-xs shadow-inner">
+                                     <label class="absolute left-5 top-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">GPS Latitude</label>
                                   </div>
-                                  <button (click)="createForm.useCompanyPercentage = !createForm.useCompanyPercentage" 
-                                          [class]="createForm.useCompanyPercentage ? 'bg-cyan-500' : 'bg-slate-200 dark:bg-slate-800'"
-                                          class="w-12 h-6 rounded-full relative transition-colors">
-                                     <div [class]="createForm.useCompanyPercentage ? 'translate-x-7' : 'translate-x-1'"
-                                          class="absolute top-1 w-4 h-4 bg-white rounded-full transition-transform"></div>
-                                  </button>
-                               </div>
-                               
-                               @if (!createForm.useCompanyPercentage) {
-                                  <div class="animate-in zoom-in-95 duration-200">
-                                     <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Project Supervision Override %</label>
-                                     <div class="relative">
-                                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">%</span>
-                                        <input type="number" [(ngModel)]="createForm.supervisionPercentage" 
-                                               class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-rose-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all">
-                                     </div>
+                                  <div class="relative group/field">
+                                     <input type="number" [(ngModel)]="createForm.lng" step="any" placeholder="0.0000"
+                                            class="w-full p-5 pt-7 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-xs shadow-inner">
+                                     <label class="absolute left-5 top-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">GPS Longitude</label>
                                   </div>
-                               }
-                            </div>
-                         }
-
-                         @if (createForm.calculationMethod === 'Packages') {
-                            <div class="animate-in slide-in-from-top-2 duration-300">
-                               <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Contract Package</label>
-                               <select [(ngModel)]="createForm.packageId" 
-                                       class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 outline-none font-bold text-slate-900 dark:text-white transition-all appearance-none cursor-pointer">
-                                  <option [ngValue]="null">Select a package...</option>
-                                  @for (pkg of availablePackages; track pkg.id) {
-                                     <option [value]="pkg.id">{{ pkg.name }} - {{ pkg.price | currency }}</option>
-                                  }
-                               </select>
-                            </div>
-                         }
-                      </div>
-                   </div>
-
-                   <!-- Right Column: Special Items & BOQ -->
-                   <div class="space-y-8">
-                      <!-- Mandatory Adjustments Section -->
-                      <div class="space-y-6 p-6 rounded-3xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
-                         <p class="text-[10px] font-black text-orange-500 uppercase tracking-widest mb-4">Financial Adjustments</p>
-                         
-                         <!-- Extra Fees -->
-                         <div class="space-y-3">
-                            <div class="grid grid-cols-3 gap-2">
-                               <div class="col-span-1 relative z-10">
-                                  <label class="text-[8px] font-black text-slate-400 uppercase tracking-[0.15em] block mb-1">Extra Fees</label>
-                                  <input type="number" [(ngModel)]="createForm.extraFees" 
-                                         class="w-full p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-cyan-500/50 outline-none font-black text-sm text-slate-900 dark:text-white">
                                </div>
-                               <div class="col-span-2">
-                                  <label class="text-[8px] font-black text-slate-400 uppercase tracking-[0.15em] block mb-1">Fee Description</label>
-                                  <input type="text" [(ngModel)]="createForm.extraFeesDescription" 
-                                         [placeholder]="createForm.extraFees > 0 ? 'Description Required...' : 'Reason for extra fees'"
-                                         [class.border-rose-500]="createForm.extraFees > 0 && !createForm.extraFeesDescription"
-                                         class="w-full p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-xs text-slate-900 dark:text-white transition-all">
-                               </div>
-                            </div>
-                         </div>
-
-                         <!-- Deducted Amount -->
-                         <div class="space-y-3">
-                            <div class="grid grid-cols-3 gap-2">
-                               <div class="col-span-1 relative z-10">
-                                  <label class="text-[8px] font-black text-rose-500/70 uppercase tracking-[0.15em] block mb-1">Deducted</label>
-                                  <input type="number" [(ngModel)]="createForm.deductedAmount" 
-                                         class="w-full p-3 rounded-xl bg-white dark:bg-slate-950 border border-rose-500/10 dark:border-rose-500/10 focus:border-rose-500/50 outline-none font-black text-sm text-rose-500 dark:text-rose-400">
-                               </div>
-                               <div class="col-span-2">
-                                  <label class="text-[8px] font-black text-slate-400 uppercase tracking-[0.15em] block mb-1">Deduction Reason</label>
-                                  <input type="text" [(ngModel)]="createForm.deductedAmountDescription" 
-                                         [placeholder]="createForm.deductedAmount > 0 ? 'Description Required...' : 'Reason for deduction'"
-                                         [class.border-rose-500]="createForm.deductedAmount > 0 && !createForm.deductedAmountDescription"
-                                         class="w-full p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 focus:border-rose-500/50 outline-none font-bold text-xs text-slate-900 dark:text-white transition-all">
-                               </div>
-                            </div>
-                         </div>
-                      </div>
-
-                      <!-- Catalog Items Section (Condensed) -->
-                      <div class="p-6 rounded-3xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
-                         <div class="flex items-center justify-between mb-4">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Initial BOQ Template</label>
-                            <button (click)="toggleAllCatalog(true)" class="text-[9px] font-black text-cyan-500 uppercase hover:underline">Reset All</button>
-                         </div>
-                         <div class="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
-                            @for (item of catalogItems; track item.id) {
-                               <label class="flex items-center space-x-3 p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/5 cursor-pointer hover:border-cyan-500/30 transition-all">
-                                  <div class="relative flex items-center">
-                                     <input type="checkbox" [checked]="isCatalogItemSelected(item.id)" (change)="toggleCatalogItem(item)"
-                                            class="w-4 h-4 rounded-md border-2 border-slate-200 dark:border-slate-800 appearance-none checked:bg-cyan-500 checked:border-cyan-500 transition-all cursor-pointer">
-                                  </div>
-                                  <div class="flex-1 min-w-0">
-                                     <p class="text-[11px] font-bold text-slate-900 dark:text-white truncate">{{ item.name }}</p>
-                                     <p class="text-[8px] text-slate-400 font-black tracking-widest">{{ item.unit }}</p>
-                                  </div>
-                               </label>
                             }
                          </div>
-                         
-                         <!-- List of already added Custom Items -->
-                         @if (customProjectItems.length > 0) {
-                            <div class="mt-4 space-y-2 max-h-32 overflow-y-auto pr-1 custom-scrollbar">
-                               <p class="text-[8px] font-black text-cyan-500 uppercase tracking-widest mb-2">Project-Specific Items</p>
-                               @for (item of customProjectItems; track item.id) {
-                                  <div class="flex items-center justify-between p-2 rounded-xl bg-cyan-500/5 border border-cyan-500/10">
-                                     <div class="flex-1 min-w-0">
-                                        <p class="text-[10px] font-bold text-cyan-600 dark:text-cyan-400 truncate">{{ item.name }}</p>
-                                        <p class="text-[8px] text-cyan-500/60 font-black uppercase">{{ item.unit }}</p>
+                      </div>
+
+                      <!-- Operational Settings (Moved here for better balance) -->
+                      <div class="p-8 rounded-[2.5rem] bg-indigo-500/5 border border-indigo-500/10 shadow-lg relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <svg class="w-20 h-24 text-indigo-500" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                         </div>
+
+                         <div class="flex items-center space-x-3 mb-8">
+                            <p class="text-[11px] font-black text-indigo-500 uppercase tracking-[0.3em]">Operational Logic</p>
+                            <div class="h-px flex-1 bg-gradient-to-r from-indigo-500/20 to-transparent"></div>
+                         </div>
+
+                         <div class="grid grid-cols-2 gap-4">
+                            <!-- Toggle Card -->
+                            <div (click)="createForm.allowAddProgressEntry = !createForm.allowAddProgressEntry"
+                                 [class]="createForm.allowAddProgressEntry ? 'bg-indigo-500 text-white shadow-xl shadow-indigo-500/20' : 'bg-slate-50 dark:bg-slate-950 text-slate-400 border-slate-100 dark:border-white/5'"
+                                 class="p-4 rounded-2xl border transition-all cursor-pointer group/toggle">
+                               <div class="flex items-center justify-between mb-2">
+                                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                                  <div class="w-2 h-2 rounded-full" [class]="createForm.allowAddProgressEntry ? 'bg-white animate-pulse' : 'bg-slate-300'"></div>
+                               </div>
+                               <p class="text-[9px] font-black uppercase tracking-widest">Enable Logging</p>
+                            </div>
+
+                            <div (click)="createForm.allowReopenClosedDay = !createForm.allowReopenClosedDay"
+                                 [class]="createForm.allowReopenClosedDay ? 'bg-indigo-500 text-white shadow-xl shadow-indigo-500/20' : 'bg-slate-50 dark:bg-slate-950 text-slate-400 border-slate-100 dark:border-white/5'"
+                                 class="p-4 rounded-2xl border transition-all cursor-pointer group/toggle">
+                               <div class="flex items-center justify-between mb-2">
+                                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+                                  <div class="w-2 h-2 rounded-full" [class]="createForm.allowReopenClosedDay ? 'bg-white animate-pulse' : 'bg-slate-300'"></div>
+                               </div>
+                               <p class="text-[9px] font-black uppercase tracking-widest">Reopen Days</p>
+                            </div>
+
+                            <div (click)="createForm.autoCloseDay = !createForm.autoCloseDay"
+                                 [class]="createForm.autoCloseDay ? 'bg-indigo-500 text-white shadow-xl shadow-indigo-500/20' : 'bg-slate-50 dark:bg-slate-950 text-slate-400 border-slate-100 dark:border-white/5'"
+                                 class="p-4 rounded-2xl border transition-all cursor-pointer group/toggle">
+                               <div class="flex items-center justify-between mb-2">
+                                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                  <div class="w-2 h-2 rounded-full" [class]="createForm.autoCloseDay ? 'bg-white animate-pulse' : 'bg-slate-300'"></div>
+                               </div>
+                               <p class="text-[9px] font-black uppercase tracking-widest">Auto Locking</p>
+                            </div>
+
+                            <div [class.opacity-40]="!createForm.autoCloseDay" class="p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/5 transition-all">
+                               <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Close Time</p>
+                               <input type="time" [(ngModel)]="createForm.autoCloseDayTime" [disabled]="!createForm.autoCloseDay"
+                                      class="w-full bg-transparent text-slate-900 dark:text-white font-black text-sm outline-none cursor-pointer">
+                            </div>
+                         </div>
+                      </div>
+                   </div>
+
+                   <!-- Right Column (Financial Wing) -->
+                   <div class="lg:col-span-6 space-y-10">
+                      
+                      <!-- Calculation Hub -->
+                      <div class="p-8 rounded-[2.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-2xl relative overflow-hidden group">
+                         <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z"/></svg>
+                         </div>
+
+                         <div class="flex items-center space-x-3 mb-8">
+                            <p class="text-[11px] font-black uppercase tracking-[0.3em]">Financial Calculation Model</p>
+                            <div class="h-px flex-1 bg-gradient-to-r from-white/20 to-transparent"></div>
+                         </div>
+
+                         <div class="space-y-8">
+                            <!-- Premium Switcher -->
+                            <div class="flex p-2 rounded-[1.5rem] bg-white/10 dark:bg-slate-900/10 border border-white/5">
+                               @for (method of calculationMethods; track method) {
+                                  <button (click)="createForm.calculationMethod = method" 
+                                          [class]="createForm.calculationMethod === method ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl scale-100' : 'text-white/50 dark:text-slate-500 hover:text-white hover:bg-white/5 scale-95'"
+                                          class="flex-1 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300">{{ method }}</button>
+                               }
+                            </div>
+
+                            <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                               @if (createForm.calculationMethod === 'Measured') {
+                                  <div class="p-6 rounded-3xl bg-white/5 border border-white/10">
+                                     <label class="text-[10px] font-black uppercase tracking-widest block mb-4 opacity-60">Total Contractual Project Cost</label>
+                                     <div class="relative group/val">
+                                        <span class="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-cyan-500 group-focus-within/val:scale-125 transition-transform">$</span>
+                                        <input type="number" [(ngModel)]="createForm.totalContractValue" 
+                                               class="w-full p-6 pl-12 rounded-2xl bg-white/10 border border-white/10 focus:border-cyan-500/50 outline-none font-black text-2xl text-white transition-all shadow-inner">
                                      </div>
-                                     <button (click)="removeCustomItem(item.id)" class="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                     </button>
+                                  </div>
+                               }
+
+                               @if (createForm.calculationMethod === 'Supervision') {
+                                  <div class="space-y-4">
+                                     <div (click)="createForm.useCompanyPercentage = !createForm.useCompanyPercentage"
+                                          [class]="createForm.useCompanyPercentage ? 'bg-cyan-500 border-transparent' : 'bg-white/5 border-white/10'"
+                                          class="flex items-center justify-between p-6 rounded-3xl border transition-all cursor-pointer">
+                                        <div>
+                                           <p class="text-xs font-black uppercase tracking-tight">Standard Company Default</p>
+                                           <p class="text-[10px] opacity-60 font-medium">Currently configured at {{ companySettings?.defaultSupervisionPercentage }}%</p>
+                                        </div>
+                                        <div class="w-10 h-10 rounded-full flex items-center justify-center bg-white/20">
+                                           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" [attr.d]="createForm.useCompanyPercentage ? 'M5 13l4 4L19 7' : 'M12 4v16m8-8H4'"></path></svg>
+                                        </div>
+                                     </div>
+                                     
+                                     @if (!createForm.useCompanyPercentage) {
+                                        <div class="p-6 rounded-3xl bg-white/5 border border-white/10 animate-in zoom-in-95 duration-300">
+                                           <label class="text-[10px] font-black uppercase tracking-widest block mb-4 opacity-60">Custom Project Override %</label>
+                                           <div class="relative">
+                                              <span class="absolute right-6 top-1/2 -translate-y-1/2 text-2xl font-black text-cyan-400">%</span>
+                                              <input type="number" [(ngModel)]="createForm.supervisionPercentage" 
+                                                     class="w-full p-6 rounded-2xl bg-white/10 border border-white/10 focus:border-cyan-500 outline-none font-black text-2xl text-white">
+                                           </div>
+                                        </div>
+                                     }
+                                  </div>
+                               }
+
+                               @if (createForm.calculationMethod === 'Packages') {
+                                  <div class="p-6 rounded-3xl bg-white/5 border border-white/10">
+                                     <label class="text-[10px] font-black uppercase tracking-widest block mb-4 opacity-60">Enterprise Service Package</label>
+                                     <div class="relative">
+                                        <select [(ngModel)]="createForm.packageId" 
+                                                class="w-full p-6 pr-12 rounded-2xl bg-white/10 border border-white/10 focus:border-cyan-500 outline-none font-black text-lg text-white appearance-none cursor-pointer">
+                                           <option [ngValue]="null" class="text-slate-900">Select standard package...</option>
+                                           @for (pkg of availablePackages; track pkg.id) {
+                                              <option [value]="pkg.id" class="text-slate-900">{{ pkg.name }} — {{ pkg.price | currency }}</option>
+                                           }
+                                        </select>
+                                        <svg class="absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 pointer-events-none opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                                     </div>
                                   </div>
                                }
                             </div>
-                         }
-                         <div class="mt-4 pt-4 border-t border-slate-100 dark:border-white/5 flex items-center space-x-2">
-                            <input #cName type="text" placeholder="Add Custom Item..." 
-                                   class="flex-1 p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 rounded-lg text-[10px] outline-none font-bold text-slate-900 dark:text-white">
-                            <input #cUnit type="text" placeholder="Unit" 
-                                   class="w-16 p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 rounded-lg text-[10px] outline-none font-bold text-center text-slate-900 dark:text-white">
-                            <button (click)="addCustomItem(cName.value, cUnit.value); cName.value=''; cUnit.value=''" 
-                                    class="p-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg hover:bg-cyan-500 dark:hover:bg-cyan-500 transition-all">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                             </button>
+                         </div>
+                      </div>
+
+                      <!-- Adjustments & Overlays -->
+                      <div class="p-8 rounded-[2.5rem] bg-orange-500/5 border border-orange-500/10 shadow-lg relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <svg class="w-24 h-24 text-orange-500" fill="currentColor" viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+                         </div>
+
+                         <div class="flex items-center space-x-3 mb-8">
+                            <p class="text-[11px] font-black text-orange-600 uppercase tracking-[0.3em]">Financial Overlays</p>
+                            <div class="h-px flex-1 bg-gradient-to-r from-orange-500/20 to-transparent"></div>
+                         </div>
+
+                         <div class="space-y-6">
+                            <div class="grid grid-cols-12 gap-4">
+                               <div class="col-span-4">
+                                  <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Extra Fees</label>
+                                  <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500 font-bold">$</span>
+                                    <input type="number" [(ngModel)]="createForm.extraFees" 
+                                           class="w-full p-4 pl-8 rounded-2xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/5 outline-none font-black text-sm text-slate-900 dark:text-white">
+                                  </div>
+                               </div>
+                               <div class="col-span-8">
+                                  <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Reason</label>
+                                  <input type="text" [(ngModel)]="createForm.extraFeesDescription" 
+                                         placeholder="Infrastructure, insurance, etc..."
+                                         class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/5 outline-none font-bold text-sm text-slate-900 dark:text-white transition-all focus:ring-4 focus:ring-emerald-500/5">
+                               </div>
+                            </div>
+
+                            <div class="grid grid-cols-12 gap-4">
+                               <div class="col-span-4">
+                                  <label class="text-[9px] font-black text-rose-500 uppercase tracking-widest block mb-2">Deducted</label>
+                                  <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-rose-500 font-bold">$</span>
+                                    <input type="number" [(ngModel)]="createForm.deductedAmount" 
+                                           class="w-full p-4 pl-8 rounded-2xl bg-white dark:bg-slate-950 border border-rose-500/10 outline-none font-black text-sm text-rose-500">
+                                  </div>
+                               </div>
+                               <div class="col-span-8">
+                                  <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Deduction Reason</label>
+                                  <input type="text" [(ngModel)]="createForm.deductedAmountDescription" 
+                                         placeholder="Down payment, security, etc..."
+                                         class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/5 outline-none font-bold text-sm text-slate-900 dark:text-white transition-all focus:ring-4 focus:ring-rose-500/5">
+                               </div>
+                            </div>
                          </div>
                       </div>
                    </div>
                 </div>
-
-                <!-- NEW: Daily Log Settings Overrides -->
-                @if (companySettings?.allowAddProgressEntry || companySettings?.allowReopenClosedDay || companySettings?.autoCloseDay) {
-                <div class="mt-12 p-8 rounded-[2.5rem] bg-indigo-50/30 dark:bg-indigo-500/5 border border-indigo-100 dark:border-indigo-500/10">
-                   <div class="flex items-center space-x-3 mb-8">
-                      <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
-                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-                         </svg>
-                      </div>
-                      <div>
-                         <h3 class="text-base font-black text-slate-900 dark:text-white uppercase tracking-tight">Daily Log Overrides</h3>
-                         <p class="text-[9px] text-indigo-500 font-bold uppercase tracking-widest">Project-specific configurations</p>
-                      </div>
-                   </div>
-
-                   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                      <!-- Allow Add Progress Entry -->
-                      @if (companySettings?.allowAddProgressEntry) {
-                      <div class="flex items-center justify-between p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/5">
-                         <div>
-                            <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block leading-none mb-1">Log Progress</span>
-                            <span class="text-[8px] text-slate-400 font-medium tracking-tight">Workers can add entries</span>
-                         </div>
-                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" [(ngModel)]="createForm.allowAddProgressEntry" class="sr-only peer">
-                            <div class="w-10 h-5 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
-                         </label>
-                      </div>
-                      }
-
-                      <!-- Allow Reopen Closed Day -->
-                      @if (companySettings?.allowReopenClosedDay) {
-                      <div class="flex items-center justify-between p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/5">
-                         <div>
-                            <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block leading-none mb-1">Reopen Days</span>
-                            <span class="text-[8px] text-slate-400 font-medium tracking-tight">Admins can unlock days</span>
-                         </div>
-                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" [(ngModel)]="createForm.allowReopenClosedDay" class="sr-only peer">
-                            <div class="w-10 h-5 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
-                         </label>
-                      </div>
-                      }
-
-                      <!-- Auto Close Day -->
-                      @if (companySettings?.autoCloseDay) {
-                      <div class="flex items-center justify-between p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/5">
-                         <div>
-                            <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block leading-none mb-1">Auto Close</span>
-                            <span class="text-[8px] text-slate-400 font-medium tracking-tight">Automatic day locking</span>
-                         </div>
-                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" [(ngModel)]="createForm.autoCloseDay" class="sr-only peer">
-                            <div class="w-10 h-5 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
-                         </label>
-                      </div>
-
-                      <!-- Auto Close Time -->
-                      <div class="p-3 rounded-2xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/5 transition-opacity"
-                           [class.opacity-40]="!createForm.autoCloseDay">
-                         <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1">Close Time</label>
-                         <input type="time" [(ngModel)]="createForm.autoCloseDayTime" 
-                                [disabled]="!createForm.autoCloseDay"
-                                class="w-full px-2 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-white/5 text-[11px] font-bold text-slate-900 dark:text-white outline-none disabled:cursor-not-allowed">
-                      </div>
-                      }
-                   </div>
-                </div>
-                }
              </div>
 
-             <!-- Validation Feedback (Fixed above footer) -->
+             <!-- Floating Audit (Validation Summary) -->
              @if (!isFormValid) {
-                <div class="px-8 py-3 bg-rose-500/5 border-t border-rose-500/10 shrink-0">
-                   <div class="flex items-center space-x-2 mb-1">
-                      <svg class="w-3 h-3 text-rose-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
-                      <span class="text-[9px] font-black text-rose-500 uppercase tracking-widest">Missing Required Information:</span>
-                   </div>
-                   <div class="flex flex-wrap gap-2">
-                      @for (error of validationErrors; track error) {
-                         <span class="text-[8px] font-bold bg-rose-500 text-white px-2 py-0.5 rounded-full uppercase">{{ error }}</span>
-                      }
+                <div class="mx-10 mb-6 p-6 rounded-3xl bg-rose-500/10 backdrop-blur-xl border border-rose-500/20 shadow-2xl animate-in slide-in-from-bottom-5 duration-500">
+                   <div class="flex items-center justify-between">
+                      <div class="flex items-center space-x-4">
+                         <div class="w-10 h-10 rounded-xl bg-rose-500 flex items-center justify-center text-white shadow-lg shadow-rose-500/30">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                         </div>
+                         <div>
+                            <p class="text-[11px] font-black text-rose-500 uppercase tracking-[0.2em] mb-1">Configuration Audit Pending</p>
+                            <div class="flex flex-wrap gap-2">
+                               @for (error of validationErrors; track error) {
+                                  <span class="px-3 py-1 bg-rose-500/20 text-rose-600 dark:text-rose-400 text-[8px] font-black uppercase tracking-widest rounded-lg border border-rose-500/20">{{ error }}</span>
+                               }
+                            </div>
+                         </div>
+                      </div>
                    </div>
                 </div>
              }
 
-             <!-- Modal Footer (Fixed) -->
-             <div class="p-8 pt-6 flex space-x-4 shrink-0 border-t border-slate-50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
-                <button (click)="showCreateModal = false" class="flex-1 py-4 rounded-2xl bg-white dark:bg-slate-800 text-slate-500 font-black text-[10px] uppercase tracking-widest transition-all hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-white/5">
-                   {{ 'common.cancel' | translate }}
-                </button>
-                <button (click)="createProject()" 
-                        [disabled]="!isFormValid"
-                        [class.opacity-40]="!isFormValid"
-                        [class.grayscale]="!isFormValid"
-                        class="flex-[2] py-4 rounded-2xl bg-slate-900 dark:bg-cyan-500 text-white font-black text-[10px] uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed">
-                   Confirm & Create Project
-                </button>
+             <!-- Modal Footer (Premium Actions) -->
+             <div class="p-10 shrink-0 bg-slate-50 dark:bg-white/[0.02] border-t border-slate-100 dark:border-white/5 relative z-10 flex items-center justify-between">
+                <div class="text-left hidden md:block">
+                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Current Creation Status</p>
+                  <p class="text-xs font-black text-slate-900 dark:text-white" [class.text-rose-500]="!isFormValid">{{ isFormValid ? 'Configuration Verified' : 'Incomplete Fields' }}</p>
+                </div>
+
+                <div class="flex space-x-6 w-full md:w-auto">
+                   <button (click)="showCreateModal = false" class="px-10 py-5 rounded-[1.5rem] text-slate-500 font-black text-[11px] uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-white/5 transition-all active:scale-95">Discard</button>
+                   <button (click)="createProject()" 
+                           [disabled]="!isFormValid"
+                           class="flex items-center space-x-3 px-12 py-5 rounded-[1.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[11px] uppercase tracking-widest shadow-2xl shadow-slate-900/40 hover:scale-105 active:scale-95 transition-all disabled:opacity-20 disabled:grayscale disabled:cursor-not-allowed group">
+                      <span>Establish Project</span>
+                      <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                      </svg>
+                   </button>
+                </div>
              </div>
           </div>
        </div>
@@ -601,6 +591,7 @@ export class ProjectsComponent implements OnInit {
   filterStatus: 'all' | 'Active' | 'Completed' | 'Delayed' = 'all';
   viewMode: 'grid' | 'list' = 'grid';
   sparklineData = [30, 50, 40, 70, 60, 80, 90];
+  calculationMethods: ('Measured' | 'Supervision' | 'Packages')[] = ['Measured', 'Supervision', 'Packages'];
 
   // Create Project State
   showCreateModal = false;
@@ -629,8 +620,6 @@ export class ProjectsComponent implements OnInit {
     autoCloseDay: false,
     autoCloseDayTime: '18:00'
   };
-  selectedCatalogItems: CatalogItem[] = [];
-  customProjectItems: CatalogItem[] = [];
 
   get filteredProjects(): Project[] {
     if (this.filterStatus === 'all') {
@@ -687,9 +676,7 @@ export class ProjectsComponent implements OnInit {
     return errors;
   }
 
-  isCatalogItemSelected(id: number): boolean {
-    return !!this.selectedCatalogItems.find(i => i.id === id);
-  }
+
 
   constructor(
     private mockDataService: MockDataService,
@@ -735,44 +722,10 @@ export class ProjectsComponent implements OnInit {
       autoCloseDay: this.companySettings?.autoCloseDay ?? false,
       autoCloseDayTime: this.companySettings?.autoCloseDayTime ?? '18:00'
     };
-    // Pre-select ALL catalog items by default as requested
-    this.selectedCatalogItems = [...this.catalogItems];
-    this.customProjectItems = [];
     this.showCreateModal = true;
   }
 
-  toggleCatalogItem(item: CatalogItem) {
-    const index = this.selectedCatalogItems.findIndex(i => i.id === item.id);
-    if (index > -1) {
-      this.selectedCatalogItems = this.selectedCatalogItems.filter(i => i.id !== item.id);
-    } else {
-      this.selectedCatalogItems = [...this.selectedCatalogItems, { ...item }];
-    }
-  }
 
-  toggleAllCatalog(select: boolean) {
-    if (select) {
-      this.selectedCatalogItems = [...this.catalogItems];
-    } else {
-      this.selectedCatalogItems = [];
-    }
-  }
-
-  addCustomItem(name: string, unit: string) {
-    if (!name || !unit) return;
-    const newItem: CatalogItem = {
-      id: -Math.floor(Math.random() * 10000), // Negative ID for temp items
-      name,
-      unit,
-      defaultRate: 0,
-      category: 'Other'
-    };
-    this.customProjectItems = [...this.customProjectItems, newItem];
-  }
-
-  removeCustomItem(id: number) {
-    this.customProjectItems = this.customProjectItems.filter(i => i.id !== id);
-  }
 
   createProject() {
     const isExtraFeesValid = !this.createForm.extraFees || (this.createForm.extraFees > 0 && this.createForm.extraFeesDescription);
@@ -802,8 +755,6 @@ export class ProjectsComponent implements OnInit {
     this.projects.unshift(newProject);
     this.showCreateModal = false;
 
-    // Combine Catalog and Custom items for the final BOQ initialization
-    const allInitialItems = [...this.selectedCatalogItems, ...this.customProjectItems];
     console.log('Project created with config:', {
       project: newProject,
       calculation: {
@@ -815,8 +766,7 @@ export class ProjectsComponent implements OnInit {
       adjustments: {
         extra: { amount: this.createForm.extraFees, desc: this.createForm.extraFeesDescription },
         deducted: { amount: this.createForm.deductedAmount, desc: this.createForm.deductedAmountDescription }
-      },
-      initialBOQ: allInitialItems
+      }
     });
   }
 }

@@ -66,7 +66,7 @@ import { RouterModule } from '@angular/router';
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                 </svg>
               </div>
-              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Companies</span>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.companies' | translate }}</span>
             </a>
           }
 
@@ -124,7 +124,7 @@ import { RouterModule } from '@angular/router';
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 </svg>
               </div>
-              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Configurations</span>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.configurations' | translate }}</span>
             </a>
           }
 
@@ -171,7 +171,7 @@ import { RouterModule } from '@angular/router';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">My Portfolio</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.portfolio' | translate }}</span>
           </a>
 
           <a routerLink="/client/reports" 
@@ -182,7 +182,7 @@ import { RouterModule } from '@angular/router';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 17v-2m3 2v-4m3 2v-6m-8-4h8a2 2 0 012 2v11a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Executive Reports</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.reports' | translate }}</span>
           </a>
         }
 

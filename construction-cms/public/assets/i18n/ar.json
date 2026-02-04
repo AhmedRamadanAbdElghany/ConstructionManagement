@@ -2,7 +2,7 @@
   "sidebar": {
     "company_name": "نظام إدارة البناء",
     "dashboard": "لوحة التحكم",
-    "hr_settings": "الموارد البشرية والإعدادات",
+    "hr_settings": "إدارة المستخدمين",
     "projects": "المشاريع",
     "locations": "المواقع",
     "daily_log": "السجل اليومي",
@@ -13,6 +13,10 @@
     "operations": "العمليات",
     "client": "بوابة العميل",
     "other": "أخرى",
+    "configurations": "إعدادات المؤسسة",
+    "companies": "الشركات",
+    "portfolio": "حقيبة مشاريعي",
+    "reports": "التقارير التنفيذية",
     "demo_role_switch": "تبديل الدور التجريبي"
   },
   "topbar": {
