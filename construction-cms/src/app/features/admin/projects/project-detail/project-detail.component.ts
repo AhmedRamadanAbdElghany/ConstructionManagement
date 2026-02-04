@@ -8,12 +8,13 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SettingsService } from '../../../../core/services/settings.service';
 import { PhaseService, Phase } from '../../../../core/services/phase.service';
+import { PhaseNodeComponent } from '../../project-hierarchy/phase-node.component';
 import { map } from 'rxjs/operators';
 
 @Component({
    selector: 'app-project-detail',
    standalone: true,
-   imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ReactiveFormsModule], // Added FormsModule and ReactiveFormsModule
+   imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ReactiveFormsModule, PhaseNodeComponent], // Added FormsModule and ReactiveFormsModule
    template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       @if (project) {
@@ -706,57 +707,73 @@ import { map } from 'rxjs/operators';
             </div>
           }
 
-          <!-- Phases Tab -->
-          @if (activeTab === 'phases') {
-            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all animate-in fade-in duration-500">
-              <div class="px-8 py-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-slate-50/30 dark:bg-slate-950/20">
-                <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Project Phase Hierarchy</h3>
-                <button (click)="openPhaseModal()" class="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl">
-                  Add Phase
-                </button>
-              </div>
-              <div class="p-8">
-                 <div class="space-y-4">
-                    @for (phase of projectPhases; track phase.id) {
-                    <div class="p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 flex items-center justify-between group/phase">
-                       <div class="flex items-center space-x-4">
-                          <div class="w-10 h-10 rounded-full bg-white dark:bg-slate-900 shadow-sm flex items-center justify-center text-xs font-black text-slate-400">
-                             {{ phase.order + 1 }}
-                          </div>
-                          <div>
-                             <h4 class="font-bold text-slate-900 dark:text-white">{{ phase.name }}</h4>
-                             <p class="text-[10px] text-slate-500 italic">{{ phase.description || 'No description' }}</p>
-                             @if (phase.startDate || phase.endDate) {
-                                <div class="flex items-center space-x-2 mt-1">
-                                   <span class="px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-900/20 text-indigo-500 text-[9px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-800">
-                                      {{ phase.startDate | date:'mediumDate' }}
-                                   </span>
-                                   <span class="text-slate-300 font-black text-[9px]">&rarr;</span>
-                                   <span class="px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-900/20 text-indigo-500 text-[9px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-800">
-                                      {{ phase.endDate | date:'mediumDate' }}
-                                   </span>
-                                </div>
-                             }
-                           </div>
-                       </div>
-                       <div class="flex space-x-2 opacity-0 group-hover/phase:opacity-100 transition-opacity">
-                          <button (click)="openPhaseModal(phase)" class="p-2 rounded-xl text-slate-400 hover:text-cyan-500 transition-colors">
-                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                          </button>
-                          <button (click)="deletePhase(phase.id)" class="p-2 rounded-xl text-slate-400 hover:text-red-500 transition-colors">
-                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                          </button>
-                       </div>
-                    </div>
-                    } @empty {
-                       <div class="py-12 text-center border-2 border-dashed border-slate-100 dark:border-white/5 rounded-[2.5rem]">
-                          <p class="text-slate-400 font-bold text-sm uppercase tracking-widest">No project phases defined yet.</p>
-                       </div>
+           <!-- Phases Tab -->
+           @if (activeTab === 'phases') {
+             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all animate-in fade-in duration-500">
+               <div class="px-8 py-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-slate-50/30 dark:bg-slate-950/20">
+                 <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Project Phase Hierarchy</h3>
+                 <div class="flex items-center space-x-4">
+                    @if (isPhasesInitialized) {
+                        <button (click)="useGlobalTemplate()" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/5 transition-all">
+                            Switch to Global
+                        </button>
+                        <button (click)="resetHierarchy()" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/5 transition-all">
+                            Start Over (Empty)
+                        </button>
+                        <button (click)="openPhaseModal()" class="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl">
+                            Add Phase
+                        </button>
                     }
                  </div>
-              </div>
-            </div>
-          }
+               </div>
+               <div class="p-8">
+                  @if (!isPhasesInitialized) {
+                      <div class="py-16 text-center border-2 border-dashed border-slate-100 dark:border-white/5 rounded-[2.5rem] bg-slate-50/50 dark:bg-white/[0.02]">
+                           <div class="w-16 h-16 rounded-[1.5rem] bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-6 opacity-50">
+                              <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                           </div>
+                           <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">Initialize Hierarchy</h3>
+                           <p class="text-slate-500 text-sm font-bold max-w-md mx-auto mb-10">Choose how you want to structure your project phases and tasks.</p>
+                           
+                           <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 px-8">
+                              <button (click)="useGlobalTemplate()" class="w-full sm:w-80 p-8 rounded-[2.5rem] bg-gradient-to-br from-cyan-500/10 to-indigo-500/10 border-2 border-cyan-500/20 hover:border-cyan-500 text-left transition-all hover:scale-[1.02] active:scale-98 group">
+                                 <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 flex items-center justify-center text-cyan-600 mb-4 group-hover:bg-cyan-500 group-hover:text-white transition-all">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
+                                 </div>
+                                 <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">Global Template</h4>
+                                 <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Import standard company structure</p>
+                              </button>
+
+                              <button (click)="startEmptyHierarchy()" class="w-full sm:w-80 p-8 rounded-[2.5rem] bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-white/5 hover:border-emerald-500 text-left transition-all hover:scale-[1.02] active:scale-98 group">
+                                 <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/10 flex items-center justify-center text-slate-500 mb-4 group-hover:bg-emerald-500 group-hover:text-white transition-all">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                 </div>
+                                 <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">Empty Hierarchy</h4>
+                                 <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Build from scratch your own way</p>
+                              </button>
+                           </div>
+                      </div>
+                  } @else {
+                      <div class="space-y-4">
+                         @for (phase of projectPhases; track phase.id) {
+                         <app-phase-node 
+                             [node]="phase"
+                             (onAddChild)="openPhaseModal(undefined, $event)"
+                             (onEdit)="openPhaseModal($event)"
+                             (onDelete)="deletePhase($event)"
+                             (onAddItems)="openItemModal($event)"
+                             (onEditItem)="openItemModal($event.phase, $event.item)">
+                         </app-phase-node>
+                         } @empty {
+                             <div class="py-16 text-center bg-slate-50/50 dark:bg-white/[0.02] rounded-[2.5rem] border border-dashed border-slate-200 dark:border-white/5">
+                                 <p class="text-slate-400 font-black uppercase tracking-widest text-[10px]">Your hierarchy is empty. Use the 'Add Phase' button above.</p>
+                             </div>
+                         }
+                      </div>
+                  }
+               </div>
+             </div>
+           }
 
           <!-- Finances Tab -->
           @if (activeTab === 'finances' && project) {
@@ -1331,8 +1348,12 @@ import { map } from 'rxjs/operators';
                <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[3rem] shadow-2xl flex flex-col relative overflow-hidden animate-in scale-in-95 duration-500 border border-white/10">
                   <div class="p-10 pb-6 flex items-center justify-between bg-slate-50/50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
                      <div>
-                        <h3 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Add BOQ Item</h3>
-                        <p class="text-[10px] text-cyan-500 font-bold uppercase tracking-widest mt-1">New work item definition</p>
+                        <h3 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                           {{ selectedBoqItem ? 'Configure Item Dates' : 'Add BOQ Item' }}
+                        </h3>
+                        <p class="text-[10px] text-cyan-500 font-bold uppercase tracking-widest mt-1">
+                           {{ selectedBoqItem ? 'Update schedule for ' + selectedBoqItem.description : 'New work item definition' }}
+                        </p>
                      </div>
                      <button (click)="showAddBoqModal = false" class="p-4 rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition-all shadow-sm">
                         <svg class="w-5 h-5 text-slate-400 font-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -1393,7 +1414,7 @@ import { map } from 'rxjs/operators';
 
                   <div class="p-10 pt-4 flex space-x-4 shrink-0 bg-slate-50/50 dark:bg-white/5">
                      <button (click)="showAddBoqModal = false" class="flex-1 py-5 rounded-[1.5rem] bg-white dark:bg-slate-800 text-slate-500 font-black text-[11px] uppercase tracking-widest border border-slate-200 dark:border-white/5">Cancel</button>
-                     <button (click)="addBoqItem()" [disabled]="!boqForm.description || !boqForm.unit || boqForm.totalQuantity <= 0" class="flex-[2] py-5 rounded-[1.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-[11px] uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50">Add Item</button>
+                     <button (click)="addBoqItem()" [disabled]="!boqForm.description || !boqForm.unit || boqForm.totalQuantity <= 0" class="flex-[2] py-5 rounded-[1.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-[11px] uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50">{{ selectedBoqItem ? 'Update Configuration' : 'Add Item' }}</button>
                   </div>
                </div>
             </div>
@@ -1677,6 +1698,7 @@ export class ProjectDetailComponent implements OnInit {
    showAddBillModal = false;
    showAddPaymentModal = false;
    showAddBoqModal = false;
+   selectedBoqItem: BOQItem | null = null;
 
    boqForm = {
       description: '',
@@ -1755,7 +1777,17 @@ export class ProjectDetailComponent implements OnInit {
          });
 
          this.mockDataService.getBOQItems(projectId).subscribe(items => {
-            this.boqItems = items;
+            // For demo, ensure we have some items linked to phases with dates
+            const basePhaseId = projectId * 10000;
+            this.boqItems = [
+               ...items,
+               { id: 9001, projectId, phaseId: basePhaseId + 101, description: 'توريد مكاتب مهندسين ومجهزة', unit: 'Unit', totalQuantity: 2, executedQuantity: 0, rate: 5000, startDate: '2024-03-01', endDate: '2024-03-05' },
+               { id: 9002, projectId, phaseId: basePhaseId + 102, description: 'تركيب عداد مياه مؤقت للموقع', unit: 'Unit', totalQuantity: 1, executedQuantity: 0, rate: 2500, startDate: '2024-03-02', endDate: '2024-03-04' },
+               { id: 9003, projectId, phaseId: basePhaseId + 301, description: 'صب خرسانة عادية للقواعد العادية', unit: 'm3', totalQuantity: 150, executedQuantity: 0, rate: 300, startDate: '2024-03-10', endDate: '2024-03-12' },
+               { id: 9004, projectId, phaseId: basePhaseId + 302, description: 'حديد تسليح القواعد المسلحة والسملات', unit: 'Ton', totalQuantity: 12, executedQuantity: 0, rate: 45000, startDate: '2024-03-14', endDate: '2024-03-18' },
+               { id: 9005, projectId, phaseId: basePhaseId + 302, description: 'نجارة مسلحة وصب خرسانة جاهزة', unit: 'm3', totalQuantity: 280, executedQuantity: 0, rate: 1200, startDate: '2024-03-15', endDate: '2024-03-22' }
+            ];
+            this.loadProjectPhases(projectId); // Reload to pick up item date aggregation
          });
 
          this.mockDataService.getTransactions(projectId).subscribe(trans => {
@@ -1770,7 +1802,7 @@ export class ProjectDetailComponent implements OnInit {
             this.projectSettings = settings;
          });
 
-         this.loadProjectPhases(projectId);
+
 
          this.mockDataService.getRoles().subscribe(roles => {
             this.availableRoles = roles;
@@ -1979,20 +2011,41 @@ export class ProjectDetailComponent implements OnInit {
 
    addBoqItem() {
       if (!this.project) return;
-      const newItem: BOQItem = {
-         id: Math.floor(Math.random() * 10000),
-         projectId: this.project.id,
-         description: this.boqForm.description,
-         unit: this.boqForm.unit,
-         totalQuantity: this.boqForm.totalQuantity,
-         executedQuantity: 0,
-         rate: this.boqForm.rate,
-         startDate: this.boqForm.startDate,
-         endDate: this.boqForm.endDate
-      } as any;
-      this.boqItems.push(newItem);
+
+      if (this.selectedBoqItem) {
+         // Find and update the existing item in the array
+         const index = this.boqItems.findIndex(i => i.id === this.selectedBoqItem!.id);
+         if (index !== -1) {
+            this.boqItems[index] = {
+               ...this.boqItems[index],
+               description: this.boqForm.description,
+               unit: this.boqForm.unit,
+               totalQuantity: this.boqForm.totalQuantity,
+               rate: this.boqForm.rate,
+               startDate: this.boqForm.startDate || undefined,
+               endDate: this.boqForm.endDate || undefined
+            };
+         }
+      } else {
+         const newItem: BOQItem = {
+            id: Math.floor(Math.random() * 10000),
+            projectId: this.project.id,
+            phaseId: this.selectedPhase?.id, // Link to phase if adding from hierarchy
+            description: this.boqForm.description,
+            unit: this.boqForm.unit,
+            totalQuantity: this.boqForm.totalQuantity,
+            executedQuantity: 0,
+            rate: this.boqForm.rate,
+            startDate: this.boqForm.startDate || undefined,
+            endDate: this.boqForm.endDate || undefined
+         } as any;
+         this.boqItems.push(newItem);
+      }
+
       this.showAddBoqModal = false;
       this.resetBoqForm();
+      // Refresh phases to show new item if we have a project ID
+      if (this.project) this.loadProjectPhases(this.project.id);
    }
 
    resetBoqForm() {
@@ -2202,22 +2255,76 @@ export class ProjectDetailComponent implements OnInit {
 
    // --- Phases Logic ---
    projectPhases: Phase[] = [];
+   isPhasesInitialized = false;
    showPhaseModal = false;
    selectedPhase?: Phase;
+   parentPhase?: Phase;
    phaseForm: any = { name: '', description: '', order: 0 };
 
    loadProjectPhases(projectId: number) {
-      this.phaseService.getProjectPhases(projectId).subscribe(phases => this.projectPhases = phases);
+      this.phaseService.getProjectPhases(projectId, this.boqItems).subscribe(phases => {
+         this.projectPhases = phases;
+         // If there are already phases in the DB, consider it initialized
+         if (phases.length > 0) this.isPhasesInitialized = true;
+      });
    }
 
-   openPhaseModal(phase?: Phase) {
+   startEmptyHierarchy() {
+      this.isPhasesInitialized = true;
+   }
+
+   useGlobalTemplate() {
+      if (!this.project) return;
+      const message = this.projectPhases.length > 0
+         ? 'This will delete your current project hierarchy and reset it to company defaults. Continue?'
+         : 'Import company default phase hierarchy?';
+
+      if (confirm(message)) {
+         this.phaseService.initializeProjectPhasesFromDefaults(this.project.id, 1).subscribe(() => {
+            if (this.project) {
+               this.loadProjectPhases(this.project.id);
+               this.isPhasesInitialized = true;
+            }
+         });
+      }
+   }
+
+   resetHierarchy() {
+      if (confirm('Are you sure you want to clear all phases and start over with an empty hierarchy?')) {
+         // In a real app, delete all phases for this project
+         this.projectPhases = [];
+         this.isPhasesInitialized = true;
+         // If we had a service method to clear, we'd call it here
+      }
+   }
+
+   openPhaseModal(phase?: Phase, parent?: Phase) {
       this.selectedPhase = phase;
+      this.parentPhase = parent;
       if (phase) {
          this.phaseForm = { name: phase.name, description: phase.description, order: phase.order };
       } else {
-         this.phaseForm = { name: '', description: '', order: this.projectPhases.length };
+         this.phaseForm = { name: '', description: '', order: parent ? (parent.children?.length || 0) : this.projectPhases.length };
       }
       this.showPhaseModal = true;
+   }
+
+   openItemModal(phase: Phase, item?: BOQItem) {
+      this.selectedPhase = phase;
+      this.selectedBoqItem = item || null;
+      if (item) {
+         this.boqForm = {
+            description: item.description,
+            unit: item.unit,
+            totalQuantity: item.totalQuantity,
+            rate: item.rate,
+            startDate: item.startDate || null,
+            endDate: item.endDate || null
+         } as any;
+      } else {
+         this.resetBoqForm();
+      }
+      this.showAddBoqModal = true;
    }
 
    savePhase() {
@@ -2228,7 +2335,11 @@ export class ProjectDetailComponent implements OnInit {
             this.showPhaseModal = false;
          });
       } else {
-         this.phaseService.createProjectPhase(this.project.id, this.phaseForm).subscribe(() => {
+         const request = {
+            ...this.phaseForm,
+            parentPhaseId: this.parentPhase?.id
+         };
+         this.phaseService.createProjectPhase(this.project.id, request).subscribe(() => {
             if (this.project) this.loadProjectPhases(this.project.id);
             this.showPhaseModal = false;
          });

@@ -60,13 +60,24 @@ export class PhaseService {
     constructor(private http: HttpClient) { }
 
     // Helper to build a tree from a flat list
-    private buildTree(items: Phase[], parentId?: number): Phase[] {
-        return items
+    private buildTree(phases: Phase[], items: any[], parentId?: number): Phase[] {
+        return phases
             .filter(item => item.parentPhaseId === parentId)
-            .map(item => ({
-                ...item,
-                children: this.buildTree(items, item.id)
-            }))
+            .map(item => {
+                const node: Phase = {
+                    ...item,
+                    children: this.buildTree(phases, items, item.id),
+                    // Attach items that belong to this phase
+                    items: items.filter(i => i.phaseId === item.id).map(i => ({
+                        id: i.id,
+                        name: i.description || i.name,
+                        unit: i.unit,
+                        startDate: i.startDate ? new Date(i.startDate) : undefined,
+                        endDate: i.endDate ? new Date(i.endDate) : undefined
+                    }))
+                };
+                return node;
+            })
             .sort((a, b) => a.order - b.order);
     }
 
@@ -108,9 +119,9 @@ export class PhaseService {
     }
 
     // Project Phases
-    getProjectPhases(projectId: number): Observable<Phase[]> {
+    getProjectPhases(projectId: number, allBoqItems: any[] = []): Observable<Phase[]> {
         const phases = this.dummyProjectPhases[projectId] || [];
-        const tree = this.buildTree(phases);
+        const tree = this.buildTree(phases, allBoqItems);
         tree.forEach(root => this.calculateDates(root));
         return of(tree);
     }
@@ -131,17 +142,55 @@ export class PhaseService {
     }
 
     updatePhase(phaseId: number, request: UpdatePhaseRequest): Observable<void> {
+        for (const projectId in this.dummyProjectPhases) {
+            const phases = this.dummyProjectPhases[projectId];
+            const index = phases.findIndex(p => p.id === phaseId);
+            if (index !== -1) {
+                this.dummyProjectPhases[projectId][index] = { ...this.dummyProjectPhases[projectId][index], ...request };
+                break;
+            }
+        }
         return of(void 0);
     }
 
     deletePhase(phaseId: number): Observable<void> {
+        for (const projectId in this.dummyProjectPhases) {
+            const phases = this.dummyProjectPhases[projectId];
+            const index = phases.findIndex(p => p.id === phaseId);
+            if (index !== -1) {
+                // Find all descendants to delete
+                const getDescendants = (id: number): number[] => {
+                    const children = phases.filter(p => p.parentPhaseId === id);
+                    let ids = children.map(c => c.id);
+                    children.forEach(c => {
+                        ids = [...ids, ...getDescendants(c.id)];
+                    });
+                    return ids;
+                };
+                const idsToDelete = [phaseId, ...getDescendants(phaseId)];
+                this.dummyProjectPhases[projectId] = phases.filter(p => !idsToDelete.includes(p.id));
+                break;
+            }
+        }
+        return of(void 0);
+    }
+
+    initializeProjectPhasesFromDefaults(projectId: number, companyId: number): Observable<void> {
+        // Clone the flat default phases to the project
+        const cloned = this.flatDefaultPhases.map(p => ({
+            ...p,
+            id: p.id + (projectId * 10000), // Ensure unique IDs for this project
+            parentPhaseId: p.parentPhaseId ? p.parentPhaseId + (projectId * 10000) : undefined,
+            items: []
+        }));
+        this.dummyProjectPhases[projectId] = cloned;
         return of(void 0);
     }
 
     // Company Default Phases
     getDefaultPhases(companyId: number): Observable<Phase[]> {
-        // Return the tree built from the flat storage (no date calculation for templates)
-        const tree = this.buildTree(this.flatDefaultPhases);
+        // Return the tree built from the flat storage (no items or date calculation for templates)
+        const tree = this.buildTree(this.flatDefaultPhases, []);
         return of(tree);
     }
 

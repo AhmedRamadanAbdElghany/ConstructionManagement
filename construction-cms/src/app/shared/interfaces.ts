@@ -50,6 +50,7 @@ export interface Project {
 export interface BOQItem {
   id: number;
   projectId: number;
+  phaseId?: number; // Linked phase in hierarchy
   description: string;
   unit: string;
   totalQuantity: number;

@@ -18,32 +18,56 @@ import { Phase } from '../../../core/services/phase.service';
              }
           </div>
           <div>
-            <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tight text-sm">{{ node.name }}</h4>
-            <div class="flex flex-wrap gap-2 mt-1">
+            <div class="flex items-center space-x-3">
+               <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tight text-sm">{{ node.name }}</h4>
+               @if (node.startDate || node.endDate) {
+                  <div class="flex items-center space-x-1 px-2 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20">
+                     <span class="text-[8px] font-black text-indigo-500 uppercase tracking-tighter">{{ node.startDate | date:'MMM d' }}</span>
+                     <span class="text-[8px] font-black text-slate-300">&rarr;</span>
+                     <span class="text-[8px] font-black text-indigo-500 uppercase tracking-tighter">{{ node.endDate | date:'MMM d' }}</span>
+                  </div>
+               }
+            </div>
+            <div class="flex flex-wrap gap-2 mt-1.5">
                @for (item of node.items; track item.id) {
-                  <span class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 text-[8px] font-black uppercase tracking-widest border border-emerald-500/20">
-                     {{ item.name }}
-                  </span>
+                  <button (click)="onEditItem.emit({item, phase: node})" class="flex flex-col text-left space-y-0.5 bg-emerald-500/5 dark:bg-emerald-500/10 p-2 rounded-xl border border-emerald-500/10 hover:border-emerald-500/40 hover:bg-emerald-500/10 transition-all group/item">
+                     <span class="text-[9px] font-black text-emerald-600 uppercase tracking-widest group-hover/item:text-emerald-700">{{ item.name }}</span>
+                     @if (item.startDate || item.endDate) {
+                        <div class="flex items-center space-x-1 opacity-60">
+                           <span class="text-[7px] font-bold text-emerald-500 uppercase">{{ item.startDate | date:'M/d' }}</span>
+                           <span class="text-[7px] text-slate-300">-</span>
+                           <span class="text-[7px] font-bold text-emerald-500 uppercase">{{ item.endDate | date:'M/d' }}</span>
+                        </div>
+                     } @else {
+                        <span class="text-[7px] font-bold text-slate-400 uppercase italic">Configure Dates</span>
+                     }
+                  </button>
                } @empty {
-                  <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">No items attached</p>
+                  <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest pl-1">No items attached</p>
                }
             </div>
           </div>
         </div>
 
-        <div class="flex items-center space-x-2">
-           <button (click)="onAddChild.emit(node)" class="p-2 rounded-xl bg-cyan-500/10 text-cyan-600 hover:bg-cyan-500 hover:text-white transition-all shadow-sm" title="Add Sub-Phase">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+        <div class="flex items-center space-x-1">
+           <!-- Add Sub-Phase -->
+           <button (click)="onAddChild.emit(node)" class="px-3 py-1.5 rounded-xl bg-cyan-500/10 text-cyan-600 hover:bg-cyan-500 hover:text-white text-[9px] font-black uppercase tracking-widest transition-all flex items-center space-x-1" title="Add Sub-Phase">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+              <span>Sub</span>
            </button>
            
-           <button (click)="onAddItems.emit(node)" class="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white text-[9px] font-black uppercase tracking-widest transition-all relative" title="Manage Items">
-              + Items
+           <!-- Add Items -->
+           <button (click)="onAddItems.emit(node)" class="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white text-[9px] font-black uppercase tracking-widest transition-all relative flex items-center space-x-1" title="Manage Items">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+              <span>Items</span>
               @if (node.items?.length) {
                  <span class="absolute -top-2 -right-2 w-5 h-5 bg-emerald-500 text-white rounded-full flex items-center justify-center text-[8px] border-2 border-white dark:border-slate-900 ring-2 ring-emerald-500/20">
                     {{ node.items?.length }}
                  </span>
               }
            </button>
+
+           <div class="w-px h-6 bg-slate-200 dark:bg-white/10 mx-1"></div>
 
            <button (click)="onEdit.emit(node)" class="p-2 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
@@ -62,7 +86,8 @@ import { Phase } from '../../../core/services/phase.service';
               (onAddChild)="onAddChild.emit($event)"
               (onEdit)="onEdit.emit($event)"
               (onDelete)="onDelete.emit($event)"
-              (onAddItems)="onAddItems.emit($event)">
+              (onAddItems)="onAddItems.emit($event)"
+              (onEditItem)="onEditItem.emit($event)">
             </app-phase-node>
           }
         </div>
@@ -76,4 +101,5 @@ export class PhaseNodeComponent {
    @Output() onEdit = new EventEmitter<Phase>();
    @Output() onDelete = new EventEmitter<number>();
    @Output() onAddItems = new EventEmitter<Phase>();
+   @Output() onEditItem = new EventEmitter<{ item: any, phase: Phase }>();
 }

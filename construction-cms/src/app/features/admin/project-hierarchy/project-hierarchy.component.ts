@@ -41,11 +41,34 @@ import { PhaseNodeComponent } from './phase-node.component';
               (onAddItems)="openItemModal($event)">
             </app-phase-node>
           } @empty {
-            <div class="py-32 text-center bg-white dark:bg-slate-900 rounded-[4rem] border border-dashed border-slate-200 dark:border-white/5 shadow-xl">
-               <div class="w-24 h-24 rounded-[3rem] bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-8 opacity-50">
-                  <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            <div class="py-16 bg-white dark:bg-slate-900 rounded-[4rem] border border-dashed border-slate-200 dark:border-white/5 shadow-xl">
+               <div class="text-center mb-12">
+                  <div class="w-24 h-24 rounded-[3rem] bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-8 opacity-50">
+                     <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                  </div>
+                  <p class="text-slate-400 font-black uppercase tracking-[0.2em] text-xs mb-2">{{ 'noPhases' | translate }}</p>
+                  <p class="text-slate-500 text-sm font-bold max-w-md mx-auto">Choose how to initialize your project hierarchy structure</p>
                </div>
-               <p class="text-slate-400 font-black uppercase tracking-[0.2em] text-xs">{{ 'noPhases' | translate }}</p>
+
+               <div class="grid grid-cols-1 md:grid-cols-2 gap-6 px-12">
+                  <!-- Use Global Template -->
+                  <button (click)="useGlobalTemplate()" class="p-8 rounded-[2.5rem] bg-gradient-to-br from-cyan-500/10 to-indigo-500/10 border-2 border-cyan-500/30 hover:border-cyan-500 text-left transition-all group hover:scale-[1.02] active:scale-[0.98]">
+                     <div class="w-14 h-14 rounded-2xl bg-cyan-500/20 flex items-center justify-center text-cyan-600 mb-4 group-hover:bg-cyan-500 group-hover:text-white transition-all">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
+                     </div>
+                     <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">Use Global Template</h3>
+                     <p class="text-[11px] text-slate-500 font-bold uppercase tracking-widest">Import a pre-configured construction phase structure</p>
+                  </button>
+
+                  <!-- Start Empty -->
+                  <button (click)="openModal()" class="p-8 rounded-[2.5rem] bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-white/10 hover:border-emerald-500 text-left transition-all group hover:scale-[1.02] active:scale-[0.98]">
+                     <div class="w-14 h-14 rounded-2xl bg-slate-200 dark:bg-white/10 flex items-center justify-center text-slate-500 mb-4 group-hover:bg-emerald-500 group-hover:text-white transition-all">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                     </div>
+                     <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">Start Empty</h3>
+                     <p class="text-[11px] text-slate-500 font-bold uppercase tracking-widest">Create your own custom hierarchy from scratch</p>
+                  </button>
+               </div>
             </div>
           }
         </div>
@@ -223,6 +246,53 @@ export class ProjectHierarchyComponent implements OnInit {
 
    loadCatalog() {
       this.catalogService.getCatalogItems().subscribe(items => this.catalogItems = items);
+   }
+
+   useGlobalTemplate() {
+      // Simulate loading a global template with predefined phases
+      const globalTemplate = [
+         { name: 'التجهيزات والموقع العام', order: 0, parentPhaseId: undefined },
+         { name: 'مكاتب الموقع والسور', order: 0, parentPhaseId: undefined, isChild: 1 },
+         { name: 'توصيلات المياه والكهرباء', order: 1, parentPhaseId: undefined, isChild: 1 },
+         { name: 'أعمال الحفر والردم', order: 1, parentPhaseId: undefined },
+         { name: 'أعمال الخرسانة', order: 2, parentPhaseId: undefined },
+         { name: 'خرسانة عادية', order: 0, parentPhaseId: undefined, isChild: 3 },
+         { name: 'خرسانة مسلحة', order: 1, parentPhaseId: undefined, isChild: 3 },
+         { name: 'أعمال البناء', order: 3, parentPhaseId: undefined },
+         { name: 'أعمال التشطيبات', order: 4, parentPhaseId: undefined },
+         { name: 'تشطيب داخلي', order: 0, parentPhaseId: undefined, isChild: 5 },
+         { name: 'تشطيب خارجي', order: 1, parentPhaseId: undefined, isChild: 5 }
+      ];
+
+      const companyId = 1;
+      const parentMap: { [key: number]: number } = {};
+      let rootIndex = 0;
+
+      // Create root phases first, then children
+      const createPhases = async () => {
+         // Create roots first
+         const roots = globalTemplate.filter(t => !t.isChild);
+         for (const t of roots) {
+            this.phaseService.createDefaultPhase(companyId, { name: t.name, order: t.order }).subscribe(result => {
+               parentMap[rootIndex] = result.id;
+               rootIndex++;
+            });
+         }
+
+         // Wait a bit for roots to be created, then create children
+         setTimeout(() => {
+            const children = globalTemplate.filter(t => t.isChild !== undefined);
+            for (const t of children) {
+               const parentId = parentMap[t.isChild as number];
+               if (parentId) {
+                  this.phaseService.createDefaultPhase(companyId, { name: t.name, order: t.order, parentPhaseId: parentId }).subscribe();
+               }
+            }
+            setTimeout(() => this.loadPhases(), 500);
+         }, 500);
+      };
+
+      createPhases();
    }
 
    openModal(phase?: Phase, parent?: Phase) {
