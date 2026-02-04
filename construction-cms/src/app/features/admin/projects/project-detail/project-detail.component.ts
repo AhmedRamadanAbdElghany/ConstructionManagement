@@ -9,12 +9,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SettingsService } from '../../../../core/services/settings.service';
 import { PhaseService, Phase } from '../../../../core/services/phase.service';
 import { PhaseNodeComponent } from '../../project-hierarchy/phase-node.component';
+import { BoqProgressNodeComponent } from '../../project-hierarchy/boq-progress-node.component';
 import { map } from 'rxjs/operators';
 
 @Component({
    selector: 'app-project-detail',
    standalone: true,
-   imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ReactiveFormsModule, PhaseNodeComponent], // Added FormsModule and ReactiveFormsModule
+   imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ReactiveFormsModule, PhaseNodeComponent, BoqProgressNodeComponent], // Added FormsModule and ReactiveFormsModule
    template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       @if (project) {
@@ -158,7 +159,7 @@ import { map } from 'rxjs/operators';
               [class.border-slate-200]="activeTab !== 'boq'"
               [class.dark:border-white/5]="activeTab !== 'boq'"
               class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-              BOQ Items
+              BOQ Progress
             </button>
             <button 
               (click)="activeTab = 'finances'"
@@ -500,7 +501,7 @@ import { map } from 'rxjs/operators';
           <!-- Team Tab -->
           @if (activeTab === 'team') {
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all">
-              <div class="px-8 py-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-slate-50/30 dark:bg-slate-950/20">
+              <div class="px-8 py-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-slate-50/30 dark:bg-950/20">
                 <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'project_detail.team_members' | translate }}</h3>
                 <button (click)="showAddMemberModal = true" class="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl">
                   {{ 'project_detail.add_member' | translate }}
@@ -636,76 +637,41 @@ import { map } from 'rxjs/operators';
             </div>
           }
 
-          <!-- BOQ Tab -->
-          @if (activeTab === 'boq') {
-            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all animate-in fade-in duration-500">
-              <div class="px-8 py-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-slate-50/30 dark:bg-slate-950/20">
-                <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Bill of Quantities</h3>
-                <button (click)="showAddBoqModal = true" class="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl">
-                  Add Item
-                </button>
-              </div>
-              <div class="overflow-x-auto">
-                <table class="w-full">
-                  <thead>
-                    <tr class="text-left bg-slate-50/50 dark:bg-slate-950/30 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">
-                      <th class="px-8 py-5">Description</th>
-                      <th class="px-8 py-5">Unit</th>
-                      <th class="px-8 py-5">Total Qty</th>
-                      <th class="px-8 py-5">Start</th>
-                      <th class="px-8 py-5">End</th>
-                      <th class="px-8 py-5">Executed</th>
-                      <th class="px-8 py-5">Progress</th>
-                      <th class="px-8 py-5">Rate</th>
-                      <th class="px-8 py-5">Total Value</th>
-                      <th class="px-8 py-5 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-100 dark:divide-white/5 text-slate-900 dark:text-white">
-                    @for (item of boqItems; track item.id) {
-                      <tr class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
-                        <td class="px-8 py-6 font-bold text-sm">{{ item.description }}</td>
-                        <td class="px-8 py-6 text-xs text-slate-400 font-bold uppercase tracking-widest">{{ item.unit }}</td>
-                        <td class="px-8 py-6 text-sm font-black">{{ item.totalQuantity }}</td>
-                        <td class="px-8 py-6 text-xs font-bold text-slate-500">{{ item.startDate | date:'mediumDate' }}</td>
-                        <td class="px-8 py-6 text-xs font-bold text-slate-500">{{ item.endDate | date:'mediumDate' }}</td>
-                        <td class="px-8 py-6 text-sm font-black text-cyan-600 dark:text-cyan-400">{{ item.executedQuantity }}</td>
-                        <td class="px-8 py-6">
-                          <div class="flex items-center space-x-3">
-                            <div class="w-24 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden shadow-inner">
-                              <div class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full transition-all duration-1000"
-                                   [style.width.%]="(item.executedQuantity / item.totalQuantity) * 100">
-                              </div>
-                            </div>
-                            <span class="text-[10px] font-black text-slate-400">{{ ((item.executedQuantity / item.totalQuantity) * 100) | number:'1.0-0' }}%</span>
-                          </div>
-                        </td>
-                        <td class="px-8 py-6 text-sm font-bold text-slate-500">{{ item.rate | currency:'USD' }}</td>
-                        <td class="px-8 py-6 font-black text-emerald-600 dark:text-emerald-400">{{ item.totalQuantity * item.rate | currency:'USD' }}</td>
-                        <td class="px-8 py-6 text-right">
-                          <div class="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button class="p-2 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all" (click)="deleteBoqItem(item.id)">
-                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    } @empty {
-                      <tr>
-                        <td colspan="8" class="px-8 py-20 text-center">
-                          <div class="w-16 h-16 rounded-[2rem] bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-4 opacity-50">
-                            <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                          </div>
-                          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">No BOQ Items Yet</p>
-                          <p class="text-xs text-slate-400">Click "Add Item" to create your first Bill of Quantity item</p>
-                        </td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          }
+           <!-- BOQ Tab (Renamed to Project Progress & BOQ) -->
+           @if (activeTab === 'boq') {
+             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all animate-in fade-in duration-500">
+               <div class="px-8 py-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-slate-50/30 dark:bg-slate-950/20">
+                 <div>
+                    <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">BOQ Progress Dashboard</h3>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Hierarchical financial and execution tracking</p>
+                 </div>
+                 <div class="flex items-center space-x-6">
+                    <div class="text-right">
+                       <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Total Project value</div>
+                       <div class="text-lg font-black text-emerald-600 dark:text-emerald-400">{{ totalProjectValue | currency:'USD' }}</div>
+                    </div>
+                 </div>
+               </div>
+               <div class="p-8">
+                  <div class="space-y-4">
+                     @for (phase of projectPhases; track phase.id) {
+                        <app-boq-progress-node 
+                            [node]="phase" 
+                            [parentTotalMoney]="totalProjectValue">
+                        </app-boq-progress-node>
+                     } @empty {
+                        <div class="py-20 text-center bg-slate-50/50 dark:bg-white/[0.02] rounded-[2.5rem] border border-dashed border-slate-200 dark:border-white/5">
+                           <div class="w-16 h-16 rounded-[2rem] bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-4 opacity-50">
+                              <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                           </div>
+                           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Hierarchy Structure Required</p>
+                           <p class="text-xs text-slate-400">Please initialize your project hierarchy in the "Phases Hierarchy" tab first.</p>
+                        </div>
+                     }
+                  </div>
+               </div>
+             </div>
+           }
 
            <!-- Phases Tab -->
            @if (activeTab === 'phases') {
@@ -1682,6 +1648,10 @@ export class ProjectDetailComponent implements OnInit {
    bills: ProjectBill[] = [];
    clientPayments: ClientPayment[] = [];
 
+   get totalProjectValue(): number {
+      return this.boqItems.reduce((sum, item) => sum + (item.totalQuantity * item.rate), 0);
+   }
+
    // Edit State
    showEditModal = false;
    companySettings: CompanySettings | undefined;
@@ -1777,17 +1747,25 @@ export class ProjectDetailComponent implements OnInit {
          });
 
          this.mockDataService.getBOQItems(projectId).subscribe(items => {
-            // For demo, ensure we have some items linked to phases with dates
+            // For demo, ensure we have some items linked to phases with dates and varied progress
             const basePhaseId = projectId * 10000;
             this.boqItems = [
                ...items,
-               { id: 9001, projectId, phaseId: basePhaseId + 101, description: 'توريد مكاتب مهندسين ومجهزة', unit: 'Unit', totalQuantity: 2, executedQuantity: 0, rate: 5000, startDate: '2024-03-01', endDate: '2024-03-05' },
-               { id: 9002, projectId, phaseId: basePhaseId + 102, description: 'تركيب عداد مياه مؤقت للموقع', unit: 'Unit', totalQuantity: 1, executedQuantity: 0, rate: 2500, startDate: '2024-03-02', endDate: '2024-03-04' },
-               { id: 9003, projectId, phaseId: basePhaseId + 301, description: 'صب خرسانة عادية للقواعد العادية', unit: 'm3', totalQuantity: 150, executedQuantity: 0, rate: 300, startDate: '2024-03-10', endDate: '2024-03-12' },
-               { id: 9004, projectId, phaseId: basePhaseId + 302, description: 'حديد تسليح القواعد المسلحة والسملات', unit: 'Ton', totalQuantity: 12, executedQuantity: 0, rate: 45000, startDate: '2024-03-14', endDate: '2024-03-18' },
+               // Mobilization (Completed)
+               { id: 9001, projectId, phaseId: basePhaseId + 101, description: 'توريد مكاتب مهندسين ومجهزة', unit: 'Unit', totalQuantity: 2, executedQuantity: 2, rate: 5000, startDate: '2024-03-01', endDate: '2024-03-05' },
+               { id: 9002, projectId, phaseId: basePhaseId + 102, description: 'تركيب عداد مياه مؤقت للموقع', unit: 'Unit', totalQuantity: 1, executedQuantity: 1, rate: 2500, startDate: '2024-03-02', endDate: '2024-03-04' },
+
+               // Excavation (Completed)
+               { id: 9006, projectId, phaseId: basePhaseId + 2, description: 'أعمال حفر الموقع العام', unit: 'm3', totalQuantity: 1200, executedQuantity: 1200, rate: 45, startDate: '2024-03-05', endDate: '2024-03-10' },
+
+               // Concrete - Plain (Processing)
+               { id: 9003, projectId, phaseId: basePhaseId + 301, description: 'صب خرسانة عادية للقواعد العادية', unit: 'm3', totalQuantity: 150, executedQuantity: 120, rate: 300, startDate: '2024-03-10', endDate: '2024-03-12' },
+
+               // Concrete - Reinforced (Pending/Partial)
+               { id: 9004, projectId, phaseId: basePhaseId + 302, description: 'حديد تسليح القواعد المسلحة والسملات', unit: 'Ton', totalQuantity: 12, executedQuantity: 3, rate: 45000, startDate: '2024-03-14', endDate: '2024-03-18' },
                { id: 9005, projectId, phaseId: basePhaseId + 302, description: 'نجارة مسلحة وصب خرسانة جاهزة', unit: 'm3', totalQuantity: 280, executedQuantity: 0, rate: 1200, startDate: '2024-03-15', endDate: '2024-03-22' }
             ];
-            this.loadProjectPhases(projectId); // Reload to pick up item date aggregation
+            this.loadProjectPhases(projectId); // Reload to pick up item date and money aggregation
          });
 
          this.mockDataService.getTransactions(projectId).subscribe(trans => {

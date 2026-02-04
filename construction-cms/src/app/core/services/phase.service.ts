@@ -2,6 +2,17 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 
+export interface PhaseItem {
+    id: number;
+    name: string;
+    unit?: string;
+    totalQuantity: number;
+    executedQuantity: number;
+    rate: number;
+    startDate?: Date;
+    endDate?: Date;
+}
+
 export interface Phase {
     id: number;
     name: string;
@@ -11,18 +22,10 @@ export interface Phase {
     isLeaf: boolean;
     startDate?: Date;
     endDate?: Date;
+    totalMoney?: number;
+    executedMoney?: number;
     children?: Phase[];
     items?: PhaseItem[];
-}
-
-export interface PhaseItem {
-    id: number;
-    name: string;
-    unit?: string;
-    defaultRate?: number;
-    category?: string;
-    startDate?: Date;
-    endDate?: Date;
 }
 
 export interface CreatePhaseRequest {
@@ -55,7 +58,14 @@ export class PhaseService {
         { id: 302, name: 'خرسانة مسلحة', order: 1, parentPhaseId: 3, isLeaf: true, items: [] }
     ];
 
-    private dummyProjectPhases: { [key: number]: Phase[] } = {};
+    private dummyProjectPhases: { [key: number]: Phase[] } = {
+        1: this.flatDefaultPhases.map(p => ({
+            ...p,
+            id: p.id + 10000,
+            parentPhaseId: p.parentPhaseId ? p.parentPhaseId + 10000 : undefined,
+            items: []
+        }))
+    };
 
     constructor(private http: HttpClient) { }
 
@@ -72,6 +82,9 @@ export class PhaseService {
                         id: i.id,
                         name: i.description || i.name,
                         unit: i.unit,
+                        totalQuantity: i.totalQuantity || 0,
+                        executedQuantity: i.executedQuantity || 0,
+                        rate: i.rate || 0,
                         startDate: i.startDate ? new Date(i.startDate) : undefined,
                         endDate: i.endDate ? new Date(i.endDate) : undefined
                     }))
@@ -81,14 +94,16 @@ export class PhaseService {
             .sort((a, b) => a.order - b.order);
     }
 
-    private calculateDates(phase: Phase): void {
+    private calculateStats(phase: Phase): void {
         let minStart: number | undefined;
         let maxEnd: number | undefined;
+        let totalMoney = 0;
+        let executedMoney = 0;
 
         // Process children first (bottom-up)
         if (phase.children && phase.children.length > 0) {
             phase.children.forEach(child => {
-                this.calculateDates(child);
+                this.calculateStats(child);
                 if (child.startDate) {
                     const childStart = new Date(child.startDate).getTime();
                     if (minStart === undefined || childStart < minStart) minStart = childStart;
@@ -97,6 +112,8 @@ export class PhaseService {
                     const childEnd = new Date(child.endDate).getTime();
                     if (maxEnd === undefined || childEnd > maxEnd) maxEnd = childEnd;
                 }
+                totalMoney += child.totalMoney || 0;
+                executedMoney += child.executedMoney || 0;
             });
         }
 
@@ -111,18 +128,22 @@ export class PhaseService {
                     const itemEnd = new Date(item.endDate).getTime();
                     if (maxEnd === undefined || itemEnd > maxEnd) maxEnd = itemEnd;
                 }
+                totalMoney += item.totalQuantity * item.rate;
+                executedMoney += item.executedQuantity * item.rate;
             });
         }
 
         phase.startDate = minStart ? new Date(minStart) : undefined;
         phase.endDate = maxEnd ? new Date(maxEnd) : undefined;
+        phase.totalMoney = totalMoney;
+        phase.executedMoney = executedMoney;
     }
 
     // Project Phases
     getProjectPhases(projectId: number, allBoqItems: any[] = []): Observable<Phase[]> {
         const phases = this.dummyProjectPhases[projectId] || [];
         const tree = this.buildTree(phases, allBoqItems);
-        tree.forEach(root => this.calculateDates(root));
+        tree.forEach(root => this.calculateStats(root));
         return of(tree);
     }
 

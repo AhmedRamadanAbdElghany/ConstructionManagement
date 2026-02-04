@@ -319,7 +319,14 @@ export class ProjectHierarchyComponent implements OnInit {
       // Check if already linked
       if (this.isItemLinked(item.id)) return;
 
-      this.selectedPhase.items.push(item);
+      this.selectedPhase.items.push({
+         id: item.id,
+         name: item.name,
+         unit: item.unit,
+         rate: item.defaultRate || 0,
+         totalQuantity: 0,
+         executedQuantity: 0
+      });
 
       // Persist to service for demo
       this.phaseService.updateDefaultPhase(this.selectedPhase.id, {
