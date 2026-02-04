@@ -42,7 +42,7 @@ import { RouterModule } from '@angular/router';
       <nav class="flex-1 p-4 space-y-2 overflow-y-auto overflow-x-hidden custom-scrollbar pt-8">
         <!-- Section Header -->
         <p class="px-4 py-2 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
-           [class.opacity-0]="isCollapsed()">{{ 'sidebar.administration' | translate }}</p>
+           [class.opacity-0]="isCollapsed()">{{ (isClient ? 'sidebar.client_portal' : 'sidebar.administration') | translate }}</p>
 
         <a routerLink="/dashboard" 
            routerLinkActive="nav-active"
@@ -132,7 +132,7 @@ import { RouterModule } from '@angular/router';
         }
 
         <p class="px-4 py-6 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
-           [class.opacity-0]="isCollapsed()">{{ 'sidebar.operations' | translate }}</p>
+           [class.opacity-0]="isCollapsed()">{{ (isClient ? 'sidebar.insights' : 'sidebar.operations') | translate }}</p>
 
         @if (currentRole !== 'SuperAdmin') {
           @if (isWorker || isAdmin) {
@@ -168,10 +168,10 @@ import { RouterModule } from '@angular/router';
              class="nav-item group">
             <div class="nav-icon-box">
               <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.portfolio' | translate }}</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.my_projects' | translate }}</span>
           </a>
 
           <a routerLink="/client/reports" 
@@ -182,7 +182,7 @@ import { RouterModule } from '@angular/router';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 17v-2m3 2v-4m3 2v-6m-8-4h8a2 2 0 012 2v11a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.reports' | translate }}</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.project_reports' | translate }}</span>
           </a>
         }
 

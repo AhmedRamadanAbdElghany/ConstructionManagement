@@ -8,6 +8,9 @@
     "daily_log": "السجل اليومي",
     "personal_hr": "الموارد البشرية الشخصية",
     "my_projects": "مشاريعي",
+    "project_reports": "التحليل التنفيذي",
+    "insights": "الرؤى والتحليلات",
+    "client_portal": "عمليات العميل",
     "notifications": "الإشعارات",
     "administration": "الإدارة",
     "operations": "العمليات",
@@ -15,8 +18,8 @@
     "other": "أخرى",
     "configurations": "إعدادات المؤسسة",
     "companies": "الشركات",
-    "portfolio": "حقيبة مشاريعي",
-    "reports": "التقارير التنفيذية",
+    "portfolio": "حقيبة المشاريع",
+    "reports": "التقارير التفصيلية",
     "demo_role_switch": "تبديل الدور التجريبي"
   },
   "topbar": {
@@ -51,7 +54,9 @@
     "progress": "التقدم",
     "cash_flow": "التدفق النقدي",
     "action": "الإجراء",
-    "view": "عرض"
+    "view": "عرض",
+    "intervention_desc": "يحدد النظام مشاركتك المباشرة في هذه التأخيرات. يتطلب الأمر مراجعة تشغيلية فورية.",
+    "strategic_portfolio": "المحفظة الاستراتيجية"
   },
   "hr": {
     "title": "إدارة الموارد البشرية والمستخدمين",

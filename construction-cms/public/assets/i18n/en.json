@@ -8,6 +8,9 @@
     "daily_log": "Daily Log",
     "personal_hr": "Personal HR",
     "my_projects": "My Projects",
+    "project_reports": "Executive Analysis",
+    "insights": "Analytics & Insights",
+    "client_portal": "Client Operations",
     "notifications": "Notifications",
     "administration": "Administration",
     "operations": "Operations",
@@ -15,8 +18,8 @@
     "other": "Other",
     "configurations": "Enterprise Settings",
     "companies": "Companies",
-    "portfolio": "My Portfolio",
-    "reports": "Executive Reports",
+    "portfolio": "Property Portfolio",
+    "reports": "Detailed Reports",
     "demo_role_switch": "Demo Role Switch"
   },
   "topbar": {
@@ -58,7 +61,9 @@
     "project": "Project",
     "tasks": "Tasks",
     "efficiency": "Efficiency",
-    "attendance": "Attendance"
+    "attendance": "Attendance",
+    "intervention_desc": "System identifies your direct involvement in these delays. Immediate operational review required.",
+    "strategic_portfolio": "Strategic Portfolio"
   },
   "hr": {
     "title": "HR & User Management",

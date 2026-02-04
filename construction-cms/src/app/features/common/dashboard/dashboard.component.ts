@@ -324,165 +324,189 @@ import { AuthService } from '../../../core/auth/auth.service';
              WORKER DASHBOARD (CompanyUser)
              ────────────────────────────────────────────────────────────────── -->
         @else if (isWorker) {
-          <div class="space-y-8">
-            <!-- Profile Welcome & Quick Stats -->
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              <!-- Profile Card -->
-              <div class="lg:col-span-1 bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 relative overflow-hidden group">
-                <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div class="relative flex flex-col items-center text-center">
-                  <div class="w-24 h-24 rounded-3xl bg-gradient-to-br from-indigo-500 to-purple-600 p-1 shadow-2xl shadow-indigo-500/30 mb-6 rotate-3 group-hover:rotate-0 transition-transform duration-500">
-                    <div class="w-full h-full bg-white dark:bg-slate-900 rounded-[20px] flex items-center justify-center overflow-hidden">
-                       <span class="text-4xl">👷‍♂️</span>
-                    </div>
-                  </div>
-                  <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-2">{{ currentUser?.fullName }}</h2>
-                  <span class="px-4 py-1.5 rounded-full bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-widest border border-slate-200 dark:border-white/10">
-                    {{ currentUser?.role }}
-                  </span>
+          <div class="space-y-10 animate-in fade-in slide-in-from-bottom-10 duration-1000">
+            
+            <!-- Worker Hero: Performance & Profile -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+               
+               <!-- Glassmorphism Profile -->
+               <div class="lg:col-span-4 bg-white/40 dark:bg-slate-900/40 backdrop-blur-3xl rounded-[3.5rem] p-10 border border-white dark:border-white/5 shadow-[0_32px_120px_-15px_rgba(0,0,0,0.1)] relative overflow-hidden group">
+                  <div class="absolute -top-20 -left-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] group-hover:bg-indigo-500/20 transition-colors duration-700"></div>
                   
-                  <div class="grid grid-cols-2 gap-4 w-full mt-8 pt-8 border-t border-slate-100 dark:border-white/5">
-                    <div class="text-center flex flex-col items-center">
-                      <p class="text-2xl font-black text-slate-900 dark:text-white">{{ workerProjectStats?.totalProjects }}</p>
-                      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-tight mt-1 max-w-[100px]">{{ 'dashboard.assigned_projects' | translate }}</p>
+                  <div class="relative flex flex-col items-center text-center">
+                    <div class="relative mb-8 group-hover:scale-105 transition-transform duration-500">
+                      <div class="w-32 h-32 rounded-[2.5rem] bg-gradient-to-br from-indigo-500 via-blue-600 to-cyan-500 p-1 shadow-2xl rotate-3">
+                        <div class="w-full h-full bg-white dark:bg-slate-900 rounded-[2.2rem] flex items-center justify-center overflow-hidden">
+                           <span class="text-5xl">👷‍♂️</span>
+                        </div>
+                      </div>
+                      <div class="absolute -bottom-2 -right-2 w-10 h-10 rounded-2xl bg-emerald-500 border-4 border-white dark:border-slate-900 flex items-center justify-center shadow-lg">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                      </div>
                     </div>
-                    <div class="text-center flex flex-col items-center">
-                      <p class="text-2xl font-black text-rose-500">{{ workerProjectStats?.delayed }}</p>
-                      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-tight mt-1 max-w-[100px]">{{ 'dashboard.involved_delayed' | translate }}</p>
+
+                    <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ currentUser?.fullName }}</h2>
+                    <p class="text-[10px] font-black text-indigo-500 uppercase tracking-[0.3em] mb-8 px-4 py-1.5 bg-indigo-500/5 rounded-full inline-block">{{ currentUser?.role }} • Senior Grade</p>
+                    
+                    <div class="grid grid-cols-2 gap-8 w-full">
+                      <div class="text-center">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Efficiency</p>
+                        <div class="flex items-end justify-center space-x-1">
+                          <span class="text-3xl font-black text-slate-900 dark:text-white leading-none">94</span>
+                          <span class="text-xs font-black text-emerald-500 mb-0.5">%</span>
+                        </div>
+                      </div>
+                      <div class="text-center">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Projects</p>
+                        <div class="flex items-end justify-center space-x-1">
+                          <span class="text-3xl font-black text-slate-900 dark:text-white leading-none">{{ workerProjectStats?.active }}</span>
+                          <span class="text-xs font-black text-slate-400 mb-0.5">/{{ workerProjectStats?.totalProjects }}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
+               </div>
+
+               <!-- Productivity Pulse & Quick Matrix -->
+               <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8 h-full">
+                  
+                  <!-- Performance Radar / Signal card -->
+                  <div class="bg-slate-900 rounded-[3.5rem] p-10 relative overflow-hidden flex flex-col justify-between group">
+                    <div class="absolute top-0 right-0 p-10">
+                      <div class="flex space-x-1">
+                        @for (i of [1,2,3,4,5]; track i) {
+                          <div class="w-1.5 bg-emerald-500 rounded-full animate-pulse" [style.height.px]="10 + (i * 4)" [style.animationDelay.ms]="i * 150"></div>
+                        }
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 class="text-white/40 text-[10px] font-black uppercase tracking-[0.3em] mb-4">Operations Status</h3>
+                      <p class="text-2xl font-black text-white leading-tight">Your productivity signal is <span class="text-emerald-400">Optimal</span> today.</p>
+                    </div>
+
+                    <div class="flex items-center space-x-6 mt-10">
+                      <div class="flex -space-x-3">
+                        @for (i of [1,2,3]; track i) {
+                          <div class="w-10 h-10 rounded-xl bg-slate-800 border-2 border-slate-900 flex items-center justify-center text-xs">👤</div>
+                        }
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500 border-2 border-slate-900 flex items-center justify-center text-[10px] font-black text-white">+12</div>
+                      </div>
+                      <p class="text-xs font-medium text-slate-400">Team interaction frequency: <span class="text-white font-bold">High</span></p>
+                    </div>
+                  </div>
+
+                  <!-- Quick Action Tiles -->
+                  <div class="grid grid-cols-2 gap-6">
+                    <div routerLink="/worker/daily-log" class="bg-indigo-600 rounded-[2.5rem] p-8 flex flex-col justify-between hover:scale-[1.02] active:scale-95 transition-all cursor-pointer shadow-xl shadow-indigo-600/20 group">
+                      <svg class="w-8 h-8 text-white/50 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                      <p class="text-white font-black text-sm leading-tight">Log Today's<br>Progress</p>
+                    </div>
+                    <div routerLink="/worker/personal-hr" class="bg-white dark:bg-white/5 rounded-[2.5rem] p-8 flex flex-col justify-between border border-slate-200 dark:border-white/10 hover:border-indigo-500/50 transition-all cursor-pointer shadow-xl group">
+                      <svg class="w-8 h-8 text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                      <p class="text-slate-900 dark:text-white font-black text-sm leading-tight">Finance &<br>Vacation</p>
+                    </div>
+                  </div>
+               </div>
+            </div>
+
+            <!-- Urgent Task: Delayed Responsibility -->
+            @if (workerProjectStats?.causedDelayCount > 0) {
+              <div class="bg-rose-500/10 backdrop-blur-3xl rounded-[3.5rem] p-10 border border-rose-500/20 shadow-inner relative overflow-hidden group/warning animate-pulse-slow">
+                 <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-rose-500/10 rounded-full blur-[100px]"></div>
+                 
+                 <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 relative z-10">
+                    <div class="flex items-center space-x-6">
+                       <div class="w-20 h-20 rounded-3xl bg-rose-500 flex items-center justify-center text-white shadow-2xl shadow-rose-500/40">
+                          <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                       </div>
+                       <div>
+                          <h3 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight uppercase leading-none mb-2">Urgent Intervention Required</h3>
+                          <p class="text-rose-600 dark:text-rose-500 font-bold text-sm tracking-tight">{{ 'dashboard.intervention_desc' | translate }}</p>
+                       </div>
+                    </div>
+                    <div class="flex flex-wrap gap-4">
+                       @for (item of workerProjectStats?.projects; track item.project.id) {
+                         @if (item.causedDelay) {
+                           <div class="px-6 py-4 rounded-[1.5rem] bg-white dark:bg-slate-900 shadow-xl border border-rose-500/20 flex items-center space-x-3">
+                             <div class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></div>
+                             <span class="text-sm font-black text-slate-800 dark:text-white">{{ item.project.name }}</span>
+                           </div>
+                         }
+                       }
+                    </div>
+                 </div>
+              </div>
+            }
+
+            <!-- Enhanced Projects Portfolio -->
+            <div class="space-y-6">
+              <div class="flex items-end justify-between px-6">
+                <div>
+                  <h3 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">Strategic Portfolio</h3>
+                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Managed Enterprise Assets</p>
+                </div>
+                <div class="flex space-x-2">
+                   <div class="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 flex items-center justify-center text-slate-400 shadow-sm cursor-pointer hover:text-indigo-500 transition-colors">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg>
+                   </div>
                 </div>
               </div>
 
-              <!-- Main Stats Grid -->
-              <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
-                 <!-- Delayed Responsibility Warning -->
-                 @if (workerProjectStats?.causedDelayCount > 0) {
-                   <div class="md:col-span-2 bg-gradient-to-r from-rose-500 to-orange-600 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-rose-500/30">
-                      <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
-                      <div class="relative flex items-center justify-between">
-                        <div>
-                          <div class="flex items-center space-x-3 mb-2">
-                             <span class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-md">⚠️</span>
-                             <span class="text-xs font-black uppercase tracking-widest opacity-90">{{ 'dashboard.caused_delays' | translate }}</span>
-                          </div>
-                          <h3 class="text-3xl font-black mb-1">{{ workerProjectStats?.causedDelayCount }} Projects Impacted</h3>
-                          <p class="text-sm font-medium opacity-80 max-w-md">Attention required: Some projects are delayed due to tasks assigned to you. Please review standard operating procedures.</p>
-                        </div>
-                        <div class="hidden md:block">
-                           <button class="px-6 py-3 rounded-2xl bg-white text-rose-600 text-sm font-black uppercase tracking-wide hover:bg-rose-50 transition-colors shadow-lg">
-                             View Details
-                           </button>
-                        </div>
-                      </div>
-                   </div>
-                 }
-
-                 <!-- Active Projects Card -->
-                 <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 relative group hover:border-emerald-500/30 transition-all">
-                    <div class="flex items-center justify-between mb-8">
-                      <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                      </div>
-                      <span class="text-4xl font-black text-slate-900 dark:text-white">{{ workerProjectStats?.active }}</span>
-                    </div>
-                    <p class="text-sm font-bold text-slate-500 uppercase tracking-wide">Active Projects</p>
-                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-4 overflow-hidden">
-                       <div class="bg-emerald-500 h-full rounded-full transition-all duration-1000" [style.width.%]="workerProjectStats?.totalProjects ? (workerProjectStats?.active / workerProjectStats?.totalProjects) * 100 : 0"></div>
-                    </div>
-                 </div>
-
-                 <!-- Completed Projects Card -->
-                 <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 relative group hover:border-blue-500/30 transition-all">
-                    <div class="flex items-center justify-between mb-8">
-                      <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                      </div>
-                      <span class="text-4xl font-black text-slate-900 dark:text-white">{{ workerProjectStats?.completed }}</span>
-                    </div>
-                    <p class="text-sm font-bold text-slate-500 uppercase tracking-wide">Completed Projects</p>
-                     <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-4 overflow-hidden">
-                       <div class="bg-blue-500 h-full rounded-full" [style.width.%]="(workerProjectStats?.completed / (workerProjectStats?.totalProjects || 1)) * 100"></div>
-                    </div>
-                 </div>
-              </div>
-            </div>
-
-            <!-- Enhanced Projects List -->
-            <div class="bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden p-8">
-              <div class="flex items-center justify-between mb-8">
-                 <div>
-                    <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight mb-1">{{ 'dashboard.worker_projects_status' | translate }}</h2>
-                    <p class="text-sm text-slate-500 font-medium">Detailed status overview of all your assigned projects</p>
-                 </div>
-                 <div class="flex space-x-2">
-                    <span class="px-3 py-1 bg-slate-100 dark:bg-white/5 rounded-lg text-xs font-bold text-slate-500 uppercase tracking-widest">Filter: All</span>
-                 </div>
-              </div>
-              
-              <div class="grid grid-cols-1 gap-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @for (item of workerProjectStats?.projects; track item.project.id) {
-                  <div class="group flex flex-col md:flex-row md:items-center justify-between p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-950/30 border border-slate-100 dark:border-white/5 hover:border-indigo-500/30 hover:shadow-lg hover:shadow-indigo-500/5 transition-all duration-300">
-                    <div class="flex items-center space-x-6">
-                      <div class="relative">
-                         <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-black text-white shadow-lg transform group-hover:scale-110 transition-transform duration-300"
-                              [ngClass]="{
-                                'bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-emerald-500/30': item.project.status === 'Active',
-                                'bg-gradient-to-br from-blue-400 to-blue-600 shadow-blue-500/30': item.project.status === 'Completed',
-                                'bg-gradient-to-br from-rose-400 to-rose-600 shadow-rose-500/30': item.project.status === 'Delayed'
-                              }">
-                           {{ item.project.name.charAt(0) }}
-                         </div>
-                         @if(item.causedDelay) {
-                           <div class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center text-white text-[10px] animate-bounce">!</div>
-                         }
-                      </div>
-                      
-                      <div>
-                        <h4 class="text-lg font-black text-slate-900 dark:text-white mb-1 group-hover:text-indigo-500 transition-colors">{{ item.project.name }}</h4>
-                        <div class="flex items-center space-x-3">
-                           <span class="text-xs text-slate-500 font-bold uppercase tracking-wide bg-white dark:bg-white/10 px-2 py-0.5 rounded-md border border-slate-200 dark:border-white/5">{{ item.role }}</span>
-                           <span class="text-xs text-slate-400 font-medium flex items-center">
-                             <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                             {{ item.project.location?.address || 'Site Location' }}
-                           </span>
-                        </div>
-                      </div>
+                  <div class="bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-xl hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)] transition-all duration-500 group/tile overflow-hidden">
+                    <!-- Tile Header -->
+                    <div class="p-8 pb-0 flex items-start justify-between">
+                       <div class="relative">
+                          <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-black text-white transition-transform duration-500 group-hover/tile:scale-110 group-hover/tile:-rotate-3"
+                               [ngClass]="{
+                                 'bg-gradient-to-br from-indigo-500 to-indigo-700': item.project.status === 'Active',
+                                 'bg-gradient-to-br from-emerald-500 to-emerald-700': item.project.status === 'Completed',
+                                 'bg-gradient-to-br from-rose-500 to-rose-700': item.project.status === 'Delayed'
+                               }">
+                            {{ item.project.name.charAt(0) }}
+                          </div>
+                          @if(item.causedDelay) {
+                            <div class="absolute -top-2 -right-2 w-7 h-7 bg-rose-500 rounded-full border-4 border-white dark:border-slate-900 flex items-center justify-center text-white text-[10px] font-black shadow-lg animate-bounce">!</div>
+                          }
+                       </div>
+                       <div class="text-right">
+                          <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Status</span>
+                          <span [class]="item.project.status === 'Delayed' ? 'text-rose-500' : 'text-emerald-500'" class="text-xs font-black uppercase tracking-tight">{{ item.project.status }}</span>
+                       </div>
                     </div>
 
-                    <div class="mt-4 md:mt-0 flex items-center space-x-6 pl-22 md:pl-0">
-                      <!-- Progress Bar -->
-                      <div class="flex flex-col w-32">
-                         <div class="flex justify-between mb-1">
-                            <span class="text-[10px] uppercase font-bold text-slate-400">Progress</span>
-                            <span class="text-[10px] font-black text-slate-700 dark:text-slate-300">{{ item.project.progress }}%</span>
-                         </div>
-                         <div class="w-full h-2 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden">
-                            <div class="h-full bg-indigo-500 rounded-full" [style.width.%]="item.project.progress"></div>
-                         </div>
-                      </div>
+                    <!-- Tile Body -->
+                    <div class="p-8 space-y-6">
+                       <div>
+                          <h4 class="text-xl font-black text-slate-900 dark:text-white leading-tight mb-1 truncate">{{ item.project.name }}</h4>
+                          <div class="flex items-center space-x-2">
+                             <span class="px-2 py-0.5 rounded-lg bg-indigo-500/10 text-indigo-500 text-[9px] font-black uppercase tracking-widest">{{ item.role }}</span>
+                             <span class="text-[10px] font-medium text-slate-400 flex items-center">
+                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                                {{ item.project.location?.address?.split(',')[0] }}
+                             </span>
+                          </div>
+                       </div>
 
-                      <div class="flex flex-col items-end min-w-[120px]">
-                        @if (item.causedDelay) {
-                          <span class="inline-flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-rose-50 text-rose-600 border border-rose-100 dark:bg-rose-500/10 dark:border-rose-500/20 mb-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
-                            <span class="text-[10px] font-black uppercase tracking-widest">Delay Cause</span>
-                          </span>
-                        } @else {
-                           <span class="inline-flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-500 border border-slate-200 dark:bg-white/5 dark:border-white/5 dark:text-slate-400 mb-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                            <span class="text-[10px] font-black uppercase tracking-widest">On Track</span>
-                          </span>
-                        }
-                        
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                          Due: {{ item.project.endDate | date:'mediumDate' }}
-                        </span>
-                      </div>
-                      
-                      <button class="w-10 h-10 rounded-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-400 hover:text-indigo-500 hover:border-indigo-500 transition-all">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                      </button>
+                       <div class="space-y-2">
+                          <div class="flex justify-between items-end">
+                             <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Global Completion</p>
+                             <p class="text-lg font-black text-slate-900 dark:text-white leading-none tracking-tighter">{{ item.project.progress }}%</p>
+                          </div>
+                          <div class="h-2.5 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                             <div class="h-full bg-gradient-to-r from-indigo-500 to-cyan-400 rounded-full transition-all duration-1000 group-hover/tile:scale-x-105 origin-left" [style.width.%]="item.project.progress"></div>
+                          </div>
+                       </div>
+                    </div>
+
+                    <!-- Tile Footer -->
+                    <div class="px-8 py-5 bg-slate-50 dark:bg-white/[0.02] border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
+                       <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Est. Completion: <span class="text-slate-900 dark:text-slate-200">{{ item.project.endDate | date:'MMM yyyy' }}</span></p>
+                       <button [routerLink]="['/admin/projects', item.project.id]" class="w-10 h-10 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-400 hover:text-indigo-500 hover:border-indigo-500 hover:scale-110 transition-all">
+                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                       </button>
                     </div>
                   </div>
                 }
@@ -686,6 +710,14 @@ import { AuthService } from '../../../core/auth/auth.service';
     }
     .custom-scrollbar::-webkit-scrollbar { width: 5px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+    
+    @keyframes pulse-slow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(0.98); }
+    }
+    .animate-pulse-slow {
+      animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
   `]
 })
 export class DashboardComponent implements OnInit {
