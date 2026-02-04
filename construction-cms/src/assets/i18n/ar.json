@@ -47,7 +47,21 @@
     "progress": "التقدم",
     "cash_flow": "التدفق النقدي",
     "action": "الإجراء",
-    "view": "عرض"
+    "view": "عرض",
+    "worker_performance": "أداء العامل العام",
+    "realtime_efficiency": "تتبع الكفاءة في الوقت الفعلي",
+    "worker": "عامل",
+    "project": "مشروع",
+    "tasks": "مهام",
+    "efficiency": "كفاءة",
+    "team_performance": "نظرة عامة على أداء الفريق",
+    "assigned_projects": "المشاريع المسندة",
+    "involved_delayed": "مشارك في مشاريع متأخرة",
+    "caused_delays": "تسبب في تأخيرات",
+    "my_projects_status": "حالة مشاريعي",
+    "worker_projects_status": "حالة مشاريعي",
+    "delayed_responsibility": "تحليل مسؤولية التأخير",
+    "attendance": "الحضور"
   },
   "hr": {
     "title": "إدارة الموارد البشرية والمستخدمين",

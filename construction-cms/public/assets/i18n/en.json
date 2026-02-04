@@ -260,5 +260,17 @@
   "itemCategory": "Category",
   "noCatalogItems": "No items in catalog yet.",
   "companyGlobal": "Company Global",
-  "projectSpecific": "Project Specific"
+  "projectSpecific": "Project Specific",
+  "phaseHierarchy": "Master Project Hierarchy",
+  "manageDefaultPhases": "Define the global blueprint for all company projects",
+  "addPhase": "Create Phase Template",
+  "editPhase": "Modify Phase Draft",
+  "phaseName": "Phase Name",
+  "phaseDesc": "Description",
+  "subPhases": "Sub-phases",
+  "noPhases": "No default phases defined yet.",
+  "determineStructure": "Determine the default structure for all new projects",
+  "onePhase": "1 Phase",
+  "twoPhases": "2 Phases",
+  "multiPhases": "Multiple Phases"
 }

@@ -68,6 +68,12 @@ export const routes: Routes = [
                 data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
             },
             {
+                path: 'project-hierarchy',
+                loadComponent: () => import('./features/admin/project-hierarchy/project-hierarchy.component').then(m => m.ProjectHierarchyComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
                 path: 'access-control/permissions',
                 loadComponent: () => import('./features/admin/access-control/permissions/permissions.component').then(m => m.PermissionsComponent),
                 canActivate: [roleGuard],

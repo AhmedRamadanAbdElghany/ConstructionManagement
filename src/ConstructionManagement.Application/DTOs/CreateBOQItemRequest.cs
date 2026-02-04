@@ -1,4 +1,5 @@
 public record CreateBOQItemRequest(
+    int? PhaseId,
     string? ItemCode,
     string ItemName,
     string? Description,

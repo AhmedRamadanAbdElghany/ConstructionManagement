@@ -1,0 +1,79 @@
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Phase } from '../../../core/services/phase.service';
+
+@Component({
+   selector: 'app-phase-node',
+   standalone: true,
+   imports: [CommonModule],
+   template: `
+    <div class="ml-4 border-l-2 border-slate-100 dark:border-white/5 pl-8 py-2">
+      <div class="group bg-white dark:bg-slate-900 rounded-[2rem] p-6 border border-slate-200 dark:border-white/5 shadow-sm hover:shadow-md transition-all flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <div class="w-10 h-10 rounded-xl bg-slate-50 dark:bg-white/5 flex items-center justify-center text-slate-400">
+             @if (node.isLeaf) {
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+             } @else {
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+             }
+          </div>
+          <div>
+            <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tight text-sm">{{ node.name }}</h4>
+            <div class="flex flex-wrap gap-2 mt-1">
+               @for (item of node.items; track item.id) {
+                  <span class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 text-[8px] font-black uppercase tracking-widest border border-emerald-500/20">
+                     {{ item.name }}
+                  </span>
+               } @empty {
+                  <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">No items attached</p>
+               }
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2">
+           <button (click)="onAddChild.emit(node)" class="p-2 rounded-xl bg-cyan-500/10 text-cyan-600 hover:bg-cyan-500 hover:text-white transition-all shadow-sm" title="Add Sub-Phase">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+           </button>
+           
+           <button (click)="onAddItems.emit(node)" class="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white text-[9px] font-black uppercase tracking-widest transition-all relative" title="Manage Items">
+              + Items
+              @if (node.items?.length) {
+                 <span class="absolute -top-2 -right-2 w-5 h-5 bg-emerald-500 text-white rounded-full flex items-center justify-center text-[8px] border-2 border-white dark:border-slate-900 ring-2 ring-emerald-500/20">
+                    {{ node.items?.length }}
+                 </span>
+              }
+           </button>
+
+           <button (click)="onEdit.emit(node)" class="p-2 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+           </button>
+           <button (click)="onDelete.emit(node.id)" class="p-2 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-400 hover:text-rose-500 transition-all">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+           </button>
+        </div>
+      </div>
+
+      @if (node.children?.length) {
+        <div class="mt-2">
+          @for (child of node.children; track child.id) {
+            <app-phase-node 
+              [node]="child" 
+              (onAddChild)="onAddChild.emit($event)"
+              (onEdit)="onEdit.emit($event)"
+              (onDelete)="onDelete.emit($event)"
+              (onAddItems)="onAddItems.emit($event)">
+            </app-phase-node>
+          }
+        </div>
+      }
+    </div>
+  `
+})
+export class PhaseNodeComponent {
+   @Input() node!: Phase;
+   @Output() onAddChild = new EventEmitter<Phase>();
+   @Output() onEdit = new EventEmitter<Phase>();
+   @Output() onDelete = new EventEmitter<number>();
+   @Output() onAddItems = new EventEmitter<Phase>();
+}

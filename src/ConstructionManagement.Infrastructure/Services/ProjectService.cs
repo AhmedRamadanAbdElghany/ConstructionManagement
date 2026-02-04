@@ -13,6 +13,7 @@ public class ProjectService : IProjectService
     private readonly IRepository<UserRole> _userRoleRepository;
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<ProjectSettings> _settingsRepository;
+    private readonly IPhaseService _phaseService;
     private readonly IUnitOfWork _unitOfWork;
 
     public ProjectService(
@@ -20,12 +21,14 @@ public class ProjectService : IProjectService
         IRepository<UserRole> userRoleRepository,
         IRepository<User> userRepository,
         IRepository<ProjectSettings> settingsRepository,
+        IPhaseService phaseService,
         IUnitOfWork unitOfWork)
     {
         _projectRepository = projectRepository;
         _userRoleRepository = userRoleRepository;
         _userRepository = userRepository;
         _settingsRepository = settingsRepository;
+        _phaseService = phaseService;
         _unitOfWork = unitOfWork;
     }
 
@@ -98,6 +101,12 @@ public class ProjectService : IProjectService
 
             await _settingsRepository.AddAsync(settings);
             await _unitOfWork.SaveChangesAsync();
+
+            // Initialize Phases from Company Defaults
+            if (project.CompanyId.HasValue)
+            {
+                await _phaseService.InitializeProjectPhasesAsync(project.Id, project.CompanyId.Value);
+            }
 
             await _unitOfWork.CommitAsync();
             return project.Id;

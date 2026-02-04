@@ -55,6 +55,8 @@ export interface BOQItem {
   totalQuantity: number;
   executedQuantity: number;
   rate: number;
+  startDate?: string;
+  endDate?: string;
 }
 
 export interface DailyLog {

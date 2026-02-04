@@ -9,20 +9,54 @@ import { RolesService } from '../../../core/services/roles.service';
 import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '../../../shared/interfaces';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { AuthService } from '../../../core/auth/auth.service';
+import { PhaseService, Phase } from '../../../core/services/phase.service';
+import { RolesComponent } from '../access-control/roles/roles.component';
+import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarchy.component';
 
 @Component({
    selector: 'app-company-settings',
    standalone: true,
-   imports: [CommonModule, FormsModule, TranslateModule],
+   imports: [CommonModule, FormsModule, TranslateModule, RolesComponent, ProjectHierarchyComponent],
    template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-10">
+        <!-- Page Title & Tabs -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
-            <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ 'companyTitle' | translate }}</h1>
-            <p class="text-slate-500 dark:text-slate-400 font-medium tracking-tight">{{ 'companySubtitle' | translate }}</p>
+            <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">Configurations</h1>
+            <div class="flex p-1 bg-slate-200 dark:bg-slate-800 rounded-xl w-fit">
+              <button (click)="activeTab = 'settings'" 
+                      [class.bg-white]="activeTab === 'settings'" 
+                      [class.shadow-sm]="activeTab === 'settings'"
+                      [class.text-slate-900]="activeTab === 'settings'"
+                      [class.dark:bg-slate-700]="activeTab === 'settings'"
+                      [class.dark:text-white]="activeTab === 'settings'"
+                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
+                  Settings
+              </button>
+              <button (click)="activeTab = 'roles'" 
+                      [class.bg-white]="activeTab === 'roles'" 
+                      [class.shadow-sm]="activeTab === 'roles'"
+                      [class.text-slate-900]="activeTab === 'roles'"
+                      [class.dark:bg-slate-700]="activeTab === 'roles'"
+                      [class.dark:text-white]="activeTab === 'roles'"
+                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
+                  Roles & Permissions
+              </button>
+              <button (click)="activeTab = 'hierarchy'" 
+                      [class.bg-white]="activeTab === 'hierarchy'" 
+                      [class.shadow-sm]="activeTab === 'hierarchy'"
+                      [class.text-slate-900]="activeTab === 'hierarchy'"
+                      [class.dark:bg-slate-700]="activeTab === 'hierarchy'"
+                      [class.dark:text-white]="activeTab === 'hierarchy'"
+                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
+                  Project Hierarchy
+              </button>
+            </div>
           </div>
+
+          @if (activeTab === 'settings') {
           <button 
             (click)="saveSettings()"
             [disabled]="loading || !isDirty"
@@ -35,7 +69,10 @@ import { AuthService } from '../../../core/auth/auth.service';
             }
             {{ 'common.save' | translate }}
           </button>
+          }
         </div>
+
+        @if (activeTab === 'settings') {
 
         @if (settings) {
           <div class="space-y-12">
@@ -457,6 +494,15 @@ import { AuthService } from '../../../core/auth/auth.service';
             <div class="w-48 h-4 bg-slate-200 dark:bg-slate-800 rounded-full mb-2"></div>
           </div>
         }
+        }
+
+        @if (activeTab === 'roles') {
+           <app-roles></app-roles>
+        }
+
+        @if (activeTab === 'hierarchy') {
+           <app-project-hierarchy></app-project-hierarchy>
+        }
       </div>
 
       <!-- Package Modal (Shared Logic) -->
@@ -681,6 +727,7 @@ import { AuthService } from '../../../core/auth/auth.service';
   `]
 })
 export class CompanySettingsComponent implements OnInit {
+   activeTab: 'settings' | 'roles' | 'hierarchy' = 'settings';
    settings?: CompanySettings;
    private originalSettings?: string;
    loading = false;
@@ -732,6 +779,7 @@ export class CompanySettingsComponent implements OnInit {
       private packageService: CompanyPackagesService,
       private rolesService: RolesService,
       private catalogService: CatalogService,
+      private phaseService: PhaseService,
       private authService: AuthService
    ) { }
 

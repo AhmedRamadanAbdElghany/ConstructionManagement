@@ -56,6 +56,7 @@ public class BOQItemService : IBOQItemService
                 ItemName = request.ItemName,
                 Description = request.Description,
                 Unit = request.Unit,
+                PhaseId = request.PhaseId,
                 AccountingType = project.AccountingSystem,
                 Status = "جديد",
                 StartDate = request.StartDate,

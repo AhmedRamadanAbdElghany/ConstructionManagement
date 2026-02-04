@@ -22,6 +22,7 @@ public class ApplicationDbContext : DbContext
 
     // ── DbSets ──────────────────────────────────────────────────────────────────
     public DbSet<Company> Companies => Set<Company>();
+    public DbSet<CompanyDefaultPhase> CompanyDefaultPhases => Set<CompanyDefaultPhase>();
     public DbSet<User> Users => Set<User>();
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<UserRole> UserRoles => Set<UserRole>();
@@ -54,6 +55,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<BOQPackage> BOQPackages => Set<BOQPackage>();
     public DbSet<CompanyPackage> CompanyPackages => Set<CompanyPackage>(); // Renamed from ClientPackage
     public DbSet<InvoiceSequence> InvoiceSequences => Set<InvoiceSequence>();
+    public DbSet<Phase> Phases => Set<Phase>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -99,7 +101,32 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<BOQExecutedDelta>().HasIndex(d => d.BOQItemId);
         modelBuilder.Entity<BOQExecutedDelta>().HasIndex(d => d.ProcessedAt);
 
-        // 3. InvoiceSequence & Constraints
+        // 3. Hierarchical Phases
+        modelBuilder.Entity<Phase>()
+            .HasOne(p => p.Project)
+            .WithMany(pr => pr.Phases)
+            .HasForeignKey(p => p.ProjectId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Phase>()
+            .HasOne(p => p.ParentPhase)
+            .WithMany(p => p.ChildPhases)
+            .HasForeignKey(p => p.ParentPhaseId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<CompanyDefaultPhase>()
+            .HasOne(p => p.Parent)
+            .WithMany(p => p.Children)
+            .HasForeignKey(p => p.ParentId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<BOQItem>()
+            .HasOne(b => b.Phase)
+            .WithMany(p => p.Items)
+            .HasForeignKey(b => b.PhaseId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        // 4. InvoiceSequence & Constraints
         modelBuilder.Entity<InvoiceSequence>().ToTable("InvoiceSequences").HasKey(s => s.YearPart);
         modelBuilder.Entity<InvoiceSequence>().Property(s => s.NextNumber).HasDefaultValue(1);
         modelBuilder.Entity<ItemInvoice>().HasIndex(ii => ii.InvoiceNumber).IsUnique().HasDatabaseName("IX_ItemInvoice_InvoiceNumber_Unique");

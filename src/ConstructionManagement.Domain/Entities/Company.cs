@@ -22,6 +22,7 @@ public class Company : BaseEntity
     // Relations
     public virtual ICollection<User> Users { get; set; } = new List<User>();
     public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
+    public virtual ICollection<CompanyDefaultPhase> DefaultPhases { get; set; } = new List<CompanyDefaultPhase>();
     
     // 1:1 settings
     public virtual CompanySettings? Settings { get; set; }

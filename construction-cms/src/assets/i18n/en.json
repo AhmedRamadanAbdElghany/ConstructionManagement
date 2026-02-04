@@ -58,6 +58,7 @@
     "involved_delayed": "Involved in Delayed",
     "caused_delays": "Caused Delays",
     "my_projects_status": "My Projects Status",
+    "worker_projects_status": "My Projects Status",
     "delayed_responsibility": "Delay Responsibility Breakdown",
     "attendance": "Attendance",
     "team_performance": "Team Performance Overview"

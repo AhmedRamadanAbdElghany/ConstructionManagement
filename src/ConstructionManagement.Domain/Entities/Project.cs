@@ -67,9 +67,16 @@ public class Project : BaseEntity, ICompanyEntity
     public ConstructionManagement.Domain.Enums.CalculationMethod AccountingSystem { get; set; } = ConstructionManagement.Domain.Enums.CalculationMethod.Measured;
     public decimal? TotalContractValue { get; set; }
 
-    // -- Navigation Properties -------------------------------------------------
+    // Navigation Properties -------------------------------------------------
+
+    /// <summary>
+    /// Hierarchical phases of the project.
+    /// </summary>
+    public virtual ICollection<Phase> Phases { get; set; }
+        = new List<Phase>();
 
     // BOQ (Bill of Quantities) items
+    // NOTE: In the new hierarchical structure, items should be accessed via Phases.
     public virtual ICollection<BOQItem> BOQItems { get; set; }
         = new List<BOQItem>();
 

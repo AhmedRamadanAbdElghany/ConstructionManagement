@@ -412,7 +412,7 @@ import { AuthService } from '../../../core/auth/auth.service';
             <div class="bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden p-8">
               <div class="flex items-center justify-between mb-8">
                  <div>
-                    <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight mb-1">{{ 'dashboard.my_projects_status' | translate }}</h2>
+                    <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight mb-1">{{ 'dashboard.worker_projects_status' | translate }}</h2>
                     <p class="text-sm text-slate-500 font-medium">Detailed status overview of all your assigned projects</p>
                  </div>
                  <div class="flex space-x-2">
@@ -774,6 +774,7 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('Dashboard Initialized', this.currentUser);
     if (this.isSuperAdmin) {
       this.loadSuperAdminView();
     } else if (this.isWorker) {

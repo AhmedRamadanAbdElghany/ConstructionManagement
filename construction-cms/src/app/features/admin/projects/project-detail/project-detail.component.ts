@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SettingsService } from '../../../../core/services/settings.service';
+import { PhaseService, Phase } from '../../../../core/services/phase.service';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -187,6 +188,21 @@ import { map } from 'rxjs/operators';
               [class.dark:border-white/5]="activeTab !== 'bills'"
               class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
               Bills
+            </button>
+            <button 
+              (click)="activeTab = 'phases'"
+              [class.bg-slate-900]="activeTab === 'phases'"
+              [class.dark:bg-white]="activeTab === 'phases'"
+              [class.text-white]="activeTab === 'phases'"
+              [class.dark:text-slate-900]="activeTab === 'phases'"
+              [class.bg-white]="activeTab !== 'phases'"
+              [class.dark:bg-slate-900]="activeTab !== 'phases'"
+              [class.text-slate-500]="activeTab !== 'phases'"
+              [class.border-transparent]="activeTab === 'phases'"
+              [class.border-slate-200]="activeTab !== 'phases'"
+              [class.dark:border-white/5]="activeTab !== 'phases'"
+              class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
+              Phases Hierarchy
             </button>
             <button 
               (click)="activeTab = 'payments'"
@@ -635,6 +651,8 @@ import { map } from 'rxjs/operators';
                       <th class="px-8 py-5">Description</th>
                       <th class="px-8 py-5">Unit</th>
                       <th class="px-8 py-5">Total Qty</th>
+                      <th class="px-8 py-5">Start</th>
+                      <th class="px-8 py-5">End</th>
                       <th class="px-8 py-5">Executed</th>
                       <th class="px-8 py-5">Progress</th>
                       <th class="px-8 py-5">Rate</th>
@@ -648,6 +666,8 @@ import { map } from 'rxjs/operators';
                         <td class="px-8 py-6 font-bold text-sm">{{ item.description }}</td>
                         <td class="px-8 py-6 text-xs text-slate-400 font-bold uppercase tracking-widest">{{ item.unit }}</td>
                         <td class="px-8 py-6 text-sm font-black">{{ item.totalQuantity }}</td>
+                        <td class="px-8 py-6 text-xs font-bold text-slate-500">{{ item.startDate | date:'mediumDate' }}</td>
+                        <td class="px-8 py-6 text-xs font-bold text-slate-500">{{ item.endDate | date:'mediumDate' }}</td>
                         <td class="px-8 py-6 text-sm font-black text-cyan-600 dark:text-cyan-400">{{ item.executedQuantity }}</td>
                         <td class="px-8 py-6">
                           <div class="flex items-center space-x-3">
@@ -682,6 +702,58 @@ import { map } from 'rxjs/operators';
                     }
                   </tbody>
                 </table>
+              </div>
+            </div>
+          }
+
+          <!-- Phases Tab -->
+          @if (activeTab === 'phases') {
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all animate-in fade-in duration-500">
+              <div class="px-8 py-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-slate-50/30 dark:bg-slate-950/20">
+                <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Project Phase Hierarchy</h3>
+                <button (click)="openPhaseModal()" class="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl">
+                  Add Phase
+                </button>
+              </div>
+              <div class="p-8">
+                 <div class="space-y-4">
+                    @for (phase of projectPhases; track phase.id) {
+                    <div class="p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 flex items-center justify-between group/phase">
+                       <div class="flex items-center space-x-4">
+                          <div class="w-10 h-10 rounded-full bg-white dark:bg-slate-900 shadow-sm flex items-center justify-center text-xs font-black text-slate-400">
+                             {{ phase.order + 1 }}
+                          </div>
+                          <div>
+                             <h4 class="font-bold text-slate-900 dark:text-white">{{ phase.name }}</h4>
+                             <p class="text-[10px] text-slate-500 italic">{{ phase.description || 'No description' }}</p>
+                             @if (phase.startDate || phase.endDate) {
+                                <div class="flex items-center space-x-2 mt-1">
+                                   <span class="px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-900/20 text-indigo-500 text-[9px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-800">
+                                      {{ phase.startDate | date:'mediumDate' }}
+                                   </span>
+                                   <span class="text-slate-300 font-black text-[9px]">&rarr;</span>
+                                   <span class="px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-900/20 text-indigo-500 text-[9px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-800">
+                                      {{ phase.endDate | date:'mediumDate' }}
+                                   </span>
+                                </div>
+                             }
+                           </div>
+                       </div>
+                       <div class="flex space-x-2 opacity-0 group-hover/phase:opacity-100 transition-opacity">
+                          <button (click)="openPhaseModal(phase)" class="p-2 rounded-xl text-slate-400 hover:text-cyan-500 transition-colors">
+                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                          </button>
+                          <button (click)="deletePhase(phase.id)" class="p-2 rounded-xl text-slate-400 hover:text-red-500 transition-colors">
+                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                          </button>
+                       </div>
+                    </div>
+                    } @empty {
+                       <div class="py-12 text-center border-2 border-dashed border-slate-100 dark:border-white/5 rounded-[2.5rem]">
+                          <p class="text-slate-400 font-bold text-sm uppercase tracking-widest">No project phases defined yet.</p>
+                       </div>
+                    }
+                 </div>
               </div>
             </div>
           }
@@ -1299,6 +1371,18 @@ import { map } from 'rxjs/operators';
                         <input type="number" [(ngModel)]="boqForm.rate" 
                                class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none">
                      </div>
+                     <div class="grid grid-cols-2 gap-4">
+                        <div class="relative group">
+                           <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Start Date</label>
+                           <input type="date" [(ngModel)]="boqForm.startDate" 
+                                  class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none">
+                        </div>
+                        <div class="relative group">
+                           <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">End Date</label>
+                           <input type="date" [(ngModel)]="boqForm.endDate" 
+                                  class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none">
+                        </div>
+                     </div>
                      @if (boqForm.totalQuantity > 0 && boqForm.rate > 0) {
                         <div class="p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
                            <p class="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-1">Estimated Total Value</p>
@@ -1518,6 +1602,42 @@ import { map } from 'rxjs/operators';
                </div>
             </div>
           }
+
+          <!-- Phase Modal -->
+          @if (showPhaseModal) {
+            <div class="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xl animate-in fade-in duration-300">
+               <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-[3rem] shadow-2xl flex flex-col relative overflow-hidden animate-in scale-in-95 duration-500 border border-white/10">
+                  <div class="p-10 pb-6 flex items-center justify-between bg-slate-50/30 dark:bg-slate-950/20 border-b border-slate-100 dark:border-white/5">
+                     <div>
+                        <h3 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                           {{ selectedPhase ? 'Edit Phase' : 'Add Phase' }}
+                        </h3>
+                     </div>
+                     <button (click)="showPhaseModal = false" class="p-4 rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition-all shadow-sm">
+                        <svg class="w-5 h-5 text-slate-400 font-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                     </button>
+                  </div>
+
+                  <div class="p-10 pt-6 space-y-6">
+                     <div class="relative group">
+                        <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Phase Name</label>
+                        <input type="text" [(ngModel)]="phaseForm.name" 
+                               class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none focus:border-cyan-500">
+                     </div>
+                     <div class="relative group">
+                        <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Description</label>
+                        <textarea [(ngModel)]="phaseForm.description" rows="3"
+                                  class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none focus:border-cyan-500"></textarea>
+                     </div>
+                  </div>
+
+                  <div class="p-10 pt-4 flex space-x-4 shrink-0 bg-slate-50/30 dark:bg-slate-950/20">
+                     <button (click)="showPhaseModal = false" class="flex-1 py-5 rounded-[1.5rem] bg-white dark:bg-slate-800 text-slate-500 font-black text-[11px] uppercase tracking-widest border border-slate-200 dark:border-white/5">Cancel</button>
+                     <button (click)="savePhase()" [disabled]="!phaseForm.name" class="flex-[2] py-5 rounded-[1.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-[11px] uppercase tracking-widest shadow-xl shadow-slate-900/20 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50">Save Phase</button>
+                  </div>
+               </div>
+            </div>
+          }
         </div>
       }
 
@@ -1526,7 +1646,7 @@ import { map } from 'rxjs/operators';
 })
 export class ProjectDetailComponent implements OnInit {
    project: Project | undefined;
-   activeTab: 'timeline' | 'team' | 'history' | 'boq' | 'finances' | 'bills' | 'payments' = 'timeline';
+   activeTab: 'timeline' | 'team' | 'history' | 'boq' | 'finances' | 'bills' | 'payments' | 'phases' = 'timeline';
    teamMembers: User[] = [];
    companyUsers: User[] = [];
    dailyLogs: DailyLog[] = [];
@@ -1562,7 +1682,9 @@ export class ProjectDetailComponent implements OnInit {
       description: '',
       unit: '',
       totalQuantity: 0,
-      rate: 0
+      rate: 0,
+      startDate: null as string | null,
+      endDate: null as string | null
    };
 
    billForm = {
@@ -1611,7 +1733,8 @@ export class ProjectDetailComponent implements OnInit {
       private route: ActivatedRoute,
       private mockDataService: MockDataService,
       private authService: AuthService,
-      private settingsService: SettingsService
+      private settingsService: SettingsService,
+      private phaseService: PhaseService
    ) { }
 
    ngOnInit() {
@@ -1646,6 +1769,8 @@ export class ProjectDetailComponent implements OnInit {
          this.settingsService.getProjectSettings(projectId).subscribe(settings => {
             this.projectSettings = settings;
          });
+
+         this.loadProjectPhases(projectId);
 
          this.mockDataService.getRoles().subscribe(roles => {
             this.availableRoles = roles;
@@ -1861,8 +1986,10 @@ export class ProjectDetailComponent implements OnInit {
          unit: this.boqForm.unit,
          totalQuantity: this.boqForm.totalQuantity,
          executedQuantity: 0,
-         rate: this.boqForm.rate
-      };
+         rate: this.boqForm.rate,
+         startDate: this.boqForm.startDate,
+         endDate: this.boqForm.endDate
+      } as any;
       this.boqItems.push(newItem);
       this.showAddBoqModal = false;
       this.resetBoqForm();
@@ -1873,8 +2000,10 @@ export class ProjectDetailComponent implements OnInit {
          description: '',
          unit: '',
          totalQuantity: 0,
-         rate: 0
-      };
+         rate: 0,
+         startDate: null,
+         endDate: null
+      } as any;
    }
 
    deleteBoqItem(id: number) {
@@ -2071,4 +2200,44 @@ export class ProjectDetailComponent implements OnInit {
       this.saveProjectSettings();
    }
 
+   // --- Phases Logic ---
+   projectPhases: Phase[] = [];
+   showPhaseModal = false;
+   selectedPhase?: Phase;
+   phaseForm: any = { name: '', description: '', order: 0 };
+
+   loadProjectPhases(projectId: number) {
+      this.phaseService.getProjectPhases(projectId).subscribe(phases => this.projectPhases = phases);
+   }
+
+   openPhaseModal(phase?: Phase) {
+      this.selectedPhase = phase;
+      if (phase) {
+         this.phaseForm = { name: phase.name, description: phase.description, order: phase.order };
+      } else {
+         this.phaseForm = { name: '', description: '', order: this.projectPhases.length };
+      }
+      this.showPhaseModal = true;
+   }
+
+   savePhase() {
+      if (!this.project) return;
+      if (this.selectedPhase) {
+         this.phaseService.updatePhase(this.selectedPhase.id, this.phaseForm).subscribe(() => {
+            if (this.project) this.loadProjectPhases(this.project.id);
+            this.showPhaseModal = false;
+         });
+      } else {
+         this.phaseService.createProjectPhase(this.project.id, this.phaseForm).subscribe(() => {
+            if (this.project) this.loadProjectPhases(this.project.id);
+            this.showPhaseModal = false;
+         });
+      }
+   }
+
+   deletePhase(id: number) {
+      if (confirm('Delete this phase?')) {
+         if (this.project) this.phaseService.deletePhase(id).subscribe(() => this.loadProjectPhases(this.project!.id));
+      }
+   }
 }

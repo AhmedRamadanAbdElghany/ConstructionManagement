@@ -57,6 +57,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IProjectTeamService, ProjectTeamService>();
 builder.Services.AddScoped<IBOQItemService, BOQItemService>();
+builder.Services.AddScoped<IPhaseService, PhaseService>();
 builder.Services.AddScoped<IDailyLogService, DailyLogService>();
 builder.Services.AddScoped<ISiteMediaService, SiteMediaService>();
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();

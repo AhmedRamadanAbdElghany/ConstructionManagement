@@ -89,6 +89,32 @@ button {
   transition-duration: 200ms;
 }
 
+/* Global Form Elements Fixes */
+input,
+select,
+textarea {
+  color: #1e293b;
+  /* slate-800 default for light */
+}
+
+.dark input,
+.dark select,
+.dark textarea {
+  color: #f1f5f9 !important;
+  /* slate-100 for dark */
+}
+
+/* Ensure dropdown options are ALWAYS visible */
+select option {
+  background-color: white;
+  color: #1e293b;
+}
+
+.dark select option {
+  background-color: #0f172a;
+  color: #f1f5f9;
+}
+
 /* Focus visible styles */
 *:focus-visible {
   outline: 2px solid #06b6d4;

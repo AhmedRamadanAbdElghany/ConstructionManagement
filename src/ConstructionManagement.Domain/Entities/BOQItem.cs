@@ -26,6 +26,12 @@ public class BOQItem : BaseEntity, ICompanyEntity
     [ForeignKey(nameof(ProjectId))]
     public virtual Project Project { get; set; } = null!;
 
+    // -- Phase Relationship ----------------------------------------------------
+    public int? PhaseId { get; set; }
+
+    [ForeignKey(nameof(PhaseId))]
+    public virtual Phase? Phase { get; set; }
+
     // -- Schedule --------------------------------------------------------------
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
