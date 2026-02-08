@@ -406,6 +406,265 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                }
             </div>
 
+            <!-- Equipment Management Settings Section -->
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
+               <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl"></div>
+               <div class="flex items-center justify-between mb-8">
+                  <div class="flex items-center space-x-4">
+                     <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path>
+                        </svg>
+                     </div>
+                     <div>
+                        <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Equipment Management</h3>
+                        <p class="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">Asset tracking & Maintenance</p>
+                     </div>
+                  </div>
+               </div>
+
+               @if (isSuperAdmin) {
+               <div class="flex items-center justify-between p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 mb-4">
+                  <div>
+                     <span class="text-xs font-black text-emerald-700 dark:text-emerald-300 uppercase block">Enable Equipment Module</span>
+                     <span class="text-[8px] text-emerald-500">Control asset tracking and billing</span>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                     <input type="checkbox" [(ngModel)]="settings.enableEquipmentManagement" class="sr-only peer">
+                     <div class="w-14 h-8 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500"></div>
+                  </label>
+               </div>
+               }
+
+               @if (settings.enableEquipmentManagement) {
+               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                     <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">GPS Tracking</span>
+                     <input type="checkbox" [(ngModel)]="settings.enableEquipmentGpsTracking" class="w-5 h-5 accent-emerald-500">
+                  </div>
+                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                     <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Rental Billing</span>
+                     <input type="checkbox" [(ngModel)]="settings.enableEquipmentRentalBilling" class="w-5 h-5 accent-emerald-500">
+                  </div>
+                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                     <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Utilization Tracking</span>
+                     <input type="checkbox" [(ngModel)]="settings.enableEquipmentUtilizationTracking" class="w-5 h-5 accent-emerald-500">
+                  </div>
+                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                     <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Maintenance Alert (Days)</span>
+                     <input type="number" [(ngModel)]="settings.maintenanceReminderDays" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
+                  </div>
+               </div>
+               } @else {
+                  <p class="text-[10px] text-slate-400 italic">Equipment module is disabled. Contact Super Admin to enable it.</p>
+               }
+            </div>
+
+            <!-- Safety Management Settings Section -->
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
+               <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl"></div>
+               <div class="flex items-center justify-between mb-8">
+                  <div class="flex items-center space-x-4">
+                     <div class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                     </div>
+                     <div>
+                        <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Safety Management</h3>
+                        <p class="text-[10px] text-amber-500 font-bold uppercase tracking-widest">Compliance & Incident Control</p>
+                     </div>
+                  </div>
+               </div>
+
+               @if (isSuperAdmin) {
+               <div class="flex items-center justify-between p-4 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 mb-4">
+                  <div>
+                     <span class="text-xs font-black text-amber-700 dark:text-amber-300 uppercase block">Enable Safety Module</span>
+                     <span class="text-[8px] text-amber-500">Control safety protocols and reporting</span>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                     <input type="checkbox" [(ngModel)]="settings.enableSafetyManagement" class="sr-only peer">
+                     <div class="w-14 h-8 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-amber-500"></div>
+                  </label>
+               </div>
+               }
+
+               @if (settings.enableSafetyManagement) {
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Require Training</span>
+                      <input type="checkbox" [(ngModel)]="settings.requireSafetyTraining" class="w-5 h-5 accent-amber-500">
+                   </div>
+                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Incident Escalation</span>
+                      <input type="checkbox" [(ngModel)]="settings.enableIncidentEscalation" class="w-5 h-5 accent-amber-500">
+                   </div>
+                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Inspection Frequency (Days)</span>
+                      <input type="number" [(ngModel)]="settings.safetyInspectionFrequencyDays" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
+                   </div>
+                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Reporting Window (Hours)</span>
+                      <input type="number" [(ngModel)]="settings.incidentReportingHours" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
+                   </div>
+                </div>
+               } @else {
+                  <p class="text-[10px] text-slate-400 italic">Safety module is disabled. Contact Super Admin to enable it.</p>
+               }
+            </div>
+
+            <!-- Subcontractor Management Settings Section -->
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
+               <div class="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full blur-3xl"></div>
+               <div class="flex items-center justify-between mb-8">
+                  <div class="flex items-center space-x-4">
+                     <div class="w-12 h-12 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                     </div>
+                     <div>
+                        <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Subcontractor Management</h3>
+                        <p class="text-[10px] text-rose-500 font-bold uppercase tracking-widest">Partner Performance & Compliance</p>
+                     </div>
+                  </div>
+               </div>
+
+               @if (isSuperAdmin) {
+               <div class="flex items-center justify-between p-4 rounded-2xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 mb-4">
+                  <div>
+                     <span class="text-xs font-black text-rose-700 dark:text-rose-300 uppercase block">Enable Subcontractor Module</span>
+                     <span class="text-[8px] text-rose-500">Manage external labor and contracts</span>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                     <input type="checkbox" [(ngModel)]="settings.enableSubcontractorManagement" class="sr-only peer">
+                     <div class="w-14 h-8 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-rose-500"></div>
+                  </label>
+               </div>
+               }
+
+               @if (settings.enableSubcontractorManagement) {
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Require Contract Mapping</span>
+                      <input type="checkbox" [(ngModel)]="settings.requireSubcontractorContract" class="w-5 h-5 accent-rose-500">
+                   </div>
+                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Enable Partner Ratings</span>
+                      <input type="checkbox" [(ngModel)]="settings.enableSubcontractorRatings" class="w-5 h-5 accent-rose-500">
+                   </div>
+                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Min Rating Threshold</span>
+                      <input type="number" [(ngModel)]="settings.minimumRatingThreshold" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
+                   </div>
+                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Insurance Warning (Days)</span>
+                      <input type="number" [(ngModel)]="settings.subcontractorInsuranceWarningDays" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
+                   </div>
+                </div>
+               } @else {
+                  <p class="text-[10px] text-slate-400 italic">Subcontractor module is disabled. Contact Super Admin to enable it.</p>
+               }
+            </div>
+
+            <!-- Quality Control Settings Section -->
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
+               <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl"></div>
+               <div class="flex items-center justify-between mb-8">
+                  <div class="flex items-center space-x-4">
+                     <div class="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                     </div>
+                     <div>
+                        <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Quality Control</h3>
+                        <p class="text-[10px] text-blue-500 font-bold uppercase tracking-widest">Inspection & Defect Mitigation</p>
+                     </div>
+                  </div>
+               </div>
+
+               @if (isSuperAdmin) {
+               <div class="flex items-center justify-between p-4 rounded-2xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 mb-4">
+                  <div>
+                     <span class="text-xs font-black text-blue-700 dark:text-blue-300 uppercase block">Enable Quality Module</span>
+                     <span class="text-[8px] text-blue-500">Control quality standards and punch lists</span>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                     <input type="checkbox" [(ngModel)]="settings.enableQualityControl" class="sr-only peer">
+                     <div class="w-14 h-8 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-500"></div>
+                  </label>
+               </div>
+               }
+
+               @if (settings.enableQualityControl) {
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Defect Tracking</span>
+                      <input type="checkbox" [(ngModel)]="settings.defectTrackingEnabled" class="w-5 h-5 accent-blue-500">
+                   </div>
+                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Auto Escalate Critical</span>
+                      <input type="checkbox" [(ngModel)]="settings.autoEscalateCriticalDefects" class="w-5 h-5 accent-blue-500">
+                   </div>
+                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Pass Score (%)</span>
+                      <input type="number" [(ngModel)]="settings.qualityScoreThreshold" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
+                   </div>
+                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Fix Window (Hours)</span>
+                      <input type="number" [(ngModel)]="settings.defectResponseHours" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
+                   </div>
+                </div>
+               } @else {
+                  <p class="text-[10px] text-slate-400 italic">Quality Control module is disabled. Contact Super Admin to enable it.</p>
+               }
+            </div>
+
+            <!-- Analytics & Reporting Settings Section -->
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
+               <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl"></div>
+               <div class="flex items-center justify-between mb-8">
+                  <div class="flex items-center space-x-4">
+                     <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                     </div>
+                     <div>
+                        <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Analytics & Intelligence</h3>
+                        <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">Data Insights & Forecasting</p>
+                     </div>
+                  </div>
+               </div>
+
+               @if (isSuperAdmin) {
+               <div class="flex items-center justify-between p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 mb-4">
+                  <div>
+                     <span class="text-xs font-black text-indigo-700 dark:text-indigo-300 uppercase block">Enable Advanced Analytics</span>
+                     <span class="text-[8px] text-indigo-500">Allow detailed reporting and AI insights</span>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                     <input type="checkbox" [(ngModel)]="settings.enableAnalytics" class="sr-only peer">
+                     <div class="w-14 h-8 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-indigo-500"></div>
+                  </label>
+               </div>
+               }
+
+               @if (settings.enableAnalytics) {
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Enable Scheduled Reports</span>
+                      <input type="checkbox" [(ngModel)]="settings.enableAnalyticsReporting" class="w-5 h-5 accent-indigo-500">
+                   </div>
+                </div>
+               } @else {
+                  <p class="text-[10px] text-slate-400 italic">Analytics module is disabled. Contact Super Admin to enable it.</p>
+               }
+            </div>
+
             <!-- SECTION 2: MODULE CONFIGURATION (Company Admin ONLY) -->
             @if (isOnlyCompanyAdmin) {
             <section class="space-y-8">

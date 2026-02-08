@@ -6,6 +6,27 @@ export interface Company {
   isActive: boolean;
   packageId?: number;
   settings?: any;
+
+  // Feature Toggles
+  enableUserManagement: boolean;
+  enableProjectManagement: boolean;
+  enableBOQManagement: boolean;
+  enableDailyLogs: boolean;
+  enableSiteMedia: boolean;
+  enableEquipmentManagement: boolean;
+  enableInventoryManagement: boolean;
+  enableQualityControl: boolean;
+  enableSafetyManagement: boolean;
+  enableSubcontractorManagement: boolean;
+  enableFinancialManagement: boolean;
+  enableAnalytics: boolean;
+  enableNotifications: boolean;
+  enableDocumentManagement: boolean;
+  enableDesignManagement: boolean;
+  enableClientPortal: boolean;
+  enableAccessControl: boolean;
+  enableHRManagement: boolean;
+  enableVendorManagement: boolean;
 }
 
 export interface User {
@@ -139,6 +160,28 @@ export interface WorkerPerformance {
 }
 
 export interface CompanySettings {
+  // Master Switches
+  enableUserManagement: boolean;
+  enableProjectManagement: boolean;
+  enableBOQManagement: boolean;
+  enableDailyLogs: boolean;
+  enableSiteMedia: boolean;
+  enableInventoryManagement: boolean;
+  enableEquipmentManagement: boolean;
+  enableQualityControl: boolean;
+  enableSafetyManagement: boolean;
+  enableSubcontractorManagement: boolean;
+  enableFinancialManagement: boolean;
+  enableAnalytics: boolean;
+  enableNotifications: boolean;
+  enableDocumentManagement: boolean;
+  enableDesignManagement: boolean;
+  enableClientPortal: boolean;
+  enableAccessControl: boolean;
+  enableHRManagement: boolean;
+  enableVendorManagement: boolean;
+
+  // General Settings
   enableDelayNotification: boolean;
   delayNotificationIsOneTimeOnly: boolean;
   delayNotificationIntervalDays: number;
@@ -160,22 +203,33 @@ export interface CompanySettings {
   allowLocations: boolean;
   allowHR: boolean;
   defaultSupervisionPercentage?: number;
+
   // Daily Log Settings
   allowAddProgressEntry: boolean;
   allowReopenClosedDay: boolean;
   autoCloseDay: boolean;
-  autoCloseDayTime?: string; // HH:mm format, e.g., "18:00"
-  // Inventory Management Settings
-  enableInventoryManagement?: boolean;
+  autoCloseDayTime?: string;
+
+  // Inventory Settings
   requireMaterialRequestApproval?: boolean;
   materialRequestApproverRole?: string;
   enableMultiWarehouse?: boolean;
   enableStockAlerts?: boolean;
   defaultLowStockThreshold?: number;
-  // Equipment Management Settings
-  enableEquipmentManagement?: boolean;
-  // Safety Management Settings
-  enableSafetyManagement?: boolean;
+
+  // Equipment Settings
+  enableEquipmentGpsTracking?: boolean;
+  enableEquipmentRentalBilling?: boolean;
+  enableEquipmentUtilizationTracking?: boolean;
+  maintenanceReminderDays?: number;
+  requireEquipmentAssignmentApproval?: boolean;
+  equipmentAssignmentApproverRole?: string;
+  requireMaintenanceSchedule?: boolean;
+  enableEquipmentInsuranceTracking?: boolean;
+  enableEquipmentDepreciation?: boolean;
+  defaultDepreciationYears?: number;
+
+  // Safety Settings
   requireSafetyInspections?: boolean;
   safetyInspectionFrequencyDays?: number;
   incidentReportingHours?: number;
@@ -185,12 +239,34 @@ export interface CompanySettings {
   enableSafetyComplianceTracking?: boolean;
   safetyChecklistApproverRole?: string;
   incidentInvestigatorRole?: string;
-  // Subcontractor Management Settings
-  enableSubcontractorManagement?: boolean;
-  // Document Management Settings
-  enableDocumentManagement?: boolean;
+  requireEquipmentOperatorCertification?: boolean;
+
+  // Subcontractor Settings
+  requireSubcontractorApproval?: boolean;
+  requireSubcontractorInsurance?: boolean;
+  subcontractorInsuranceWarningDays?: number;
+  defaultRetentionPercentage?: number;
+  requireSubcontractorContract?: boolean;
+  requireSubcontractorPaymentApproval?: boolean;
+  subcontractorPaymentApproverRole?: string;
+  maxPaymentWithoutApproval?: number;
+  enableSubcontractorRatings?: boolean;
+  requireRatingOnCompletion?: boolean;
+  enableSubcontractorSafetyScore?: boolean;
+  minimumRatingThreshold?: number;
+
+  // Document Settings
+  maxFileSizeMB?: number;
+  allowedFileTypes?: string;
+  requireDocumentApproval?: boolean;
+  enableVersionControl?: boolean;
+  enableExpirationTracking?: boolean;
+  documentExpirationWarningDays?: number;
+  documentApproverRole?: string;
+  enableDocumentCategories?: boolean;
+  maxVersionsPerDocument?: number;
+
   // Quality Control Settings
-  enableQualityControl?: boolean;
   requireQualityInspections?: boolean;
   qualityInspectionFrequencyDays?: number;
   defectTrackingEnabled?: boolean;
@@ -198,9 +274,11 @@ export interface CompanySettings {
   qualityScoreThreshold?: number;
   autoEscalateCriticalDefects?: boolean;
   defectResponseHours?: number;
-  // Analytics & Reporting Settings
+
+  // Analytics Settings
   enableAnalyticsReporting?: boolean;
 }
+
 
 export interface ProjectSettings {
   enableDelayNotification: boolean | null;

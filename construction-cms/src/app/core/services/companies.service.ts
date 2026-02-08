@@ -15,6 +15,27 @@ export interface CreateCompanyRequest {
     requirePhotoReview: boolean;
     enablePhotoUpload: boolean;
     clientCanSeeFinancials: boolean;
+
+    // Feature Toggles
+    enableUserManagement: boolean;
+    enableProjectManagement: boolean;
+    enableBOQManagement: boolean;
+    enableDailyLogs: boolean;
+    enableSiteMedia: boolean;
+    enableEquipmentManagement: boolean;
+    enableInventoryManagement: boolean;
+    enableQualityControl: boolean;
+    enableSafetyManagement: boolean;
+    enableSubcontractorManagement: boolean;
+    enableFinancialManagement: boolean;
+    enableAnalytics: boolean;
+    enableNotifications: boolean;
+    enableDocumentManagement: boolean;
+    enableDesignManagement: boolean;
+    enableClientPortal: boolean;
+    enableAccessControl: boolean;
+    enableHRManagement: boolean;
+    enableVendorManagement: boolean;
 }
 
 export interface UpdateCompanyRequest {
@@ -28,6 +49,27 @@ export interface UpdateCompanyRequest {
     requirePhotoReview?: boolean;
     enablePhotoUpload?: boolean;
     clientCanSeeFinancials?: boolean;
+
+    // Feature Toggles
+    enableUserManagement?: boolean;
+    enableProjectManagement?: boolean;
+    enableBOQManagement?: boolean;
+    enableDailyLogs?: boolean;
+    enableSiteMedia?: boolean;
+    enableEquipmentManagement?: boolean;
+    enableInventoryManagement?: boolean;
+    enableQualityControl?: boolean;
+    enableSafetyManagement?: boolean;
+    enableSubcontractorManagement?: boolean;
+    enableFinancialManagement?: boolean;
+    enableAnalytics?: boolean;
+    enableNotifications?: boolean;
+    enableDocumentManagement?: boolean;
+    enableDesignManagement?: boolean;
+    enableClientPortal?: boolean;
+    enableAccessControl?: boolean;
+    enableHRManagement?: boolean;
+    enableVendorManagement?: boolean;
 }
 
 @Injectable({

@@ -280,7 +280,7 @@
     "rejected": "Rejected",
     "pending": "Pending",
     "completed": "Completed",
-    "work_in_progress": "Work in Progress"
+    "word_in_progress": "Work in Progress"
   },
   "designs": {
     "title": "Design Management",
@@ -472,5 +472,31 @@
   "requestMaterials": "Request Materials",
   "materialRequests": "Material Requests",
   "approveRequest": "Approve Request",
-  "rejectRequest": "Reject Request"
+  "rejectRequest": "Reject Request",
+  "companyFeatures": {
+    "title": "Feature Access Ecosystem",
+    "infrastructure": "Core Infrastructure",
+    "operations": "Site Operations",
+    "supply": "Supply & Assets",
+    "governance": "Governance & People",
+    "userManagement": "Users",
+    "projectManagement": "Projects",
+    "boqManagement": "BOQ",
+    "dailyLogs": "Daily Logs",
+    "siteMedia": "Media",
+    "equipmentManagement": "Equipment",
+    "inventoryManagement": "Inventory",
+    "qualityControl": "Quality",
+    "safetyManagement": "Safety",
+    "subcontractorManagement": "Subs",
+    "financialManagement": "Finance",
+    "analytics": "Analytics",
+    "notifications": "Alerts",
+    "documentManagement": "Docs",
+    "designManagement": "Design",
+    "clientPortal": "Client Portal",
+    "accessControl": "Security",
+    "hrManagement": "HR & Payroll",
+    "vendorManagement": "Vendors"
+  }
 }

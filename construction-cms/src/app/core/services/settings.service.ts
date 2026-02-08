@@ -4,6 +4,27 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { CompanySettings, ProjectSettings, CompanyPackage } from '../../shared/interfaces';
 
 export interface UpdateCompanySettingsRequest {
+    // Master Switches
+    enableUserManagement?: boolean;
+    enableProjectManagement?: boolean;
+    enableBOQManagement?: boolean;
+    enableDailyLogs?: boolean;
+    enableSiteMedia?: boolean;
+    enableInventoryManagement?: boolean;
+    enableEquipmentManagement?: boolean;
+    enableQualityControl?: boolean;
+    enableSafetyManagement?: boolean;
+    enableSubcontractorManagement?: boolean;
+    enableFinancialManagement?: boolean;
+    enableAnalytics?: boolean;
+    enableNotifications?: boolean;
+    enableDocumentManagement?: boolean;
+    enableDesignManagement?: boolean;
+    enableClientPortal?: boolean;
+    enableAccessControl?: boolean;
+    enableHRManagement?: boolean;
+    enableVendorManagement?: boolean;
+
     enableDelayNotification?: boolean;
     delayNotificationIsOneTimeOnly?: boolean;
     delayNotificationIntervalDays?: number;
@@ -27,6 +48,8 @@ export interface UpdateCompanySettingsRequest {
     enableMultiWarehouse?: boolean;
     enableStockAlerts?: boolean;
     defaultLowStockThreshold?: number;
+
+    // Equipment Settings
     requireEquipmentAssignmentApproval?: boolean;
     equipmentAssignmentApproverRole?: string;
     enableEquipmentGpsTracking?: boolean;
@@ -37,6 +60,56 @@ export interface UpdateCompanySettingsRequest {
     enableEquipmentInsuranceTracking?: boolean;
     enableEquipmentDepreciation?: boolean;
     defaultDepreciationYears?: number;
+
+    // Safety Settings
+    requireSafetyInspections?: boolean;
+    safetyInspectionFrequencyDays?: number;
+    incidentReportingHours?: number;
+    enableIncidentEscalation?: boolean;
+    requireSafetyTraining?: boolean;
+    safetyTrainingRenewalMonths?: number;
+    requireEquipmentOperatorCertification?: boolean;
+    enableSafetyComplianceTracking?: boolean;
+    safetyChecklistApproverRole?: string;
+    incidentInvestigatorRole?: string;
+
+    // Subcontractor Settings
+    requireSubcontractorApproval?: boolean;
+    requireSubcontractorInsurance?: boolean;
+    subcontractorInsuranceWarningDays?: number;
+    defaultRetentionPercentage?: number;
+    requireSubcontractorContract?: boolean;
+    requireSubcontractorPaymentApproval?: boolean;
+    subcontractorPaymentApproverRole?: string;
+    maxPaymentWithoutApproval?: number;
+    enableSubcontractorRatings?: boolean;
+    requireRatingOnCompletion?: boolean;
+    enableSubcontractorSafetyScore?: boolean;
+    minimumRatingThreshold?: number;
+
+    // Document Settings
+    maxFileSizeMB?: number;
+    allowedFileTypes?: string;
+    requireDocumentApproval?: boolean;
+    enableVersionControl?: boolean;
+    enableExpirationTracking?: boolean;
+    documentExpirationWarningDays?: number;
+    documentApproverRole?: string;
+    enableDocumentCategories?: boolean;
+    maxVersionsPerDocument?: number;
+
+    // Quality Control Settings
+    requireQualityInspections?: boolean;
+    qualityInspectionFrequencyDays?: number;
+    defectTrackingEnabled?: boolean;
+    punchListEnabled?: boolean;
+    qualityScoreThreshold?: number;
+    autoEscalateCriticalDefects?: boolean;
+    defectResponseHours?: number;
+
+    // Analytics Settings
+    enableAnalyticsReporting?: boolean;
+
     defaultMoneyCalculationMethod?: string;
 }
 
