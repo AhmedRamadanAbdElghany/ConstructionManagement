@@ -67,9 +67,11 @@ builder.Services.AddScoped<IProjectApprovalRuleService, ProjectApprovalRuleServi
 builder.Services.AddScoped<IProjectDelayEscalationService, ProjectDelayEscalationService>(); // renamed & kept
 builder.Services.AddScoped<IProjectTransactionService, ProjectTransactionService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
+    builder.Services.AddScoped<IDesignService, DesignService>();
+builder.Services.AddScoped<IVendorService, VendorService>();
+builder.Services.AddScoped<ICashVoucherService, CashVoucherService>();
+builder.Services.AddScoped<IMiscExpenseService, MiscExpenseService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-// Notification & Email
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
@@ -123,6 +125,9 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("CanAddProgressEntry", policy => policy.AddRequirements(new ProjectRoleRequirement("DailyLog.AddEntry")));
     options.AddPolicy("CanReopenClosedDaily", policy => policy.AddRequirements(new ProjectRoleRequirement("DailyLog.Reopen")));
     options.AddPolicy("CanApproveProgressEntry", policy => policy.AddRequirements(new ProjectRoleRequirement("DailyLog.Approve")));
+
+    // Design permissions
+    options.AddPolicy("CanAddDesign", policy => policy.AddRequirements(new ProjectRoleRequirement("Design.Add")));
 
     // NOTE: Add policy tests for each permission.
 });

@@ -113,8 +113,8 @@ import { AuthService } from '../../../../core/auth/auth.service';
                  <div class="flex items-center gap-4">
                    <div class="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">⚙️</div>
                    <div>
-                     <p class="text-[11px] font-black text-slate-800 dark:text-slate-200 tracking-tight mb-0.5">{{ perm.name }}</p>
-                     <p class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">{{ perm.desc }}</p>
+                      <p class="text-[11px] font-black text-slate-800 dark:text-slate-200 tracking-tight mb-0.5">{{ perm.name }}</p>
+                       <p class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">{{ perm.desc }}</p>
                    </div>
                  </div>
                  <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all"
@@ -143,14 +143,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
   `]
 })
 export class RolesComponent implements OnInit {
-  mockPermissions = [
-    { name: 'Project.Audit', desc: 'Full architectural oversight and compliance review' },
-    { name: 'Finance.Release', desc: 'Authorization of high-value capital expenditures' },
-    { name: 'Media.Approve', desc: 'Final certification for on-site progress assets' },
-    { name: 'Asset.Manage', desc: 'Fleet and equipment lifecycle management' },
-    { name: 'Personnel.Onboard', desc: 'Provisioning new identity models into the engine' },
-    { name: 'Analytics.Export', desc: 'Generation of enterprise-level operational reports' }
-  ];
+  mockPermissions: Permission[] = [];
 
   mockRoles: any[] = [
     { id: 1, name: 'General Manager', description: 'Enterprise-level strategic oversight with full capital control.', perms: ['Project.Audit', 'Finance.Release', 'Analytics.Export'] },
@@ -169,9 +162,22 @@ export class RolesComponent implements OnInit {
     description: ''
   };
 
-  constructor() { }
+  constructor(private rolesService: RolesService) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    // Load permissions from backend
+    this.rolesService.getPermissions().subscribe(permissions => {
+      this.mockPermissions = permissions;
+    });
+
+    // Load roles from backend
+    this.rolesService.getRoles().subscribe(roles => {
+      this.mockRoles = roles;
+      if (this.mockRoles.length > 0) {
+        this.selectedRole = this.mockRoles[0];
+      }
+    });
+  }
 
   openCreateModal() {
     this.editingRole = null;

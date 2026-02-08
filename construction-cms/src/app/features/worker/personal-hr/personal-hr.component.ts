@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { MockDataService } from '../../../core/mock/mock-data.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { VacationRequest } from '../../../shared/interfaces';
 
@@ -285,7 +284,7 @@ export class PersonalHrComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private mockDataService: MockDataService,
+
     private authService: AuthService
   ) {
     this.vacationForm = this.fb.group({
@@ -300,10 +299,9 @@ export class PersonalHrComponent implements OnInit {
     const currentUser = this.authService.getCurrentUser();
     this.monthlySalary = currentUser.salary;
 
-    this.mockDataService.getAllVacationRequests().subscribe(requests => {
-      this.vacationRequests = requests;
-      this.pendingRequests = requests.filter(r => r.status === 'Pending').length;
-    });
+    // TODO: Implement vacation request API
+    // this.vacationRequests = [];
+    // this.pendingRequests = this.vacationRequests.filter(r => r.status === 'Pending').length;
   }
 
   submitVacationRequest() {
@@ -317,12 +315,11 @@ export class PersonalHrComponent implements OnInit {
         reason: this.vacationForm.value.reason
       };
 
-      this.mockDataService.addVacationRequest(newRequest).subscribe(request => {
-        this.vacationRequests.unshift(request);
-        this.pendingRequests++;
-        this.vacationForm.reset({ type: 'Annual' });
-        alert('Vacation request submitted successfully!');
-      });
+      // TODO: Implement vacation request API
+      // this.vacationRequests.unshift(newRequest);
+      // this.pendingRequests++;
+      this.vacationForm.reset({ type: 'Annual' });
+      alert('Vacation request submitted successfully!');
     }
   }
 

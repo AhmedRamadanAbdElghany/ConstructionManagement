@@ -52,10 +52,10 @@ public class BOQItemService : IBOQItemService
             var boqItem = new BOQItem
             {
                 ProjectId = projectId,
-                ItemCode = request.ItemCode,
-                ItemName = request.ItemName,
+                ItemCode = request.ItemCode ?? string.Empty,
+                ItemName = request.ItemName ?? string.Empty,
                 Description = request.Description,
-                Unit = request.Unit,
+                Unit = request.Unit ?? string.Empty,
                 PhaseId = request.PhaseId,
                 AccountingType = project.AccountingSystem,
                 Status = "جديد",

@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { MockDataService } from '../../../core/mock/mock-data.service';
+import { DashboardService, DashboardStats, SuperAdminStats, CompanySubscription, RecentActivity, SuperAdminActivity } from '../../../core/services/dashboard.service';
 import { Project, WorkerPerformance } from '../../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -786,21 +786,12 @@ export class DashboardComponent implements OnInit {
     { label: 'Dec', earned: 92, collected: 88 }
   ];
 
-  recentActivities = [
-    { id: 1, type: 'success', message: 'Payment received for Dubai Tower Project', time: '2 minutes ago' },
-    { id: 2, type: 'info', message: 'New BOQ item added to Villa Complex', time: '15 minutes ago' },
-    { id: 3, type: 'warning', message: 'Commercial Mall Cairo is behind schedule', time: '1 hour ago' },
-  ];
+  recentActivities: RecentActivity[] = [];
 
-  saActivities = [
-    { company: 'Al-Massa Construction', action: 'Upgraded to Enterprise Tier', time: '10 MIN AGO', status: 'success' },
-    { company: 'BuildIt Solutions', action: 'Monthly payment processed successfully', time: '1 HOUR AGO', status: 'success' },
-    { company: 'Skyline Architects', action: 'Subscription canceled', time: '3 HOURS AGO', status: 'danger' },
-    { company: 'Urban Development', action: 'New organization onboarded', time: '5 HOURS AGO', status: 'success' },
-  ];
+  saActivities: SuperAdminActivity[] = [];
 
   constructor(
-    private mockDataService: MockDataService,
+    private dashboardService: DashboardService,
     private authService: AuthService
   ) {
     this.currentUser = this.authService.getCurrentUser();
@@ -818,41 +809,32 @@ export class DashboardComponent implements OnInit {
   }
 
   loadSuperAdminView() {
-    this.mockDataService.getSuperAdminStats().subscribe(stats => {
-      this.saStats = stats;
+    this.dashboardService.getDashboardStats().subscribe(stats => {
+      this.stats = stats;
     });
-    this.mockDataService.getCompanySubscriptions().subscribe(subs => {
+    this.dashboardService.getCompanySubscriptions().subscribe(subs => {
       this.subscriptions = subs;
+    });
+    this.dashboardService.getSuperAdminActivities().subscribe(activities => {
+      this.saActivities = activities;
     });
   }
 
   loadWorkerView() {
-    this.mockDataService.getWorkerProjectStats(this.currentUser.id).subscribe(stats => {
-      this.workerProjectStats = stats;
+    this.dashboardService.getDashboardStats().subscribe(stats => {
+      this.stats = stats;
+    });
+    this.dashboardService.getRecentActivities().subscribe(activities => {
+      this.recentActivities = activities;
     });
   }
 
   loadStandardView() {
-    this.mockDataService.getProjects().subscribe(projects => {
-      this.projects = projects;
-    });
-
-    this.mockDataService.getWorkerPerformance().subscribe(perf => {
-      this.workerPerformance = perf;
-    });
-
-    this.mockDataService.getDelayedProjectsStats().subscribe(stats => {
-      this.delayedProjectsStats = stats;
-    });
-
-    this.mockDataService.getDashboardStats().subscribe(stats => {
+    this.dashboardService.getDashboardStats().subscribe(stats => {
       this.stats = stats;
     });
-
-    /* if (this.currentUser?.role === 'CompanyAdmin') {
-      this.mockDataService.getWorkerPerformance().subscribe(perf => {
-        this.workerPerformance = perf;
-      });
-    } */
+    this.dashboardService.getRecentActivities().subscribe(activities => {
+      this.recentActivities = activities;
+    });
   }
 }

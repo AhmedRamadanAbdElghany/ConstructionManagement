@@ -1,0 +1,1432 @@
+
+> construction-cms@0.0.0 build
+> ng build
+
+[33m>[39m Building...
+[32m√[39m Building...
+Application bundle generation failed. [13.658 seconds] - 2026-02-07T04:16:37.421Z
+
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2306: File 'c:/Users/Ahmed.Ramadan/source/repos/Construction/construction-cms/src/app/core/services/cash-vouchers.service.ts' is not a module.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin/finance/finance.component.ts:5:72:
+[37m      5 │ ...ucherSummary } from [32m'../../../core/services/cash-vouchers.service'[37m;
+        ╵                        [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2571: Object is of type 'unknown'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin/finance/finance.component.ts:683:4:
+[37m      683 │     [32mthis.cashVouchersService[37m.getVouchers()
+          ╵     [32m~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS7006: Parameter 'vouchers' implicitly has an 'any' type.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin/finance/finance.component.ts:685:17:
+[37m      685 │       .subscribe([32mvouchers[37m => {
+          ╵                  [32m~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2571: Object is of type 'unknown'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin/finance/finance.component.ts:716:4:
+[37m      716 │     [32mthis.cashVouchersService[37m.getSummary()
+          ╵     [32m~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS7006: Parameter 'summary' implicitly has an 'any' type.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin/finance/finance.component.ts:718:17:
+[37m      718 │       .subscribe([32msummary[37m => {
+          ╵                  [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2571: Object is of type 'unknown'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin/finance/finance.component.ts:751:6:
+[37m      751 │       [32mthis.cashVouchersService[37m.reviewVoucher(voucher.id, { isAppr...
+          ╵       [32m~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2571: Object is of type 'unknown'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin/finance/finance.component.ts:760:6:
+[37m      760 │       [32mthis.cashVouchersService[37m.reviewVoucher(voucher.id, { isAppr...
+          ╵       [32m~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'team'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin/projects/project-detail/project-detail.component.ts:1851:31:
+[37m      1851 │             this.teamMembers = [32mteam[37m;
+           ╵                                [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'itemId'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin/projects/project-detail/project-detail.component.ts:1854:50:
+[37m      1854 │ ....dailyLogsService.getDailyLogHistory([32mitemId[37m).subscribe(logs => {
+           ╵                                         [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type 'TransactionDto[]' is not assignable to type 'Transaction[]'.
+  Type 'TransactionDto' is missing the following properties from type 'Transaction': type, date[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin/projects/project-detail/project-detail.component.ts:1862:12:
+[37m      1862 │             [32mthis.transactions[37m = trans;
+           ╵             [32m~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type 'InvoiceDto[]' is not assignable to type 'ProjectBill[]'.
+  Type 'InvoiceDto' is missing the following properties from type 'ProjectBill': projectId, billNumber, date[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin/projects/project-detail/project-detail.component.ts:1880:12:
+[37m      1880 │             [32mthis.bills[37m = bills;
+           ╵             [32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type 'InvoiceDto[]' is not assignable to type 'ClientPayment[]'.
+  Type 'InvoiceDto' is missing the following properties from type 'ClientPayment': projectId, date, method, referenceNumber[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin/projects/project-detail/project-detail.component.ts:1884:12:
+[37m      1884 │             [32mthis.clientPayments[37m = payments;
+           ╵             [32m~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'navigateDay' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:35:29:
+[37m      35 │             <button (click)="[32mnavigateDay[37m(-1)" class="w-12 h-12 rou...
+         ╵                              [32m~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'onDateChange' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:43:76:
+[37m      43 │ ...="date" [(ngModel)]="selectedDateString" (change)="[32monDateChange[37m()"
+         ╵                                                       [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'navigateDay' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:47:29:
+[37m      47 │             <button (click)="[32mnavigateDay[37m(1)" class="w-12 h-12 roun...
+         ╵                              [32m~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'goToToday' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:53:29:
+[37m      53 │             <button (click)="[32mgoToToday[37m()" class="px-5 py-3 rounded...
+         ╵                              [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'openReopenModal' does not exist on type 'DailyLogComponent'. Did you mean 'showReopenModal'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:79:29:
+[37m      79 │ ...       <button (click)="[32mopenReopenModal[37m()" class="px-6 py-3 rou...
+         ╵                            [32m~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'uploadTaskPhoto' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:141:89:
+[37m      141 │ ...image/*" class="hidden" (change)="[32muploadTaskPhoto[37m(task, $event)">
+          ╵                                      [32m~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'startTask' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:151:43:
+[37m      151 │ ...          <button (click)="[32mstartTask[37m(task)" class="flex-1 py-3...
+          ╵                               [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'completeTask' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:156:43:
+[37m      156 │ ...        <button (click)="[32mcompleteTask[37m(task)" class="flex-1 py-...
+          ╵                             [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'approveTask' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:161:43:
+[37m      161 │ ...         <button (click)="[32mapproveTask[37m(task)" class="flex-1 py-...
+          ╵                              [32m~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'rejectTask' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:164:43:
+[37m      164 │ ...         <button (click)="[32mrejectTask[37m(task)" class="flex-1 py-3...
+          ╵                              [32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'submitDailyLog' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:190:61:
+[37m      190 │ ...]="dailyLogForm" (ngSubmit)="[32msubmitDailyLog[37m()" class="space-y-6">
+          ╵                                 [32m~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'getTaskCount' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:238:71:
+[37m      238 │ ...ack text-emerald-600">{{ [32mgetTaskCount[37m('Completed') + getTaskCo...
+          ╵                             [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'getTaskCount' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:238:99:
+[37m      238 │ ...{{ getTaskCount('Completed') + [32mgetTaskCount[37m('Approved') }}</span>
+          ╵                                   [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'getTaskCount' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:242:69:
+[37m      242 │ ...ont-black text-amber-600">{{ [32mgetTaskCount[37m('InProgress') }}</span>
+          ╵                                 [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'closeDay' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:252:33:
+[37m      252 │                 <button (click)="[32mcloseDay[37m()"
+          ╵                                  [32m~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'selectDate' does not exist on type 'DailyLogComponent'. Did you mean 'selectedDate'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:265:35:
+[37m      265 │                   <button (click)="[32mselectDate[37m(day.date)"
+          ╵                                    [32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isSameDay' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:267:37:
+[37m      267 │ ...                [ngClass]="[32misSameDay[37m(day.date, selectedDate) ?...
+          ╵                               [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isSameDay' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:270:34:
+[37m      270 │ ...                [ngClass]="[32misSameDay[37m(day.date, selectedDate) ?...
+          ╵                               [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'toggleRoleNotification' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:300:37:
+[37m      300 │ ...                <button (click)="[32mtoggleRoleNotification[37m(role.id)"
+          ╵                                     [32m~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'closeReopenModal' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:311:31:
+[37m      311 │ ...      <button (click)="[32mcloseReopenModal[37m()" class="flex-1 py-4 ...
+          ╵                           [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'confirmReopenDay' does not exist on type 'DailyLogComponent'. Did you mean 'canReopenDay'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:314:31:
+[37m      314 │ ...      <button (click)="[32mconfirmReopenDay[37m()" [disabled]="!reopen...
+          ╵                           [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isSameDay' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:352:16:
+[37m      352 │     return this.[32misSameDay[37m(this.selectedDate, new Date());
+          ╵                 [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'formatDateForInput' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:368:35:
+[37m      368 │ ....selectedDateString = this.[32mformatDateForInput[37m(this.selectedDate);
+          ╵                               [32m~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'loadRecentDays' does not exist on type 'DailyLogComponent'. Did you mean 'recentDays'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:370:9:
+[37m      370 │     this.[32mloadRecentDays[37m();
+          ╵          [32m~~~~~~~~~~~~~~[0m
+
+  'recentDays' is declared here.
+
+    src/app/features/worker/daily-log/daily-log.component.ts:349:2:
+[37m      349 │   [32mrecentDays[37m: { date: Date; taskCount: number; isClosed: boolean ...
+          ╵   [32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'checkPermissions' does not exist on type 'DailyLogComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:371:9:
+[37m      371 │     this.[32mcheckPermissions[37m();
+          ╵          [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'items'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:376:20:
+[37m      376 │     this.boqItems = [32mitems[37m;
+          ╵                     [32m~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1068: Unexpected token. A constructor, method, accessor, or property was expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:377:3:
+[37m      377 │   }[32m)[37m;
+          ╵    [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1068: Unexpected token. A constructor, method, accessor, or property was expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:378:4:
+[37m      378 │     [32mthis[37m.loadTasksForDate(this.selectedDate);
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:378:4:
+[37m      378 │     [32mthis[37m.loadTasksForDate(this.selectedDate);
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:378:26:
+[37m      378 │     this.loadTasksForDate([32mthis[37m.selectedDate);
+          ╵                           [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1128: Declaration or statement expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:379:2:
+[37m      379 │   [32m}[37m
+          ╵   [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'loadTasksForDate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:381:0:
+[37m      381 │ [32mloadTasksForDate[37m(date: Date) {
+          ╵ [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2552: Cannot find name 'date'. Did you mean 'Date'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:381:17:
+[37m      381 │ loadTasksForDate([32mdate[37m: Date) {
+          ╵                  [32m~~~~[0m
+
+  'Date' is declared here.
+
+    node_modules/typescript/lib/lib.es5.d.ts:961:12:
+[37m      961 │ declare var [32mDate[37m: DateConstructor;
+          ╵             [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:381:21:
+[37m      381 │ loadTasksForDate(date[32m:[37m Date) {
+          ╵                      [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:381:29:
+[37m      381 │ loadTasksForDate(date: Date) [32m{[37m
+          ╵                              [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:383:2:
+[37m      383 │   [32mthis[37m.assignedTasks = [
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:390:2:
+[37m      390 │   [32mthis[37m.isDayClosed = date < new Date(new Date().setHours(0, 0, 0,...
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2552: Cannot find name 'date'. Did you mean 'Date'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:390:21:
+[37m      390 │   this.isDayClosed = [32mdate[37m < new Date(new Date().setHours(0, 0, 0,...
+          ╵                      [32m~~~~[0m
+
+  'Date' is declared here.
+
+    node_modules/typescript/lib/lib.es5.d.ts:961:12:
+[37m      961 │ declare var [32mDate[37m: DateConstructor;
+          ╵             [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:390:74:
+[37m      390 │ ...ate < new Date(new Date().setHours(0, 0, 0, 0)) && ![32mthis[37m.isToday;
+          ╵                                                        [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'loadRecentDays'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:393:0:
+[37m      393 │ [32mloadRecentDays[37m() {
+          ╵ [32m~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:393:17:
+[37m      393 │ loadRecentDays() [32m{[37m
+          ╵                  [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:395:2:
+[37m      395 │   [32mthis[37m.recentDays = [];
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:399:4:
+[37m      399 │     [32mthis[37m.recentDays.push({
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2552: Cannot find name 'checkPermissions'. Did you mean 'Permissions'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:407:0:
+[37m      407 │ [32mcheckPermissions[37m() {
+          ╵ [32m~~~~~~~~~~~~~~~~[0m
+
+  'Permissions' is declared here.
+
+    node_modules/typescript/lib/lib.dom.d.ts:23896:12:
+[37m      23896 │ declare var [32mPermissions[37m: {
+            ╵             [32m~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:407:19:
+[37m      407 │ checkPermissions() [32m{[37m
+          ╵                    [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:408:15:
+[37m      408 │   const role = [32mthis[37m.authService.getCurrentUser()?.role;
+          ╵                [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:410:2:
+[37m      410 │   [32mthis[37m.canApprove = role === 'CompanyAdmin' || role === 'SuperAdm...
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:411:2:
+[37m      411 │   [32mthis[37m.canReopenDay = role === 'CompanyAdmin' || role === 'SuperA...
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:413:2:
+[37m      413 │   [32mthis[37m.canAddEntry = role === 'CompanyUser' || role === 'CompanyA...
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'navigateDay'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:417:0:
+[37m      417 │ [32mnavigateDay[37m(delta: number) {
+          ╵ [32m~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'delta'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:417:12:
+[37m      417 │ navigateDay([32mdelta[37m: number) {
+          ╵             [32m~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:417:17:
+[37m      417 │ navigateDay(delta[32m:[37m number) {
+          ╵                  [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'number' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:417:19:
+[37m      417 │ navigateDay(delta: [32mnumber[37m) {
+          ╵                    [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:417:27:
+[37m      417 │ navigateDay(delta: number) [32m{[37m
+          ╵                            [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:418:27:
+[37m      418 │   const newDate = new Date([32mthis[37m.selectedDate);
+          ╵                            [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'delta'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:419:38:
+[37m      419 │   newDate.setDate(newDate.getDate() + [32mdelta[37m);
+          ╵                                       [32m~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:420:2:
+[37m      420 │   [32mthis[37m.selectedDate = newDate;
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:421:2:
+[37m      421 │   [32mthis[37m.selectedDateString = this.formatDateForInput(newDate);
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:421:28:
+[37m      421 │   this.selectedDateString = [32mthis[37m.formatDateForInput(newDate);
+          ╵                             [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:422:2:
+[37m      422 │   [32mthis[37m.loadTasksForDate(newDate);
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'goToToday'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:425:0:
+[37m      425 │ [32mgoToToday[37m() {
+          ╵ [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:425:12:
+[37m      425 │ goToToday() [32m{[37m
+          ╵             [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:426:2:
+[37m      426 │   [32mthis[37m.selectedDate = new Date();
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:427:2:
+[37m      427 │   [32mthis[37m.selectedDateString = this.formatDateForInput(this.selected...
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:427:28:
+[37m      427 │   this.selectedDateString = [32mthis[37m.formatDateForInput(this.selected...
+          ╵                             [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:427:52:
+[37m      427 │ ....selectedDateString = this.formatDateForInput([32mthis[37m.selectedDate);
+          ╵                                                  [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:428:2:
+[37m      428 │   [32mthis[37m.loadTasksForDate(this.selectedDate);
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:428:24:
+[37m      428 │   this.loadTasksForDate([32mthis[37m.selectedDate);
+          ╵                         [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'onDateChange'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:431:0:
+[37m      431 │ [32monDateChange[37m() {
+          ╵ [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:431:15:
+[37m      431 │ onDateChange() [32m{[37m
+          ╵                [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:432:2:
+[37m      432 │   [32mthis[37m.selectedDate = new Date(this.selectedDateString);
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:432:31:
+[37m      432 │   this.selectedDate = new Date([32mthis[37m.selectedDateString);
+          ╵                                [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:433:2:
+[37m      433 │   [32mthis[37m.loadTasksForDate(this.selectedDate);
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:433:24:
+[37m      433 │   this.loadTasksForDate([32mthis[37m.selectedDate);
+          ╵                         [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'selectDate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:436:0:
+[37m      436 │ [32mselectDate[37m(date: Date) {
+          ╵ [32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'date'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:436:11:
+[37m      436 │ selectDate([32mdate[37m: Date) {
+          ╵            [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:436:15:
+[37m      436 │ selectDate(date[32m:[37m Date) {
+          ╵                [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:436:23:
+[37m      436 │ selectDate(date: Date) [32m{[37m
+          ╵                        [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:437:2:
+[37m      437 │   [32mthis[37m.selectedDate = date;
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'date'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:437:22:
+[37m      437 │   this.selectedDate = [32mdate[37m;
+          ╵                       [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:438:2:
+[37m      438 │   [32mthis[37m.selectedDateString = this.formatDateForInput(date);
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:438:28:
+[37m      438 │   this.selectedDateString = [32mthis[37m.formatDateForInput(date);
+          ╵                             [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'date'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:438:52:
+[37m      438 │   this.selectedDateString = this.formatDateForInput([32mdate[37m);
+          ╵                                                     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:439:2:
+[37m      439 │   [32mthis[37m.loadTasksForDate(date);
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'date'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:439:24:
+[37m      439 │   this.loadTasksForDate([32mdate[37m);
+          ╵                         [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'formatDateForInput'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:442:0:
+[37m      442 │ [32mformatDateForInput[37m(date: Date): string {
+          ╵ [32m~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'date'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:442:19:
+[37m      442 │ formatDateForInput([32mdate[37m: Date): string {
+          ╵                    [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:442:23:
+[37m      442 │ formatDateForInput(date[32m:[37m Date): string {
+          ╵                        [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:442:30:
+[37m      442 │ formatDateForInput(date: Date)[32m:[37m string {
+          ╵                               [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1434: Unexpected keyword or identifier.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:442:32:
+[37m      442 │ formatDateForInput(date: Date): [32mstring[37m {
+          ╵                                 [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'string' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:442:32:
+[37m      442 │ formatDateForInput(date: Date): [32mstring[37m {
+          ╵                                 [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'isSameDay'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:446:0:
+[37m      446 │ [32misSameDay[37m(d1: Date, d2: Date): boolean {
+          ╵ [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'd1'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:446:10:
+[37m      446 │ isSameDay([32md1[37m: Date, d2: Date): boolean {
+          ╵           [32m~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:446:12:
+[37m      446 │ isSameDay(d1[32m:[37m Date, d2: Date): boolean {
+          ╵             [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'd2'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:446:20:
+[37m      446 │ isSameDay(d1: Date, [32md2[37m: Date): boolean {
+          ╵                     [32m~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:446:22:
+[37m      446 │ isSameDay(d1: Date, d2[32m:[37m Date): boolean {
+          ╵                       [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:446:29:
+[37m      446 │ isSameDay(d1: Date, d2: Date)[32m:[37m boolean {
+          ╵                              [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1434: Unexpected keyword or identifier.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:446:31:
+[37m      446 │ isSameDay(d1: Date, d2: Date): [32mboolean[37m {
+          ╵                                [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'boolean' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:446:31:
+[37m      446 │ isSameDay(d1: Date, d2: Date): [32mboolean[37m {
+          ╵                                [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'startTask'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:451:0:
+[37m      451 │ [32mstartTask[37m(task: WorkTask) {
+          ╵ [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'task'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:451:10:
+[37m      451 │ startTask([32mtask[37m: WorkTask) {
+          ╵           [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:451:14:
+[37m      451 │ startTask(task[32m:[37m WorkTask) {
+          ╵               [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'WorkTask' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:451:16:
+[37m      451 │ startTask(task: [32mWorkTask[37m) {
+          ╵                 [32m~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:451:26:
+[37m      451 │ startTask(task: WorkTask) [32m{[37m
+          ╵                           [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'task'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:452:2:
+[37m      452 │   [32mtask[37m.status = 'InProgress';
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'completeTask'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:455:0:
+[37m      455 │ [32mcompleteTask[37m(task: WorkTask) {
+          ╵ [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'task'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:455:13:
+[37m      455 │ completeTask([32mtask[37m: WorkTask) {
+          ╵              [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:455:17:
+[37m      455 │ completeTask(task[32m:[37m WorkTask) {
+          ╵                  [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'WorkTask' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:455:19:
+[37m      455 │ completeTask(task: [32mWorkTask[37m) {
+          ╵                    [32m~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:455:29:
+[37m      455 │ completeTask(task: WorkTask) [32m{[37m
+          ╵                              [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'task'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:456:2:
+[37m      456 │   [32mtask[37m.status = 'Completed';
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'approveTask'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:459:0:
+[37m      459 │ [32mapproveTask[37m(task: WorkTask) {
+          ╵ [32m~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'task'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:459:12:
+[37m      459 │ approveTask([32mtask[37m: WorkTask) {
+          ╵             [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:459:16:
+[37m      459 │ approveTask(task[32m:[37m WorkTask) {
+          ╵                 [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'WorkTask' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:459:18:
+[37m      459 │ approveTask(task: [32mWorkTask[37m) {
+          ╵                   [32m~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:459:28:
+[37m      459 │ approveTask(task: WorkTask) [32m{[37m
+          ╵                             [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'task'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:460:2:
+[37m      460 │   [32mtask[37m.status = 'Approved';
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'rejectTask'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:463:0:
+[37m      463 │ [32mrejectTask[37m(task: WorkTask) {
+          ╵ [32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'task'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:463:11:
+[37m      463 │ rejectTask([32mtask[37m: WorkTask) {
+          ╵            [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:463:15:
+[37m      463 │ rejectTask(task[32m:[37m WorkTask) {
+          ╵                [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'WorkTask' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:463:17:
+[37m      463 │ rejectTask(task: [32mWorkTask[37m) {
+          ╵                  [32m~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:463:27:
+[37m      463 │ rejectTask(task: WorkTask) [32m{[37m
+          ╵                            [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'task'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:464:2:
+[37m      464 │   [32mtask[37m.status = 'Rejected';
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'uploadTaskPhoto'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:467:0:
+[37m      467 │ [32muploadTaskPhoto[37m(task: WorkTask, event: Event) {
+          ╵ [32m~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'task'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:467:16:
+[37m      467 │ uploadTaskPhoto([32mtask[37m: WorkTask, event: Event) {
+          ╵                 [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:467:20:
+[37m      467 │ uploadTaskPhoto(task[32m:[37m WorkTask, event: Event) {
+          ╵                     [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'WorkTask' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:467:22:
+[37m      467 │ uploadTaskPhoto(task: [32mWorkTask[37m, event: Event) {
+          ╵                       [32m~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:467:37:
+[37m      467 │ uploadTaskPhoto(task: WorkTask, event[32m:[37m Event) {
+          ╵                                      [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:467:46:
+[37m      467 │ uploadTaskPhoto(task: WorkTask, event: Event) [32m{[37m
+          ╵                                               [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS18048: 'event' is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:468:16:
+[37m      468 │   const input = [32mevent[37m.target as HTMLInputElement;
+          ╵                 [32m~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS18047: 'input.files' is possibly 'null'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:469:21:
+[37m      469 │   if (input.files && [32minput.files[37m[0]) {
+          ╵                      [32m~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'task'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:472:6:
+[37m      472 │       [32mtask[37m.photos.push(e.target?.result as string);
+          ╵       [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS18047: 'input.files' is possibly 'null'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:474:25:
+[37m      474 │     reader.readAsDataURL([32minput.files[37m[0]);
+          ╵                          [32m~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'getTaskCount'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:478:0:
+[37m      478 │ [32mgetTaskCount[37m(status: string): number {
+          ╵ [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:478:19:
+[37m      478 │ getTaskCount(status[32m:[37m string): number {
+          ╵                    [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'string' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:478:21:
+[37m      478 │ getTaskCount(status: [32mstring[37m): number {
+          ╵                      [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:478:28:
+[37m      478 │ getTaskCount(status: string)[32m:[37m number {
+          ╵                             [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1434: Unexpected keyword or identifier.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:478:30:
+[37m      478 │ getTaskCount(status: string): [32mnumber[37m {
+          ╵                               [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'number' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:478:30:
+[37m      478 │ getTaskCount(status: string): [32mnumber[37m {
+          ╵                               [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'submitDailyLog'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:482:0:
+[37m      482 │ [32msubmitDailyLog[37m() {
+          ╵ [32m~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:482:17:
+[37m      482 │ submitDailyLog() [32m{[37m
+          ╵                  [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:483:6:
+[37m      483 │   if ([32mthis[37m.dailyLogForm.valid) {
+          ╵       [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:486:24:
+[37m      486 │       boqItemId: Number([32mthis[37m.dailyLogForm.value.boqItemId),
+          ╵                         [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:487:19:
+[37m      487 │       boqItemName: [32mthis[37m.boqItems.find(i => i.id === Number(this.d...
+          ╵                    [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS7006: Parameter 'i' implicitly has an 'any' type.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:487:38:
+[37m      487 │ ...oqItemName: this.boqItems.find([32mi[37m => i.id === Number(this.daily...
+          ╵                                   [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:487:59:
+[37m      487 │ ...ms.find(i => i.id === Number([32mthis[37m.dailyLogForm.value.boqItemId...
+          ╵                                 [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:488:24:
+[37m      488 │       assignedQuantity: [32mthis[37m.dailyLogForm.value.quantity,
+          ╵                         [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:489:12:
+[37m      489 │       unit: [32mthis[37m.boqItems.find(i => i.id === Number(this.dailyLog...
+          ╵             [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS7006: Parameter 'i' implicitly has an 'any' type.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:489:31:
+[37m      489 │       unit: this.boqItems.find([32mi[37m => i.id === Number(this.dailyLog...
+          ╵                                [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:489:52:
+[37m      489 │ ...ms.find(i => i.id === Number([32mthis[37m.dailyLogForm.value.boqItemId...
+          ╵                                 [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:491:13:
+[37m      491 │       notes: [32mthis[37m.dailyLogForm.value.notes,
+          ╵              [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:494:4:
+[37m      494 │     [32mthis[37m.assignedTasks.push(newTask);
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:495:4:
+[37m      495 │     [32mthis[37m.dailyLogForm.reset();
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'closeDay'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:499:0:
+[37m      499 │ [32mcloseDay[37m() {
+          ╵ [32m~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:499:11:
+[37m      499 │ closeDay() [32m{[37m
+          ╵            [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:501:4:
+[37m      501 │     [32mthis[37m.isDayClosed = true;
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'openReopenModal'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:506:0:
+[37m      506 │ [32mopenReopenModal[37m() {
+          ╵ [32m~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:506:18:
+[37m      506 │ openReopenModal() [32m{[37m
+          ╵                   [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:507:2:
+[37m      507 │   [32mthis[37m.showReopenModal = true;
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:508:2:
+[37m      508 │   [32mthis[37m.reopenReason = '';
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:509:2:
+[37m      509 │   [32mthis[37m.selectedNotifyRoles = [];
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'closeReopenModal'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:512:0:
+[37m      512 │ [32mcloseReopenModal[37m() {
+          ╵ [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:512:19:
+[37m      512 │ closeReopenModal() [32m{[37m
+          ╵                    [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:513:2:
+[37m      513 │   [32mthis[37m.showReopenModal = false;
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'toggleRoleNotification'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:516:0:
+[37m      516 │ [32mtoggleRoleNotification[37m(roleId: number) {
+          ╵ [32m~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'roleId'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:516:23:
+[37m      516 │ toggleRoleNotification([32mroleId[37m: number) {
+          ╵                        [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:516:29:
+[37m      516 │ toggleRoleNotification(roleId[32m:[37m number) {
+          ╵                              [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'number' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:516:31:
+[37m      516 │ toggleRoleNotification(roleId: [32mnumber[37m) {
+          ╵                                [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:516:39:
+[37m      516 │ toggleRoleNotification(roleId: number) [32m{[37m
+          ╵                                        [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:517:14:
+[37m      517 │   const idx = [32mthis[37m.selectedNotifyRoles.indexOf(roleId);
+          ╵               [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'roleId'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:517:47:
+[37m      517 │   const idx = this.selectedNotifyRoles.indexOf([32mroleId[37m);
+          ╵                                                [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:519:4:
+[37m      519 │     [32mthis[37m.selectedNotifyRoles.splice(idx, 1);
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:521:4:
+[37m      521 │     [32mthis[37m.selectedNotifyRoles.push(roleId);
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'roleId'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:521:34:
+[37m      521 │     this.selectedNotifyRoles.push([32mroleId[37m);
+          ╵                                   [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'confirmReopenDay'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:525:0:
+[37m      525 │ [32mconfirmReopenDay[37m() {
+          ╵ [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:525:19:
+[37m      525 │ confirmReopenDay() [32m{[37m
+          ╵                    [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:526:6:
+[37m      526 │   if ([32mthis[37m.reopenReason) {
+          ╵       [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:528:46:
+[37m      528 │ ...Reopening day with reason:', [32mthis[37m.reopenReason, 'Notifying rol...
+          ╵                                 [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:528:85:
+[37m      528 │ ...this.reopenReason, 'Notifying roles:', [32mthis[37m.selectedNotifyRoles);
+          ╵                                           [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:529:4:
+[37m      529 │     [32mthis[37m.isDayClosed = false;
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:530:4:
+[37m      530 │     [32mthis[37m.showReopenModal = false;
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1128: Declaration or statement expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:534:0:
+[37m      534 │ [32m}[37m
+          ╵ [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTop-level return cannot be used inside an ECMAScript module[0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:635:4:
+[37m      635 │     [32mreturn[37m date.toISOString().split('T')[0];
+          ╵     [32m~~~~~~[0m
+
+  This file is considered to be an ECMAScript module because of the "export" keyword here:
+
+    src/app/features/worker/daily-log/daily-log.component.ts:361:0:
+[37m      361 │ [32mexport[37m class DailyLogComponent implements OnInit {
+          ╵ [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTop-level return cannot be used inside an ECMAScript module[0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:640:4:
+[37m      640 │     [32mreturn[37m d1.toDateString() === d2.toDateString();
+          ╵     [32m~~~~~~[0m
+
+  This file is considered to be an ECMAScript module because of the "export" keyword here:
+
+    src/app/features/worker/daily-log/daily-log.component.ts:361:0:
+[37m      361 │ [32mexport[37m class DailyLogComponent implements OnInit {
+          ╵ [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTop-level return cannot be used inside an ECMAScript module[0m
+
+    src/app/features/worker/daily-log/daily-log.component.ts:673:4:
+[37m      673 │     [32mreturn[37m this.assignedTasks.filter(t => t.status === status).le...
+          ╵     [32m~~~~~~[0m
+
+  This file is considered to be an ECMAScript module because of the "export" keyword here:
+
+    src/app/features/worker/daily-log/daily-log.component.ts:361:0:
+[37m      361 │ [32mexport[37m class DailyLogComponent implements OnInit {
+          ╵ [32m~~~~~~[0m
+
+[39m[22m

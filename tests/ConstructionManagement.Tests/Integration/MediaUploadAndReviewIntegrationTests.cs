@@ -7,14 +7,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
-using InfraSiteMediaService = ConstructionManagement.Infrastructure.Services.SiteMediaService;
 
 using ConstructionManagement.Domain.Enums;
 namespace ConstructionManagement.Tests.Integration;
 
 public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
 {
-    private readonly InfraSiteMediaService _mediaService;
+    private readonly SiteMediaService _mediaService;
     private readonly Mock<IFileStorageService> _fileStorageMock = new();
 
     public MediaUploadAndReviewIntegrationTests()
@@ -23,7 +22,7 @@ public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
             .Setup(x => x.UploadFileAsync(It.IsAny<IFormFile>(), It.IsAny<string>()))
             .ReturnsAsync("site-media/test.jpg");
 
-        _mediaService = new InfraSiteMediaService(
+        _mediaService = new SiteMediaService(
             new Repository<SiteMedia>(Context),
             new Repository<ProjectSettings>(Context),
             new Repository<ProjectApprovalRule>(Context),

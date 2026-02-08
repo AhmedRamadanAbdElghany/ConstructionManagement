@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { MockDataService } from '../../../core/mock/mock-data.service';
-import { AppNotification } from '../../../shared/interfaces';
+import { NotificationsService, NotificationDto } from '../../../core/services/notifications.service';
 
 @Component({
   selector: 'app-notifications',
@@ -57,8 +56,8 @@ import { AppNotification } from '../../../shared/interfaces';
             <div 
               (click)="navigateToNotification(notification)"
               class="group p-6 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none cursor-pointer transition-all hover:border-cyan-500/30 relative overflow-hidden"
-              [class.bg-slate-50]="notification.read"
-              [class.dark:bg-slate-950/30]="notification.read">
+              [class.bg-slate-50]="notification.isRead"
+              [class.dark:bg-slate-950/30]="notification.isRead">
               
               <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/15 transition-colors"></div>
 
@@ -95,13 +94,13 @@ import { AppNotification } from '../../../shared/interfaces';
                 </div>
                 <div class="flex-1 min-w-0">
                   <div class="flex items-start justify-between mb-2">
-                    <p class="text-base text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors" [class.font-black]="!notification.read" [class.font-bold]="notification.read">{{ notification.message }}</p>
-                    @if (!notification.read) {
+                    <p class="text-base text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors" [class.font-black]="!notification.isRead" [class.font-bold]="notification.isRead">{{ notification.message }}</p>
+                    @if (!notification.isRead) {
                       <span class="w-2.5 h-2.5 rounded-full bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.5)] flex-shrink-0 ml-4 mt-1.5 animate-pulse"></span>
                     }
                   </div>
-                  <p class="text-xs font-black text-slate-500 dark:text-slate-500 uppercase tracking-widest">{{ getTimeAgo(notification.timestamp) }}</p>
-                  @if (notification.route) {
+                  <p class="text-xs font-black text-slate-500 dark:text-slate-500 uppercase tracking-widest">{{ getTimeAgo(notification.createdAt) }}</p>
+                  @if (notification.actionUrl) {
                     <div class="mt-6 inline-flex items-center text-xs font-black text-cyan-600 dark:text-cyan-400 uppercase tracking-widest hover:translate-x-1 transition-transform">
                       <span>{{ 'notifications.view_details' | translate }}</span>
                       <svg class="w-3.5 h-3.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -131,43 +130,43 @@ import { AppNotification } from '../../../shared/interfaces';
   `
 })
 export class NotificationsComponent implements OnInit {
-  notifications: AppNotification[] = [];
+  notifications: NotificationDto[] = [];
   filter: 'all' | 'unread' = 'all';
 
-  get filteredNotifications(): AppNotification[] {
+  get filteredNotifications(): NotificationDto[] {
     if (this.filter === 'unread') {
-      return this.notifications.filter(n => !n.read);
+      return this.notifications.filter(n => !n.isRead);
     }
     return this.notifications;
   }
 
   get unreadCount(): number {
-    return this.notifications.filter(n => !n.read).length;
+    return this.notifications.filter(n => !n.isRead).length;
   }
 
-  constructor(private mockDataService: MockDataService) { }
+  constructor(private notificationsService: NotificationsService) { }
 
   ngOnInit() {
-    this.mockDataService.getNotifications().subscribe(notifications => {
+    this.notificationsService.getNotifications().subscribe(notifications => {
       this.notifications = notifications;
     });
   }
 
   markAllRead() {
-    this.mockDataService.markAllNotificationsRead().subscribe(() => {
-      this.notifications.forEach(n => n.read = true);
+    this.notificationsService.markAllAsRead().subscribe(() => {
+      this.notifications.forEach(n => n.isRead = true);
     });
   }
 
-  navigateToNotification(notification: AppNotification) {
+  navigateToNotification(notification: NotificationDto) {
     // Mark as read
-    this.mockDataService.markNotificationRead(notification.id).subscribe(() => {
-      notification.read = true;
+    this.notificationsService.markAsRead(notification.id).subscribe(() => {
+      notification.isRead = true;
     });
 
     // Navigate if route exists
-    if (notification.route) {
-      window.location.href = notification.route;
+    if (notification.actionUrl) {
+      window.location.href = notification.actionUrl;
     }
   }
 

@@ -6,10 +6,10 @@ import { Role, Permission } from '../../../../shared/interfaces';
 import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
-    selector: 'app-permissions',
-    standalone: true,
-    imports: [CommonModule, FormsModule],
-    template: `
+  selector: 'app-permissions',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  template: `
     <div class="permissions-container p-6">
       <div class="header mb-8 flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100">
         <div>
@@ -32,7 +32,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
               <span class="text-lg">🗑</span>
             </button>
           </div>
-          <p class="text-gray-600 text-sm leading-relaxed">{{ perm.description || 'No description provided.' }}</p>
+          <p class="text-gray-600 text-sm leading-relaxed">{{ perm.desc || 'No description provided.' }}</p>
           <div class="mt-4 flex items-center gap-2">
             <span class="px-2 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-semibold uppercase tracking-wider rounded">System Global</span>
           </div>
@@ -52,8 +52,8 @@ import { AuthService } from '../../../../core/auth/auth.service';
             </div>
             <div>
               <label class="block text-sm font-semibold text-gray-700 mb-2">Description</label>
-              <textarea [(ngModel)]="newPerm.description" 
-                        placeholder="Detailed explanation of what this allows..." 
+              <textarea [(ngModel)]="newPerm.desc"
+                        placeholder="Detailed explanation of what this allows..."
                         rows="3"
                         class="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all bg-gray-50/50"></textarea>
             </div>
@@ -71,42 +71,42 @@ import { AuthService } from '../../../../core/auth/auth.service';
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     :host { display: block; background: #f8fafc; min-height: 100vh; }
     .permission-card { border-left: 4px solid transparent; }
     .permission-card:hover { border-left-color: #4f46e5; transform: translateY(-4px); }
   `]
 })
 export class PermissionsComponent implements OnInit {
-    permissions: Permission[] = [];
-    showCreateModal = false;
-    newPerm: Partial<Permission> = {};
+  permissions: Permission[] = [];
+  showCreateModal = false;
+  newPerm: Partial<Permission> = {};
 
-    constructor(private rolesService: RolesService) { }
+  constructor(private rolesService: RolesService) { }
 
-    ngOnInit() {
+  ngOnInit() {
+    this.loadPermissions();
+  }
+
+  loadPermissions() {
+    this.rolesService.getPermissions().subscribe(data => {
+      this.permissions = data;
+    });
+  }
+
+  createPermission() {
+    this.rolesService.createPermission(this.newPerm).subscribe(() => {
+      this.loadPermissions();
+      this.showCreateModal = false;
+      this.newPerm = {};
+    });
+  }
+
+  deletePermission(id: number) {
+    if (confirm('Are you sure you want to delete this permission? This might affects existing roles.')) {
+      this.rolesService.deletePermission(id).subscribe(() => {
         this.loadPermissions();
+      });
     }
-
-    loadPermissions() {
-        this.rolesService.getPermissions().subscribe(data => {
-            this.permissions = data;
-        });
-    }
-
-    createPermission() {
-        this.rolesService.createPermission(this.newPerm).subscribe(() => {
-            this.loadPermissions();
-            this.showCreateModal = false;
-            this.newPerm = {};
-        });
-    }
-
-    deletePermission(id: number) {
-        if (confirm('Are you sure you want to delete this permission? This might affects existing roles.')) {
-            this.rolesService.deletePermission(id).subscribe(() => {
-                this.loadPermissions();
-            });
-        }
-    }
+  }
 }

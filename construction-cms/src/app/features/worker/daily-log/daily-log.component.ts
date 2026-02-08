@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
-import { MockDataService } from '../../../core/mock/mock-data.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { BOQItem, DailyLog, SiteMedia } from '../../../shared/interfaces';
 import { AuthService } from '../../../core/auth/auth.service';
+import { DailyLogsService } from '../../../core/services/daily-logs.service';
 
 interface WorkTask {
   id: number;
@@ -355,8 +355,8 @@ export class DailyLogComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private mockDataService: MockDataService,
-    private authService: AuthService
+    private authService: AuthService,
+    private dailyLogsService: DailyLogsService
   ) {
     this.dailyLogForm = this.fb.group({
       boqItemId: ['', Validators.required],
@@ -373,22 +373,30 @@ export class DailyLogComponent implements OnInit {
   }
 
   loadData() {
-    this.mockDataService.getBOQItems(1).subscribe(items => {
-      this.boqItems = items;
-    });
+    // TODO: Implement BOQ items API
+    this.boqItems = [];
     this.loadTasksForDate(this.selectedDate);
   }
 
   loadTasksForDate(date: Date) {
-    // Simulate loading tasks for the selected date
-    this.assignedTasks = [
-      { id: 1, boqItemId: 1, boqItemName: 'Concrete Foundation Work', assignedQuantity: 50, unit: 'm³', status: 'Completed', photos: [] },
-      { id: 2, boqItemId: 2, boqItemName: 'Steel Reinforcement', assignedQuantity: 2000, unit: 'kg', status: 'InProgress', photos: [] },
-      { id: 3, boqItemId: 3, boqItemName: 'Formwork Installation', assignedQuantity: 100, unit: 'm²', status: 'Pending', photos: [] }
-    ];
+    // Load daily logs from backend for the selected date
+    const dateStr = this.formatDateForInput(date);
+    this.dailyLogsService.getDailyLogHistory(1).subscribe(logs => {
+      // Map daily logs to work tasks
+      this.assignedTasks = logs.map(log => ({
+        id: log.id,
+        boqItemId: log.itemId || 0,
+        boqItemName: log.itemName || 'Unknown Task',
+        assignedQuantity: log.completionPercentage || 0,
+        unit: 'm³',
+        status: log.isClosed ? 'Completed' : 'InProgress',
+        photos: []
+      }));
 
-    // Simulate if day is closed for past dates
-    this.isDayClosed = date < new Date(new Date().setHours(0, 0, 0, 0)) && !this.isToday;
+      // Check if day is closed
+      const closedLog = logs.find(l => l.isClosed);
+      this.isDayClosed = !!closedLog && date < new Date(new Date().setHours(0, 0, 0, 0)) && !this.isToday;
+    });
   }
 
   loadRecentDays() {

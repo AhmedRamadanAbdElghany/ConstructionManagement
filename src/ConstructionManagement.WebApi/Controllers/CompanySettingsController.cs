@@ -81,6 +81,40 @@ public class CompanySettingsController : ControllerBase
         if (request.DefaultMoneyCalculationMethod is not null)
             settings.DefaultMoneyCalculationMethod = Enum.TryParse<CalculationMethod>(request.DefaultMoneyCalculationMethod, true, out var m) ? m : CalculationMethod.Measured;
 
+        // Inventory Management Settings
+        if (request.RequireMaterialRequestApproval.HasValue)
+            settings.RequireMaterialRequestApproval = request.RequireMaterialRequestApproval.Value;
+        if (request.MaterialRequestApproverRole is not null)
+            settings.MaterialRequestApproverRole = request.MaterialRequestApproverRole;
+        if (request.EnableMultiWarehouse.HasValue)
+            settings.EnableMultiWarehouse = request.EnableMultiWarehouse.Value;
+        if (request.EnableStockAlerts.HasValue)
+            settings.EnableStockAlerts = request.EnableStockAlerts.Value;
+        if (request.DefaultLowStockThreshold.HasValue)
+            settings.DefaultLowStockThreshold = request.DefaultLowStockThreshold.Value;
+
+        // Equipment Management Settings
+        if (request.RequireEquipmentAssignmentApproval.HasValue)
+            settings.RequireEquipmentAssignmentApproval = request.RequireEquipmentAssignmentApproval.Value;
+        if (request.EquipmentAssignmentApproverRole is not null)
+            settings.EquipmentAssignmentApproverRole = request.EquipmentAssignmentApproverRole;
+        if (request.EnableEquipmentGpsTracking.HasValue)
+            settings.EnableEquipmentGpsTracking = request.EnableEquipmentGpsTracking.Value;
+        if (request.EnableEquipmentRentalBilling.HasValue)
+            settings.EnableEquipmentRentalBilling = request.EnableEquipmentRentalBilling.Value;
+        if (request.RequireMaintenanceSchedule.HasValue)
+            settings.RequireMaintenanceSchedule = request.RequireMaintenanceSchedule.Value;
+        if (request.MaintenanceReminderDays.HasValue)
+            settings.MaintenanceReminderDays = request.MaintenanceReminderDays.Value;
+        if (request.EnableEquipmentUtilizationTracking.HasValue)
+            settings.EnableEquipmentUtilizationTracking = request.EnableEquipmentUtilizationTracking.Value;
+        if (request.EnableEquipmentInsuranceTracking.HasValue)
+            settings.EnableEquipmentInsuranceTracking = request.EnableEquipmentInsuranceTracking.Value;
+        if (request.EnableEquipmentDepreciation.HasValue)
+            settings.EnableEquipmentDepreciation = request.EnableEquipmentDepreciation.Value;
+        if (request.DefaultDepreciationYears.HasValue)
+            settings.DefaultDepreciationYears = request.DefaultDepreciationYears.Value;
+
         await _repo.UpdateAsync(settings);
         await _uow.SaveChangesAsync();
 

@@ -145,7 +145,7 @@ import { RouterLink } from '@angular/router';
                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
                    Module Entitlements
                  </h3>
-                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-6">
                     <div (click)="toggleFormControl('allowMeasured')" 
                          [ngClass]="companyForm.get('allowMeasured')?.value ? 'border-amber-500 bg-amber-50/40 text-amber-900 dark:text-amber-100' : 'border-slate-100 dark:border-slate-800 text-slate-400'"
                          class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center group/card hover:scale-[1.02]">
@@ -176,8 +176,132 @@ import { RouterLink } from '@angular/router';
                         <span class="text-2xl mb-2">👥</span>
                         <span class="font-black text-[10px] uppercase tracking-widest text-center">HR & Payroll</span>
                     </div>
+                     <div (click)="toggleFormControl('enableInventoryManagement')" 
+                          [ngClass]="companyForm.get('enableInventoryManagement')?.value ? 'border-violet-500 bg-violet-50/40 text-violet-900 dark:text-violet-100' : 'border-slate-100 dark:border-slate-800 text-slate-400'" 
+                          class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center group/card hover:scale-[1.02]">
+                        <span class="text-2xl mb-2">&#128196;</span>
+                        <span class="font-black text-[10px] uppercase tracking-widest text-center">Inventory</span>
+                     </div>
+                     <div (click)="toggleFormControl('enableEquipmentManagement')" 
+                          [ngClass]="companyForm.get('enableEquipmentManagement')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-400'" 
+                          class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center group/card hover:scale-[1.02]">
+                        <span class="text-2xl mb-2">&#128668;</span>
+                        <span class="font-black text-[10px] uppercase tracking-widest text-center">Equipment</span>
+                     </div>
                  </div>
                </section>
+
+                <!-- Inventory Configuration -->
+                <section class="pt-6" *ngIf="companyForm.get('enableInventoryManagement')?.value">
+                  <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
+                    <span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span>
+                    Inventory Configuration
+                  </h3>
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                     <!-- Material Request Approval -->
+                     <div class="p-6 border-2 rounded-3xl" [ngClass]="companyForm.get('requireMaterialRequestApproval')?.value ? 'border-violet-500 bg-violet-50/40' : 'border-slate-100 dark:border-slate-800'">
+                        <div class="flex items-center justify-between mb-4">
+                           <span class="font-black text-[10px] uppercase tracking-widest">Material Request Approval</span>
+                           <label class="relative inline-flex items-center cursor-pointer">
+                             <input type="checkbox" formControlName="requireMaterialRequestApproval" class="sr-only peer">
+                             <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-violet-500"></div>
+                           </label>
+                        </div>
+                        <input formControlName="materialRequestApproverRole" placeholder="Approver Role"
+                               class="w-full p-3 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-violet-500 rounded-xl outline-none text-xs font-bold">
+                     </div>
+                     <!-- Multi Warehouse -->
+                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableMultiWarehouse')?.value ? 'border-violet-500 bg-violet-50/40' : 'border-slate-100 dark:border-slate-800'">
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Multi Warehouse</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Enable multiple warehouses</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" formControlName="enableMultiWarehouse" class="sr-only peer">
+                          <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-violet-500"></div>
+                        </label>
+                     </div>
+                     <!-- Stock Alerts -->
+                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableStockAlerts')?.value ? 'border-violet-500 bg-violet-50/40' : 'border-slate-100 dark:border-slate-800'">
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Stock Alerts</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Enable low stock notifications</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" formControlName="enableStockAlerts" class="sr-only peer">
+                          <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-violet-500"></div>
+                        </label>
+                     </div>
+                     <!-- Low Stock Threshold -->
+                     <div class="p-6 border-2 rounded-3xl" [ngClass]="companyForm.get('defaultLowStockThreshold')?.value ? 'border-violet-500 bg-violet-50/40' : 'border-slate-100 dark:border-slate-800'">
+                        <span class="font-black text-[10px] uppercase tracking-widest block mb-4">Low Stock Threshold</span>
+                        <input type="number" formControlName="defaultLowStockThreshold" 
+                               class="w-full p-3 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-violet-500 rounded-xl outline-none text-xs font-bold">
+                     </div>
+                  </div>
+                </section>
+
+                <!-- Equipment Configuration -->
+                <section class="pt-6" *ngIf="companyForm.get('enableEquipmentManagement')?.value">
+                  <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                    Equipment Configuration
+                  </h3>
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                     <!-- Maintenance Scheduling -->
+                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentMaintenanceScheduling')?.value ? 'border-emerald-600 bg-emerald-50/40' : 'border-slate-100 dark:border-slate-800'">
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Maintenance Scheduling</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Enable scheduled maintenance</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" formControlName="enableEquipmentMaintenanceScheduling" class="sr-only peer">
+                          <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                        </label>
+                     </div>
+                     <!-- Utilization Tracking -->
+                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentUtilizationTracking')?.value ? 'border-emerald-600 bg-emerald-50/40' : 'border-slate-100 dark:border-slate-800'">
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Utilization Tracking</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Track equipment usage hours</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" formControlName="enableEquipmentUtilizationTracking" class="sr-only peer">
+                          <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                        </label>
+                     </div>
+                     <!-- GPS Tracking -->
+                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentGPSTracking')?.value ? 'border-emerald-600 bg-emerald-50/40' : 'border-slate-100 dark:border-slate-800'">
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">GPS Tracking</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Track equipment location</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" formControlName="enableEquipmentGPSTracking" class="sr-only peer">
+                          <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                        </label>
+                     </div>
+                     <!-- Billing Integration -->
+                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentBilling')?.value ? 'border-emerald-600 bg-emerald-50/40' : 'border-slate-100 dark:border-slate-800'">
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Billing Integration</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Equipment rental billing</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" formControlName="enableEquipmentBilling" class="sr-only peer">
+                          <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                        </label>
+                     </div>
+                     <!-- Maintenance Alert Threshold -->
+                     <div class="p-6 border-2 rounded-3xl" [ngClass]="companyForm.get('equipmentMaintenanceAlertThreshold')?.value ? 'border-emerald-600 bg-emerald-50/40' : 'border-slate-100 dark:border-slate-800'">
+                        <span class="font-black text-[10px] uppercase tracking-widest block mb-4">Maintenance Alert (Hours)</span>
+                        <input type="number" formControlName="equipmentMaintenanceAlertThreshold" 
+                               class="w-full p-3 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-emerald-600 rounded-xl outline-none text-xs font-bold">
+                     </div>
+                  </div>
+                </section>
+
+
 
                <!-- Daily Log Policy -->
                <section class="pt-6">
@@ -358,6 +482,18 @@ export class CompaniesComponent implements OnInit {
       allowPackages: [false],
       allowLocations: [true],
       allowHR: [true],
+      enableInventoryManagement: [false],
+       enableEquipmentManagement: [false],
+       enableEquipmentMaintenanceScheduling: [true],
+       enableEquipmentUtilizationTracking: [true],
+       enableEquipmentGPSTracking: [false],
+       enableEquipmentBilling: [true],
+       equipmentMaintenanceAlertThreshold: [100],
+      requireMaterialRequestApproval: [false],
+       materialRequestApproverRole: [''],
+       enableMultiWarehouse: [false],
+       enableStockAlerts: [true],
+       defaultLowStockThreshold: [10],
       allowAddProgressEntry: [true],
       allowReopenClosedDay: [false],
       autoCloseDay: [false],
@@ -398,6 +534,18 @@ export class CompaniesComponent implements OnInit {
       allowPackages: false,
       allowLocations: true,
       allowHR: true,
+      enableInventoryManagement: false,
+       enableEquipmentManagement: false,
+       enableEquipmentMaintenanceScheduling: true,
+       enableEquipmentUtilizationTracking: true,
+       enableEquipmentGPSTracking: false,
+       enableEquipmentBilling: true,
+       equipmentMaintenanceAlertThreshold: 100,
+       requireMaterialRequestApproval: false,
+       materialRequestApproverRole: '',
+       enableMultiWarehouse: false,
+       enableStockAlerts: true,
+       defaultLowStockThreshold: 10,
       allowAddProgressEntry: true,
       allowReopenClosedDay: false,
       autoCloseDay: false,
@@ -433,6 +581,18 @@ export class CompaniesComponent implements OnInit {
         allowPackages: company.settings.allowPackages,
         allowLocations: company.settings.allowLocations,
         allowHR: company.settings.allowHR,
+        enableInventoryManagement: company.settings.enableInventoryManagement,
+         enableEquipmentManagement: company.settings.enableEquipmentManagement,
+         enableEquipmentMaintenanceScheduling: company.settings.enableEquipmentMaintenanceScheduling,
+         enableEquipmentUtilizationTracking: company.settings.enableEquipmentUtilizationTracking,
+         enableEquipmentGPSTracking: company.settings.enableEquipmentGPSTracking,
+         enableEquipmentBilling: company.settings.enableEquipmentBilling,
+         equipmentMaintenanceAlertThreshold: company.settings.equipmentMaintenanceAlertThreshold,
+        requireMaterialRequestApproval: company.settings.requireMaterialRequestApproval,
+        materialRequestApproverRole: company.settings.materialRequestApproverRole,
+        enableMultiWarehouse: company.settings.enableMultiWarehouse,
+        enableStockAlerts: company.settings.enableStockAlerts,
+        defaultLowStockThreshold: company.settings.defaultLowStockThreshold,
         allowAddProgressEntry: company.settings.allowAddProgressEntry,
         allowReopenClosedDay: company.settings.allowReopenClosedDay,
         autoCloseDay: company.settings.autoCloseDay,

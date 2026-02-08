@@ -3,6 +3,7 @@ using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using MockQueryable;
 using Moq;
 using System;
@@ -18,12 +19,14 @@ public class InvoiceServiceTests
     private readonly Mock<IRepository<ItemInvoice>> _invoiceRepoMock = new();
     private readonly Mock<IRepository<ItemDailyLog>> _dailyLogRepoMock = new();
     private readonly Mock<IRepository<BOQItem>> _boqItemRepoMock = new();
+    private readonly Mock<ILogger<InvoiceService>> _loggerMock = new();
 
     private InvoiceService CreateService()
         => new InvoiceService(
             _invoiceRepoMock.Object,
             _dailyLogRepoMock.Object,
-            _boqItemRepoMock.Object
+            _boqItemRepoMock.Object,
+            _loggerMock.Object
         );
 
     [Fact]

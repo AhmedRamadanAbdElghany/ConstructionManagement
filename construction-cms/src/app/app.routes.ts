@@ -84,6 +84,156 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/admin/access-control/roles/roles.component').then(m => m.RolesComponent),
                 canActivate: [roleGuard],
                 data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'vendors',
+                loadComponent: () => import('./features/admin/vendors/vendors.component').then(m => m.VendorsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'inventory',
+                loadComponent: () => import('./features/admin/inventory/inventory.component').then(m => m.InventoryComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'equipment',
+                loadComponent: () => import('./features/admin/equipment/equipment-list.component').then(m => m.EquipmentListComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'safety',
+                loadComponent: () => import('./features/admin/safety/safety.component').then(m => m.SafetyComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'subcontractors',
+                loadComponent: () => import('./features/admin/subcontractor/subcontractor.component').then(m => m.SubcontractorComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'analytics',
+                loadComponent: () => import('./features/admin/analytics/analytics.component').then(m => m.AnalyticsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'documents',
+                loadComponent: () => import('./features/admin/documents/documents.component').then(m => m.DocumentsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'quality',
+                loadComponent: () => import('./features/admin/quality/quality.component').then(m => m.QualityComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'quality/inspections',
+                loadComponent: () => import('./features/admin/quality/quality-inspections.component').then(m => m.QualityInspectionsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'quality/defects',
+                loadComponent: () => import('./features/admin/quality/quality-defects.component').then(m => m.QualityDefectsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'quality/punchlist',
+                loadComponent: () => import('./features/admin/quality/quality-punchlist.component').then(m => m.QualityPunchlistComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'safety/inspections',
+                loadComponent: () => import('./features/admin/safety/safety-inspections.component').then(m => m.SafetyInspectionsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'safety/incidents',
+                loadComponent: () => import('./features/admin/safety/safety-incidents.component').then(m => m.SafetyIncidentsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'safety/training',
+                loadComponent: () => import('./features/admin/safety/safety-training.component').then(m => m.SafetyTrainingComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'analytics/profitability',
+                loadComponent: () => import('./features/admin/analytics/profitability-dashboard.component').then(m => m.ProfitabilityDashboardComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'analytics/reports',
+                loadComponent: () => import('./features/admin/analytics/reports-generation.component').then(m => m.ReportsGenerationComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'analytics/advanced',
+                loadComponent: () => import('./features/admin/analytics/advanced-analytics.component').then(m => m.AdvancedAnalyticsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'equipment/:id',
+                loadComponent: () => import('./features/admin/equipment/equipment-detail.component').then(m => m.EquipmentDetailComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'equipment/assignments',
+                loadComponent: () => import('./features/admin/equipment/equipment-assignments.component').then(m => m.EquipmentAssignmentsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'inventory/transactions',
+                loadComponent: () => import('./features/admin/inventory/inventory-transactions.component').then(m => m.InventoryTransactionsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'subcontractors/:id',
+                loadComponent: () => import('./features/admin/subcontractor/subcontractor-detail/subcontractor-detail.component').then(m => m.SubcontractorDetailComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'subcontractors/contracts',
+                loadComponent: () => import('./features/admin/subcontractor/subcontractor-contracts/subcontractor-contracts.component').then(m => m.SubcontractorContractsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'subcontractors/payments',
+                loadComponent: () => import('./features/admin/subcontractor/subcontractor-payments/subcontractor-payments.component').then(m => m.SubcontractorPaymentsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'subcontractors/ratings',
+                loadComponent: () => import('./features/admin/subcontractor/subcontractor-ratings/subcontractor-ratings.component').then(m => m.SubcontractorRatingsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'projects/:id/settings',
+                loadComponent: () => import('./features/admin/projects/project-settings/project-settings.component').then(m => m.ProjectSettingsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
             }
         ]
     },
@@ -107,21 +257,70 @@ export const routes: Routes = [
         ]
     },
 
-    // Client Routes
+    // Client Portal Routes
     {
-        path: 'client',
+        path: 'client-portal',
         children: [
             {
-                path: 'projects',
-                loadComponent: () => import('./features/client/client-projects/client-projects.component').then(m => m.ClientProjectsComponent),
-                canActivate: [roleGuard],
-                data: { roles: ['NormalUser'] }
+                path: 'login',
+                loadComponent: () => import('./features/client/client-portal/client-login.component').then(m => m.ClientLoginComponent)
             },
             {
-                path: 'reports',
-                loadComponent: () => import('./features/client/reports/client-reports.component').then(m => m.ClientReportsComponent),
-                canActivate: [roleGuard],
-                data: { roles: ['NormalUser'] }
+                path: 'dashboard',
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+            },
+            {
+                path: 'projects',
+                loadComponent: () => import('./features/client/client-projects/client-projects.component').then(m => m.ClientProjectsComponent)
+            },
+            {
+                path: 'projects/:id/progress',
+                loadComponent: () => import('./features/client/client-projects/client-projects.component').then(m => m.ClientProjectsComponent)
+            },
+            {
+                path: 'payments',
+                loadComponent: () => import('./features/client/reports/client-reports.component').then(m => m.ClientReportsComponent)
+            },
+            {
+                path: 'messages',
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+            },
+            {
+                path: 'messages/new',
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+            },
+            {
+                path: 'messages/:id',
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+            },
+            {
+                path: 'change-orders',
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+            },
+            {
+                path: 'change-orders/new',
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+            },
+            {
+                path: 'change-orders/:id',
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+            },
+            {
+                path: 'documents',
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+            },
+            {
+                path: 'activities',
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+            },
+            {
+                path: 'settings',
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+            },
+            {
+                path: '',
+                redirectTo: 'dashboard',
+                pathMatch: 'full'
             }
         ]
     },

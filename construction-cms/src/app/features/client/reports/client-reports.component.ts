@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { AnalyticsService, ReportDefinition, ExecuteReportRequest } from '../../../core/services/analytics.service';
 
 interface ClientReport {
   id: string;
@@ -203,12 +204,84 @@ interface ClientReport {
   `]
 })
 export class ClientReportsComponent implements OnInit {
+  private analyticsService = inject(AnalyticsService);
+
   selectedPeriod = 'last30';
   reports: ClientReport[] = [];
   activePrintReport: ClientReport | null = null;
+  isLoading = false;
 
   ngOnInit() {
-    this.generateDummyReports();
+    this.loadReports();
+  }
+
+  loadReports() {
+    this.isLoading = true;
+    this.analyticsService.getReportDefinitions().subscribe({
+      next: (reportDefinitions) => {
+        // Convert ReportDefinition to ClientReport format
+        this.reports = reportDefinitions.map((def: any) => ({
+          id: def.id.toString(),
+          type: this.mapReportType(def.reportType),
+          title: def.name,
+          date: def.createdAt ? this.formatDate(def.createdAt) : new Date().toLocaleDateString(),
+          period: this.selectedPeriod,
+          status: (def as any).isActive ? 'Final' : 'Draft',
+          description: def.description || 'No description available',
+          metrics: this.generateMetricsForReport(def)
+        }));
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading reports:', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private mapReportType(reportType: string): 'Progress' | 'Financial' | 'Quality' | 'Legal' {
+    const type = reportType.toLowerCase();
+    if (type.includes('progress') || type.includes('project')) return 'Progress';
+    if (type.includes('financial') || type.includes('cost') || type.includes('revenue')) return 'Financial';
+    if (type.includes('quality') || type.includes('inspection')) return 'Quality';
+    return 'Legal';
+  }
+
+  private generateMetricsForReport(report: ReportDefinition): { label: string; value: string; trend?: 'up' | 'down' }[] {
+    // Generate dummy metrics based on report type
+    const type = this.mapReportType(report.reportType);
+    switch (type) {
+      case 'Progress':
+        return [
+          { label: 'Completion', value: '78.4%', trend: 'up' },
+          { label: 'Work Hours', value: '1,420h' }
+        ];
+      case 'Financial':
+        return [
+          { label: 'Utilization', value: '92.1%', trend: 'down' },
+          { label: 'Dispersion', value: '$84.2K' }
+        ];
+      case 'Quality':
+        return [
+          { label: 'Safety Score', value: '100/100' },
+          { label: 'Tests Passed', value: '42' }
+        ];
+      case 'Legal':
+        return [
+          { label: 'Registration', value: 'Verified' },
+          { label: 'Permit ID', value: 'STR-2025-AX4' }
+        ];
+      default:
+        return [];
+    }
+  }
+
+  private formatDate(dateString: string): string {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   }
 
   printReport(report: ClientReport) {

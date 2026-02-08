@@ -1,0 +1,9 @@
+.premium-stat-card {
+    @apply bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-200 dark:border-white/5 shadow-xl transition-all;
+}
+
+:host ::ng-deep select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}

@@ -1,0 +1,311 @@
+<div class="project-settings-container">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-content">
+            <button class="back-button" (click)="goBack()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                        clip-rule="evenodd" />
+                </svg>
+                <span>{{ 'BACK' | translate }}</span>
+            </button>
+            <div class="header-title">
+                <h1>{{ 'PROJECT_SETTINGS' | translate }}</h1>
+                <p *ngIf="project" class="project-name">{{ project.name }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+        <div class="spinner"></div>
+        <p>{{ 'LOADING' | translate }}...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !loading" class="error-banner">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clip-rule="evenodd" />
+        </svg>
+        <span>{{ error }}</span>
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="success" class="success-banner">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd" />
+        </svg>
+        <span>{{ 'SETTINGS_SAVED' | translate }}</span>
+    </div>
+
+    <!-- Main Content -->
+    <div *ngIf="!loading && !error" class="settings-content">
+        <!-- Tabs -->
+        <div class="tabs-container">
+            <button class="tab-button" [class.active]="activeTab === 'general'" (click)="setActiveTab('general')">
+                {{ 'GENERAL' | translate }}
+            </button>
+            <button class="tab-button" [class.active]="activeTab === 'notifications'"
+                (click)="setActiveTab('notifications')">
+                {{ 'NOTIFICATIONS' | translate }}
+            </button>
+            <button class="tab-button" [class.active]="activeTab === 'photos'" (click)="setActiveTab('photos')">
+                {{ 'PHOTOS' | translate }}
+            </button>
+            <button class="tab-button" [class.active]="activeTab === 'invoices'" (click)="setActiveTab('invoices')">
+                {{ 'INVOICES' | translate }}
+            </button>
+            <button class="tab-button" [class.active]="activeTab === 'client'" (click)="setActiveTab('client')">
+                {{ 'CLIENT_ACCESS' | translate }}
+            </button>
+            <button class="tab-button" [class.active]="activeTab === 'daily-log'" (click)="setActiveTab('daily-log')">
+                {{ 'DAILY_LOG' | translate }}
+            </button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- General Tab -->
+            <div *ngIf="activeTab === 'general'" class="tab-panel">
+                <div class="panel-header">
+                    <h2>{{ 'GENERAL_SETTINGS' | translate }}</h2>
+                    <p class="panel-description">{{ 'GENERAL_SETTINGS_DESC' | translate }}</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="moneyCalculationMethod">{{ 'MONEY_CALCULATION_METHOD' | translate }}</label>
+                    <select id="moneyCalculationMethod" class="form-control" [(ngModel)]="form.moneyCalculationMethod">
+                        <option [ngValue]="null">{{ 'INHERIT_FROM_COMPANY' | translate }}</option>
+                        <option value="Measured">{{ 'MEASURED' | translate }}</option>
+                        <option value="Supervision">{{ 'SUPERVISION' | translate }}</option>
+                        <option value="Packages">{{ 'PACKAGES' | translate }}</option>
+                    </select>
+                    <small class="form-hint">{{ 'MONEY_CALCULATION_METHOD_HINT' | translate }}</small>
+                </div>
+            </div>
+
+            <!-- Notifications Tab -->
+            <div *ngIf="activeTab === 'notifications'" class="tab-panel">
+                <div class="panel-header">
+                    <h2>{{ 'DELAY_NOTIFICATIONS' | translate }}</h2>
+                    <p class="panel-description">{{ 'DELAY_NOTIFICATIONS_DESC' | translate }}</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" [(ngModel)]="form.enableDelayNotification"
+                            [indeterminate]="isNull(form.enableDelayNotification)"
+                            (change)="form.enableDelayNotification = $event.target.checked" />
+                        <span>{{ 'ENABLE_DELAY_NOTIFICATIONS' | translate }}</span>
+                    </label>
+                    <small class="form-hint">{{ 'ENABLE_DELAY_NOTIFICATIONS_HINT' | translate }}</small>
+                </div>
+
+                <div *ngIf="form.enableDelayNotification !== null && form.enableDelayNotification" class="sub-settings">
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" [(ngModel)]="form.delayNotificationIsOneTimeOnly"
+                                [indeterminate]="isNull(form.delayNotificationIsOneTimeOnly)"
+                                (change)="form.delayNotificationIsOneTimeOnly = $event.target.checked" />
+                            <span>{{ 'ONE_TIME_ONLY' | translate }}</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="delayNotificationIntervalDays">{{ 'NOTIFICATION_INTERVAL_DAYS' | translate
+                            }}</label>
+                        <input type="number" id="delayNotificationIntervalDays" class="form-control"
+                            [(ngModel)]="form.delayNotificationIntervalDays" min="1" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" [(ngModel)]="form.delayNotificationSendEmail"
+                                [indeterminate]="isNull(form.delayNotificationSendEmail)"
+                                (change)="form.delayNotificationSendEmail = $event.target.checked" />
+                            <span>{{ 'SEND_EMAIL_NOTIFICATION' | translate }}</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="delayGracePeriodDays">{{ 'GRACE_PERIOD_DAYS' | translate }}</label>
+                        <input type="number" id="delayGracePeriodDays" class="form-control"
+                            [(ngModel)]="form.delayGracePeriodDays" min="0" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Photos Tab -->
+            <div *ngIf="activeTab === 'photos'" class="tab-panel">
+                <div class="panel-header">
+                    <h2>{{ 'PHOTO_SETTINGS' | translate }}</h2>
+                    <p class="panel-description">{{ 'PHOTO_SETTINGS_DESC' | translate }}</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" [(ngModel)]="form.enablePhotoUpload"
+                            [indeterminate]="isNull(form.enablePhotoUpload)"
+                            (change)="form.enablePhotoUpload = $event.target.checked" />
+                        <span>{{ 'ENABLE_PHOTO_UPLOAD' | translate }}</span>
+                    </label>
+                </div>
+
+                <div *ngIf="form.enablePhotoUpload !== null && form.enablePhotoUpload" class="sub-settings">
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" [(ngModel)]="form.requirePhotoReview"
+                                [indeterminate]="isNull(form.requirePhotoReview)"
+                                (change)="form.requirePhotoReview = $event.target.checked" />
+                            <span>{{ 'REQUIRE_PHOTO_REVIEW' | translate }}</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="photoApproverRole">{{ 'PHOTO_APPROVER_ROLE' | translate }}</label>
+                        <select id="photoApproverRole" class="form-control" [(ngModel)]="form.photoApproverRole">
+                            <option [ngValue]="null">{{ 'INHERIT_FROM_COMPANY' | translate }}</option>
+                            <option value="SuperAdmin">{{ 'SUPER_ADMIN' | translate }}</option>
+                            <option value="CompanyAdmin">{{ 'COMPANY_ADMIN' | translate }}</option>
+                            <option value="CompanyUser">{{ 'COMPANY_USER' | translate }}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="maxPhotosPerUpload">{{ 'MAX_PHOTOS_PER_UPLOAD' | translate }}</label>
+                        <input type="number" id="maxPhotosPerUpload" class="form-control"
+                            [(ngModel)]="form.maxPhotosPerUpload" min="1" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invoices Tab -->
+            <div *ngIf="activeTab === 'invoices'" class="tab-panel">
+                <div class="panel-header">
+                    <h2>{{ 'INVOICE_SETTINGS' | translate }}</h2>
+                    <p class="panel-description">{{ 'INVOICE_SETTINGS_DESC' | translate }}</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" [(ngModel)]="form.enableInvoiceReview"
+                            [indeterminate]="isNull(form.enableInvoiceReview)"
+                            (change)="form.enableInvoiceReview = $event.target.checked" />
+                        <span>{{ 'ENABLE_INVOICE_REVIEW' | translate }}</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" [(ngModel)]="form.enableInvoiceAggregation"
+                            [indeterminate]="isNull(form.enableInvoiceAggregation)"
+                            (change)="form.enableInvoiceAggregation = $event.target.checked" />
+                        <span>{{ 'ENABLE_INVOICE_AGGREGATION' | translate }}</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Client Access Tab -->
+            <div *ngIf="activeTab === 'client'" class="tab-panel">
+                <div class="panel-header">
+                    <h2>{{ 'CLIENT_ACCESS_SETTINGS' | translate }}</h2>
+                    <p class="panel-description">{{ 'CLIENT_ACCESS_SETTINGS_DESC' | translate }}</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" [(ngModel)]="form.clientCanSeeFinancials"
+                            [indeterminate]="isNull(form.clientCanSeeFinancials)"
+                            (change)="form.clientCanSeeFinancials = $event.target.checked" />
+                        <span>{{ 'CLIENT_CAN_SEE_FINANCIALS' | translate }}</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" [(ngModel)]="form.clientCanSeeMedia"
+                            [indeterminate]="isNull(form.clientCanSeeMedia)"
+                            (change)="form.clientCanSeeMedia = $event.target.checked" />
+                        <span>{{ 'CLIENT_CAN_SEE_MEDIA' | translate }}</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" [(ngModel)]="form.clientCanSeeBOQ"
+                            [indeterminate]="isNull(form.clientCanSeeBOQ)"
+                            (change)="form.clientCanSeeBOQ = $event.target.checked" />
+                        <span>{{ 'CLIENT_CAN_SEE_BOQ' | translate }}</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Daily Log Tab -->
+            <div *ngIf="activeTab === 'daily-log'" class="tab-panel">
+                <div class="panel-header">
+                    <h2>{{ 'DAILY_LOG_SETTINGS' | translate }}</h2>
+                    <p class="panel-description">{{ 'DAILY_LOG_SETTINGS_DESC' | translate }}</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" [(ngModel)]="form.allowAddProgressEntry"
+                            [indeterminate]="isNull(form.allowAddProgressEntry)"
+                            (change)="form.allowAddProgressEntry = $event.target.checked" />
+                        <span>{{ 'ALLOW_ADD_PROGRESS_ENTRY' | translate }}</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" [(ngModel)]="form.allowReopenClosedDay"
+                            [indeterminate]="isNull(form.allowReopenClosedDay)"
+                            (change)="form.allowReopenClosedDay = $event.target.checked" />
+                        <span>{{ 'ALLOW_REOPEN_CLOSED_DAY' | translate }}</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" [(ngModel)]="form.autoCloseDay"
+                            [indeterminate]="isNull(form.autoCloseDay)"
+                            (change)="form.autoCloseDay = $event.target.checked" />
+                        <span>{{ 'AUTO_CLOSE_DAY' | translate }}</span>
+                    </label>
+                </div>
+
+                <div *ngIf="form.autoCloseDay !== null && form.autoCloseDay" class="sub-settings">
+                    <div class="form-group">
+                        <label for="autoCloseDayTime">{{ 'AUTO_CLOSE_DAY_TIME' | translate }}</label>
+                        <input type="time" id="autoCloseDayTime" class="form-control"
+                            [(ngModel)]="form.autoCloseDayTime" />
+                        <small class="form-hint">{{ 'AUTO_CLOSE_DAY_TIME_HINT' | translate }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-secondary" (click)="resetToDefaults()" [disabled]="!hasChanges() || saving">
+                {{ 'RESET' | translate }}
+            </button>
+            <button class="btn btn-primary" (click)="saveSettings()" [disabled]="!hasChanges() || saving">
+                <svg *ngIf="saving" class="spinner-small" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                </svg>
+                <span *ngIf="!saving">{{ 'SAVE_CHANGES' | translate }}</span>
+                <span *ngIf="saving">{{ 'SAVING' | translate }}...</span>
+            </button>
+        </div>
+    </div>
+</div>

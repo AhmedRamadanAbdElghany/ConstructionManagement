@@ -5,6 +5,8 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { CompaniesService } from '../../../../core/services/companies.service';
 import { Company, Package } from '../../../../shared/interfaces';
 import { PackagesService } from '../../../../core/services/packages.service';
+import { RolesService } from '../../../../core/services/roles.service';
+import { ProjectService } from '../../../../core/services/project.service';
 
 @Component({
   selector: 'app-company-detail',
@@ -175,7 +177,7 @@ import { PackagesService } from '../../../../core/services/packages.service';
                     <th class="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Collection Status</th>
                     <th class="px-8 py-6"></th>
                   </tr>
-                  <tr *ngFor="let bill of mockBills" class="border-t border-slate-50 dark:border-white/5 hover:bg-slate-50/30 transition-all group">
+                  <tr *ngFor="let bill of bills" class="border-t border-slate-50 dark:border-white/5 hover:bg-slate-50/30 transition-all group">
                     <td class="px-8 py-6 text-sm font-bold text-slate-600 dark:text-slate-400">{{ bill.date }}</td>
                     <td class="px-8 py-6 text-sm font-black text-slate-800 dark:text-slate-200">{{ bill.desc }}</td>
                     <td class="px-8 py-6 text-sm font-black text-indigo-600">{{ bill.amount | currency }}</td>
@@ -200,13 +202,13 @@ import { PackagesService } from '../../../../core/services/packages.service';
                     <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
                     Accountability Directory
                   </h3>
-                  <p class="text-xs text-slate-500 mt-1 font-medium">{{ mockUsers.length }} active user identities across this organization</p>
+                  <p class="text-xs text-slate-500 mt-1 font-medium">{{ users.length }} active user identities across this organization</p>
                 </div>
                 <button (click)="showOnboardModal = true" class="px-8 py-3 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-indigo-500/20 hover:scale-105 transition-all">Onboard Personnel</button>
              </div>
 
              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-               <div *ngFor="let user of mockUsers" class="p-8 bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 rounded-[2.5rem] relative group hover:bg-white dark:hover:bg-slate-800 hover:shadow-2xl transition-all h-fit">
+                <div *ngFor="let user of users" class="p-8 bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 rounded-[2.5rem] relative group hover:bg-white dark:hover:bg-slate-800 hover:shadow-2xl transition-all h-fit">
                   <div class="flex items-center gap-5 mb-8">
                     <div class="w-16 h-16 rounded-[1.5rem] bg-indigo-600 text-white flex items-center justify-center text-2xl font-black shadow-lg shadow-indigo-500/20 group-hover:bg-slate-900 group-hover:dark:bg-white group-hover:dark:text-indigo-600 transition-colors">{{ user.name.charAt(0) }}</div>
                     <div>
@@ -220,7 +222,7 @@ import { PackagesService } from '../../../../core/services/packages.service';
                       <label class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 block">Organizational Scope</label>
                       <div class="relative">
                         <select [(ngModel)]="user.role" class="w-full p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl text-xs font-black uppercase tracking-widest outline-none shadow-sm appearance-none cursor-pointer focus:border-indigo-500 text-slate-900 dark:text-white">
-                          <option *ngFor="let r of mockRoles" [value]="r.name">{{ r.name }}</option>
+                          <option *ngFor="let r of roles" [value]="r.name">{{ r.name }}</option>
                         </select>
                         <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">⌄</div>
                       </div>
@@ -267,14 +269,14 @@ import { PackagesService } from '../../../../core/services/packages.service';
                         <div class="space-y-2">
                           <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Initial Duty Role</label>
                           <select formControlName="role" class="w-full p-5 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-3xl outline-none font-bold appearance-none text-slate-900 dark:text-white">
-                             <option *ngFor="let r of mockRoles" [value]="r.name">{{ r.name }}</option>
+                             <option *ngFor="let r of roles" [value]="r.name">{{ r.name }}</option>
                           </select>
                         </div>
                         <div class="space-y-2">
                           <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Directly Reports To</label>
                           <select formControlName="reportsToId" class="w-full p-5 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-3xl outline-none font-bold appearance-none text-slate-900 dark:text-white">
                              <option [ngValue]="null">Top Level / None</option>
-                             <option *ngFor="let u of mockUsers" [value]="u.id">{{ u.name }}</option>
+                              <option *ngFor="let u of users" [value]="u.id">{{ u.name }}</option>
                           </select>
                         </div>
                       </div>
@@ -295,7 +297,7 @@ import { PackagesService } from '../../../../core/services/packages.service';
                 <div class="w-full lg:w-1/3">
                   <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 px-4">Available Archetypes</h3>
                   <div class="space-y-3">
-                    <div *ngFor="let role of mockRoles" 
+                    <div *ngFor="let role of roles" 
                          (click)="selectedRole = role"
                          [class.bg-indigo-600]="selectedRole?.id === role.id"
                          [class.border-indigo-600]="selectedRole?.id === role.id"
@@ -359,7 +361,7 @@ import { PackagesService } from '../../../../core/services/packages.service';
                      </div>
 
                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div *ngFor="let perm of mockPermissions" 
+                        <div *ngFor="let perm of permissions" 
                              (click)="toggleRolePermission(perm.name)"
                              class="p-5 bg-white dark:bg-slate-900 border rounded-2xl flex items-center justify-between cursor-pointer group hover:border-indigo-300 transition-all"
                              [class.border-indigo-200]="selectedRole.perms.includes(perm.name)"
@@ -402,7 +404,7 @@ import { PackagesService } from '../../../../core/services/packages.service';
              </div>
 
              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-               <div *ngFor="let perm of mockPermissions" class="p-8 bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-[2.5rem] shadow-xl shadow-slate-200/50 hover:scale-105 transition-all relative overflow-hidden group border-b-8 border-b-indigo-500">
+                        <div *ngFor="let perm of permissions" class="p-8 bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-[2.5rem] shadow-xl shadow-slate-200/50 hover:scale-105 transition-all relative overflow-hidden group border-b-8 border-b-indigo-500">
                   <button (click)="deletePerm(perm.name)" class="absolute top-6 right-6 w-8 h-8 rounded-xl bg-rose-50 dark:bg-rose-900/20 text-rose-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110">
                     <span class="text-xl">&times;</span>
                   </button>
@@ -454,13 +456,13 @@ import { PackagesService } from '../../../../core/services/packages.service';
                     <div class="w-2 h-2 rounded-full bg-blue-500"></div>
                     Portfolio Breakdown
                   </h3>
-                  <p class="text-xs text-slate-500 mt-1 font-medium">{{ mockProjects.length }} active ventures under this organization</p>
+                  <p class="text-xs text-slate-500 mt-1 font-medium">{{ projects.length }} active ventures under this organization</p>
                 </div>
                 <button (click)="showProjectModal = true" class="px-8 py-3 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-indigo-500/20 hover:scale-105 transition-all">Launch New Project</button>
              </div>
 
              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-               <div *ngFor="let proj of mockProjects" class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-[3rem] p-8 hover:shadow-2xl transition-all group relative overflow-hidden">
+               <div *ngFor="let proj of projects" class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-[3rem] p-8 hover:shadow-2xl transition-all group relative overflow-hidden">
                   <div class="flex justify-between items-start mb-8">
                     <div class="flex items-center gap-5">
                       <div class="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 transition-transform">🏙️</div>
@@ -563,47 +565,29 @@ export class CompanyDetailComponent implements OnInit {
   featureToggles = [
     { ctrl: 'enableDelayNotification', icon: '🔔', label: 'Delay Notifications', desc: 'Auto-alerts for project and task deadlines' },
     { ctrl: 'requirePhotoReview', icon: '📸', label: 'Mandatory Photo Review', desc: 'Professional approval flow for all site media' },
-    { ctrl: 'clientCanSeeFinancials', icon: '💰', label: 'Client Financial Portal', desc: 'Allow clients transparency over project budgets' }
+    { ctrl: 'clientCanSeeFinancials', icon: '💰', label: 'Client Financial Portal', desc: 'Allow clients transparency over project budgets' },
+    { ctrl: 'enableInventoryManagement', icon: '📦', label: 'Inventory Management', desc: 'Track materials, stock levels, and warehouse operations' },
+    { ctrl: 'enableEquipmentManagement', icon: '🏗️', label: 'Equipment Management', desc: 'Manage heavy machinery and equipment fleet' },
+    { ctrl: 'enableSafetyManagement', icon: '🛡️', label: 'Safety Management', desc: 'Safety checklists, inspections, incidents, and training' },
+    { ctrl: 'enableSubcontractorManagement', icon: '🤝', label: 'Subcontractor Management', desc: 'Manage subcontractors, contracts, payments, and performance ratings' }
   ];
 
-  mockBills = [
-    { date: 'Feb 01, 2024', desc: 'Enterprise Subscription Monthly', amount: 5240, status: 'Paid' },
-    { date: 'Jan 01, 2024', desc: 'Enterprise Subscription Monthly', amount: 5240, status: 'Paid' },
-    { date: 'Dec 01, 2023', desc: 'Setup & Onboarding Fee', amount: 12000, status: 'Paid' }
-  ];
+  bills: any[] = [];
 
-  mockUsers = [
-    { id: 1, name: 'Ahmed Ali', email: 'ahmed@company.com', role: 'CompanyAdmin', lastLogin: '2 hours ago', reportsToId: null as number | null },
-    { id: 2, name: 'Maria Hassan', email: 'maria@company.com', role: 'CompanyUser', lastLogin: 'Yesterday', reportsToId: 1 },
-    { id: 3, name: 'Omar Khalil', email: 'omar@company.com', role: 'SiteManager', lastLogin: '3 days ago', reportsToId: 1 }
-  ];
+  users: any[] = [];
 
-  mockRoles = [
-    { id: 1, name: 'CompanyAdmin', desc: 'Full access to all company projects and settings', perms: ['Project.View', 'Project.Edit', 'User.Manage', 'Finance.Measured', 'Finance.Supervision'] },
-    { id: 2, name: 'CompanyUser', desc: 'Access to assigned projects and daily logs', perms: ['Project.View', 'DailyLog.Create'] },
-    { id: 3, name: 'SiteManager', desc: 'Management of site operations and worker logs', perms: ['Project.View', 'DailyLog.Manage', 'User.View'] }
-  ];
+  roles: any[] = [];
 
-  mockPermissions = [
-    { name: 'Project.View', desc: 'Access to view project dashboard' },
-    { name: 'Project.Edit', desc: 'Ability to edit project basic information' },
-    { name: 'User.Manage', desc: 'Ability to create and manage company roles and users' },
-    { name: 'Finance.Measured', desc: 'Access to measured BOQ items' },
-    { name: 'Finance.Supervision', desc: 'Access to supervision BOQ items' },
-    { name: 'DailyLog.Create', desc: 'Ability to submit daily field logs' },
-    { name: 'DailyLog.Manage', desc: 'Ability to close and approve daily logs' }
-  ];
+  permissions: any[] = [];
 
-  mockProjects = [
-    { id: 101, name: 'Crystal Tower Residencies', money: 24500000, photos: 1240, workers: 86, status: 65 },
-    { id: 102, name: 'East Side Industrial Park', money: 12800000, photos: 856, workers: 42, status: 30 },
-    { id: 103, name: 'Metro Plaza Renovation', money: 4200000, photos: 320, workers: 18, status: 90 }
-  ];
+  projects: any[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private companiesService: CompaniesService,
     private packagesService: PackagesService,
+    private rolesService: RolesService,
+    private projectService: ProjectService,
     private fb: FormBuilder
   ) {
     this.companyForm = this.fb.group({
@@ -615,7 +599,11 @@ export class CompanyDetailComponent implements OnInit {
       clientCanSeeFinancials: [false],
       allowMeasured: [true],
       allowSupervision: [true],
-      allowPackages: [false]
+      allowPackages: [false],
+      enableInventoryManagement: [false],
+      enableEquipmentManagement: [false],
+      enableSafetyManagement: [false],
+      enableSubcontractorManagement: [false]
     });
 
     this.onboardForm = this.fb.group({
@@ -653,9 +641,24 @@ export class CompanyDetailComponent implements OnInit {
     }
 
     this.packagesService.getAllPackages().subscribe(pkgs => this.packages = pkgs);
-    if (this.mockRoles.length > 0) {
-      this.selectedRole = this.mockRoles[0];
-    }
+
+    // Load roles and permissions from backend
+    this.rolesService.getPermissions().subscribe(perms => {
+      this.permissions = perms;
+    });
+
+    const companyId = Number(this.route.snapshot.paramMap.get('id'));
+    this.rolesService.getRoles(companyId).subscribe(roleData => {
+      this.roles = roleData;
+      if (this.roles.length > 0) {
+        this.selectedRole = this.roles[0];
+      }
+    });
+
+    // Load projects from backend
+    this.projectService.getMyProjects().subscribe(projData => {
+      this.projects = projData;
+    });
   }
 
   initForm(company: Company) {
@@ -712,23 +715,32 @@ export class CompanyDetailComponent implements OnInit {
 
   addPermission() {
     if (this.permForm.valid) {
-      if (this.mockPermissions.some(p => p.name === this.permForm.value.name)) {
+      if (this.permissions.some(p => p.name === this.permForm.value.name)) {
         alert('This capability key already exists in the engine architecture.');
         return;
       }
-      this.mockPermissions.push({ ...this.permForm.value });
-      this.permForm.reset();
-      this.showPermModal = false;
+      this.rolesService.createPermission(this.permForm.value).subscribe(() => {
+        this.rolesService.getPermissions().subscribe(perms => {
+          this.permissions = perms;
+        });
+        this.permForm.reset();
+        this.showPermModal = false;
+      });
     }
   }
 
   deletePerm(permName: string) {
     if (confirm(`CRITICAL: Removing '${permName}' will revoke this capability from ALL roles and companies. This cannot be undone. Proceed?`)) {
-      this.mockPermissions = this.mockPermissions.filter(p => p.name !== permName);
-      // Clean up roles that had this permission
-      this.mockRoles.forEach(role => {
-        role.perms = role.perms.filter(p => p !== permName);
-      });
+      const perm = this.permissions.find(p => p.name === permName);
+      if (perm) {
+        this.rolesService.deletePermission(perm.id).subscribe(() => {
+          this.permissions = this.permissions.filter(p => p.name !== permName);
+          // Clean up roles that had this permission
+          this.roles.forEach(role => {
+            role.perms = role.perms.filter((p: string) => p !== permName);
+          });
+        });
+      }
     }
   }
 
@@ -743,57 +755,69 @@ export class CompanyDetailComponent implements OnInit {
 
   deleteRole(id: number) {
     if (confirm('CRITICAL: Removing this role will revoke access for all associated personnel in this organization. Proceed?')) {
-      this.mockRoles = this.mockRoles.filter(r => r.id !== id);
-      if (this.selectedRole?.id === id) {
-        this.selectedRole = this.mockRoles.length > 0 ? this.mockRoles[0] : null;
-      }
+      this.rolesService.deleteRole(id).subscribe(() => {
+        this.roles = this.roles.filter(r => r.id !== id);
+        if (this.selectedRole?.id === id) {
+          this.selectedRole = this.roles.length > 0 ? this.roles[0] : null;
+        }
+      });
     }
   }
 
   addRole() {
     if (this.roleAddForm.valid) {
       if (this.editingRole) {
-        this.editingRole.name = this.roleAddForm.value.name;
-        this.editingRole.desc = this.roleAddForm.value.desc;
-        this.editingRole = null;
+        this.rolesService.updateRole(this.editingRole.id, this.roleAddForm.value).subscribe(() => {
+          this.editingRole.name = this.roleAddForm.value.name;
+          this.editingRole.desc = this.roleAddForm.value.desc;
+          this.editingRole = null;
+          this.roleAddForm.reset();
+          this.showRoleModal = false;
+        });
       } else {
-        const newRole = {
-          id: Math.max(...this.mockRoles.map(r => r.id)) + 1,
-          ...this.roleAddForm.value,
-          perms: [] as string[]
-        };
-        this.mockRoles.push(newRole);
-        this.selectedRole = newRole; // Automatically select the new role for permission mapping
+        this.rolesService.createRole(this.roleAddForm.value).subscribe((response: any) => {
+          const newRole = {
+            id: response.roleId,
+            ...this.roleAddForm.value,
+            perms: [] as string[]
+          };
+          this.roles.push(newRole);
+          this.selectedRole = newRole; // Automatically select the new role for permission mapping
+          this.roleAddForm.reset();
+          this.showRoleModal = false;
+        });
       }
-      this.roleAddForm.reset();
-      this.showRoleModal = false;
     }
   }
 
   launchProject() {
     if (this.projectForm.valid) {
-      const newProj = {
-        id: Math.max(...this.mockProjects.map(p => p.id)) + 1,
-        ...this.projectForm.value,
-        photos: 0,
-        workers: 0,
-        status: 0
-      };
-      this.mockProjects.unshift(newProj);
-      this.projectForm.reset({ money: 0 });
-      this.showProjectModal = false;
-      alert(`Venture '${newProj.name}' has been successfully launched in the operational portfolio.`);
+      this.projectService.createProject(this.projectForm.value).subscribe((response: any) => {
+        const newProj = {
+          id: response.projectId,
+          ...this.projectForm.value,
+          photos: 0,
+          workers: 0,
+          status: 0
+        };
+        this.projects.unshift(newProj);
+        this.projectForm.reset({ money: 0 });
+        this.showProjectModal = false;
+        alert(`Venture '${newProj.name}' has been successfully launched in the operational portfolio.`);
+      });
     }
   }
 
   onboardPersonnel() {
     if (this.onboardForm.valid) {
+      // TODO: Implement user creation via backend service
+      // For now, just add to local array
       const newUser = {
-        id: Math.max(...this.mockUsers.map(u => u.id)) + 1,
+        id: Math.max(...this.users.map(u => u.id)) + 1,
         ...this.onboardForm.value,
         lastLogin: 'Never'
       };
-      this.mockUsers.push(newUser);
+      this.users.push(newUser);
       this.onboardForm.reset({ role: 'CompanyUser', reportsToId: null });
       this.showOnboardModal = false;
     }
@@ -817,6 +841,6 @@ export class CompanyDetailComponent implements OnInit {
   }
 
   getUserName(id: number): string {
-    return this.mockUsers.find(u => u.id === id)?.name || 'Unknown Manager';
+    return this.users.find(u => u.id === id)?.name || 'Unknown Manager';
   }
 }

@@ -44,6 +44,14 @@ public class InvoicesController : ControllerBase
         return Ok(invoice);
     }
 
+    [HttpGet]
+    [Route("api/invoices")]
+    public async Task<IActionResult> GetAll([FromQuery] int? projectId = null, [FromQuery] string? status = null)
+    {
+        var invoices = await _invoiceService.GetAllInvoicesAsync(projectId, status);
+        return Ok(invoices);
+    }
+
     [HttpPut("{invoiceId}/review")]
     [Authorize(Policy = "CanReviewInvoices")]
     public async Task<IActionResult> Review(int invoiceId, [FromBody] ReviewInvoiceRequest request)

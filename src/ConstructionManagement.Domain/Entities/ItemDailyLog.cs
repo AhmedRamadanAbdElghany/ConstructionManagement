@@ -24,6 +24,8 @@ public class ItemDailyLog : BaseEntity, ICompanyEntity
 
     public string? ProgressNotes { get; set; }              // observations, issues, weather impact, etc.
 
+    public string? DailyWorkDescription { get; set; }        // description of work done on this day
+
     public bool IsClosed { get; set; } = false;             // day finalized / no more changes allowed
 
     public string? ClosingNotes { get; set; }               // reason for closing, final remarks

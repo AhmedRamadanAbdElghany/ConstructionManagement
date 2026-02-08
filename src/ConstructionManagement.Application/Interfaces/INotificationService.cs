@@ -20,6 +20,20 @@ public interface INotificationService
         string? link = null,
         NotificationType type = NotificationType.General
     );
+    
+    /// <summary>
+    /// إنشاء إشعار للموافقة على مستند
+    /// </summary>
+    Task CreateNotificationAsync(
+        string notificationType,
+        string message,
+        int? companyId,
+        int? projectId,
+        int referenceId,
+        string referenceType,
+        string? roleName = null
+    );
+
     Task SendApprovalNeededNotificationAsync(ApprovalRequest request, ApprovalStep step);
     Task<List<NotificationDto>> GetUserNotificationsAsync(int userId, bool unreadOnly = false);
     Task MarkAsReadAsync(int notificationId, int userId);

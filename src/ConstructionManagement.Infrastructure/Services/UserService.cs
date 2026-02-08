@@ -108,7 +108,7 @@ public class UserService : IUserService
         return await _userRepository.AsQueryable()
             .Where(u => u.Id == userId)
             .Select(u => new UserDto(
-                u.Id, u.FullName, u.Email,
+                u.Id, $"{u.FirstName} {u.LastName}".Trim(), u.Email,
                 u.UserRoles.Select(ur => ur.Role.Name).ToList(),
                 u.CreatedAt))
             .FirstOrDefaultAsync();
@@ -121,7 +121,7 @@ public class UserService : IUserService
 
         return await _userRepository.AsQueryable()
             .Select(u => new UserDto(
-                u.Id, u.FullName, u.Email,
+                u.Id, $"{u.FirstName} {u.LastName}".Trim(), u.Email,
                 u.UserRoles.Select(ur => ur.Role.Name).ToList(),
                 u.CreatedAt))
             .ToListAsync();

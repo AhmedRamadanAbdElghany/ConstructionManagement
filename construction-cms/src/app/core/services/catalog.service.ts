@@ -1,52 +1,56 @@
-import { Injectable } from '@angular/core';
-import { Observable, of, BehaviorSubject } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { CatalogItem } from '../../shared/interfaces';
-import { map } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
 })
 export class CatalogService {
-    private mockCatalogItems: CatalogItem[] = [
-        { id: 1, name: 'Site Mobilization', unit: 'LS', defaultRate: 5000, category: 'Preliminaries' },
-        { id: 2, name: 'Project Insurance', unit: 'LS', defaultRate: 2000, category: 'Preliminaries' },
-        { id: 3, name: 'Security Guard', unit: 'Month', defaultRate: 1500, category: 'Labor' },
-        { id: 4, name: 'Diesel Generator Rent', unit: 'Day', defaultRate: 200, category: 'Equipment' }
-    ];
-
-    private itemsSubject = new BehaviorSubject<CatalogItem[]>(this.mockCatalogItems);
+    private apiUrl = 'api/catalog';
+    private http = inject(HttpClient);
 
     getCatalogItems(projectId?: number): Observable<CatalogItem[]> {
-        return this.itemsSubject.asObservable().pipe(
-            map(items => items.filter(i => projectId ? i.projectId === projectId : !i.projectId))
-        );
+        let params = new HttpParams();
+        if (projectId) {
+            params = params.set('projectId', projectId.toString());
+        }
+        return this.http.get<CatalogItem[]>(this.apiUrl, { params });
+    }
+
+    getCatalogItem(id: number): Observable<CatalogItem> {
+        return this.http.get<CatalogItem>(`${this.apiUrl}/${id}`);
     }
 
     addCatalogItem(item: Partial<CatalogItem>): Observable<CatalogItem> {
-        const newItem: CatalogItem = {
-            ...item as CatalogItem,
-            id: Math.max(0, ...this.itemsSubject.value.map(i => i.id)) + 1
-        };
-        const current = this.itemsSubject.value;
-        this.itemsSubject.next([...current, newItem]);
-        return of(newItem);
+        return this.http.post<CatalogItem>(this.apiUrl, item);
     }
 
     updateCatalogItem(id: number, item: Partial<CatalogItem>): Observable<CatalogItem> {
-        const current = this.itemsSubject.value;
-        const index = current.findIndex(i => i.id === id);
-        if (index > -1) {
-            const updated = { ...current[index], ...item };
-            current[index] = updated;
-            this.itemsSubject.next([...current]);
-            return of(updated);
-        }
-        throw new Error('Item not found');
+        return this.http.put<CatalogItem>(`${this.apiUrl}/${id}`, item);
     }
 
     deleteCatalogItem(id: number): Observable<void> {
-        const current = this.itemsSubject.value;
-        this.itemsSubject.next(current.filter(i => i.id !== id));
-        return of(undefined);
+        return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    }
+
+    getCatalogCategories(): Observable<string[]> {
+        return this.http.get<string[]>(`${this.apiUrl}/categories`);
+    }
+
+    getCatalogItemsByCategory(category: string, projectId?: number): Observable<CatalogItem[]> {
+        let params = new HttpParams().set('category', category);
+        if (projectId) {
+            params = params.set('projectId', projectId.toString());
+        }
+        return this.http.get<CatalogItem[]>(`${this.apiUrl}/by-category`, { params });
+    }
+
+    searchCatalogItems(query: string, projectId?: number): Observable<CatalogItem[]> {
+        let params = new HttpParams().set('query', query);
+        if (projectId) {
+            params = params.set('projectId', projectId.toString());
+        }
+        return this.http.get<CatalogItem[]>(`${this.apiUrl}/search`, { params });
     }
 }

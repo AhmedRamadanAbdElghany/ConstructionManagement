@@ -14,7 +14,7 @@ public class ApplicationDbContext : DbContext
 
     public ApplicationDbContext(
         DbContextOptions<ApplicationDbContext> options,
-        ICompanyContext companyContext = null)
+        ICompanyContext? companyContext = null)
         : base(options)
     {
         _companyContext = companyContext;
@@ -56,6 +56,75 @@ public class ApplicationDbContext : DbContext
     public DbSet<CompanyPackage> CompanyPackages => Set<CompanyPackage>(); // Renamed from ClientPackage
     public DbSet<InvoiceSequence> InvoiceSequences => Set<InvoiceSequence>();
     public DbSet<Phase> Phases => Set<Phase>();
+
+    // HR / Job Postings
+    public DbSet<JobPosting> JobPostings => Set<JobPosting>();
+
+    // Expenses
+    public DbSet<MiscExpense> MiscExpenses => Set<MiscExpense>();
+    public DbSet<CashVoucher> CashVouchers => Set<CashVoucher>();
+
+    // Alias for AnalyticsService compatibility
+    public DbSet<ProjectTeamMember> TeamMembers => Set<ProjectTeamMember>();
+    public DbSet<ItemInvoice> Invoices => Set<ItemInvoice>();
+    public DbSet<MiscExpense> Expenses => Set<MiscExpense>();
+    public DbSet<ProjectTeamMember> ProjectAssignments => Set<ProjectTeamMember>();
+    
+    // Equipment Management
+    public DbSet<Equipment> Equipment => Set<Equipment>();
+    public DbSet<EquipmentType> EquipmentTypes => Set<EquipmentType>();
+    public DbSet<EquipmentAssignment> EquipmentAssignments => Set<EquipmentAssignment>();
+    public DbSet<EquipmentMaintenance> EquipmentMaintenances => Set<EquipmentMaintenance>();
+    public DbSet<EquipmentUtilization> EquipmentUtilizations => Set<EquipmentUtilization>();
+
+    // Safety Management
+    public DbSet<SafetyChecklist> SafetyChecklists => Set<SafetyChecklist>();
+    public DbSet<SafetyChecklistItem> SafetyChecklistItems => Set<SafetyChecklistItem>();
+    public DbSet<SafetyInspection> SafetyInspections => Set<SafetyInspection>();
+    public DbSet<SafetyInspectionItemResult> SafetyInspectionItemResults => Set<SafetyInspectionItemResult>();
+    public DbSet<SafetyIncident> SafetyIncidents => Set<SafetyIncident>();
+    public DbSet<SafetyTraining> SafetyTrainings => Set<SafetyTraining>();
+    public DbSet<SafetyCompliance> SafetyCompliances => Set<SafetyCompliance>();
+
+    // Subcontractor Management
+    public DbSet<Subcontractor> Subcontractors => Set<Subcontractor>();
+    public DbSet<SubcontractorContract> SubcontractorContracts => Set<SubcontractorContract>();
+    public DbSet<SubcontractorPayment> SubcontractorPayments => Set<SubcontractorPayment>();
+    public DbSet<SubcontractorRating> SubcontractorRatings => Set<SubcontractorRating>();
+
+    // Document Management
+    public DbSet<DocumentCategory> DocumentCategories => Set<DocumentCategory>();
+    public DbSet<Document> Documents => Set<Document>();
+    public DbSet<DocumentVersion> DocumentVersions => Set<DocumentVersion>();
+    public DbSet<DocumentApproval> DocumentApprovals => Set<DocumentApproval>();
+
+    // Quality Management
+    public DbSet<QualityStandard> QualityStandards => Set<QualityStandard>();
+    public DbSet<QualityInspection> QualityInspections => Set<QualityInspection>();
+    public DbSet<QualityInspectionItem> QualityInspectionItems => Set<QualityInspectionItem>();
+    public DbSet<Defect> Defects => Set<Defect>();
+    public DbSet<PunchListItem> PunchListItems => Set<PunchListItem>();
+    public DbSet<DefectResolution> DefectResolutions => Set<DefectResolution>();
+
+    // Analytics & Reporting
+    public DbSet<ReportDefinition> ReportDefinitions => Set<ReportDefinition>();
+    public DbSet<ReportExecution> ReportExecutions => Set<ReportExecution>();
+    public DbSet<DashboardWidget> DashboardWidgets => Set<DashboardWidget>();
+    public DbSet<AnalyticsSnapshot> AnalyticsSnapshots => Set<AnalyticsSnapshot>();
+    public DbSet<KPIDefinition> KPIDefinitions => Set<KPIDefinition>();
+    public DbSet<KPIResult> KPIResults => Set<KPIResult>();
+    public DbSet<ResourceUtilization> ResourceUtilizations => Set<ResourceUtilization>();
+
+    // Client Portal
+    public DbSet<ClientPortalSettings> ClientPortalSettings => Set<ClientPortalSettings>();
+    public DbSet<ClientUser> ClientUsers => Set<ClientUser>();
+    public DbSet<ClientProjectAccess> ClientProjectAccesses => Set<ClientProjectAccess>();
+    public DbSet<ClientMessage> ClientMessages => Set<ClientMessage>();
+    public DbSet<MessageAttachment> MessageAttachments => Set<MessageAttachment>();
+    public DbSet<MessageReply> MessageReplies => Set<MessageReply>();
+    public DbSet<ChangeOrderRequest> ChangeOrderRequests => Set<ChangeOrderRequest>();
+    public DbSet<ChangeOrderDocument> ChangeOrderDocuments => Set<ChangeOrderDocument>();
+    public DbSet<ClientActivityLog> ClientActivityLogs => Set<ClientActivityLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -146,6 +215,7 @@ public class ApplicationDbContext : DbContext
         // 5. User-related relationships (NoAction)
         modelBuilder.Entity<ItemDailyLog>().HasOne(dl => dl.CreatedByUser).WithMany().HasForeignKey(dl => dl.CreatedByUserId).OnDelete(DeleteBehavior.NoAction);
         modelBuilder.Entity<ItemDailyLog>().HasOne(dl => dl.ClosedByUser).WithMany().HasForeignKey(dl => dl.ClosedByUserId).OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<ItemDailyLog>().HasOne(dl => dl.ReopenedByUser).WithMany(u => u.ReopenedDailyLogs).HasForeignKey(dl => dl.ReopenedByUserId).OnDelete(DeleteBehavior.NoAction);
         modelBuilder.Entity<ItemInvoice>().HasOne(ii => ii.CreatedBy).WithMany().HasForeignKey(ii => ii.CreatedByUserId).OnDelete(DeleteBehavior.NoAction);
         modelBuilder.Entity<ItemInvoice>().HasOne(ii => ii.Reviewer).WithMany().HasForeignKey(ii => ii.ReviewerUserId).OnDelete(DeleteBehavior.NoAction);
         modelBuilder.Entity<Project>().HasOne(p => p.Owner).WithMany().HasForeignKey(p => p.OwnerUserId).OnDelete(DeleteBehavior.NoAction);
@@ -177,8 +247,108 @@ public class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<CompanySettings>().HasOne(cs => cs.Company).WithOne(c => c.Settings).HasForeignKey<CompanySettings>(cs => cs.CompanyId).OnDelete(DeleteBehavior.Cascade);
         
+        // Equipment Management configurations
+        ConfigureEquipmentEntities(modelBuilder);
+        
         // 10. SEEDING
         SeedData(modelBuilder);
+    }
+
+    private void ConfigureEquipmentEntities(ModelBuilder modelBuilder)
+    {
+        // EquipmentType configuration
+        modelBuilder.Entity<EquipmentType>(entity =>
+        {
+            entity.HasIndex(e => e.Code).IsUnique(false);
+            entity.HasIndex(e => new { e.CompanyId, e.Code }).IsUnique(false);
+            entity.HasIndex(e => e.Name);
+            entity.HasIndex(e => e.IsActive);
+        });
+
+        // Equipment configuration
+        modelBuilder.Entity<Equipment>(entity =>
+        {
+            entity.HasIndex(e => e.SerialNumber).IsUnique();
+            entity.HasIndex(e => e.Barcode);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => new { e.CompanyId, e.SerialNumber }).IsUnique(false);
+            entity.HasIndex(e => e.EquipmentTypeId);
+            entity.HasIndex(e => e.IsActive);
+            entity.HasIndex(e => e.NextMaintenanceDate);
+        });
+
+        // EquipmentAssignment configuration
+        modelBuilder.Entity<EquipmentAssignment>(entity =>
+        {
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.StartDate);
+            entity.HasIndex(e => e.EndDate);
+            entity.HasIndex(e => new { e.EquipmentId, e.Status });
+            entity.HasIndex(e => new { e.ProjectId, e.Status });
+            entity.HasIndex(e => new { e.AssignedToUserId, e.Status });
+        });
+
+        // EquipmentMaintenance configuration
+        modelBuilder.Entity<EquipmentMaintenance>(entity =>
+        {
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.ScheduledDate);
+            entity.HasIndex(e => e.EquipmentId);
+            entity.HasIndex(e => new { e.EquipmentId, e.Status });
+            entity.HasIndex(e => e.NextMaintenanceDue);
+        });
+
+        // EquipmentUtilization configuration
+        modelBuilder.Entity<EquipmentUtilization>(entity =>
+        {
+            entity.HasIndex(e => e.UtilizationDate);
+            entity.HasIndex(e => e.EquipmentId);
+            entity.HasIndex(e => e.ProjectId);
+            entity.HasIndex(e => new { e.EquipmentId, e.UtilizationDate });
+        });
+
+        // Relationships
+        modelBuilder.Entity<Equipment>()
+            .HasOne(e => e.EquipmentType)
+            .WithMany(t => t.Equipment)
+            .HasForeignKey(e => e.EquipmentTypeId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<EquipmentAssignment>()
+            .HasOne(ea => ea.Equipment)
+            .WithMany(e => e.Assignments)
+            .HasForeignKey(ea => ea.EquipmentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<EquipmentAssignment>()
+            .HasOne(ea => ea.Project)
+            .WithMany()
+            .HasForeignKey(ea => ea.ProjectId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<EquipmentAssignment>()
+            .HasOne(ea => ea.AssignedToUser)
+            .WithMany()
+            .HasForeignKey(ea => ea.AssignedToUserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<EquipmentMaintenance>()
+            .HasOne(em => em.Equipment)
+            .WithMany(e => e.Maintenances)
+            .HasForeignKey(em => em.EquipmentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<EquipmentUtilization>()
+            .HasOne(eu => eu.Equipment)
+            .WithMany(e => e.UtilizationRecords)
+            .HasForeignKey(eu => eu.EquipmentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<EquipmentUtilization>()
+            .HasOne(eu => eu.Project)
+            .WithMany()
+            .HasForeignKey(eu => eu.ProjectId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 
     private void SeedData(ModelBuilder modelBuilder)
@@ -356,6 +526,20 @@ public class ApplicationDbContext : DbContext
         // --- Transactions ---
         modelBuilder.Entity<Transaction>().HasData(
             new Transaction { Id = 1, ProjectId = 1, BOQItemId = 101, Amount = 5000, Type = TransactionType.MaterialPurchase, Status = TransactionStatus.Approved, CreatedByUserId = 1, CreatedAt = fixedDate }
+        );
+
+        // --- Cash Vouchers ---
+        modelBuilder.Entity<CashVoucher>().HasData(
+            new CashVoucher { Id = 1, VoucherNumber = "CV-001", ProjectId = 1, Amount = 10000, Description = "Site materials purchase", Category = "Materials", ApprovalStatus = VoucherApprovalStatus.Approved, VoucherDate = fixedDate, CreatedAt = fixedDate, CreatedByUserId = 2 },
+            new CashVoucher { Id = 2, VoucherNumber = "CV-002", ProjectId = 1, Amount = 5000, Description = "Equipment rental", Category = "Equipment", ApprovalStatus = VoucherApprovalStatus.Pending, VoucherDate = fixedDate, CreatedAt = fixedDate, CreatedByUserId = 2 },
+            new CashVoucher { Id = 3, VoucherNumber = "CV-003", ProjectId = 2, Amount = 15000, Description = "Labor payment", Category = "Labor", ApprovalStatus = VoucherApprovalStatus.Approved, VoucherDate = fixedDate, CreatedAt = fixedDate, CreatedByUserId = 2 }
+        );
+
+        // --- Misc Expenses ---
+        modelBuilder.Entity<MiscExpense>().HasData(
+            new MiscExpense { Id = 1, ExpenseNumber = "ME-001", ProjectId = 1, Category = "Office Supplies", Amount = 2500, Description = "Office supplies", ApprovalStatus = ExpenseApprovalStatus.Approved, ExpenseDate = fixedDate, CreatedAt = fixedDate, CreatedByUserId = 2 },
+            new MiscExpense { Id = 2, ExpenseNumber = "ME-002", ProjectId = 1, Category = "Transportation", Amount = 5000, Description = "Transportation", ApprovalStatus = ExpenseApprovalStatus.Pending, ExpenseDate = fixedDate, CreatedAt = fixedDate, CreatedByUserId = 2 },
+            new MiscExpense { Id = 3, ExpenseNumber = "ME-003", ProjectId = 2, Category = "Utilities", Amount = 7500, Description = "Utilities", ApprovalStatus = ExpenseApprovalStatus.Approved, ExpenseDate = fixedDate, CreatedAt = fixedDate, CreatedByUserId = 2 }
         );
 
         // --- Notifications ---

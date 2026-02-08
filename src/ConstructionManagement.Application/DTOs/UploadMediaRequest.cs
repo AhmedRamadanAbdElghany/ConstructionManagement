@@ -10,5 +10,5 @@ public class UploadMediaRequest
     public string? Description { get; set; }
     public SourceType SourceType { get; set; }
     public int? ItemId { get; set; } // ضيفه هنا بدل ما يكون في الـ Query
-    public IFormFile File { get; set; } // لازم يكون جزء من الـ Class
+    public required IFormFile File { get; set; } // لازم يكون جزء من الـ Class
 }

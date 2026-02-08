@@ -37,6 +37,7 @@ public class BOQItemServiceTests
         // Arrange
         var projectId = 1;
         var request = new CreateBOQItemRequest(
+            PhaseId: null,
             ItemCode: "CONC-01",
             ItemName: "Concrete",
             Description: "Normal Concrete",
@@ -76,6 +77,7 @@ public class BOQItemServiceTests
         // Arrange
         var projectId = 99;
         var request = new CreateBOQItemRequest(
+            PhaseId: null,
             ItemCode: null,
             ItemName: "Test",
             Description: null,
@@ -114,6 +116,7 @@ public class BOQItemServiceTests
         // Arrange
         var projectId = 1;
         var request = new CreateBOQItemRequest(
+            PhaseId: null,
             ItemCode: null,
             ItemName: "Error Item",
             Description: null,

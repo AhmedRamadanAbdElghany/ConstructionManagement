@@ -1,105 +1,99 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { CompanySettings, ProjectSettings, CompanyPackage } from '../../shared/interfaces';
+
+export interface UpdateCompanySettingsRequest {
+    enableDelayNotification?: boolean;
+    delayNotificationIsOneTimeOnly?: boolean;
+    delayNotificationIntervalDays?: number;
+    delayNotificationSendEmail?: boolean;
+    delayGracePeriodDays?: number;
+    enablePhotoUpload?: boolean;
+    requirePhotoReview?: boolean;
+    photoApproverRole?: string;
+    enableInvoiceReview?: boolean;
+    enableInvoiceAggregation?: boolean;
+    maxPhotosPerUpload?: number | null;
+    clientCanSeeFinancials?: boolean;
+    clientCanSeeMedia?: boolean;
+    clientCanSeeBOQ?: boolean;
+    allowMeasured?: boolean;
+    allowSupervision?: boolean;
+    allowPackages?: boolean;
+    defaultSupervisionPercentage?: number;
+    requireMaterialRequestApproval?: boolean;
+    materialRequestApproverRole?: string;
+    enableMultiWarehouse?: boolean;
+    enableStockAlerts?: boolean;
+    defaultLowStockThreshold?: number;
+    requireEquipmentAssignmentApproval?: boolean;
+    equipmentAssignmentApproverRole?: string;
+    enableEquipmentGpsTracking?: boolean;
+    enableEquipmentRentalBilling?: boolean;
+    requireMaintenanceSchedule?: boolean;
+    maintenanceReminderDays?: number;
+    enableEquipmentUtilizationTracking?: boolean;
+    enableEquipmentInsuranceTracking?: boolean;
+    enableEquipmentDepreciation?: boolean;
+    defaultDepreciationYears?: number;
+    defaultMoneyCalculationMethod?: string;
+}
+
+export interface UpdateProjectSettingsRequest {
+    enableDelayNotification?: boolean | null;
+    delayNotificationIsOneTimeOnly?: boolean | null;
+    delayNotificationIntervalDays?: number | null;
+    delayNotificationSendEmail?: boolean | null;
+    delayGracePeriodDays?: number | null;
+    enablePhotoUpload?: boolean | null;
+    requirePhotoReview?: boolean | null;
+    photoApproverRole?: string | null;
+    enableInvoiceReview?: boolean | null;
+    enableInvoiceAggregation?: boolean | null;
+    maxPhotosPerUpload?: number | null;
+    clientCanSeeFinancials?: boolean | null;
+    clientCanSeeMedia?: boolean | null;
+    clientCanSeeBOQ?: boolean | null;
+    moneyCalculationMethod?: string | null;
+    allowAddProgressEntry?: boolean | null;
+    allowReopenClosedDay?: boolean | null;
+    autoCloseDay?: boolean | null;
+    autoCloseDayTime?: string | null;
+}
 
 @Injectable({
     providedIn: 'root'
 })
 export class SettingsService {
-    private apiUrl = 'api'; // Usually proxy handles this or absolute URL is used
-
-    // Dummy Data
-    private dummyCompanySettings: CompanySettings = {
-        enableDelayNotification: true,
-        delayNotificationIsOneTimeOnly: false,
-        delayNotificationIntervalDays: 7,
-        delayNotificationSendEmail: true,
-        delayGracePeriodDays: 3,
-        enablePhotoUpload: true,
-        requirePhotoReview: true,
-        photoApproverRole: 'MediaReviewer',
-        enableInvoiceReview: true,
-        enableInvoiceAggregation: true,
-        maxPhotosPerUpload: 10,
-        clientCanSeeFinancials: true,
-        clientCanSeeMedia: true,
-        clientCanSeeBOQ: true,
-        defaultMoneyCalculationMethod: 'Measured',
-        allowMeasured: true,
-        allowSupervision: true,
-        allowPackages: true,
-        allowLocations: true,
-        allowHR: true,
-        defaultSupervisionPercentage: 10,
-        allowAddProgressEntry: true,
-        allowReopenClosedDay: true,
-        autoCloseDay: true,
-        autoCloseDayTime: '18:00'
-    };
-
-    private dummyCompanyPackages: CompanyPackage[] = [
-        { id: 1, name: 'Basic Finish', description: 'Standard painting and flooring', price: 50000, includedItemsDescription: 'Walls, Tiles, Basic Plumbing', variationCalculation: 'AddFullCost' },
-        { id: 2, name: 'Premium Luxury', description: 'Italian marble and smart home', price: 150000, includedItemsDescription: 'Marble, Smart Home, Custom Cabinetry', variationCalculation: 'AddDifference' }
-    ];
-
-    private dummyProjectSettings: ProjectSettings = {
-        enableDelayNotification: true,
-        delayNotificationIsOneTimeOnly: false,
-        delayNotificationIntervalDays: 7,
-        delayNotificationSendEmail: true,
-        delayGracePeriodDays: 3,
-        enablePhotoUpload: true,
-        requirePhotoReview: true,
-        photoApproverRole: 'MediaReviewer',
-        enableInvoiceReview: true,
-        enableInvoiceAggregation: true,
-        maxPhotosPerUpload: 10,
-        clientCanSeeFinancials: false,
-        clientCanSeeMedia: true,
-        clientCanSeeBOQ: true,
-        moneyCalculationMethod: 'Measured',
-        allowAddProgressEntry: null,
-        allowReopenClosedDay: null,
-        autoCloseDay: null,
-        autoCloseDayTime: null
-    };
-
-    private settingsSubject = new BehaviorSubject<CompanySettings>(this.dummyCompanySettings);
+    private apiUrl = 'api';
 
     constructor(private http: HttpClient) { }
 
+    // --- Company Settings ---
+
     getCompanySettings(): Observable<CompanySettings> {
-        // Return as observable and clone to prevent direct pollution
-        return this.settingsSubject.asObservable().pipe(
-            map(s => JSON.parse(JSON.stringify(s)))
-        );
+        return this.http.get<CompanySettings>(`${this.apiUrl}/company-settings`);
     }
 
-    getCompanyPackages(): Observable<CompanyPackage[]> {
-        return of([...this.dummyCompanyPackages]);
+    updateCompanySettings(request: UpdateCompanySettingsRequest): Observable<CompanySettings> {
+        return this.http.put<CompanySettings>(`${this.apiUrl}/company-settings`, request);
     }
 
-    updateCompanySettings(settings: Partial<CompanySettings>): Observable<CompanySettings> {
-        // In real app, this would be an API call
-        const updated = { ...this.settingsSubject.value, ...settings };
-        this.settingsSubject.next(updated);
-        return of(updated);
-    }
+    // --- Project Settings ---
 
     getProjectSettings(projectId: number): Observable<ProjectSettings> {
-        // Real API Call (Commented out)
-        // return this.http.get<ProjectSettings>(`${this.apiUrl}/projects/${projectId}/settings`);
-
-        return of(this.dummyProjectSettings);
+        return this.http.get<ProjectSettings>(`${this.apiUrl}/projects/${projectId}/settings`);
     }
 
-    updateProjectSettings(projectId: number, settings: Partial<ProjectSettings>): Observable<ProjectSettings> {
-        // Real API Call (Commented out)
-        // return this.http.put<ProjectSettings>(`${this.apiUrl}/projects/${projectId}/settings`, settings);
+    updateProjectSettings(projectId: number, request: UpdateProjectSettingsRequest): Observable<ProjectSettings> {
+        return this.http.put<ProjectSettings>(`${this.apiUrl}/projects/${projectId}/settings`, request);
+    }
 
-        this.dummyProjectSettings = { ...this.dummyProjectSettings, ...settings };
-        return of(this.dummyProjectSettings);
+    // --- Company Packages ---
+
+    getCompanyPackages(): Observable<CompanyPackage[]> {
+        // This endpoint might not exist in backend, returning empty array for now
+        return this.http.get<CompanyPackage[]>(`${this.apiUrl}/companies/packages`);
     }
 }

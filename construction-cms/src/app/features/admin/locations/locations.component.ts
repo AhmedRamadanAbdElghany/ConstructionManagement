@@ -1,8 +1,9 @@
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MockDataService } from '../../../core/mock/mock-data.service';
 import { Project, User } from '../../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
+import { ProjectService } from '../../../core/services/project.service';
+import { RolesService } from '../../../core/services/roles.service';
 
 declare const L: any;
 
@@ -169,19 +170,21 @@ export class LocationsComponent implements OnInit, AfterViewInit {
     return this.projects.filter(p => p.status === this.filterStatus);
   }
 
-  constructor(private mockDataService: MockDataService) { }
+  constructor(private projectService: ProjectService, private rolesService: RolesService) { }
 
   ngOnInit() {
-    this.mockDataService.getProjects().subscribe(projects => {
+    this.projectService.getMyProjects().subscribe(projects => {
       this.projects = projects;
       if (this.map && projects.length > 0) {
         this.addMarkersToMap();
       }
     });
 
-    this.mockDataService.getUsers().subscribe(users => {
-      this.workers = users.filter(u => u.role === 'CompanyUser');
-    });
+    // TODO: Implement workers API
+    // this.rolesService.getUsers().subscribe(users => {
+    //   this.workers = users.filter(u => u.role === 'CompanyUser');
+    // });
+    this.workers = [];
   }
 
   ngAfterViewInit() {

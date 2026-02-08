@@ -1,0 +1,134 @@
+<div class="inventory-transactions-container">
+    <div
+        class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden mb-10">
+        <div class="p-8 border-b border-slate-100 dark:border-white/5">
+            <h2 class="text-xl font-black text-slate-900 dark:text-white mb-1">{{ 'admin.filters' | translate }}</h2>
+        </div>
+        <div class="p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div>
+                <label for="search" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{
+                    'admin.search' | translate }}</label>
+                <input type="text" id="search" [(ngModel)]="filters.search" (input)="filterTransactions()"
+                    placeholder="{{ 'admin.search_transactions' | translate }}"
+                    class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+            </div>
+            <div>
+                <label for="transactionType"
+                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{
+                    'admin.transaction_type' | translate }}</label>
+                <select id="transactionType" [(ngModel)]="filters.transactionType" (change)="filterTransactions()"
+                    class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                    <option value="">{{ 'admin.all_types' | translate }}</option>
+                    <option value="In">{{ 'admin.in' | translate }}</option>
+                    <option value="Out">{{ 'admin.out' | translate }}</option>
+                    <option value="Transfer">{{ 'admin.transfer' | translate }}</option>
+                </select>
+            </div>
+            <div>
+                <label for="startDate" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{
+                    'admin.start_date' | translate }}</label>
+                <input type="date" id="startDate" [(ngModel)]="filters.startDate" (change)="filterTransactions()"
+                    class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+            </div>
+            <div>
+                <label for="endDate" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{
+                    'admin.end_date' | translate }}</label>
+                <input type="date" id="endDate" [(ngModel)]="filters.endDate" (change)="filterTransactions()"
+                    class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+            </div>
+        </div>
+    </div>
+
+    <!-- Transactions List -->
+    <div *ngIf="!isLoading && filteredTransactions.length > 0"
+        class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden mb-10">
+        <div class="p-8 border-b border-slate-100 dark:border-white/5">
+            <h2 class="text-xl font-black text-slate-900 dark:text-white mb-1">{{ 'admin.transactions' | translate }}
+            </h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400">{{ filteredTransactions.length }} {{
+                'admin.transactions_found' | translate }}</p>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-slate-50 dark:bg-slate-950/50">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            {{ 'admin.date' | translate }}</th>
+                        <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            {{ 'admin.type' | translate }}</th>
+                        <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            {{ 'admin.item' | translate }}</th>
+                        <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            {{ 'admin.quantity' | translate }}</th>
+                        <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            {{ 'admin.reference' | translate }}</th>
+                        <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            {{ 'admin.performed_by' | translate }}</th>
+                        <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            {{ 'admin.notes' | translate }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let transaction of filteredTransactions"
+                        class="border-t border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
+                        <td class="px-6 py-4">
+                            <span class="text-sm font-medium text-slate-900 dark:text-white">{{
+                                formatDate(transaction.transactionDate) }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span [ngClass]="{
+                'px-3 py-1 rounded-lg text-xs font-black': true,
+                'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400': transaction.transactionType === 'In',
+                'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400': transaction.transactionType === 'Out',
+                'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400': transaction.transactionType === 'Transfer'
+              }">
+                                {{ transaction.transactionType }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-sm font-medium text-slate-900 dark:text-white">{{ transaction.itemName
+                                }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-sm font-medium text-slate-900 dark:text-white">{{ transaction.quantity
+                                }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-sm font-medium text-slate-900 dark:text-white">{{
+                                transaction.referenceNumber || '-' }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-sm font-medium text-slate-900 dark:text-white">{{ transaction.performedBy
+                                || '-' }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-sm font-medium text-slate-900 dark:text-white">{{ transaction.notes || '-'
+                                }}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- No Results -->
+    <div *ngIf="!isLoading && filteredTransactions.length === 0"
+        class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden mb-10">
+        <div class="p-12 text-center">
+            <p class="text-lg font-medium text-slate-500 dark:text-slate-400">{{ 'admin.no_transactions_found' |
+                translate }}</p>
+            <p class="text-sm text-slate-400 dark:text-slate-500 mt-2">{{ 'admin.try_different_filters' | translate }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading"
+        class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden mb-10">
+        <div class="p-12 text-center">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-indigo-500">
+            </div>
+            <p class="text-lg font-medium text-slate-500 dark:text-slate-400 mt-4">{{ 'admin.loading' | translate }}</p>
+        </div>
+    </div>
+</div>

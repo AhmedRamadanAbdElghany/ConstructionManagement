@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { MockDataService } from '../../../core/mock/mock-data.service';
 import { Project, CatalogItem, User, CompanyPackage, CompanySettings } from '../../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { SettingsService } from '../../../core/services/settings.service';
+import { ProjectService } from '../../../core/services/project.service';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -679,13 +679,13 @@ export class ProjectsComponent implements OnInit {
 
 
   constructor(
-    private mockDataService: MockDataService,
+    private projectService: ProjectService,
     private catalogService: CatalogService,
     private settingsService: SettingsService
   ) { }
 
   ngOnInit() {
-    this.mockDataService.getProjects().subscribe(projects => {
+    this.projectService.getMyProjects().subscribe(projects => {
       this.projects = projects;
     });
     this.catalogService.getCatalogItems().subscribe(items => {

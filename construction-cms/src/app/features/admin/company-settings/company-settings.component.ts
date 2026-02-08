@@ -360,6 +360,52 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
             </section>
             }
 
+            <!-- Inventory Settings Section -->
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
+               <div class="absolute top-0 right-0 w-32 h-32 bg-violet-500/5 rounded-full blur-3xl"></div>
+               <div class="flex items-center justify-between mb-8">
+                  <div class="flex items-center space-x-4">
+                     <div class="w-12 h-12 rounded-2xl bg-violet-500/10 flex items-center justify-center text-violet-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                        </svg>
+                     </div>
+                     <div>
+                        <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Inventory Management</h3>
+                        <p class="text-[10px] text-violet-500 font-bold uppercase tracking-widest">Module Settings</p>
+                     </div>
+                  </div>
+               </div>
+
+               @if (isSuperAdmin) {
+               <div class="flex items-center justify-between p-4 rounded-2xl bg-violet-50 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/20 mb-4">
+                  <div>
+                     <span class="text-xs font-black text-violet-700 dark:text-violet-300 uppercase block">Enable Inventory Module</span>
+                     <span class="text-[8px] text-violet-500">Control whether inventory management is active</span>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                     <input type="checkbox" [(ngModel)]="settings.enableInventoryManagement" class="sr-only peer">
+                     <div class="w-14 h-8 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-violet-500"></div>
+                  </label>
+               </div>
+               }
+
+               @if (settings.enableInventoryManagement) {
+               <div class="space-y-4">
+                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                     <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Require Material Approval</span>
+                     <input type="checkbox" [(ngModel)]="settings.requireMaterialRequestApproval" class="w-5 h-5 accent-violet-500">
+                  </div>
+                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                     <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Enable Stock Alerts</span>
+                     <input type="checkbox" [(ngModel)]="settings.enableStockAlerts" class="w-5 h-5 accent-violet-500">
+                  </div>
+               </div>
+               } @else {
+                  <p class="text-[10px] text-slate-400 italic">Inventory module is disabled. Contact Super Admin to enable it.</p>
+               }
+            </div>
+
             <!-- SECTION 2: MODULE CONFIGURATION (Company Admin ONLY) -->
             @if (isOnlyCompanyAdmin) {
             <section class="space-y-8">
@@ -700,7 +746,7 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                </div>
                <div>
                   <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'permissionDesc' | translate }}</label>
-                  <textarea [(ngModel)]="permissionForm.description" rows="2" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-medium"></textarea>
+                  <textarea [(ngModel)]="permissionForm.desc" rows="2" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-medium"></textarea>
                </div>
             </div>
 
@@ -762,7 +808,7 @@ export class CompanySettingsComponent implements OnInit {
 
    permissionForm: Partial<Permission> = {
       name: '',
-      description: ''
+      desc: ''
    };
 
    catalogForm: Partial<CatalogItem> = {
@@ -922,7 +968,7 @@ export class CompanySettingsComponent implements OnInit {
 
    // Permissions Management
    openPermissionModal() {
-      this.permissionForm = { name: '', description: '' };
+      this.permissionForm = { name: '', desc: '' };
       this.showPermissionModal = true;
    }
 
@@ -999,3 +1045,5 @@ export class CompanySettingsComponent implements OnInit {
       }
    }
 }
+
+

@@ -100,6 +100,12 @@ public class User : BaseEntity, ICompanyEntity
     public virtual ICollection<ItemDailyLog> ClosedDailyLogs { get; set; }
         = new List<ItemDailyLog>();
 
+    /// <summary>
+    /// Daily logs reopened by this user
+    /// </summary>
+    public virtual ICollection<ItemDailyLog> ReopenedDailyLogs { get; set; }
+        = new List<ItemDailyLog>();
+
     // -- Notifications & Escalations -------------------------------------------
 
     /// <summary>

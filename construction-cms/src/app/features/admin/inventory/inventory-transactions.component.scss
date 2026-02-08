@@ -1,0 +1,40 @@
+.inventory-transactions-container {
+    min-height: 100vh;
+    background: var(--bg-primary);
+    padding: 2rem;
+
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .filters-section {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 1.5rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .transactions-table {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 1.5rem;
+        overflow: hidden;
+    }
+
+    .no-results {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 1.5rem;
+        padding: 3rem;
+        text-align: center;
+    }
+
+    .loading {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 1.5rem;
+        padding: 3rem;
+        text-align: center;
+    }
+}

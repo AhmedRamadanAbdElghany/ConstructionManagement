@@ -126,10 +126,9 @@ public class LocalFileStorageServiceTests : IDisposable
         var relativePath = "/uploads/general/" + fileName;
 
         // Act
-        var result = await service.DeleteFileAsync(relativePath);
+        await service.DeleteFileAsync(relativePath);
 
         // Assert
-        result.Should().BeTrue();
         File.Exists(fullPath).Should().BeFalse();
     }
 
@@ -140,10 +139,7 @@ public class LocalFileStorageServiceTests : IDisposable
         var service = CreateService();
 
         // Act
-        var result = await service.DeleteFileAsync("/uploads/non-existent.jpg");
-
-        // Assert
-        result.Should().BeFalse();
+        await service.DeleteFileAsync("/uploads/non-existent.jpg");
     }
 
     #endregion

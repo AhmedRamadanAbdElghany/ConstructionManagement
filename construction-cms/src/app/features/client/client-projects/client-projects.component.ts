@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { MockDataService } from '../../../core/mock/mock-data.service';
-import { Project, SiteMedia } from '../../../shared/interfaces';
+import { Project } from '../../../shared/interfaces';
+import { ProjectService } from '../../../core/services/project.service';
+import { SiteMediaService, SiteMediaDto } from '../../../core/services/site-media.service';
+import { ClientPortalService } from '../../../core/services/client-portal.service';
 
 @Component({
   selector: 'app-client-projects',
@@ -78,7 +80,7 @@ import { Project, SiteMedia } from '../../../shared/interfaces';
                 <div class="grid grid-cols-3 gap-2">
                   @for (media of getProjectMedia(project.id); track media.id) {
                     <div class="relative aspect-square rounded-xl overflow-hidden group cursor-pointer">
-                      <img [src]="media.url" [alt]="'Site photo'" 
+                      <img [src]="media.fileUrl" [alt]="'Site photo'" 
                            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110">
                       <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -145,7 +147,7 @@ import { Project, SiteMedia } from '../../../shared/interfaces';
 })
 export class ClientProjectsComponent implements OnInit {
   projects: Project[] = [];
-  siteMedia: SiteMedia[] = [];
+  siteMedia: SiteMediaDto[] = [];
 
   recentUpdates = [
     { message: 'Foundation work completed - Phase 1', date: '2 days ago' },
@@ -153,20 +155,20 @@ export class ClientProjectsComponent implements OnInit {
     { message: 'Site inspection passed successfully', date: '1 week ago' },
   ];
 
-  constructor(private mockDataService: MockDataService) { }
+  constructor(private projectService: ProjectService, private siteMediaService: SiteMediaService) { }
 
   ngOnInit() {
-    this.mockDataService.getProjects().subscribe(projects => {
+    this.projectService.getMyProjects().subscribe(projects => {
       this.projects = projects;
     });
 
     // Load media for all projects
-    this.mockDataService.getSiteMedia(1).subscribe(media => {
+    this.siteMediaService.getMediaForProject(1).subscribe(media => {
       this.siteMedia = media;
     });
   }
 
-  getProjectMedia(projectId: number): SiteMedia[] {
+  getProjectMedia(projectId: number): SiteMediaDto[] {
     return this.siteMedia.filter(m => m.projectId === projectId);
   }
 }

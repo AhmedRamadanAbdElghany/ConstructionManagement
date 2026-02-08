@@ -1,0 +1,339 @@
+<div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+            <div>
+                <h1
+                    class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight uppercase tracking-tight">
+                    {{ 'admin.equipment_assignments' | translate }}</h1>
+                <p class="text-sm text-slate-500 dark:text-slate-400">{{ 'admin.equipment_assignments_desc' | translate
+                    }}</p>
+            </div>
+            <button (click)="loadAssignments()"
+                class="w-12 h-12 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20 hover:scale-105 transition-transform">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="flex items-center justify-center py-20">
+            <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+
+        <!-- Filters -->
+        <div *ngIf="!isLoading"
+            class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden mb-10">
+            <div class="p-8 border-b border-slate-100 dark:border-white/5">
+                <h2 class="text-xl font-black text-slate-900 dark:text-white mb-1">{{ 'admin.filters' | translate }}
+                </h2>
+            </div>
+            <div class="p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label for="search" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{
+                        'admin.search' | translate }}</label>
+                    <input type="text" id="search" [(ngModel)]="filters.search" (input)="filterAssignments()"
+                        placeholder="{{ 'admin.search_assignments' | translate }}"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label for="status" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{
+                        'admin.status' | translate }}</label>
+                    <select id="status" [(ngModel)]="filters.status" (change)="filterAssignments()"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                        <option value="">{{ 'admin.all_statuses' | translate }}</option>
+                        <option value="Active">{{ 'admin.active' | translate }}</option>
+                        <option value="Completed">{{ 'admin.completed' | translate }}</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="projectId" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{
+                        'admin.project' | translate }}</label>
+                    <select id="projectId" [(ngModel)]="filters.projectId" (change)="filterAssignments()"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                        <option value="">{{ 'admin.all_projects' | translate }}</option>
+                        <option *ngFor="let project of projects" [ngValue]="project.id">{{ project.name }}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assignments List -->
+        <div *ngIf="!isLoading && filteredAssignments.length > 0"
+            class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden mb-10">
+            <div class="p-8 border-b border-slate-100 dark:border-white/5">
+                <h2 class="text-xl font-black text-slate-900 dark:text-white mb-1">{{ 'admin.assignments' | translate }}
+                </h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400">{{ filteredAssignments.length }} {{
+                    'admin.assignments_found' | translate }}</p>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-slate-50 dark:bg-slate-950/50">
+                        <tr>
+                            <th
+                                class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                {{ 'admin.equipment' | translate }}</th>
+                            <th
+                                class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                {{ 'admin.project' | translate }}</th>
+                            <th
+                                class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                {{ 'admin.assigned_to' | translate }}</th>
+                            <th
+                                class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                {{ 'admin.assignment_type' | translate }}</th>
+                            <th
+                                class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                {{ 'admin.assignment_date' | translate }}</th>
+                            <th
+                                class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                {{ 'admin.status' | translate }}</th>
+                            <th
+                                class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                {{ 'admin.actions' | translate }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let assignment of filteredAssignments"
+                            class="border-t border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-medium text-slate-900 dark:text-white">{{
+                                    assignment.equipmentName }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-medium text-slate-900 dark:text-white">{{
+                                    assignment.projectName }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-medium text-slate-900 dark:text-white">{{
+                                    assignment.assignedTo }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-medium text-slate-900 dark:text-white">{{
+                                    assignment.assignmentType }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-medium text-slate-900 dark:text-white">{{
+                                    formatDate(assignment.assignmentDate) }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span [ngClass]="{
+                  'px-3 py-1 rounded-lg text-xs font-black': true,
+                  'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400': assignment.status === 'Active',
+                  'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400': assignment.status === 'Completed'
+                }">{{ assignment.status }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+                                    <button (click)="returnEquipment(assignment)"
+                                        [disabled]="assignment.status !== 'Active'"
+                                        class="px-3 py-2 bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-xs">
+                                        {{ 'admin.return' | translate }}
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- No Assignments State -->
+        <div *ngIf="!isLoading && filteredAssignments.length === 0"
+            class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden mb-10">
+            <div class="p-12 text-center">
+                <svg class="w-16 h-16 mx-auto mb-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h10a2 2 0 012 2v7a2 2 0 01-2 2H7a2 2 0 01-2-2v-5a2 2 0 012-2z">
+                    </path>
+                </svg>
+                <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2">{{ 'admin.no_assignments_found' |
+                    translate }}</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400">{{ 'admin.try_different_filters' | translate }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Create Assignment Modal -->
+        <div *ngIf="showCreateModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div
+                class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between">
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white">{{ 'admin.create_assignment' |
+                        translate }}</h2>
+                    <button (click)="showCreateModal = false"
+                        class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="p-8 space-y-6">
+                    <div>
+                        <label for="equipmentId"
+                            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{
+                            'admin.equipment' | translate }}</label>
+                        <select id="equipmentId" [(ngModel)]="createRequest.equipmentId"
+                            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <option value="">{{ 'admin.select_equipment' | translate }}</option>
+                            <option *ngFor="let equipment of availableEquipment" [ngValue]="equipment.id">{{
+                                equipment.name }}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="projectId"
+                            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{ 'admin.project'
+                            | translate }}</label>
+                        <select id="projectId" [(ngModel)]="createRequest.projectId"
+                            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <option value="">{{ 'admin.select_project' | translate }}</option>
+                            <option *ngFor="let project of projects" [ngValue]="project.id">{{ project.name }}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="assignedTo"
+                            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{
+                            'admin.assigned_to' | translate }}</label>
+                        <select id="assignedTo" [(ngModel)]="createRequest.assignedTo"
+                            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <option value="">{{ 'admin.select_user' | translate }}</option>
+                            <option *ngFor="let user of users" [ngValue]="user.id">{{ user.fullName }}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="assignmentType"
+                            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{
+                            'admin.assignment_type' | translate }}</label>
+                        <select id="assignmentType" [(ngModel)]="createRequest.assignmentType"
+                            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <option value="Project">{{ 'admin.project' | translate }}</option>
+                            <option value="Task">{{ 'admin.task' | translate }}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="assignmentDate"
+                            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{
+                            'admin.assignment_date' | translate }}</label>
+                        <input type="date" id="assignmentDate" [(ngModel)]="createRequest.assignmentDate"
+                            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                    </div>
+                </div>
+                <div class="p-8 border-t border-slate-100 dark:border-white/5 flex justify-end gap-4">
+                    <button (click)="showCreateModal = false"
+                        class="px-6 py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                        {{ 'admin.cancel' | translate }}
+                    </button>
+                    <button (click)="createAssignment()" [disabled]="isCreating"
+                        class="px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg *ngIf="isCreating" class="w-5 h-5 animate-spin inline mr-2" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v4a2 2 0 012-2h4a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2z">
+                            </path>
+                        </svg>
+                        <span *ngIf="!isCreating">{{ 'admin.create' | translate }}</span>
+                        <span *ngIf="isCreating">{{ 'admin.creating' | translate }}...</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Return Equipment Modal -->
+        <div *ngIf="showReturnModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div
+                class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between">
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white">{{ 'admin.return_equipment' |
+                        translate }}</h2>
+                    <button (click)="showReturnModal = false"
+                        class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="p-8 space-y-6">
+                    <div *ngIf="selectedAssignment">
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">{{ 'admin.return_equipment_desc' |
+                            translate }}</p>
+                        <div class="bg-slate-50 dark:bg-slate-950/50 rounded-xl p-6 mb-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm text-slate-600 dark:text-slate-400">{{ 'admin.equipment' |
+                                    translate }}:</span>
+                                <span class="text-sm font-medium text-slate-900 dark:text-white">{{
+                                    selectedAssignment.equipmentName }}</span>
+                            </div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm text-slate-600 dark:text-slate-400">{{ 'admin.project' | translate
+                                    }}:</span>
+                                <span class="text-sm font-medium text-slate-900 dark:text-white">{{
+                                    selectedAssignment.projectName }}</span>
+                            </div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm text-slate-600 dark:text-slate-400">{{ 'admin.assigned_to' |
+                                    translate }}:</span>
+                                <span class="text-sm font-medium text-slate-900 dark:text-white">{{
+                                    selectedAssignment.assignedTo }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="condition"
+                            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{
+                            'admin.condition' | translate }}</label>
+                        <select id="condition" [(ngModel)]="returnRequest.condition"
+                            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <option value="Excellent">{{ 'admin.excellent' | translate }}</option>
+                            <option value="Good">{{ 'admin.good' | translate }}</option>
+                            <option value="Fair">{{ 'admin.fair' | translate }}</option>
+                            <option value="Poor">{{ 'admin.poor' | translate }}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="fuelLevel"
+                            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{
+                            'admin.fuel_level' | translate }}</label>
+                        <select id="fuelLevel" [(ngModel)]="returnRequest.fuelLevel"
+                            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <option value="Full">{{ 'admin.full' | translate }}</option>
+                            <option value="ThreeQuarter">{{ 'admin.three_quarter' | translate }}</option>
+                            <option value="Half">{{ 'admin.half' | translate }}</option>
+                            <option value="Quarter">{{ 'admin.quarter' | translate }}</option>
+                            <option value="Empty">{{ 'admin.empty' | translate }}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="notes" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{
+                            'admin.notes' | translate }}</label>
+                        <textarea id="notes" [(ngModel)]="returnRequest.notes" rows="4"
+                            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent"></textarea>
+                    </div>
+                </div>
+                <div class="p-8 border-t border-slate-100 dark:border-white/5 flex justify-end gap-4">
+                    <button (click)="showReturnModal = false"
+                        class="px-6 py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                        {{ 'admin.cancel' | translate }}
+                    </button>
+                    <button (click)="returnEquipment()" [disabled]="isReturning"
+                        class="px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg *ngIf="isReturning" class="w-5 h-5 animate-spin inline mr-2" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v4a2 2 0 012-2h4a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2z">
+                            </path>
+                        </svg>
+                        <span *ngIf="!isReturning">{{ 'admin.return' | translate }}</span>
+                        <span *ngIf="isReturning">{{ 'admin.returning' | translate }}...</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -25,6 +25,10 @@ public class ClientPayment : BaseEntity, ICompanyEntity
 
     public decimal Amount { get; set; }                 // amount received in project currency
 
+    public string Currency { get; set; } = "USD";        // currency of the payment
+
+    public DateTime? DueDate { get; set; }              // payment due date
+
     public string? PaymentType { get; set; }            // "Advance", "Interim", "Retention Release", "Final", etc.
 
     public string? Description { get; set; }            // e.g. "Payment for 30% completion"

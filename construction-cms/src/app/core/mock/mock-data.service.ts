@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { User, Project, BOQItem, DailyLog, SiteMedia, Transaction, VacationRequest, AppNotification, WorkerPerformance, Role, ProjectBill, ClientPayment } from '../../shared/interfaces';
+import { User, Project, BOQItem, DailyLog, SiteMedia, Transaction, VacationRequest, AppNotification, WorkerPerformance, Role, ProjectBill, ClientPayment, Design, DesignCategory } from '../../shared/interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
@@ -177,9 +177,9 @@ export class MockDataService {
   ];
 
   private clientPayments: ClientPayment[] = [
-    { id: 1, projectId: 1, amount: 50000, date: '2024-01-25T10:00:00Z', method: 'Bank Transfer', referenceNumber: 'TX-9821-001', status: 'Received' },
-    { id: 2, projectId: 1, amount: 25000, date: '2024-02-10T11:30:00Z', method: 'Cash', referenceNumber: 'RCP-552', status: 'Received' },
-    { id: 3, projectId: 1, amount: 15000, date: '2024-02-28T09:15:00Z', method: 'Bank Transfer', referenceNumber: 'TX-9950-042', status: 'Pending' }
+    { id: 1, projectId: 1, projectName: 'Luxury Villa Project', amount: 50000, date: '2024-01-25T10:00:00Z', method: 'Bank Transfer', referenceNumber: 'TX-9821-001', status: 'Received' },
+    { id: 2, projectId: 1, projectName: 'Luxury Villa Project', amount: 25000, date: '2024-02-10T11:30:00Z', method: 'Cash', referenceNumber: 'RCP-552', status: 'Received' },
+    { id: 3, projectId: 1, projectName: 'Luxury Villa Project', amount: 15000, date: '2024-02-28T09:15:00Z', method: 'Bank Transfer', referenceNumber: 'TX-9950-042', status: 'Pending' }
   ];
 
   getUsers(): Observable<User[]> { return of(this.users); }
@@ -324,5 +324,304 @@ export class MockDataService {
     };
 
     return of(stats);
+  }
+
+  // =====================
+  // Design Categories Mock Data
+  // =====================
+  private designCategories: DesignCategory[] = [
+    {
+      id: 1,
+      name: 'Architectural',
+      description: 'Architectural drawings and plans',
+      projectId: 1,
+      order: 1,
+      createdAt: '2024-01-15T10:00:00Z',
+      photoUrl: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=400&h=300&fit=crop',
+      createdByUserId: 2,
+      childCategories: [],
+      designs: [],
+      designCount: 0
+    },
+    {
+      id: 2,
+      name: 'Structural',
+      description: 'Structural engineering designs',
+      projectId: 1,
+      order: 2,
+      createdAt: '2024-01-15T10:30:00Z',
+      photoUrl: 'https://images.unsplash.com/photo-1518098268026-4e1875127430?w=400&h=300&fit=crop',
+      createdByUserId: 2,
+      childCategories: [],
+      designs: [],
+      designCount: 0
+    },
+    {
+      id: 3,
+      name: 'Electrical',
+      description: 'Electrical systems and schematics',
+      projectId: 1,
+      order: 3,
+      createdAt: '2024-01-16T09:00:00Z',
+      photoUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop',
+      createdByUserId: 2,
+      childCategories: [],
+      designs: [],
+      designCount: 0
+    },
+    {
+      id: 4,
+      name: 'Floor Plans',
+      description: 'Detailed floor plans and layouts',
+      parentCategoryId: 1,
+      projectId: 1,
+      order: 1,
+      createdAt: '2024-01-17T08:00:00Z',
+      photoUrl: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop',
+      createdByUserId: 2,
+      childCategories: [],
+      designs: [],
+      designCount: 0
+    },
+    {
+      id: 5,
+      name: 'Elevations',
+      description: 'Building elevations and facades',
+      parentCategoryId: 1,
+      projectId: 1,
+      order: 2,
+      createdAt: '2024-01-18T14:00:00Z',
+      photoUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop',
+      createdByUserId: 2,
+      childCategories: [],
+      designs: [],
+      designCount: 0
+    }
+  ];
+
+  // =====================
+  // Designs Mock Data with versions
+  // =====================
+  private designs: Design[] = [
+    // Architectural - Floor Plans - Multiple versions
+    {
+      id: 1,
+      name: 'Ground Floor Plan v1',
+      description: 'Initial ground floor layout',
+      categoryId: 4,
+      projectId: 1,
+      version: 1,
+      fileName: 'ground_floor_v1.pdf',
+      fileType: 'application/pdf',
+      fileSize: 2456000,
+      fileUrl: '/assets/designs/ground_floor_v1.pdf',
+      status: 'Active',
+      createdByUserId: 2,
+      createdByUserName: 'Maria Hassan',
+      createdAt: '2024-01-20T10:00:00Z',
+      updatedAt: '2024-01-20T10:00:00Z',
+      approvalStatus: 'Approved',
+      approvedByUserId: 1,
+      approvedByUserName: 'Ahmed Ali',
+      approvedDate: '2024-01-22T14:30:00Z',
+      versionCount: 3,
+      changeNotes: 'Initial version'
+    },
+    {
+      id: 2,
+      name: 'Ground Floor Plan v2',
+      description: 'Updated ground floor layout with modifications',
+      categoryId: 4,
+      projectId: 1,
+      version: 2,
+      fileName: 'ground_floor_v2.pdf',
+      fileType: 'application/pdf',
+      fileSize: 2680000,
+      fileUrl: '/assets/designs/ground_floor_v2.pdf',
+      status: 'Active',
+      createdByUserId: 2,
+      createdByUserName: 'Maria Hassan',
+      createdAt: '2024-02-05T09:00:00Z',
+      updatedAt: '2024-02-05T09:00:00Z',
+      approvalStatus: 'Approved',
+      approvedByUserId: 1,
+      approvedByUserName: 'Ahmed Ali',
+      approvedDate: '2024-02-07T11:00:00Z',
+      versionCount: 3,
+      parentDesignId: 1,
+      changeNotes: 'Modified entrance layout and added additional restroom'
+    },
+    {
+      id: 3,
+      name: 'Ground Floor Plan v3',
+      description: 'Final approved version with all changes',
+      categoryId: 4,
+      projectId: 1,
+      version: 3,
+      fileName: 'ground_floor_v3.pdf',
+      fileType: 'application/pdf',
+      fileSize: 2890000,
+      fileUrl: '/assets/designs/ground_floor_v3.pdf',
+      status: 'Active',
+      createdByUserId: 2,
+      createdByUserName: 'Maria Hassan',
+      createdAt: '2024-03-10T15:00:00Z',
+      updatedAt: '2024-03-10T15:00:00Z',
+      approvalStatus: 'Approved',
+      approvedByUserId: 1,
+      approvedByUserName: 'Ahmed Ali',
+      approvedDate: '2024-03-12T09:00:00Z',
+      versionCount: 3,
+      parentDesignId: 2,
+      changeNotes: 'Final revision incorporating client feedback'
+    },
+    // Structural - Foundation designs
+    {
+      id: 4,
+      name: 'Foundation Layout v1',
+      description: 'Main foundation design',
+      categoryId: 2,
+      projectId: 1,
+      version: 1,
+      fileName: 'foundation_v1.dwg',
+      fileType: 'application/dwg',
+      fileSize: 5200000,
+      fileUrl: '/assets/designs/foundation_v1.dwg',
+      status: 'Active',
+      createdByUserId: 7,
+      createdByUserName: 'Mohamed Farid',
+      createdAt: '2024-01-25T08:00:00Z',
+      updatedAt: '2024-01-25T08:00:00Z',
+      approvalStatus: 'Approved',
+      approvedByUserId: 1,
+      approvedByUserName: 'Ahmed Ali',
+      approvedDate: '2024-01-28T10:00:00Z',
+      versionCount: 1,
+      changeNotes: 'Initial foundation design'
+    },
+    // Electrical - Single version
+    {
+      id: 5,
+      name: 'Electrical Wiring Diagram v1',
+      description: 'Complete electrical wiring layout',
+      categoryId: 3,
+      projectId: 1,
+      version: 1,
+      fileName: 'electrical_wiring_v1.pdf',
+      fileType: 'application/pdf',
+      fileSize: 1850000,
+      fileUrl: '/assets/designs/electrical_wiring_v1.pdf',
+      status: 'Active',
+      createdByUserId: 2,
+      createdByUserName: 'Maria Hassan',
+      createdAt: '2024-02-15T11:00:00Z',
+      updatedAt: '2024-02-15T11:00:00Z',
+      approvalStatus: 'Pending',
+      versionCount: 1,
+      changeNotes: 'Initial electrical design'
+    },
+    // Architectural - Elevations - Rejected version
+    {
+      id: 6,
+      name: 'Main Facade Elevation v1',
+      description: 'Initial facade design',
+      categoryId: 5,
+      projectId: 1,
+      version: 1,
+      fileName: 'facade_v1.pdf',
+      fileType: 'application/pdf',
+      fileSize: 3200000,
+      fileUrl: '/assets/designs/facade_v1.pdf',
+      status: 'Archived',
+      createdByUserId: 2,
+      createdByUserName: 'Maria Hassan',
+      createdAt: '2024-02-20T14:00:00Z',
+      updatedAt: '2024-02-20T14:00:00Z',
+      approvalStatus: 'Rejected',
+      approvedByUserId: 1,
+      approvedByUserName: 'Ahmed Ali',
+      approvedDate: '2024-02-25T16:00:00Z',
+      versionCount: 2,
+      rejectionReason: 'Does not match client requirements. Please revise facade to include more glass elements.',
+      changeNotes: 'Initial facade design'
+    },
+    {
+      id: 7,
+      name: 'Main Facade Elevation v2',
+      description: 'Revised facade with glass elements',
+      categoryId: 5,
+      projectId: 1,
+      version: 2,
+      fileName: 'facade_v2.pdf',
+      fileType: 'application/pdf',
+      fileSize: 3500000,
+      fileUrl: '/assets/designs/facade_v2.pdf',
+      status: 'Active',
+      createdByUserId: 2,
+      createdByUserName: 'Maria Hassan',
+      createdAt: '2024-03-01T10:00:00Z',
+      updatedAt: '2024-03-01T10:00:00Z',
+      approvalStatus: 'Approved',
+      approvedByUserId: 1,
+      approvedByUserName: 'Ahmed Ali',
+      approvedDate: '2024-03-05T14:00:00Z',
+      versionCount: 2,
+      parentDesignId: 6,
+      changeNotes: 'Added 40% glass coverage per client request'
+    }
+  ];
+
+  getDesignCategoriesByProject(projectId: number): Observable<DesignCategory[]> {
+    const categories = this.designCategories.filter(c => c.projectId === projectId);
+    return of(categories);
+  }
+
+  getDesignsByProject(projectId: number): Observable<Design[]> {
+    const designs = this.designs.filter(d => d.projectId === projectId);
+    return of(designs);
+  }
+
+  getDesignsByCategory(categoryId: number): Observable<Design[]> {
+    const designs = this.designs.filter(d => d.categoryId === categoryId);
+    return of(designs);
+  }
+
+  getDesignVersions(designId: number): Observable<Design[]> {
+    // Find the design and get all its versions
+    const design = this.designs.find(d => d.id === designId);
+    if (!design) {
+      return of([]);
+    }
+
+    // If it's a child version, find all siblings with same parentDesignId
+    // If it's a parent, find all its children
+    let versions: Design[];
+    if (design.parentDesignId) {
+      versions = this.designs.filter(d => d.parentDesignId === design.parentDesignId || d.id === design.parentDesignId);
+    } else {
+      versions = this.designs.filter(d => d.parentDesignId === designId || d.id === designId);
+    }
+
+    // Sort by version descending (latest first)
+    versions.sort((a, b) => b.version - a.version);
+    return of(versions);
+  }
+
+  getLatestDesignVersions(projectId: number): Observable<Design[]> {
+    // Get all designs for project
+    const projectDesigns = this.designs.filter(d => d.projectId === projectId);
+
+    // Group by parentDesignId and get latest
+    const latestVersions: Map<number, Design> = new Map();
+
+    projectDesigns.forEach(design => {
+      const key = design.parentDesignId || design.id;
+      const existing = latestVersions.get(key);
+      if (!existing || design.version > existing.version) {
+        latestVersions.set(key, design);
+      }
+    });
+
+    return of(Array.from(latestVersions.values()));
   }
 }

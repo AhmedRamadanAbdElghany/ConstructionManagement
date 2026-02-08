@@ -12,11 +12,13 @@ namespace ConstructionManagement.Tests.Unit.Services;
 public class NotificationServiceTests
 {
     private readonly Mock<IRepository<Notification>> _repoMock = new();
+    private readonly Mock<IRepository<UserRole>> _userRoleRepoMock = new();
+    private readonly Mock<IRepository<ProjectTeamRole>> _projectTeamRoleRepoMock = new();
     private readonly Mock<IUnitOfWork> _uowMock = new();
     private readonly Mock<ILogger<NotificationService>> _loggerMock = new();
 
     private NotificationService CreateService() =>
-        new(_repoMock.Object, _uowMock.Object, _loggerMock.Object);
+        new(_repoMock.Object, _userRoleRepoMock.Object, _projectTeamRoleRepoMock.Object, _uowMock.Object, _loggerMock.Object);
 
     #region Create & Send Tests
 

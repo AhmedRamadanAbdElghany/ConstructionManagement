@@ -10,7 +10,6 @@ using Moq;
 using Xunit;
 
 using ConstructionManagement.Domain.Enums;
-using ConstructionManagement.Domain.Enums;
 namespace ConstructionManagement.Tests.Integration;
 
 // DOCUMENTATION TABLES (replace with full 113 test-case tables):
@@ -90,6 +89,7 @@ public class BOQAndTransactionIntegrationTests : IntegrationTestBase
 
         // ── 3. Create BOQ item ───────────────────────────────────────────────────
         var createItemRequest = new CreateBOQItemRequest(
+            PhaseId: null,
             ItemCode: "B1",
             ItemName: "Steel Reinforcement",
             Description: "Steel bars",
@@ -153,7 +153,7 @@ public class BOQAndTransactionIntegrationTests : IntegrationTestBase
         await Context.SaveChangesAsync();
 
         var itemId = await _boqService.CreateBOQItemAsync(project.Id, new CreateBOQItemRequest(
-            "B2", "Item 2", "Desc", "Unit", null, null, "Measured", 10, 10, null, null, null, null, null, null
+            null, "B2", "Item 2", "Desc", "Unit", null, null, "Measured", 10, 10, null, null, null, null, null, null
         ), user.Id);
 
         await _transService.CreateTransactionAsync(project.Id, new CreateTransactionRequest(
@@ -201,7 +201,7 @@ public class BOQAndTransactionIntegrationTests : IntegrationTestBase
 
         // ── 3. Create BOQ Item ───────────────────────────────────────────────────
         var itemId = await _boqService.CreateBOQItemAsync(project.Id, new CreateBOQItemRequest(
-            "B1", "Steel", "Bars", "Ton", null, null, "Measured", 100m, 10m, null, null, null, null, null, null
+            null, "B1", "Steel", "Bars", "Ton", null, null, "Measured", 100m, 10m, null, null, null, null, null, null
         ), user.Id);
 
         // ── 4. Initial Transaction ───────────────────────────────────────────────

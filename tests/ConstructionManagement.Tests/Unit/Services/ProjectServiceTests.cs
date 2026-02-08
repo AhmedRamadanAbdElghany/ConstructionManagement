@@ -19,7 +19,7 @@ public class ProjectServiceTests
     private readonly Mock<IUnitOfWork> _uowMock = new(); // تأكد أن الاسم هنا هو المستخدم بالأسفل
 
     private ProjectService CreateService() =>
-        new(_projectRepo.Object, _userRoleRepo.Object, _userRepo.Object, _settingsRepo.Object, _uowMock.Object);
+        new(_projectRepo.Object, _userRoleRepo.Object, _userRepo.Object, _settingsRepo.Object, new Mock<IPhaseService>().Object, _uowMock.Object);
 
     [Fact]
     public async Task CreateProjectAsync_ValidRequest_CommitsTransaction()

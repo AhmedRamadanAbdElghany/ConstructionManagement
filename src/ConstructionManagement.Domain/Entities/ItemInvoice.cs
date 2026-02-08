@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using ConstructionManagement.Domain.Enums;
 
 namespace ConstructionManagement.Domain.Entities;
 
@@ -54,9 +55,23 @@ public class ItemInvoice : BaseEntity, ICompanyEntity
     [MaxLength(500)]
     public string? AttachmentPath { get; set; }
 
+    /// <summary>
+    /// Database-stored status as string for backward compatibility.
+    /// Use StatusEnum for type-safe operations.
+    /// </summary>
     [Required]
     [MaxLength(50)]
-    public string Status { get; set; } = "Pending";
+    public string Status { get; set; } = InvoiceStatus.Pending.ToDatabaseString();
+
+    /// <summary>
+    /// Type-safe status enum for business logic operations.
+    /// </summary>
+    [NotMapped]
+    public InvoiceStatus StatusEnum
+    {
+        get => InvoiceStatusExtensions.FromString(Status) ?? InvoiceStatus.Draft;
+        set => Status = value.ToDatabaseString();
+    }
 
     [MaxLength(500)]
     public string? RejectionReason { get; set; }

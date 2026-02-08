@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using ConstructionManagement.Domain.Enums;
 
 namespace ConstructionManagement.Domain.Entities;
 
@@ -56,10 +57,46 @@ public class ProjectTeamMember : BaseEntity, ICompanyEntity
     [NotMapped]
     public IEnumerable<ProjectRole> Roles => ProjectTeamRoles.Select(ptr => ptr.ProjectRole);
 
-    // Optional helpers – useful in queries / views
+    /// Optional helpers – useful in queries / views
     [NotMapped]
     public bool HasAnyRole => ProjectTeamRoles.Any();
 
     [NotMapped]
     public bool IsManagerOrAbove => Roles.Any(r => r.Name is "ProjectManager" or "GeneralManager" or "Approver");
+
+    // -- Analytics Properties (for HR and resource tracking) --------------------------------
+
+    /// <summary>
+    /// Employment status for analytics purposes
+    /// </summary>
+    public EmploymentStatus Status { get; set; } = EmploymentStatus.Active;
+
+    /// <summary>
+    /// Job title/position of the team member
+    /// </summary>
+    public string JobTitle { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Hours worked by this team member (tracked for analytics)
+    /// </summary>
+    public decimal HoursWorked { get; set; } = 0;
+
+    /// <summary>
+    /// Salary of the team member (for cost analytics)
+    /// </summary>
+    public decimal Salary { get; set; } = 0;
+
+    // -- Computed properties from User entity ----------------------------------------
+
+    /// <summary>
+    /// First name from linked User entity
+    /// </summary>
+    [NotMapped]
+    public string FirstName => User?.FirstName ?? string.Empty;
+
+    /// <summary>
+    /// Last name from linked User entity
+    /// </summary>
+    [NotMapped]
+    public string LastName => User?.LastName ?? string.Empty;
 }

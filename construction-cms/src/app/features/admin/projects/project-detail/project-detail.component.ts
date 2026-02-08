@@ -1,15 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { MockDataService } from '../../../../core/mock/mock-data.service';
 import { Project, User, DailyLog, BOQItem, CompanySettings, ProjectSettings, Role, Transaction, ProjectBill, ClientPayment, ProjectActivity } from '../../../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SettingsService } from '../../../../core/services/settings.service';
 import { PhaseService, Phase } from '../../../../core/services/phase.service';
+import { ProjectService } from '../../../../core/services/project.service';
+import { ProjectTeamService, TeamMemberDto } from '../../../../core/services/project-team.service';
+import { DailyLogsService, DailyLogDto } from '../../../../core/services/daily-logs.service';
+import { BOQService } from '../../../../core/services/boq.service';
+import { TransactionsService, TransactionDto } from '../../../../core/services/transactions.service';
+import { InvoicesService, InvoiceDto } from '../../../../core/services/invoices.service';
+import { RolesService } from '../../../../core/services/roles.service';
 import { PhaseNodeComponent } from '../../project-hierarchy/phase-node.component';
 import { BoqProgressNodeComponent } from '../../project-hierarchy/boq-progress-node.component';
+import { DesignsTabComponent } from './designs-tab.component';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -220,6 +227,21 @@ import { map } from 'rxjs/operators';
               [class.dark:border-white/5]="activeTab !== 'payments'"
               class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
                {{ 'project_detail.client_payments' | translate }}
+            </button>
+            <button 
+              (click)="activeTab = 'designs'"
+              [class.bg-slate-900]="activeTab === 'designs'"
+              [class.dark:bg-white]="activeTab === 'designs'"
+              [class.text-white]="activeTab === 'designs'"
+              [class.dark:text-slate-900]="activeTab === 'designs'"
+              [class.bg-white]="activeTab !== 'designs'"
+              [class.dark:bg-slate-900]="activeTab !== 'designs'"
+              [class.text-slate-500]="activeTab !== 'designs'"
+              [class.border-transparent]="activeTab === 'designs'"
+              [class.border-slate-200]="activeTab !== 'designs'"
+              [class.dark:border-white/5]="activeTab !== 'designs'"
+              class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
+               {{ 'project_detail.designs' | translate }}
             </button>
           </div>
 
@@ -1708,21 +1730,21 @@ import { map } from 'rxjs/operators';
    `
 })
 export class ProjectDetailComponent implements OnInit {
-   project: Project | undefined;
-   activeTab: 'timeline' | 'team' | 'history' | 'boq' | 'finances' | 'bills' | 'payments' | 'phases' = 'timeline';
-   teamMembers: User[] = [];
+   project: any | undefined;
+   activeTab: 'timeline' | 'team' | 'history' | 'boq' | 'finances' | 'bills' | 'payments' | 'phases' | 'designs' = 'timeline';
+   teamMembers: any[] = [];
    companyUsers: User[] = [];
-   dailyLogs: DailyLog[] = [];
-   boqItems: BOQItem[] = [];
-   activities: ProjectActivity[] = [];
+   dailyLogs: any[] = [];
+   boqItems: any[] = [];
+   activities: any[] = [];
 
    get totalCollected(): number {
-      return this.clientPayments.reduce((sum, p) => sum + p.amount, 0);
+      return (this.clientPayments as any[]).reduce((sum, p) => sum + p.amount, 0);
    }
 
-   transactions: Transaction[] = [];
-   bills: ProjectBill[] = [];
-   clientPayments: ClientPayment[] = [];
+   transactions: any[] = [];
+   bills: any[] = [];
+   clientPayments: any[] = [];
 
    get totalProjectValue(): number {
       return this.boqItems.reduce((sum, item) => sum + (item.totalQuantity * item.rate), 0);
@@ -1733,14 +1755,14 @@ export class ProjectDetailComponent implements OnInit {
 
    // Edit State
    showEditModal = false;
-   companySettings: CompanySettings | undefined;
-   projectSettings: ProjectSettings | undefined;
+   companySettings: any | undefined;
+   projectSettings: any | undefined;
    // Role Change Modal State
    showRoleModal = false;
    showAddMemberModal = false;
    availableRoles: Role[] = [];
-   userToEdit: User | null = null;
-   roleOverrides: { [userId: number]: string } = {};
+   userToEdit: any | null = null;
+   roleOverrides: any = {};
    selectedNewMembers: Set<number> = new Set();
 
    // Add Bill/Payment Modal State
@@ -1748,8 +1770,7 @@ export class ProjectDetailComponent implements OnInit {
    showAddPaymentModal = false;
    showAddBoqModal = false;
    selectedBoqItem: BOQItem | null = null;
-
-   boqForm = {
+   boqForm: any = {
       description: '',
       unit: '',
       totalQuantity: 0,
@@ -1758,7 +1779,7 @@ export class ProjectDetailComponent implements OnInit {
       endDate: null as string | null
    };
 
-   billForm = {
+   billForm: any = {
       billNumber: '',
       amount: 0,
       date: new Date().toISOString().split('T')[0],
@@ -1766,7 +1787,7 @@ export class ProjectDetailComponent implements OnInit {
       photoUrl: ''
    };
 
-   paymentForm = {
+   paymentForm: any = {
       amount: 0,
       date: new Date().toISOString().split('T')[0],
       method: 'Bank Transfer' as 'Bank Transfer' | 'Cash' | 'Cheque',
@@ -1775,9 +1796,7 @@ export class ProjectDetailComponent implements OnInit {
       photoUrl: '',
       actionBy: ''
    };
-
-
-   editForm = {
+   editForm: any = {
       name: '',
       address: '',
       startDate: '',
@@ -1802,11 +1821,17 @@ export class ProjectDetailComponent implements OnInit {
 
    // Daily Log View State
    showLogModal = false;
-   selectedLog: DailyLog | null = null;
+   selectedLog: any | null = null;
 
    constructor(
       private route: ActivatedRoute,
-      private mockDataService: MockDataService,
+      private projectService: ProjectService,
+      private projectTeamService: ProjectTeamService,
+      private dailyLogsService: DailyLogsService,
+      private boqService: BOQService,
+      private transactionsService: TransactionsService,
+      private invoicesService: InvoicesService,
+      private rolesService: RolesService,
       private authService: AuthService,
       private settingsService: SettingsService,
       private phaseService: PhaseService
@@ -1815,50 +1840,24 @@ export class ProjectDetailComponent implements OnInit {
    ngOnInit() {
       const projectId = Number(this.route.snapshot.paramMap.get('id'));
       if (projectId) {
-         this.mockDataService.getProjects().subscribe(projects => {
-            this.project = projects.find(p => p.id === projectId);
+         this.projectService.getProjectById(projectId).subscribe(project => {
+            this.project = project;
          });
 
-         this.mockDataService.getUsers().subscribe(users => {
-            const potentialMembers = users.filter(u => u.role === 'CompanyUser' || u.role === 'CompanyAdmin');
-            this.companyUsers = potentialMembers;
-            this.teamMembers = potentialMembers.slice(0, 3); // Mocking that some are already members
+         this.projectTeamService.getTeam(projectId).subscribe(users => {
+            this.teamMembers = users;
          });
 
-         this.mockDataService.getDailyLogs(projectId).subscribe(logs => {
-            // Enriching logs for better historical demo
-            this.dailyLogs = logs.map(l => ({
-               ...l,
-               items: l.items.length > 0 ? l.items : [
-                  { id: Math.random(), boqItemId: 9001 + Math.floor(Math.random() * 5), quantity: 5 + Math.floor(Math.random() * 20), notes: 'Regular progress as per schedule.' },
-                  { id: Math.random(), boqItemId: 9001 + Math.floor(Math.random() * 5), quantity: 2 + Math.floor(Math.random() * 10), notes: 'Verified by site engineer.' }
-               ]
-            }));
+         this.dailyLogsService.getDailyLogHistory(projectId).subscribe(logs => {
+            this.dailyLogs = logs;
          });
 
-         this.mockDataService.getBOQItems(projectId).subscribe(items => {
-            // For demo, ensure we have some items linked to phases with dates and varied progress
-            const basePhaseId = projectId * 10000;
-            this.boqItems = [
-               ...items,
-               // Mobilization (Completed)
-               { id: 9001, projectId, phaseId: basePhaseId + 101, description: 'توريد مكاتب مهندسين ومجهزة', unit: 'Unit', totalQuantity: 2, executedQuantity: 2, rate: 5000, startDate: '2024-03-01', endDate: '2024-03-05' },
-               { id: 9002, projectId, phaseId: basePhaseId + 102, description: 'تركيب عداد مياه مؤقت للموقع', unit: 'Unit', totalQuantity: 1, executedQuantity: 1, rate: 2500, startDate: '2024-03-02', endDate: '2024-03-04' },
-
-               // Excavation (Completed)
-               { id: 9006, projectId, phaseId: basePhaseId + 2, description: 'أعمال حفر الموقع العام', unit: 'm3', totalQuantity: 1200, executedQuantity: 1200, rate: 45, startDate: '2024-03-05', endDate: '2024-03-10' },
-
-               // Concrete - Plain (Processing)
-               { id: 9003, projectId, phaseId: basePhaseId + 301, description: 'صب خرسانة عادية للقواعد العادية', unit: 'm3', totalQuantity: 150, executedQuantity: 120, rate: 300, startDate: '2024-03-10', endDate: '2024-03-12' },
-
-               // Concrete - Reinforced (Pending/Partial)
-               { id: 9004, projectId, phaseId: basePhaseId + 302, description: 'حديد تسليح القواعد المسلحة والسملات', unit: 'Ton', totalQuantity: 12, executedQuantity: 3, rate: 45000, startDate: '2024-03-14', endDate: '2024-03-18' },
-               { id: 9005, projectId, phaseId: basePhaseId + 302, description: 'نجارة مسلحة وصب خرسانة جاهزة', unit: 'm3', totalQuantity: 280, executedQuantity: 0, rate: 1200, startDate: '2024-03-15', endDate: '2024-03-22' }
-            ];
+         this.boqService.getItems(projectId).subscribe(items => {
+            this.boqItems = items;
             this.loadProjectPhases(projectId); // Reload to pick up item date and money aggregation
          });
 
-         this.mockDataService.getTransactions(projectId).subscribe(trans => {
+         this.transactionsService.getTransactions(projectId).subscribe(trans => {
             this.transactions = trans;
          });
 
@@ -1870,17 +1869,15 @@ export class ProjectDetailComponent implements OnInit {
             this.projectSettings = settings;
          });
 
-
-
-         this.mockDataService.getRoles().subscribe(roles => {
+         this.rolesService.getRoles().subscribe(roles => {
             this.availableRoles = roles;
          });
 
-         this.mockDataService.getBills(projectId).subscribe(bills => {
+         this.invoicesService.getInvoices(projectId).subscribe(bills => {
             this.bills = bills;
          });
 
-         this.mockDataService.getClientPayments(projectId).subscribe(payments => {
+         this.invoicesService.getInvoices(projectId).subscribe(payments => {
             this.clientPayments = payments;
          });
 
@@ -1989,7 +1986,7 @@ export class ProjectDetailComponent implements OnInit {
    }
 
 
-   openRoleModal(user: User) {
+   openRoleModal(user: any) {
       this.userToEdit = user;
       this.showRoleModal = true;
    }
@@ -2021,7 +2018,7 @@ export class ProjectDetailComponent implements OnInit {
 
    addBill() {
       if (!this.project) return;
-      const newBill: ProjectBill = {
+      const newBill: any = {
          id: Math.floor(Math.random() * 10000),
          projectId: this.project.id,
          billNumber: this.billForm.billNumber,
@@ -2048,7 +2045,7 @@ export class ProjectDetailComponent implements OnInit {
 
    addPayment() {
       if (!this.project) return;
-      const newPayment: ClientPayment = {
+      const newPayment: any = {
          id: Math.floor(Math.random() * 10000),
          projectId: this.project.id,
          amount: this.paymentForm.amount,
@@ -2215,7 +2212,7 @@ export class ProjectDetailComponent implements OnInit {
 
    saveProjectSettings() {
       if (!this.projectSettings || !this.project) return;
-      this.settingsService.updateProjectSettings(this.project.id, this.projectSettings).subscribe();
+      this.settingsService.updateProjectSettings(this.project.id, this.projectSettings as any).subscribe();
    }
 
    toggleProgressEntry() {
@@ -2330,7 +2327,7 @@ export class ProjectDetailComponent implements OnInit {
    phaseForm: any = { name: '', description: '', order: 0 };
 
    loadProjectPhases(projectId: number) {
-      this.phaseService.getProjectPhases(projectId, this.boqItems).subscribe(phases => {
+      this.phaseService.getProjectPhases(projectId).subscribe(phases => {
          this.projectPhases = phases;
          // If there are already phases in the DB, consider it initialized
          if (phases.length > 0) this.isPhasesInitialized = true;
@@ -2420,7 +2417,7 @@ export class ProjectDetailComponent implements OnInit {
       }
    }
 
-   openLogDetails(log: DailyLog) {
+   openLogDetails(log: any) {
       this.selectedLog = log;
       this.showLogModal = true;
    }

@@ -1,0 +1,223 @@
+<div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+            <div>
+                <button (click)="goBack()"
+                    class="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                        </path>
+                    </svg>
+                    <span>{{ 'BACK' | translate }}</span>
+                </button>
+                <h1
+                    class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight uppercase tracking-tight">
+                    {{ 'admin.equipment_details' | translate }}</h1>
+                <p *ngIf="equipment" class="text-sm text-slate-500 dark:text-slate-400">{{ equipment.name }}</p>
+            </div>
+            <button (click)="loadEquipment()"
+                class="w-12 h-12 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20 hover:scale-105 transition-transform">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="flex items-center justify-center py-20">
+            <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+
+        <!-- Equipment Details -->
+        <div *ngIf="!isLoading && equipment" class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+            <!-- Status Card -->
+            <div
+                class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden">
+                <div class="p-8 border-b border-slate-100 dark:border-white/5">
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white mb-1">{{ 'admin.status' | translate }}
+                    </h2>
+                </div>
+                <div class="p-8 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-slate-600 dark:text-slate-400">{{ 'admin.status' | translate }}</span>
+                        <span [ngClass]="{
+              'px-3 py-1 rounded-lg text-xs font-black': true,
+              'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400': equipment.status === 'Active',
+              'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400': equipment.status === 'Maintenance',
+              'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400': equipment.status === 'Inactive'
+            }">{{ equipment.status }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-slate-600 dark:text-slate-400">{{ 'admin.purchase_date' | translate
+                            }}</span>
+                        <span class="text-sm font-medium text-slate-900 dark:text-white">{{
+                            formatDate(equipment.purchaseDate) }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-slate-600 dark:text-slate-400">{{ 'admin.purchase_price' | translate
+                            }}</span>
+                        <span class="text-sm font-medium text-slate-900 dark:text-white">{{
+                            formatCurrency(equipment.purchasePrice) }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-slate-600 dark:text-slate-400">{{ 'admin.current_value' | translate
+                            }}</span>
+                        <span class="text-sm font-medium text-slate-900 dark:text-white">{{
+                            formatCurrency(equipment.currentValue) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Specifications Card -->
+            <div
+                class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden">
+                <div class="p-8 border-b border-slate-100 dark:border-white/5">
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white mb-1">{{ 'admin.specifications' |
+                        translate }}</h2>
+                </div>
+                <div class="p-8 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-slate-600 dark:text-slate-400">{{ 'admin.category' | translate
+                            }}</span>
+                        <span class="text-sm font-medium text-slate-900 dark:text-white">{{ equipment.category }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-slate-600 dark:text-slate-400">{{ 'admin.manufacturer' | translate
+                            }}</span>
+                        <span class="text-sm font-medium text-slate-900 dark:text-white">{{ equipment.manufacturer
+                            }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-slate-600 dark:text-slate-400">{{ 'admin.model' | translate }}</span>
+                        <span class="text-sm font-medium text-slate-900 dark:text-white">{{ equipment.model }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-slate-600 dark:text-slate-400">{{ 'admin.serial_number' | translate
+                            }}</span>
+                        <span class="text-sm font-medium text-slate-900 dark:text-white">{{ equipment.serialNumber
+                            }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Utilization Stats Card -->
+            <div
+                class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden">
+                <div class="p-8 border-b border-slate-100 dark:border-white/5">
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white mb-1">{{ 'admin.utilization_stats' |
+                        translate }}</h2>
+                </div>
+                <div class="p-8 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-slate-600 dark:text-slate-400">{{ 'admin.total_assignments' |
+                            translate }}</span>
+                        <span class="text-sm font-medium text-slate-900 dark:text-white">{{
+                            utilizationStats.totalAssignments }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-slate-600 dark:text-slate-400">{{ 'admin.active_assignments' |
+                            translate }}</span>
+                        <span class="text-sm font-medium text-slate-900 dark:text-white">{{
+                            utilizationStats.activeAssignments }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-slate-600 dark:text-slate-400">{{ 'admin.total_hours' | translate
+                            }}</span>
+                        <span class="text-sm font-medium text-slate-900 dark:text-white">{{ utilizationStats.totalHours
+                            }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-slate-600 dark:text-slate-400">{{ 'admin.utilization_rate' | translate
+                            }}</span>
+                        <span class="text-sm font-medium text-slate-900 dark:text-white">{{
+                            utilizationStats.utilizationRate }}%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Maintenance History -->
+        <div *ngIf="!isLoading && equipment"
+            class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden mb-10">
+            <div class="p-8 border-b border-slate-100 dark:border-white/5">
+                <h2 class="text-xl font-black text-slate-900 dark:text-white mb-1">{{ 'admin.maintenance_history' |
+                    translate }}</h2>
+            </div>
+            <div *ngIf="maintenanceHistory && maintenanceHistory.length > 0"
+                class="divide-y divide-slate-100 dark:divide-white/5">
+                <div *ngFor="let maintenance of maintenanceHistory"
+                    class="p-6 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-black text-slate-900 dark:text-white mb-1">{{ maintenance.type }}
+                            </h3>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">{{ formatDate(maintenance.date) }}</p>
+                        </div>
+                        <span [ngClass]="{
+              'px-3 py-1 rounded-lg text-xs font-black': true,
+              'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400': maintenance.status === 'Completed',
+              'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400': maintenance.status === 'In Progress',
+              'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400': maintenance.status === 'Pending'
+            }">{{ maintenance.status }}</span>
+                    </div>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-2">{{ maintenance.description }}</p>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-slate-500 dark:text-slate-400">{{ 'admin.cost' | translate }}: {{
+                            formatCurrency(maintenance.cost) }}</span>
+                        <span class="text-slate-500 dark:text-slate-400">{{ 'admin.performed_by' | translate }}: {{
+                            maintenance.performedBy }}</span>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!maintenanceHistory || maintenanceHistory.length === 0" class="p-12 text-center">
+                <svg class="w-16 h-16 mx-auto mb-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h10a2 2 0 012 2v7a2 2 0 01-2 2H7a2 2 0 01-2-2v-5a2 2 0 012-2z">
+                    </path>
+                </svg>
+                <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2">{{ 'admin.no_maintenance_history' |
+                    translate }}</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400">{{ 'admin.no_maintenance_history_desc' | translate
+                    }}</p>
+            </div>
+        </div>
+
+        <!-- Current Assignment -->
+        <div *ngIf="!isLoading && equipment && currentAssignment"
+            class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden">
+            <div class="p-8 border-b border-slate-100 dark:border-white/5">
+                <h2 class="text-xl font-black text-slate-900 dark:text-white mb-1">{{ 'admin.current_assignment' |
+                    translate }}</h2>
+            </div>
+            <div class="p-8 space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-slate-600 dark:text-slate-400">{{ 'admin.project' | translate }}</span>
+                    <span class="text-sm font-medium text-slate-900 dark:text-white">{{ currentAssignment.projectName
+                        }}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-slate-600 dark:text-slate-400">{{ 'admin.assigned_to' | translate
+                        }}</span>
+                    <span class="text-sm font-medium text-slate-900 dark:text-white">{{ currentAssignment.assignedTo
+                        }}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-slate-600 dark:text-slate-400">{{ 'admin.assignment_date' | translate
+                        }}</span>
+                    <span class="text-sm font-medium text-slate-900 dark:text-white">{{
+                        formatDate(currentAssignment.assignmentDate) }}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-slate-600 dark:text-slate-400">{{ 'admin.assignment_type' | translate
+                        }}</span>
+                    <span class="text-sm font-medium text-slate-900 dark:text-white">{{ currentAssignment.assignmentType
+                        }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

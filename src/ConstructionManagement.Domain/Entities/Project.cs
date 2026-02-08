@@ -11,6 +11,11 @@ public class Project : BaseEntity, ICompanyEntity
     public string ProjectName { get; set; } = string.Empty;
 
     /// <summary>
+    /// Alias/Short name for the project (used for display)
+    /// </summary>
+    public string Name => ProjectName;
+
+    /// <summary>
     /// Tenant identifier for data isolation
     /// </summary>
     public int? CompanyId { get; set; }
@@ -62,6 +67,16 @@ public class Project : BaseEntity, ICompanyEntity
 
     public bool IsClosed { get; set; } = false;
     public DateTime? ClosedAt { get; set; }
+
+    /// <summary>
+    /// Progress percentage of the project (0-100)
+    /// </summary>
+    public decimal ProgressPercentage { get; set; } = 0;
+
+    /// <summary>
+    /// Project budget
+    /// </summary>
+    public decimal? Budget { get; set; }
 
     // -- Financial & Accounting ------------------------------------------------
     public ConstructionManagement.Domain.Enums.CalculationMethod AccountingSystem { get; set; } = ConstructionManagement.Domain.Enums.CalculationMethod.Measured;

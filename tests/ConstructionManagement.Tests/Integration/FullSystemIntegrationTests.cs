@@ -77,7 +77,7 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 		await Context.SaveChangesAsync();
 
 		var request = new CreateBOQItemRequest(
-			"C1", "Item 1", "Desc", "Unit", null, null,
+			null, "C1", "Item 1", "Desc", "Unit", null, null,
 			"Measured", 100, 50, null, null, null, null,
             null, null
 		);
@@ -120,7 +120,7 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 		var project = await SeedProjectAsync("Project 1", user.Id);
 
 		var itemId = await _boqService.CreateBOQItemAsync(project.Id, new CreateBOQItemRequest(
-			"C1", "Item 1", "Desc", "Unit", null, null, "Measured", 100m, 50m, null, null, null, null, null, null
+			null, "C1", "Item 1", "Desc", "Unit", null, null, "Measured", 100m, 50m, null, null, null, null, null, null
 		), user.Id);
 
 		var saved = await Context.BOQItems.Include(i => i.MeasuredData).FirstAsync(i => i.Id == itemId);

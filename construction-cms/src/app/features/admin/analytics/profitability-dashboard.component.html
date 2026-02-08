@@ -1,0 +1,268 @@
+<div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+            <div>
+                <h1
+                    class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight uppercase tracking-tight">
+                    {{ 'admin.profitability_dashboard' | translate }}</h1>
+                <p class="text-sm text-slate-500 dark:text-slate-400">{{ 'admin.profitability_subtitle' | translate }}
+                </p>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-xs font-black text-slate-400 uppercase tracking-widest">{{ 'admin.period' | translate
+                    }}</span>
+                <select [(ngModel)]="selectedPeriod" (change)="loadFinancialAnalytics()"
+                    class="bg-transparent border-none text-xs font-black text-indigo-600 dark:text-indigo-400 focus:ring-0 outline-none cursor-pointer">
+                    <option value="30">{{ 'admin.last_30_days' | translate }}</option>
+                    <option value="90">{{ 'admin.last_90_days' | translate }}</option>
+                    <option value="180">{{ 'admin.last_6_months' | translate }}</option>
+                    <option value="365">{{ 'admin.last_year' | translate }}</option>
+                </select>
+            </div>
+            <button (click)="loadFinancialAnalytics()"
+                class="w-12 h-12 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20 hover:scale-105 transition-transform">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="flex items-center justify-center py-20">
+            <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+
+        <!-- Financial Summary Cards -->
+        <div *ngIf="!isLoading && financialAnalytics"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="premium-stat-card">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">{{ 'admin.total_revenue'
+                    | translate }}</p>
+                <span class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{{
+                    formatCurrency(financialAnalytics.totalRevenue) }}</span>
+                <span class="text-xs text-emerald-500 mt-2 block">+12.5% vs last period</span>
+            </div>
+            <div class="premium-stat-card">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">{{ 'admin.total_costs' |
+                    translate }}</p>
+                <span class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{{
+                    formatCurrency(financialAnalytics.totalCosts) }}</span>
+                <span class="text-xs text-rose-500 mt-2 block">+8.3% vs last period</span>
+            </div>
+            <div class="premium-stat-card">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">{{ 'admin.gross_profit'
+                    | translate }}</p>
+                <span class="text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tighter">{{
+                    formatCurrency(financialAnalytics.grossProfit) }}</span>
+                <span class="text-xs text-emerald-500 mt-2 block">+18.2% vs last period</span>
+            </div>
+            <div class="premium-stat-card">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">{{ 'admin.profit_margin'
+                    | translate }}</p>
+                <span class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{{
+                    formatPercentage(financialAnalytics.profitMargin) }}</span>
+                <span class="text-xs text-emerald-500 mt-2 block">+2.1% vs last period</span>
+            </div>
+        </div>
+
+        <!-- Detailed Financial Metrics -->
+        <div *ngIf="!isLoading && financialAnalytics" class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+            <!-- Revenue Breakdown -->
+            <div
+                class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden">
+                <div class="p-8 border-b border-slate-100 dark:border-white/5">
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white mb-1">{{ 'admin.revenue_breakdown' |
+                        translate }}</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">{{ 'admin.revenue_breakdown_desc' | translate
+                        }}</p>
+                </div>
+                <div class="p-8 space-y-4">
+                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-950/50">
+                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">{{ 'admin.total_invoiced' |
+                            translate }}</span>
+                        <span class="text-lg font-black text-slate-900 dark:text-white">{{
+                            formatCurrency(financialAnalytics.invoicedAmount) }}</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-950/50">
+                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">{{ 'admin.collected' |
+                            translate }}</span>
+                        <span class="text-lg font-black text-emerald-600 dark:text-emerald-400">{{
+                            formatCurrency(financialAnalytics.collectedAmount) }}</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-950/50">
+                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">{{ 'admin.pending' |
+                            translate }}</span>
+                        <span class="text-lg font-black text-amber-600 dark:text-amber-400">{{
+                            formatCurrency(financialAnalytics.pendingAmount) }}</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-950/50">
+                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">{{ 'admin.overdue' |
+                            translate }}</span>
+                        <span class="text-lg font-black text-rose-600 dark:text-rose-400">{{
+                            formatCurrency(financialAnalytics.overdueAmount) }}</span>
+                    </div>
+                    <div
+                        class="flex items-center justify-between p-4 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20">
+                        <span class="text-sm font-black text-emerald-600 dark:text-emerald-400">{{
+                            'admin.collection_rate' | translate }}</span>
+                        <span class="text-lg font-black text-emerald-600 dark:text-emerald-400">{{
+                            formatPercentage(financialAnalytics.collectionRate) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cost Breakdown -->
+            <div
+                class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden">
+                <div class="p-8 border-b border-slate-100 dark:border-white/5">
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white mb-1">{{ 'admin.cost_breakdown' |
+                        translate }}</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">{{ 'admin.cost_breakdown_desc' | translate }}
+                    </p>
+                </div>
+                <div class="p-8 space-y-4">
+                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-950/50">
+                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">{{ 'admin.labor_costs' |
+                            translate }}</span>
+                        <span class="text-lg font-black text-slate-900 dark:text-white">{{
+                            formatCurrency(financialAnalytics.laborCosts) }}</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-950/50">
+                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">{{ 'admin.material_costs' |
+                            translate }}</span>
+                        <span class="text-lg font-black text-slate-900 dark:text-white">{{
+                            formatCurrency(financialAnalytics.materialCosts) }}</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-950/50">
+                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">{{ 'admin.equipment_costs'
+                            | translate }}</span>
+                        <span class="text-lg font-black text-slate-900 dark:text-white">{{
+                            formatCurrency(financialAnalytics.equipmentCosts) }}</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-950/50">
+                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">{{
+                            'admin.subcontractor_costs' | translate }}</span>
+                        <span class="text-lg font-black text-slate-900 dark:text-white">{{
+                            formatCurrency(financialAnalytics.subcontractorCosts) }}</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-950/50">
+                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">{{ 'admin.overhead_costs' |
+                            translate }}</span>
+                        <span class="text-lg font-black text-slate-900 dark:text-white">{{
+                            formatCurrency(financialAnalytics.overheadCosts) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profitability Metrics -->
+        <div *ngIf="!isLoading && financialAnalytics" class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+            <div
+                class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden">
+                <div class="p-8 border-b border-slate-100 dark:border-white/5">
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white mb-1">{{ 'admin.net_profit' | translate
+                        }}</h2>
+                </div>
+                <div class="p-8">
+                    <span class="text-4xl font-black text-emerald-600 dark:text-emerald-400">{{
+                        formatCurrency(financialAnalytics.netProfit) }}</span>
+                </div>
+            </div>
+            <div
+                class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden">
+                <div class="p-8 border-b border-slate-100 dark:border-white/5">
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white mb-1">{{ 'admin.operating_margin' |
+                        translate }}</h2>
+                </div>
+                <div class="p-8">
+                    <span class="text-4xl font-black text-slate-900 dark:text-white">{{
+                        formatPercentage(financialAnalytics.operatingMargin) }}</span>
+                </div>
+            </div>
+            <div
+                class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden">
+                <div class="p-8 border-b border-slate-100 dark:border-white/5">
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white mb-1">{{ 'admin.roi' | translate }}
+                    </h2>
+                </div>
+                <div class="p-8">
+                    <span class="text-4xl font-black text-slate-900 dark:text-white">{{
+                        formatPercentage(financialAnalytics.returnOnInvestment) }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Financial Summaries -->
+        <div *ngIf="!isLoading && projectSummaries && projectSummaries.length > 0"
+            class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden">
+            <div class="p-8 border-b border-slate-100 dark:border-white/5">
+                <h2 class="text-xl font-black text-slate-900 dark:text-white mb-1">{{ 'admin.project_profitability' |
+                    translate }}</h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400">{{ 'admin.project_profitability_desc' | translate
+                    }}</p>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-slate-50 dark:bg-slate-950/50">
+                        <tr>
+                            <th
+                                class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                {{ 'admin.project' | translate }}</th>
+                            <th
+                                class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                {{ 'admin.budget' | translate }}</th>
+                            <th
+                                class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                {{ 'admin.actual_cost' | translate }}</th>
+                            <th
+                                class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                {{ 'admin.variance' | translate }}</th>
+                            <th
+                                class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                {{ 'admin.profit' | translate }}</th>
+                            <th
+                                class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                {{ 'admin.margin' | translate }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let project of projectSummaries"
+                            class="border-t border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-black text-slate-900 dark:text-white">{{ project.projectName
+                                    }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-medium text-slate-600 dark:text-slate-400">{{
+                                    formatCurrency(project.budget) }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-medium text-slate-600 dark:text-slate-400">{{
+                                    formatCurrency(project.actualCost) }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-black"
+                                    [ngClass]="project.variance >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'">
+                                    {{ formatCurrency(project.variance) }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-black text-emerald-600 dark:text-emerald-400">{{
+                                    formatCurrency(project.profit) }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-sm font-black"
+                                    [ngClass]="project.profitMargin >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'">
+                                    {{ formatPercentage(project.profitMargin) }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

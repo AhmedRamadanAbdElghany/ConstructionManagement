@@ -1,3 +1,4 @@
+using ConstructionManagement.Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 
@@ -57,9 +58,44 @@ public class LocalFileStorageService : IFileStorageService
         return $"/uploads/{safeFolder}/{uniqueFileName}";
     }
 
-    public Task<bool> DeleteFileAsync(string filePath)
+    public Task<FileStorageResult> SaveFileAsync(IFormFile file, string folder)
     {
-        if (string.IsNullOrEmpty(filePath)) return Task.FromResult(false);
+        if (file == null || file.Length == 0)
+            throw new ArgumentException("No file provided or file is empty");
+
+        if (file.Length > MaxFileSize)
+            throw new ArgumentException($"File size exceeds maximum allowed ({MaxFileSize / 1024 / 1024} MB)");
+
+        var allowedExtensions = new HashSet<string> { ".jpg", ".jpeg", ".png", ".gif", ".mp4", ".mov", ".pdf", ".doc", ".docx", ".xls", ".xlsx" };
+        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+        if (!allowedExtensions.Contains(extension))
+            throw new ArgumentException($"File type '{extension}' is not supported");
+
+        var safeFolder = string.IsNullOrEmpty(folder)
+            ? "general"
+            : string.Concat(folder.Split(Path.GetInvalidFileNameChars())).Replace(" ", "_");
+
+        var targetDirectory = Path.Combine(_rootPath, safeFolder);
+
+        if (!Directory.Exists(targetDirectory))
+            Directory.CreateDirectory(targetDirectory);
+
+        var uniqueFileName = $"{Guid.NewGuid()}_{DateTime.UtcNow:yyyyMMddHHmmss}{extension}";
+        var fullPath = Path.Combine(targetDirectory, uniqueFileName);
+
+        var relativePath = $"/uploads/{safeFolder}/{uniqueFileName}";
+
+        return Task.FromResult(new FileStorageResult
+        {
+            Path = relativePath,
+            FileName = uniqueFileName
+        });
+    }
+
+    public async Task DeleteFileAsync(string filePath)
+    {
+        if (string.IsNullOrEmpty(filePath)) return;
 
         // تحويل المسار النسبي إلى مسار فيزيائي للحذف
         var physicalPath = Path.Combine(_rootPath, "..", filePath.TrimStart('/'));
@@ -67,9 +103,6 @@ public class LocalFileStorageService : IFileStorageService
         if (File.Exists(physicalPath))
         {
             File.Delete(physicalPath);
-            return Task.FromResult(true);
         }
-
-        return Task.FromResult(false);
     }
 }

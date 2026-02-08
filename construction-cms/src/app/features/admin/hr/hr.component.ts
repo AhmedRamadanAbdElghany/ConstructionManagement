@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MockDataService } from '../../../core/mock/mock-data.service';
 import { User, UserRole } from '../../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
+import { RolesService } from '../../../core/services/roles.service';
 
 @Component({
   selector: 'app-hr',
@@ -372,7 +372,7 @@ export class HrComponent implements OnInit {
     return this.users.reduce((sum, u) => sum + u.salary, 0);
   }
 
-  constructor(private mockDataService: MockDataService, private fb: FormBuilder) {
+  constructor(private rolesService: RolesService, private fb: FormBuilder) {
     this.addUserForm = this.fb.group({
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -382,9 +382,11 @@ export class HrComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.mockDataService.getUsers().subscribe(users => {
-      this.users = users;
-    });
+    // TODO: Implement users API
+    // this.rolesService.getUsers().subscribe(users => {
+    //   this.users = users;
+    // });
+    this.users = [];
   }
 
   openAddUserModal() {

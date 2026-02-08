@@ -165,6 +165,41 @@ export interface CompanySettings {
   allowReopenClosedDay: boolean;
   autoCloseDay: boolean;
   autoCloseDayTime?: string; // HH:mm format, e.g., "18:00"
+  // Inventory Management Settings
+  enableInventoryManagement?: boolean;
+  requireMaterialRequestApproval?: boolean;
+  materialRequestApproverRole?: string;
+  enableMultiWarehouse?: boolean;
+  enableStockAlerts?: boolean;
+  defaultLowStockThreshold?: number;
+  // Equipment Management Settings
+  enableEquipmentManagement?: boolean;
+  // Safety Management Settings
+  enableSafetyManagement?: boolean;
+  requireSafetyInspections?: boolean;
+  safetyInspectionFrequencyDays?: number;
+  incidentReportingHours?: number;
+  enableIncidentEscalation?: boolean;
+  requireSafetyTraining?: boolean;
+  safetyTrainingRenewalMonths?: number;
+  enableSafetyComplianceTracking?: boolean;
+  safetyChecklistApproverRole?: string;
+  incidentInvestigatorRole?: string;
+  // Subcontractor Management Settings
+  enableSubcontractorManagement?: boolean;
+  // Document Management Settings
+  enableDocumentManagement?: boolean;
+  // Quality Control Settings
+  enableQualityControl?: boolean;
+  requireQualityInspections?: boolean;
+  qualityInspectionFrequencyDays?: number;
+  defectTrackingEnabled?: boolean;
+  punchListEnabled?: boolean;
+  qualityScoreThreshold?: number;
+  autoEscalateCriticalDefects?: boolean;
+  defectResponseHours?: number;
+  // Analytics & Reporting Settings
+  enableAnalyticsReporting?: boolean;
 }
 
 export interface ProjectSettings {
@@ -286,7 +321,7 @@ export interface Role {
 export interface Permission {
   id: number;
   name: string;
-  description?: string;
+  desc?: string;
   companyId?: number;
 }
 
@@ -342,4 +377,422 @@ export interface ProjectActivity {
   action: string;
   details: string;
   timestamp: string; // ISO string
+}
+
+// Design Management
+
+export type DesignStatus = 'Draft' | 'Active' | 'Archived' | 'Deprecated' | 'Pending' | 'Approved' | 'Rejected';
+
+export type DesignApprovalStatus = 'Pending' | 'Approved' | 'Rejected';
+
+export interface Design {
+  id: number;
+  projectId: number;
+  name: string;
+  description?: string;
+  categoryId?: number;
+  categoryName?: string;
+  status: DesignStatus;
+  version: number;
+  fileUrl?: string;
+  fileName?: string;
+  originalFileName?: string;
+  fileSize?: number;
+  fileType?: string;
+  createdByUserId?: number;
+  createdByUserName?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  versionCount?: number;
+  changeNotes?: string;
+  // Approval fields
+  approvalStatus?: DesignApprovalStatus;
+  approvedByUserId?: number;
+  approvedByUserName?: string;
+  approvedDate?: string;
+  rejectionReason?: string;
+  parentDesignId?: number;
+}
+
+export interface DesignCategory {
+  id: number;
+  companyId?: number;
+  projectId?: number;
+  name: string;
+  description?: string;
+  order: number;
+  parentCategoryId?: number;
+  childCategories?: DesignCategory[];
+  designs?: Design[];
+  designCount?: number;
+  // Additional properties
+  createdAt?: string;
+  photoUrl?: string;
+  createdByUserId?: number;
+}
+
+export interface CreateDesignRequest {
+  name: string;
+  description?: string;
+  categoryId?: number;
+  file?: File;
+  status: 'Draft' | 'Active' | 'Archived' | 'Deprecated';
+  createAsNewVersion: boolean;
+  parentDesignId?: number;
+  changeNotes?: string;
+}
+
+export interface UpdateDesignRequest {
+  name?: string;
+  description?: string;
+  categoryId?: number;
+  file?: File;
+  status?: 'Draft' | 'Active' | 'Archived' | 'Deprecated';
+  changeNotes?: string;
+}
+
+export interface CreateCategoryRequest {
+  name: string;
+  description?: string;
+  parentCategoryId?: number;
+  projectId?: number;
+  order: number;
+}
+
+export interface UpdateCategoryRequest {
+  name?: string;
+  description?: string;
+  parentCategoryId?: number;
+  order?: number;
+}
+
+// Analytics & Reports Interfaces
+export interface ReportFilter {
+  key: string;
+  label: string;
+  type: 'select' | 'text' | 'number' | 'date' | 'boolean';
+  placeholder?: string;
+  options?: { value: string; label: string }[];
+}
+
+export interface ReportGenerationRequest {
+  reportId: number;
+  filters: any;
+  format: string;
+  schedule?: {
+    frequency: string;
+    dayOfWeek?: number;
+    time?: string;
+  };
+}
+
+export interface GeneratedReport {
+  id: string;
+  name: string;
+  format: string;
+  generatedAt: string;
+  status: string;
+  downloadUrl?: string;
+}
+
+// Client Portal Interfaces
+export interface ClientPayment {
+  id: number;
+  projectId: number;
+  projectName: string;
+  amount: number;
+  date: string;
+  method: 'Bank Transfer' | 'Cash' | 'Cheque';
+  referenceNumber: string;
+  status: 'Received' | 'Pending' | 'Bounced';
+  notes?: string;
+  photoUrl?: string;
+  actionBy?: string;
+}
+
+export interface ClientPaymentSummary {
+  totalInvoiced: number;
+  totalPaid: number;
+  pendingAmount: number;
+  overdueAmount: number;
+  paymentCount: number;
+}
+
+export interface ClientMessage {
+  id: number;
+  projectId: number;
+  projectName: string;
+  subject: string;
+  message: string;
+  priority: 'Low' | 'Medium' | 'High' | 'Urgent';
+  status: 'Open' | 'In Progress' | 'Resolved';
+  isRead: boolean;
+  createdAt: string;
+  updatedAt: string;
+  createdBy?: string;
+  replies?: ClientMessageReply[];
+}
+
+export interface ClientMessageReply {
+  id: number;
+  message: string;
+  createdAt: string;
+  createdBy: string;
+  isFromClient: boolean;
+}
+
+export interface ChangeOrderRequest {
+  id: number;
+  projectId: number;
+  projectName: string;
+  title: string;
+  description: string;
+  estimatedCost: number;
+  estimatedTimeImpact: number;
+  status: 'Pending' | 'Approved' | 'Rejected' | 'Completed';
+  requestedAt: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+  rejectionReason?: string;
+}
+
+export interface ClientUser {
+  id: number;
+  fullName: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  avatarUrl?: string;
+  notificationPreferences: {
+    email: boolean;
+    sms: boolean;
+    push: boolean;
+  };
+}
+
+// Quality Control Interfaces
+export interface QualityInspection {
+  id: number;
+  projectId: number;
+  projectName: string;
+  inspectionType: string;
+  location: string;
+  scheduledDate: string;
+  completedDate?: string;
+  inspectorId: number;
+  inspectorName: string;
+  status: 'Scheduled' | 'In Progress' | 'Completed' | 'Cancelled';
+  score: number;
+  notes?: string;
+  checklistItems: QualityChecklistItem[];
+}
+
+export interface QualityChecklistItem {
+  id: number;
+  description: string;
+  category: string;
+  isRequired: boolean;
+  isPassed: boolean;
+  notes?: string;
+  photos?: string[];
+}
+
+export interface QualityDefect {
+  id: number;
+  projectId: number;
+  projectName: string;
+  location: string;
+  description: string;
+  severity: 'Low' | 'Medium' | 'High' | 'Critical';
+  status: 'Open' | 'In Progress' | 'Resolved' | 'Verified';
+  reportedDate: string;
+  reportedBy: string;
+  assignedTo?: string;
+  dueDate?: string;
+  resolvedDate?: string;
+  photos?: string[];
+  costImpact?: number;
+}
+
+export interface PunchListItem {
+  id: number;
+  projectId: number;
+  projectName: string;
+  location: string;
+  description: string;
+  priority: 'Low' | 'Medium' | 'High';
+  status: 'Open' | 'In Progress' | 'Completed';
+  assignedTo?: string;
+  dueDate?: string;
+  completedDate?: string;
+  photos?: string[];
+}
+
+// Safety Management Interfaces
+export interface SafetyInspection {
+  id: number;
+  projectId: number;
+  projectName: string;
+  inspectionType: string;
+  location: string;
+  scheduledDate: string;
+  completedDate?: string;
+  inspectorId: number;
+  inspectorName: string;
+  status: 'Scheduled' | 'In Progress' | 'Completed' | 'Cancelled';
+  score: number;
+  findings: SafetyFinding[];
+  notes?: string;
+}
+
+export interface SafetyFinding {
+  id: number;
+  category: string;
+  description: string;
+  severity: 'Low' | 'Medium' | 'High' | 'Critical';
+  status: 'Open' | 'Corrected' | 'Verified';
+  dueDate?: string;
+  correctedDate?: string;
+}
+
+export interface SafetyIncident {
+  id: number;
+  projectId: number;
+  projectName: string;
+  incidentType: string;
+  severity: 'Minor' | 'Moderate' | 'Major' | 'Critical';
+  description: string;
+  location: string;
+  incidentDate: string;
+  reportedDate: string;
+  reportedBy: string;
+  status: 'Open' | 'Investigating' | 'Resolved' | 'Closed';
+  assignedTo?: string;
+  investigationNotes?: string;
+  rootCause?: string;
+  correctiveActions?: string;
+  photos?: string[];
+  witnesses?: string[];
+}
+
+export interface SafetyTraining {
+  id: number;
+  trainingType: string;
+  title: string;
+  description: string;
+  trainer: string;
+  trainingDate: string;
+  duration: number;
+  location: string;
+  attendees: SafetyTrainingAttendee[];
+  status: 'Scheduled' | 'Completed' | 'Cancelled';
+}
+
+export interface SafetyTrainingAttendee {
+  userId: number;
+  userName: string;
+  attended: boolean;
+  score?: number;
+  certificateIssued: boolean;
+  certificateExpiryDate?: string;
+}
+
+// Equipment Management Interfaces
+export interface EquipmentAssignment {
+  id: number;
+  equipmentId: number;
+  equipmentName: string;
+  projectId: number;
+  projectName: string;
+  assignedDate: string;
+  returnedDate?: string;
+  assignedBy: string;
+  status: 'Active' | 'Returned' | 'Transferred';
+  operatingHours: number;
+  fuelConsumed: number;
+  notes?: string;
+}
+
+export interface EquipmentMaintenance {
+  id: number;
+  equipmentId: number;
+  equipmentName: string;
+  maintenanceType: 'Preventive' | 'Corrective' | 'Emergency';
+  description: string;
+  scheduledDate: string;
+  completedDate?: string;
+  performedBy: string;
+  cost: number;
+  status: 'Scheduled' | 'In Progress' | 'Completed' | 'Cancelled';
+  partsUsed?: string[];
+  notes?: string;
+}
+
+// Inventory Management Interfaces
+export interface InventoryTransaction {
+  id: number;
+  itemId: number;
+  itemName: string;
+  transactionType: 'In' | 'Out' | 'Transfer' | 'Adjustment';
+  quantity: number;
+  unit: string;
+  unitCost: number;
+  totalCost: number;
+  transactionDate: string;
+  referenceNumber?: string;
+  projectId?: number;
+  projectName?: string;
+  performedBy: string;
+  notes?: string;
+}
+
+// Subcontractor Management Interfaces
+export interface SubcontractorContract {
+  id: number;
+  subcontractorId: number;
+  subcontractorName: string;
+  projectId: number;
+  projectName: string;
+  contractNumber: string;
+  contractType: string;
+  startDate: string;
+  endDate: string;
+  contractValue: number;
+  status: 'Draft' | 'Active' | 'Completed' | 'Terminated';
+  scopeOfWork: string;
+  paymentTerms: string;
+  signedDate?: string;
+  documents?: string[];
+}
+
+export interface SubcontractorPayment {
+  id: number;
+  contractId: number;
+  subcontractorId: number;
+  subcontractorName: string;
+  projectId: number;
+  projectName: string;
+  amount: number;
+  paymentDate: string;
+  paymentMethod: string;
+  referenceNumber: string;
+  status: 'Pending' | 'Approved' | 'Paid' | 'Cancelled';
+  invoiceNumber?: string;
+  notes?: string;
+}
+
+export interface SubcontractorRating {
+  id: number;
+  subcontractorId: number;
+  subcontractorName: string;
+  projectId: number;
+  projectName: string;
+  ratingDate: string;
+  ratedBy: string;
+  qualityRating: number;
+  timelinessRating: number;
+  communicationRating: number;
+  safetyRating: number;
+  overallRating: number;
+  comments?: string;
 }
