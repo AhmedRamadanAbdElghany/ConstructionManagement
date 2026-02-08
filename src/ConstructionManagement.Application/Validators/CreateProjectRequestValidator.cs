@@ -10,8 +10,8 @@ public class CreateProjectRequestValidator : AbstractValidator<CreateProjectRequ
 
         RuleFor(x => x.AccountingSystem)
             .NotEmpty().WithMessage("نوع نظام الحساب مطلوب")
-            .Must(x => x == "Measured" || x == "Supervision" || x == "Mixed" || x == "Other")
-            .WithMessage("نوع نظام الحساب غير صالح (Measured, Supervision, Mixed, Other فقط)");
+            .Must(x => x == "Measured" || x == "Supervision" || x == "Packages")
+            .WithMessage("نوع نظام الحساب غير صالح (Measured, Supervision, Packages فقط)");
 
         RuleFor(x => x.TotalContractValue)
             .GreaterThan(0).When(x => x.TotalContractValue.HasValue)
@@ -19,6 +19,8 @@ public class CreateProjectRequestValidator : AbstractValidator<CreateProjectRequ
 
         RuleFor(x => x.StartDate)
             .NotNull().WithMessage("تاريخ البداية مطلوب")
+            .GreaterThanOrEqualTo(DateTime.UtcNow.Date)
+            .WithMessage("تاريخ البداية لا يمكن أن يكون في الماضي")
             .LessThanOrEqualTo(x => x.EndDate).When(x => x.EndDate.HasValue)
             .WithMessage("تاريخ البداية يجب أن يكون قبل أو يساوي تاريخ النهاية");
 

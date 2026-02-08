@@ -93,9 +93,6 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<ApprovalEscalationJob>();
 
 // 7. JWT Authentication
-var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]!);
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -103,14 +100,18 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    var jwtConfig = builder.Configuration.GetSection("JwtSettings");
+    var secretKey = jwtConfig["Key"] ?? throw new InvalidOperationException("JWT Key is missing");
+    var keyBytes = Encoding.ASCII.GetBytes(secretKey);
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
+        IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
         ValidateIssuer = true,
-        ValidIssuer = jwtSettings["Issuer"],
+        ValidIssuer = jwtConfig["Issuer"],
         ValidateAudience = true,
-        ValidAudience = jwtSettings["Audience"],
+        ValidAudience = jwtConfig["Audience"],
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
     };
@@ -130,8 +131,11 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("CanCloseProject", policy => policy.AddRequirements(new ProjectRoleRequirement("Project.Close")));
     options.AddPolicy("CanViewProjectFinancials", policy => policy.AddRequirements(new ProjectRoleRequirement("Financials.View")));
     options.AddPolicy("CanAddTransaction", policy => policy.AddRequirements(new ProjectRoleRequirement("Transaction.Add")));
+    options.AddPolicy("CanViewTransactions", policy => policy.AddRequirements(new ProjectRoleRequirement("Financials.View")));
     options.AddPolicy("CanReviewTransactions", policy => policy.AddRequirements(new ProjectRoleRequirement("Transaction.Review")));
+    options.AddPolicy("CanReviewInvoices", policy => policy.AddRequirements(new ProjectRoleRequirement("Transaction.Review")));
     options.AddPolicy("CanReviewSiteMedia", policy => policy.AddRequirements(new ProjectRoleRequirement("Media.Review")));
+    options.AddPolicy("CanReviewSiteImage", policy => policy.AddRequirements(new ProjectRoleRequirement("Media.Review")));
     options.AddPolicy("CanCloseDailyLog", policy => policy.AddRequirements(new ProjectRoleRequirement("DailyLog.Close")));
     options.AddPolicy("CanManageProjectSettings", policy => policy.AddRequirements(new ProjectRoleRequirement("Settings.Manage")));
     

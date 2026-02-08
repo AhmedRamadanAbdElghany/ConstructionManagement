@@ -22,7 +22,6 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpGet("{projectId}")]
-    [Authorize(Policy = "CanCreateProject")]
     public async Task<IActionResult> Get(int projectId)
     {
         var project = await _projectService.GetProjectByIdAsync(projectId);

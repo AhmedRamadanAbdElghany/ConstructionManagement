@@ -36,13 +36,21 @@ public class ProjectRoleHandler : AuthorizationHandler<ProjectRoleRequirement>
         using var scope = _scopeFactory.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
+        // 3.5. التحقق مما إذا كان المستخدم هو مالك المشروع (Owner)
+        var project = await db.Projects.FindAsync(projectId);
+        if (project != null && project.OwnerUserId == userId)
+        {
+            context.Succeed(requirement);
+            return;
+        }
+
         // 4. البحث في شجرة الصلاحيات (User -> TeamMember -> Roles -> Permissions)
         var hasPermission = await db.ProjectTeamMembers
             .Where(m => m.ProjectId == projectId && m.UserId == userId)
             .SelectMany(m => m.ProjectTeamRoles)
             .Select(tr => tr.ProjectRole)
             .SelectMany(pr => pr.Permissions)
-            .AnyAsync(rp => rp.Permission.Name == requirement.PermissionName); // تم تصحيح المسمى هنا
+            .AnyAsync(rp => rp.Permission.Name == requirement.PermissionName);
 
         if (hasPermission)
         {

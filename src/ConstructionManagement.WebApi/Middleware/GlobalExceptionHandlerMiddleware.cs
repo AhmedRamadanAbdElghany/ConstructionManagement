@@ -31,9 +31,11 @@ public class GlobalExceptionHandlerMiddleware
     {
         context.Response.ContentType = "application/problem+json";
 
+        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
         var problemDetails = new ProblemDetails
         {
-            Status = (int)HttpStatusCode.InternalServerError,
+            Status = context.Response.StatusCode,
             Title = "حدث خطأ داخلي في الخادم",
             Detail = _env.IsDevelopment() ? exception.Message : "يرجى المحاولة لاحقًا",
             Instance = context.Request.Path

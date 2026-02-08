@@ -274,13 +274,13 @@ public class AuthControllerIntegrationTests : ApiTestBase
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
-    private class LoginResponse
+    public class LoginResponse
     {
         public string Token { get; set; } = string.Empty;
         public UserData? User { get; set; }
     }
 
-    private class UserData
+    public class UserData
     {
         public int UserId { get; set; }
         public string FullName { get; set; } = string.Empty;

@@ -20,9 +20,9 @@ public class AuthServiceTests
     public AuthServiceTests()
     {
         // تم التعديل إلى jwtSettings (حرف j صغير) ليتطابق مع السطر 102 في AuthService.cs
-        _configMock.Setup(c => c["jwtSettings:Key"]).Returns("ThisIsAStrongSecretKeyForTesting123456!");
-        _configMock.Setup(c => c["jwtSettings:Issuer"]).Returns("TestIssuer");
-        _configMock.Setup(c => c["jwtSettings:Audience"]).Returns("TestAudience");
+        _configMock.Setup(c => c["JwtSettings:Key"]).Returns("ThisIsAStrongSecretKeyForTesting123456!");
+        _configMock.Setup(c => c["JwtSettings:Issuer"]).Returns("TestIssuer");
+        _configMock.Setup(c => c["JwtSettings:Audience"]).Returns("TestAudience");
     }
 
     private AuthService CreateService()
@@ -149,8 +149,8 @@ public class AuthServiceTests
         };
         _userRepoMock.Setup(r => r.GetByEmailAsync(user.Email)).ReturnsAsync(user);
 
-        // محاكاة غياب المفتاح باستخدام الحرف الصغير jwtSettings
-        _configMock.Setup(c => c["jwtSettings:Key"]).Returns((string?)null);
+        // Override to simulate missing key - use PascalCase to match AuthService
+        _configMock.Setup(c => c["JwtSettings:Key"]).Returns((string?)null);
 
         var service = CreateService();
 

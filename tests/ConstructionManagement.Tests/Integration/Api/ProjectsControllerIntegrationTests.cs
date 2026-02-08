@@ -246,7 +246,7 @@ public class ProjectsControllerIntegrationTests : ApiTestBase
         var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
 
         var user = await SeedUserAsync(email, hashedPassword, "Test User");
-        var project = await SeedProjectAsync("Test Project", user.Id, p => p.Status = "Closed");
+        var project = await SeedProjectAsync("Test Project", user.Id, p => p.IsClosed = true);
 
         var token = await AuthenticateAsync(email, password);
         SetAuthToken(token);
@@ -315,7 +315,7 @@ public class ProjectsControllerIntegrationTests : ApiTestBase
     }
 
     [Fact]
-    public async Task GetProject_WithInvalidDateRange_ReturnsBadRequest()
+    public async Task CreateProject_WithInvalidDateRange_ReturnsBadRequest()
     {
         // Arrange
         const string email = "test@example.com";

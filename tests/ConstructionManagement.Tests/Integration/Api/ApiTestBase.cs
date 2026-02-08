@@ -21,10 +21,16 @@ public abstract class ApiTestBase : IAsyncDisposable
     protected readonly HttpClient Client;
     protected readonly ApplicationDbContext Context;
 
+    private readonly Microsoft.Data.Sqlite.SqliteConnection _connection;
+
     protected ApiTestBase()
     {
         Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Testing");
         Environment.SetEnvironmentVariable("IsTesting", "true");
+
+        // Initialize and open the connection
+        _connection = new Microsoft.Data.Sqlite.SqliteConnection("DataSource=:memory:");
+        _connection.Open();
 
         // Configure test settings
         var testSettings = new Dictionary<string, string?>
@@ -33,6 +39,7 @@ public abstract class ApiTestBase : IAsyncDisposable
             { "JwtSettings:Issuer", "TestIssuer" },
             { "JwtSettings:Audience", "TestAudience" },
             { "JwtSettings:ExpiryInMinutes", "60" },
+            // Connection string is not used when passing connection instance, but good to have meaningful default
             { "ConnectionStrings:DefaultConnection", "DataSource=:memory:" },
             { "IsTesting", "true" }
         };
@@ -40,7 +47,7 @@ public abstract class ApiTestBase : IAsyncDisposable
         Factory = new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
             {
-                builder.UseEnvironment("Testing");
+                builder.UseEnvironment("Development");
                 builder.ConfigureAppConfiguration((context, config) =>
                 {
                     config.AddInMemoryCollection(testSettings);
@@ -53,9 +60,15 @@ public abstract class ApiTestBase : IAsyncDisposable
                     if (dbDescriptor != null)
                         services.Remove(dbDescriptor);
 
-                    // Add in-memory DbContext
-                    services.AddDbContext<ApplicationDbContext>(options =>
-                        options.UseSqlite("DataSource=:memory:"), ServiceLifetime.Scoped);
+                    // Register the shared connection
+                    services.AddSingleton<System.Data.Common.DbConnection>(_connection);
+
+                    // Add in-memory DbContext using the shared connection
+                    services.AddDbContext<ApplicationDbContext>((sp, options) =>
+                    {
+                        var connection = sp.GetRequiredService<System.Data.Common.DbConnection>();
+                        options.UseSqlite(connection);
+                    }, ServiceLifetime.Scoped);
 
                     // Replace ICompanyContext
                     var companyDesc = services.FirstOrDefault(d => d.ServiceType == typeof(ICompanyContext));
@@ -71,8 +84,45 @@ public abstract class ApiTestBase : IAsyncDisposable
         var scope = Factory.Services.CreateScope();
         Context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        Context.Database.OpenConnection();
+        // EnsureCreated uses the open connection
         Context.Database.EnsureCreated();
+        
+        // Seed base test data (company and roles)
+        SeedBaseData();
+    }
+
+    /// <summary>
+    /// Seeds essential base data (Company and Roles) required for authentication to work
+    /// </summary>
+    private void SeedBaseData()
+    {
+        // Seed Company if not exists
+        if (!Context.Companies.Any(c => c.Id == 1))
+        {
+            Context.Companies.Add(new Company
+            {
+                Id = 1,
+                Name = "Test Company",
+                IsActive = true
+            });
+            Context.SaveChanges();
+        }
+        
+        // Seed default roles if not exist (check by name, not by empty table)
+        if (!Context.Roles.Any(r => r.Name == "SuperAdmin"))
+        {
+            Context.Roles.Add(new Role { Name = "SuperAdmin", Description = "Super Administrator", CompanyId = null });
+        }
+        if (!Context.Roles.Any(r => r.Name == "Admin"))
+        {
+            Context.Roles.Add(new Role { Name = "Admin", Description = "Company Administrator", CompanyId = 1 });
+        }
+        if (!Context.Roles.Any(r => r.Name == "User"))
+        {
+            Context.Roles.Add(new Role { Name = "User", Description = "Regular User", CompanyId = 1 });
+        }
+        
+        Context.SaveChanges();
     }
 
     protected async Task<string> AuthenticateAsync(string email, string password)
@@ -92,10 +142,13 @@ public abstract class ApiTestBase : IAsyncDisposable
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        var result = await response.Content.ReadFromJsonAsync<LoginResponseDto>(options);
+        var content = await response.Content.ReadAsStringAsync();
+        // Console.WriteLine($"Login Response: {content}"); 
+
+        var result = JsonSerializer.Deserialize<LoginResponseDto>(content, options);
         
         if (result == null || string.IsNullOrEmpty(result.Token))
-            throw new InvalidOperationException("Login succeeded but token is null or empty");
+            throw new InvalidOperationException($"Login succeeded but token is null or empty. content: {content}");
         
         return result.Token;
     }
@@ -114,6 +167,11 @@ public abstract class ApiTestBase : IAsyncDisposable
 
     protected async Task<User> SeedUserAsync(string email, string passwordHash, string fullName = "Test User", int? companyId = 1)
     {
+        return await SeedUserWithRolesAsync(email, passwordHash, fullName, companyId, "User");
+    }
+
+    protected async Task<User> SeedUserWithRolesAsync(string email, string passwordHash, string fullName = "Test User", int? companyId = 1, params string[] roleNames)
+    {
         var nameParts = fullName.Split(' ', 2);
         var user = new User
         {
@@ -125,13 +183,46 @@ public abstract class ApiTestBase : IAsyncDisposable
             CreatedAt = DateTime.UtcNow
         };
         
-        // Remove existing user with same email
-        var existing = await Context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        // Remove existing user with same email and their UserRoles
+        var existing = await Context.Users
+            .Include(u => u.UserRoles)
+            .FirstOrDefaultAsync(u => u.Email == email);
         if (existing != null)
+        {
+            Context.UserRoles.RemoveRange(existing.UserRoles);
             Context.Users.Remove(existing);
+            await Context.SaveChangesAsync();
+        }
         
         Context.Users.Add(user);
         await Context.SaveChangesAsync();
+        
+        // Assign roles
+        if (roleNames.Length > 0)
+        {
+            foreach (var roleName in roleNames)
+            {
+                var role = await Context.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
+                if (role != null)
+                {
+                    Context.UserRoles.Add(new UserRole
+                    {
+                        UserId = user.Id,
+                        RoleId = role.Id,
+                        CompanyId = companyId,
+                        AssignedAt = DateTime.UtcNow
+                    });
+                }
+            }
+            await Context.SaveChangesAsync();
+            
+            // Reload user with roles
+            user = await Context.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .FirstAsync(u => u.Id == user.Id);
+        }
+        
         return user;
     }
 
@@ -149,6 +240,14 @@ public abstract class ApiTestBase : IAsyncDisposable
         configure?.Invoke(project);
         Context.Projects.Add(project);
         await Context.SaveChangesAsync();
+
+        // Seed project settings as they are required by some services
+        if (!Context.ProjectSettings.Any(s => s.Id == project.Id))
+        {
+            Context.ProjectSettings.Add(new ProjectSettings { Id = project.Id });
+            await Context.SaveChangesAsync();
+        }
+
         return project;
     }
 
@@ -160,7 +259,7 @@ public abstract class ApiTestBase : IAsyncDisposable
         GC.SuppressFinalize(this);
     }
 
-    private class LoginResponseDto
+    public class LoginResponseDto
     {
         [JsonPropertyName("token")]
         public string Token { get; set; } = "";
@@ -169,7 +268,7 @@ public abstract class ApiTestBase : IAsyncDisposable
         public UserDto? User { get; set; }
     }
 
-    private class UserDto
+    public class UserDto
     {
         [JsonPropertyName("userId")]
         public int UserId { get; set; }
