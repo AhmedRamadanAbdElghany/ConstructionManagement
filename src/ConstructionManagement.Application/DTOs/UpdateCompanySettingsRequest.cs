@@ -5,6 +5,29 @@ public class UpdateCompanySettingsRequest
     // All fields are nullable so partial updates are possible
     // (only send the fields you want to change)
 
+    // ============================================
+    // MODULE MASTER SWITCHES (Controlled by Super Admin)
+    // ============================================
+    public bool? EnableUserManagement { get; set; }
+    public bool? EnableProjectManagement { get; set; }
+    public bool? EnableBOQManagement { get; set; }
+    public bool? EnableDailyLogs { get; set; }
+    public bool? EnableSiteMedia { get; set; }
+    public bool? EnableInventoryManagement { get; set; }
+    public bool? EnableEquipmentManagement { get; set; }
+    public bool? EnableQualityControl { get; set; }
+    public bool? EnableSafetyManagement { get; set; }
+    public bool? EnableSubcontractorManagement { get; set; }
+    public bool? EnableFinancialManagement { get; set; }
+    public bool? EnableAnalytics { get; set; }
+    public bool? EnableNotifications { get; set; }
+    public bool? EnableDocumentManagement { get; set; }
+    public bool? EnableDesignManagement { get; set; }
+    public bool? EnableClientPortal { get; set; }
+    public bool? EnableAccessControl { get; set; }
+    public bool? EnableHRManagement { get; set; }
+    public bool? EnableVendorManagement { get; set; }
+
     public bool? EnableDelayNotification { get; set; }
     public bool? DelayNotificationIsOneTimeOnly { get; set; }
     public int? DelayNotificationIntervalDays { get; set; }
@@ -102,4 +125,22 @@ public class UpdateCompanySettingsRequest
     public string? DocumentApproverRole { get; set; }
     public bool? EnableDocumentCategories { get; set; }
     public int? MaxVersionsPerDocument { get; set; }
+
+    // ============================================
+    // QUALITY CONTROL SETTINGS
+    // ============================================
+
+    public bool? RequireQualityInspections { get; set; }
+    public int? QualityInspectionFrequencyDays { get; set; }
+    public bool? DefectTrackingEnabled { get; set; }
+    public bool? PunchListEnabled { get; set; }
+    public int? QualityScoreThreshold { get; set; }
+    public bool? AutoEscalateCriticalDefects { get; set; }
+    public int? DefectResponseHours { get; set; }
+
+    // ============================================
+    // ANALYTICS & REPORTING SETTINGS
+    // ============================================
+
+    public bool? EnableAnalyticsReporting { get; set; }
 }

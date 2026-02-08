@@ -33,6 +33,9 @@ public class InMemoryNotificationQueue : INotificationQueue
 
     public void QueueNotification(Application.Interfaces.NotificationMessage message)
     {
+        if (message == null)
+            throw new ArgumentNullException(nameof(message));
+        
         QueueNotification(message, message.Priority);
     }
 
@@ -89,10 +92,7 @@ public class InMemoryNotificationQueue : INotificationQueue
             int total = 0;
             foreach (var queue in _priorityQueues.Values)
             {
-                while (queue.TryPeek(out _))
-                {
-                    total++;
-                }
+                total += queue.Count;
             }
             return total;
         }

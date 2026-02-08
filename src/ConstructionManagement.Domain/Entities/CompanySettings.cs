@@ -58,6 +58,29 @@ public class CompanySettings : BaseEntity, ICompanyEntity
     [ForeignKey(nameof(CompanyId))]
     public virtual Company Company { get; set; } = null!;
 
+    // ============================================
+    // MODULE MASTER SWITCHES (Controlled by Super Admin)
+    // ============================================
+    public bool EnableUserManagement { get; set; } = true;
+    public bool EnableProjectManagement { get; set; } = true;
+    public bool EnableBOQManagement { get; set; } = true;
+    public bool EnableDailyLogs { get; set; } = true;
+    public bool EnableSiteMedia { get; set; } = true;
+    public bool EnableInventoryManagement { get; set; } = false;
+    public bool EnableEquipmentManagement { get; set; } = false;
+    public bool EnableQualityControl { get; set; } = false;
+    public bool EnableSafetyManagement { get; set; } = false;
+    public bool EnableSubcontractorManagement { get; set; } = false;
+    public bool EnableFinancialManagement { get; set; } = true;
+    public bool EnableAnalytics { get; set; } = true;
+    public bool EnableNotifications { get; set; } = true;
+    public bool EnableDocumentManagement { get; set; } = false;
+    public bool EnableDesignManagement { get; set; } = false;
+    public bool EnableClientPortal { get; set; } = false;
+    public bool EnableAccessControl { get; set; } = true;
+    public bool EnableHRManagement { get; set; } = false;
+    public bool EnableVendorManagement { get; set; } = false;
+
     // All the same settings as ProjectSettings
     public bool EnableDelayNotification { get; set; } = true;
     public bool DelayNotificationIsOneTimeOnly { get; set; } = false;
@@ -96,7 +119,6 @@ public class CompanySettings : BaseEntity, ICompanyEntity
 
     // Vendor/Supplier Invoice Settings
     public bool EnableVendorInvoiceUpload { get; set; } = false;
-    public bool EnableVendorManagement { get; set; } = false;
     public bool RequireInvoiceApproval { get; set; } = true;
     public string? InvoiceApproverRole { get; set; } // Role required to approve invoices
 
@@ -206,7 +228,6 @@ public class CompanySettings : BaseEntity, ICompanyEntity
     /// Master switch for Safety Management module
     /// Only Super Admin can enable/disable this
     /// </summary>
-    public bool EnableSafetyManagement { get; set; } = false;
     
     /// <summary>
     /// Require safety inspections on all projects
@@ -372,6 +393,26 @@ public class CompanySettings : BaseEntity, ICompanyEntity
     /// Maximum versions to keep per document (0 = unlimited)
     /// </summary>
     public int? MaxVersionsPerDocument { get; set; } = 0;
+
+    // ============================================
+    // QUALITY CONTROL SETTINGS
+    // (Only configurable when EnableQualityControl is true)
+    // ============================================
+    
+    public bool RequireQualityInspections { get; set; } = true;
+    public int QualityInspectionFrequencyDays { get; set; } = 30;
+    public bool DefectTrackingEnabled { get; set; } = true;
+    public bool PunchListEnabled { get; set; } = true;
+    public int QualityScoreThreshold { get; set; } = 80;
+    public bool AutoEscalateCriticalDefects { get; set; } = true;
+    public int DefectResponseHours { get; set; } = 48;
+
+    // ============================================
+    // ANALYTICS & REPORTING SETTINGS
+    // (Only configurable when EnableAnalytics is true)
+    // ============================================
+    
+    public bool EnableAnalyticsReporting { get; set; } = true;
 
     // You can add more global defaults here later
 }

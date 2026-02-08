@@ -174,7 +174,6 @@ public class InMemoryNotificationQueueTests
     }
 
     #endregion
-}
 
 /// <summary>
 /// Unit tests for NotificationMessage.
@@ -253,4 +252,5 @@ public class NotificationPriorityTests
         ((int)NotificationPriority.Normal).Should().BeLessThan((int)NotificationPriority.High);
         ((int)NotificationPriority.High).Should().BeLessThan((int)NotificationPriority.Urgent);
     }
+}
 }

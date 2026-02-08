@@ -59,13 +59,13 @@ public class EscalationIntegrationTests : IntegrationTestBase
         Context.Users.Add(user);
         await Context.SaveChangesAsync();
 
-        // 2. Arrange: إنشاء مشروع متأخر
+        // 2. Arrange: إنشاء مشروع متأخر (تأخير في تاريخ البداية)
         var project = new Project
         {
             ProjectName = "Late Tower",
             OwnerUserId = user.Id,
             StartDate = DateTime.UtcNow.AddDays(-10),
-            Status = "جديد"
+            Status = "جديد"  // Status must be "جديد" for start delay check
         };
         Context.Projects.Add(project);
         await Context.SaveChangesAsync();
@@ -75,19 +75,19 @@ public class EscalationIntegrationTests : IntegrationTestBase
             Id = project.Id,
             EnableDelayNotification = true,
             DelayNotificationIntervalDays = 1,
-            DelayGracePeriodDays = 0 // عشان يتفعل التأخير فورًا
+            DelayGracePeriodDays = 0 // Grace period 0 to trigger immediately
         };
         Context.ProjectSettings.Add(settings);
         await Context.SaveChangesAsync();
 
-        // 3. Act – الاسم الجديد الصحيح
+        // 3. Act – تشغيل خدمة التصعيد
         await _service.CheckProjectAndItemDelaysAsync();
 
         // 4. Assert
         var log = await Context.EscalationLogs
-            .FirstOrDefaultAsync(l => l.ProjectId == project.Id);
+            .FirstOrDefaultAsync(l => l.ProjectId == project.Id && l.BOQItemId == null);
 
-        log.Should().NotBeNull("يجب تسجيل التصعيد في جدول EscalationLogs");
+        log.Should().NotBeNull("يجب تسجيل التصعيد في جدول EscalationLogs عند تأخير بداية المشروع");
 
         _notifMock.Verify(n => n.CreateAndSendAsync(
             user.Id,

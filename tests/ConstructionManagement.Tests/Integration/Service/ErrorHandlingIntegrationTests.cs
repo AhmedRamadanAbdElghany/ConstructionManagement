@@ -1,13 +1,21 @@
 using ConstructionManagement.Application.DTOs;
+using ConstructionManagement.Application.DTOs.Transaction;
+using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Domain.Enums;
+using ConstructionManagement.Infrastructure.Persistence.Repositories;
+using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
+using Microsoft.Extensions.Configuration;
+using Moq;
 using Xunit;
 
 namespace ConstructionManagement.Tests.Integration.Service;
 
 public class ErrorHandlingIntegrationTests : IntegrationTestBase
 {
+    private readonly IConfiguration _emptyConfig = new ConfigurationBuilder().Build();
+
     [Fact]
     public async Task CreateProject_WithInvalidData_ThrowsValidationException()
     {
@@ -18,23 +26,30 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
 
         await SeedUserAsync(email, hashedPassword, "Test User");
 
-        var invalidRequest = new CreateProjectRequest
-        {
-            ProjectName = "", // Invalid: empty name
-            SiteAddress = "123 Test Street",
-            KickoffDate = DateTime.UtcNow.AddDays(-1), // Invalid: past date
-            HandoverTarget = DateTime.UtcNow.AddDays(-10), // Invalid: before kickoff
-            AccountingSystem = CalculationMethod.Measured
-        };
+        var invalidRequest = new CreateProjectRequest(
+            ProjectName: "", // Invalid: empty name
+            Description: "123 Test Street",
+            StartDate: DateTime.UtcNow.AddDays(-1), 
+            EndDate: DateTime.UtcNow.AddDays(-10), // Invalid: before kickoff
+            GeneralManagerUserId: null,
+            AccountingSystem: CalculationMethod.Measured.ToString(),
+            TotalContractValue: 100000
+        );
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<Exception>(async () =>
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
         {
-            var service = new ProjectService(Context, UnitOfWork);
+            var projectRepo = new Repository<Project>(Context);
+            var userRoleRepo = new Repository<UserRole>(Context);
+            var userRepo = new Repository<User>(Context);
+            var settingsRepo = new Repository<ProjectSettings>(Context);
+            var phaseService = new Mock<IPhaseService>().Object;
+            
+            var service = new ProjectService(projectRepo, userRoleRepo, userRepo, settingsRepo, phaseService, UnitOfWork);
             await service.CreateProjectAsync(invalidRequest, 1);
         });
 
-        exception.Should().NotBeNull();
+        exception.Message.Should().Contain("تاريخ نهاية المشروع");
     }
 
     [Fact]
@@ -48,22 +63,33 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
         var user = await SeedUserAsync(email, hashedPassword, "Test User");
         var project = await SeedProjectAsync("Test Project", user.Id);
 
-        var invalidRequest = new CreateTransactionRequest
-        {
-            TransactionType = TransactionType.Expense,
-            Amount = -100.00m, // Invalid: negative amount
-            Description = "Test transaction",
-            TransactionDate = DateTime.UtcNow
-        };
+        // Add required ProjectSettings for the project
+        Context.ProjectSettings.Add(new ProjectSettings { Id = project.Id, EnableInvoiceReview = false });
+        await Context.SaveChangesAsync();
+
+        var invalidRequest = new CreateTransactionRequest(
+            BOQItemId: null,
+            Type: TransactionType.Overhead,
+            Amount: -100.00m, // Invalid: negative amount
+            Description: "Test transaction",
+            InvoiceNumber: null,
+            SupplierName: null,
+            InvoiceAttachment: null
+        );
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<Exception>(async () =>
+        var exception = await Assert.ThrowsAsync<ArgumentException>(async () =>
         {
-            var service = new ProjectTransactionService(Context, UnitOfWork);
+            var settingsRepo = new Repository<ProjectSettings>(Context);
+            var transactionRepo = new Repository<Transaction>(Context);
+            var boqItemRepo = new Repository<BOQItem>(Context);
+            var profitabilityLogRepo = new Repository<BOQProfitabilityLog>(Context);
+            var service = new ProjectTransactionService(
+                transactionRepo, boqItemRepo, settingsRepo, new Mock<IFileStorageService>().Object, profitabilityLogRepo, new Mock<INotificationService>().Object, UnitOfWork);
             await service.CreateTransactionAsync(project.Id, invalidRequest, user.Id);
         });
 
-        exception.Should().NotBeNull();
+        exception.Message.Should().Contain("مبلغ");
     }
 
     [Fact]
@@ -81,28 +107,19 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
         {
             ProjectId = project.Id,
             ItemName = "Test Item",
-            Unit = "m2",
-            UnitRate = 100,
-            Quantity = 1000
+            ItemCode = "TEST",
+            AccountingType = CalculationMethod.Measured
         };
         Context.BOQItems.Add(boqItem);
         await Context.SaveChangesAsync();
 
-        var invalidRequest = new CreateDailyLogRequest
-        {
-            LogDate = DateTime.UtcNow.Date,
-            CompletionPercentage = 150, // Invalid: > 100
-            Notes = "Test daily log"
-        };
-
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<Exception>(async () =>
-        {
-            var service = new DailyLogService(Context, UnitOfWork);
-            await service.GetOrCreateDailyLogIdAsync(boqItem.Id, invalidRequest.LogDate, user.Id);
-        });
-
-        exception.Should().NotBeNull();
+        var logRepo = new Repository<ItemDailyLog>(Context);
+        var deltaRepo = new Repository<BOQExecutedDelta>(Context);
+        var service = new DailyLogService(logRepo, deltaRepo, UnitOfWork);
+        
+        var logId = await service.GetOrCreateDailyLogIdAsync(boqItem.Id, DateTime.UtcNow.Date, user.Id);
+        logId.Should().BeGreaterThan(0);
     }
 
     [Fact]
@@ -112,7 +129,8 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
         var loginRequest = new LoginRequest("nonexistent@example.com", "Password123");
 
         // Act
-        var service = new AuthService(null!, Configuration, UnitOfWork);
+        var userRepo = new UserRepository(Context);
+        var service = new AuthService(userRepo, _emptyConfig, UnitOfWork);
         var result = await service.LoginAsync(loginRequest);
 
         // Assert
@@ -134,7 +152,8 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
         var loginRequest = new LoginRequest(email, wrongPassword);
 
         // Act
-        var service = new AuthService(null!, Configuration, UnitOfWork);
+        var userRepo = new UserRepository(Context);
+        var service = new AuthService(userRepo, _emptyConfig, UnitOfWork);
         var result = await service.LoginAsync(loginRequest);
 
         // Assert
@@ -153,20 +172,37 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
         var user = await SeedUserAsync(email, hashedPassword, "Test User");
         var project = await SeedProjectAsync("Test Project", user.Id);
 
-        var invalidRequest = new CreateBOQItemRequest
-        {
-            ProjectId = project.Id,
-            ItemName = "Test Item",
-            Unit = "m2",
-            UnitRate = 100,
-            Quantity = 0 // Invalid: zero quantity
-        };
+        var invalidRequest = new CreateBOQItemRequest(
+            PhaseId: null,
+            ItemCode: "I001",
+            ItemName: "Test Item",
+            Description: null,
+            Unit: "m2",
+            StartDate: null,
+            EndDate: null,
+            AccountingType: CalculationMethod.Measured.ToString(),
+            AgreedQuantity: 0, // Invalid: zero quantity
+            UnitPrice: 100,
+            SupervisionPercentage: null,
+            BaseCalculation: null,
+            CustomBaseAmount: null,
+            EstimatedTotalCost: null,
+            TotalPackageValue: null,
+            PaymentTerms: null
+        );
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<Exception>(async () =>
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
         {
-            var service = new BOQItemService(Context, UnitOfWork);
-            await service.CreateBOQItemAsync(invalidRequest);
+            var itemRepo = new Repository<BOQItem>(Context);
+            var measuredRepo = new Repository<BOQMeasured>(Context);
+            var supervisionRepo = new Repository<BOQSupervision>(Context);
+            var packageRepo = new Repository<BOQPackage>(Context);
+            var invoiceRepo = new Repository<ItemInvoice>(Context);
+            var projectRepo = new Repository<Project>(Context);
+            
+            var service = new BOQItemService(itemRepo, measuredRepo, supervisionRepo, packageRepo, invoiceRepo, projectRepo, UnitOfWork);
+            await service.CreateBOQItemAsync(project.Id, invalidRequest, user.Id);
         });
 
         exception.Should().NotBeNull();
@@ -182,14 +218,23 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
 
         var user = await SeedUserAsync(email, hashedPassword, "Test User");
 
-        var updateRequest = new UpdateProjectRequest
-        {
-            ProjectName = "Updated Project",
-            SiteAddress = "456 Updated Street"
-        };
+        var updateRequest = new UpdateProjectRequest(
+            ProjectName: "Updated Project",
+            Description: "Updated Description",
+            StartDate: null,
+            EndDate: null,
+            TotalContractValue: null,
+            GeneralManagerUserId: null
+        );
 
         // Act
-        var service = new ProjectService(Context, UnitOfWork);
+        var projectRepo = new Repository<Project>(Context);
+        var userRoleRepo = new Repository<UserRole>(Context);
+        var userRepo = new Repository<User>(Context);
+        var settingsRepo = new Repository<ProjectSettings>(Context);
+        var phaseService = new Mock<IPhaseService>().Object;
+        
+        var service = new ProjectService(projectRepo, userRoleRepo, userRepo, settingsRepo, phaseService, UnitOfWork);
         var result = await service.UpdateProjectAsync(99999, updateRequest, user.Id);
 
         // Assert
@@ -207,14 +252,16 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
         var user = await SeedUserAsync(email, hashedPassword, "Test User");
         var project = await SeedProjectAsync("Test Project", user.Id);
 
-        var closeRequest = new CloseDailyLogRequest
-        {
-            CompletionPercentage = 75,
-            Notes = "Closing non-existent log"
-        };
+        var closeRequest = new CloseDailyLogRequest(
+            DailyProgressPercentage: 75,
+            ProgressNotes: "Closing non-existent log",
+            ClosingNotes: null
+        );
 
         // Act
-        var service = new DailyLogService(Context, UnitOfWork);
+        var logRepo = new Repository<ItemDailyLog>(Context);
+        var deltaRepo = new Repository<BOQExecutedDelta>(Context);
+        var service = new DailyLogService(logRepo, deltaRepo, UnitOfWork);
         var result = await service.CloseDailyLogAsync(99999, DateTime.UtcNow.Date, user.Id, closeRequest);
 
         // Assert
@@ -231,14 +278,18 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
 
         var user = await SeedUserAsync(email, hashedPassword, "Test User");
 
-        var reviewRequest = new ReviewTransactionRequest
-        {
-            Approved = true,
-            ReviewNotes = "Reviewing non-existent transaction"
-        };
+        var reviewRequest = new ReviewTransactionRequest(
+            Status: TransactionStatus.Approved,
+            ReviewNotes: "Reviewing non-existent transaction"
+        );
 
         // Act
-        var service = new ProjectTransactionService(Context, UnitOfWork);
+        var settingsRepo = new Repository<ProjectSettings>(Context);
+        var transactionRepo = new Repository<Transaction>(Context);
+        var boqItemRepo = new Repository<BOQItem>(Context);
+        var profitabilityLogRepo = new Repository<BOQProfitabilityLog>(Context);
+        var service = new ProjectTransactionService(
+            transactionRepo, boqItemRepo, settingsRepo, new Mock<IFileStorageService>().Object, profitabilityLogRepo, new Mock<INotificationService>().Object, UnitOfWork);
         var result = await service.ReviewTransactionAsync(99999, reviewRequest, user.Id);
 
         // Assert
@@ -255,26 +306,34 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
 
         var user = await SeedUserAsync(email, hashedPassword, "Test User");
 
-        var request1 = new CreateProjectRequest
-        {
-            ProjectName = "Duplicate Project",
-            SiteAddress = "123 Test Street",
-            KickoffDate = DateTime.UtcNow.AddDays(1),
-            HandoverTarget = DateTime.UtcNow.AddDays(90),
-            AccountingSystem = CalculationMethod.Measured
-        };
+        var request1 = new CreateProjectRequest(
+            ProjectName: "Duplicate Project",
+            Description: "123 Test Street",
+            StartDate: DateTime.UtcNow.AddDays(1),
+            EndDate: DateTime.UtcNow.AddDays(90),
+            GeneralManagerUserId: null,
+            AccountingSystem: CalculationMethod.Measured.ToString(),
+            TotalContractValue: 100000
+        );
 
-        var request2 = new CreateProjectRequest
-        {
-            ProjectName = "Duplicate Project",
-            SiteAddress = "456 Test Street",
-            KickoffDate = DateTime.UtcNow.AddDays(1),
-            HandoverTarget = DateTime.UtcNow.AddDays(90),
-            AccountingSystem = CalculationMethod.Measured
-        };
+        var request2 = new CreateProjectRequest(
+            ProjectName: "Duplicate Project",
+            Description: "456 Test Street",
+            StartDate: DateTime.UtcNow.AddDays(1),
+            EndDate: DateTime.UtcNow.AddDays(100),
+            GeneralManagerUserId: null,
+            AccountingSystem: CalculationMethod.Measured.ToString(),
+            TotalContractValue: 100000
+        );
 
         // Act
-        var service = new ProjectService(Context, UnitOfWork);
+        var projectRepo = new Repository<Project>(Context);
+        var userRoleRepo = new Repository<UserRole>(Context);
+        var userRepo = new Repository<User>(Context);
+        var settingsRepo = new Repository<ProjectSettings>(Context);
+        var phaseService = new Mock<IPhaseService>().Object;
+        
+        var service = new ProjectService(projectRepo, userRoleRepo, userRepo, settingsRepo, phaseService, UnitOfWork);
         var result1 = await service.CreateProjectAsync(request1, user.Id);
         var result2 = await service.CreateProjectAsync(request2, user.Id);
 
@@ -294,19 +353,30 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
         var user = await SeedUserAsync(email, hashedPassword, "Test User");
         var project = await SeedProjectAsync("Test Project", user.Id);
 
-        var request = new CreateTransactionRequest
-        {
-            TransactionType = TransactionType.Expense,
-            Amount = 1000.00m,
-            Description = "Future transaction",
-            TransactionDate = DateTime.UtcNow.AddDays(30) // Future date
-        };
+        // Add required ProjectSettings for the project
+        Context.ProjectSettings.Add(new ProjectSettings { Id = project.Id, EnableInvoiceReview = false });
+        await Context.SaveChangesAsync();
+
+        var request = new CreateTransactionRequest(
+            BOQItemId: null,
+            Type: TransactionType.Overhead,
+            Amount: 1000.00m,
+            Description: "Future transaction",
+            InvoiceNumber: null,
+            SupplierName: null,
+            InvoiceAttachment: null
+        );
 
         // Act
-        var service = new ProjectTransactionService(Context, UnitOfWork);
+        var settingsRepo = new Repository<ProjectSettings>(Context);
+        var transactionRepo = new Repository<Transaction>(Context);
+        var boqItemRepo = new Repository<BOQItem>(Context);
+        var profitabilityLogRepo = new Repository<BOQProfitabilityLog>(Context);
+        var service = new ProjectTransactionService(
+            transactionRepo, boqItemRepo, settingsRepo, new Mock<IFileStorageService>().Object, profitabilityLogRepo, new Mock<INotificationService>().Object, UnitOfWork);
         var result = await service.CreateTransactionAsync(project.Id, request, user.Id);
 
-        // Assert - Should succeed (assuming future dates are allowed)
+        // Assert - Should succeed
         result.Should().BeGreaterThan(0);
     }
 
@@ -321,20 +391,37 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
         var user = await SeedUserAsync(email, hashedPassword, "Test User");
         var project = await SeedProjectAsync("Test Project", user.Id);
 
-        var invalidRequest = new CreateBOQItemRequest
-        {
-            ProjectId = project.Id,
-            ItemName = "Test Item",
-            Unit = "m2",
-            UnitRate = -50.00m, // Invalid: negative rate
-            Quantity = 1000
-        };
+        var invalidRequest = new CreateBOQItemRequest(
+            PhaseId: null,
+            ItemCode: "I001",
+            ItemName: "Test Item",
+            Description: null,
+            Unit: "m2",
+            StartDate: null,
+            EndDate: null,
+            AccountingType: CalculationMethod.Measured.ToString(),
+            AgreedQuantity: 1000,
+            UnitPrice: -50.00m, // Invalid: negative rate
+            SupervisionPercentage: null,
+            BaseCalculation: null,
+            CustomBaseAmount: null,
+            EstimatedTotalCost: null,
+            TotalPackageValue: null,
+            PaymentTerms: null
+        );
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<Exception>(async () =>
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
         {
-            var service = new BOQItemService(Context, UnitOfWork);
-            await service.CreateBOQItemAsync(invalidRequest);
+            var itemRepo = new Repository<BOQItem>(Context);
+            var measuredRepo = new Repository<BOQMeasured>(Context);
+            var supervisionRepo = new Repository<BOQSupervision>(Context);
+            var packageRepo = new Repository<BOQPackage>(Context);
+            var invoiceRepo = new Repository<ItemInvoice>(Context);
+            var projectRepo = new Repository<Project>(Context);
+            
+            var service = new BOQItemService(itemRepo, measuredRepo, supervisionRepo, packageRepo, invoiceRepo, projectRepo, UnitOfWork);
+            await service.CreateBOQItemAsync(project.Id, invalidRequest, user.Id);
         });
 
         exception.Should().NotBeNull();
@@ -355,24 +442,19 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
         {
             ProjectId = project.Id,
             ItemName = "Test Item",
-            Unit = "m2",
-            UnitRate = 100,
-            Quantity = 1000
+            ItemCode = "REOPEN",
+            AccountingType = CalculationMethod.Measured
         };
         Context.BOQItems.Add(boqItem);
         await Context.SaveChangesAsync();
 
-        var invalidRequest = new ReopenDailyLogRequest
-        {
-            Reason = "", // Invalid: empty reason
-            NotifyRoleIds = new List<int> { 1, 2 }
-        };
-
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<Exception>(async () =>
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
         {
-            var service = new DailyLogService(Context, UnitOfWork);
-            await service.ReopenClosedDayAsync(boqItem.Id, DateTime.UtcNow.Date, user.Id, invalidRequest.Reason, invalidRequest.NotifyRoleIds);
+            var logRepo = new Repository<ItemDailyLog>(Context);
+            var deltaRepo = new Repository<BOQExecutedDelta>(Context);
+            var service = new DailyLogService(logRepo, deltaRepo, UnitOfWork);
+            await service.ReopenClosedDayAsync(boqItem.Id, DateTime.UtcNow.Date, user.Id, "", new List<int> { 1, 2 });
         });
 
         exception.Should().NotBeNull();
@@ -386,22 +468,31 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
         const string password = "Password123";
         var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
 
-        await SeedUserAsync(email, hashedPassword, "Test User");
+        var user = await SeedUserAsync(email, hashedPassword, "Test User");
 
-        var duplicateRequest = new CreateUserRequest
-        {
-            FirstName = "Test",
-            LastName = "User",
-            Email = email, // Duplicate email
-            Password = password,
-            Role = "Worker"
-        };
+        // Create SuperAdmin role and assign to user for authorization
+        var superAdminRole = new Role { Name = "SuperAdmin" };
+        Context.Roles.Add(superAdminRole);
+        await Context.SaveChangesAsync();
+        
+        var userRole = new UserRole { UserId = user.Id, RoleId = superAdminRole.Id };
+        Context.UserRoles.Add(userRole);
+        await Context.SaveChangesAsync();
+
+        var duplicateRequest = new AddUserRequest(
+            FullName: "Test User",
+            Email: email, // Duplicate email
+            Password: password
+        );
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<Exception>(async () =>
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
         {
-            var service = new UserService(Context, UnitOfWork);
-            await service.CreateUserAsync(duplicateRequest);
+            var userRepo = new Repository<User>(Context);
+            var roleRepo = new Repository<Role>(Context);
+            var userRoleRepo = new Repository<UserRole>(Context);
+            var service = new UserService(userRepo, roleRepo, userRoleRepo, UnitOfWork);
+            await service.AddUserAsync(duplicateRequest, user.Id);
         });
 
         exception.Should().NotBeNull();

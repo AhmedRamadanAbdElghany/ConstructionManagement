@@ -1,5 +1,6 @@
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Domain.Enums;
+using ConstructionManagement.Application.DTOs;
 using FluentAssertions;
 using System.Net;
 using System.Net.Http.Json;
@@ -24,16 +25,12 @@ public class ProjectsControllerIntegrationTests : ApiTestBase
         var createRequest = new
         {
             projectName = "Test Project",
-            siteAddress = "123 Test Street",
-            kickoffDate = DateTime.UtcNow.AddDays(1),
-            handoverTarget = DateTime.UtcNow.AddDays(90),
-            gpsLat = 30.0444,
-            gpsLng = 31.2357,
+            description = "123 Test Street",
+            startDate = DateTime.UtcNow.AddDays(1),
+            endDate = DateTime.UtcNow.AddDays(90),
+            generalManagerUserId = user.Id,
             accountingSystem = "Measured",
-            enableLogging = true,
-            reopenDays = 3,
-            autoLocking = true,
-            closeTime = "18:00"
+            totalContractValue = 100000m
         };
 
         // Act
@@ -56,9 +53,6 @@ public class ProjectsControllerIntegrationTests : ApiTestBase
         var createRequest = new
         {
             projectName = "Test Project",
-            siteAddress = "123 Test Street",
-            kickoffDate = DateTime.UtcNow.AddDays(1),
-            handoverTarget = DateTime.UtcNow.AddDays(90),
             accountingSystem = "Measured"
         };
 
@@ -84,9 +78,6 @@ public class ProjectsControllerIntegrationTests : ApiTestBase
         var createRequest = new
         {
             projectName = "", // Invalid: empty name
-            siteAddress = "123 Test Street",
-            kickoffDate = DateTime.UtcNow.AddDays(1),
-            handoverTarget = DateTime.UtcNow.AddDays(90),
             accountingSystem = "Measured"
         };
 
@@ -120,7 +111,7 @@ public class ProjectsControllerIntegrationTests : ApiTestBase
         var result = await response.Content.ReadFromJsonAsync<ProjectDto>();
         result.Should().NotBeNull();
         result!.ProjectName.Should().Be("Test Project");
-        result.OwnerUserId.Should().Be(user.Id);
+        result.OwnerUserID.Should().Be(user.Id);
     }
 
     [Fact]
@@ -167,7 +158,7 @@ public class ProjectsControllerIntegrationTests : ApiTestBase
         var result = await response.Content.ReadFromJsonAsync<List<ProjectDto>>();
         result.Should().NotBeNull();
         result!.Count.Should().Be(3);
-        result.All(p => p.OwnerUserId == user.Id).Should().BeTrue();
+        result.All(p => p.OwnerUserID == user.Id).Should().BeTrue();
     }
 
     [Fact]
@@ -187,7 +178,7 @@ public class ProjectsControllerIntegrationTests : ApiTestBase
         var updateRequest = new
         {
             projectName = "Updated Project Name",
-            siteAddress = "456 Updated Street"
+            description = "456 Updated Street"
         };
 
         // Act
@@ -240,7 +231,7 @@ public class ProjectsControllerIntegrationTests : ApiTestBase
         SetAuthToken(token);
 
         // Act
-        var response = await Client.PutAsync($"/api/projects/{project.Id}/close");
+        var response = await Client.PutAsync($"/api/projects/{project.Id}/close", null);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -261,7 +252,7 @@ public class ProjectsControllerIntegrationTests : ApiTestBase
         SetAuthToken(token);
 
         // Act
-        var response = await Client.PutAsync($"/api/projects/{project.Id}/close");
+        var response = await Client.PutAsync($"/api/projects/{project.Id}/close", null);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -284,7 +275,7 @@ public class ProjectsControllerIntegrationTests : ApiTestBase
         SetAuthToken(token);
 
         // Act
-        var response = await Client.PutAsync($"/api/projects/{project.Id}/close");
+        var response = await Client.PutAsync($"/api/projects/{project.Id}/close", null);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
@@ -309,9 +300,9 @@ public class ProjectsControllerIntegrationTests : ApiTestBase
             var createRequest = new
             {
                 projectName = $"{method} Project",
-                siteAddress = "123 Test Street",
-                kickoffDate = DateTime.UtcNow.AddDays(1),
-                handoverTarget = DateTime.UtcNow.AddDays(90),
+                description = "123 Test Street",
+                startDate = DateTime.UtcNow.AddDays(1),
+                endDate = DateTime.UtcNow.AddDays(90),
                 accountingSystem = method
             };
 
@@ -338,9 +329,9 @@ public class ProjectsControllerIntegrationTests : ApiTestBase
         var createRequest = new
         {
             projectName = "Test Project",
-            siteAddress = "123 Test Street",
-            kickoffDate = DateTime.UtcNow.AddDays(-1), // Invalid: past date
-            handoverTarget = DateTime.UtcNow.AddDays(90),
+            description = "123 Test Street",
+            startDate = DateTime.UtcNow.AddDays(-1), // Invalid: past date
+            endDate = DateTime.UtcNow.AddDays(90),
             accountingSystem = "Measured"
         };
 
@@ -354,16 +345,5 @@ public class ProjectsControllerIntegrationTests : ApiTestBase
     private class CreateProjectResponse
     {
         public int ProjectId { get; set; }
-    }
-
-    private class ProjectDto
-    {
-        public int Id { get; set; }
-        public string ProjectName { get; set; } = string.Empty;
-        public string SiteAddress { get; set; } = string.Empty;
-        public int OwnerUserId { get; set; }
-        public string Status { get; set; } = string.Empty;
-        public DateTime KickoffDate { get; set; }
-        public DateTime HandoverTarget { get; set; }
     }
 }

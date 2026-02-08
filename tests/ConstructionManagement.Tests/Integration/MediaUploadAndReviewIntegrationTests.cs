@@ -55,19 +55,9 @@ public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
     public async Task UploadMedia_WithApprovalRule_CreatesApprovalRequest()
     {
         // Arrange
-        var user = new User { FirstName = "Media", LastName = "Uploader", Email = "u@u.com", PasswordHash = "x" };
-        Context.Users.Add(user);
-        await Context.SaveChangesAsync();
+        var user = await SeedUserAsync("u@u.com", "x", "Media Uploader");
 
-        var project = new Project
-        {
-            ProjectName = "Media Project",
-            OwnerUserId = user.Id,
-            AccountingSystem = CalculationMethod.Measured,
-            Status = "Active"
-        };
-        Context.Projects.Add(project);
-        await Context.SaveChangesAsync();
+        var project = await SeedProjectAsync("Media Project", user.Id);
 
         Context.Set<ProjectSettings>().Add(new ProjectSettings
         {
@@ -122,19 +112,9 @@ public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
     public async Task ReviewMedia_Approve_SetsApprovedStatus()
     {
         // Arrange
-        var user = new User { FirstName = "Media", LastName = "Reviewer", Email = "r@r.com", PasswordHash = "x" };
-        Context.Users.Add(user);
-        await Context.SaveChangesAsync();
+        var user = await SeedUserAsync("r@r.com", "x", "Media Reviewer");
 
-        var project = new Project
-        {
-            ProjectName = "Review Project",
-            OwnerUserId = user.Id,
-            AccountingSystem = CalculationMethod.Measured,
-            Status = "Active"
-        };
-        Context.Projects.Add(project);
-        await Context.SaveChangesAsync();
+        var project = await SeedProjectAsync("Review Project", user.Id);
 
         Context.Set<ProjectSettings>().Add(new ProjectSettings
         {
@@ -154,7 +134,7 @@ public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
             uploaderUserId: user.Id,
             source: SourceType.OnlineUpload);
 
-        var reviewRequest = new ReviewMediaRequest("Approved", string.Empty, string.Empty, null);
+        var reviewRequest = new ReviewMediaRequest("Approved", null, "None", null);
 
         // Act
         var ok = await _mediaService.ReviewMediaAsync(mediaId, reviewRequest, user.Id);
@@ -174,19 +154,9 @@ public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
     [Fact]
     public async Task UploadMedia_WhenReviewNotRequired_AutoApproves()
     {
-        var user = new User { FirstName = "Media", LastName = "Uploader2", Email = "u2@u.com", PasswordHash = "x" };
-        Context.Users.Add(user);
-        await Context.SaveChangesAsync();
+        var user = await SeedUserAsync("u2@u.com", "x", "Media Uploader2");
 
-        var project = new Project
-        {
-            ProjectName = "Media Project 2",
-            OwnerUserId = user.Id,
-            AccountingSystem = CalculationMethod.Measured,
-            Status = "Active"
-        };
-        Context.Projects.Add(project);
-        await Context.SaveChangesAsync();
+        var project = await SeedProjectAsync("Media Project 2", user.Id);
 
         Context.Set<ProjectSettings>().Add(new ProjectSettings
         {
@@ -221,19 +191,9 @@ public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
     public async Task UploadAndReviewMedia_WithApprovalRule_CreatesAndProcessesApprovalRequest()
     {
         // Arrange
-        var user = new User { FirstName = "Media", LastName = "Uploader", Email = "u@u.com", PasswordHash = "x" };
-        Context.Users.Add(user);
-        await Context.SaveChangesAsync();
+        var user = await SeedUserAsync("u@u.com", "x", "Media Uploader");
 
-        var project = new Project
-        {
-            ProjectName = "Media Project",
-            OwnerUserId = user.Id,
-            AccountingSystem = CalculationMethod.Measured,
-            Status = "Active"
-        };
-        Context.Projects.Add(project);
-        await Context.SaveChangesAsync();
+        var project = await SeedProjectAsync("Media Project", user.Id);
 
         Context.Set<ProjectSettings>().Add(new ProjectSettings
         {
@@ -266,7 +226,7 @@ public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
             uploaderUserId: user.Id,
             source: SourceType.OnlineUpload);
 
-        var reviewRequest = new ReviewMediaRequest("Approved", string.Empty, string.Empty, null);
+        var reviewRequest = new ReviewMediaRequest("Approved", null, "None", null);
         var ok = await _mediaService.ReviewMediaAsync(mediaId, reviewRequest, user.Id);
 
         // Assert
@@ -285,19 +245,9 @@ public class MediaUploadAndReviewIntegrationTests : IntegrationTestBase
     public async Task UploadAndReviewMedia_WhenReviewNotRequired_AutoApproves()
     {
         // Arrange
-        var user = new User { FirstName = "Media", LastName = "Uploader2", Email = "u2@u.com", PasswordHash = "x" };
-        Context.Users.Add(user);
-        await Context.SaveChangesAsync();
+        var user = await SeedUserAsync("u2@u.com", "x", "Media Uploader2");
 
-        var project = new Project
-        {
-            ProjectName = "Media Project 2",
-            OwnerUserId = user.Id,
-            AccountingSystem = CalculationMethod.Measured,
-            Status = "Active"
-        };
-        Context.Projects.Add(project);
-        await Context.SaveChangesAsync();
+        var project = await SeedProjectAsync("Media Project 2", user.Id);
 
         Context.Set<ProjectSettings>().Add(new ProjectSettings
         {

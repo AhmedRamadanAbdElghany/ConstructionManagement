@@ -1,5 +1,6 @@
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Domain.Enums;
+using ConstructionManagement.Application.DTOs.Transaction;
 using FluentAssertions;
 using System.Net;
 using System.Net.Http.Json;
@@ -23,24 +24,20 @@ public class TransactionsControllerIntegrationTests : ApiTestBase
         var token = await AuthenticateAsync(email, password);
         SetAuthToken(token);
 
-        var createRequest = new
-        {
-            transactionType = "Expense",
-            amount = 5000.00m,
-            description = "Test expense",
-            transactionDate = DateTime.UtcNow,
-            boqItemId = (int?)null
-        };
+        var form = new MultipartFormDataContent();
+        form.Add(new StringContent(TransactionType.Overhead.ToString()), "Type");
+        form.Add(new StringContent("5000.00"), "Amount");
+        form.Add(new StringContent("Test expense"), "Description");
 
         // Act
-        var response = await Client.PostAsJsonAsync($"/api/projects/{project.Id}/transactions", createRequest);
+        var response = await Client.PostAsync($"/api/projects/{project.Id}/transactions", form);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
         var result = await response.Content.ReadFromJsonAsync<CreateTransactionResponse>();
         result.Should().NotBeNull();
-        result!.TransactionId.Should().BeGreaterThan(0);
+        result!.transactionId.Should().BeGreaterThan(0);
     }
 
     [Fact]
@@ -49,15 +46,12 @@ public class TransactionsControllerIntegrationTests : ApiTestBase
         // Arrange
         await ClearAuthTokenAsync();
 
-        var createRequest = new
-        {
-            transactionType = "Expense",
-            amount = 5000.00m,
-            description = "Test expense"
-        };
+        var form = new MultipartFormDataContent();
+        form.Add(new StringContent(TransactionType.Overhead.ToString()), "Type");
+        form.Add(new StringContent("5000.00"), "Amount");
 
         // Act
-        var response = await Client.PostAsJsonAsync("/api/projects/1/transactions", createRequest);
+        var response = await Client.PostAsync($"/api/projects/1/transactions", form);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -79,15 +73,12 @@ public class TransactionsControllerIntegrationTests : ApiTestBase
         var token = await AuthenticateAsync(email2, password);
         SetAuthToken(token);
 
-        var createRequest = new
-        {
-            transactionType = "Expense",
-            amount = 5000.00m,
-            description = "Unauthorized expense"
-        };
+        var form = new MultipartFormDataContent();
+        form.Add(new StringContent(TransactionType.Overhead.ToString()), "Type");
+        form.Add(new StringContent("5000.00"), "Amount");
 
         // Act
-        var response = await Client.PostAsJsonAsync($"/api/projects/{project.Id}/transactions", createRequest);
+        var response = await Client.PostAsync($"/api/projects/{project.Id}/transactions", form);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
@@ -107,15 +98,12 @@ public class TransactionsControllerIntegrationTests : ApiTestBase
         var token = await AuthenticateAsync(email, password);
         SetAuthToken(token);
 
-        var createRequest = new
-        {
-            transactionType = "Expense",
-            amount = -100.00m, // Invalid: negative amount
-            description = "Test expense"
-        };
+        var form = new MultipartFormDataContent();
+        form.Add(new StringContent(TransactionType.Overhead.ToString()), "Type");
+        form.Add(new StringContent("-100.00"), "Amount"); // Invalid: negative amount
 
         // Act
-        var response = await Client.PostAsJsonAsync($"/api/projects/{project.Id}/transactions", createRequest);
+        var response = await Client.PostAsync($"/api/projects/{project.Id}/transactions", form);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -132,16 +120,16 @@ public class TransactionsControllerIntegrationTests : ApiTestBase
         var user = await SeedUserAsync(email, hashedPassword, "Test User");
         var project = await SeedProjectAsync("Test Project", user.Id);
 
-        var transaction = new ProjectTransaction
+        var transaction = new Transaction
         {
             ProjectId = project.Id,
-            TransactionType = TransactionType.Expense,
+            Type = TransactionType.Overhead,
             Amount = 5000.00m,
             Description = "Test transaction",
             TransactionDate = DateTime.UtcNow,
             CreatedByUserId = user.Id
         };
-        Context.ProjectTransactions.Add(transaction);
+        Context.Transactions.Add(transaction);
         await Context.SaveChangesAsync();
 
         var token = await AuthenticateAsync(email, password);
@@ -155,7 +143,7 @@ public class TransactionsControllerIntegrationTests : ApiTestBase
 
         var result = await response.Content.ReadFromJsonAsync<TransactionDto>();
         result.Should().NotBeNull();
-        result!.Id.Should().Be(transaction.Id);
+        result!.TransactionId.Should().Be(transaction.Id);
         result.Amount.Should().Be(5000.00m);
         result.Description.Should().Be("Test transaction");
     }
@@ -195,16 +183,16 @@ public class TransactionsControllerIntegrationTests : ApiTestBase
         var project1 = await SeedProjectAsync("Project 1", owner.Id);
         var project2 = await SeedProjectAsync("Project 2", other.Id);
 
-        var transaction = new ProjectTransaction
+        var transaction = new Transaction
         {
             ProjectId = project1.Id,
-            TransactionType = TransactionType.Expense,
+            Type = TransactionType.Overhead,
             Amount = 5000.00m,
             Description = "Test transaction",
             TransactionDate = DateTime.UtcNow,
             CreatedByUserId = owner.Id
         };
-        Context.ProjectTransactions.Add(transaction);
+        Context.Transactions.Add(transaction);
         await Context.SaveChangesAsync();
 
         var token = await AuthenticateAsync(email2, password);
@@ -230,16 +218,16 @@ public class TransactionsControllerIntegrationTests : ApiTestBase
 
         for (int i = 0; i < 5; i++)
         {
-            var transaction = new ProjectTransaction
+            var transaction = new Transaction
             {
                 ProjectId = project.Id,
-                TransactionType = TransactionType.Expense,
+                Type = TransactionType.Overhead,
                 Amount = 1000.00m * (i + 1),
                 Description = $"Test transaction {i + 1}",
                 TransactionDate = DateTime.UtcNow.AddDays(-i),
                 CreatedByUserId = user.Id
             };
-            Context.ProjectTransactions.Add(transaction);
+            Context.Transactions.Add(transaction);
         }
         await Context.SaveChangesAsync();
 
@@ -253,7 +241,7 @@ public class TransactionsControllerIntegrationTests : ApiTestBase
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var result = await response.Content.ReadFromJsonAsync<List<TransactionDto>>();
-        result.Should().NotBeNull();
+        result.Should().BeEquivalentTo(result); // Using FluentAssertions
         result!.Count.Should().Be(5);
     }
 
@@ -273,35 +261,42 @@ public class TransactionsControllerIntegrationTests : ApiTestBase
             ProjectId = project.Id,
             ItemName = "Test Item",
             Unit = "m2",
-            UnitRate = 100,
-            Quantity = 1000
+            AccountingType = CalculationMethod.Measured
         };
         Context.BOQItems.Add(boqItem);
         await Context.SaveChangesAsync();
 
-        var transaction1 = new ProjectTransaction
+        Context.BOQMeasured.Add(new BOQMeasured
+        {
+            Id = boqItem.Id,
+            AgreedQuantity = 1000,
+            UnitPrice = 100
+        });
+        await Context.SaveChangesAsync();
+
+        var transaction1 = new Transaction
         {
             ProjectId = project.Id,
             BOQItemId = boqItem.Id,
-            TransactionType = TransactionType.Invoice,
+            Type = TransactionType.MaterialPurchase,
             Amount = 5000.00m,
             Description = "Transaction with BOQ item",
             TransactionDate = DateTime.UtcNow,
             CreatedByUserId = user.Id
         };
 
-        var transaction2 = new ProjectTransaction
+        var transaction2 = new Transaction
         {
             ProjectId = project.Id,
             BOQItemId = null,
-            TransactionType = TransactionType.Expense,
+            Type = TransactionType.Overhead,
             Amount = 1000.00m,
             Description = "Transaction without BOQ item",
             TransactionDate = DateTime.UtcNow,
             CreatedByUserId = user.Id
         };
 
-        Context.ProjectTransactions.AddRange(transaction1, transaction2);
+        Context.Transactions.AddRange(transaction1, transaction2);
         await Context.SaveChangesAsync();
 
         var token = await AuthenticateAsync(email, password);
@@ -330,27 +325,23 @@ public class TransactionsControllerIntegrationTests : ApiTestBase
         var user = await SeedUserAsync(email, hashedPassword, "Test User");
         var project = await SeedProjectAsync("Test Project", user.Id);
 
-        var transaction = new ProjectTransaction
+        var transaction = new Transaction
         {
             ProjectId = project.Id,
-            TransactionType = TransactionType.Invoice,
+            Type = TransactionType.MaterialPurchase,
             Amount = 5000.00m,
             Description = "Test transaction",
             TransactionDate = DateTime.UtcNow,
             CreatedByUserId = user.Id,
-            Status = "Pending"
+            Status = TransactionStatus.Pending
         };
-        Context.ProjectTransactions.Add(transaction);
+        Context.Transactions.Add(transaction);
         await Context.SaveChangesAsync();
 
         var token = await AuthenticateAsync(email, password);
         SetAuthToken(token);
 
-        var reviewRequest = new
-        {
-            approved = true,
-            reviewNotes = "Transaction approved"
-        };
+        var reviewRequest = new ReviewTransactionRequest(TransactionStatus.Approved, "Transaction approved");
 
         // Act
         var response = await Client.PutAsJsonAsync($"/api/projects/{project.Id}/transactions/{transaction.Id}/review", reviewRequest);
@@ -372,27 +363,23 @@ public class TransactionsControllerIntegrationTests : ApiTestBase
 
         var project = await SeedProjectAsync("Test Project", owner.Id);
 
-        var transaction = new ProjectTransaction
+        var transaction = new Transaction
         {
             ProjectId = project.Id,
-            TransactionType = TransactionType.Invoice,
+            Type = TransactionType.MaterialPurchase,
             Amount = 5000.00m,
             Description = "Test transaction",
             TransactionDate = DateTime.UtcNow,
             CreatedByUserId = owner.Id,
-            Status = "Pending"
+            Status = TransactionStatus.Pending
         };
-        Context.ProjectTransactions.Add(transaction);
+        Context.Transactions.Add(transaction);
         await Context.SaveChangesAsync();
 
         var token = await AuthenticateAsync(email2, password);
         SetAuthToken(token);
 
-        var reviewRequest = new
-        {
-            approved = true,
-            reviewNotes = "Unauthorized review"
-        };
+        var reviewRequest = new ReviewTransactionRequest(TransactionStatus.Approved, "Unauthorized review");
 
         // Act
         var response = await Client.PutAsJsonAsync($"/api/projects/{project.Id}/transactions/{transaction.Id}/review", reviewRequest);
@@ -412,27 +399,23 @@ public class TransactionsControllerIntegrationTests : ApiTestBase
         var user = await SeedUserAsync(email, hashedPassword, "Test User");
         var project = await SeedProjectAsync("Test Project", user.Id);
 
-        var transaction = new ProjectTransaction
+        var transaction = new Transaction
         {
             ProjectId = project.Id,
-            TransactionType = TransactionType.Invoice,
+            Type = TransactionType.MaterialPurchase,
             Amount = 5000.00m,
             Description = "Test transaction",
             TransactionDate = DateTime.UtcNow,
             CreatedByUserId = user.Id,
-            Status = "Approved"
+            Status = TransactionStatus.Approved
         };
-        Context.ProjectTransactions.Add(transaction);
+        Context.Transactions.Add(transaction);
         await Context.SaveChangesAsync();
 
         var token = await AuthenticateAsync(email, password);
         SetAuthToken(token);
 
-        var reviewRequest = new
-        {
-            approved = false,
-            reviewNotes = "Try to review again"
-        };
+        var reviewRequest = new ReviewTransactionRequest(TransactionStatus.Rejected, "Try to review again");
 
         // Act
         var response = await Client.PutAsJsonAsync($"/api/projects/{project.Id}/transactions/{transaction.Id}/review", reviewRequest);
@@ -455,20 +438,17 @@ public class TransactionsControllerIntegrationTests : ApiTestBase
         var token = await AuthenticateAsync(email, password);
         SetAuthToken(token);
 
-        var transactionTypes = new[] { "Expense", "Invoice", "Payment", "Refund" };
+        var transactionTypes = new[] { TransactionType.MaterialPurchase, TransactionType.LaborPayment, TransactionType.Overhead };
 
         foreach (var type in transactionTypes)
         {
-            var createRequest = new
-            {
-                transactionType = type,
-                amount = 1000.00m,
-                description = $"{type} transaction",
-                transactionDate = DateTime.UtcNow
-            };
+            var form = new MultipartFormDataContent();
+            form.Add(new StringContent(type.ToString()), "Type");
+            form.Add(new StringContent("1000.00"), "Amount");
+            form.Add(new StringContent($"{type} transaction"), "Description");
 
             // Act
-            var response = await Client.PostAsJsonAsync($"/api/projects/{project.Id}/transactions", createRequest);
+            var response = await Client.PostAsync($"/api/projects/{project.Id}/transactions", form);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -477,18 +457,18 @@ public class TransactionsControllerIntegrationTests : ApiTestBase
 
     private class CreateTransactionResponse
     {
-        public int TransactionId { get; set; }
+        public int transactionId { get; set; }
     }
 
     private class TransactionDto
     {
-        public int Id { get; set; }
+        public int TransactionId { get; set; }
         public int ProjectId { get; set; }
         public int? BOQItemId { get; set; }
-        public string TransactionType { get; set; } = string.Empty;
+        public TransactionType Type { get; set; }
         public decimal Amount { get; set; }
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
         public DateTime TransactionDate { get; set; }
-        public string Status { get; set; } = string.Empty;
+        public TransactionStatus Status { get; set; }
     }
 }

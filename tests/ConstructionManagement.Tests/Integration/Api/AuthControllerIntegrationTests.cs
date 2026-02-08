@@ -158,8 +158,8 @@ public class AuthControllerIntegrationTests : ApiTestBase
         var token = await AuthenticateAsync(email, password);
         SetAuthToken(token);
 
-        // Act
-        var response = await Client.GetAsync("/api/projects");
+        // Act - use the correct endpoint that exists
+        var response = await Client.GetAsync("/api/projects/my-projects");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -171,8 +171,8 @@ public class AuthControllerIntegrationTests : ApiTestBase
         // Arrange
         await ClearAuthTokenAsync();
 
-        // Act
-        var response = await Client.GetAsync("/api/projects");
+        // Act - use the correct endpoint that exists
+        var response = await Client.GetAsync("/api/projects/my-projects");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -188,12 +188,11 @@ public class AuthControllerIntegrationTests : ApiTestBase
 
         await SeedUserAsync(email, hashedPassword, "Test User");
 
-        // Create an expired token (this would require mocking JWT validation)
-        // For now, we'll test with an invalid token
+        // Set an invalid token
         SetAuthToken("invalid.token.here");
 
         // Act
-        var response = await Client.GetAsync("/api/projects");
+        var response = await Client.GetAsync("/api/projects/my-projects");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);

@@ -245,6 +245,19 @@ public class ApplicationDbContext : DbContext
             property.SetColumnType("decimal(18,2)");
         }
 
+        // Safety Management Constraints (Prevent cycles)
+        modelBuilder.Entity<SafetyInspection>()
+            .HasOne(i => i.SafetyChecklist)
+            .WithMany(c => c.Inspections)
+            .HasForeignKey(i => i.SafetyChecklistId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<SafetyInspectionItemResult>()
+            .HasOne(r => r.SafetyChecklistItem)
+            .WithMany()
+            .HasForeignKey(r => r.SafetyChecklistItemId)
+            .OnDelete(DeleteBehavior.NoAction);
+
         modelBuilder.Entity<CompanySettings>().HasOne(cs => cs.Company).WithOne(c => c.Settings).HasForeignKey<CompanySettings>(cs => cs.CompanyId).OnDelete(DeleteBehavior.Cascade);
         
         // Equipment Management configurations
@@ -358,7 +371,8 @@ public class ApplicationDbContext : DbContext
 
         // --- Companies ---
         modelBuilder.Entity<Company>().HasData(
-            new Company { Id = 1, Name = "BuildIt Solutions", CreatedAt = fixedDate, PackageId = 3 }
+            new Company { Id = 1, Name = "BuildIt Solutions", CreatedAt = fixedDate, PackageId = 3 },
+            new Company { Id = 2, Name = "Test Company 2", CreatedAt = fixedDate, PackageId = 1 }
         );
 
         // --- Users ---

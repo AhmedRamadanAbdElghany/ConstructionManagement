@@ -1,14 +1,17 @@
+using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
-using ConstructionManagement.Domain.Entities;
-using ConstructionManagement.Infrastructure.Persistence;
 using ConstructionManagement.Infrastructure.Services;
-using ConstructionManagement.WebApi;
+using ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Domain.Enums;
+using ConstructionManagement.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ConstructionManagement.Tests.Integration.Api;
 
@@ -17,12 +20,12 @@ public abstract class ApiTestBase : IAsyncDisposable
     protected readonly WebApplicationFactory<Program> Factory;
     protected readonly HttpClient Client;
     protected readonly ApplicationDbContext Context;
-    protected readonly ICompanyContext CompanyContext;
-    protected readonly IUnitOfWork UnitOfWork;
-    protected readonly IConfiguration Configuration;
 
     protected ApiTestBase()
     {
+        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Testing");
+        Environment.SetEnvironmentVariable("IsTesting", "true");
+
         // Configure test settings
         var testSettings = new Dictionary<string, string?>
         {
@@ -30,12 +33,14 @@ public abstract class ApiTestBase : IAsyncDisposable
             { "JwtSettings:Issuer", "TestIssuer" },
             { "JwtSettings:Audience", "TestAudience" },
             { "JwtSettings:ExpiryInMinutes", "60" },
-            { "ConnectionStrings:DefaultConnection", "DataSource=:memory:" }
+            { "ConnectionStrings:DefaultConnection", "DataSource=:memory:" },
+            { "IsTesting", "true" }
         };
 
         Factory = new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
             {
+                builder.UseEnvironment("Testing");
                 builder.ConfigureAppConfiguration((context, config) =>
                 {
                     config.AddInMemoryCollection(testSettings);
@@ -43,64 +48,68 @@ public abstract class ApiTestBase : IAsyncDisposable
 
                 builder.ConfigureServices(services =>
                 {
-                    // Remove the existing DbContext
-                    var descriptor = services.SingleOrDefault(
-                        d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
-                    if (descriptor != null)
-                    {
-                        services.Remove(descriptor);
-                    }
+                    // Remove existing DbContext
+                    var dbDescriptor = services.FirstOrDefault(d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
+                    if (dbDescriptor != null)
+                        services.Remove(dbDescriptor);
 
-                    // Add in-memory database
-                    services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
-                    {
-                        var companyContext = new CompanyContext { CompanyId = 1 };
-                        options.UseSqlite("DataSource=:memory:");
-                        var context = new ApplicationDbContext(options.Options, companyContext);
-                        context.Database.OpenConnection();
-                        context.Database.EnsureCreated();
-                        return context;
-                    });
+                    // Add in-memory DbContext
+                    services.AddDbContext<ApplicationDbContext>(options =>
+                        options.UseSqlite("DataSource=:memory:"), ServiceLifetime.Scoped);
 
-                    // Add CompanyContext
+                    // Replace ICompanyContext
+                    var companyDesc = services.FirstOrDefault(d => d.ServiceType == typeof(ICompanyContext));
+                    if (companyDesc != null)
+                        services.Remove(companyDesc);
                     services.AddScoped<ICompanyContext>(sp => new CompanyContext { CompanyId = 1 });
                 });
             });
 
         Client = Factory.CreateClient();
 
-        // Get services from the factory's service provider
+        // Use the same context for tests
         var scope = Factory.Services.CreateScope();
         Context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        CompanyContext = scope.ServiceProvider.GetRequiredService<ICompanyContext>();
-        UnitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-        Configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+
+        Context.Database.OpenConnection();
+        Context.Database.EnsureCreated();
     }
 
     protected async Task<string> AuthenticateAsync(string email, string password)
     {
-        var loginRequest = new
+        var loginRequest = new LoginRequest(email, password);
+        var response = await Client.PostAsJsonAsync("/api/auth/login", loginRequest);
+        
+        if (!response.IsSuccessStatusCode)
         {
-            Email = email,
-            Password = password
+            var error = await response.Content.ReadAsStringAsync();
+            throw new InvalidOperationException($"Login failed ({response.StatusCode}): {error}");
+        }
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        var response = await Client.PostAsJsonAsync("/api/auth/login", loginRequest);
-        response.EnsureSuccessStatusCode();
-
-        var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
-        return result!.Token;
+        var result = await response.Content.ReadFromJsonAsync<LoginResponseDto>(options);
+        
+        if (result == null || string.IsNullOrEmpty(result.Token))
+            throw new InvalidOperationException("Login succeeded but token is null or empty");
+        
+        return result.Token;
     }
 
     protected void SetAuthToken(string token)
     {
         Client.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", token);
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
     }
 
-    protected async Task ClearAuthTokenAsync()
+    protected Task ClearAuthTokenAsync()
     {
         Client.DefaultRequestHeaders.Authorization = null;
+        return Task.CompletedTask;
     }
 
     protected async Task<User> SeedUserAsync(string email, string passwordHash, string fullName = "Test User", int? companyId = 1)
@@ -109,11 +118,18 @@ public abstract class ApiTestBase : IAsyncDisposable
         var user = new User
         {
             FirstName = nameParts[0],
-            LastName = nameParts.Length > 1 ? nameParts[1] : string.Empty,
+            LastName = nameParts.Length > 1 ? nameParts[1] : "",
             Email = email,
             PasswordHash = passwordHash,
-            CompanyId = companyId
+            CompanyId = companyId,
+            CreatedAt = DateTime.UtcNow
         };
+        
+        // Remove existing user with same email
+        var existing = await Context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        if (existing != null)
+            Context.Users.Remove(existing);
+        
         Context.Users.Add(user);
         await Context.SaveChangesAsync();
         return user;
@@ -126,11 +142,11 @@ public abstract class ApiTestBase : IAsyncDisposable
             ProjectName = name,
             OwnerUserId = ownerUserId,
             AccountingSystem = CalculationMethod.Measured,
-            Status = "Active"
+            Status = "Active",
+            CreatedAt = DateTime.UtcNow
         };
-
+        
         configure?.Invoke(project);
-
         Context.Projects.Add(project);
         await Context.SaveChangesAsync();
         return project;
@@ -144,17 +160,30 @@ public abstract class ApiTestBase : IAsyncDisposable
         GC.SuppressFinalize(this);
     }
 
-    private class LoginResponse
+    private class LoginResponseDto
     {
-        public string Token { get; set; } = string.Empty;
+        [JsonPropertyName("token")]
+        public string Token { get; set; } = "";
+        
+        [JsonPropertyName("user")]
         public UserDto? User { get; set; }
     }
 
     private class UserDto
     {
-        public int Id { get; set; }
-        public string Email { get; set; } = string.Empty;
-        public string FirstName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
+        [JsonPropertyName("userId")]
+        public int UserId { get; set; }
+        
+        [JsonPropertyName("fullName")]
+        public string FullName { get; set; } = "";
+        
+        [JsonPropertyName("email")]
+        public string Email { get; set; } = "";
+        
+        [JsonPropertyName("roles")]
+        public List<string>? Roles { get; set; }
+        
+        [JsonPropertyName("createdAt")]
+        public DateTime CreatedAt { get; set; }
     }
 }

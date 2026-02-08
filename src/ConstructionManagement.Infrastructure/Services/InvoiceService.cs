@@ -321,7 +321,7 @@ public class InvoiceService : IInvoiceService
         return new InvoiceDto(
             InvoiceID: invoice.Id,
             ItemID: invoice.BOQItemId,
-            InvoiceNumber: invoice.InvoiceNumber,
+            InvoiceNumber: invoice.InvoiceNumber ?? string.Empty,
             InvoiceDate: invoice.InvoiceDate,
             DueDate: invoice.DueDate,
             SubTotal: invoice.SubTotal,
@@ -333,13 +333,13 @@ public class InvoiceService : IInvoiceService
             Currency: invoice.Currency ?? "EGP",
             Description: invoice.Description,
             SupplierVendor: invoice.SupplierVendor,
-            Status: invoice.Status,
+            Status: invoice.Status ?? "Pending",
             RejectionReason: invoice.RejectionReason,
             ReviewDate: invoice.ReviewDate,
             ReviewerFullName: invoice.Reviewer != null ? $"{invoice.Reviewer.FirstName} {invoice.Reviewer.LastName}".Trim() : null,
             AttachmentPath: invoice.AttachmentPath,
             CreatedByUserId: invoice.CreatedByUserId,
-            CreatedByFullName: $"{invoice.CreatedBy.FirstName} {invoice.CreatedBy.LastName}".Trim(),
+            CreatedByFullName: invoice.CreatedBy != null ? $"{invoice.CreatedBy.FirstName} {invoice.CreatedBy.LastName}".Trim() : null,
             CreatedAt: invoice.CreatedAt
         );
     }

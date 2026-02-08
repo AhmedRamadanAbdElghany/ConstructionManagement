@@ -25,8 +25,11 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
             ProjectId = project.Id,
             ItemName = "Test Item",
             Unit = "m2",
-            UnitRate = 100,
-            Quantity = 1000
+            MeasuredData = new BOQMeasured
+            {
+                AgreedQuantity = 1000,
+                UnitPrice = 100
+            }
         };
         Context.BOQItems.Add(boqItem);
         await Context.SaveChangesAsync();
@@ -62,7 +65,7 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
         };
 
         // Act
-        var response = await Client.PostAsJsonAsync("/api/items/1/dailylogs", createRequest);
+        var response = await Client.PostAsJsonAsync("/api/projects/1/transactions", createRequest);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -86,8 +89,11 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
             ProjectId = project.Id,
             ItemName = "Test Item",
             Unit = "m2",
-            UnitRate = 100,
-            Quantity = 1000
+            MeasuredData = new BOQMeasured
+            {
+                AgreedQuantity = 1000,
+                UnitPrice = 100
+            }
         };
         Context.BOQItems.Add(boqItem);
         await Context.SaveChangesAsync();
@@ -123,8 +129,11 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
             ProjectId = project.Id,
             ItemName = "Test Item",
             Unit = "m2",
-            UnitRate = 100,
-            Quantity = 1000
+            MeasuredData = new BOQMeasured
+            {
+                AgreedQuantity = 1000,
+                UnitPrice = 100
+            }
         };
         Context.BOQItems.Add(boqItem);
         await Context.SaveChangesAsync();
@@ -135,8 +144,8 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
         var logDate = DateTime.UtcNow.Date;
         var closeRequest = new
         {
-            completionPercentage = 75,
-            notes = "Day completed successfully"
+            dailyProgressPercentage = 75,
+            progressNotes = "Day completed successfully"
         };
 
         // Act
@@ -162,8 +171,11 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
             ProjectId = project.Id,
             ItemName = "Test Item",
             Unit = "m2",
-            UnitRate = 100,
-            Quantity = 1000
+            MeasuredData = new BOQMeasured
+            {
+                AgreedQuantity = 1000,
+                UnitPrice = 100
+            }
         };
         Context.BOQItems.Add(boqItem);
         await Context.SaveChangesAsync();
@@ -174,8 +186,8 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
         var logDate = DateTime.UtcNow.Date;
         var closeRequest = new
         {
-            completionPercentage = 75,
-            notes = "First close"
+            dailyProgressPercentage = 75,
+            progressNotes = "First close"
         };
 
         // First close
@@ -204,8 +216,11 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
             ProjectId = project.Id,
             ItemName = "Test Item",
             Unit = "m2",
-            UnitRate = 100,
-            Quantity = 1000
+            MeasuredData = new BOQMeasured
+            {
+                AgreedQuantity = 1000,
+                UnitPrice = 100
+            }
         };
         Context.BOQItems.Add(boqItem);
         await Context.SaveChangesAsync();
@@ -239,8 +254,11 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
             ProjectId = project.Id,
             ItemName = "Test Item",
             Unit = "m2",
-            UnitRate = 100,
-            Quantity = 1000
+            MeasuredData = new BOQMeasured
+            {
+                AgreedQuantity = 1000,
+                UnitPrice = 100
+            }
         };
         Context.BOQItems.Add(boqItem);
         await Context.SaveChangesAsync();
@@ -253,8 +271,8 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
         // First close the day
         var closeRequest = new
         {
-            completionPercentage = 75,
-            notes = "Day completed"
+            dailyProgressPercentage = 75,
+            progressNotes = "Day completed"
         };
         await Client.PutAsJsonAsync($"/api/items/{boqItem.Id}/dailylogs/{logDate:yyyy-MM-dd}/close", closeRequest);
 
@@ -288,8 +306,11 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
             ProjectId = project.Id,
             ItemName = "Test Item",
             Unit = "m2",
-            UnitRate = 100,
-            Quantity = 1000
+            MeasuredData = new BOQMeasured
+            {
+                AgreedQuantity = 1000,
+                UnitPrice = 100
+            }
         };
         Context.BOQItems.Add(boqItem);
         await Context.SaveChangesAsync();
@@ -302,8 +323,8 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
         // Close the day as owner
         var closeRequest = new
         {
-            completionPercentage = 75,
-            notes = "Day completed"
+            dailyProgressPercentage = 75,
+            progressNotes = "Day completed"
         };
         await Client.PutAsJsonAsync($"/api/items/{boqItem.Id}/dailylogs/{logDate:yyyy-MM-dd}/close", closeRequest);
 
@@ -338,8 +359,11 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
             ProjectId = project.Id,
             ItemName = "Test Item",
             Unit = "m2",
-            UnitRate = 100,
-            Quantity = 1000
+            MeasuredData = new BOQMeasured
+            {
+                AgreedQuantity = 1000,
+                UnitPrice = 100
+            }
         };
         Context.BOQItems.Add(boqItem);
         await Context.SaveChangesAsync();
@@ -376,8 +400,11 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
             ProjectId = project.Id,
             ItemName = "Test Item",
             Unit = "m2",
-            UnitRate = 100,
-            Quantity = 1000
+            MeasuredData = new BOQMeasured
+            {
+                AgreedQuantity = 1000,
+                UnitPrice = 100
+            }
         };
         Context.BOQItems.Add(boqItem);
         await Context.SaveChangesAsync();
@@ -406,8 +433,8 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
     {
         public int Id { get; set; }
         public DateTime LogDate { get; set; }
-        public int CompletionPercentage { get; set; }
-        public string? Notes { get; set; }
+        public decimal DailyProgressPercentage { get; set; }
+        public string? ProgressNotes { get; set; }
         public bool IsClosed { get; set; }
     }
 }

@@ -31,11 +31,6 @@ public class AuthService : IAuthService
         // البحث عن المستخدم باستخدام البريد الإلكتروني
         var user = await _userRepository.GetByEmailAsync(request.Email);
 
-
-        string myPassword = "Admin@123";
-        string salt = BCrypt.Net.BCrypt.GenerateSalt(11); // رقم 11 هو الافتراضي في أغلب الأنظمة
-        string hashedValue = BCrypt.Net.BCrypt.HashPassword(myPassword, salt);
-
         // التحقق من وجود المستخدم وصحة كلمة المرور المشفرة
         if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
@@ -99,7 +94,7 @@ public class AuthService : IAuthService
 
     private string GenerateJwtToken(User user)
     {
-        var secretKey = _configuration["jwtSettings:Key"];
+        var secretKey = _configuration["JwtSettings:Key"];
         if (string.IsNullOrEmpty(secretKey))
             throw new InvalidOperationException("JWT Key is missing in configuration.");
 
@@ -134,8 +129,8 @@ public class AuthService : IAuthService
         {
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddDays(7), // يفضل استخدام UtcNow
-            Issuer = _configuration["jwtSettings:Issuer"],
-            Audience = _configuration["jwtSettings:Audience"],
+            Issuer = _configuration["JwtSettings:Issuer"],
+            Audience = _configuration["JwtSettings:Audience"],
             SigningCredentials = creds
         };
 

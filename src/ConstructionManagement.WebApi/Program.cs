@@ -26,13 +26,27 @@ builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateProjectRequestValidator>();
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+bool isTesting = (connectionString?.Contains("DataSource=", StringComparison.OrdinalIgnoreCase) ?? false)
+              || builder.Configuration.GetValue<bool>("IsTesting") 
+              || builder.Environment.EnvironmentName == "Testing"
+              || Environment.GetEnvironmentVariable("IsTesting") == "true"
+              || Environment.CommandLine.Contains("testhost", StringComparison.OrdinalIgnoreCase)
+              || Environment.CommandLine.Contains("xunit", StringComparison.OrdinalIgnoreCase)
+              || AppDomain.CurrentDomain.GetAssemblies().Any(a => a.FullName!.Contains("xunit", StringComparison.OrdinalIgnoreCase));
+
+Console.WriteLine($"DEBUG: isTesting={isTesting}, ConnectionString={connectionString}");
+
 // 2. Database
-builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+if (!isTesting)
 {
-    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-    var connectionString = configuration.GetConnectionString("DefaultConnection");
-    options.UseSqlServer(connectionString);
-});
+    builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+    {
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        options.UseSqlServer(connectionString);
+    });
+}
 
 
 // 4. Company context (scoped per request)
@@ -133,13 +147,17 @@ builder.Services.AddAuthorization(options =>
 });
 
 // 9. Hangfire
-builder.Services.AddHangfire(config => config
-    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-    .UseSimpleAssemblyNameTypeSerializer()
-    .UseRecommendedSerializerSettings()
-    .UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
+var hfConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (!isTesting && hfConnectionString != null && !hfConnectionString.Contains("DataSource=", StringComparison.OrdinalIgnoreCase))
+{
+    builder.Services.AddHangfire(config => config
+        .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+        .UseSimpleAssemblyNameTypeSerializer()
+        .UseRecommendedSerializerSettings()
+        .UseSqlServerStorage(hfConnectionString));
 
-builder.Services.AddHangfireServer();
+    builder.Services.AddHangfireServer();
+}
 
 // 10. Swagger with JWT
 builder.Services.AddEndpointsApiExplorer();
@@ -195,10 +213,33 @@ app.UseMiddleware<CompanyResolutionMiddleware>();
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 // Hangfire Dashboard (secured – only SuperAdmin)
-app.UseHangfireDashboard("/hangfire", new DashboardOptions
+if (!isTesting && hfConnectionString != null && !hfConnectionString.Contains("DataSource=", StringComparison.OrdinalIgnoreCase))
 {
-    Authorization = new[] { new HangfireCustomAuthorizationFilter() }
-});
+    app.UseHangfireDashboard("/hangfire", new DashboardOptions
+    {
+        Authorization = new[] { new HangfireCustomAuthorizationFilter() }
+    });
+
+    // Schedule background jobs
+
+    // 1. Daily project/item delay & budget warnings (morning check)
+    RecurringJob.AddOrUpdate<IProjectDelayEscalationService>(
+        "project-delay-escalation-daily",
+        service => service.CheckProjectAndItemDelaysAsync(),
+        Cron.Daily(8));  // Every day at 8:00 AM
+
+    // 2. Hourly approval workflow timeouts
+    RecurringJob.AddOrUpdate<ApprovalEscalationJob>(
+        "approval-escalation-check-hourly",
+        job => job.CheckAndEscalateDelayedApprovalsAsync(),
+        Cron.Hourly);  // Every hour
+
+    // في Program.cs بعد AddHangfireServer()
+    RecurringJob.AddOrUpdate<BOQProgressAggregationJob>(
+        "aggregate-boq-deltas",
+        job => job.AggregatePendingDeltas(),
+        Cron.Hourly);  // كل ساعة – أو Cron.Daily(3) لكل يوم الساعة 3 صباحًا
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -206,26 +247,6 @@ app.UseAuthorization();
 app.UseStaticFiles(); // for uploaded files (photos, invoices, etc.)
 
 app.MapControllers();
-
-// Schedule background jobs
-
-// 1. Daily project/item delay & budget warnings (morning check)
-RecurringJob.AddOrUpdate<IProjectDelayEscalationService>(
-    "project-delay-escalation-daily",
-    service => service.CheckProjectAndItemDelaysAsync(),
-    Cron.Daily(8));  // Every day at 8:00 AM
-
-// 2. Hourly approval workflow timeouts
-RecurringJob.AddOrUpdate<ApprovalEscalationJob>(
-    "approval-escalation-check-hourly",
-    job => job.CheckAndEscalateDelayedApprovalsAsync(),
-    Cron.Hourly);  // Every hour
-
-// في Program.cs بعد AddHangfireServer()
-RecurringJob.AddOrUpdate<BOQProgressAggregationJob>(
-    "aggregate-boq-deltas",
-    job => job.AggregatePendingDeltas(),
-    Cron.Hourly);  // كل ساعة – أو Cron.Daily(3) لكل يوم الساعة 3 صباحًا
 
 app.Run();
 
@@ -239,3 +260,5 @@ public class HangfireCustomAuthorizationFilter : IDashboardAuthorizationFilter
                httpContext.User.IsInRole("SuperAdmin");
     }
 }
+  
+public partial class Program {} 

@@ -49,7 +49,27 @@ public class CompaniesController : ControllerBase
         {
             Name = request.Name,
             PackageId = request.PackageId,
-            IsActive = true
+            IsActive = true,
+
+            EnableUserManagement = request.EnableUserManagement,
+            EnableProjectManagement = request.EnableProjectManagement,
+            EnableBOQManagement = request.EnableBOQManagement,
+            EnableDailyLogs = request.EnableDailyLogs,
+            EnableSiteMedia = request.EnableSiteMedia,
+            EnableEquipmentManagement = request.EnableEquipmentManagement,
+            EnableInventoryManagement = request.EnableInventoryManagement,
+            EnableQualityControl = request.EnableQualityControl,
+            EnableSafetyManagement = request.EnableSafetyManagement,
+            EnableSubcontractorManagement = request.EnableSubcontractorManagement,
+            EnableFinancialManagement = request.EnableFinancialManagement,
+            EnableAnalytics = request.EnableAnalytics,
+            EnableNotifications = request.EnableNotifications,
+            EnableDocumentManagement = request.EnableDocumentManagement,
+            EnableDesignManagement = request.EnableDesignManagement,
+            EnableClientPortal = request.EnableClientPortal,
+            EnableAccessControl = request.EnableAccessControl,
+            EnableHRManagement = request.EnableHRManagement,
+            EnableVendorManagement = request.EnableVendorManagement
         };
         
         await _companyRepo.AddAsync(company);
@@ -149,6 +169,26 @@ public class CompaniesController : ControllerBase
         company.Name = request.Name;
         company.PackageId = request.PackageId;
         company.IsActive = request.IsActive;
+
+        company.EnableUserManagement = request.EnableUserManagement;
+        company.EnableProjectManagement = request.EnableProjectManagement;
+        company.EnableBOQManagement = request.EnableBOQManagement;
+        company.EnableDailyLogs = request.EnableDailyLogs;
+        company.EnableSiteMedia = request.EnableSiteMedia;
+        company.EnableEquipmentManagement = request.EnableEquipmentManagement;
+        company.EnableInventoryManagement = request.EnableInventoryManagement;
+        company.EnableQualityControl = request.EnableQualityControl;
+        company.EnableSafetyManagement = request.EnableSafetyManagement;
+        company.EnableSubcontractorManagement = request.EnableSubcontractorManagement;
+        company.EnableFinancialManagement = request.EnableFinancialManagement;
+        company.EnableAnalytics = request.EnableAnalytics;
+        company.EnableNotifications = request.EnableNotifications;
+        company.EnableDocumentManagement = request.EnableDocumentManagement;
+        company.EnableDesignManagement = request.EnableDesignManagement;
+        company.EnableClientPortal = request.EnableClientPortal;
+        company.EnableAccessControl = request.EnableAccessControl;
+        company.EnableHRManagement = request.EnableHRManagement;
+        company.EnableVendorManagement = request.EnableVendorManagement;
 
         if (company.Settings == null)
         {

@@ -69,6 +69,9 @@ public class BOQItemService : IBOQItemService
             // منطق MeasuredData
             if (boqItem.AccountingType == CalculationMethod.Measured)
             {
+                if (request.AgreedQuantity <= 0) throw new InvalidOperationException("الكمية يجب أن تكون أكبر من صفر");
+                if (request.UnitPrice < 0) throw new InvalidOperationException("سعر الوحدة لا يمكن أن يكون سالباً");
+
                 var measured = new BOQMeasured
                 {
                     Id = boqItem.Id, // يعتمد على SaveChanges السابقة لتوليد Id
@@ -80,6 +83,8 @@ public class BOQItemService : IBOQItemService
             }
             else if (boqItem.AccountingType == CalculationMethod.Packages)
             {
+                 if (request.TotalPackageValue <= 0) throw new InvalidOperationException("قيمة الحزمة يجب أن تكون أكبر من صفر");
+
                  var packageData = new BOQPackage
                  {
                      Id = boqItem.Id,
@@ -91,6 +96,8 @@ public class BOQItemService : IBOQItemService
             }
             else if (boqItem.AccountingType == CalculationMethod.Supervision)
             {
+                if (request.SupervisionPercentage <= 0) throw new InvalidOperationException("نسبة الأشراف يجب أن تكون أكبر من صفر");
+
                 var supervision = new BOQSupervision
                 {
                     Id = boqItem.Id,

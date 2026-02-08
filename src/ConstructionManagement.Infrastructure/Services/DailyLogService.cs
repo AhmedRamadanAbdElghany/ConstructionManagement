@@ -101,6 +101,9 @@ public class DailyLogService : IDailyLogService
 
     public async Task<bool> ReopenClosedDayAsync(int itemId, DateTime logDate, int userId, string reason, List<int>? notifyRoleIds)
     {
+        if (string.IsNullOrWhiteSpace(reason))
+            throw new InvalidOperationException("سبب إعادة الفتح مطلوب");
+
         var log = await _logRepository.AsQueryable()
             .FirstOrDefaultAsync(l => l.BOQItemId == itemId && l.LogDate.Date == logDate.Date);
 

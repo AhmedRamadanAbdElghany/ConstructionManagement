@@ -39,6 +39,9 @@ public class ProjectTransactionService : IProjectTransactionService
     {
         ArgumentNullException.ThrowIfNull(request);
 
+        if (request.Amount <= 0)
+            throw new ArgumentException("مبلغ المعاملة يجب أن يكون أكبر من صفر", nameof(request.Amount));
+
         var settings = await _settingsRepository.GetByIdAsync(projectId)
             ?? throw new InvalidOperationException($"Project settings not found for project ID {projectId}");
 
@@ -196,13 +199,15 @@ public class ProjectTransactionService : IProjectTransactionService
 
     private async Task CheckAndSendBudgetNotifications(int projectId, BOQItem boqItem, decimal totalSpent, decimal currentProfit, int userId)
     {
+        if (boqItem.EstimatedBudget <= 0) return;
+
         decimal warningThreshold = boqItem.EstimatedBudget * 0.90m;
         decimal criticalThreshold = boqItem.EstimatedBudget;
 
         if (totalSpent >= criticalThreshold)
         {
             await _notificationService.CreateAndSendAsync(boqItem.Project.OwnerUserId, "تصعيد حرج: تجاوز الميزانية",
-                $"البند {boqItem.ItemName} تجاوز الميزانية ({(totalSpent / boqItem.EstimatedBudget * 100):F1}%)", $"/projects/{projectId}", NotificationType.BudgetOverrun);
+                $"البند {boqItem.ItemName} تجاوز الميزانية ({totalSpent:P1})", $"/projects/{projectId}", NotificationType.BudgetOverrun);
         }
         else if (totalSpent >= warningThreshold)
         {
