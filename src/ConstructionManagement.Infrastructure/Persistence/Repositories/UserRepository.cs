@@ -13,6 +13,6 @@ public class UserRepository : Repository<User>, IUserRepository
         return await _dbSet
             .Include(u => u.UserRoles)           // جلب جدول الربط
                 .ThenInclude(ur => ur.Role)      // جلب بيانات الدور الفعلية من جدول الـ Roles
-            .FirstOrDefaultAsync(u => u.Email == email);
+            .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
     }
 }

@@ -11,7 +11,7 @@ namespace ConstructionManagement.Tests.Integration.Service;
 
 public class ConcurrencyHandlingIntegrationTests : ApiTestBase
 {
-    [Fact(Skip = "Concurrency tests require a real database with proper connection pooling. Skipping for in-memory SQLite tests.")]
+    [Fact]
     public async Task ConcurrentProjectUpdates_LastWriteWins()
     {
         // Arrange
@@ -46,7 +46,7 @@ public class ConcurrencyHandlingIntegrationTests : ApiTestBase
             "One of the concurrent updates should have been applied");
     }
 
-    [Fact(Skip = "Concurrency tests require a real database with proper connection pooling. Skipping for in-memory SQLite tests.")]
+    [Fact]
     public async Task ConcurrentTransactionCreation_BothSucceed()
     {
         // Arrange
@@ -98,7 +98,7 @@ public class ConcurrencyHandlingIntegrationTests : ApiTestBase
             "Both concurrent transactions should have been created");
     }
 
-    [Fact(Skip = "Concurrency tests require a real database with proper connection pooling. Skipping for in-memory SQLite tests.")]
+    [Fact]
     public async Task ConcurrentDailyLogCreation_BothSucceed()
     {
         // Arrange
@@ -160,7 +160,7 @@ public class ConcurrencyHandlingIntegrationTests : ApiTestBase
             "Both concurrent daily logs should have been created");
     }
 
-    [Fact(Skip = "Concurrency tests require a real database with proper connection pooling. Skipping for in-memory SQLite tests.")]
+    [Fact]
     public async Task ConcurrentBOQItemUpdates_LastWriteWins()
     {
         // Arrange
@@ -213,7 +213,7 @@ public class ConcurrencyHandlingIntegrationTests : ApiTestBase
             "One of the concurrent updates should have been applied");
     }
 
-    [Fact(Skip = "Concurrency tests require a real database with proper connection pooling. Skipping for in-memory SQLite tests.")]
+    [Fact]
     public async Task ConcurrentUserCreation_BothSucceed()
     {
         // Arrange
@@ -259,7 +259,7 @@ public class ConcurrencyHandlingIntegrationTests : ApiTestBase
             "Both concurrent users should have been created");
     }
 
-    [Fact(Skip = "Concurrency tests require a real database with proper connection pooling. Skipping for in-memory SQLite tests.")]
+    [Fact]
     public async Task ConcurrentProjectDeletion_OnlyOneSucceeds()
     {
         // Arrange
@@ -301,7 +301,7 @@ public class ConcurrencyHandlingIntegrationTests : ApiTestBase
             "Project should have been deleted by one of the concurrent operations");
     }
 
-    [Fact(Skip = "Concurrency tests require a real database with proper connection pooling. Skipping for in-memory SQLite tests.")]
+    [Fact]
     public async Task ConcurrentReads_DoNotBlockWrites()
     {
         // Arrange
@@ -341,7 +341,7 @@ public class ConcurrencyHandlingIntegrationTests : ApiTestBase
             "Write should have succeeded despite concurrent read");
     }
 
-    [Fact(Skip = "Concurrency tests require a real database with proper connection pooling. Skipping for in-memory SQLite tests.")]
+    [Fact]
     public async Task HighConcurrency_MultipleOperationsSucceed()
     {
         // Arrange

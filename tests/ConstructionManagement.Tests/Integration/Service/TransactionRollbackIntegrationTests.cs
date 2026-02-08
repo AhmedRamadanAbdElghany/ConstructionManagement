@@ -16,7 +16,7 @@ namespace ConstructionManagement.Tests.Integration.Service;
 /// </summary>
 public class TransactionRollbackIntegrationTests : ApiTestBase
 {
-    [Fact(Skip = "Transaction rollback tests require a real database with proper foreign key constraint support. Skipping for in-memory SQLite tests.")]
+    [Fact]
     public async Task CreateEntity_CanRollbackOnError()
     {
         // Arrange
@@ -49,12 +49,12 @@ public class TransactionRollbackIntegrationTests : ApiTestBase
         }
 
         // Assert - No new project should be created due to rollback
-        var finalProjectCount = await Context.Projects.CountAsync();
+        var finalProjectCount = await Context.Projects.IgnoreQueryFilters().CountAsync();
         finalProjectCount.Should().Be(initialProjectCount,
             "Transaction should have rolled back due to validation error");
     }
 
-    [Fact(Skip = "Transaction rollback tests require a real database with proper foreign key constraint support. Skipping for in-memory SQLite tests.")]
+    [Fact]
     public async Task UpdateEntity_CanRollbackOnError()
     {
         // Arrange
@@ -80,12 +80,16 @@ public class TransactionRollbackIntegrationTests : ApiTestBase
         }
 
         // Assert - Project name should not have been updated due to rollback
-        var updatedProject = await Context.Projects.FindAsync(project.Id);
+        var updatedProject = await Context.Projects
+            .IgnoreQueryFilters()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Id == project.Id);
+            
         updatedProject!.ProjectName.Should().Be(originalProjectName,
             "Transaction should have rolled back due to validation error");
     }
 
-    [Fact(Skip = "Transaction rollback tests require a real database with proper foreign key constraint support. Skipping for in-memory SQLite tests.")]
+    [Fact]
     public async Task CreateMultipleEntities_WithPartialFailure_RollsBackAll()
     {
         // Arrange
@@ -131,12 +135,12 @@ public class TransactionRollbackIntegrationTests : ApiTestBase
         }
 
         // Assert - No new projects should be created due to rollback
-        var finalProjectCount = await Context.Projects.CountAsync();
+        var finalProjectCount = await Context.Projects.IgnoreQueryFilters().CountAsync();
         finalProjectCount.Should().Be(initialProjectCount,
             "All transactions should have rolled back due to partial failure");
     }
 
-    [Fact(Skip = "Transaction rollback tests require a real database with proper foreign key constraint support. Skipping for in-memory SQLite tests.")]
+    [Fact]
     public async Task UpdateEntity_WithDatabaseError_RollsBackUpdate()
     {
         // Arrange
@@ -170,13 +174,17 @@ public class TransactionRollbackIntegrationTests : ApiTestBase
         }
 
         // Assert - Project name should not have been updated due to rollback
-        var updatedProject = await Context.Projects.FindAsync(project.Id);
+        var updatedProject = await Context.Projects
+            .IgnoreQueryFilters()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Id == project.Id);
+        
         updatedProject.Should().NotBeNull();
         updatedProject!.ProjectName.Should().Be(originalProjectName,
             "Update should have rolled back due to database error");
     }
 
-    [Fact(Skip = "Transaction rollback tests require a real database with proper foreign key constraint support. Skipping for in-memory SQLite tests.")]
+    [Fact]
     public async Task DeleteEntity_WithRelatedData_PreventsDeletion()
     {
         // Arrange
@@ -212,7 +220,7 @@ public class TransactionRollbackIntegrationTests : ApiTestBase
         }
 
         // Assert - Project should not have been deleted due to foreign key constraint
-        var finalProjectCount = await Context.Projects.CountAsync();
+        var finalProjectCount = await Context.Projects.IgnoreQueryFilters().CountAsync();
         finalProjectCount.Should().Be(initialProjectCount,
             "Deletion should have been prevented by foreign key constraint");
     }

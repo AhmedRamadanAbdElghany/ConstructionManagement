@@ -97,7 +97,7 @@ public abstract class ApiTestBase : IAsyncDisposable
     private void SeedBaseData()
     {
         // Seed Company if not exists
-        if (!Context.Companies.Any(c => c.Id == 1))
+        if (!Context.Companies.IgnoreQueryFilters().Any(c => c.Id == 1))
         {
             Context.Companies.Add(new Company
             {
@@ -109,15 +109,15 @@ public abstract class ApiTestBase : IAsyncDisposable
         }
         
         // Seed default roles if not exist (check by name, not by empty table)
-        if (!Context.Roles.Any(r => r.Name == "SuperAdmin"))
+        if (!Context.Roles.IgnoreQueryFilters().Any(r => r.Name == "SuperAdmin"))
         {
             Context.Roles.Add(new Role { Name = "SuperAdmin", Description = "Super Administrator", CompanyId = null });
         }
-        if (!Context.Roles.Any(r => r.Name == "Admin"))
+        if (!Context.Roles.IgnoreQueryFilters().Any(r => r.Name == "Admin"))
         {
             Context.Roles.Add(new Role { Name = "Admin", Description = "Company Administrator", CompanyId = 1 });
         }
-        if (!Context.Roles.Any(r => r.Name == "User"))
+        if (!Context.Roles.IgnoreQueryFilters().Any(r => r.Name == "User"))
         {
             Context.Roles.Add(new Role { Name = "User", Description = "Regular User", CompanyId = 1 });
         }
@@ -184,7 +184,7 @@ public abstract class ApiTestBase : IAsyncDisposable
         };
         
         // Remove existing user with same email and their UserRoles
-        var existing = await Context.Users
+        var existing = await Context.Users.IgnoreQueryFilters()
             .Include(u => u.UserRoles)
             .FirstOrDefaultAsync(u => u.Email == email);
         if (existing != null)
@@ -202,7 +202,7 @@ public abstract class ApiTestBase : IAsyncDisposable
         {
             foreach (var roleName in roleNames)
             {
-                var role = await Context.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
+                var role = await Context.Roles.IgnoreQueryFilters().FirstOrDefaultAsync(r => r.Name == roleName);
                 if (role != null)
                 {
                     Context.UserRoles.Add(new UserRole
@@ -217,7 +217,7 @@ public abstract class ApiTestBase : IAsyncDisposable
             await Context.SaveChangesAsync();
             
             // Reload user with roles
-            user = await Context.Users
+            user = await Context.Users.IgnoreQueryFilters()
                 .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
                 .FirstAsync(u => u.Id == user.Id);
@@ -242,7 +242,7 @@ public abstract class ApiTestBase : IAsyncDisposable
         await Context.SaveChangesAsync();
 
         // Seed project settings as they are required by some services
-        if (!Context.ProjectSettings.Any(s => s.Id == project.Id))
+        if (!Context.ProjectSettings.IgnoreQueryFilters().Any(s => s.Id == project.Id))
         {
             Context.ProjectSettings.Add(new ProjectSettings { Id = project.Id });
             await Context.SaveChangesAsync();

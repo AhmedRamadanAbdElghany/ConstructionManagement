@@ -24,6 +24,9 @@ public class DailyLogsController : ControllerBase
     [Authorize(Policy = "CanAddProgressEntry")]
     public async Task<IActionResult> CreateOrGet(int itemId, [FromBody] CreateDailyLogRequest request)
     {
+        if (request.LogDate.Date > DateTime.UtcNow.Date)
+            return BadRequest(new { message = "لا يمكن إضافة يومية لتاريخ مستقبلي" });
+
         var userId = GetUserId();
         var logId = await _dailyLogService.GetOrCreateDailyLogIdAsync(itemId, request.LogDate, userId);
         return Ok(new { dailyLogId = logId });
@@ -31,7 +34,7 @@ public class DailyLogsController : ControllerBase
 
     // 2. تقفيل اليوم + تحديد نسبة الإنجاز
     // المسار النهائي: PUT api/items/{itemId}/dailylogs/{logDate}/close
-    [HttpPut("{logDate:datetime}/close")] // إضافة datetime constraint للحماية
+    [HttpPut("{logDate}/close")] // إزالة datetime constraint للسماح بالـ 400 في التستات
     [Authorize(Policy = "CanCloseDailyLog")]
     public async Task<IActionResult> Close(int itemId, DateTime logDate, [FromBody] CloseDailyLogRequest request)
     {
@@ -56,7 +59,7 @@ public class DailyLogsController : ControllerBase
 
     // 4. إعادة فتح يوم مقفول (مع الصلاحيات اللازمة)
     // المسار النهائي: PUT api/items/{itemId}/dailylogs/{logDate}/reopen
-    [HttpPut("{logDate:datetime}/reopen")]
+    [HttpPut("{logDate}/reopen")]
     [Authorize(Policy = "CanReopenClosedDaily")]
     public async Task<IActionResult> ReopenClosedDay(int itemId, DateTime logDate, [FromBody] ReopenDailyLogRequest request)
     {

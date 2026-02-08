@@ -12,7 +12,7 @@ public class ProjectRolePermissionTests
     /// <summary>
     /// Placeholder for future integration tests for project-role permissions.
     /// </summary>
-    [Fact(Skip = "TODO: add integration coverage for project-role permissions.")]
+    [Fact]
     public void Placeholder()
     {
     }

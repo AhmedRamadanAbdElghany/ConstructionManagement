@@ -16,7 +16,7 @@ namespace ConstructionManagement.Tests.Integration.Service;
 /// </summary>
 public class MultiTenantIsolationIntegrationTests : ApiTestBase
 {
-    [Fact(Skip = "Multi-tenant isolation tests require a shared database with proper company context isolation. Skipping for in-memory SQLite tests.")]
+    [Fact]
     public async Task ProjectsFromDifferentCompanies_AreIsolated()
     {
         // Arrange
@@ -40,7 +40,7 @@ public class MultiTenantIsolationIntegrationTests : ApiTestBase
         company2Projects.First().ProjectName.Should().Be("Company 2 Project");
     }
 
-    [Fact(Skip = "Multi-tenant isolation tests require a shared database with proper company context isolation. Skipping for in-memory SQLite tests.")]
+    [Fact]
     public async Task UsersFromDifferentCompanies_AreIsolated()
     {
         // Arrange
@@ -61,7 +61,7 @@ public class MultiTenantIsolationIntegrationTests : ApiTestBase
         company2Users.First().Email.Should().Be("user2@company2.com");
     }
 
-    [Fact(Skip = "Multi-tenant isolation tests require a shared database with proper company context isolation. Skipping for in-memory SQLite tests.")]
+    [Fact]
     public async Task TransactionsFromDifferentCompanies_AreIsolated()
     {
         // Arrange
@@ -108,7 +108,7 @@ public class MultiTenantIsolationIntegrationTests : ApiTestBase
         company1Transactions.First().Description.Should().Be("Company 1 Transaction");
     }
 
-    [Fact(Skip = "Multi-tenant isolation tests require a shared database with proper company context isolation. Skipping for in-memory SQLite tests.")]
+    [Fact]
     public async Task DailyLogsFromDifferentCompanies_AreIsolated()
     {
         // Arrange
@@ -167,7 +167,7 @@ public class MultiTenantIsolationIntegrationTests : ApiTestBase
         company1DailyLogs.First().DailyProgressPercentage.Should().Be(50);
     }
 
-    [Fact(Skip = "Multi-tenant isolation tests require a shared database with proper company context isolation. Skipping for in-memory SQLite tests.")]
+    [Fact]
     public async Task BOQItemsFromDifferentCompanies_AreIsolated()
     {
         // Arrange

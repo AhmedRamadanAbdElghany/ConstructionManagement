@@ -148,6 +148,9 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
             progressNotes = "Day completed successfully"
         };
 
+        // Initialize the log first
+        await Client.PostAsJsonAsync($"/api/items/{boqItem.Id}/dailylogs", new { logDate });
+
         // Act
         var response = await Client.PutAsJsonAsync($"/api/items/{boqItem.Id}/dailylogs/{logDate:yyyy-MM-dd}/close", closeRequest);
 
@@ -189,6 +192,9 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
             dailyProgressPercentage = 75,
             progressNotes = "First close"
         };
+
+        // Initialize the log first
+        await Client.PostAsJsonAsync($"/api/items/{boqItem.Id}/dailylogs", new { logDate });
 
         // First close
         await Client.PutAsJsonAsync($"/api/items/{boqItem.Id}/dailylogs/{logDate:yyyy-MM-dd}/close", closeRequest);
@@ -267,6 +273,9 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
         SetAuthToken(token);
 
         var logDate = DateTime.UtcNow.Date;
+
+        // Initialize the log first
+        await Client.PostAsJsonAsync($"/api/items/{boqItem.Id}/dailylogs", new { logDate });
 
         // First close the day
         var closeRequest = new
@@ -351,8 +360,8 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
         const string password = "Password123";
         var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
 
-        await SeedUserAsync(email, hashedPassword, "Test User");
-        var project = await SeedProjectAsync("Test Project", 1);
+        var user = await SeedUserAsync(email, hashedPassword, "Test User");
+        var project = await SeedProjectAsync("Test Project", user.Id);
 
         var boqItem = new BOQItem
         {
@@ -378,7 +387,7 @@ public class DailyLogsControllerIntegrationTests : ApiTestBase
         };
 
         // Act - Try to reopen with invalid date format
-        var response = await Client.PutAsJsonAsync("/api/items/1/dailylogs/invalid-date/reopen", reopenRequest);
+        var response = await Client.PutAsJsonAsync($"/api/items/{boqItem.Id}/dailylogs/invalid-date/reopen", reopenRequest);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
