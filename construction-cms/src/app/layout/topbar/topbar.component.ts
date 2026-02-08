@@ -19,19 +19,19 @@ import { AppNotification } from '../../shared/interfaces';
         <div class="relative group">
           <div class="absolute inset-0 bg-cyan-500/5 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity"></div>
           <div class="relative">
-            <svg class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="absolute ltr:left-5 rtl:right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
             <input 
               type="text" 
               [placeholder]="'topbar.search_placeholder' | translate"
-              class="w-full pl-14 pr-6 py-3.5 rounded-2xl bg-slate-100 dark:bg-slate-900/40 border border-slate-200 dark:border-white/5 text-slate-900 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-600 focus:border-cyan-500/30 dark:focus:bg-slate-900 focus:bg-white focus:ring-4 focus:ring-cyan-500/5 transition-all outline-none text-sm font-medium">
+              class="w-full ltr:pl-14 ltr:pr-6 rtl:pr-14 rtl:pl-6 py-3.5 rounded-2xl bg-slate-100 dark:bg-slate-900/40 border border-slate-200 dark:border-white/5 text-slate-900 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-600 focus:border-cyan-500/30 dark:focus:bg-slate-900 focus:bg-white focus:ring-4 focus:ring-cyan-500/5 transition-all outline-none text-sm font-medium">
           </div>
         </div>
       </div>
 
       <!-- Right Side -->
-      <div class="flex items-center space-x-4">
+      <div class="flex items-center gap-4">
         <!-- Theme Toggle -->
         <button 
           (click)="themeService.toggleTheme()"
@@ -58,7 +58,7 @@ import { AppNotification } from '../../shared/interfaces';
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
             </svg>
             @if (unreadCount > 0) {
-              <span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 text-white text-[10px] font-black flex items-center justify-center shadow-lg shadow-rose-500/25 ring-2 ring-white dark:ring-slate-950">
+              <span class="absolute -top-1 ltr:-right-1 rtl:-left-1 w-5 h-5 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 text-white text-[10px] font-black flex items-center justify-center shadow-lg shadow-rose-500/25 ring-2 ring-white dark:ring-slate-950">
                 {{ unreadCount }}
               </span>
             }
@@ -66,7 +66,7 @@ import { AppNotification } from '../../shared/interfaces';
 
           <!-- Notifications Dropdown -->
           @if (showNotifications) {
-            <div class="absolute right-0 top-[calc(100%+12px)] w-[420px] bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-3xl border border-slate-200 dark:border-white/10 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+            <div class="absolute ltr:right-0 rtl:left-0 top-[calc(100%+12px)] w-[420px] bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-3xl border border-slate-200 dark:border-white/10 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
               <div class="p-8 pb-4 flex items-center justify-between">
                 <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">{{ 'topbar.notifications' | translate }}</h3>
                 <button (click)="markAllRead()" class="px-4 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-[10px] font-black text-cyan-500 dark:text-cyan-400 uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
@@ -78,7 +78,7 @@ import { AppNotification } from '../../shared/interfaces';
                   <div 
                     class="group p-5 rounded-[1.5rem] transition-all cursor-pointer border border-transparent hover:bg-slate-50 dark:hover:bg-white/[0.03]"
                     [class.bg-cyan-500/5]="!notification.read">
-                    <div class="flex items-start space-x-4">
+                    <div class="flex items-start gap-4">
                       <div class="w-12 h-12 rounded-[1rem] flex items-center justify-center flex-shrink-0 shadow-inner"
                            [ngClass]="{
                              'bg-amber-500/10 text-amber-500': notification.type === 'warning',
@@ -105,7 +105,7 @@ import { AppNotification } from '../../shared/interfaces';
               <div class="p-6 bg-slate-50 dark:bg-slate-950/50 border-t border-slate-200 dark:border-white/5">
                 <a routerLink="/notifications" 
                    (click)="showNotifications = false"
-                   class="flex items-center justify-center space-x-2 w-full py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-700 transition-all">
+                   class="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-700 transition-all">
                   <span>{{ 'topbar.view_all_notifications' | translate }}</span>
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5-5 5"></path></svg>
                 </a>
@@ -121,11 +121,11 @@ import { AppNotification } from '../../shared/interfaces';
         <div class="relative">
           <button 
             (click)="toggleProfile()"
-            class="group flex items-center space-x-4 p-1.5 pr-5 rounded-[1.5rem] bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-white/5 hover:border-cyan-500/30 transition-all active:scale-95 shadow-lg">
+            class="group flex items-center gap-4 p-1.5 ltr:pr-5 rtl:pl-5 rounded-[1.5rem] bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-white/5 hover:border-cyan-500/30 transition-all active:scale-95 shadow-lg">
             <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-700 flex items-center justify-center text-white ring-2 ring-white/10 shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform overflow-hidden font-black">
                {{ authService.getCurrentUser().fullName.charAt(0) }}
             </div>
-            <div class="hidden md:block text-left min-w-max">
+            <div class="hidden md:block ltr:text-left rtl:text-right min-w-max">
               <p class="text-sm font-black text-slate-900 dark:text-white tracking-tight leading-none mb-1">{{ authService.getCurrentUser().fullName }}</p>
               <p class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none">
                 {{ 'sidebar.role_' + (authService.getCurrentUser().role === 'SuperAdmin' ? 'super' : 
@@ -140,13 +140,13 @@ import { AppNotification } from '../../shared/interfaces';
 
           <!-- Profile Dropdown -->
           @if (showProfile) {
-            <div class="absolute right-0 top-[calc(100%+12px)] w-72 bg-white dark:bg-slate-900 rounded-[2rem] shadow-3xl border border-slate-200 dark:border-white/10 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+            <div class="absolute ltr:right-0 rtl:left-0 top-[calc(100%+12px)] w-72 bg-white dark:bg-slate-900 rounded-[2rem] shadow-3xl border border-slate-200 dark:border-white/10 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
               <div class="p-8 border-b border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-slate-950/20">
                 <p class="text-lg font-black text-slate-900 dark:text-white tracking-tight leading-none mb-2">{{ authService.getCurrentUser().fullName }}</p>
                 <p class="text-[11px] text-slate-400 dark:text-slate-500 font-bold break-all">{{ authService.getCurrentUser().email }}</p>
               </div>
               <div class="p-3 space-y-1">
-                <a href="#" class="flex items-center space-x-4 px-5 py-3.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/[0.03] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all group/item">
+                <a href="#" class="flex items-center gap-4 px-5 py-3.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/[0.03] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all group/item">
                   <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center group-hover/item:bg-cyan-500 transition-colors">
                     <svg class="w-5 h-5 text-slate-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                   </div>
@@ -154,7 +154,7 @@ import { AppNotification } from '../../shared/interfaces';
                 </a>
               </div>
               <div class="p-3 bg-slate-50 dark:bg-slate-950/30 border-t border-slate-200 dark:border-white/5">
-                <button class="w-full flex items-center space-x-4 px-5 py-4 rounded-2xl hover:bg-rose-500 bg-slate-200/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 hover:text-white transition-all group/item shadow-inner">
+                <button class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-rose-500 bg-slate-200/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 hover:text-white transition-all group/item shadow-inner">
                   <div class="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center group-hover/item:bg-white/20 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                   </div>

@@ -4,7 +4,7 @@ import { Injectable, signal } from '@angular/core';
     providedIn: 'root'
 })
 export class ThemeService {
-    private theme = signal<'dark' | 'light'>('dark');
+    private theme = signal<'dark' | 'light'>('light');
     currentTheme = this.theme.asReadonly();
 
     constructor() {
@@ -12,8 +12,8 @@ export class ThemeService {
         if (savedTheme) {
             this.setTheme(savedTheme);
         } else {
-            // Default to dark
-            this.setTheme('dark');
+            // Default to light
+            this.setTheme('light');
         }
     }
 

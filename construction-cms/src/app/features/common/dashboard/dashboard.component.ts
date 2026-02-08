@@ -324,115 +324,127 @@ import { AuthService } from '../../../core/auth/auth.service';
              WORKER DASHBOARD (CompanyUser)
              ────────────────────────────────────────────────────────────────── -->
         @else if (isWorker) {
-          <div class="space-y-10 animate-in fade-in slide-in-from-bottom-10 duration-1000">
+          <div class="space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
             
-            <!-- Worker Hero: Performance & Profile -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <!-- Worker Top Section: Profile & Metrics -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
                
-               <!-- Glassmorphism Profile -->
-               <div class="lg:col-span-4 bg-white/40 dark:bg-slate-900/40 backdrop-blur-3xl rounded-[3.5rem] p-10 border border-white dark:border-white/5 shadow-[0_32px_120px_-15px_rgba(0,0,0,0.1)] relative overflow-hidden group">
-                  <div class="absolute -top-20 -left-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] group-hover:bg-indigo-500/20 transition-colors duration-700"></div>
+               <!-- Profile Card -->
+               <div class="lg:col-span-4 bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-white/5 shadow-xl relative overflow-hidden group">
+                  <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl group-hover:bg-indigo-500/15 transition-colors"></div>
                   
-                  <div class="relative flex flex-col items-center text-center">
-                    <div class="relative mb-8 group-hover:scale-105 transition-transform duration-500">
-                      <div class="w-32 h-32 rounded-[2.5rem] bg-gradient-to-br from-indigo-500 via-blue-600 to-cyan-500 p-1 shadow-2xl rotate-3">
-                        <div class="w-full h-full bg-white dark:bg-slate-900 rounded-[2.2rem] flex items-center justify-center overflow-hidden">
-                           <span class="text-5xl">👷‍♂️</span>
+                  <div class="relative flex flex-col items-center">
+                    <div class="relative mb-6">
+                      <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-indigo-500 via-blue-600 to-indigo-700 p-1 shadow-lg group-hover:scale-105 transition-transform duration-500">
+                        <div class="w-full h-full bg-white dark:bg-slate-900 rounded-xl flex items-center justify-center overflow-hidden">
+                           <span class="text-4xl">👷‍♂️</span>
                         </div>
                       </div>
-                      <div class="absolute -bottom-2 -right-2 w-10 h-10 rounded-2xl bg-emerald-500 border-4 border-white dark:border-slate-900 flex items-center justify-center shadow-lg">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                      <div class="absolute -bottom-1 -right-1 w-8 h-8 rounded-xl bg-emerald-500 border-4 border-white dark:border-slate-900 flex items-center justify-center shadow-lg">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                       </div>
                     </div>
 
-                    <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ currentUser?.fullName }}</h2>
-                    <p class="text-[10px] font-black text-indigo-500 uppercase tracking-[0.3em] mb-8 px-4 py-1.5 bg-indigo-500/5 rounded-full inline-block">
-                      {{ 'sidebar.role_' + (currentUser?.role === 'SuperAdmin' ? 'super' : currentUser?.role === 'CompanyAdmin' ? 'admin' : currentUser?.role === 'CompanyUser' ? 'worker' : 'client') | translate }} • {{ 'dashboard.senior_grade' | translate }}
-                    </p>
+                    <div class="text-center mb-8">
+                      <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ currentUser?.fullName }}</h2>
+                      <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">
+                        {{ 'sidebar.role_' + (currentUser?.role === 'SuperAdmin' ? 'super' : currentUser?.role === 'CompanyAdmin' ? 'admin' : currentUser?.role === 'CompanyUser' ? 'worker' : 'client') | translate }}
+                      </p>
+                    </div>
                     
-                    <div class="grid grid-cols-2 gap-8 w-full">
+                    <div class="grid grid-cols-2 gap-4 w-full pt-6 border-t border-slate-100 dark:border-white/5">
                       <div class="text-center">
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ 'dashboard.efficiency' | translate }}</p>
-                        <div class="flex items-end justify-center space-x-1">
-                          <span class="text-3xl font-black text-slate-900 dark:text-white leading-none">94</span>
-                          <span class="text-xs font-black text-emerald-500 mb-0.5">%</span>
-                        </div>
+                        <p class="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest mb-1">{{ 'dashboard.efficiency' | translate }}</p>
+                        <p class="text-2xl font-black text-indigo-600 dark:text-indigo-400 leading-none">94<span class="text-xs ml-0.5">%</span></p>
                       </div>
-                      <div class="text-center">
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ 'sidebar.projects' | translate }}</p>
-                        <div class="flex items-end justify-center space-x-1">
-                          <span class="text-3xl font-black text-slate-900 dark:text-white leading-none">{{ workerProjectStats?.active }}</span>
-                          <span class="text-xs font-black text-slate-400 mb-0.5">/{{ workerProjectStats?.totalProjects }}</span>
-                        </div>
+                      <div class="text-center border-l border-slate-100 dark:border-white/5">
+                        <p class="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest mb-1">{{ 'sidebar.projects' | translate }}</p>
+                        <p class="text-2xl font-black text-slate-900 dark:text-white leading-none">{{ workerProjectStats?.active }}<span class="text-xs text-slate-400 dark:text-slate-600 ml-0.5">/{{ workerProjectStats?.totalProjects }}</span></p>
                       </div>
                     </div>
                   </div>
                </div>
 
-               <!-- Productivity Pulse & Quick Matrix -->
-               <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8 h-full">
-                  
-                  <!-- Performance Radar / Signal card -->
-                  <div class="bg-slate-900 rounded-[3.5rem] p-10 relative overflow-hidden flex flex-col justify-between group">
-                    <div class="absolute top-0 right-0 p-10">
-                      <div class="flex space-x-1">
-                        @for (i of [1,2,3,4,5]; track i) {
-                          <div class="w-1.5 bg-emerald-500 rounded-full animate-pulse" [style.height.px]="10 + (i * 4)" [style.animationDelay.ms]="i * 150"></div>
-                        }
+               <!-- Status & Actions -->
+               <div class="lg:col-span-8 flex flex-col gap-6">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
+                    <!-- Productivity Status -->
+                    <div class="bg-indigo-600 dark:bg-indigo-900/40 rounded-3xl p-8 relative overflow-hidden flex flex-col justify-between group shadow-lg shadow-indigo-600/10">
+                      <div class="absolute top-0 right-0 p-8">
+                        <div class="flex items-end gap-1 h-6">
+                          @for (i of [1,2,3,4,5]; track i) {
+                            <div class="w-1 bg-white/40 dark:bg-white/20 rounded-full animate-pulse" [style.height.px]="10 + (i * 3)" [style.animationDelay.ms]="i * 150"></div>
+                          }
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <p class="text-white/60 text-[10px] font-black uppercase tracking-[0.2em] mb-3">{{ 'dashboard.operations_status' | translate }}</p>
+                        <h3 class="text-2xl font-black text-white leading-tight mb-2">{{ 'dashboard.productivity_optimal' | translate }}</h3>
+                        <p class="text-white/40 text-xs font-medium">{{ 'dashboard.team_interaction' | translate }}: <span class="text-white/80 font-bold">{{ 'dashboard.interaction_high' | translate }}</span></p>
+                      </div>
+
+                      <div class="flex items-center gap-3">
+                        <div class="flex -space-x-2">
+                          @for (i of [1,2,3]; track i) {
+                            <div class="w-8 h-8 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-[10px]">👤</div>
+                          }
+                        </div>
+                        <span class="text-[10px] font-black text-white/60 uppercase tracking-widest">+12 {{ 'sidebar.role_worker' | translate }}</span>
                       </div>
                     </div>
-                    
-                    <div>
-                      <h3 class="text-white/40 text-[10px] font-black uppercase tracking-[0.3em] mb-4">{{ 'dashboard.operations_status' | translate }}</h3>
-                      <p class="text-2xl font-black text-white leading-tight">{{ 'dashboard.productivity_optimal' | translate }}</p>
-                    </div>
 
-                    <div class="flex items-center space-x-6 mt-10">
-                      <div class="flex -space-x-3">
-                        @for (i of [1,2,3]; track i) {
-                          <div class="w-10 h-10 rounded-xl bg-slate-800 border-2 border-slate-900 flex items-center justify-center text-xs">👤</div>
-                        }
-                        <div class="w-10 h-10 rounded-xl bg-indigo-500 border-2 border-slate-900 flex items-center justify-center text-[10px] font-black text-white">+12</div>
-                      </div>
-                      <p class="text-xs font-medium text-slate-400">{{ 'dashboard.team_interaction' | translate }}: <span class="text-white font-bold">{{ 'dashboard.interaction_high' | translate }}</span></p>
-                    </div>
-                  </div>
-
-                  <!-- Quick Action Tiles -->
-                  <div class="grid grid-cols-2 gap-6">
-                    <div routerLink="/worker/daily-log" class="bg-indigo-600 rounded-[2.5rem] p-8 flex flex-col justify-between hover:scale-[1.02] active:scale-95 transition-all cursor-pointer shadow-xl shadow-indigo-600/20 group">
-                      <svg class="w-8 h-8 text-white/50 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-                      <p class="text-white font-black text-sm leading-tight">{{ 'dashboard.log_today' | translate }}</p>
-                    </div>
-                    <div routerLink="/worker/personal-hr" class="bg-white dark:bg-white/5 rounded-[2.5rem] p-8 flex flex-col justify-between border border-slate-200 dark:border-white/10 hover:border-indigo-500/50 transition-all cursor-pointer shadow-xl group">
-                      <svg class="w-8 h-8 text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                      <p class="text-slate-900 dark:text-white font-black text-sm leading-tight">{{ 'dashboard.finance_vacation' | translate }}</p>
+                    <!-- Quick Actions Grid -->
+                    <div class="grid grid-cols-1 gap-4">
+                      <a routerLink="/worker/daily-log" class="flex-1 bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-white/5 hover:border-indigo-500/50 transition-all group flex items-center justify-between shadow-sm">
+                        <div class="flex items-center gap-4">
+                          <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                          </div>
+                          <div>
+                            <p class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'dashboard.log_today' | translate }}</p>
+                            <p class="text-[10px] text-slate-500 font-medium">{{ 'dashboard.live' | translate }}</p>
+                          </div>
+                        </div>
+                        <svg class="w-5 h-5 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                      </a>
+                      
+                      <a routerLink="/worker/personal-hr" class="flex-1 bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-white/5 hover:border-cyan-500/50 transition-all group flex items-center justify-between shadow-sm">
+                        <div class="flex items-center gap-4">
+                          <div class="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                          </div>
+                          <div>
+                            <p class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'dashboard.finance_vacation' | translate }}</p>
+                            <p class="text-[10px] text-slate-500 font-medium">HR Center</p>
+                          </div>
+                        </div>
+                        <svg class="w-5 h-5 text-slate-300 group-hover:text-cyan-500 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                      </a>
                     </div>
                   </div>
                </div>
             </div>
 
-            <!-- Urgent Task: Delayed Responsibility -->
+            <!-- Warning Banner -->
             @if (workerProjectStats?.causedDelayCount > 0) {
-              <div class="bg-rose-500/10 backdrop-blur-3xl rounded-[3.5rem] p-10 border border-rose-500/20 shadow-inner relative overflow-hidden group/warning animate-pulse-slow">
-                 <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-rose-500/10 rounded-full blur-[100px]"></div>
-                 
-                 <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 relative z-10">
-                    <div class="flex items-center space-x-6">
-                       <div class="w-20 h-20 rounded-3xl bg-rose-500 flex items-center justify-center text-white shadow-2xl shadow-rose-500/40">
-                          <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <div class="bg-rose-500/5 dark:bg-rose-500/10 rounded-3xl p-6 border border-rose-500/20 shadow-sm overflow-hidden relative group">
+                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                    <div class="flex items-center gap-5">
+                       <div class="w-14 h-14 rounded-2xl bg-rose-500 text-white flex items-center justify-center shadow-lg shadow-rose-500/30 shrink-0">
+                          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                        </div>
                        <div>
-                          <h3 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight uppercase leading-none mb-2">{{ 'dashboard.urgent_intervention' | translate }}</h3>
-                          <p class="text-rose-600 dark:text-rose-500 font-bold text-sm tracking-tight">{{ 'dashboard.intervention_desc' | translate }}</p>
+                          <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-0.5">{{ 'dashboard.attention' | translate }}: {{ 'dashboard.urgent_intervention' | translate }}</h3>
+                          <p class="text-rose-600 dark:text-rose-500 text-xs font-bold">{{ 'dashboard.intervention_desc' | translate }}</p>
                        </div>
                     </div>
-                    <div class="flex flex-wrap gap-4">
+                    <div class="flex flex-wrap gap-2">
                        @for (item of workerProjectStats?.projects; track item.project.id) {
                          @if (item.causedDelay) {
-                           <div class="px-6 py-4 rounded-[1.5rem] bg-white dark:bg-slate-900 shadow-xl border border-rose-500/20 flex items-center space-x-3">
-                             <div class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></div>
-                             <span class="text-sm font-black text-slate-800 dark:text-white">{{ item.project.name }}</span>
+                           <div class="px-4 py-2 rounded-xl bg-white dark:bg-slate-900 shadow-sm border border-rose-500/10 flex items-center gap-2">
+                             <div class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></div>
+                             <span class="text-xs font-black text-slate-800 dark:text-white uppercase">{{ item.project.name }}</span>
                            </div>
                          }
                        }
@@ -441,51 +453,44 @@ import { AuthService } from '../../../core/auth/auth.service';
               </div>
             }
 
-            <!-- Enhanced Projects Portfolio -->
-            <div class="space-y-6">
-              <div class="flex items-end justify-between px-6">
+            <!-- Projects Grid -->
+            <div class="space-y-6 pt-2">
+              <div class="flex items-center justify-between">
                 <div>
-                  <h3 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{{ 'dashboard.strategic_portfolio' | translate }}</h3>
-                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">{{ 'dashboard.worker_projects_status' | translate }}</p>
+                  <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{{ 'dashboard.strategic_portfolio' | translate }}</h3>
+                  <p class="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest">{{ 'dashboard.worker_projects_status' | translate }}</p>
                 </div>
-                <div class="flex space-x-2">
+                <div class="flex gap-2">
                    <div class="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 flex items-center justify-center text-slate-400 shadow-sm cursor-pointer hover:text-indigo-500 transition-colors">
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg>
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg>
                    </div>
                 </div>
               </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @for (item of workerProjectStats?.projects; track item.project.id) {
-                  <div class="bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-xl hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)] transition-all duration-500 group/tile overflow-hidden">
-                    <!-- Tile Header -->
-                    <div class="p-8 pb-0 flex items-start justify-between">
-                       <div class="relative">
-                          <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-black text-white transition-transform duration-500 group-hover/tile:scale-110 group-hover/tile:-rotate-3"
+                  <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/5 shadow-lg hover:shadow-xl transition-all duration-300 group/item overflow-hidden">
+                    <div class="p-6">
+                       <div class="flex items-start justify-between mb-6">
+                          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black text-white shadow-lg group-hover/item:scale-105 transition-transform"
                                [ngClass]="{
-                                 'bg-gradient-to-br from-indigo-500 to-indigo-700': item.project.status === 'Active',
-                                 'bg-gradient-to-br from-emerald-500 to-emerald-700': item.project.status === 'Completed',
-                                 'bg-gradient-to-br from-rose-500 to-rose-700': item.project.status === 'Delayed'
+                                 'bg-indigo-500': item.project.status === 'Active',
+                                 'bg-emerald-500': item.project.status === 'Completed',
+                                 'bg-rose-500': item.project.status === 'Delayed'
                                }">
                             {{ item.project.name.charAt(0) }}
                           </div>
                           @if(item.causedDelay) {
-                            <div class="absolute -top-2 -right-2 w-7 h-7 bg-rose-500 rounded-full border-4 border-white dark:border-slate-900 flex items-center justify-center text-white text-[10px] font-black shadow-lg animate-bounce">!</div>
+                            <span class="px-2 py-1 rounded bg-rose-500 text-white text-[10px] font-black uppercase shadow-lg animate-bounce">!</span>
                           }
                        </div>
-                       <div class="text-right">
-                           <span [class]="item.project.status === 'Delayed' ? 'text-rose-500' : 'text-emerald-500'" class="text-xs font-black uppercase tracking-tight">{{ 'projects.' + item.project.status.toLowerCase() | translate }}</span>
-                       </div>
-                    </div>
 
-                    <!-- Tile Body -->
-                    <div class="p-8 space-y-6">
-                       <div>
-                          <h4 class="text-xl font-black text-slate-900 dark:text-white leading-tight mb-1 truncate">{{ item.project.name }}</h4>
-                          <div class="flex items-center space-x-2">
-                             <span class="px-2 py-0.5 rounded-lg bg-indigo-500/10 text-indigo-500 text-[9px] font-black uppercase tracking-widest">{{ item.role }}</span>
-                             <span class="text-[10px] font-medium text-slate-400 flex items-center">
-                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                       <div class="mb-6">
+                          <h4 class="text-lg font-black text-slate-900 dark:text-white tracking-tight truncate mb-1">{{ item.project.name }}</h4>
+                          <div class="flex items-center gap-2">
+                             <span class="px-2 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest">{{ item.role }}</span>
+                             <span class="text-[10px] font-bold text-slate-400 flex items-center">
+                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
                                 {{ item.project.location?.address?.split(',')[0] }}
                              </span>
                           </div>
@@ -493,20 +498,19 @@ import { AuthService } from '../../../core/auth/auth.service';
 
                        <div class="space-y-2">
                           <div class="flex justify-between items-end">
-                             <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{{ 'dashboard.global_completion' | translate }}</p>
-                             <p class="text-lg font-black text-slate-900 dark:text-white leading-none tracking-tighter">{{ item.project.progress }}%</p>
+                             <p class="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest">{{ 'dashboard.progress' | translate }}</p>
+                             <p class="text-sm font-black text-slate-900 dark:text-white">{{ item.project.progress }}%</p>
                           </div>
-                          <div class="h-2.5 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
-                             <div class="h-full bg-gradient-to-r from-indigo-500 to-cyan-400 rounded-full transition-all duration-1000 group-hover/tile:scale-105 origin-left" [style.width.%]="item.project.progress"></div>
+                          <div class="h-2 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                             <div class="h-full bg-indigo-500 rounded-full transition-all duration-1000 group-hover/item:brightness-110" [style.width.%]="item.project.progress"></div>
                           </div>
                        </div>
                     </div>
 
-                    <!-- Tile Footer -->
-                    <div class="px-8 py-5 bg-slate-50 dark:bg-white/[0.02] border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
-                       <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'dashboard.est_completion' | translate }}: <span class="text-slate-900 dark:text-slate-200">{{ item.project.endDate | date:'MMM yyyy' }}</span></p>
-                       <button [routerLink]="['/admin/projects', item.project.id]" class="w-10 h-10 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-400 hover:text-indigo-500 hover:border-indigo-500 hover:scale-110 transition-all">
-                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    <div class="px-6 py-4 bg-slate-50 dark:bg-transparent border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
+                       <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ item.project.endDate | date:'MMM yyyy' }}</span>
+                       <button [routerLink]="['/admin/projects', item.project.id]" class="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/5 flex items-center justify-center text-slate-400 hover:text-indigo-500 transition-all">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
                        </button>
                     </div>
                   </div>
@@ -514,7 +518,7 @@ import { AuthService } from '../../../core/auth/auth.service';
               </div>
             </div>
           </div>
-        }
+        } 
         
         <!-- ──────────────────────────────────────────────────────────────────
              STANDARD DASHBOARD (Admin/Worker fallback)

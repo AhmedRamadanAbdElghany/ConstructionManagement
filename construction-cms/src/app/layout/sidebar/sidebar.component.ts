@@ -12,12 +12,12 @@ import { RouterModule } from '@angular/router';
   imports: [CommonModule, TranslateModule, RouterModule],
   template: `
     <div [class.w-72]="!isCollapsed()" [class.w-24]="isCollapsed()" 
-         class="h-full flex flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800/60 shadow-2xl transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] relative group/sidebar overflow-hidden">
+         class="h-full flex flex-col bg-white dark:bg-slate-900 border-e border-slate-200 dark:border-slate-800/60 shadow-2xl transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] relative group/sidebar overflow-hidden">
       
       <!-- Collapse Toggle -->
       <button 
         (click)="toggleCollapse()"
-        class="absolute -right-3 top-24 w-6 h-6 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-cyan-500 transition-all z-[60] shadow-xl hover:scale-110 active:scale-95">
+        class="absolute top-24 w-6 h-6 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-cyan-500 transition-all z-[60] shadow-xl hover:scale-110 active:scale-95 ltr:-right-3 rtl:-left-3">
         <svg class="w-4 h-4 transition-transform duration-500" [class.rotate-180]="isCollapsed()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path>
         </svg>
@@ -25,7 +25,7 @@ import { RouterModule } from '@angular/router';
 
       <!-- Logo Section -->
       <div class="h-24 flex items-center px-6 border-b border-slate-200 dark:border-slate-800/60 shrink-0">
-        <div class="flex items-center space-x-4 min-w-max">
+        <div class="flex items-center gap-4 min-w-max">
           <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-700 flex items-center justify-center shadow-lg shadow-cyan-500/20 ring-1 ring-white/10 shrink-0">
             <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
@@ -367,7 +367,7 @@ import { RouterModule } from '@angular/router';
 
       <!-- User Profile -->
       <div class="p-6 bg-slate-100/30 dark:bg-slate-950/40 border-t border-slate-200 dark:border-slate-800/60 mt-auto shrink-0 group/profile cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-950/60 transition-colors">
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center gap-4">
           <div class="relative flex-shrink-0">
             <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white font-black text-lg ring-2 ring-white dark:ring-slate-800 shadow-2xl transition-transform group-hover/profile:scale-110 group-hover/profile:rotate-3">
               {{ authService.getCurrentUser().fullName.charAt(0) }}
@@ -398,7 +398,7 @@ import { RouterModule } from '@angular/router';
     }
 
     .nav-item {
-      @apply flex items-center space-x-4 px-4 py-3 rounded-2xl text-slate-500 dark:text-slate-400 transition-all duration-300 hover:bg-slate-100 dark:hover:bg-white/[0.03] hover:text-slate-900 dark:hover:text-white outline-none;
+      @apply flex items-center gap-4 px-4 py-3 rounded-2xl text-slate-500 dark:text-slate-400 transition-all duration-300 hover:bg-slate-100 dark:hover:bg-white/[0.03] hover:text-slate-900 dark:hover:text-white outline-none;
     }
 
     .nav-icon-box {

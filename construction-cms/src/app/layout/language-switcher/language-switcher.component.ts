@@ -7,7 +7,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
   standalone: true,
   imports: [CommonModule, TranslateModule],
   template: `
-    <div class="flex items-center space-x-1 p-1 rounded-xl bg-slate-800/50 border border-slate-700/50">
+    <div class="flex items-center gap-1 p-1 rounded-xl bg-slate-800/50 border border-slate-700/50">
       <button 
         (click)="switchLanguage('en')" 
         class="px-3 py-1.5 rounded-lg text-sm font-medium transition-all"
