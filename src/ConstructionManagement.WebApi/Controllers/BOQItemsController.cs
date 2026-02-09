@@ -23,6 +23,14 @@ public class BOQItemsController : ControllerBase
     public async Task<IActionResult> Get(int projectId, int itemId)
     {
         var item = await _service.GetBOQItemWithProgressAsync(itemId);
+        // Verify projectId?
         return item != null ? Ok(item) : NotFound();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetProjectItems(int projectId)
+    {
+        var items = await _service.GetProjectItemsAsync(projectId);
+        return Ok(items);
     }
 }

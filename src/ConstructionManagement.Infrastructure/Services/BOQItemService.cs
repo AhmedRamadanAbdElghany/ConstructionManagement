@@ -167,4 +167,64 @@ public class BOQItemService : IBOQItemService
             null // أضف حقول أخرى لو موجودة في الـ DTO
         );
     }
+    public async Task<IEnumerable<BOQItemDto>> GetProjectItemsAsync(int projectId)
+    {
+        var items = await _itemRepository.AsQueryable()
+            .Where(i => i.ProjectId == projectId)
+            .Include(i => i.MeasuredData)
+            .Include(i => i.SupervisionData)
+            .Include(i => i.PackageData)
+            .ToListAsync();
+
+        var invoices = await _invoiceRepo.AsQueryable()
+            .Where(i => i.ProjectId == projectId && i.Status == "Approved")
+            .Select(i => new { i.BOQItemId, i.NetAmount })
+            .ToListAsync();
+
+        var invoiceGroups = invoices.GroupBy(i => i.BOQItemId)
+            .ToDictionary(g => g.Key, g => g.Sum(x => x.NetAmount));
+
+        var dtos = new List<BOQItemDto>();
+
+        foreach (var item in items)
+        {
+            decimal progress = 0;
+
+            if (item.AccountingType == CalculationMethod.Measured && item.MeasuredData != null)
+            {
+                if (item.MeasuredData.AgreedQuantity > 0)
+                {
+                    progress = (item.MeasuredData.ExecutedQuantity / item.MeasuredData.AgreedQuantity) * 100;
+                }
+            }
+            else if (item.AccountingType == CalculationMethod.Supervision && item.SupervisionData != null)
+            {
+                if (item.SupervisionData.EstimatedTotalCost > 0)
+                {
+                    if (invoiceGroups.TryGetValue(item.Id, out var approvedSum))
+                    {
+                        progress = (approvedSum / item.SupervisionData.EstimatedTotalCost) * 100;
+                    }
+                }
+            }
+            else if (item.AccountingType == CalculationMethod.Packages && item.PackageData != null)
+            {
+                progress = item.PackageData.CompletionPercentage;
+            }
+
+            dtos.Add(new BOQItemDto(
+                item.Id,
+                item.ItemCode ?? "",
+                item.ItemName,
+                item.AccountingType.ToString(),
+                item.Status,
+                item.StartDate,
+                item.EndDate,
+                progress,
+                item.Description
+            ));
+        }
+
+        return dtos;
+    }
 }

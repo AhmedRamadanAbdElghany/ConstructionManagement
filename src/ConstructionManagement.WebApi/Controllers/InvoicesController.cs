@@ -45,7 +45,7 @@ public class InvoicesController : ControllerBase
     }
 
     [HttpGet]
-    [Route("api/invoices")]
+    [Route("/api/invoices")]
     public async Task<IActionResult> GetAll([FromQuery] int? projectId = null, [FromQuery] string? status = null)
     {
         var invoices = await _invoiceService.GetAllInvoicesAsync(projectId, status);
