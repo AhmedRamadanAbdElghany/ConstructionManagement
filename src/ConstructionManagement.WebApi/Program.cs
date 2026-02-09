@@ -61,6 +61,8 @@ builder.Services.AddScoped<IRepository<BOQProfitabilityLog>, Repository<BOQProfi
 builder.Services.AddScoped<IRepository<ProjectSettings>, Repository<ProjectSettings>>();
 builder.Services.AddScoped<IRepository<EscalationLog>, Repository<EscalationLog>>();
 builder.Services.AddScoped<IRepository<Notification>, Repository<Notification>>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<IRepository<UserTypeHistory>, Repository<UserTypeHistory>>();
 builder.Services.AddScoped<IRepository<ProjectTeamRole>, Repository<ProjectTeamRole>>();
 builder.Services.AddScoped<IRepository<BOQExecutedDelta>, Repository<BOQExecutedDelta>>();
 
@@ -88,6 +90,7 @@ builder.Services.AddScoped<IMiscExpenseService, MiscExpenseService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IUserTypeService, UserTypeService>();
 
 // Approval-specific escalation job
 builder.Services.AddScoped<ApprovalEscalationJob>();

@@ -6,6 +6,7 @@ using ConstructionManagement.Domain.Enums;
 using ConstructionManagement.Infrastructure.Persistence.Repositories;
 using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Xunit;
@@ -15,6 +16,7 @@ namespace ConstructionManagement.Tests.Integration.Service;
 public class ErrorHandlingIntegrationTests : IntegrationTestBase
 {
     private readonly IConfiguration _emptyConfig = new ConfigurationBuilder().Build();
+    private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock = new();
 
     [Fact]
     public async Task CreateProject_WithInvalidData_ThrowsValidationException()
@@ -130,7 +132,7 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
 
         // Act
         var userRepo = new UserRepository(Context);
-        var service = new AuthService(userRepo, _emptyConfig, UnitOfWork);
+        var service = new AuthService(userRepo, _emptyConfig, UnitOfWork, _httpContextAccessorMock.Object);
         var result = await service.LoginAsync(loginRequest);
 
         // Assert
@@ -153,7 +155,7 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
 
         // Act
         var userRepo = new UserRepository(Context);
-        var service = new AuthService(userRepo, _emptyConfig, UnitOfWork);
+        var service = new AuthService(userRepo, _emptyConfig, UnitOfWork, _httpContextAccessorMock.Object);
         var result = await service.LoginAsync(loginRequest);
 
         // Assert

@@ -6,4 +6,8 @@ namespace ConstructionManagement.Infrastructure.Persistence.Repositories.Interfa
 public interface IUserRepository : IRepository<User>
 {
     Task<User?> GetByEmailAsync(string email);
+    Task<User?> GetByPasswordResetTokenAsync(string token);
+    Task<User?> GetByEmailVerificationTokenAsync(string token);
+    Task<IEnumerable<User>> GetUsersByRoleAsync(string roleName);
+    Task<IEnumerable<User>> GetUsersByCompanyIdAndRoleAsync(int companyId, string roleName);
 }

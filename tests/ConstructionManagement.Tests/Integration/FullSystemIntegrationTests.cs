@@ -3,8 +3,10 @@ using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories;
 using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Moq;
 using Xunit;
 
 using ConstructionManagement.Domain.Enums;
@@ -15,6 +17,7 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 	private readonly AuthService _authService;
 	private readonly BOQItemService _boqService;
 	private readonly IConfiguration _config;
+	private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock = new();
 
 	public FullSystemIntegrationTests()
 	{
@@ -34,7 +37,8 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 		_authService = new AuthService(
 			userRepository,
 			_config,
-			UnitOfWork);
+			UnitOfWork,
+			_httpContextAccessorMock.Object);
 
 		_boqService = new BOQItemService(
 			new Repository<BOQItem>(Context),

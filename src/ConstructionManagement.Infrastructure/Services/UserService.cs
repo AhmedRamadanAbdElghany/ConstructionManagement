@@ -110,7 +110,8 @@ public class UserService : IUserService
             .Select(u => new UserDto(
                 u.Id, $"{u.FirstName} {u.LastName}".Trim(), u.Email,
                 u.UserRoles.Select(ur => ur.Role.Name).ToList(),
-                u.CreatedAt))
+                u.CreatedAt,
+                u.UserType))
             .FirstOrDefaultAsync();
     }
 
@@ -123,7 +124,8 @@ public class UserService : IUserService
             .Select(u => new UserDto(
                 u.Id, $"{u.FirstName} {u.LastName}".Trim(), u.Email,
                 u.UserRoles.Select(ur => ur.Role.Name).ToList(),
-                u.CreatedAt))
+                u.CreatedAt,
+                u.UserType))
             .ToListAsync();
     }
 

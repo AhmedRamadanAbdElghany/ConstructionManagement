@@ -1,7 +1,8 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/auth/auth.service';
 import { SettingsService } from '../../core/services/settings.service';
+import { PendingRequestsService } from '../../core/services/pending-requests.service';
 import { CompanySettings } from '../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
@@ -43,6 +44,23 @@ import { RouterModule } from '@angular/router';
         <!-- Section Header -->
         <p class="px-4 py-2 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
            [class.opacity-0]="isCollapsed()">{{ (isClient ? 'sidebar.client_portal' : 'sidebar.administration') | translate }}</p>
+
+        @if (isAdmin) {
+          <!-- Pending Requests (SuperAdmin & CompanyAdmin) -->
+          <a routerLink="/admin/pending-requests" 
+             routerLinkActive="nav-active"
+             class="nav-item group">
+            <div class="nav-icon-box relative">
+              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+              </svg>
+              @if (pendingRequestsService.pendingRequests() > 0) {
+                <span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-amber-500 text-white text-[10px] font-black flex items-center justify-center shadow-lg ring-2 ring-white dark:ring-slate-900">{{ pendingRequestsService.pendingRequests() > 99 ? '99+' : pendingRequestsService.pendingRequests() }}</span>
+              }
+            </div>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.pending_requests' | translate }}</span>
+          </a>
+        }
 
         <a routerLink="/dashboard" 
            routerLinkActive="nav-active"
@@ -349,13 +367,13 @@ import { RouterModule } from '@angular/router';
         <label class="block text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] mb-3 px-1 truncate" [class.text-center]="isCollapsed()">{{ 'sidebar.demo_role_switch' | translate }}</label>
         <div class="relative group/select">
           <select 
-            (change)="switchRole($event)"
-            [value]="currentRole"
+            (change)="switchUserType($event)"
+            [value]="currentUserType"
             class="w-full pl-3 pr-10 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-300 text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-cyan-500/10 focus:border-cyan-500/30 transition-all cursor-pointer appearance-none outline-none shadow-xl">
-            <option value="SuperAdmin">{{ 'sidebar.role_super' | translate }}</option>
-            <option value="CompanyAdmin">{{ 'sidebar.role_admin' | translate }}</option>
-            <option value="CompanyUser">{{ 'sidebar.role_worker' | translate }}</option>
-            <option value="NormalUser">{{ 'sidebar.role_client' | translate }}</option>
+            <option value="0">Normal User</option>
+            <option value="1">Worker</option>
+            <option value="2">Company Owner</option>
+            <option value="3">Inventory Owner</option>
           </select>
           <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400 dark:text-slate-600 group-hover/select:text-cyan-500 dark:group-hover/select:text-cyan-400 transition-colors" [class.hidden]="isCollapsed()">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -439,16 +457,34 @@ import { RouterModule } from '@angular/router';
 export class SidebarComponent {
   isCollapsed = signal(false);
   settings?: CompanySettings;
+  pendingRequestsCount = signal(0);
 
   constructor(
     public authService: AuthService,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    public pendingRequestsService: PendingRequestsService
   ) {
     this.settingsService.getCompanySettings().subscribe(s => this.settings = s);
+    this.loadPendingRequestsCount();
+  }
+
+  loadPendingRequestsCount() {
+    // Initial load
+    this.pendingRequestsService.refreshPendingCount();
+  }
+
+  get currentUserType(): number {
+    const user = this.authService.getCurrentUser();
+    return user?.userType ?? 0;
   }
 
   get currentRole(): string {
-    return this.authService.getCurrentUser()?.role || 'CompanyUser';
+    const user = this.authService.getCurrentUser();
+    if (user && user.roles && user.roles.length > 0) {
+      // Return the first role for display
+      return user.roles[0];
+    }
+    return 'CompanyUser';
   }
 
   get isAdmin(): boolean {
@@ -464,13 +500,29 @@ export class SidebarComponent {
     return this.currentRole === 'NormalUser';
   }
 
+  get isInventoryOwner(): boolean {
+    return this.currentUserType === 3; // InventoryOwner = 3
+  }
+
   toggleCollapse() {
     this.isCollapsed.update(v => !v);
   }
 
-  switchRole(event: Event) {
+  switchUserType(event: Event) {
     const select = event.target as HTMLSelectElement;
-    this.authService.switchUserRole(select.value as any);
+    const newType = parseInt(select.value, 10);
+
+    this.authService.switchUserType(newType).subscribe({
+      next: () => {
+        // Optionally reload the page or refresh the UI
+        window.location.reload();
+      },
+      error: (err: any) => {
+        console.error('Failed to switch user type:', err);
+        // Revert selection
+        select.value = this.currentUserType.toString();
+      }
+    });
   }
 }
 

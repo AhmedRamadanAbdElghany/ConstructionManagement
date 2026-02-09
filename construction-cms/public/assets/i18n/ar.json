@@ -24,7 +24,8 @@
     "role_super": "سوبر",
     "role_admin": "مسؤول",
     "role_worker": "موظف",
-    "role_client": "عميل"
+    "role_client": "عميل",
+    "pending_requests": "الطلبات المعلقة"
   },
   "topbar": {
     "search_placeholder": "البحث في المشاريع والمستخدمين والمستندات...",

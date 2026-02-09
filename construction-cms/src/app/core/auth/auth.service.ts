@@ -1,13 +1,20 @@
-import { Injectable } from '@angular/core';
-import { User, UserRole } from '../../shared/interfaces';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { User, UserRole, UserType } from '../../shared/interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private apiUrl = '/api/auth';
+  private http = inject(HttpClient);
+
   private currentUser: User = {
     id: 1,
     fullName: 'Ahmed Ali',
     email: 'ahmed@company.com',
     role: 'CompanyAdmin',
+    userType: 2, // CompanyOwner
     status: 'Working',
     salary: 5000
   };
@@ -23,6 +30,27 @@ export class AuthService {
   getCurrentUser(): User {
     return this.currentUser;
   }
+
+  switchUserType(newType: number, reason?: string): Observable<{ success: boolean; message: string }> {
+    // For mock service, just update locally
+    if (this.currentUser.userType !== undefined) {
+      this.currentUser.userType = newType as UserType;
+    }
+    return of({ success: true, message: 'User type switched successfully' });
+  }
+
+  // Alternative: call actual backend (uncomment to use)
+  /*
+  switchUserType(newType: number, reason?: string): Observable<{ success: boolean; message: string }> {
+    return this.http.post<{ success: boolean; message: string }>(`${this.apiUrl}/change-user-type`, { newUserType: newType, reason }).pipe(
+      tap(response => {
+        if (response.success) {
+          this.currentUser.userType = newType;
+        }
+      })
+    );
+  }
+  */
 
   switchUserRole(role: UserRole): void {
     this.currentUser.role = role;

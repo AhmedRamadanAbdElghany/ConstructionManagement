@@ -4,6 +4,7 @@ using ConstructionManagement.Infrastructure.Persistence.Repositories;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Xunit;
@@ -15,6 +16,7 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
 {
     private readonly AuthService _service;
     private readonly Mock<IUserRepository> _userRepoMock = new();
+    private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock = new();
 
     public AuthServiceIntegrationTests() : base()
     {
@@ -35,7 +37,8 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
         _service = new AuthService(
             _userRepoMock.Object,
             configuration,
-            UnitOfWork
+            UnitOfWork,
+            _httpContextAccessorMock.Object
         );
     }
 
@@ -112,7 +115,7 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
         Context.Users.Add(user);
         await Context.SaveChangesAsync();
 
-        var service = new AuthService(new UserRepository(Context), config, UnitOfWork);
+        var service = new AuthService(new UserRepository(Context), config, UnitOfWork, _httpContextAccessorMock.Object);
 
         // Act
         var result = await service.LoginAsync(new LoginRequest("auth@test.com", password));

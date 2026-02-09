@@ -1,5 +1,6 @@
 using ConstructionManagement.Application.DTOs.Notfification;
 using ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Domain.Enums;
 
 namespace ConstructionManagement.Application.Interfaces;
 
@@ -20,7 +21,7 @@ public interface INotificationService
         string? link = null,
         NotificationType type = NotificationType.General
     );
-    
+
     /// <summary>
     /// إنشاء إشعار للموافقة على مستند
     /// </summary>
@@ -36,6 +37,20 @@ public interface INotificationService
 
     Task SendApprovalNeededNotificationAsync(ApprovalRequest request, ApprovalStep step);
     Task<List<NotificationDto>> GetUserNotificationsAsync(int userId, bool unreadOnly = false);
+    
+    /// <summary>
+    /// الحصول على الإشعارات من الأنواع السابقة للمستخدم (للحصول على الإشعارات المعلقة عند تغيير نوع المستخدم)
+    /// </summary>
+    Task<List<NotificationDto>> GetNotificationsFromPreviousUserTypesAsync(int userId, bool unreadOnly = false);
+    
     Task MarkAsReadAsync(int notificationId, int userId);
     Task MarkAllAsReadAsync(int userId);
+
+    // New methods for company/join requests
+    Task NotifyCompanyRequestApprovedAsync(int userId, string companyName);
+    Task NotifyCompanyRequestRejectedAsync(int userId, string reason);
+    Task NotifyJoinRequestApprovedAsync(int userId, string companyName);
+    Task NotifyJoinRequestRejectedAsync(int userId, string reason);
+    Task NotifyNewCompanyRequestAsync(int superAdminUserId, string companyName, int requestId);
+    Task NotifyNewJoinRequestAsync(int companyAdminUserId, string userName, int requestId);
 }

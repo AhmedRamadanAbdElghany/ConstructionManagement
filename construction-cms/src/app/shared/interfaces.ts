@@ -1,5 +1,7 @@
 export type UserRole = 'SuperAdmin' | 'CompanyAdmin' | 'CompanyUser' | 'NormalUser';
 
+export type UserType = 0 | 1 | 2 | 3; // NormalUser=0, Worker=1, CompanyOwner=2, InventoryOwner=3
+
 export interface Company {
   id: number;
   name: string;
@@ -34,6 +36,8 @@ export interface User {
   fullName: string;
   email: string;
   role: UserRole;
+  roles?: string[]; // For backward compatibility
+  userType?: UserType; // 0=NormalUser, 1=Worker, 2=CompanyOwner, 3=InventoryOwner
   status: 'Working' | 'Absent' | 'Client';
   salary: number;
   notes?: string; // Admin private notes

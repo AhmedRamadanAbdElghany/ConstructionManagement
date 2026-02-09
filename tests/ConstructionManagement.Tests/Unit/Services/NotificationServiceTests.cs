@@ -1,29 +1,28 @@
+using ConstructionManagement.Application.DTOs.Notfification;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Domain.Enums;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
-using MockQueryable;
 using Moq;
 
 namespace ConstructionManagement.Tests.Unit.Services;
 
 public class NotificationServiceTests
 {
-    private readonly Mock<IRepository<Notification>> _repoMock = new();
-    private readonly Mock<IRepository<UserRole>> _userRoleRepoMock = new();
-    private readonly Mock<IRepository<ProjectTeamRole>> _projectTeamRoleRepoMock = new();
-    private readonly Mock<IUnitOfWork> _uowMock = new();
+    private readonly Mock<INotificationRepository> _repoMock = new();
+    private readonly Mock<IUserRepository> _userRepoMock = new();
     private readonly Mock<ILogger<NotificationService>> _loggerMock = new();
 
     private NotificationService CreateService() =>
-        new(_repoMock.Object, _userRoleRepoMock.Object, _projectTeamRoleRepoMock.Object, _uowMock.Object, _loggerMock.Object);
+        new(_repoMock.Object, _userRepoMock.Object, _loggerMock.Object);
 
     #region Create & Send Tests
 
     [Fact]
-    public async Task CreateAndSendAsync_ShouldSaveNotificationAndCallUnitOfWork()
+    public async Task CreateAndSendAsync_ShouldSaveNotification()
     {
         // Arrange
         var userId = 1;
@@ -40,7 +39,6 @@ public class NotificationServiceTests
             n.UserId == userId &&
             n.Title == "Test Title" &&
             n.Link == "/link")), Times.Once());
-        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once());
     }
 
     #endregion
@@ -54,11 +52,13 @@ public class NotificationServiceTests
         var userId = 1;
         var notifications = new List<Notification>
         {
-            new Notification { Id = 1, UserId = userId, IsRead = false, CreatedAt = DateTime.UtcNow },
-            new Notification { Id = 2, UserId = userId, IsRead = true, CreatedAt = DateTime.UtcNow.AddMinutes(-5) }
-        }.BuildMock();
+            new() { Id = 1, UserId = userId, IsRead = false, Title = "Test1", Message = "Msg1", CreatedAt = DateTime.UtcNow },
+            new() { Id = 2, UserId = userId, IsRead = true, Title = "Test2", Message = "Msg2", CreatedAt = DateTime.UtcNow }
+        };
 
-        _repoMock.Setup(r => r.AsQueryable()).Returns(notifications);
+        _repoMock.Setup(r => r.GetUnreadByUserIdAsync(userId))
+            .ReturnsAsync(notifications.Where(n => !n.IsRead).ToList());
+
         var service = CreateService();
 
         // Act
@@ -66,69 +66,113 @@ public class NotificationServiceTests
 
         // Assert
         result.Should().HaveCount(1);
-        result.All(n => n.IsRead == false).Should().BeTrue();
+        result[0].IsRead.Should().BeFalse();
     }
 
-    #endregion
-
-    #region Update Status Tests
-
     [Fact]
-    public async Task MarkAsReadAsync_ShouldUpdateStatus_WhenNotificationExistsAndBelongsToUser()
+    public async Task GetUserNotificationsAsync_ShouldReturnAll_WhenNotUnreadOnly()
     {
         // Arrange
         var userId = 1;
-        var notificationId = 10;
-        var notification = new Notification { Id = notificationId, UserId = userId, IsRead = false };
+        var notifications = new List<Notification>
+        {
+            new() { Id = 1, UserId = userId, IsRead = false, Title = "Test1", Message = "Msg1", CreatedAt = DateTime.UtcNow },
+            new() { Id = 2, UserId = userId, IsRead = true, Title = "Test2", Message = "Msg2", CreatedAt = DateTime.UtcNow }
+        };
 
-        var mockData = new List<Notification> { notification }.BuildMock();
-        _repoMock.Setup(r => r.AsQueryable()).Returns(mockData);
+        _repoMock.Setup(r => r.GetByUserIdAsync(userId))
+            .ReturnsAsync(notifications);
 
         var service = CreateService();
 
         // Act
-        await service.MarkAsReadAsync(notificationId, userId);
+        var result = await service.GetUserNotificationsAsync(userId, unreadOnly: false);
+
+        // Assert
+        result.Should().HaveCount(2);
+    }
+
+    #endregion
+
+    #region Mark as Read Tests
+
+    [Fact]
+    public async Task MarkAsReadAsync_ShouldUpdateNotification_WhenNotificationExists()
+    {
+        // Arrange
+        const int userId = 1;
+        var notification = new Notification { Id = 1, UserId = userId, IsRead = false, Title = "Test", Message = "Msg", CreatedAt = DateTime.UtcNow };
+        
+        _repoMock.Setup(r => r.GetByIdAndUserIdAsync(1, userId))
+            .ReturnsAsync(notification);
+        _repoMock.Setup(r => r.UpdateAsync(It.IsAny<Notification>()))
+            .Returns(Task.CompletedTask);
+
+        var service = CreateService();
+
+        // Act
+        await service.MarkAsReadAsync(1, userId);
 
         // Assert
         notification.IsRead.Should().BeTrue();
         notification.ReadAt.Should().NotBeNull();
         _repoMock.Verify(r => r.UpdateAsync(notification), Times.Once());
-        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once());
     }
 
     [Fact]
     public async Task MarkAsReadAsync_ShouldDoNothing_WhenNotificationBelongsToAnotherUser()
     {
         // Arrange
-        var userId = 1;
-        var otherUserId = 99;
-        var notificationId = 10;
-        var notification = new Notification { Id = notificationId, UserId = otherUserId, IsRead = false };
+        const int userId = 2; // Different user
+        var notification = new Notification { Id = 1, UserId = 1, IsRead = false, Title = "Test", Message = "Msg", CreatedAt = DateTime.UtcNow };
+        
+        _repoMock.Setup(r => r.GetByIdAndUserIdAsync(1, userId))
+            .ReturnsAsync((Notification?)null);
 
-        _repoMock.Setup(r => r.AsQueryable()).Returns(new List<Notification> { notification }.BuildMock());
         var service = CreateService();
 
         // Act
-        await service.MarkAsReadAsync(notificationId, userId); // محاولة مستخدم مختلف قراءة الإشعار
+        await service.MarkAsReadAsync(1, userId);
 
         // Assert
-        notification.IsRead.Should().BeFalse(); // لم يتغير
         _repoMock.Verify(r => r.UpdateAsync(It.IsAny<Notification>()), Times.Never());
     }
 
     [Fact]
-    public async Task MarkAllAsReadAsync_ShouldUpdateOnlyUnreadNotifications()
+    public async Task MarkAsReadAsync_ShouldDoNothing_WhenAlreadyRead()
+    {
+        // Arrange
+        const int userId = 1;
+        var notification = new Notification { Id = 1, UserId = userId, IsRead = true, Title = "Test", Message = "Msg", CreatedAt = DateTime.UtcNow };
+        
+        _repoMock.Setup(r => r.GetByIdAndUserIdAsync(1, userId))
+            .ReturnsAsync(notification);
+
+        var service = CreateService();
+
+        // Act
+        await service.MarkAsReadAsync(1, userId);
+
+        // Assert
+        _repoMock.Verify(r => r.UpdateAsync(It.IsAny<Notification>()), Times.Never());
+    }
+
+    [Fact]
+    public async Task MarkAllAsReadAsync_ShouldUpdateAllUnread_WhenUserHasUnreadNotifications()
     {
         // Arrange
         var userId = 1;
         var notifications = new List<Notification>
         {
-            new Notification { Id = 1, UserId = userId, IsRead = false },
-            new Notification { Id = 2, UserId = userId, IsRead = true },
-            new Notification { Id = 3, UserId = userId, IsRead = false }
-        }.BuildMock();
+            new() { Id = 1, UserId = userId, IsRead = false, Title = "Test1", Message = "Msg1", CreatedAt = DateTime.UtcNow },
+            new() { Id = 2, UserId = userId, IsRead = false, Title = "Test2", Message = "Msg2", CreatedAt = DateTime.UtcNow }
+        };
 
-        _repoMock.Setup(r => r.AsQueryable()).Returns(notifications);
+        _repoMock.Setup(r => r.GetUnreadByUserIdAsync(userId))
+            .ReturnsAsync(notifications);
+        _repoMock.Setup(r => r.UpdateRangeAsync(It.IsAny<List<Notification>>()))
+            .Returns(Task.CompletedTask);
+
         var service = CreateService();
 
         // Act
@@ -136,7 +180,6 @@ public class NotificationServiceTests
 
         // Assert
         _repoMock.Verify(r => r.UpdateRangeAsync(It.Is<List<Notification>>(list => list.Count == 2)), Times.Once());
-        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Once());
     }
 
     [Fact]
@@ -144,12 +187,10 @@ public class NotificationServiceTests
     {
         // Arrange
         var userId = 1;
-        var notifications = new List<Notification>
-        {
-            new Notification { Id = 1, UserId = userId, IsRead = true }
-        }.BuildMock();
 
-        _repoMock.Setup(r => r.AsQueryable()).Returns(notifications);
+        _repoMock.Setup(r => r.GetUnreadByUserIdAsync(userId))
+            .ReturnsAsync(new List<Notification>());
+
         var service = CreateService();
 
         // Act
@@ -157,7 +198,6 @@ public class NotificationServiceTests
 
         // Assert
         _repoMock.Verify(r => r.UpdateRangeAsync(It.IsAny<List<Notification>>()), Times.Never());
-        _uowMock.Verify(u => u.SaveChangesAsync(), Times.Never());
     }
 
     #endregion

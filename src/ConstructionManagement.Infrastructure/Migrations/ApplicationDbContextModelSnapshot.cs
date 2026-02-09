@@ -245,7 +245,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             IsDeleted = false,
                             ProjectApprovalRuleId = 1,
                             ProjectId = 1,
-                            RequestedAt = new DateTime(2026, 2, 9, 1, 1, 40, 490, DateTimeKind.Utc).AddTicks(9420),
+                            RequestedAt = new DateTime(2026, 2, 9, 3, 35, 15, 642, DateTimeKind.Utc).AddTicks(2069),
                             RequestedByUserId = 2,
                             Source = 0,
                             SourceId = 1,
@@ -1717,6 +1717,70 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("CompanyId");
 
                     b.ToTable("CompanyPackages");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BusinessId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactPhone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RejectionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ReviewedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ReviewedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReviewedByUserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CompanyRequests");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanySettings", b =>
@@ -3826,6 +3890,59 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.ToTable("JobPostings");
                 });
 
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.JoinRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RejectionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ReviewedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ReviewedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("ReviewedByUserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("JoinRequests");
+                });
+
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.KPIDefinition", b =>
                 {
                     b.Property<int>("Id")
@@ -5050,7 +5167,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            AssignedAt = new DateTime(2026, 2, 9, 1, 1, 40, 476, DateTimeKind.Utc).AddTicks(4642),
+                            AssignedAt = new DateTime(2026, 2, 9, 3, 35, 15, 635, DateTimeKind.Utc).AddTicks(9333),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             ProjectRoleId = 2,
@@ -5059,7 +5176,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            AssignedAt = new DateTime(2026, 2, 9, 1, 1, 40, 476, DateTimeKind.Utc).AddTicks(5902),
+                            AssignedAt = new DateTime(2026, 2, 9, 3, 35, 15, 636, DateTimeKind.Utc).AddTicks(77),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             ProjectRoleId = 1,
@@ -5068,7 +5185,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            AssignedAt = new DateTime(2026, 2, 9, 1, 1, 40, 476, DateTimeKind.Utc).AddTicks(5906),
+                            AssignedAt = new DateTime(2026, 2, 9, 3, 35, 15, 636, DateTimeKind.Utc).AddTicks(79),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             ProjectRoleId = 2,
@@ -5077,7 +5194,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 4,
-                            AssignedAt = new DateTime(2026, 2, 9, 1, 1, 40, 476, DateTimeKind.Utc).AddTicks(5908),
+                            AssignedAt = new DateTime(2026, 2, 9, 3, 35, 15, 636, DateTimeKind.Utc).AddTicks(80),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             ProjectRoleId = 3,
@@ -5086,7 +5203,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 5,
-                            AssignedAt = new DateTime(2026, 2, 9, 1, 1, 40, 476, DateTimeKind.Utc).AddTicks(5910),
+                            AssignedAt = new DateTime(2026, 2, 9, 3, 35, 15, 636, DateTimeKind.Utc).AddTicks(82),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             ProjectRoleId = 4,
@@ -6947,7 +7064,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             IsDeleted = false,
                             ProjectId = 1,
                             Status = 1,
-                            TransactionDate = new DateTime(2026, 2, 9, 1, 1, 40, 479, DateTimeKind.Utc).AddTicks(8267),
+                            TransactionDate = new DateTime(2026, 2, 9, 3, 35, 15, 637, DateTimeKind.Utc).AddTicks(8938),
                             Type = 0
                         });
                 });
@@ -6973,11 +7090,17 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("EmailVerificationToken")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEmailVerified")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
@@ -6987,6 +7110,12 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordResetToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PasswordResetTokenExpiry")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
@@ -7013,6 +7142,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             Email = "admin@construction.com",
                             FirstName = "System",
                             IsDeleted = false,
+                            IsEmailVerified = false,
                             LastName = "Admin",
                             PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
                             Username = "admin"
@@ -7025,6 +7155,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             Email = "ahmed@construction.com",
                             FirstName = "Ahmed",
                             IsDeleted = false,
+                            IsEmailVerified = false,
                             LastName = "Ramadan",
                             PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
                             Username = "ahmed"
@@ -7037,6 +7168,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             Email = "company_admin@construction.com",
                             FirstName = "Company",
                             IsDeleted = false,
+                            IsEmailVerified = false,
                             LastName = "Admin",
                             PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
                             Username = "company_admin"
@@ -7049,6 +7181,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             Email = "pm@construction.com",
                             FirstName = "Project",
                             IsDeleted = false,
+                            IsEmailVerified = false,
                             LastName = "Manager",
                             PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
                             Username = "pm"
@@ -7061,6 +7194,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             Email = "engineer@construction.com",
                             FirstName = "Site",
                             IsDeleted = false,
+                            IsEmailVerified = false,
                             LastName = "Engineer",
                             PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
                             Username = "engineer"
@@ -7073,6 +7207,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             Email = "accountant@construction.com",
                             FirstName = "Project",
                             IsDeleted = false,
+                            IsEmailVerified = false,
                             LastName = "Accountant",
                             PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
                             Username = "accountant"
@@ -7085,6 +7220,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             Email = "consultant@construction.com",
                             FirstName = "External",
                             IsDeleted = false,
+                            IsEmailVerified = false,
                             LastName = "Consultant",
                             PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
                             Username = "consultant"
@@ -7116,13 +7252,13 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             UserId = 1,
                             RoleId = 1,
-                            AssignedAt = new DateTime(2026, 2, 9, 1, 1, 40, 468, DateTimeKind.Utc).AddTicks(8032)
+                            AssignedAt = new DateTime(2026, 2, 9, 3, 35, 15, 629, DateTimeKind.Utc).AddTicks(7144)
                         },
                         new
                         {
                             UserId = 3,
                             RoleId = 2,
-                            AssignedAt = new DateTime(2026, 2, 9, 1, 1, 40, 468, DateTimeKind.Utc).AddTicks(9813)
+                            AssignedAt = new DateTime(2026, 2, 9, 3, 35, 15, 632, DateTimeKind.Utc).AddTicks(451)
                         });
                 });
 
@@ -7635,6 +7771,23 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("Company");
                 });
 
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyRequest", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "ReviewedBy")
+                        .WithMany()
+                        .HasForeignKey("ReviewedByUserId");
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ReviewedBy");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanySettings", b =>
                 {
                     b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
@@ -7993,6 +8146,31 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasForeignKey("CompanyId");
 
                     b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.JoinRequest", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "ReviewedBy")
+                        .WithMany()
+                        .HasForeignKey("ReviewedByUserId");
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("ReviewedBy");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.KPIDefinition", b =>

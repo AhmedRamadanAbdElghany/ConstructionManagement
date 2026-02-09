@@ -49,6 +49,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<BOQProfitabilityLog> BOQProfitabilityLogs => Set<BOQProfitabilityLog>();
     public DbSet<EscalationLog> EscalationLogs => Set<EscalationLog>();
     public DbSet<Notification> Notifications => Set<Notification>();
+    public DbSet<UserTypeHistory> UserTypeHistories => Set<UserTypeHistory>();
     public DbSet<Package> Packages => Set<Package>();
     public DbSet<ApprovalRequest> ApprovalRequests => Set<ApprovalRequest>();
     public DbSet<ApprovalStep> ApprovalSteps => Set<ApprovalStep>();
@@ -59,6 +60,10 @@ public class ApplicationDbContext : DbContext
 
     // HR / Job Postings
     public DbSet<JobPosting> JobPostings => Set<JobPosting>();
+
+    // Company and Join Requests
+    public DbSet<CompanyRequest> CompanyRequests => Set<CompanyRequest>();
+    public DbSet<JoinRequest> JoinRequests => Set<JoinRequest>();
 
     // Expenses
     public DbSet<MiscExpense> MiscExpenses => Set<MiscExpense>();

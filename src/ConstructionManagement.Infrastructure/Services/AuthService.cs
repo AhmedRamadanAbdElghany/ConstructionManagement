@@ -2,11 +2,15 @@ using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
+using ConstructionManagement.Domain.Enums;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ConstructionManagement.Infrastructure.Services;
 
@@ -14,82 +18,256 @@ public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
     private readonly IConfiguration _configuration;
-    private readonly IUnitOfWork _unitOfWork; // إضافة Unit of Work
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public AuthService(
         IUserRepository userRepository,
         IConfiguration configuration,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IHttpContextAccessor httpContextAccessor)
     {
         _userRepository = userRepository;
         _configuration = configuration;
         _unitOfWork = unitOfWork;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
     {
-        // البحث عن المستخدم باستخدام البريد الإلكتروني
         var user = await _userRepository.GetByEmailAsync(request.Email);
 
-        // التحقق من وجود المستخدم وصحة كلمة المرور المشفرة
         if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
-            return new AuthResponse(false, "بيانات الدخول غير صحيحة", null, null);
+            return new AuthResponse(false, "Invalid email or password", null, null);
         }
 
-        // توليد التوكن
         var token = GenerateJwtToken(user);
 
-        // استخراج أسماء الأدوار بشكل آمن
         var roles = user.UserRoles?.Select(ur => ur.Role.Name).ToList() ?? new List<string>();
 
-        // إنشاء كائن Dto للمستخدم
         var userDto = new UserDto(
             user.Id,
             user.FullName,
             user.Email,
             roles,
-            user.CreatedAt
+            user.CreatedAt,
+            user.UserType
         );
 
-        return new AuthResponse(true, "تم تسجيل الدخول بنجاح", token, userDto);
+        return new AuthResponse(true, "Login successful", token, userDto);
     }
 
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
     {
-        // 1. التحقق من وجود المستخدم مسبقاً
+        // Validate email format
+        if (!IsValidEmail(request.Email))
+        {
+            return new AuthResponse(false, "Invalid email format", null, null);
+        }
+
+        // Validate password strength
+        var passwordValidation = ValidatePasswordStrength(request.Password);
+        if (!passwordValidation.IsValid)
+        {
+            return new AuthResponse(false, passwordValidation.Message, null, null);
+        }
+
         var existingUser = await _userRepository.GetByEmailAsync(request.Email);
         if (existingUser != null)
         {
-            return new AuthResponse(false, "البريد الإلكتروني مستخدم بالفعل", null, null);
+            return new AuthResponse(false, "Email is already registered", null, null);
         }
 
-        // 2. إنشاء كائن المستخدم وتشفير كلمة المرور
         var nameParts = request.FullName.Split(' ', 2);
         var user = new User
         {
             FirstName = nameParts[0],
             LastName = nameParts.Length > 1 ? nameParts[1] : string.Empty,
             Email = request.Email,
-            Phone = request.Phone, // تأكد أن اسم الحقل في الـ Entity يطابق هذا
+            Phone = request.Phone,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            IsEmailVerified = false,
+            EmailVerificationToken = GenerateSecureToken(),
+            UserType = request.UserType
         };
 
         try
         {
-            // 3. الحفظ باستخدام Repository و Unit of Work
             await _userRepository.AddAsync(user);
             await _unitOfWork.SaveChangesAsync();
 
-            // 4. إرجاع استجابة نجاح (يمكنك توليد توكن هنا أيضاً إذا أردت تسجيل دخول تلقائي)
-            return new AuthResponse(true, "تم إنشاء الحساب بنجاح", null, null);
+            // TODO: Send verification email with user.EmailVerificationToken
+
+            var roles = new List<string> { "CompanyUser" };
+            var userDto = new UserDto(
+                user.Id,
+                user.FullName,
+                user.Email,
+                roles,
+                user.CreatedAt,
+                user.UserType
+            );
+
+            return new AuthResponse(true, "Registration successful. Please check your email to verify your account.", null, userDto);
         }
         catch (Exception ex)
         {
-            // تسجيل الخطأ أو التعامل معه
-            return new AuthResponse(false, $"حدث خطأ أثناء التسجيل: {ex.Message}", null, null);
+            return new AuthResponse(false, $"Registration failed: {ex.Message}", null, null);
         }
+    }
+
+    public async Task<ForgotPasswordResponse> ForgotPasswordAsync(ForgotPasswordRequest request)
+    {
+        if (!IsValidEmail(request.Email))
+        {
+            return new ForgotPasswordResponse(false, "Invalid email format");
+        }
+
+        var user = await _userRepository.GetByEmailAsync(request.Email);
+        if (user == null)
+        {
+            // Don't reveal if user exists
+            return new ForgotPasswordResponse(true, "If an account exists with this email, a password reset link has been sent.");
+        }
+
+        // Generate reset token
+        user.PasswordResetToken = GenerateSecureToken();
+        user.PasswordResetTokenExpiry = DateTime.UtcNow.AddHours(1);
+
+        try
+        {
+            await _userRepository.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
+
+            // TODO: Send password reset email with user.PasswordResetToken
+
+            return new ForgotPasswordResponse(true, "If an account exists with this email, a password reset link has been sent.");
+        }
+        catch (Exception ex)
+        {
+            return new ForgotPasswordResponse(false, "An error occurred while processing your request.");
+        }
+    }
+
+    public async Task<ResetPasswordResponse> ResetPasswordAsync(ResetPasswordRequest request)
+    {
+        if (request.NewPassword != request.ConfirmPassword)
+        {
+            return new ResetPasswordResponse(false, "Passwords do not match");
+        }
+
+        var passwordValidation = ValidatePasswordStrength(request.NewPassword);
+        if (!passwordValidation.IsValid)
+        {
+            return new ResetPasswordResponse(false, passwordValidation.Message);
+        }
+
+        var user = await _userRepository.GetByPasswordResetTokenAsync(request.Token);
+        if (user == null || user.PasswordResetTokenExpiry < DateTime.UtcNow)
+        {
+            return new ResetPasswordResponse(false, "Invalid or expired reset token.");
+        }
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+        user.PasswordResetToken = null;
+        user.PasswordResetTokenExpiry = null;
+
+        try
+        {
+            await _userRepository.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
+
+            return new ResetPasswordResponse(true, "Password reset successful.");
+        }
+        catch (Exception ex)
+        {
+            return new ResetPasswordResponse(false, "An error occurred while resetting your password.");
+        }
+    }
+
+    public async Task<bool> VerifyEmailAsync(string token)
+    {
+        var user = await _userRepository.GetByEmailVerificationTokenAsync(token);
+        if (user == null)
+        {
+            return false;
+        }
+
+        user.IsEmailVerified = true;
+        user.EmailVerificationToken = null;
+
+        try
+        {
+            await _userRepository.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public async Task<AuthResponse> ResendVerificationEmailAsync(string email)
+    {
+        if (!IsValidEmail(email))
+        {
+            return new AuthResponse(false, "Invalid email format", null, null);
+        }
+
+        var user = await _userRepository.GetByEmailAsync(email);
+        if (user == null)
+        {
+            return new AuthResponse(false, "User not found", null, null);
+        }
+
+        if (user.IsEmailVerified)
+        {
+            return new AuthResponse(false, "Email is already verified", null, null);
+        }
+
+        user.EmailVerificationToken = GenerateSecureToken();
+
+        try
+        {
+            await _userRepository.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
+
+            // TODO: Send verification email
+
+            return new AuthResponse(true, "Verification email sent successfully.", null, null);
+        }
+        catch (Exception ex)
+        {
+            return new AuthResponse(false, $"Failed to send verification email: {ex.Message}", null, null);
+        }
+    }
+
+    public int? GetCurrentUserId()
+    {
+        var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (int.TryParse(userIdClaim, out var userId))
+        {
+            return userId;
+        }
+        return null;
+    }
+
+    public async Task<int?> GetCurrentUserIdAsync()
+    {
+        return GetCurrentUserId();
+    }
+
+    public async Task<User?> GetCurrentUserAsync()
+    {
+        var userId = await GetCurrentUserIdAsync();
+        if (userId.HasValue)
+        {
+            return await _userRepository.GetByIdAsync(userId.Value);
+        }
+        return null;
     }
 
     private string GenerateJwtToken(User user)
@@ -101,7 +279,6 @@ public class AuthService : IAuthService
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        // 1. المطالبات الأساسية (Claims)
         var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
@@ -116,7 +293,6 @@ public class AuthService : IAuthService
             claims.Add(new Claim("companyId", user.CompanyId.Value.ToString()));
         }
 
-        // 2. مطالبات الأدوار (إضافة كل دور كمطالبة منفصلة)
         if (user.UserRoles != null)
         {
             foreach (var userRole in user.UserRoles)
@@ -128,7 +304,7 @@ public class AuthService : IAuthService
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddDays(7), // يفضل استخدام UtcNow
+            Expires = DateTime.UtcNow.AddDays(7),
             Issuer = _configuration["JwtSettings:Issuer"],
             Audience = _configuration["JwtSettings:Audience"],
             SigningCredentials = creds
@@ -138,5 +314,50 @@ public class AuthService : IAuthService
         var token = tokenHandler.CreateToken(tokenDescriptor);
 
         return tokenHandler.WriteToken(token);
+    }
+
+    private static string GenerateSecureToken()
+    {
+        var bytes = new byte[32];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(bytes);
+        }
+        return Convert.ToBase64String(bytes)
+            .Replace("+", "-")
+            .Replace("/", "_")
+            .Replace("=", "");
+    }
+
+    private static bool IsValidEmail(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            return false;
+
+        var regex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.IgnoreCase);
+        return regex.IsMatch(email);
+    }
+
+    private static (bool IsValid, string Message) ValidatePasswordStrength(string password)
+    {
+        if (string.IsNullOrWhiteSpace(password))
+            return (false, "Password is required");
+
+        if (password.Length < 8)
+            return (false, "Password must be at least 8 characters long");
+
+        if (!Regex.IsMatch(password, @"[A-Z]"))
+            return (false, "Password must contain at least one uppercase letter");
+
+        if (!Regex.IsMatch(password, @"[a-z]"))
+            return (false, "Password must contain at least one lowercase letter");
+
+        if (!Regex.IsMatch(password, @"[0-9]"))
+            return (false, "Password must contain at least one number");
+
+        if (!Regex.IsMatch(password, @"[!@#$%^&*(),.?""':{}|<>]"))
+            return (false, "Password must contain at least one special character");
+
+        return (true, "Password is strong");
     }
 }

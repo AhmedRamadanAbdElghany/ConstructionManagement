@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Domain.Enums;
 
 /// <summary>
 /// In-app notification sent to a specific user
@@ -15,6 +16,12 @@ public class Notification : BaseEntity, ICompanyEntity
 
     [ForeignKey(nameof(UserId))]
     public virtual User User { get; set; } = null!;
+
+    /// <summary>
+    /// The user type the notification was originally created for
+    /// Used to track notifications that should be delivered even after user type changes
+    /// </summary>
+    public UserType? OriginalUserType { get; set; }
 
     // -- Content ---------------------------------------------------------------
     public string Title { get; set; } = string.Empty;

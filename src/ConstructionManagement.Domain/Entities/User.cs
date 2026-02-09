@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 namespace ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Domain.Enums;
 
 /// <summary>
 /// Represents a system user (employee, manager, engineer, client rep, etc.)
@@ -15,6 +16,19 @@ public class User : BaseEntity, ICompanyEntity
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public string? Phone { get; set; }
+
+    /// <summary>
+    /// The current type of the user (persisted for role switching)
+    /// </summary>
+    public UserType UserType { get; set; } = UserType.NormalUser;
+
+    // -- Email Verification -----------------------------------------------------
+    public bool IsEmailVerified { get; set; } = false;
+    public string? EmailVerificationToken { get; set; }
+
+    // -- Password Reset --------------------------------------------------------
+    public string? PasswordResetToken { get; set; }
+    public DateTime? PasswordResetTokenExpiry { get; set; }
 
     // -- Multi-Tenancy ----------------------------------------------------------
     /// Logical tenant identifier for data isolation (all data in single database)

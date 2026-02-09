@@ -2,10 +2,16 @@ import { Routes } from '@angular/router';
 import { roleGuard } from './core/auth/role.guard';
 
 export const routes: Routes = [
+    // Auth Routes (available without authentication)
+    {
+        path: 'auth',
+        loadChildren: () => import('./features/auth/auth.routes').then(m => m.authRoutes)
+    },
+
     // Default redirect
     {
         path: '',
-        redirectTo: 'dashboard',
+        redirectTo: 'auth/login',
         pathMatch: 'full'
     },
 
@@ -30,6 +36,12 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/admin/companies/companies.component').then(m => m.CompaniesComponent),
                 canActivate: [roleGuard],
                 data: { roles: ['SuperAdmin'] }
+            },
+            {
+                path: 'pending-requests',
+                loadComponent: () => import('./features/admin/pending-requests/pending-requests.component').then(m => m.PendingRequestsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
             },
             {
                 path: 'companies/:id',
