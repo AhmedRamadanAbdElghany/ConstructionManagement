@@ -197,6 +197,7 @@ public class ApplicationDbContext : DbContext
 
         // 4. InvoiceSequence & Constraints
         modelBuilder.Entity<InvoiceSequence>().ToTable("InvoiceSequences").HasKey(s => s.YearPart);
+        modelBuilder.Entity<InvoiceSequence>().Property(s => s.YearPart).ValueGeneratedNever();
         modelBuilder.Entity<InvoiceSequence>().Property(s => s.NextNumber).HasDefaultValue(1);
         modelBuilder.Entity<ItemInvoice>().HasIndex(ii => ii.InvoiceNumber).IsUnique().HasDatabaseName("IX_ItemInvoice_InvoiceNumber_Unique");
 

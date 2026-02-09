@@ -245,7 +245,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             IsDeleted = false,
                             ProjectApprovalRuleId = 1,
                             ProjectId = 1,
-                            RequestedAt = new DateTime(2026, 2, 8, 19, 1, 49, 781, DateTimeKind.Utc).AddTicks(8829),
+                            RequestedAt = new DateTime(2026, 2, 9, 1, 1, 40, 490, DateTimeKind.Utc).AddTicks(9420),
                             RequestedByUserId = 2,
                             Source = 0,
                             SourceId = 1,
@@ -3463,10 +3463,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.InvoiceSequence", b =>
                 {
                     b.Property<int>("YearPart")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("YearPart"));
 
                     b.Property<int>("NextNumber")
                         .ValueGeneratedOnAdd()
@@ -5053,7 +5050,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            AssignedAt = new DateTime(2026, 2, 8, 19, 1, 49, 773, DateTimeKind.Utc).AddTicks(4909),
+                            AssignedAt = new DateTime(2026, 2, 9, 1, 1, 40, 476, DateTimeKind.Utc).AddTicks(4642),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             ProjectRoleId = 2,
@@ -5062,7 +5059,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            AssignedAt = new DateTime(2026, 2, 8, 19, 1, 49, 773, DateTimeKind.Utc).AddTicks(6792),
+                            AssignedAt = new DateTime(2026, 2, 9, 1, 1, 40, 476, DateTimeKind.Utc).AddTicks(5902),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             ProjectRoleId = 1,
@@ -5071,7 +5068,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            AssignedAt = new DateTime(2026, 2, 8, 19, 1, 49, 773, DateTimeKind.Utc).AddTicks(6796),
+                            AssignedAt = new DateTime(2026, 2, 9, 1, 1, 40, 476, DateTimeKind.Utc).AddTicks(5906),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             ProjectRoleId = 2,
@@ -5080,7 +5077,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 4,
-                            AssignedAt = new DateTime(2026, 2, 8, 19, 1, 49, 773, DateTimeKind.Utc).AddTicks(6798),
+                            AssignedAt = new DateTime(2026, 2, 9, 1, 1, 40, 476, DateTimeKind.Utc).AddTicks(5908),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             ProjectRoleId = 3,
@@ -5089,7 +5086,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 5,
-                            AssignedAt = new DateTime(2026, 2, 8, 19, 1, 49, 773, DateTimeKind.Utc).AddTicks(6811),
+                            AssignedAt = new DateTime(2026, 2, 9, 1, 1, 40, 476, DateTimeKind.Utc).AddTicks(5910),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             ProjectRoleId = 4,
@@ -6950,7 +6947,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             IsDeleted = false,
                             ProjectId = 1,
                             Status = 1,
-                            TransactionDate = new DateTime(2026, 2, 8, 19, 1, 49, 776, DateTimeKind.Utc).AddTicks(9145),
+                            TransactionDate = new DateTime(2026, 2, 9, 1, 1, 40, 479, DateTimeKind.Utc).AddTicks(8267),
                             Type = 0
                         });
                 });
@@ -7119,13 +7116,13 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             UserId = 1,
                             RoleId = 1,
-                            AssignedAt = new DateTime(2026, 2, 8, 19, 1, 49, 769, DateTimeKind.Utc).AddTicks(5973)
+                            AssignedAt = new DateTime(2026, 2, 9, 1, 1, 40, 468, DateTimeKind.Utc).AddTicks(8032)
                         },
                         new
                         {
                             UserId = 3,
                             RoleId = 2,
-                            AssignedAt = new DateTime(2026, 2, 8, 19, 1, 49, 769, DateTimeKind.Utc).AddTicks(6798)
+                            AssignedAt = new DateTime(2026, 2, 9, 1, 1, 40, 468, DateTimeKind.Utc).AddTicks(9813)
                         });
                 });
 
