@@ -246,7 +246,7 @@ public class ProjectsControllerIntegrationTests : ApiTestBase
         var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
 
         var user = await SeedUserAsync(email, hashedPassword, "Test User");
-        var project = await SeedProjectAsync("Test Project", user.Id, p => p.IsClosed = true);
+        var project = await SeedProjectAsync("Test Project", user.Id, configure: p => p.IsClosed = true);
 
         var token = await AuthenticateAsync(email, password);
         SetAuthToken(token);

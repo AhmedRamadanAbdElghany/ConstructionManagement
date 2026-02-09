@@ -69,12 +69,13 @@ namespace ConstructionManagement.Tests.Integration
             return user;
         }
 
-        protected async Task<Project> SeedProjectAsync(string name, int ownerUserId, Action<Project>? configure = null)
+        protected async Task<Project> SeedProjectAsync(string name, int ownerUserId, int? companyId = null, Action<Project>? configure = null)
         {
             var project = new Project
             {
                 ProjectName = name,
                 OwnerUserId = ownerUserId,
+                CompanyId = companyId,
                 AccountingSystem = CalculationMethod.Measured,
                 Status = "Active"
             };

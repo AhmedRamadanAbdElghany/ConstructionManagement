@@ -32,6 +32,13 @@ public abstract class ApiTestBase : IAsyncDisposable
         _connection = new Microsoft.Data.Sqlite.SqliteConnection("DataSource=:memory:");
         _connection.Open();
 
+        // Enable foreign keys and set busy timeout
+        using (var command = _connection.CreateCommand())
+        {
+            command.CommandText = "PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 5000;";
+            command.ExecuteNonQuery();
+        }
+
         // Configure test settings
         var testSettings = new Dictionary<string, string?>
         {
@@ -226,12 +233,13 @@ public abstract class ApiTestBase : IAsyncDisposable
         return user;
     }
 
-    protected async Task<Project> SeedProjectAsync(string name, int ownerUserId, Action<Project>? configure = null)
+    protected async Task<Project> SeedProjectAsync(string name, int ownerUserId, int? companyId = null, Action<Project>? configure = null)
     {
         var project = new Project
         {
             ProjectName = name,
             OwnerUserId = ownerUserId,
+            CompanyId = companyId,
             AccountingSystem = CalculationMethod.Measured,
             Status = "Active",
             CreatedAt = DateTime.UtcNow

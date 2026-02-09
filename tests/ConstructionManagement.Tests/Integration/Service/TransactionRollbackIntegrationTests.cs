@@ -34,11 +34,11 @@ public class TransactionRollbackIntegrationTests : ApiTestBase
         {
             var invalidProject = new Project
             {
-                ProjectName = "", // Invalid: empty name
-                OwnerUserId = user.Id,
+                ProjectName = "Invalid Project",
+                OwnerUserId = 999999, // Trigger FK violation
                 AccountingSystem = CalculationMethod.Measured,
                 StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(-1) // Invalid: end date before start
+                EndDate = DateTime.UtcNow.AddDays(30)
             };
             Context.Projects.Add(invalidProject);
             await Context.SaveChangesAsync();
@@ -64,13 +64,15 @@ public class TransactionRollbackIntegrationTests : ApiTestBase
 
         var user = await SeedUserAsync(email, hashedPassword, "Test User");
         var project = await SeedProjectAsync("Test Project", user.Id);
+        Context.Entry(project).State = EntityState.Detached;
+        Context.ChangeTracker.Clear();
 
         var originalProjectName = project.ProjectName;
 
         // Act - Attempt to update with invalid data that should trigger rollback
         try
         {
-            project.ProjectName = ""; // Invalid: empty name
+            project.OwnerUserId = 999999; // Trigger FK violation
             Context.Projects.Update(project);
             await Context.SaveChangesAsync();
         }
@@ -116,11 +118,11 @@ public class TransactionRollbackIntegrationTests : ApiTestBase
             };
             Context.Projects.Add(project1);
 
-            // Second project is invalid (missing required fields)
+            // Second project is invalid (trigger FK violation)
             var project2 = new Project
             {
-                ProjectName = "", // Invalid: empty name
-                OwnerUserId = user.Id,
+                ProjectName = "Invalid Project",
+                OwnerUserId = 999999, // Trigger FK violation
                 AccountingSystem = CalculationMethod.Measured,
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddDays(30)
@@ -153,24 +155,17 @@ public class TransactionRollbackIntegrationTests : ApiTestBase
 
         var originalProjectName = project.ProjectName;
 
-        // Act - Simulate a database error during update
+        // Act - Simulate a database error during update (FK violation)
         try
         {
-            // Temporarily break the database connection
-            Context.Database.CloseConnection();
-            
             project.ProjectName = "Updated Project Name";
+            project.OwnerUserId = 999999; // Trigger FK violation
             Context.Projects.Update(project);
             await Context.SaveChangesAsync();
         }
         catch
         {
             // Ignore expected exception
-        }
-        finally
-        {
-            // Reconnect if needed
-            try { Context.Database.OpenConnection(); } catch { }
         }
 
         // Assert - Project name should not have been updated due to rollback

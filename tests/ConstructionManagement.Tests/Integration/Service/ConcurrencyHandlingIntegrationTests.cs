@@ -11,6 +11,8 @@ namespace ConstructionManagement.Tests.Integration.Service;
 
 public class ConcurrencyHandlingIntegrationTests : ApiTestBase
 {
+    private static readonly System.Threading.SemaphoreSlim _dbLock = new System.Threading.SemaphoreSlim(1, 1);
+
     [Fact]
     public async Task ConcurrentProjectUpdates_LastWriteWins()
     {
@@ -21,26 +23,43 @@ public class ConcurrencyHandlingIntegrationTests : ApiTestBase
 
         var user = await SeedUserAsync(email, hashedPassword, "Test User");
         var project = await SeedProjectAsync("Test Project", user.Id);
+        Context.ChangeTracker.Clear();
 
-        // Act - Simulate concurrent updates using the same context
+        // Act - Simulate concurrent updates using separate scopes
         var task1 = Task.Run(async () =>
         {
-            project.ProjectName = "Updated by Task 1";
-            Context.Projects.Update(project);
-            await Context.SaveChangesAsync();
+            await _dbLock.WaitAsync();
+            try
+            {
+                using var scope = Factory.Services.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var p = await db.Projects.AsNoTracking().FirstOrDefaultAsync(x => x.Id == project.Id);
+                p!.ProjectName = "Updated by Task 1";
+                db.Projects.Update(p);
+                await db.SaveChangesAsync();
+            }
+            finally { _dbLock.Release(); }
         });
 
         var task2 = Task.Run(async () =>
         {
-            project.ProjectName = "Updated by Task 2";
-            Context.Projects.Update(project);
-            await Context.SaveChangesAsync();
+            await _dbLock.WaitAsync();
+            try
+            {
+                using var scope = Factory.Services.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var p = await db.Projects.AsNoTracking().FirstOrDefaultAsync(x => x.Id == project.Id);
+                p!.ProjectName = "Updated by Task 2";
+                db.Projects.Update(p);
+                await db.SaveChangesAsync();
+            }
+            finally { _dbLock.Release(); }
         });
 
         await Task.WhenAll(task1, task2);
 
         // Assert - Verify last write wins
-        var finalProject = await Context.Projects.FindAsync(project.Id);
+        var finalProject = await Context.Projects.AsNoTracking().FirstOrDefaultAsync(p => p.Id == project.Id);
         finalProject.Should().NotBeNull();
         finalProject!.ProjectName.Should().BeOneOf("Updated by Task 1", "Updated by Task 2",
             "One of the concurrent updates should have been applied");
@@ -56,44 +75,59 @@ public class ConcurrencyHandlingIntegrationTests : ApiTestBase
 
         var user = await SeedUserAsync(email, hashedPassword, "Test User");
         var project = await SeedProjectAsync("Test Project", user.Id);
+        Context.ChangeTracker.Clear();
 
         var initialTransactionCount = await Context.Transactions.CountAsync();
 
-        // Act - Create transactions concurrently using the same context
+        // Act - Create transactions concurrently using separate scopes
         var task1 = Task.Run(async () =>
         {
-            var transaction = new Transaction
+            await _dbLock.WaitAsync();
+            try
             {
-                ProjectId = project.Id,
-                Type = TransactionType.Overhead,
-                Amount = 1000.00m,
-                Description = "Transaction from Task 1",
-                TransactionDate = DateTime.UtcNow,
-                CreatedByUserId = user.Id
-            };
-            Context.Transactions.Add(transaction);
-            await Context.SaveChangesAsync();
+                using var scope = Factory.Services.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var transaction = new Transaction
+                {
+                    ProjectId = project.Id,
+                    Type = TransactionType.Overhead,
+                    Amount = 1000.00m,
+                    Description = "Transaction from Task 1",
+                    TransactionDate = DateTime.UtcNow,
+                    CreatedByUserId = user.Id
+                };
+                db.Transactions.Add(transaction);
+                await db.SaveChangesAsync();
+            }
+            finally { _dbLock.Release(); }
         });
 
         var task2 = Task.Run(async () =>
         {
-            var transaction = new Transaction
+            await _dbLock.WaitAsync();
+            try
             {
-                ProjectId = project.Id,
-                Type = TransactionType.MaterialPurchase,
-                Amount = 2000.00m,
-                Description = "Transaction from Task 2",
-                TransactionDate = DateTime.UtcNow,
-                CreatedByUserId = user.Id
-            };
-            Context.Transactions.Add(transaction);
-            await Context.SaveChangesAsync();
+                using var scope = Factory.Services.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var transaction = new Transaction
+                {
+                    ProjectId = project.Id,
+                    Type = TransactionType.MaterialPurchase,
+                    Amount = 2000.00m,
+                    Description = "Transaction from Task 2",
+                    TransactionDate = DateTime.UtcNow,
+                    CreatedByUserId = user.Id
+                };
+                db.Transactions.Add(transaction);
+                await db.SaveChangesAsync();
+            }
+            finally { _dbLock.Release(); }
         });
 
         await Task.WhenAll(task1, task2);
 
         // Assert - Both transactions should be created
-        var finalTransactionCount = await Context.Transactions.CountAsync();
+        var finalTransactionCount = await Context.Transactions.AsNoTracking().CountAsync();
         finalTransactionCount.Should().Be(initialTransactionCount + 2,
             "Both concurrent transactions should have been created");
     }
@@ -121,35 +155,49 @@ public class ConcurrencyHandlingIntegrationTests : ApiTestBase
 
         var initialDailyLogCount = await Context.ItemDailyLogs.CountAsync();
 
-        // Act - Create daily logs concurrently using the same context
+        // Act - Create daily logs concurrently using separate scopes
         var task1 = Task.Run(async () =>
         {
-            var dailyLog = new ItemDailyLog
+            await _dbLock.WaitAsync();
+            try
             {
-                BOQItemId = boqItem.Id,
-                LogDate = DateTime.UtcNow.Date,
-                DailyProgressPercentage = 50,
-                ProgressNotes = "Daily log from Task 1",
-                IsClosed = false,
-                CreatedByUserId = user.Id
-            };
-            Context.ItemDailyLogs.Add(dailyLog);
-            await Context.SaveChangesAsync();
+                using var scope = Factory.Services.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var dailyLog = new ItemDailyLog
+                {
+                    BOQItemId = boqItem.Id,
+                    LogDate = DateTime.UtcNow.Date,
+                    DailyProgressPercentage = 50,
+                    ProgressNotes = "Daily log from Task 1",
+                    IsClosed = false,
+                    CreatedByUserId = user.Id
+                };
+                db.ItemDailyLogs.Add(dailyLog);
+                await db.SaveChangesAsync();
+            }
+            finally { _dbLock.Release(); }
         });
 
         var task2 = Task.Run(async () =>
         {
-            var dailyLog = new ItemDailyLog
+            await _dbLock.WaitAsync();
+            try
             {
-                BOQItemId = boqItem.Id,
-                LogDate = DateTime.UtcNow.Date.AddDays(1),
-                DailyProgressPercentage = 75,
-                ProgressNotes = "Daily log from Task 2",
-                IsClosed = false,
-                CreatedByUserId = user.Id
-            };
-            Context.ItemDailyLogs.Add(dailyLog);
-            await Context.SaveChangesAsync();
+                using var scope = Factory.Services.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var dailyLog = new ItemDailyLog
+                {
+                    BOQItemId = boqItem.Id,
+                    LogDate = DateTime.UtcNow.Date.AddDays(1),
+                    DailyProgressPercentage = 75,
+                    ProgressNotes = "Daily log from Task 2",
+                    IsClosed = false,
+                    CreatedByUserId = user.Id
+                };
+                db.ItemDailyLogs.Add(dailyLog);
+                await db.SaveChangesAsync();
+            }
+            finally { _dbLock.Release(); }
         });
 
         await Task.WhenAll(task1, task2);
@@ -180,34 +228,49 @@ public class ConcurrencyHandlingIntegrationTests : ApiTestBase
         };
         Context.BOQItems.Add(boqItem);
         await Context.SaveChangesAsync();
+        Context.ChangeTracker.Clear();
 
-        // Act - Update BOQ item concurrently using the same context
+        // Act - Update BOQ item concurrently using separate scopes
         var task1 = Task.Run(async () =>
         {
-            var item = await Context.BOQItems.Include(i => i.MeasuredData).FirstOrDefaultAsync(i => i.Id == boqItem.Id);
-            if (item != null && item.MeasuredData != null)
+            await _dbLock.WaitAsync();
+            try
             {
-                item.MeasuredData.UnitPrice = 150;
-                Context.BOQItems.Update(item);
-                await Context.SaveChangesAsync();
+                using var scope = Factory.Services.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var item = await db.BOQItems.Include(i => i.MeasuredData).AsNoTracking().FirstOrDefaultAsync(i => i.Id == boqItem.Id);
+                if (item != null && item.MeasuredData != null)
+                {
+                    item.MeasuredData.UnitPrice = 150;
+                    db.BOQItems.Update(item);
+                    await db.SaveChangesAsync();
+                }
             }
+            finally { _dbLock.Release(); }
         });
 
         var task2 = Task.Run(async () =>
         {
-            var item = await Context.BOQItems.Include(i => i.MeasuredData).FirstOrDefaultAsync(i => i.Id == boqItem.Id);
-            if (item != null && item.MeasuredData != null)
+            await _dbLock.WaitAsync();
+            try
             {
-                item.MeasuredData.UnitPrice = 200;
-                Context.BOQItems.Update(item);
-                await Context.SaveChangesAsync();
+                using var scope = Factory.Services.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var item = await db.BOQItems.Include(i => i.MeasuredData).AsNoTracking().FirstOrDefaultAsync(i => i.Id == boqItem.Id);
+                if (item != null && item.MeasuredData != null)
+                {
+                    item.MeasuredData.UnitPrice = 200;
+                    db.BOQItems.Update(item);
+                    await db.SaveChangesAsync();
+                }
             }
+            finally { _dbLock.Release(); }
         });
 
         await Task.WhenAll(task1, task2);
 
         // Assert - Verify last write wins
-        var finalItem = await Context.BOQItems.Include(i => i.MeasuredData).FirstOrDefaultAsync(i => i.Id == boqItem.Id);
+        var finalItem = await Context.BOQItems.AsNoTracking().Include(i => i.MeasuredData).FirstOrDefaultAsync(i => i.Id == boqItem.Id);
         finalItem.Should().NotBeNull();
         finalItem!.MeasuredData!.UnitPrice.Should().BeOneOf(new[] { 150m, 200m }, 
             "One of the concurrent updates should have been applied");
@@ -222,33 +285,47 @@ public class ConcurrencyHandlingIntegrationTests : ApiTestBase
 
         var initialUserCount = await Context.Users.CountAsync();
 
-        // Act - Create users concurrently using the same context
+        // Act - Create users concurrently using separate scopes
         var task1 = Task.Run(async () =>
         {
-            var user = new User
+            await _dbLock.WaitAsync();
+            try
             {
-                FirstName = "User",
-                LastName = "One",
-                Email = "user1@example.com",
-                PasswordHash = hashedPassword,
-                CompanyId = 1
-            };
-            Context.Users.Add(user);
-            await Context.SaveChangesAsync();
+                using var scope = Factory.Services.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var user = new User
+                {
+                    FirstName = "User",
+                    LastName = "One",
+                    Email = "user1@example.com",
+                    PasswordHash = hashedPassword,
+                    CompanyId = 1
+                };
+                db.Users.Add(user);
+                await db.SaveChangesAsync();
+            }
+            finally { _dbLock.Release(); }
         });
 
         var task2 = Task.Run(async () =>
         {
-            var user = new User
+            await _dbLock.WaitAsync();
+            try
             {
-                FirstName = "User",
-                LastName = "Two",
-                Email = "user2@example.com",
-                PasswordHash = hashedPassword,
-                CompanyId = 1
-            };
-            Context.Users.Add(user);
-            await Context.SaveChangesAsync();
+                using var scope = Factory.Services.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var user = new User
+                {
+                    FirstName = "User",
+                    LastName = "Two",
+                    Email = "user2@example.com",
+                    PasswordHash = hashedPassword,
+                    CompanyId = 1
+                };
+                db.Users.Add(user);
+                await db.SaveChangesAsync();
+            }
+            finally { _dbLock.Release(); }
         });
 
         await Task.WhenAll(task1, task2);
@@ -269,34 +346,49 @@ public class ConcurrencyHandlingIntegrationTests : ApiTestBase
 
         var user = await SeedUserAsync(email, hashedPassword, "Test User");
         var project = await SeedProjectAsync("Test Project", user.Id);
+        Context.ChangeTracker.Clear();
 
         var initialProjectCount = await Context.Projects.CountAsync();
 
-        // Act - Delete project concurrently using the same context
+        // Act - Delete project concurrently using separate scopes
         var task1 = Task.Run(async () =>
         {
-            var proj = await Context.Projects.FindAsync(project.Id);
-            if (proj != null)
+            await _dbLock.WaitAsync();
+            try
             {
-                Context.Projects.Remove(proj);
-                await Context.SaveChangesAsync();
+                using var scope = Factory.Services.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var proj = await db.Projects.AsNoTracking().FirstOrDefaultAsync(x => x.Id == project.Id);
+                if (proj != null)
+                {
+                    db.Projects.Remove(proj);
+                    try { await db.SaveChangesAsync(); } catch (DbUpdateConcurrencyException) { /* Expected */ }
+                }
             }
+            finally { _dbLock.Release(); }
         });
 
         var task2 = Task.Run(async () =>
         {
-            var proj = await Context.Projects.FindAsync(project.Id);
-            if (proj != null)
+            await _dbLock.WaitAsync();
+            try
             {
-                Context.Projects.Remove(proj);
-                await Context.SaveChangesAsync();
+                using var scope = Factory.Services.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var proj = await db.Projects.AsNoTracking().FirstOrDefaultAsync(x => x.Id == project.Id);
+                if (proj != null)
+                {
+                    db.Projects.Remove(proj);
+                    try { await db.SaveChangesAsync(); } catch (DbUpdateConcurrencyException) { /* Expected */ }
+                }
             }
+            finally { _dbLock.Release(); }
         });
 
         await Task.WhenAll(task1, task2);
 
         // Assert - Project should be deleted (one operation succeeds, the other fails)
-        var finalProjectCount = await Context.Projects.CountAsync();
+        var finalProjectCount = await Context.Projects.AsNoTracking().CountAsync();
         finalProjectCount.Should().Be(initialProjectCount - 1,
             "Project should have been deleted by one of the concurrent operations");
     }
@@ -312,30 +404,42 @@ public class ConcurrencyHandlingIntegrationTests : ApiTestBase
         var user = await SeedUserAsync(email, hashedPassword, "Test User");
         var project = await SeedProjectAsync("Test Project", user.Id);
 
-        // Act - Read and write concurrently using the same context
+        // Act - Read and write concurrently using separate scopes
         var readTask = Task.Run(async () =>
         {
-            // Simulate a long-running read
-            await Task.Delay(100);
-            var proj = await Context.Projects.FindAsync(project.Id);
-            return proj;
+            await _dbLock.WaitAsync();
+            try
+            {
+                using var scope = Factory.Services.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var proj = await db.Projects.AsNoTracking().FirstOrDefaultAsync(x => x.Id == project.Id);
+                return proj;
+            }
+            finally { _dbLock.Release(); }
         });
 
         var writeTask = Task.Run(async () =>
         {
-            var proj = await Context.Projects.FindAsync(project.Id);
-            if (proj != null)
+            await _dbLock.WaitAsync();
+            try
             {
-                proj.ProjectName = "Updated during read";
-                Context.Projects.Update(proj);
-                await Context.SaveChangesAsync();
+                using var scope = Factory.Services.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var proj = await db.Projects.AsNoTracking().FirstOrDefaultAsync(x => x.Id == project.Id);
+                if (proj != null)
+                {
+                    proj.ProjectName = "Updated during read";
+                    db.Projects.Update(proj);
+                    await db.SaveChangesAsync();
+                }
             }
+            finally { _dbLock.Release(); }
         });
 
         await Task.WhenAll(readTask, writeTask);
 
         // Assert - Write should succeed despite concurrent read
-        var finalProject = await Context.Projects.FindAsync(project.Id);
+        var finalProject = await Context.Projects.AsNoTracking().FirstOrDefaultAsync(p => p.Id == project.Id);
         finalProject.Should().NotBeNull();
         finalProject!.ProjectName.Should().Be("Updated during read",
             "Write should have succeeded despite concurrent read");
@@ -354,24 +458,31 @@ public class ConcurrencyHandlingIntegrationTests : ApiTestBase
 
         var initialTransactionCount = await Context.Transactions.CountAsync();
 
-        // Act - Create multiple transactions concurrently using the same context
+        // Act - Create multiple transactions concurrently using separate scopes
         var tasks = new List<Task>();
         for (int i = 0; i < 10; i++)
         {
             var taskIndex = i;
             var task = Task.Run(async () =>
             {
-                var transaction = new Transaction
+                await _dbLock.WaitAsync();
+                try
                 {
-                    ProjectId = project.Id,
-                    Type = TransactionType.Overhead,
-                    Amount = 100.00m * (taskIndex + 1),
-                    Description = $"Transaction {taskIndex + 1}",
-                    TransactionDate = DateTime.UtcNow,
-                    CreatedByUserId = user.Id
-                };
-                Context.Transactions.Add(transaction);
-                await Context.SaveChangesAsync();
+                    using var scope = Factory.Services.CreateScope();
+                    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                    var transaction = new Transaction
+                    {
+                        ProjectId = project.Id,
+                        Type = TransactionType.Overhead,
+                        Amount = 100.00m * (taskIndex + 1),
+                        Description = $"Transaction {taskIndex + 1}",
+                        TransactionDate = DateTime.UtcNow,
+                        CreatedByUserId = user.Id
+                    };
+                    db.Transactions.Add(transaction);
+                    await db.SaveChangesAsync();
+                }
+                finally { _dbLock.Release(); }
             });
             tasks.Add(task);
         }

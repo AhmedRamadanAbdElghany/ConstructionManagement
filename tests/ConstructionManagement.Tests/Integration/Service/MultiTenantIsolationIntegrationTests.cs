@@ -26,18 +26,19 @@ public class MultiTenantIsolationIntegrationTests : ApiTestBase
         var user1 = await SeedUserAsync("user1@company1.com", hashedPassword, "User 1", companyId: 1);
         var user2 = await SeedUserAsync("user2@company2.com", hashedPassword, "User 2", companyId: 2);
 
-        var project1 = await SeedProjectAsync("Company 1 Project", user1.Id);
-        var project2 = await SeedProjectAsync("Company 2 Project", user2.Id);
+        var project1 = await SeedProjectAsync("Company 1 Project", user1.Id, companyId: 1);
+        var project2 = await SeedProjectAsync("Company 2 Project", user2.Id, companyId: 2);
 
-        // Act - Query projects by company ID
-        var company1Projects = await Context.Projects.Where(p => p.OwnerUserId == user1.Id).ToListAsync();
-        var company2Projects = await Context.Projects.Where(p => p.OwnerUserId == user2.Id).ToListAsync();
+        // Act & Assert - Projects should be isolated by global query filter (Context Id = 1)
+        var allProjects = await Context.Projects.IgnoreQueryFilters().ToListAsync();
+        var company1Projects = await Context.Projects.Where(p => p.ProjectName == "Company 1 Project").ToListAsync();
+        var company2ProjectsInvisible = await Context.Projects.Where(p => p.ProjectName == "Company 2 Project").ToListAsync();
 
-        // Assert - Each company should only see their own projects
-        company1Projects.Should().HaveCount(1);
-        company1Projects.First().ProjectName.Should().Be("Company 1 Project");
-        company2Projects.Should().HaveCount(1);
-        company2Projects.First().ProjectName.Should().Be("Company 2 Project");
+        allProjects.Should().Contain(p => p.ProjectName == "Company 1 Project");
+        allProjects.Should().Contain(p => p.ProjectName == "Company 2 Project");
+        
+        company1Projects.Should().ContainSingle();
+        company2ProjectsInvisible.Should().BeEmpty("Projects from other companies should be filtered out");
     }
 
     [Fact]
@@ -50,15 +51,16 @@ public class MultiTenantIsolationIntegrationTests : ApiTestBase
         var user1 = await SeedUserAsync("user1@company1.com", hashedPassword, "User 1", companyId: 1);
         var user2 = await SeedUserAsync("user2@company2.com", hashedPassword, "User 2", companyId: 2);
 
-        // Act - Query users by company ID
-        var company1Users = await Context.Users.Where(u => u.CompanyId == 1).ToListAsync();
-        var company2Users = await Context.Users.Where(u => u.CompanyId == 2).ToListAsync();
+        // Act & Assert - Users should be isolated by global query filter (Context Id = 1)
+        var allUsers = await Context.Users.IgnoreQueryFilters().ToListAsync();
+        var company1Users = await Context.Users.Where(u => u.Email == "user1@company1.com").ToListAsync();
+        var company2UsersInvisible = await Context.Users.Where(u => u.Email == "user2@company2.com").ToListAsync();
 
-        // Assert - Each company should only see their own users
-        company1Users.Should().HaveCount(1);
-        company1Users.First().Email.Should().Be("user1@company1.com");
-        company2Users.Should().HaveCount(1);
-        company2Users.First().Email.Should().Be("user2@company2.com");
+        allUsers.Should().Contain(u => u.Email == "user1@company1.com");
+        allUsers.Should().Contain(u => u.Email == "user2@company2.com");
+
+        company1Users.Should().ContainSingle();
+        company2UsersInvisible.Should().BeEmpty("Users from other companies should be filtered out");
     }
 
     [Fact]
@@ -71,8 +73,8 @@ public class MultiTenantIsolationIntegrationTests : ApiTestBase
         var user1 = await SeedUserAsync("user1@company1.com", hashedPassword, "User 1", companyId: 1);
         var user2 = await SeedUserAsync("user2@company2.com", hashedPassword, "User 2", companyId: 2);
 
-        var project1 = await SeedProjectAsync("Company 1 Project", user1.Id);
-        var project2 = await SeedProjectAsync("Company 2 Project", user2.Id);
+        var project1 = await SeedProjectAsync("Company 1 Project", user1.Id, companyId: 1);
+        var project2 = await SeedProjectAsync("Company 2 Project", user2.Id, companyId: 2);
 
         var transaction1 = new Transaction
         {
@@ -81,7 +83,8 @@ public class MultiTenantIsolationIntegrationTests : ApiTestBase
             Amount = 5000,
             Description = "Company 1 Transaction",
             CreatedByUserId = user1.Id,
-            TransactionDate = DateTime.UtcNow
+            TransactionDate = DateTime.UtcNow,
+            CompanyId = 1
         };
         Context.Transactions.Add(transaction1);
 
@@ -92,20 +95,23 @@ public class MultiTenantIsolationIntegrationTests : ApiTestBase
             Amount = 3000,
             Description = "Company 2 Transaction",
             CreatedByUserId = user2.Id,
-            TransactionDate = DateTime.UtcNow
+            TransactionDate = DateTime.UtcNow,
+            CompanyId = 2
         };
         Context.Transactions.Add(transaction2);
 
         await Context.SaveChangesAsync();
 
-        // Act - Query transactions by user ID
-        var company1Transactions = await Context.Transactions
-            .Where(t => t.CreatedByUserId == user1.Id)
-            .ToListAsync();
+        // Act & Assert - Transactions should be isolated (Context Id = 1)
+        var allTransactions = await Context.Transactions.IgnoreQueryFilters().ToListAsync();
+        var company1Transactions = await Context.Transactions.Where(t => t.Description == "Company 1 Transaction").ToListAsync();
+        var company2TransactionsInvisible = await Context.Transactions.Where(t => t.Description == "Company 2 Transaction").ToListAsync();
 
-        // Assert - Each company should only see their own transactions
+        allTransactions.Should().Contain(t => t.Description == "Company 1 Transaction");
+        allTransactions.Should().Contain(t => t.Description == "Company 2 Transaction");
+
         company1Transactions.Should().ContainSingle();
-        company1Transactions.First().Description.Should().Be("Company 1 Transaction");
+        company2TransactionsInvisible.Should().BeEmpty("Transactions from other companies should be filtered out");
     }
 
     [Fact]
@@ -118,20 +124,22 @@ public class MultiTenantIsolationIntegrationTests : ApiTestBase
         var user1 = await SeedUserAsync("user1@company1.com", hashedPassword, "User 1", companyId: 1);
         var user2 = await SeedUserAsync("user2@company2.com", hashedPassword, "User 2", companyId: 2);
 
-        var project1 = await SeedProjectAsync("Company 1 Project", user1.Id);
-        var project2 = await SeedProjectAsync("Company 2 Project", user2.Id);
+        var project1 = await SeedProjectAsync("Company 1 Project", user1.Id, companyId: 1);
+        var project2 = await SeedProjectAsync("Company 2 Project", user2.Id, companyId: 2);
 
         var boqItem1 = new BOQItem
         {
             ProjectId = project1.Id,
-            ItemName = "Item 1"
+            ItemName = "Item 1",
+            CompanyId = 1
         };
         Context.BOQItems.Add(boqItem1);
 
         var boqItem2 = new BOQItem
         {
             ProjectId = project2.Id,
-            ItemName = "Item 2"
+            ItemName = "Item 2",
+            CompanyId = 2
         };
         Context.BOQItems.Add(boqItem2);
 
@@ -142,7 +150,8 @@ public class MultiTenantIsolationIntegrationTests : ApiTestBase
             BOQItemId = boqItem1.Id,
             LogDate = DateTime.UtcNow,
             DailyProgressPercentage = 50,
-            CreatedByUserId = user1.Id
+            CreatedByUserId = user1.Id,
+            CompanyId = 1
         };
         Context.ItemDailyLogs.Add(dailyLog1);
 
@@ -151,20 +160,23 @@ public class MultiTenantIsolationIntegrationTests : ApiTestBase
             BOQItemId = boqItem2.Id,
             LogDate = DateTime.UtcNow,
             DailyProgressPercentage = 75,
-            CreatedByUserId = user2.Id
+            CreatedByUserId = user2.Id,
+            CompanyId = 2
         };
         Context.ItemDailyLogs.Add(dailyLog2);
 
         await Context.SaveChangesAsync();
 
-        // Act - Query daily logs by user ID
-        var company1DailyLogs = await Context.ItemDailyLogs
-            .Where(dl => dl.CreatedByUserId == user1.Id)
-            .ToListAsync();
+        // Act & Assert - Daily logs should be isolated (Context Id = 1)
+        var allLogs = await Context.ItemDailyLogs.IgnoreQueryFilters().ToListAsync();
+        var company1Logs = await Context.ItemDailyLogs.Where(dl => dl.ProgressNotes == "Daily log from Task 1" || dl.DailyProgressPercentage == 50).ToListAsync();
+        var company2LogsInvisible = await Context.ItemDailyLogs.Where(dl => dl.ProgressNotes == "Daily log from Task 2" || dl.DailyProgressPercentage == 75).ToListAsync();
 
-        // Assert - Each company should only see their own daily logs
-        company1DailyLogs.Should().ContainSingle();
-        company1DailyLogs.First().DailyProgressPercentage.Should().Be(50);
+        allLogs.Should().Contain(dl => dl.DailyProgressPercentage == 50);
+        allLogs.Should().Contain(dl => dl.DailyProgressPercentage == 75);
+
+        company1Logs.Should().ContainSingle();
+        company2LogsInvisible.Should().BeEmpty("Daily logs from other companies should be filtered out");
     }
 
     [Fact]
@@ -177,15 +189,16 @@ public class MultiTenantIsolationIntegrationTests : ApiTestBase
         var user1 = await SeedUserAsync("user1@company1.com", hashedPassword, "User 1", companyId: 1);
         var user2 = await SeedUserAsync("user2@company2.com", hashedPassword, "User 2", companyId: 2);
 
-        var project1 = await SeedProjectAsync("Company 1 Project", user1.Id);
-        var project2 = await SeedProjectAsync("Company 2 Project", user2.Id);
+        var project1 = await SeedProjectAsync("Company 1 Project", user1.Id, companyId: 1);
+        var project2 = await SeedProjectAsync("Company 2 Project", user2.Id, companyId: 2);
 
         var boqItem1 = new BOQItem
         {
             ProjectId = project1.Id,
             ItemName = "Company 1 Item",
             ItemCode = "C1-001",
-            AccountingType = CalculationMethod.Measured
+            AccountingType = CalculationMethod.Measured,
+            CompanyId = 1
         };
         Context.BOQItems.Add(boqItem1);
 
@@ -194,19 +207,22 @@ public class MultiTenantIsolationIntegrationTests : ApiTestBase
             ProjectId = project2.Id,
             ItemName = "Company 2 Item",
             ItemCode = "C2-001",
-            AccountingType = CalculationMethod.Measured
+            AccountingType = CalculationMethod.Measured,
+            CompanyId = 2
         };
         Context.BOQItems.Add(boqItem2);
 
         await Context.SaveChangesAsync();
 
-        // Act - Query BOQ items by project ID
-        var company1BOQItems = await Context.BOQItems
-            .Where(item => item.ProjectId == project1.Id)
-            .ToListAsync();
+        // Act & Assert - BOQ items should be isolated (Context Id = 1)
+        var allItems = await Context.BOQItems.IgnoreQueryFilters().ToListAsync();
+        var company1Items = await Context.BOQItems.Where(i => i.ItemCode == "C1-001").ToListAsync();
+        var company2ItemsInvisible = await Context.BOQItems.Where(i => i.ItemCode == "C2-001").ToListAsync();
 
-        // Assert - Each company should only see their own BOQ items
-        company1BOQItems.Should().ContainSingle();
-        company1BOQItems.First().ItemCode.Should().Be("C1-001");
+        allItems.Should().Contain(i => i.ItemCode == "C1-001");
+        allItems.Should().Contain(i => i.ItemCode == "C2-001");
+
+        company1Items.Should().ContainSingle();
+        company2ItemsInvisible.Should().BeEmpty("BOQ items from other companies should be filtered out");
     }
 }
