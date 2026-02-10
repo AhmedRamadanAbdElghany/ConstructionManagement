@@ -127,6 +127,15 @@ public class AuthService : IAuthService
                 {
                     await _notificationService.NotifyNewCompanyRequestAsync(admin.Id, companyRequest.CompanyName, companyRequest.Id);
                 }
+
+                // Notify User
+                await _notificationService.CreateAndSendAsync(
+                    user.Id,
+                    "Registration Pending",
+                    "Your company registration request has been received and is currently awaiting administrative approval.",
+                    null,
+                    NotificationType.General
+                );
             }
 
             // TODO: Send verification email with user.EmailVerificationToken

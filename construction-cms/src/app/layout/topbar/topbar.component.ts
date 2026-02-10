@@ -80,16 +80,16 @@ import { NotificationsService, NotificationDto } from '../../core/services/notif
                       <div class="flex items-start gap-4">
                         <div class="w-12 h-12 rounded-[1rem] flex items-center justify-center flex-shrink-0 shadow-inner"
                              [ngClass]="{
-                               'bg-amber-500/10 text-amber-500': notification.type === 'warning',
-                               'bg-cyan-500/10 text-cyan-400': notification.type === 'info',
-                               'bg-emerald-500/10 text-emerald-500': notification.type === 'success',
-                               'bg-rose-500/10 text-rose-500': notification.type === 'error'
+                               'bg-amber-500/10 text-amber-500': notification.type === 'warning' || notification.type === 'ProjectDelay' || notification.type === 'ItemDelay',
+                               'bg-cyan-500/10 text-cyan-400': notification.type === 'info' || notification.type === 'General',
+                               'bg-emerald-500/10 text-emerald-500': notification.type === 'success' || notification.type === 'ApprovalGranted' || notification.type === 'PaymentReceived',
+                               'bg-rose-500/10 text-rose-500': notification.type === 'error' || notification.type === 'ApprovalRejected' || notification.type === 'BudgetOverrun'
                              }">
                           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            @if (notification.type === 'warning') { <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path> }
-                            @if (notification.type === 'info') { <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path> }
-                            @if (notification.type === 'success') { <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path> }
-                            @if (notification.type === 'error') { <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path> }
+                            @if (notification.type === 'warning' || notification.type === 'ProjectDelay' || notification.type === 'ItemDelay') { <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path> }
+                            @if (notification.type === 'info' || notification.type === 'General') { <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path> }
+                            @if (notification.type === 'success' || notification.type === 'ApprovalGranted' || notification.type === 'PaymentReceived') { <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path> }
+                            @if (notification.type === 'error' || notification.type === 'ApprovalRejected' || notification.type === 'BudgetOverrun') { <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path> }
                           </svg>
                         </div>
                         <div class="flex-1 min-w-0">

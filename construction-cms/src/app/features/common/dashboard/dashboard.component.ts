@@ -14,6 +14,7 @@ import { AuthService } from '../../../core/services/auth.service';
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
+        @if (!isPending) {
         <div class="mb-8 text-nowrap overflow-hidden">
           <div class="flex items-center space-x-2 mb-2">
             <span class="px-3 py-1 rounded-full bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-xs font-bold flex items-center border border-indigo-500/20">
@@ -26,6 +27,7 @@ import { AuthService } from '../../../core/services/auth.service';
           </h1>
           <p class="text-slate-500 dark:text-slate-400 font-medium">{{ isSuperAdmin ? ('dashboard.revenue_analytics' | translate) : ('dashboard.overview_subtitle' | translate) }}</p>
         </div>
+        }
 
         <!-- ──────────────────────────────────────────────────────────────────
              PENDING APPROVAL VIEW (New Company Registrants)
