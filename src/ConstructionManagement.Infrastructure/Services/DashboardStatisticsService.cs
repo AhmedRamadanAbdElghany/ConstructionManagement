@@ -12,17 +12,20 @@ public class DashboardStatisticsService : IDashboardStatisticsService
     private readonly IRepository<Project> _projectRepository;
     private readonly IRepository<CompanyPackage> _companyPackageRepository;
     private readonly IRepository<Company> _companyRepository;
+    private readonly INotificationRepository _notificationRepository;
     private readonly ILogger<DashboardStatisticsService> _logger;
 
     public DashboardStatisticsService(
         IRepository<Project> projectRepository,
         IRepository<CompanyPackage> companyPackageRepository,
         IRepository<Company> companyRepository,
+        INotificationRepository notificationRepository,
         ILogger<DashboardStatisticsService> logger)
     {
         _projectRepository = projectRepository ?? throw new ArgumentNullException(nameof(projectRepository));
         _companyPackageRepository = companyPackageRepository ?? throw new ArgumentNullException(nameof(companyPackageRepository));
         _companyRepository = companyRepository ?? throw new ArgumentNullException(nameof(companyRepository));
+        _notificationRepository = notificationRepository ?? throw new ArgumentNullException(nameof(notificationRepository));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -76,26 +79,63 @@ public class DashboardStatisticsService : IDashboardStatisticsService
         return subscriptions;
     }
 
-    public async Task<List<RecentActivity>> GetRecentActivitiesAsync(int? limit = null)
+    public async Task<List<RecentActivity>> GetRecentActivitiesAsync(int userId, int? limit = null)
     {
-        _logger.LogDebug("Fetching recent activities. Limit: {Limit}", limit);
+        _logger.LogDebug("Fetching recent activities for user {UserId}. Limit: {Limit}", userId, limit);
 
-        // For now, return mock data since we don't have an Activity entity
-        var activities = new List<RecentActivity>
+        var notifications = await _notificationRepository.AsQueryable()
+            .Where(n => n.UserId == userId)
+            .OrderByDescending(n => n.CreatedAt)
+            .Take(limit ?? 5)
+            .ToListAsync();
+
+        var activities = notifications.Select(n => new RecentActivity
         {
-            new() { Id = 1, Type = "success", Message = "Payment received for Dubai Tower Project", Time = "2 minutes ago" },
-            new() { Id = 2, Type = "info", Message = "New BOQ item added to Villa Complex", Time = "15 minutes ago" },
-            new() { Id = 3, Type = "warning", Message = "Commercial Mall Cairo is behind schedule", Time = "1 hour ago" }
-        };
+            Id = n.Id,
+            Type = MapNotificationTypeToActivityType(n.Type),
+            Message = n.Title + ": " + n.Message, // Combining Title and Message for better context
+            Time = GetTimeAgo(n.CreatedAt)
+        }).ToList();
 
-        if (limit.HasValue && limit.Value > 0)
-        {
-            activities = activities.Take(limit.Value).ToList();
-        }
-
-        _logger.LogDebug("Returning {Count} recent activities", activities.Count);
+        _logger.LogDebug("Returning {Count} real activities", activities.Count);
 
         return activities;
+    }
+
+    private string MapNotificationTypeToActivityType(NotificationType type)
+    {
+        return type switch
+        {
+            NotificationType.ApprovalGranted => "success",
+            NotificationType.PaymentReceived => "success",
+            NotificationType.MilestoneAchieved => "success",
+            
+            NotificationType.ProjectDelay => "warning",
+            NotificationType.ItemDelay => "warning",
+            NotificationType.BudgetWarning => "warning",
+            
+            NotificationType.BudgetOverrun => "danger",
+            NotificationType.ApprovalRejected => "danger",
+            NotificationType.Escalation => "danger",
+            
+            _ => "info" // General, Info, PhotoReview, etc.
+        };
+    }
+
+    private string GetTimeAgo(DateTime dateTime)
+    {
+        var timeSpan = DateTime.UtcNow - dateTime;
+
+        if (timeSpan.TotalMinutes < 1)
+            return "Just now";
+        if (timeSpan.TotalMinutes < 60)
+            return $"{(int)timeSpan.TotalMinutes} minutes ago";
+        if (timeSpan.TotalHours < 24)
+            return $"{(int)timeSpan.TotalHours} hours ago";
+        if (timeSpan.TotalDays < 7)
+            return $"{(int)timeSpan.TotalDays} days ago";
+        
+        return dateTime.ToString("MMM dd, yyyy");
     }
 
     public async Task<List<SuperAdminActivity>> GetSuperAdminActivitiesAsync(int? limit = null)

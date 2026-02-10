@@ -84,8 +84,8 @@ import { TranslateModule } from '@ngx-translate/core';
       </div>
 
       <!-- Quick Edit Modal (Basic Identity & Features) -->
-      <div *ngIf="showModal" class="modal-backdrop fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[100] p-4 sm:p-6 animate-in fade-in duration-300">
-        <div class="modal-content bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform animate-in zoom-in-95 duration-500 border border-white/20">
+      <div *ngIf="showModal" class="modal-backdrop fixed inset-0 bg-slate-900/80 backdrop-blur-xl flex items-center justify-center z-[100] p-4 sm:p-6 animate-in fade-in duration-500">
+        <div class="modal-content bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-[3rem] shadow-[0_0_100px_rgba(79,70,229,0.15)] w-full max-w-7xl max-h-[90vh] flex flex-col transform animate-in zoom-in-95 duration-500 border border-white/40 dark:border-white/10 ring-1 ring-white/50">
           
           <!-- Modal Header -->
           <div class="px-10 py-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/20 shrink-0">
@@ -306,7 +306,7 @@ import { TranslateModule } from '@ngx-translate/core';
                   </h3>
                   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                      <!-- Material Request Approval -->
-                     <div class="p-6 border-2 rounded-3xl" [ngClass]="companyForm.get('requireMaterialRequestApproval')?.value ? 'border-violet-500 bg-violet-50/40' : 'border-slate-100 dark:border-slate-800'">
+                     <div class="p-6 border-2 rounded-3xl" [ngClass]="companyForm.get('requireMaterialRequestApproval')?.value ? 'border-violet-500 bg-violet-50/40 text-violet-900 dark:text-violet-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
                         <div class="flex items-center justify-between mb-4">
                            <span class="font-black text-[10px] uppercase tracking-widest">Material Request Approval</span>
                            <label class="relative inline-flex items-center cursor-pointer">
@@ -315,10 +315,10 @@ import { TranslateModule } from '@ngx-translate/core';
                            </label>
                         </div>
                         <input formControlName="materialRequestApproverRole" placeholder="Approver Role"
-                               class="w-full p-3 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-violet-500 rounded-xl outline-none text-xs font-bold">
+                               class="w-full p-3 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-violet-500 rounded-xl outline-none text-xs font-bold text-slate-900 dark:text-white placeholder:text-slate-400">
                      </div>
                      <!-- Multi Warehouse -->
-                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableMultiWarehouse')?.value ? 'border-violet-500 bg-violet-50/40' : 'border-slate-100 dark:border-slate-800'">
+                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableMultiWarehouse')?.value ? 'border-violet-500 bg-violet-50/40 text-violet-900 dark:text-violet-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
                         <div>
                            <span class="font-black text-[10px] uppercase tracking-widest block">Multi Warehouse</span>
                            <p class="text-[8px] font-bold uppercase opacity-60">Enable multiple warehouses</p>
@@ -329,7 +329,7 @@ import { TranslateModule } from '@ngx-translate/core';
                         </label>
                      </div>
                      <!-- Stock Alerts -->
-                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableStockAlerts')?.value ? 'border-violet-500 bg-violet-50/40' : 'border-slate-100 dark:border-slate-800'">
+                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableStockAlerts')?.value ? 'border-violet-500 bg-violet-50/40 text-violet-900 dark:text-violet-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
                         <div>
                            <span class="font-black text-[10px] uppercase tracking-widest block">Stock Alerts</span>
                            <p class="text-[8px] font-bold uppercase opacity-60">Enable low stock notifications</p>
@@ -340,10 +340,10 @@ import { TranslateModule } from '@ngx-translate/core';
                         </label>
                      </div>
                      <!-- Low Stock Threshold -->
-                     <div class="p-6 border-2 rounded-3xl" [ngClass]="companyForm.get('defaultLowStockThreshold')?.value ? 'border-violet-500 bg-violet-50/40' : 'border-slate-100 dark:border-slate-800'">
+                     <div class="p-6 border-2 rounded-3xl" [ngClass]="companyForm.get('defaultLowStockThreshold')?.value ? 'border-violet-500 bg-violet-50/40 text-violet-900 dark:text-violet-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
                         <span class="font-black text-[10px] uppercase tracking-widest block mb-4">Low Stock Threshold</span>
                         <input type="number" formControlName="defaultLowStockThreshold" 
-                               class="w-full p-3 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-violet-500 rounded-xl outline-none text-xs font-bold">
+                               class="w-full p-3 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-violet-500 rounded-xl outline-none text-xs font-bold text-slate-900 dark:text-white">
                      </div>
                   </div>
                 </section>
@@ -356,7 +356,7 @@ import { TranslateModule } from '@ngx-translate/core';
                   </h3>
                   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                      <!-- Maintenance Scheduling -->
-                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentMaintenanceScheduling')?.value ? 'border-emerald-600 bg-emerald-50/40' : 'border-slate-100 dark:border-slate-800'">
+                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentMaintenanceScheduling')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
                         <div>
                            <span class="font-black text-[10px] uppercase tracking-widest block">Maintenance Scheduling</span>
                            <p class="text-[8px] font-bold uppercase opacity-60">Enable scheduled maintenance</p>
@@ -367,7 +367,7 @@ import { TranslateModule } from '@ngx-translate/core';
                         </label>
                      </div>
                      <!-- Utilization Tracking -->
-                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentUtilizationTracking')?.value ? 'border-emerald-600 bg-emerald-50/40' : 'border-slate-100 dark:border-slate-800'">
+                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentUtilizationTracking')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
                         <div>
                            <span class="font-black text-[10px] uppercase tracking-widest block">Utilization Tracking</span>
                            <p class="text-[8px] font-bold uppercase opacity-60">Track equipment usage hours</p>
@@ -378,7 +378,7 @@ import { TranslateModule } from '@ngx-translate/core';
                         </label>
                      </div>
                      <!-- GPS Tracking -->
-                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentGPSTracking')?.value ? 'border-emerald-600 bg-emerald-50/40' : 'border-slate-100 dark:border-slate-800'">
+                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentGPSTracking')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
                         <div>
                            <span class="font-black text-[10px] uppercase tracking-widest block">GPS Tracking</span>
                            <p class="text-[8px] font-bold uppercase opacity-60">Track equipment location</p>
@@ -389,7 +389,7 @@ import { TranslateModule } from '@ngx-translate/core';
                         </label>
                      </div>
                      <!-- Billing Integration -->
-                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentBilling')?.value ? 'border-emerald-600 bg-emerald-50/40' : 'border-slate-100 dark:border-slate-800'">
+                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentBilling')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
                         <div>
                            <span class="font-black text-[10px] uppercase tracking-widest block">Billing Integration</span>
                            <p class="text-[8px] font-bold uppercase opacity-60">Equipment rental billing</p>
@@ -400,10 +400,10 @@ import { TranslateModule } from '@ngx-translate/core';
                         </label>
                      </div>
                      <!-- Maintenance Alert Threshold -->
-                     <div class="p-6 border-2 rounded-3xl" [ngClass]="companyForm.get('equipmentMaintenanceAlertThreshold')?.value ? 'border-emerald-600 bg-emerald-50/40' : 'border-slate-100 dark:border-slate-800'">
+                     <div class="p-6 border-2 rounded-3xl" [ngClass]="companyForm.get('equipmentMaintenanceAlertThreshold')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
                         <span class="font-black text-[10px] uppercase tracking-widest block mb-4">Maintenance Alert (Hours)</span>
                         <input type="number" formControlName="equipmentMaintenanceAlertThreshold" 
-                               class="w-full p-3 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-emerald-600 rounded-xl outline-none text-xs font-bold">
+                               class="w-full p-3 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-emerald-600 rounded-xl outline-none text-xs font-bold text-slate-900 dark:text-white">
                      </div>
                   </div>
                 </section>
@@ -682,6 +682,11 @@ export class CompaniesComponent implements OnInit {
       allowPackages: true,
       allowLocations: true,
       allowHR: false,
+      enableEquipmentMaintenanceScheduling: false,
+      enableEquipmentUtilizationTracking: false,
+      enableEquipmentGPSTracking: false,
+      enableEquipmentBilling: false,
+      equipmentMaintenanceAlertThreshold: 50,
       requireMaterialRequestApproval: false,
       materialRequestApproverRole: '',
       enableMultiWarehouse: false,

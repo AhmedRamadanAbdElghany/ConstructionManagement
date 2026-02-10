@@ -716,8 +716,17 @@ import { AuthService } from '../../../core/services/auth.service';
                 @for (activity of recentActivities; track activity.id) {
                   <div class="flex items-start space-x-4 p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/[0.03] transition-all border border-transparent">
                     <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-inner p-2"
-                         [ngClass]="{ 'bg-emerald-500/10 text-emerald-500': activity.type === 'success', 'bg-cyan-500/10 text-cyan-500': activity.type === 'info', 'bg-rose-500/10 text-rose-500': activity.type === 'warning' }">
-                      <span class="text-xl">!</span>
+                         [ngClass]="{ 
+                           'bg-emerald-500/10 text-emerald-500': activity.type === 'success', 
+                           'bg-cyan-500/10 text-cyan-500': activity.type === 'info', 
+                           'bg-amber-500/10 text-amber-500': activity.type === 'warning',
+                           'bg-rose-500/10 text-rose-500': activity.type === 'danger' || activity.type === 'error'
+                         }">
+                      <span class="text-xl">
+                        @if (activity.type === 'success') { ✓ }
+                        @else if (activity.type === 'warning' || activity.type === 'danger' || activity.type === 'error') { ⚠️ }
+                        @else { ℹ️ }
+                      </span>
                     </div>
                     <div class="flex-1 min-w-0">
                       <p class="text-sm font-bold text-slate-800 dark:text-white leading-snug">{{ activity.message }}</p>

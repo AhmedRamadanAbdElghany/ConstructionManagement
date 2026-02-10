@@ -34,7 +34,8 @@ public class DashboardController : ControllerBase
     [HttpGet("activities")]
     public async Task<ActionResult<List<RecentActivity>>> GetRecentActivities([FromQuery] int? limit = null)
     {
-        var activities = await _dashboardStatisticsService.GetRecentActivitiesAsync(limit);
+        var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+        var activities = await _dashboardStatisticsService.GetRecentActivitiesAsync(userId, limit);
         return Ok(activities);
     }
 
