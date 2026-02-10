@@ -232,8 +232,8 @@ public class NotificationService : INotificationService
     {
         await CreateAndSendAsync(
             userId: userId,
-            title: "Company Approved",
-            message: $"Your company '{companyName}' has been approved!",
+            title: "Company Created",
+            message: $"Your company '{companyName}' has been created! You can now start working and managing your projects.",
             link: "/dashboard",
             type: NotificationType.ApprovalGranted
         );
