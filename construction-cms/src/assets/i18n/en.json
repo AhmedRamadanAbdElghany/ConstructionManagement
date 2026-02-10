@@ -36,7 +36,8 @@
     "role_super": "Super Admin",
     "role_admin": "Admin",
     "role_worker": "Worker",
-    "role_client": "Client"
+    "role_client": "Client",
+    "role_owner": "Firm Owner"
   },
   "pending_requests": {
     "subtitle": "Review and manage pending company registration and user join requests",
@@ -89,7 +90,7 @@
     "coming_soon": "Coming Soon"
   },
   "dashboard": {
-    "welcome": "Welcome back",
+    "welcome": "Welcome",
     "overview_subtitle": "Here's what's happening with your projects today",
     "live": "Live",
     "attention": "Needs Attention",

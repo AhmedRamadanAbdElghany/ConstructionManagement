@@ -36,7 +36,8 @@
     "role_super": "مدير النظام",
     "role_admin": "مدير",
     "role_worker": "عامل",
-    "role_client": "عميل"
+    "role_client": "عميل",
+    "role_owner": "صاحب شركة"
   },
   "pending_requests": {
     "subtitle": "مراجعة وإدارة طلبات تسجيل الشركات وطلبات انضمام المستخدمين المعلقة",
@@ -89,7 +90,7 @@
     "coming_soon": "قريباً"
   },
   "dashboard": {
-    "welcome": "مرحباً بعودتك",
+    "welcome": "مرحباً",
     "overview_subtitle": "إليك ما يحدث في مشاريعك اليوم",
     "live": "مباشر",
     "attention": "يحتاج اهتمام",

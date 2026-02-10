@@ -35,7 +35,7 @@ import { RouterModule } from '@angular/router';
           <div class="transition-all duration-500 overflow-hidden" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">
             <h1 class="text-slate-900 dark:text-white font-black text-xl leading-none tracking-tight">STRUC<span class="text-cyan-500 dark:text-cyan-400">T</span></h1>
             <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] font-bold mt-1.5 truncate">
-              {{ 'sidebar.role_' + (currentRole === 'SuperAdmin' ? 'super' : currentRole === 'CompanyAdmin' ? 'admin' : currentRole === 'CompanyUser' ? 'worker' : 'client') | translate }}
+              {{ (isPending ? 'sidebar.role_owner' : 'sidebar.role_' + (currentRole === 'SuperAdmin' ? 'super' : (currentRole === 'CompanyAdmin' && currentUserType === 2) ? 'owner' : currentRole === 'CompanyAdmin' ? 'admin' : currentRole === 'CompanyUser' ? 'worker' : 'client')) | translate }}
             </p>
           </div>
         </div>
@@ -43,7 +43,7 @@ import { RouterModule } from '@angular/router';
 
       <!-- Navigation -->
       <nav class="flex-1 p-4 space-y-2 overflow-y-auto overflow-x-hidden custom-scrollbar pt-8">
-        <!-- Section Header -->
+        @if (!isPending) {
         <p class="px-4 py-2 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
            [class.opacity-0]="isCollapsed()">{{ (isClient ? 'sidebar.client_portal' : 'sidebar.administration') | translate }}</p>
 
@@ -340,12 +340,13 @@ import { RouterModule } from '@angular/router';
             <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.documents' | translate }}</span>
           </a>
         }
+        } <!-- end isPending -->
 
         <div class="my-6 px-4">
           <div class="h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent"></div>
         </div>
 
-        @if (currentRole !== 'SuperAdmin') {
+        @if (currentRole !== 'SuperAdmin' && !isPending) {
           <a routerLink="/notifications" 
              routerLinkActive="nav-active"
              class="nav-item group">
@@ -363,10 +364,11 @@ import { RouterModule } from '@angular/router';
         }
       </nav>
 
-      <!-- Role Selector -->
+      @if (!isPending) {
       <div class="p-4 m-4 rounded-[2rem] bg-slate-100/50 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 backdrop-blur-3xl transition-all duration-500 shrink-0 shadow-inner"
            [class.mx-2]="isCollapsed()">
         <label class="block text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] mb-3 px-1 truncate" [class.text-center]="isCollapsed()">{{ 'sidebar.demo_role_switch' | translate }}</label>
+
         <div class="relative group/select">
           <select 
             (change)="switchUserType($event)"
@@ -385,6 +387,7 @@ import { RouterModule } from '@angular/router';
           </div>
         </div>
       </div>
+      }
 
       <!-- User Profile -->
       <div class="p-6 bg-slate-100/30 dark:bg-slate-950/40 border-t border-slate-200 dark:border-slate-800/60 mt-auto shrink-0 group/profile cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-950/60 transition-colors">
@@ -505,6 +508,12 @@ export class SidebarComponent {
 
   get isInventoryOwner(): boolean {
     return this.currentUserType === 3; // InventoryOwner = 3
+  }
+
+  get isPending(): boolean {
+    const user = this.authService.getCurrentUser();
+    // User type 2 (CompanyOwner) who has no companyId yet is considered pending approval
+    return user?.userType === 2 && !user?.companyId;
   }
 
   toggleCollapse() {

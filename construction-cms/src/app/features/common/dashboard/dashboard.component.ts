@@ -28,9 +28,99 @@ import { AuthService } from '../../../core/services/auth.service';
         </div>
 
         <!-- ──────────────────────────────────────────────────────────────────
+             PENDING APPROVAL VIEW (New Company Registrants)
+             ────────────────────────────────────────────────────────────────── -->
+        @if (isPending) {
+          <div class="max-w-4xl mx-auto py-12 px-4">
+            <!-- Welcome Header -->
+            <div class="text-center mb-16 animate-in fade-in slide-in-from-bottom-8 duration-700">
+              <h2 class="text-5xl font-black text-slate-900 dark:text-white mb-6 tracking-tight leading-tight">
+                Welcome to <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600">STRUCT</span>, {{ firstName }}! 🚀
+              </h2>
+              <p class="text-xl text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed">
+                We're excited to have you on board. Your professional workspace is being prepared to deliver a premium management experience.
+              </p>
+            </div>
+
+            <!-- Modern Progress Tracker -->
+            <div class="bg-white dark:bg-slate-900 rounded-[3.5rem] p-12 border border-slate-200 dark:border-white/5 shadow-3xl relative overflow-hidden mb-12 group transition-all duration-500 hover:shadow-cyan-500/10">
+              <div class="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-[100px] -mr-48 -mt-48 transition-colors"></div>
+              
+              <div class="relative z-10">
+                <div class="flex items-center justify-between mb-16 px-4">
+                   <h3 class="text-xs font-black text-cyan-500 uppercase tracking-[0.3em]">Activation Progress</h3>
+                   <div class="px-4 py-2 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-[10px] font-black uppercase tracking-widest animate-pulse">
+                     Live Status: Auditing
+                   </div>
+                </div>
+
+                <!-- Stepper -->
+                <div class="relative flex justify-between items-start">
+                  <!-- Progress Line Background -->
+                  <div class="absolute top-8 left-[10%] right-[10%] h-1 bg-slate-100 dark:bg-slate-800 rounded-full"></div>
+                  <!-- Active Line -->
+                   <div class="absolute top-8 left-[10%] w-[55%] h-1 bg-gradient-to-r from-emerald-400 to-cyan-500 rounded-full shadow-lg shadow-cyan-500/30"></div>
+
+                  <!-- Step 1: Created -->
+                  <div class="relative z-20 flex flex-col items-center w-1/4">
+                    <div class="w-16 h-16 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 transition-transform group-hover:scale-110">
+                      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <p class="mt-4 text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Created</p>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase mt-1 italic tracking-widest">Completed</p>
+                  </div>
+
+                  <!-- Step 2: Verification -->
+                  <div class="relative z-20 flex flex-col items-center w-1/4">
+                    <div class="w-16 h-16 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 transition-transform group-hover:scale-110">
+                      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                    <p class="mt-4 text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Verification</p>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase mt-1 italic tracking-widest">Verified</p>
+                  </div>
+
+                  <!-- Step 3: Admin Audit -->
+                  <div class="relative z-20 flex flex-col items-center w-1/4">
+                    <div class="w-20 h-20 -mt-2 rounded-3xl bg-gradient-to-br from-cyan-400 to-blue-600 text-white flex items-center justify-center shadow-2xl shadow-cyan-500/40 ring-4 ring-white dark:ring-slate-950 transition-all group-hover:scale-110">
+                      <div class="flex flex-col items-center">
+                        <svg class="w-10 h-10 animate-spin-slow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                      </div>
+                    </div>
+                    <p class="mt-4 text-sm font-black text-cyan-500 uppercase tracking-widest">Audit</p>
+                    <p class="text-[10px] text-cyan-500/60 font-black uppercase mt-1 tracking-widest">In Progress</p>
+                  </div>
+
+                  <!-- Step 4: Activation -->
+                  <div class="relative z-20 flex flex-col items-center w-1/4 opacity-40">
+                    <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center border border-slate-200 dark:border-white/5 transition-transform group-hover:scale-105">
+                      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <p class="mt-4 text-sm font-black text-slate-400 dark:text-slate-600 uppercase tracking-wider">Activation</p>
+                  </div>
+                </div>
+
+                <div class="mt-20 p-8 rounded-3xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-left flex items-start gap-6">
+                  <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0 text-cyan-500">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  </div>
+                  <div>
+                    <h4 class="text-base font-black text-slate-900 dark:text-white mb-2 leading-none uppercase tracking-wide">What happens next?</h4>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed">
+                      Our compliance team is reviewing your company documents and registration details. This typically takes <span class="text-cyan-500 font-bold">1-2 business days</span>. You will receive an email and a system notification as soon as your professional dashboard is unlocked.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+        }
+        
+        <!-- ──────────────────────────────────────────────────────────────────
              SUPER ADMIN DASHBOARD
              ────────────────────────────────────────────────────────────────── -->
-        @if (isSuperAdmin) {
+        @else if (isSuperAdmin) {
           <!-- Stats Cards -->
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <!-- Total Companies -->
@@ -348,7 +438,7 @@ import { AuthService } from '../../../core/services/auth.service';
                     <div class="text-center mb-8">
                       <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ currentUser?.fullName }}</h2>
                       <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">
-                        {{ 'sidebar.role_' + (currentUser?.role === 'SuperAdmin' ? 'super' : currentUser?.role === 'CompanyAdmin' ? 'admin' : currentUser?.role === 'CompanyUser' ? 'worker' : 'client') | translate }}
+                        {{ 'sidebar.role_' + (currentUser?.role === 'SuperAdmin' ? 'super' : (currentUser?.role === 'CompanyAdmin' && currentUser?.userType === 2) ? 'owner' : currentUser?.role === 'CompanyAdmin' ? 'admin' : currentUser?.role === 'CompanyUser' ? 'worker' : 'client') | translate }}
                       </p>
                     </div>
                     
@@ -762,6 +852,14 @@ export class DashboardComponent implements OnInit {
     return this.currentUser?.role === 'CompanyUser';
   }
 
+  get isPending(): boolean {
+    return this.currentUser?.userType === 2 && !this.currentUser?.companyId;
+  }
+
+  get firstName(): string {
+    return this.currentUser?.fullName?.split(' ')[0] || 'Member';
+  }
+
   clientStats = {
     totalContract: 250000,
     totalPaid: 185000,
@@ -796,13 +894,15 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private dashboardService: DashboardService,
-    private authService: AuthService
+    public authService: AuthService
   ) {
     this.currentUser = this.authService.getCurrentUser();
   }
 
   ngOnInit() {
     console.log('Dashboard Initialized', this.currentUser);
+    if (this.isPending) return;
+
     if (this.isSuperAdmin) {
       this.loadSuperAdminView();
     } else if (this.isWorker) {

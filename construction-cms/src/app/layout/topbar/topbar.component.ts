@@ -66,7 +66,7 @@ import { AppNotification } from '../../shared/interfaces';
 
           <!-- Notifications Dropdown -->
           @if (showNotifications) {
-            <div class="absolute ltr:right-0 rtl:left-0 top-[calc(100%+12px)] w-[420px] bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-3xl border border-slate-200 dark:border-white/10 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+            <div class="absolute ltr:-right-4 rtl:-left-4 top-[calc(100%+16px)] w-[400px] bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-3xl border border-slate-200 dark:border-white/10 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
               <div class="p-8 pb-4 flex items-center justify-between">
                 <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">{{ 'topbar.notifications' | translate }}</h3>
                 <button (click)="markAllRead()" class="px-4 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-[10px] font-black text-cyan-500 dark:text-cyan-400 uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
@@ -128,9 +128,9 @@ import { AppNotification } from '../../shared/interfaces';
             <div class="hidden md:block ltr:text-left rtl:text-right min-w-max">
               <p class="text-sm font-black text-slate-900 dark:text-white tracking-tight leading-none mb-1">{{ authService.getCurrentUser()?.fullName || '' }}</p>
               <p class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none">
-                {{ 'sidebar.role_' + (authService.getCurrentUser()?.role === 'SuperAdmin' ? 'super' :
+                {{ (isPending ? 'sidebar.role_owner' : 'sidebar.role_' + (authService.getCurrentUser()?.role === 'SuperAdmin' ? 'super' :
                    authService.getCurrentUser()?.role === 'CompanyAdmin' ? 'admin' :
-                   authService.getCurrentUser()?.role === 'CompanyUser' ? 'worker' : 'client') | translate }}
+                   authService.getCurrentUser()?.role === 'CompanyUser' ? 'worker' : 'client')) | translate }}
               </p>
             </div>
             <svg class="w-4 h-4 text-slate-400 group-hover:text-cyan-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -243,6 +243,11 @@ export class TopbarComponent implements OnInit {
 
   get unreadCount(): number {
     return this.notifications.filter(n => !n.read).length;
+  }
+
+  get isPending(): boolean {
+    const user = this.authService.getCurrentUser();
+    return user?.userType === 2 && !user?.companyId;
   }
 
   ngOnInit() {

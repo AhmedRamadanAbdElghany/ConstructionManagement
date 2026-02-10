@@ -521,11 +521,8 @@ export class LoginComponent {
         this.isLoading = false;
         const user = response.user;
 
-        if (user.roles.includes('SuperAdmin') || user.companyId) {
+        if (user.roles.includes('SuperAdmin') || user.companyId || user.userType === 2) {
           this.router.navigate(['/dashboard']);
-        } else if (user.userType === 2) { // CompanyOwner
-          this.errorMessage = 'Your company request is still pending approval. You will be able to log in once it is approved.';
-          this.authService.logout();
         } else {
           this.router.navigate(['/auth/company-selection']);
         }

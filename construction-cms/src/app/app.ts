@@ -18,7 +18,12 @@ export class App {
 
   get showLayout(): boolean {
     const currentUrl = this.router.url;
-    // Don't show sidebar/topbar on auth routes
-    return !currentUrl.startsWith('/auth');
+    const physicalUrl = window.location.pathname;
+
+    // Don't show layout if we are on an auth route or still at the root (which redirects)
+    const isAuth = currentUrl.startsWith('/auth') || physicalUrl.startsWith('/auth');
+    const isRoot = currentUrl === '/' || physicalUrl === '/';
+
+    return !isAuth && !isRoot;
   }
 }
