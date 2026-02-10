@@ -18,13 +18,15 @@ export const routes: Routes = [
     // Dashboard - Available to all authenticated users
     {
         path: 'dashboard',
-        loadComponent: () => import('./features/common/dashboard/dashboard.component').then(m => m.DashboardComponent)
+        loadComponent: () => import('./features/common/dashboard/dashboard.component').then(m => m.DashboardComponent),
+        canActivate: [roleGuard]
     },
 
     // Notifications
     {
         path: 'notifications',
-        loadComponent: () => import('./features/common/notifications/notifications.component').then(m => m.NotificationsComponent)
+        loadComponent: () => import('./features/common/notifications/notifications.component').then(m => m.NotificationsComponent),
+        canActivate: [roleGuard]
     },
 
     // Warehouse Partner Routes
@@ -309,55 +311,68 @@ export const routes: Routes = [
             },
             {
                 path: 'dashboard',
-                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent),
+                canActivate: [roleGuard]
             },
             {
                 path: 'projects',
-                loadComponent: () => import('./features/client/client-projects/client-projects.component').then(m => m.ClientProjectsComponent)
+                loadComponent: () => import('./features/client/client-projects/client-projects.component').then(m => m.ClientProjectsComponent),
+                canActivate: [roleGuard]
             },
             {
                 path: 'projects/:id/progress',
-                loadComponent: () => import('./features/client/client-projects/client-projects.component').then(m => m.ClientProjectsComponent)
+                loadComponent: () => import('./features/client/client-projects/client-projects.component').then(m => m.ClientProjectsComponent),
+                canActivate: [roleGuard]
             },
             {
                 path: 'payments',
-                loadComponent: () => import('./features/client/reports/client-reports.component').then(m => m.ClientReportsComponent)
+                loadComponent: () => import('./features/client/reports/client-reports.component').then(m => m.ClientReportsComponent),
+                canActivate: [roleGuard]
             },
             {
                 path: 'messages',
-                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent),
+                canActivate: [roleGuard]
             },
             {
                 path: 'messages/new',
-                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent),
+                canActivate: [roleGuard]
             },
             {
                 path: 'messages/:id',
-                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent),
+                canActivate: [roleGuard]
             },
             {
                 path: 'change-orders',
-                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent),
+                canActivate: [roleGuard]
             },
             {
                 path: 'change-orders/new',
-                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent),
+                canActivate: [roleGuard]
             },
             {
                 path: 'change-orders/:id',
-                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent),
+                canActivate: [roleGuard]
             },
             {
                 path: 'documents',
-                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent),
+                canActivate: [roleGuard]
             },
             {
                 path: 'activities',
-                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent),
+                canActivate: [roleGuard]
             },
             {
                 path: 'settings',
-                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent)
+                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent),
+                canActivate: [roleGuard]
             },
             {
                 path: '',
@@ -370,6 +385,6 @@ export const routes: Routes = [
     // Fallback
     {
         path: '**',
-        redirectTo: 'dashboard'
+        redirectTo: 'auth/login'
     }
 ];

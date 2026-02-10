@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { VendorService, Vendor, VendorInvoice, VendorInvoiceSummary, CreateVendorRequest, CreateVendorInvoiceRequest } from '../../../core/services/vendor.service';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
     selector: 'app-vendors',

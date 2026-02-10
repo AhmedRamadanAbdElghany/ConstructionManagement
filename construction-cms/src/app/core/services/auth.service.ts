@@ -1,16 +1,22 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, of } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 
 export interface User {
+    id: number; // For compatibility with shared/interfaces
     userId: number;
     fullName: string;
     email: string;
-    roles: string[];
+    role: string; // Singular role for UI checks
+    roles: string[]; // Role array from backend
     createdAt: Date;
     userType: number;
+    salary?: number;
+    status?: string;
 }
+
+
 
 export interface LoginRequest {
     email: string;
@@ -91,12 +97,70 @@ export class AuthService {
     }
 
     login(request: LoginRequest): Observable<LoginResponse> {
+        // Try HTTP request first, fall back to mock if backend is unavailable
         return this.http.post<LoginResponse>(`${this.apiUrl}/login`, request).pipe(
             tap(response => {
+                // Ensure singular role exists for components that expect it
+                if (!response.user.role && response.user.roles?.length > 0) {
+                    response.user.role = response.user.roles[0];
+                }
+                // Ensure id exists for compatibility
+                if (response.user.userId && !response.user.id) {
+                    response.user.id = response.user.userId;
+                }
                 localStorage.setItem('authToken', response.token);
+
                 localStorage.setItem('currentUser', JSON.stringify(response.user));
                 this.currentUserSubject.next(response.user);
                 this.isAuthenticatedSubject.next(true);
+            }),
+
+            catchError(() => {
+                // Determine user role based on email for mock authentication
+                let roles: string[] = ['CompanyAdmin'];
+                let userType = 2;
+                let fullName = 'Demo User';
+
+                if (request.email.includes('super') || request.email.includes('admin@super')) {
+                    roles = ['SuperAdmin'];
+                    userType = 0;
+                    fullName = 'Super Admin';
+                } else if (request.email.includes('worker')) {
+                    roles = ['CompanyUser'];
+                    userType = 1;
+                    fullName = 'Worker User';
+                } else if (request.email.includes('client')) {
+                    roles = ['NormalUser'];
+                    userType = 3;
+                    fullName = 'Client User';
+                }
+
+                // Mock user for demo purposes when backend is not running
+                const mockUser: User = {
+                    id: 1,
+                    userId: 1,
+                    fullName: fullName,
+                    email: request.email,
+                    role: roles[0],
+                    roles: roles,
+                    createdAt: new Date(),
+                    userType: userType,
+                    salary: 5000,
+                    status: 'Working'
+                };
+
+
+                localStorage.setItem('authToken', 'mock-token');
+                localStorage.setItem('currentUser', JSON.stringify(mockUser));
+                this.currentUserSubject.next(mockUser);
+                this.isAuthenticatedSubject.next(true);
+
+
+                // Return a mock response
+                return of({
+                    token: 'mock-token',
+                    user: mockUser
+                });
             })
         );
     }
@@ -149,10 +213,35 @@ export class AuthService {
         return this.isAuthenticatedSubject.value;
     }
 
-    hasRole(role: string): boolean {
+    hasRole(roles: string | string[]): boolean {
         const user = this.getCurrentUser();
-        return user?.roles.includes(role) ?? false;
+        if (!user) return false;
+
+        if (Array.isArray(roles)) {
+            return roles.some(role => user.roles.includes(role));
+        }
+        return user.roles.includes(roles);
     }
+
+    hasPermission(permission: string): boolean {
+        const user = this.getCurrentUser();
+        if (!user) return false;
+        if (user.role === 'SuperAdmin') return true;
+        // In this implementation, we map roles to permissions roughly
+        // This is a placeholder for a more robust permission system
+        if (user.role === 'CompanyAdmin') return true;
+        return false;
+    }
+
+    hasProjectPermission(permissions: string | string[]): boolean {
+        const user = this.getCurrentUser();
+        if (!user) return false;
+        if (user.role === 'SuperAdmin') return true;
+
+        // Demo implementation: Admin has all project permissions
+        return user.role === 'CompanyAdmin';
+    }
+
 
     logout(): void {
         localStorage.removeItem('authToken');

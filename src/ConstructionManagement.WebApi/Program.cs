@@ -22,7 +22,13 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Controllers + FluentValidation
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+    });
+
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateProjectRequestValidator>();
 
@@ -65,6 +71,8 @@ builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<IRepository<UserTypeHistory>, Repository<UserTypeHistory>>();
 builder.Services.AddScoped<IRepository<ProjectTeamRole>, Repository<ProjectTeamRole>>();
 builder.Services.AddScoped<IRepository<BOQExecutedDelta>, Repository<BOQExecutedDelta>>();
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+builder.Services.AddScoped<ICompanyRequestRepository, CompanyRequestRepository>();
 
 // 6. Services
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -91,6 +99,34 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IUserTypeService, UserTypeService>();
+builder.Services.AddScoped<IDashboardStatisticsService, DashboardStatisticsService>();
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+builder.Services.AddScoped<IMaterialService, MaterialService>();
+builder.Services.AddScoped<IMaterialCategoryService, MaterialCategoryService>();
+builder.Services.AddScoped<IMaterialStockService, MaterialStockService>();
+builder.Services.AddScoped<IMaterialRequestService, MaterialRequestService>();
+builder.Services.AddScoped<IMaterialConsumptionService, MaterialConsumptionService>();
+builder.Services.AddScoped<IWarehouseService, WarehouseService>();
+builder.Services.AddScoped<IEquipmentService, EquipmentService>();
+builder.Services.AddScoped<IEquipmentMaintenanceService, EquipmentMaintenanceService>();
+builder.Services.AddScoped<IQualityService, QualityService>();
+builder.Services.AddScoped<ISafetyChecklistService, SafetyService>();
+builder.Services.AddScoped<ISafetyInspectionService, SafetyService>();
+builder.Services.AddScoped<ISafetyIncidentService, SafetyService>();
+builder.Services.AddScoped<ISafetyTrainingService, SafetyService>();
+builder.Services.AddScoped<ISafetyComplianceService, SafetyService>();
+builder.Services.AddScoped<IDocumentService, DocumentService>();
+builder.Services.AddScoped<IClientPortalService, ClientPortalService>();
+builder.Services.AddScoped<ICompanyRequestService, CompanyRequestService>();
+builder.Services.AddScoped<IJoinRequestService, JoinRequestService>();
+builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<IWarehouseOrderService, WarehouseOrderService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<ISubcontractorService, SubcontractorService>();
+
+
+
+
 
 // Approval-specific escalation job
 builder.Services.AddScoped<ApprovalEscalationJob>();

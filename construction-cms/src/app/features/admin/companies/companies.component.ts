@@ -576,6 +576,9 @@ export class CompaniesComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.companyForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      packageId: [null, Validators.required],
+      isActive: [true],
       adminName: [''],
       adminEmail: [''],
 
@@ -598,9 +601,34 @@ export class CompaniesComponent implements OnInit {
       enableClientPortal: [false],
       enableAccessControl: [true],
       enableHRManagement: [false],
-      enableVendorManagement: [false]
+      enableVendorManagement: [false],
+
+      // Settings fields (settings-level)
+      enableDelayNotification: [true],
+      requirePhotoReview: [false],
+      clientCanSeeFinancials: [false],
+      allowPackages: [true],
+      allowLocations: [true],
+      allowHR: [false],
+      enableEquipmentMaintenanceScheduling: [false],
+      enableEquipmentUtilizationTracking: [false],
+      enableEquipmentGPSTracking: [false],
+      enableEquipmentBilling: [false],
+      equipmentMaintenanceAlertThreshold: [50],
+      requireMaterialRequestApproval: [false],
+      materialRequestApproverRole: [''],
+      enableMultiWarehouse: [false],
+      enableStockAlerts: [false],
+      defaultLowStockThreshold: [10],
+      allowAddProgressEntry: [true],
+      allowReopenClosedDay: [false],
+      autoCloseDay: [false],
+      enableInvoiceReview: [false],
+      clientCanSeeMedia: [false],
+      clientCanSeeBOQ: [false]
     });
   }
+
 
   ngOnInit() {
     this.loadData();
@@ -620,6 +648,9 @@ export class CompaniesComponent implements OnInit {
     this.selectedCompanyId = null;
     this.selectedCompany = null;
     this.companyForm.reset({
+      name: '',
+      packageId: this.packages.length > 0 ? this.packages[0].id : null,
+      isActive: true,
       adminName: '',
       adminEmail: '',
 
@@ -642,8 +673,28 @@ export class CompaniesComponent implements OnInit {
       enableClientPortal: false,
       enableAccessControl: true,
       enableHRManagement: false,
-      enableVendorManagement: false
+      enableVendorManagement: false,
+
+      // Settings
+      enableDelayNotification: true,
+      requirePhotoReview: false,
+      clientCanSeeFinancials: false,
+      allowPackages: true,
+      allowLocations: true,
+      allowHR: false,
+      requireMaterialRequestApproval: false,
+      materialRequestApproverRole: '',
+      enableMultiWarehouse: false,
+      enableStockAlerts: false,
+      defaultLowStockThreshold: 10,
+      allowAddProgressEntry: true,
+      allowReopenClosedDay: false,
+      autoCloseDay: false,
+      enableInvoiceReview: false,
+      clientCanSeeMedia: false,
+      clientCanSeeBOQ: false
     });
+
 
     this.companyForm.get('adminName')?.setValidators([Validators.required, Validators.minLength(3)]);
     this.companyForm.get('adminEmail')?.setValidators([Validators.required, Validators.email]);

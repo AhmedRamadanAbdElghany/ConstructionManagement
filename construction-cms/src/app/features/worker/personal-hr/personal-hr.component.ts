@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { VacationRequest } from '../../../shared/interfaces';
 
 @Component({
@@ -297,7 +297,7 @@ export class PersonalHrComponent implements OnInit {
 
   ngOnInit() {
     const currentUser = this.authService.getCurrentUser();
-    this.monthlySalary = currentUser.salary;
+    this.monthlySalary = currentUser?.salary || 0;
 
     // TODO: Implement vacation request API
     // this.vacationRequests = [];
@@ -307,7 +307,7 @@ export class PersonalHrComponent implements OnInit {
   submitVacationRequest() {
     if (this.vacationForm.valid) {
       const newRequest = {
-        userId: this.authService.getCurrentUser().id,
+        userId: this.authService.getCurrentUser()?.id || 0,
         type: this.vacationForm.value.type,
         startDate: this.vacationForm.value.startDate,
         endDate: this.vacationForm.value.endDate,

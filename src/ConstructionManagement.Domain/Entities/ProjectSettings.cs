@@ -9,7 +9,9 @@ namespace ConstructionManagement.Domain.Entities;
 /// </summary>
 public class ProjectSettings : BaseEntity, ICompanyEntity
 {
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Project Project { get; set; } = null!;
+
 
     public int? CompanyId { get; set; }
 

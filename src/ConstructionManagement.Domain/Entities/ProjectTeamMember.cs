@@ -19,7 +19,9 @@ public class ProjectTeamMember : BaseEntity, ICompanyEntity
     public int ProjectId { get; set; }
 
     [ForeignKey(nameof(ProjectId))]
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Project Project { get; set; } = null!;
+
 
     /// <summary>
     /// The user who is a member of this project
@@ -27,7 +29,9 @@ public class ProjectTeamMember : BaseEntity, ICompanyEntity
     public int UserId { get; set; }
 
     [ForeignKey(nameof(UserId))]
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual User User { get; set; } = null!;
+
 
     // -- Reporting Structure ---------------------------------------------------
 
@@ -38,7 +42,9 @@ public class ProjectTeamMember : BaseEntity, ICompanyEntity
     public int? ReportsToUserId { get; set; }
 
     [ForeignKey(nameof(ReportsToUserId))]
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual User? ReportsTo { get; set; }
+
 
     // -- Roles (many-to-many via bridge table) ---------------------------------
 

@@ -12,7 +12,9 @@ public class CompanyFeatureSettings : BaseEntity, ICompanyEntity
     /// </summary>
     public int? CompanyId { get; set; }
     [ForeignKey(nameof(CompanyId))]
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Company Company { get; set; } = null!;
+
 
     /// <summary>
     /// Master switch for Inventory Management module
@@ -56,7 +58,9 @@ public class CompanySettings : BaseEntity, ICompanyEntity
     /// </summary>
     public int? CompanyId { get; set; }
     [ForeignKey(nameof(CompanyId))]
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Company Company { get; set; } = null!;
+
 
     // ============================================
     // MODULE MASTER SWITCHES (Controlled by Super Admin)

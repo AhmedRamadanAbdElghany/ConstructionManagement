@@ -1,6 +1,6 @@
 import { Component, signal, computed, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../core/auth/auth.service';
+import { AuthService } from '../../core/services/auth.service';
 import { SettingsService } from '../../core/services/settings.service';
 import { PendingRequestsService } from '../../core/services/pending-requests.service';
 import { CompanySettings } from '../../shared/interfaces';
@@ -34,7 +34,9 @@ import { RouterModule } from '@angular/router';
           </div>
           <div class="transition-all duration-500 overflow-hidden" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">
             <h1 class="text-slate-900 dark:text-white font-black text-xl leading-none tracking-tight">STRUC<span class="text-cyan-500 dark:text-cyan-400">T</span></h1>
-            <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] font-bold mt-1.5 truncate">{{ currentRole }}</p>
+            <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] font-bold mt-1.5 truncate">
+              {{ 'sidebar.role_' + (currentRole === 'SuperAdmin' ? 'super' : currentRole === 'CompanyAdmin' ? 'admin' : currentRole === 'CompanyUser' ? 'worker' : 'client') | translate }}
+            </p>
           </div>
         </div>
       </div>
@@ -154,7 +156,7 @@ import { RouterModule } from '@angular/router';
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                 </svg>
               </div>
-              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Equipment</span>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.equipment' | translate }}</span>
             </a>
           }
 
@@ -167,7 +169,7 @@ import { RouterModule } from '@angular/router';
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                 </svg>
               </div>
-              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Safety</span>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.safety' | translate }}</span>
             </a>
           }
 
@@ -180,7 +182,7 @@ import { RouterModule } from '@angular/router';
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                 </svg>
               </div>
-              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Subcontractors</span>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.subcontractors' | translate }}</span>
             </a>
           }
 
@@ -193,7 +195,7 @@ import { RouterModule } from '@angular/router';
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
               </div>
-              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Documents</span>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.documents' | translate }}</span>
             </a>
           }
 
@@ -206,7 +208,7 @@ import { RouterModule } from '@angular/router';
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
               </div>
-              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Quality</span>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.quality' | translate }}</span>
             </a>
           }
 
@@ -219,7 +221,7 @@ import { RouterModule } from '@angular/router';
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                 </svg>
               </div>
-              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Analytics</span>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.analytics' | translate }}</span>
             </a>
           }
 
@@ -280,7 +282,7 @@ import { RouterModule } from '@angular/router';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Portal Dashboard</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.portal_dashboard' | translate }}</span>
           </a>
 
           <a routerLink="/client-portal/projects" 
@@ -291,7 +293,7 @@ import { RouterModule } from '@angular/router';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">My Projects</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.my_projects' | translate }}</span>
           </a>
 
           <a routerLink="/client-portal/payments" 
@@ -302,7 +304,7 @@ import { RouterModule } from '@angular/router';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Payments</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.payments' | translate }}</span>
           </a>
 
           <a routerLink="/client-portal/messages" 
@@ -313,7 +315,7 @@ import { RouterModule } from '@angular/router';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Messages</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.messages' | translate }}</span>
           </a>
 
           <a routerLink="/client-portal/change-orders" 
@@ -324,7 +326,7 @@ import { RouterModule } from '@angular/router';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Change Orders</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.change_orders' | translate }}</span>
           </a>
 
           <a routerLink="/client-portal/documents" 
@@ -335,7 +337,7 @@ import { RouterModule } from '@angular/router';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Documents</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.documents' | translate }}</span>
           </a>
         }
 
@@ -370,10 +372,11 @@ import { RouterModule } from '@angular/router';
             (change)="switchUserType($event)"
             [value]="currentUserType"
             class="w-full pl-3 pr-10 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-300 text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-cyan-500/10 focus:border-cyan-500/30 transition-all cursor-pointer appearance-none outline-none shadow-xl">
-            <option value="0">Normal User</option>
-            <option value="1">Worker</option>
-            <option value="2">Company Owner</option>
-            <option value="3">Inventory Owner</option>
+            <option value="0">{{ 'sidebar.role_super' | translate }}</option>
+            <option value="1">{{ 'sidebar.role_worker' | translate }}</option>
+            <option value="2">{{ 'sidebar.role_admin' | translate }}</option>
+            <option value="3">{{ 'sidebar.role_client' | translate }}</option>
+
           </select>
           <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400 dark:text-slate-600 group-hover/select:text-cyan-500 dark:group-hover/select:text-cyan-400 transition-colors" [class.hidden]="isCollapsed()">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -388,13 +391,13 @@ import { RouterModule } from '@angular/router';
         <div class="flex items-center gap-4">
           <div class="relative flex-shrink-0">
             <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white font-black text-lg ring-2 ring-white dark:ring-slate-800 shadow-2xl transition-transform group-hover/profile:scale-110 group-hover/profile:rotate-3">
-              {{ authService.getCurrentUser().fullName.charAt(0) }}
+              {{ authService.getCurrentUser()?.fullName?.charAt(0) || '' }}
             </div>
             <div class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-[3px] border-white dark:border-slate-900 shadow-lg animate-pulse"></div>
           </div>
           <div class="flex-1 min-w-0 transition-all duration-500 overflow-hidden" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">
-            <p class="text-[15px] font-black text-slate-900 dark:text-white truncate leading-none mb-1.5">{{ authService.getCurrentUser().fullName }}</p>
-            <p class="text-[10px] text-slate-400 dark:text-slate-600 truncate font-black uppercase tracking-widest">{{ authService.getCurrentUser().email }}</p>
+            <p class="text-[15px] font-black text-slate-900 dark:text-white truncate leading-none mb-1.5">{{ authService.getCurrentUser()?.fullName || '' }}</p>
+            <p class="text-[10px] text-slate-400 dark:text-slate-600 truncate font-black uppercase tracking-widest">{{ authService.getCurrentUser()?.email || '' }}</p>
           </div>
           <button class="p-3 rounded-2xl text-slate-400 dark:text-slate-600 hover:bg-rose-500/10 hover:text-rose-500 transition-all active:scale-90 group/logout" [class.hidden]="isCollapsed()">
             <svg class="w-6 h-6 transition-transform group-hover/logout:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

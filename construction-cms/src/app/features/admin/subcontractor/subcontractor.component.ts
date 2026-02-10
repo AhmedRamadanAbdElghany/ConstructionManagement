@@ -1,737 +1,363 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subject, takeUntil, forkJoin } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 import { SubcontractorService, Subcontractor, SubcontractorContract, SubcontractorPayment, SubcontractorRating, SubcontractorSummary } from '../../../core/services/subcontractor.service';
 
 @Component({
   selector: 'app-subcontractor',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule],
   template: `
-    <div class="subcontractor-management">
-      <!-- Header -->
-      <div class="page-header">
-        <h1>Subcontractor Management</h1>
-        <button class="btn btn-primary" (click)="showAddModal = true">
-          <i class="fas fa-plus"></i> Add Subcontractor
-        </button>
-      </div>
-
-      <!-- Summary Cards -->
-      <div class="summary-cards">
-        <div class="card">
-          <h3>Total</h3>
-          <div class="value">{{ summary?.totalSubcontractors || 0 }}</div>
-        </div>
-        <div class="card">
-          <h3>Active</h3>
-          <div class="value">{{ summary?.activeSubcontractors || 0 }}</div>
-        </div>
-        <div class="card">
-          <h3>Pending Approval</h3>
-          <div class="value warning">{{ summary?.pendingApproval || 0 }}</div>
-        </div>
-        <div class="card">
-          <h3>Expiring Insurance</h3>
-          <div class="value danger">{{ summary?.expiringInsurance || 0 }}</div>
-        </div>
-        <div class="card">
-          <h3>Avg Rating</h3>
-          <div class="value">{{ summary?.averageRating?.toFixed(2) || 'N/A' }}</div>
-        </div>
-      </div>
-
-      <!-- Tabs -->
-      <div class="tabs">
-        <button [class.active]="activeTab === 'list'" (click)="activeTab = 'list'">List</button>
-        <button [class.active]="activeTab === 'contracts'" (click)="activeTab = 'contracts'">Contracts</button>
-        <button [class.active]="activeTab === 'payments'" (click)="activeTab = 'payments'">Payments</button>
-        <button [class.active]="activeTab === 'ratings'" (click)="activeTab = 'ratings'">Ratings</button>
-      </div>
-
-      <!-- Subcontractor List Tab -->
-      <div class="tab-content" *ngIf="activeTab === 'list'">
-        <div class="filter-bar">
-          <input type="text" [(ngModel)]="searchTerm" placeholder="Search..." class="form-control">
-          <select [(ngModel)]="filterTrade" class="form-control">
-            <option value="">All Trades</option>
-            <option value="Electrical">Electrical</option>
-            <option value="Plumbing">Plumbing</option>
-            <option value="HVAC">HVAC</option>
-            <option value="Concrete">Concrete</option>
-            <option value="Steel">Steel</option>
-          </select>
-          <select [(ngModel)]="filterStatus" class="form-control">
-            <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="pending">Pending</option>
-            <option value="inactive">Inactive</option>
-          </select>
-        </div>
-
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Trade</th>
-              <th>Contact</th>
-              <th>Rating</th>
-              <th>Projects</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let sub of filteredSubcontractors">
-              <td>
-                <strong>{{ sub.name }}</strong>
-                <br><small>{{ sub.licenseNumber }}</small>
-              </td>
-              <td>{{ sub.tradeSpecialty }}</td>
-              <td>
-                <div *ngIf="sub.phone">{{ sub.phone }}</div>
-                <div *ngIf="sub.email"><small>{{ sub.email }}</small></div>
-              </td>
-              <td>
-                <span class="rating-badge" [class]="'grade-' + sub.ratingGrade">
-                  {{ sub.ratingGrade || 'N/A' }} ({{ sub.averageRating?.toFixed(1) || '-' }})
-                </span>
-              </td>
-              <td>
-                <span class="badge success">{{ sub.totalProjectsCompleted || 0 }} Completed</span>
-                <br><small>{{ sub.totalProjectsOngoing || 0 }} Ongoing</small>
-              </td>
-              <td>
-                <span class="status-badge" [class]="sub.isApproved ? 'approved' : 'pending'">
-                  {{ sub.isApproved ? 'Approved' : 'Pending' }}
-                </span>
-              </td>
-              <td>
-                <button class="btn-icon" (click)="selectSubcontractor(sub)" title="View Details">
-                  <i class="fas fa-eye"></i>
-                </button>
-                <button class="btn-icon" *ngIf="!sub.isApproved" (click)="approveSubcontractor(sub)" title="Approve">
-                  <i class="fas fa-check"></i>
-                </button>
-                <button class="btn-icon" (click)="editSubcontractor(sub)" title="Edit">
-                  <i class="fas fa-edit"></i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Contracts Tab -->
-      <div class="tab-content" *ngIf="activeTab === 'contracts'">
-        <div class="contracts-list">
-          <div class="contract-card" *ngFor="let contract of contracts">
-            <div class="contract-header">
-              <h4>{{ contract.title }}</h4>
-              <span class="status-badge" [class]="getStatusClass(contract.status)">{{ contract.status }}</span>
-            </div>
-            <div class="contract-details">
-              <p><strong>Contract #:</strong> {{ contract.contractNumber }}</p>
-              <p><strong>Subcontractor:</strong> {{ contract.subcontractorName }}</p>
-              <p><strong>Project:</strong> {{ contract.projectName }}</p>
-              <p><strong>Type:</strong> {{ contract.contractType }}</p>
-              <p><strong>Amount:</strong> {{ contract.contractAmount | currency }}</p>
-              <p><strong>Completion:</strong> {{ contract.completionPercentage }}%</p>
-            </div>
-            <div class="contract-progress">
-              <div class="progress-bar">
-                <div class="progress" [style.width.%]="contract.completionPercentage"></div>
-              </div>
-            </div>
-            <div class="contract-actions">
-              <button class="btn btn-sm" (click)="viewContractDetails(contract)">View</button>
-              <button class="btn btn-sm btn-primary" (click)="addPayment(contract)">Add Payment</button>
+    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
+      <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+          <div>
+            <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">{{ 'subcontractors.title' | translate }}</h1>
+            <div class="flex p-1 bg-slate-200 dark:bg-slate-800 rounded-xl w-fit">
+              <button (click)="activeTab = 'list'" 
+                      [class.bg-white]="activeTab === 'list'" 
+                      [class.shadow-sm]="activeTab === 'list'"
+                      [class.text-slate-900]="activeTab === 'list'"
+                      [class.dark:bg-slate-700]="activeTab === 'list'"
+                      [class.dark:text-white]="activeTab === 'list'"
+                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
+                  {{ 'subcontractors.list' | translate }}
+              </button>
+              <button (click)="activeTab = 'contracts'" 
+                      [class.bg-white]="activeTab === 'contracts'" 
+                      [class.shadow-sm]="activeTab === 'contracts'"
+                      [class.text-slate-900]="activeTab === 'contracts'"
+                      [class.dark:bg-slate-700]="activeTab === 'contracts'"
+                      [class.dark:text-white]="activeTab === 'contracts'"
+                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
+                  {{ 'subcontractors.contracts' | translate }}
+              </button>
+              <button (click)="activeTab = 'payments'" 
+                      [class.bg-white]="activeTab === 'payments'" 
+                      [class.shadow-sm]="activeTab === 'payments'"
+                      [class.text-slate-900]="activeTab === 'payments'"
+                      [class.dark:bg-slate-700]="activeTab === 'payments'"
+                      [class.dark:text-white]="activeTab === 'payments'"
+                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
+                  {{ 'subcontractors.payments' | translate }}
+              </button>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Payments Tab -->
-      <div class="tab-content" *ngIf="activeTab === 'payments'">
-        <div class="filter-bar">
-          <select [(ngModel)]="paymentFilter" class="form-control">
-            <option value="all">All Payments</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="paid">Paid</option>
-          </select>
+          <button (click)="openAddModal()" 
+                  class="px-8 py-4 rounded-[2rem] bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            {{ 'subcontractors.add_subcontractor' | translate }}
+          </button>
         </div>
 
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Payment #</th>
-              <th>Subcontractor</th>
-              <th>Type</th>
-              <th>Amount</th>
-              <th>Net Payment</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let payment of filteredPayments">
-              <td>{{ payment.paymentNumber }}</td>
-              <td>{{ payment.subcontractorName }}</td>
-              <td>{{ payment.paymentType }}</td>
-              <td>{{ payment.amount | currency }}</td>
-              <td>{{ payment.netPayment | currency }}</td>
-              <td>
-                <span class="status-badge" [class]="getPaymentStatusClass(payment.status)">
-                  {{ payment.status }}
-                </span>
-              </td>
-              <td>
-                <button class="btn btn-sm" *ngIf="payment.status === 'Pending'" (click)="approvePayment(payment)">
-                  Approve
-                </button>
-                <button class="btn btn-sm btn-primary" *ngIf="payment.status === 'Approved'" (click)="markAsPaid(payment)">
-                  Mark Paid
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Ratings Tab -->
-      <div class="tab-content" *ngIf="activeTab === 'ratings'">
-        <div class="ratings-grid">
-          <div class="rating-card" *ngFor="let rating of ratings">
-            <div class="rating-header">
-              <h4>{{ rating.subcontractorName }}</h4>
-              <span class="rating-grade">{{ rating.ratingGrade }}</span>
+        <!-- Summary Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 group hover:border-indigo-500/30 transition-all">
+            <div class="flex items-center justify-between mb-4">
+              <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 group-hover:scale-110 transition-transform">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+              </div>
+              <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">{{ 'subcontractors.total' | translate }}</span>
             </div>
-            <div class="rating-scores">
-              <div class="score-item">
-                <span>Quality</span>
-                <div class="score-bar">
-                  <div class="score" [style.width.%]="rating.qualityOfWork * 20"></div>
+            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{{ summary?.totalSubcontractors || 0 }}</h3>
+          </div>
+
+          <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 group hover:border-emerald-500/30 transition-all">
+            <div class="flex items-center justify-between mb-4">
+              <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </div>
+              <span class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{{ 'subcontractors.active' | translate }}</span>
+            </div>
+            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{{ summary?.activeSubcontractors || 0 }}</h3>
+          </div>
+
+          <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 group hover:border-amber-500/30 transition-all">
+            <div class="flex items-center justify-between mb-4">
+              <div class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </div>
+              <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest">{{ 'subcontractors.pending' | translate }}</span>
+            </div>
+            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{{ summary?.pendingApproval || 0 }}</h3>
+          </div>
+
+          <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 group hover:border-rose-500/30 transition-all">
+            <div class="flex items-center justify-between mb-4">
+              <div class="w-12 h-12 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500 group-hover:scale-110 transition-transform">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+              </div>
+              <span class="text-[10px] font-black text-rose-500 uppercase tracking-widest">{{ 'subcontractors.expiring' | translate }}</span>
+            </div>
+            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{{ summary?.expiringInsurance || 0 }}</h3>
+          </div>
+        </div>
+
+        <!-- Content Tabs -->
+        @if (activeTab === 'list') {
+          <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden">
+             <!-- Filters -->
+             <div class="p-8 border-b border-slate-100 dark:border-white/5 flex flex-col md:flex-row gap-4">
+                <div class="flex-1 relative">
+                  <input type="text" [(ngModel)]="searchTerm"
+                         class="w-full pl-12 pr-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500/50 transition-all"
+                         placeholder="Search partners by name...">
+                  <svg class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                  </svg>
                 </div>
-                <span class="score-value">{{ rating.qualityOfWork }}</span>
-              </div>
-              <div class="score-item">
-                <span>Timeliness</span>
-                <div class="score-bar">
-                  <div class="score" [style.width.%]="rating.timeliness * 20"></div>
+                <div class="flex gap-4">
+                  <select [(ngModel)]="filterTrade"
+                          class="px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none appearance-none cursor-pointer">
+                    <option value="">All Trades</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Plumbing">Plumbing</option>
+                    <option value="HVAC">HVAC</option>
+                    <option value="Concrete">Concrete</option>
+                    <option value="Steel">Steel</option>
+                  </select>
+                  <select [(ngModel)]="filterStatus"
+                          class="px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none appearance-none cursor-pointer">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="pending">Pending</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
                 </div>
-                <span class="score-value">{{ rating.timeliness }}</span>
-              </div>
-              <div class="score-item">
-                <span>Communication</span>
-                <div class="score-bar">
-                  <div class="score" [style.width.%]="rating.communication * 20"></div>
-                </div>
-                <span class="score-value">{{ rating.communication }}</span>
-              </div>
-              <div class="score-item">
-                <span>Safety</span>
-                <div class="score-bar">
-                  <div class="score" [style.width.%]="rating.safetyCompliance * 20"></div>
-                </div>
-                <span class="score-value">{{ rating.safetyCompliance }}</span>
-              </div>
-            </div>
-            <div class="rating-footer">
-              <span class="overall-rating">
-                <strong>{{ rating.overallRating.toFixed(2) }}</strong> / 5
-              </span>
-              <span class="evaluator">
-                By {{ rating.evaluatorName }} - {{ rating.evaluationDate | date }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+             </div>
 
-      <!-- Add Subcontractor Modal -->
-      <div class="modal-overlay" *ngIf="showAddModal" (click)="showAddModal = false">
-        <div class="modal" (click)="$event.stopPropagation()">
-          <div class="modal-header">
-            <h3>Add Subcontractor</h3>
-            <button class="close-btn" (click)="showAddModal = false">&times;</button>
+             <!-- Partners Table -->
+             <div class="overflow-x-auto">
+                <table class="w-full">
+                  <thead class="bg-slate-50 dark:bg-slate-950/50">
+                    <tr>
+                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.name' | translate }}</th>
+                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.trade' | translate }}</th>
+                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.rating' | translate }}</th>
+                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.projects' | translate }}</th>
+                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.status' | translate }}</th>
+                      <th class="px-8 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.actions' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 dark:divide-white/5">
+                    @for (sub of filteredSubcontractors; track sub.id) {
+                      <tr class="hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors group">
+                        <td class="px-8 py-5">
+                          <div class="flex items-center space-x-4">
+                             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 flex items-center justify-center text-indigo-500 font-black group-hover:scale-110 transition-transform">
+                               {{ sub.name.substring(0, 1) }}
+                             </div>
+                             <div>
+                               <p class="text-sm font-black text-slate-900 dark:text-white">{{ sub.name }}</p>
+                               <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ sub.licenseNumber || 'No License' }}</p>
+                             </div>
+                          </div>
+                        </td>
+                        <td class="px-8 py-5">
+                          <span class="px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest">{{ sub.tradeSpecialty }}</span>
+                        </td>
+                        <td class="px-8 py-5">
+                          <div class="flex items-center space-x-2">
+                             <div class="flex text-amber-400">
+                                @for (star of [1,2,3,4,5]; track star) {
+                                  <svg class="w-3 h-3" [class.fill-current]="star <= (sub.averageRating || 0)" [class.text-slate-200]="star > (sub.averageRating || 0)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.175 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.382-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                                  </svg>
+                                }
+                             </div>
+                             <span class="text-[10px] font-black text-slate-400 tracking-tighter">{{ sub.averageRating?.toFixed(1) || '0.0' }}</span>
+                          </div>
+                        </td>
+                        <td class="px-8 py-5">
+                          <div class="flex flex-col">
+                             <span class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{{ sub.totalProjectsCompleted || 0 }} {{ 'projects.completed' | translate }}</span>
+                             <span class="text-[10px] font-bold text-slate-400 italic">{{ sub.totalProjectsOngoing || 0 }} {{ 'projects.active' | translate }}</span>
+                          </div>
+                        </td>
+                        <td class="px-8 py-5">
+                          <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm"
+                                [ngClass]="sub.isApproved ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-amber-500/10 text-amber-600 dark:text-amber-400'">
+                            {{ sub.isApproved ? ('common.approved' | translate) : ('common.pending' | translate) }}
+                          </span>
+                        </td>
+                        <td class="px-8 py-5 text-right">
+                          <div class="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-all">
+                             <button class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all">
+                               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                             </button>
+                             @if (!sub.isApproved) {
+                               <button (click)="approveSubcontractor(sub)" class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-400 hover:text-emerald-600 hover:bg-emerald-500/20 transition-all">
+                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                               </button>
+                             }
+                             <button (click)="openEditModal(sub)" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-amber-500 hover:bg-amber-500/10 transition-all">
+                               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                             </button>
+                          </div>
+                        </td>
+                      </tr>
+                    } @empty {
+                      <tr>
+                        <td colspan="6" class="px-8 py-20 text-center">
+                          <p class="text-xs font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.no_subcontractors' | translate }}</p>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+             </div>
           </div>
-          <div class="modal-body">
-            <div class="form-group">
-              <label>Name *</label>
-              <input type="text" [(ngModel)]="newSubcontractor.name" class="form-control">
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label>Trade</label>
-                <select [(ngModel)]="newSubcontractor.tradeSpecialty" class="form-control">
-                  <option value="">Select Trade</option>
-                  <option value="Electrical">Electrical</option>
-                  <option value="Plumbing">Plumbing</option>
-                  <option value="HVAC">HVAC</option>
-                  <option value="Concrete">Concrete</option>
-                  <option value="Steel">Steel</option>
-                </select>
+        }
+
+        <!-- Contracts Tab -->
+        @if (activeTab === 'contracts') {
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            @for (contract of contracts; track contract.id) {
+              <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all group">
+                 <div class="flex justify-between items-start mb-6">
+                    <div class="px-3 py-1 rounded-lg bg-indigo-500/10 text-indigo-500 text-[10px] font-black uppercase tracking-widest">{{ contract.contractType }}</div>
+                    <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest"
+                          [ngClass]="{
+                            'bg-emerald-500/10 text-emerald-500': contract.status === 'Active',
+                            'bg-blue-500/10 text-blue-500': contract.status === 'Completed',
+                            'bg-amber-500/10 text-amber-500': contract.status === 'Draft'
+                          }">
+                      {{ contract.status }}
+                    </span>
+                 </div>
+                 <h4 class="text-xl font-black text-slate-900 dark:text-white mb-2 leading-tight">{{ contract.title }}</h4>
+                 <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">{{ contract.projectName }}</p>
+                 
+                 <div class="space-y-4 mb-8">
+                    <div class="flex justify-between items-center text-xs">
+                       <span class="font-bold text-slate-500 uppercase tracking-widest">{{ 'subcontractors.amount' | translate }}</span>
+                       <span class="font-black text-slate-900 dark:text-white">{{ contract.contractAmount | currency }}</span>
+                    </div>
+                    <div class="space-y-2">
+                       <div class="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                          <span class="text-slate-500">{{ 'subcontractors.completion' | translate }}</span>
+                          <span class="text-indigo-500">{{ contract.completionPercentage }}%</span>
+                       </div>
+                       <div class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                          <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full" [style.width.%]="contract.completionPercentage"></div>
+                       </div>
+                    </div>
+                 </div>
+
+                 <div class="flex gap-2">
+                    <button class="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-black text-[10px] uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">Details</button>
+                    <button class="flex-1 py-3 rounded-xl bg-indigo-500 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:scale-105 transition-all">Add Payment</button>
+                 </div>
               </div>
-              <div class="form-group">
-                <label>License Number</label>
-                <input type="text" [(ngModel)]="newSubcontractor.licenseNumber" class="form-control">
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label>Phone</label>
-                <input type="text" [(ngModel)]="newSubcontractor.phone" class="form-control">
-              </div>
-              <div class="form-group">
-                <label>Email</label>
-                <input type="email" [(ngModel)]="newSubcontractor.email" class="form-control">
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Address</label>
-              <textarea [(ngModel)]="newSubcontractor.address" class="form-control"></textarea>
-            </div>
-            <div class="form-group">
-              <label>Tax Number</label>
-              <input type="text" [(ngModel)]="newSubcontractor.taxNumber" class="form-control">
-            </div>
-            <div class="form-group">
-              <label>Insurance Number</label>
-              <input type="text" [(ngModel)]="newSubcontractor.insurancePolicyNumber" class="form-control">
-            </div>
-            <div class="form-group">
-              <label>Notes</label>
-              <textarea [(ngModel)]="newSubcontractor.notes" class="form-control"></textarea>
-            </div>
+            }
           </div>
-          <div class="modal-footer">
-            <button class="btn" (click)="showAddModal = false">Cancel</button>
-            <button class="btn btn-primary" (click)="saveSubcontractor()">Save</button>
-          </div>
-        </div>
+        }
+
+        <!-- Payments Tab -->
+        @if (activeTab === 'payments') {
+           <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden">
+              <div class="overflow-x-auto">
+                <table class="w-full">
+                  <thead class="bg-slate-50 dark:bg-slate-950/50">
+                    <tr>
+                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.payment_no' | translate }}</th>
+                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.name' | translate }}</th>
+                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.amount' | translate }}</th>
+                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.net_amount' | translate }}</th>
+                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.status' | translate }}</th>
+                      <th class="px-8 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.actions' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 dark:divide-white/5">
+                    @for (payment of filteredPayments; track payment.id) {
+                      <tr>
+                        <td class="px-8 py-5">
+                          <span class="text-sm font-black text-slate-900 dark:text-white">{{ payment.paymentNumber }}</span>
+                        </td>
+                        <td class="px-8 py-5">
+                          <span class="text-xs font-bold text-slate-600 dark:text-slate-400">{{ payment.subcontractorName }}</span>
+                        </td>
+                        <td class="px-8 py-5">
+                          <span class="text-sm font-black text-slate-900 dark:text-white">{{ payment.amount | currency }}</span>
+                        </td>
+                        <td class="px-8 py-5">
+                          <span class="text-sm font-black text-indigo-500">{{ payment.netPayment | currency }}</span>
+                        </td>
+                        <td class="px-8 py-5">
+                          <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest"
+                                [ngClass]="{
+                                  'bg-emerald-500/10 text-emerald-500': payment.status === 'Paid',
+                                  'bg-blue-500/10 text-blue-500': payment.status === 'Approved',
+                                  'bg-amber-500/10 text-amber-500': payment.status === 'Pending'
+                                }">
+                            {{ payment.status }}
+                          </span>
+                        </td>
+                        <td class="px-8 py-5 text-right">
+                           @if (payment.status === 'Pending') {
+                             <button (click)="approvePayment(payment)" class="px-4 py-2 rounded-xl bg-emerald-500 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-500/20 hover:scale-105 transition-all mr-2">Approve</button>
+                           }
+                           @if (payment.status === 'Approved') {
+                             <button (click)="markAsPaid(payment)" class="px-4 py-2 rounded-xl bg-blue-500 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-500/20 hover:scale-105 transition-all">Mark Paid</button>
+                           }
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+           </div>
+        }
       </div>
     </div>
+
+    <!-- Add/Edit Modal (Partial Implementation for brevity) -->
+    @if (showAddModal) {
+      <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-[2.5rem] shadow-2xl relative border border-slate-200 dark:border-white/5">
+          <div class="p-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between">
+            <h2 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'subcontractors.add_subcontractor' | translate }}</h2>
+            <button (click)="showAddModal = false" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-white transition-all">
+               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+          </div>
+          <div class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+               <div class="space-y-2">
+                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{{ 'subcontractors.name' | translate }}</label>
+                 <input type="text" [(ngModel)]="newSubcontractor.name" 
+                        class="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all">
+               </div>
+               <div class="space-y-2">
+                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{{ 'subcontractors.trade' | translate }}</label>
+                 <select [(ngModel)]="newSubcontractor.tradeSpecialty" 
+                         class="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none appearance-none">
+                    <option value="">Select Trade</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Plumbing">Plumbing</option>
+                    <option value="HVAC">HVAC</option>
+                 </select>
+               </div>
+            </div>
+            <button (click)="saveSubcontractor()" 
+                    class="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all">
+              {{ 'subcontractors.save' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
   `,
-  styles: [`
-    .subcontractor-management {
-      padding: 20px;
-    }
-
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .page-header h1 {
-      margin: 0;
-      font-size: 24px;
-    }
-
-    .summary-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-
-    .summary-cards .card {
-      background: #fff;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .summary-cards .card h3 {
-      margin: 0 0 10px 0;
-      font-size: 14px;
-      color: #666;
-    }
-
-    .summary-cards .card .value {
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    .summary-cards .card .value.warning {
-      color: #f39c12;
-    }
-
-    .summary-cards .card .value.danger {
-      color: #e74c3c;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 5px;
-      margin-bottom: 20px;
-      border-bottom: 2px solid #eee;
-    }
-
-    .tabs button {
-      padding: 10px 20px;
-      border: none;
-      background: none;
-      cursor: pointer;
-      font-size: 14px;
-      color: #666;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -2px;
-    }
-
-    .tabs button.active {
-      color: #007bff;
-      border-bottom-color: #007bff;
-    }
-
-    .filter-bar {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-
-    .filter-bar .form-control {
-      padding: 8px 12px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-
-    .filter-bar input {
-      flex: 1;
-    }
-
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .data-table th,
-    .data-table td {
-      padding: 12px 15px;
-      text-align: left;
-      border-bottom: 1px solid #eee;
-    }
-
-    .data-table th {
-      background: #f8f9fa;
-      font-weight: 600;
-    }
-
-    .status-badge {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: 500;
-    }
-
-    .status-badge.approved {
-      background: #d4edda;
-      color: #155724;
-    }
-
-    .status-badge.pending {
-      background: #fff3cd;
-      color: #856404;
-    }
-
-    .status-badge.active {
-      background: #d4edda;
-      color: #155724;
-    }
-
-    .status-badge.paid {
-      background: #cce5ff;
-      color: #004085;
-    }
-
-    .rating-badge {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-weight: bold;
-    }
-
-    .rating-badge.grade-A {
-      background: #d4edda;
-      color: #155724;
-    }
-
-    .rating-badge.grade-B {
-      background: #fff3cd;
-      color: #856404;
-    }
-
-    .rating-badge.grade-C {
-      background: #ffeaa7;
-      color: #856404;
-    }
-
-    .rating-badge.grade-D {
-      background: #fadbd8;
-      color: #c0392b;
-    }
-
-    .btn-icon {
-      padding: 6px 8px;
-      border: none;
-      background: #f8f9fa;
-      cursor: pointer;
-      border-radius: 4px;
-      margin-right: 5px;
-    }
-
-    .btn-icon:hover {
-      background: #e9ecef;
-    }
-
-    .contracts-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: 20px;
-    }
-
-    .contract-card {
-      background: #fff;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .contract-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .contract-header h4 {
-      margin: 0;
-    }
-
-    .contract-details p {
-      margin: 5px 0;
-      font-size: 14px;
-    }
-
-    .contract-progress {
-      margin: 15px 0;
-    }
-
-    .progress-bar {
-      height: 8px;
-      background: #e9ecef;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .progress-bar .progress {
-      height: 100%;
-      background: #007bff;
-      transition: width 0.3s ease;
-    }
-
-    .contract-actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .ratings-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-    }
-
-    .rating-card {
-      background: #fff;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .rating-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .rating-grade {
-      font-size: 24px;
-      font-weight: bold;
-      color: #28a745;
-    }
-
-    .score-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 8px 0;
-      font-size: 13px;
-    }
-
-    .score-item span:first-child {
-      width: 100px;
-    }
-
-    .score-bar {
-      flex: 1;
-      height: 6px;
-      background: #e9ecef;
-      border-radius: 3px;
-      overflow: hidden;
-    }
-
-    .score-bar .score {
-      height: 100%;
-      background: #007bff;
-    }
-
-    .score-value {
-      width: 25px;
-      text-align: right;
-      font-weight: bold;
-    }
-
-    .rating-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 1px solid #eee;
-    }
-
-    .overall-rating {
-      font-size: 18px;
-      color: #28a745;
-    }
-
-    .evaluator {
-      font-size: 12px;
-      color: #666;
-    }
-
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
-
-    .modal {
-      background: #fff;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 600px;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px;
-      border-bottom: 1px solid #eee;
-    }
-
-    .modal-header h3 {
-      margin: 0;
-    }
-
-    .close-btn {
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-    }
-
-    .modal-body {
-      padding: 20px;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 500;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-
-    .form-row {
-      display: flex;
-      gap: 15px;
-    }
-
-    .form-row .form-group {
-      flex: 1;
-    }
-
-    .modal-footer {
-      padding: 20px;
-      border-top: 1px solid #eee;
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-    }
-
-    .btn {
-      padding: 10px 20px;
-      border: 1px solid #ddd;
-      background: #fff;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .btn-primary {
-      background: #007bff;
-      color: #fff;
-      border-color: #007bff;
-    }
-
-    .btn-sm {
-      padding: 6px 12px;
-      font-size: 12px;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 3px 6px;
-      border-radius: 3px;
-      font-size: 11px;
-    }
-
-    .badge.success {
-      background: #d4edda;
-      color: #155724;
-    }
-  `]
+  styles: []
 })
-export class SubcontractorComponent implements OnInit {
+export class SubcontractorComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   activeTab = 'list';
   searchTerm = '';
   filterTrade = '';
@@ -745,7 +371,10 @@ export class SubcontractorComponent implements OnInit {
   payments: SubcontractorPayment[] = [];
   ratings: SubcontractorRating[] = [];
 
-  newSubcontractor: Partial<Subcontractor> = {};
+  newSubcontractor: Partial<Subcontractor> = {
+    name: '',
+    tradeSpecialty: ''
+  };
 
   constructor(private subcontractorService: SubcontractorService) { }
 
@@ -753,12 +382,25 @@ export class SubcontractorComponent implements OnInit {
     this.loadData();
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   loadData(): void {
-    this.subcontractorService.getSummary().subscribe(s => this.summary = s);
-    this.subcontractorService.getSubcontractors().subscribe(s => this.subcontractors = s);
-    this.subcontractorService.getAllContracts().subscribe(c => this.contracts = c);
-    this.subcontractorService.getAllPayments().subscribe(p => this.payments = p);
-    this.subcontractorService.getAllRatings().subscribe(r => this.ratings = r);
+    forkJoin({
+      summary: this.subcontractorService.getSummary(),
+      subs: this.subcontractorService.getSubcontractors(),
+      contracts: this.subcontractorService.getAllContracts(),
+      payments: this.subcontractorService.getAllPayments(),
+      ratings: this.subcontractorService.getAllRatings()
+    }).pipe(takeUntil(this.destroy$)).subscribe(results => {
+      this.summary = results.summary;
+      this.subcontractors = results.subs;
+      this.contracts = results.contracts;
+      this.payments = results.payments;
+      this.ratings = results.ratings;
+    });
   }
 
   get filteredSubcontractors(): Subcontractor[] {
@@ -779,88 +421,44 @@ export class SubcontractorComponent implements OnInit {
     return this.payments.filter(p => p.status.toLowerCase() === this.paymentFilter);
   }
 
-  getStatusClass(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'active': return 'active';
-      case 'completed': return 'approved';
-      case 'draft': return 'pending';
-      default: return '';
-    }
+  openAddModal() {
+    this.newSubcontractor = { name: '', tradeSpecialty: '' };
+    this.showAddModal = true;
   }
 
-  getPaymentStatusClass(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'paid': return 'paid';
-      case 'approved': return 'approved';
-      case 'pending': return 'pending';
-      default: return '';
-    }
-  }
-
-  selectSubcontractor(sub: Subcontractor): void {
-    console.log('Selected subcontractor:', sub);
-  }
-
-  approveSubcontractor(sub: Subcontractor): void {
-    this.subcontractorService.approveSubcontractor(sub.id, { approvedBy: 1 }).subscribe(updated => {
-      const index = this.subcontractors.findIndex(s => s.id === sub.id);
-      if (index !== -1) {
-        this.subcontractors[index] = updated;
-      }
-    });
-  }
-
-  editSubcontractor(sub: Subcontractor): void {
+  openEditModal(sub: Subcontractor) {
     this.newSubcontractor = { ...sub };
     this.showAddModal = true;
   }
 
-  saveSubcontractor(): void {
-    if (this.newSubcontractor.id) {
-      this.subcontractorService.updateSubcontractor(this.newSubcontractor.id, this.newSubcontractor)
-        .subscribe(updated => {
-          const index = this.subcontractors.findIndex(s => s.id === updated.id);
-          if (index !== -1) {
-            this.subcontractors[index] = updated;
-          }
-          this.showAddModal = false;
-          this.newSubcontractor = {};
-        });
-    } else {
-      this.subcontractorService.createSubcontractor(this.newSubcontractor as any)
-        .subscribe(created => {
-          this.subcontractors.push(created);
-          this.showAddModal = false;
-          this.newSubcontractor = {};
-        });
-    }
+  saveSubcontractor() {
+    if (!this.newSubcontractor.name) return;
+
+    const obs = (this.newSubcontractor as any).id
+      ? this.subcontractorService.updateSubcontractor((this.newSubcontractor as any).id, this.newSubcontractor as any)
+      : this.subcontractorService.createSubcontractor(this.newSubcontractor as any);
+
+    obs.subscribe(() => {
+      this.showAddModal = false;
+      this.loadData();
+    });
   }
 
-  viewContractDetails(contract: SubcontractorContract): void {
-    console.log('View contract:', contract);
+  approveSubcontractor(sub: Subcontractor) {
+    this.subcontractorService.approveSubcontractor(sub.id, { approvedBy: 1 }).subscribe(() => {
+      this.loadData();
+    });
   }
 
-  addPayment(contract: SubcontractorContract): void {
-    console.log('Add payment for contract:', contract);
+  approvePayment(payment: SubcontractorPayment) {
+    this.subcontractorService.updatePaymentStatus(payment.id, { status: 'Approved' }).subscribe(() => {
+      this.loadData();
+    });
   }
 
-  approvePayment(payment: SubcontractorPayment): void {
-    this.subcontractorService.updatePaymentStatus(payment.id, { status: 'Approved' })
-      .subscribe(updated => {
-        const index = this.payments.findIndex(p => p.id === payment.id);
-        if (index !== -1) {
-          this.payments[index] = updated;
-        }
-      });
-  }
-
-  markAsPaid(payment: SubcontractorPayment): void {
-    this.subcontractorService.updatePaymentStatus(payment.id, { status: 'Paid', paymentDate: new Date() })
-      .subscribe(updated => {
-        const index = this.payments.findIndex(p => p.id === payment.id);
-        if (index !== -1) {
-          this.payments[index] = updated;
-        }
-      });
+  markAsPaid(payment: SubcontractorPayment) {
+    this.subcontractorService.updatePaymentStatus(payment.id, { status: 'Paid', paymentDate: new Date() }).subscribe(() => {
+      this.loadData();
+    });
   }
 }

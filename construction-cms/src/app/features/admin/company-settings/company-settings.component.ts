@@ -8,7 +8,7 @@ import { CompanyPackagesService } from '../../../core/services/company-packages.
 import { RolesService } from '../../../core/services/roles.service';
 import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '../../../shared/interfaces';
 import { CatalogService } from '../../../core/services/catalog.service';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { PhaseService, Phase } from '../../../core/services/phase.service';
 import { RolesComponent } from '../access-control/roles/roles.component';
 import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarchy.component';

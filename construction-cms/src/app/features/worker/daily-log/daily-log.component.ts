@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { BOQItem, DailyLog, SiteMedia } from '../../../shared/interfaces';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { DailyLogsService } from '../../../core/services/daily-logs.service';
 
 interface WorkTask {

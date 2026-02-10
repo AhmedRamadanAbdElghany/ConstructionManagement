@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { AuthService } from '../../core/auth/auth.service';
+import { AuthService } from '../../core/services/auth.service';
 import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { ThemeService } from '../../core/theme/theme.service';
@@ -123,14 +123,14 @@ import { AppNotification } from '../../shared/interfaces';
             (click)="toggleProfile()"
             class="group flex items-center gap-4 p-1.5 ltr:pr-5 rtl:pl-5 rounded-[1.5rem] bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-white/5 hover:border-cyan-500/30 transition-all active:scale-95 shadow-lg">
             <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-700 flex items-center justify-center text-white ring-2 ring-white/10 shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform overflow-hidden font-black">
-               {{ authService.getCurrentUser().fullName.charAt(0) }}
+               {{ authService.getCurrentUser()?.fullName?.charAt(0) || '' }}
             </div>
             <div class="hidden md:block ltr:text-left rtl:text-right min-w-max">
-              <p class="text-sm font-black text-slate-900 dark:text-white tracking-tight leading-none mb-1">{{ authService.getCurrentUser().fullName }}</p>
+              <p class="text-sm font-black text-slate-900 dark:text-white tracking-tight leading-none mb-1">{{ authService.getCurrentUser()?.fullName || '' }}</p>
               <p class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none">
-                {{ 'sidebar.role_' + (authService.getCurrentUser().role === 'SuperAdmin' ? 'super' : 
-                   authService.getCurrentUser().role === 'CompanyAdmin' ? 'admin' : 
-                   authService.getCurrentUser().role === 'CompanyUser' ? 'worker' : 'client') | translate }}
+                {{ 'sidebar.role_' + (authService.getCurrentUser()?.role === 'SuperAdmin' ? 'super' :
+                   authService.getCurrentUser()?.role === 'CompanyAdmin' ? 'admin' :
+                   authService.getCurrentUser()?.role === 'CompanyUser' ? 'worker' : 'client') | translate }}
               </p>
             </div>
             <svg class="w-4 h-4 text-slate-400 group-hover:text-cyan-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -142,8 +142,8 @@ import { AppNotification } from '../../shared/interfaces';
           @if (showProfile) {
             <div class="absolute ltr:right-0 rtl:left-0 top-[calc(100%+12px)] w-72 bg-white dark:bg-slate-900 rounded-[2rem] shadow-3xl border border-slate-200 dark:border-white/10 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
               <div class="p-8 border-b border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-slate-950/20">
-                <p class="text-lg font-black text-slate-900 dark:text-white tracking-tight leading-none mb-2">{{ authService.getCurrentUser().fullName }}</p>
-                <p class="text-[11px] text-slate-400 dark:text-slate-500 font-bold break-all">{{ authService.getCurrentUser().email }}</p>
+                <p class="text-lg font-black text-slate-900 dark:text-white tracking-tight leading-none mb-2">{{ authService.getCurrentUser()?.fullName || '' }}</p>
+                <p class="text-[11px] text-slate-400 dark:text-slate-500 font-bold break-all">{{ authService.getCurrentUser()?.email || '' }}</p>
               </div>
               <div class="p-3 space-y-1">
                 <a href="#" class="flex items-center gap-4 px-5 py-3.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/[0.03] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all group/item">

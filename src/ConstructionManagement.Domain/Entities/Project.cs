@@ -20,7 +20,9 @@ public class Project : BaseEntity, ICompanyEntity
     /// </summary>
     public int? CompanyId { get; set; }
     [ForeignKey(nameof(CompanyId))]
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Company? Company { get; set; }
+
 
     public string? Description { get; set; }
 

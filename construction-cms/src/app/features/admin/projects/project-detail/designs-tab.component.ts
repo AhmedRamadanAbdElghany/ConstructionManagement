@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { DesignService } from '../../../../core/services/design.service';
 import { Design, DesignCategory, CreateCategoryRequest } from '../../../../shared/interfaces';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../../../core/services/auth.service';
 
 interface DesignGroup {
     latestDesign: Design;

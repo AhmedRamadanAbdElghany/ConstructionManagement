@@ -35,7 +35,9 @@ public class User : BaseEntity, ICompanyEntity
     /// </summary>
     public int? CompanyId { get; set; }
     [ForeignKey(nameof(CompanyId))]
+    [System.Text.Json.Serialization.JsonIgnore]
     public virtual Company? Company { get; set; }
+
 
 
     // -- Core Navigation Properties --------------------------------------------

@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { DashboardService, DashboardStats, SuperAdminStats, CompanySubscription, RecentActivity, SuperAdminActivity } from '../../../core/services/dashboard.service';
 import { Project, WorkerPerformance } from '../../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-dashboard',

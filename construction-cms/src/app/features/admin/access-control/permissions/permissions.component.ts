@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RolesService } from '../../../../core/services/roles.service';
 import { Role, Permission } from '../../../../shared/interfaces';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-permissions',

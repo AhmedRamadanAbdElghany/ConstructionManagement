@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Project, User, DailyLog, BOQItem, CompanySettings, ProjectSettings, Role, Transaction, ProjectBill, ClientPayment, ProjectActivity } from '../../../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SettingsService } from '../../../../core/services/settings.service';
 import { PhaseService, Phase } from '../../../../core/services/phase.service';

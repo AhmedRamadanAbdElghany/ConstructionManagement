@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ConstructionManagement.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class FixCircularRefs : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -4363,8 +4363,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 columns: new[] { "RoleId", "UserId", "AssignedAt", "CompanyId" },
                 values: new object[,]
                 {
-                    { 1, 1, new DateTime(2026, 2, 10, 1, 19, 24, 243, DateTimeKind.Utc).AddTicks(5963), null },
-                    { 2, 3, new DateTime(2026, 2, 10, 1, 19, 24, 243, DateTimeKind.Utc).AddTicks(7378), null }
+                    { 1, 1, new DateTime(2026, 2, 10, 11, 36, 19, 877, DateTimeKind.Utc).AddTicks(8889), null },
+                    { 2, 3, new DateTime(2026, 2, 10, 11, 36, 19, 878, DateTimeKind.Utc).AddTicks(124), null }
                 });
 
             migrationBuilder.InsertData(
@@ -4449,7 +4449,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "ApprovalRequests",
                 columns: new[] { "Id", "BOQItemId", "CompanyId", "CreatedAt", "DeletedAt", "FinalApprovedAt", "FinalApprovedByUserId", "IsDeleted", "ProjectApprovalRuleId", "ProjectId", "RejectionReason", "RequestedAt", "RequestedByUserId", "Source", "SourceId", "Status", "UpdatedAt" },
-                values: new object[] { 1, 101, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, false, 1, 1, null, new DateTime(2026, 2, 10, 1, 19, 24, 271, DateTimeKind.Utc).AddTicks(2858), 2, 0, 1, "Approved", null });
+                values: new object[] { 1, 101, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, false, 1, 1, null, new DateTime(2026, 2, 10, 11, 36, 19, 903, DateTimeKind.Utc).AddTicks(6241), 2, 0, 1, "Approved", null });
 
             migrationBuilder.InsertData(
                 table: "BOQExecutedDeltas",
@@ -4515,11 +4515,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 columns: new[] { "Id", "AssignedAt", "CompanyId", "CreatedAt", "DeletedAt", "IsDeleted", "ProjectRoleId", "ProjectTeamMemberId", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2026, 2, 10, 1, 19, 24, 252, DateTimeKind.Utc).AddTicks(1386), null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, false, 2, 1, null },
-                    { 2, new DateTime(2026, 2, 10, 1, 19, 24, 252, DateTimeKind.Utc).AddTicks(4996), null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, false, 1, 2, null },
-                    { 3, new DateTime(2026, 2, 10, 1, 19, 24, 252, DateTimeKind.Utc).AddTicks(5004), null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, false, 2, 3, null },
-                    { 4, new DateTime(2026, 2, 10, 1, 19, 24, 252, DateTimeKind.Utc).AddTicks(5010), null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, false, 3, 4, null },
-                    { 5, new DateTime(2026, 2, 10, 1, 19, 24, 252, DateTimeKind.Utc).AddTicks(5015), null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, false, 4, 5, null }
+                    { 1, new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(6845), null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, false, 2, 1, null },
+                    { 2, new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(8198), null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, false, 1, 2, null },
+                    { 3, new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(8206), null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, false, 2, 3, null },
+                    { 4, new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(8208), null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, false, 3, 4, null },
+                    { 5, new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(8210), null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, false, 4, 5, null }
                 });
 
             migrationBuilder.InsertData(
@@ -4530,7 +4530,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "Transactions",
                 columns: new[] { "Id", "Amount", "AttachmentPath", "BOQItemId", "CompanyId", "CreatedAt", "CreatedByUserId", "DeletedAt", "Description", "InvoiceNumber", "IsDeleted", "ProjectId", "ReviewDate", "ReviewNotes", "ReviewedByUserId", "Status", "SupplierName", "TransactionDate", "Type", "UpdatedAt", "UserId", "UserId1" },
-                values: new object[] { 1, 5000m, null, 101, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, null, null, false, 1, null, null, null, 1, null, new DateTime(2026, 2, 10, 1, 19, 24, 258, DateTimeKind.Utc).AddTicks(5133), 0, null, null, null });
+                values: new object[] { 1, 5000m, null, 101, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, null, null, false, 1, null, null, null, 1, null, new DateTime(2026, 2, 10, 11, 36, 19, 897, DateTimeKind.Utc).AddTicks(9885), 0, null, null, null });
 
             migrationBuilder.InsertData(
                 table: "ApprovalSteps",

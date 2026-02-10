@@ -245,7 +245,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             IsDeleted = false,
                             ProjectApprovalRuleId = 1,
                             ProjectId = 1,
-                            RequestedAt = new DateTime(2026, 2, 10, 1, 19, 24, 271, DateTimeKind.Utc).AddTicks(2858),
+                            RequestedAt = new DateTime(2026, 2, 10, 11, 36, 19, 903, DateTimeKind.Utc).AddTicks(6241),
                             RequestedByUserId = 2,
                             Source = 0,
                             SourceId = 1,
@@ -5746,7 +5746,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            AssignedAt = new DateTime(2026, 2, 10, 1, 19, 24, 252, DateTimeKind.Utc).AddTicks(1386),
+                            AssignedAt = new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(6845),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             ProjectRoleId = 2,
@@ -5755,7 +5755,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            AssignedAt = new DateTime(2026, 2, 10, 1, 19, 24, 252, DateTimeKind.Utc).AddTicks(4996),
+                            AssignedAt = new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(8198),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             ProjectRoleId = 1,
@@ -5764,7 +5764,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            AssignedAt = new DateTime(2026, 2, 10, 1, 19, 24, 252, DateTimeKind.Utc).AddTicks(5004),
+                            AssignedAt = new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(8206),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             ProjectRoleId = 2,
@@ -5773,7 +5773,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 4,
-                            AssignedAt = new DateTime(2026, 2, 10, 1, 19, 24, 252, DateTimeKind.Utc).AddTicks(5010),
+                            AssignedAt = new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(8208),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             ProjectRoleId = 3,
@@ -5782,7 +5782,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 5,
-                            AssignedAt = new DateTime(2026, 2, 10, 1, 19, 24, 252, DateTimeKind.Utc).AddTicks(5015),
+                            AssignedAt = new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(8210),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             ProjectRoleId = 4,
@@ -8008,7 +8008,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             IsDeleted = false,
                             ProjectId = 1,
                             Status = 1,
-                            TransactionDate = new DateTime(2026, 2, 10, 1, 19, 24, 258, DateTimeKind.Utc).AddTicks(5133),
+                            TransactionDate = new DateTime(2026, 2, 10, 11, 36, 19, 897, DateTimeKind.Utc).AddTicks(9885),
                             Type = 0
                         });
                 });
@@ -8246,13 +8246,13 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             UserId = 1,
                             RoleId = 1,
-                            AssignedAt = new DateTime(2026, 2, 10, 1, 19, 24, 243, DateTimeKind.Utc).AddTicks(5963)
+                            AssignedAt = new DateTime(2026, 2, 10, 11, 36, 19, 877, DateTimeKind.Utc).AddTicks(8889)
                         },
                         new
                         {
                             UserId = 3,
                             RoleId = 2,
-                            AssignedAt = new DateTime(2026, 2, 10, 1, 19, 24, 243, DateTimeKind.Utc).AddTicks(7378)
+                            AssignedAt = new DateTime(2026, 2, 10, 11, 36, 19, 878, DateTimeKind.Utc).AddTicks(124)
                         });
                 });
 

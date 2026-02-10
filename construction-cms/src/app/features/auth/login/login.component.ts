@@ -1,14 +1,14 @@
-import { Component, inject } from '@angular/core';
+﻿import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
-    selector: 'app-login',
-    standalone: true,
-    imports: [CommonModule, FormsModule, RouterLink],
-    template: `
+  selector: 'app-login',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
+  template: `
     <div class="auth-container">
       <div class="auth-card">
         <div class="auth-header">
@@ -107,7 +107,7 @@ import { AuthService } from '../../../core/services/auth.service';
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     .auth-container {
       min-height: 100vh;
       display: flex;
@@ -370,41 +370,42 @@ import { AuthService } from '../../../core/services/auth.service';
   `]
 })
 export class LoginComponent {
-    private authService = inject(AuthService);
-    private router = inject(Router);
-    private route = inject(ActivatedRoute);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
-    email = '';
-    password = '';
-    rememberMe = false;
-    showPassword = false;
-    isLoading = false;
-    errorMessage = '';
-    emailTouched = false;
-    passwordTouched = false;
-    logoUrl?: string;
+  email = '';
+  password = '';
+  rememberMe = false;
+  showPassword = false;
+  isLoading = false;
+  errorMessage = '';
+  emailTouched = false;
+  passwordTouched = false;
+  logoUrl?: string;
 
-    onSubmit(): void {
-        this.emailTouched = true;
-        this.passwordTouched = true;
+  onSubmit(): void {
+    this.emailTouched = true;
+    this.passwordTouched = true;
 
-        if (!this.email || !this.password) {
-            this.errorMessage = 'Please enter your email and password';
-            return;
-        }
-
-        this.isLoading = true;
-        this.errorMessage = '';
-
-        this.authService.login({ email: this.email, password: this.password }).subscribe({
-            next: (response) => {
-                const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
-                this.router.navigateByUrl(returnUrl);
-            },
-            error: (error) => {
-                this.isLoading = false;
-                this.errorMessage = error.error?.message || 'Invalid email or password';
-            }
-        });
+    if (!this.email || !this.password) {
+      this.errorMessage = 'Please enter your email and password';
+      return;
     }
+
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.authService.login({ email: this.email, password: this.password }).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+        setTimeout(() => { this.router.navigate(["/dashboard"]); }, 100);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorMessage = error.error?.message || 'Invalid email or password';
+      }
+    });
+  }
 }
