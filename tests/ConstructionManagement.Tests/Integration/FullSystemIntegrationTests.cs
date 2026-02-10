@@ -10,6 +10,7 @@ using Moq;
 using Xunit;
 
 using ConstructionManagement.Domain.Enums;
+using ConstructionManagement.Application.Interfaces;
 namespace ConstructionManagement.Tests.Integration;
 
 public class FullSystemIntegrationTests : IntegrationTestBase
@@ -18,6 +19,8 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 	private readonly BOQItemService _boqService;
 	private readonly IConfiguration _config;
 	private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock = new();
+	private readonly Mock<ICompanyRequestRepository> _companyRequestRepoMock = new();
+	private readonly Mock<INotificationService> _notificationServiceMock = new();
 
 	public FullSystemIntegrationTests()
 	{
@@ -38,7 +41,9 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 			userRepository,
 			_config,
 			UnitOfWork,
-			_httpContextAccessorMock.Object);
+			_httpContextAccessorMock.Object,
+			_companyRequestRepoMock.Object,
+			_notificationServiceMock.Object);
 
 		_boqService = new BOQItemService(
 			new Repository<BOQItem>(Context),

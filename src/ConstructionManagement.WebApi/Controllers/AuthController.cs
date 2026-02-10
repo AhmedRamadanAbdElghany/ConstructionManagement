@@ -47,7 +47,8 @@ public class AuthController : ControllerBase
                 email = user.Email,
                 roles = user.Roles,
                 createdAt = user.CreatedAt,
-                userType = (int)user.CurrentUserType
+                userType = (int)user.CurrentUserType,
+                companyId = user.CompanyId
             }
         });
     }
@@ -64,13 +65,19 @@ public class AuthController : ControllerBase
 
         return Ok(new
         {
-            message = "Registration successful. Please check your email to verify your account.",
-            user = new
+            success = true,
+            message = response.Message,
+            token = response.Token,
+            user = response.User != null ? new
             {
-                userId = response.User?.UserID,
-                fullName = response.User?.FullName,
-                email = response.User?.Email
-            }
+                userId = response.User.UserID,
+                fullName = response.User.FullName,
+                email = response.User.Email,
+                roles = response.User.Roles,
+                createdAt = response.User.CreatedAt,
+                userType = (int)response.User.CurrentUserType,
+                companyId = response.User.CompanyId
+            } : null
         });
     }
 
@@ -143,5 +150,25 @@ public class AuthController : ControllerBase
         }
 
         return BadRequest(new { success = false, message = "Failed to change user type" });
+    }
+
+    [HttpPut("profile")]
+    public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
+    {
+        var userId = _authService.GetCurrentUserId();
+        if (!userId.HasValue) return Unauthorized();
+
+        var success = await _authService.UpdateProfileAsync(userId.Value, request);
+        return success ? Ok(new { message = "Profile updated successfully" }) : BadRequest(new { message = "Failed to update profile" });
+    }
+
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+    {
+        var userId = _authService.GetCurrentUserId();
+        if (!userId.HasValue) return Unauthorized();
+
+        var success = await _authService.ChangePasswordAsync(userId.Value, request);
+        return success ? Ok(new { message = "Password changed successfully" }) : BadRequest(new { message = "Invalid current password or failed to update password" });
     }
 }

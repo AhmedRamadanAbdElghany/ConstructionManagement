@@ -17,6 +17,8 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
 {
     private readonly IConfiguration _emptyConfig = new ConfigurationBuilder().Build();
     private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock = new();
+    private readonly Mock<ICompanyRequestRepository> _companyRequestRepoMock = new();
+    private readonly Mock<INotificationService> _notificationServiceMock = new();
 
     [Fact]
     public async Task CreateProject_WithInvalidData_ThrowsValidationException()
@@ -132,7 +134,7 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
 
         // Act
         var userRepo = new UserRepository(Context);
-        var service = new AuthService(userRepo, _emptyConfig, UnitOfWork, _httpContextAccessorMock.Object);
+        var service = new AuthService(userRepo, _emptyConfig, UnitOfWork, _httpContextAccessorMock.Object, _companyRequestRepoMock.Object, _notificationServiceMock.Object);
         var result = await service.LoginAsync(loginRequest);
 
         // Assert
@@ -155,7 +157,7 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
 
         // Act
         var userRepo = new UserRepository(Context);
-        var service = new AuthService(userRepo, _emptyConfig, UnitOfWork, _httpContextAccessorMock.Object);
+        var service = new AuthService(userRepo, _emptyConfig, UnitOfWork, _httpContextAccessorMock.Object, _companyRequestRepoMock.Object, _notificationServiceMock.Object);
         var result = await service.LoginAsync(loginRequest);
 
         // Assert

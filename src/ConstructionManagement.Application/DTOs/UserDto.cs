@@ -9,6 +9,7 @@ namespace ConstructionManagement.Application.DTOs
         string Email, 
         List<string> Roles, 
         DateTime CreatedAt,
-        UserType CurrentUserType
+        UserType CurrentUserType,
+        int? CompanyId = null
     );
 }

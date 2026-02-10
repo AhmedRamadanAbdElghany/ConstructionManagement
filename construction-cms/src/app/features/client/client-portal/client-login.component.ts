@@ -5,10 +5,10 @@ import { Router, RouterLink } from '@angular/router';
 import { ClientPortalService, ClientLoginRequest, ClientLoginResponse } from '../../../core/services/client-portal.service';
 
 @Component({
-    selector: 'app-client-login',
-    standalone: true,
-    imports: [CommonModule, FormsModule, RouterLink],
-    template: `
+  selector: 'app-client-login',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
+  template: `
     <div class="login-container">
       <div class="login-card">
         <div class="login-header">
@@ -45,7 +45,13 @@ import { ClientPortalService, ClientLoginRequest, ClientLoginResponse } from '..
                 placeholder="Enter your password"
                 required>
               <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
-                <i [class]="showPassword ? 'icon-eye-off' : 'icon-eye'"></i>
+                <svg *ngIf="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <svg *ngIf="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.025 10.025 0 014.132-5.413m1.854-1.423A9.92 9.92 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.413m-1.854 1.423a3 3 0 00-4.243-4.243m4.243 4.243L3 3" />
+                </svg>
               </button>
             </div>
           </div>
@@ -112,7 +118,7 @@ import { ClientPortalService, ClientLoginRequest, ClientLoginResponse } from '..
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     .login-container {
       min-height: 100vh;
       display: flex;
@@ -369,41 +375,41 @@ import { ClientPortalService, ClientLoginRequest, ClientLoginResponse } from '..
   `]
 })
 export class ClientLoginComponent {
-    private clientPortalService = inject(ClientPortalService);
-    private router = inject(Router);
+  private clientPortalService = inject(ClientPortalService);
+  private router = inject(Router);
 
-    email = '';
-    password = '';
-    rememberMe = false;
-    showPassword = false;
-    isLoading = false;
-    errorMessage = '';
-    logoUrl?: string;
+  email = '';
+  password = '';
+  rememberMe = false;
+  showPassword = false;
+  isLoading = false;
+  errorMessage = '';
+  logoUrl?: string;
 
-    onSubmit(): void {
-        if (!this.email || !this.password) {
-            this.errorMessage = 'Please enter your email and password';
-            return;
-        }
-
-        this.isLoading = true;
-        this.errorMessage = '';
-
-        const request: ClientLoginRequest = {
-            email: this.email,
-            password: this.password
-        };
-
-        this.clientPortalService.clientLogin(request).subscribe({
-            next: (response: ClientLoginResponse) => {
-                localStorage.setItem('clientToken', response.token);
-                localStorage.setItem('clientUser', JSON.stringify(response.clientUser));
-                this.router.navigate(['/client-portal/dashboard']);
-            },
-            error: (error) => {
-                this.isLoading = false;
-                this.errorMessage = error.error?.message || 'Invalid email or password';
-            }
-        });
+  onSubmit(): void {
+    if (!this.email || !this.password) {
+      this.errorMessage = 'Please enter your email and password';
+      return;
     }
+
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    const request: ClientLoginRequest = {
+      email: this.email,
+      password: this.password
+    };
+
+    this.clientPortalService.clientLogin(request).subscribe({
+      next: (response: ClientLoginResponse) => {
+        localStorage.setItem('clientToken', response.token);
+        localStorage.setItem('clientUser', JSON.stringify(response.clientUser));
+        this.router.navigate(['/client-portal/dashboard']);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorMessage = error.error?.message || 'Invalid email or password';
+      }
+    });
+  }
 }

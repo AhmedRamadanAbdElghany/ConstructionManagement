@@ -9,453 +9,481 @@ import { AuthService } from '../../../core/services/auth.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   template: `
-    <div class="auth-container">
-      <div class="auth-card">
-        <div class="auth-header">
-          <div class="logo">
-            <h1>Create Account</h1>
-          </div>
-          <p class="subtitle">Register to access the Construction CMS</p>
-        </div>
-
-        <form (ngSubmit)="onSubmit()" class="auth-form">
-          <div class="form-group">
-            <label for="fullName">Full Name</label>
-            <input
-              type="text"
-              id="fullName"
-              [(ngModel)]="fullName"
-              name="fullName"
-              class="form-control"
-              placeholder="Enter your full name"
-              required>
-            <div *ngIf="fullNameTouched && !fullName" class="error-message">Full name is required</div>
-          </div>
-
-          <div class="form-group">
-            <label for="email">Email Address</label>
-            <input
-              type="email"
-              id="email"
-              [(ngModel)]="email"
-              name="email"
-              class="form-control"
-              placeholder="Enter your email"
-              required
-              email>
-            <div *ngIf="emailTouched && !email" class="error-message">Email is required</div>
-            <div *ngIf="emailTouched && email && !isEmailValid" class="error-message">Please enter a valid email</div>
-          </div>
-
-          <div class="form-group">
-            <label for="phone">Phone Number (Optional)</label>
-            <input
-              type="tel"
-              id="phone"
-              [(ngModel)]="phone"
-              name="phone"
-              class="form-control"
-              placeholder="Enter your phone number">
-          </div>
-
-          <div class="form-group">
-            <label for="userType">User Type</label>
-            <select
-              id="userType"
-              [(ngModel)]="userType"
-              name="userType"
-              class="form-control"
-              required>
-              <option value="0">Normal User</option>
-              <option value="1">Worker</option>
-              <option value="2">Company Owner</option>
-            </select>
-            <div *ngIf="userTypeTouched && userType === null" class="error-message">Please select a user type</div>
-          </div>
-
-          <div class="form-group">
-            <label for="password">Password</label>
-            <div class="password-input">
-              <input
-                [type]="showPassword ? 'text' : 'password'"
-                id="password"
-                [(ngModel)]="password"
-                name="password"
-                class="form-control"
-                placeholder="Create a password"
-                required
-                (input)="checkPasswordStrength()">
-              <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
-                <i [class]="showPassword ? 'icon-eye-off' : 'icon-eye'"></i>
-              </button>
-            </div>
-            <div *ngIf="passwordTouched && !password" class="error-message">Password is required</div>
-            
-            <div class="password-strength" *ngIf="password">
-              <div class="strength-bar">
-                <div class="strength-fill" [style.width.%]="passwordStrengthPercent" [class]="passwordStrengthClass"></div>
+    <div class="auth-wrapper">
+      <div class="auth-box">
+        <!-- Visual Side -->
+        <div class="visual-side">
+          <div class="site-overlay"></div>
+          <div class="visual-inner">
+            <div class="brand-header">
+              <div class="logo-box">
+                <svg class="w-12 h-12 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-7h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
               </div>
-              <span class="strength-text" [class]="passwordStrengthClass">{{ passwordStrengthText }}</span>
+              <span class="brand-name">Construction<span class="text-amber-500">CMS</span></span>
             </div>
-            
-            <ul class="password-requirements" *ngIf="password">
-              <li [class.valid]="hasLowerCase">Lowercase letter</li>
-              <li [class.valid]="hasUpperCase">Uppercase letter</li>
-              <li [class.valid]="hasNumber">Number</li>
-              <li [class.valid]="hasSpecialChar">Special character</li>
-              <li [class.valid]="hasMinLength">At least 8 characters</li>
-            </ul>
-          </div>
 
-          <div class="form-group">
-            <label for="confirmPassword">Confirm Password</label>
-            <div class="password-input">
-              <input
-                [type]="showConfirmPassword ? 'text' : 'password'"
-                id="confirmPassword"
-                [(ngModel)]="confirmPassword"
-                name="confirmPassword"
-                class="form-control"
-                placeholder="Confirm your password"
-                required>
-              <button type="button" class="toggle-password" (click)="showConfirmPassword = !showConfirmPassword">
-                <i [class]="showConfirmPassword ? 'icon-eye-off' : 'icon-eye'"></i>
-              </button>
+            <div class="branding-hero">
+              <h1 class="hero-title">Precision in Every <span class="highlight">Structure.</span></h1>
+              <p class="hero-subtext">Join the next generation of construction management. Data-driven decisions, real-time collaboration, and bulletproof accountability.</p>
             </div>
-            <div *ngIf="confirmPasswordTouched && confirmPassword && password !== confirmPassword" class="error-message">Passwords do not match</div>
+
+            <div class="feature-pills">
+              <div class="pill">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                <span>Hard-Hat Security</span>
+              </div>
+              <div class="pill">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                <span>Live Site Sync</span>
+              </div>
+              <div class="pill">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                <span>Architectural Insights</span>
+              </div>
+            </div>
           </div>
-
-          <div *ngIf="errorMessage" class="alert alert-danger">
-            {{ errorMessage }}
-          </div>
-
-          <div *ngIf="successMessage" class="alert alert-success">
-            {{ successMessage }}
-          </div>
-
-          <button type="submit" class="btn btn-primary btn-block" [disabled]="isLoading || !isFormValid">
-            <span *ngIf="isLoading" class="spinner"></span>
-            <span *ngIf="!isLoading">Create Account</span>
-          </button>
-        </form>
-
-        <div class="auth-footer">
-          <p>Already have an account? <a routerLink="/auth/login">Sign in</a></p>
         </div>
-      </div>
 
-      <div class="auth-features">
-        <h2>Join Construction CMS</h2>
-        <ul>
-          <li>
-            <i class="icon-project"></i>
-            <div>
-              <strong>Project Management</strong>
-              <p>Create and manage construction projects efficiently</p>
-            </div>
-          </li>
-          <li>
-            <i class="icon-team"></i>
-            <div>
-              <strong>Team Management</strong>
-              <p>Assign roles and manage your team members</p>
-            </div>
-          </li>
-          <li>
-            <i class="icon-analytics"></i>
-            <div>
-              <strong>Real-time Analytics</strong>
-              <p>Track progress and performance with detailed reports</p>
-            </div>
-          </li>
-        </ul>
+        <!-- Form Side -->
+        <div class="form-side">
+          <div class="form-content">
+            <header class="form-header">
+              <h2 class="form-title">Onboard Your Team</h2>
+              <p class="form-subtitle">Register to begin managing high-scale projects</p>
+            </header>
+
+            <form (ngSubmit)="onSubmit()" class="register-layout">
+              <div class="form-row">
+                <div class="form-field">
+                  <label class="field-label">Full Name</label>
+                  <input type="text" [(ngModel)]="fullName" name="fullName" class="modern-input" placeholder="e.g. Hassan Ibrahim" required (blur)="fullNameTouched = true">
+                  <div *ngIf="fullNameTouched && !fullName" class="error-tip">Name is required</div>
+                </div>
+
+                <div class="form-field">
+                  <label class="field-label">Email Address</label>
+                  <input type="email" [(ngModel)]="email" name="email" class="modern-input" placeholder="work@company.com" required email (blur)="emailTouched = true">
+                  <div *ngIf="emailTouched && !isEmailValid" class="error-tip">Valid email required</div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-field">
+                  <label class="field-label">Phone Number</label>
+                  <input type="tel" [(ngModel)]="phone" name="phone" class="modern-input" placeholder="+20 123 456 7890">
+                </div>
+
+                <div class="form-field">
+                  <label class="field-label">Professional Role</label>
+                  <div class="select-box">
+                    <select [(ngModel)]="userType" name="userType" class="modern-input modern-select" required>
+                      <option [value]="0">General Stakeholder</option>
+                      <option [value]="1">Engineer / Site Manager</option>
+                      <option [value]="2">Contractor / Firm Owner</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label class="field-label">Secure Password</label>
+                <div class="input-action">
+                  <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" class="modern-input" placeholder="Minimum 8 characters" required (input)="checkPasswordStrength()" (blur)="passwordTouched = true">
+                  <button type="button" class="action-toggle" (click)="showPassword = !showPassword">
+                    <svg *ngIf="!showPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                    <svg *ngIf="showPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.025 10.025 0 014.132-5.413m1.854-1.423A9.92 9.92 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.413m-1.854 1.423a3 3 0 00-4.243-4.243m4.243 4.243L3 3" /></svg>
+                  </button>
+                </div>
+                
+                <div class="strength-indicator" *ngIf="password">
+                  <div class="strength-track"><div class="strength-fill" [style.width.%]="passwordStrengthPercent" [class]="passwordStrengthClass"></div></div>
+                  <div class="strength-labels">
+                    <span [class.met]="hasLowerCase">Lowercase</span>
+                    <span [class.met]="hasUpperCase">Uppercase</span>
+                    <span [class.met]="hasNumber">Number</span>
+                    <span [class.met]="hasSpecialChar">Symbol</span>
+                    <span [class.met]="hasMinLength">8+ Chars</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label class="field-label">Confirm Authorization</label>
+                <div class="input-action">
+                  <input [type]="showConfirmPassword ? 'text' : 'password'" [(ngModel)]="confirmPassword" name="confirmPassword" class="modern-input" placeholder="Repeat your password" required (blur)="confirmPasswordTouched = true">
+                  <button type="button" class="action-toggle" (click)="showConfirmPassword = !showConfirmPassword">
+                    <svg *ngIf="!showConfirmPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                    <svg *ngIf="showConfirmPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.025 10.025 0 014.132-5.413m1.854-1.423A9.92 9.92 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.413m-1.854 1.423a3 3 0 00-4.243-4.243m4.243 4.243L3 3" /></svg>
+                  </button>
+                </div>
+                <div *ngIf="confirmPasswordTouched && password !== confirmPassword" class="error-tip">Verification must match original password</div>
+              </div>
+
+              <div class="alert-area">
+                <div *ngIf="errorMessage" class="toast error-toast slide-in">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                  <span>{{ errorMessage }}</span>
+                </div>
+                <div *ngIf="successMessage" class="toast success-toast slide-in">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <span>{{ successMessage }}</span>
+                </div>
+              </div>
+
+              <button type="submit" class="primary-button" [disabled]="isLoading || !isFormValid">
+                <div *ngIf="isLoading" class="btn-loader"></div>
+                <span>{{ isLoading ? 'Deploying Account...' : 'Initialize Dashboard' }}</span>
+                <svg *ngIf="!isLoading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+              </button>
+            </form>
+
+            <footer class="alt-action">
+              Member already? <a routerLink="/auth/login" class="login-link">Sign in to your portal</a>
+            </footer>
+          </div>
+        </div>
       </div>
     </div>
   `,
   styles: [`
-    .auth-container {
+    :host {
+      --primary: #0f172a;
+      --accent: #f59e0b;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    .auth-wrapper {
       min-height: 100vh;
       display: flex;
-      background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
-    }
-
-    .auth-card {
-      flex: 0 0 480px;
-      background: white;
-      padding: 40px;
-      display: flex;
-      flex-direction: column;
+      align-items: center;
       justify-content: center;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      max-height: 100vh;
-      overflow-y: auto;
+      background: #f8fafc;
     }
 
-    .auth-header {
-      text-align: center;
+    .auth-box {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    /* Visual Side */
+    .visual-side {
+      flex: 1.2;
+      background: var(--primary);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      overflow: hidden;
+    }
+
+    @media (max-width: 1024px) { .visual-side { display: none; } }
+
+    .site-overlay {
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=2070') center/cover no-repeat;
+      opacity: 0.25;
+      filter: grayscale(0.5) contrast(1.2);
+    }
+
+    .visual-inner {
+      position: relative;
+      z-index: 10;
+      color: #fff;
+      max-width: 520px;
+    }
+
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 80px;
+    }
+
+    .logo-box {
+      width: 56px;
+      height: 56px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand-name {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .branding-hero {
+      margin-bottom: 60px;
+    }
+
+    .hero-title {
+      font-size: 48px;
+      font-weight: 800;
+      line-height: 1.1;
       margin-bottom: 24px;
     }
 
-    .logo h1 {
-      font-size: 24px;
-      font-weight: 700;
-      color: #1e3a5f;
-      margin-bottom: 8px;
+    .highlight { color: var(--accent); }
+
+    .hero-subtext {
+      font-size: 19px;
+      color: #94a3b8;
+      line-height: 1.6;
     }
 
-    .subtitle {
-      color: #6b7280;
-      font-size: 14px;
+    .feature-pills {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
-    .auth-form {
-      margin-bottom: 20px;
+    .pill {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 12px 20px;
+      border-radius: 14px;
+      backdrop-filter: blur(10px);
     }
 
-    .form-group {
-      margin-bottom: 16px;
+    .pill svg { width: 20px; height: 20px; color: var(--accent); }
+    .pill span { font-size: 15px; font-weight: 600; color: #cbd5e1; }
+
+    /* Form Side */
+    .form-side {
+      flex: 1;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      overflow-y: auto;
     }
 
-    .form-group label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 500;
-      color: #374151;
-      font-size: 14px;
-    }
-
-    .form-control {
+    .form-content {
       width: 100%;
-      padding: 10px 14px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 14px;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      max-width: 540px;
+      animation: fadeIn 0.6s ease-out;
     }
 
-    .form-control:focus {
+    .form-header {
+      margin-bottom: 40px;
+    }
+
+    .form-title {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .form-subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .register-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 640px) { .form-row { grid-template-columns: 1fr; } }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-left: 4px;
+    }
+
+    .modern-input {
+      width: 100%;
+      height: 54px;
+      background: #f1f5f9;
+      border: 2px solid transparent;
+      border-radius: 14px;
+      padding: 0 16px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--primary);
+      transition: all 0.2s;
+    }
+
+    .modern-input:focus {
       outline: none;
-      border-color: #1e3a5f;
-      box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+      background: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
     }
 
-    .error-message {
-      color: #dc2626;
-      font-size: 12px;
-      margin-top: 4px;
-    }
-
-    .success-message {
-      color: #059669;
-      font-size: 12px;
-      margin-top: 4px;
-    }
-
-    .password-input {
+    .input-action {
       position: relative;
+      display: flex;
+      align-items: center;
     }
 
-    .toggle-password {
+    .action-toggle {
       position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
+      right: 14px;
+      background: transparent;
       border: none;
+      color: var(--text-muted);
       cursor: pointer;
-      color: #6b7280;
+      padding: 4px;
+      border-radius: 6px;
+      display: flex;
     }
 
-    .password-strength {
-      margin-top: 8px;
+    .action-toggle:hover { color: var(--accent); background: rgba(0,0,0,0.05); }
+    .action-toggle svg { width: 20px; height: 20px; }
+
+    .strength-indicator {
+      margin-top: 10px;
     }
 
-    .strength-bar {
-      height: 4px;
-      background: #e5e7eb;
-      border-radius: 2px;
+    .strength-track {
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 3px;
       overflow: hidden;
+      margin-bottom: 8px;
     }
 
     .strength-fill {
       height: 100%;
-      transition: width 0.3s, background-color 0.3s;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .strength-fill.weak { background: #dc2626; }
+    .strength-fill.weak { background: #ef4444; }
     .strength-fill.fair { background: #f59e0b; }
     .strength-fill.good { background: #3b82f6; }
     .strength-fill.strong { background: #10b981; }
 
-    .strength-text {
-      font-size: 12px;
-      margin-top: 4px;
-      display: block;
-    }
-
-    .strength-text.weak { color: #dc2626; }
-    .strength-text.fair { color: #f59e0b; }
-    .strength-text.good { color: #3b82f6; }
-    .strength-text.strong { color: #10b981; }
-
-    .password-requirements {
-      list-style: none;
-      padding: 0;
-      margin-top: 8px;
-      font-size: 12px;
-      color: #6b7280;
-    }
-
-    .password-requirements li {
-      padding: 2px 0;
-    }
-
-    .password-requirements li::before {
-      content: "✗";
-      margin-right: 6px;
-      color: #dc2626;
-    }
-
-    .password-requirements li.valid::before {
-      content: "✓";
-      color: #10b981;
-    }
-
-    .btn {
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      border: none;
-      font-size: 14px;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
-      color: white;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(30, 58, 95, 0.4);
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .btn-block {
-      width: 100%;
-    }
-
-    .alert {
-      padding: 12px 16px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      font-size: 14px;
-    }
-
-    .alert-danger {
-      background: #fef2f2;
-      color: #dc2626;
-      border: 1px solid #fecaca;
-    }
-
-    .alert-success {
-      background: #ecfdf5;
-      color: #059669;
-      border: 1px solid #a7f3d0;
-    }
-
-    .spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      border-top-color: white;
-      animation: spin 0.8s linear infinite;
-      margin-right: 8px;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .auth-footer {
-      text-align: center;
-      padding-top: 16px;
-      border-top: 1px solid #e5e7eb;
-    }
-
-    .auth-footer p {
-      color: #6b7280;
-      font-size: 14px;
-    }
-
-    .auth-footer a {
-      color: #1e3a5f;
-      text-decoration: none;
-    }
-
-    .auth-features {
-      flex: 1;
+    .strength-labels {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 40px 60px;
-      color: white;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
-    .auth-features h2 {
-      font-size: 28px;
+    .strength-labels span {
+      font-size: 11px;
       font-weight: 700;
-      margin-bottom: 32px;
-    }
-
-    .auth-features ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    .auth-features li {
+      color: #94a3b8;
       display: flex;
-      align-items: flex-start;
-      gap: 16px;
-      margin-bottom: 24px;
+      align-items: center;
+      gap: 4px;
     }
 
-    .auth-features li i {
-      font-size: 24px;
-      opacity: 0.9;
+    .strength-labels span::before { content: '○'; }
+    .strength-labels span.met { color: #10b981; }
+    .strength-labels span.met::before { content: '●'; }
+
+    .primary-button {
+      width: 100%;
+      height: 60px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      font-size: 17px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-top: 10px;
     }
 
-    .auth-features li strong {
-      display: block;
-      font-size: 16px;
-      margin-bottom: 4px;
+    .primary-button:hover:not(:disabled) {
+      background: #1e293b;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.3);
     }
 
-    .auth-features li p {
-      margin: 0;
+    .primary-button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .btn-loader {
+      width: 22px;
+      height: 22px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    .toast {
+      padding: 14px 18px;
+      border-radius: 14px;
       font-size: 14px;
-      opacity: 0.8;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
-    @media (max-width: 1024px) {
-      .auth-features {
-        display: none;
-      }
+    .error-toast { background: #fef2f2; color: #ef4444; border: 1px solid #fee2e2; }
+    .success-toast { background: #f0fdf4; color: #10b981; border: 1px solid #dcfce7; }
 
-      .auth-card {
-        flex: 1;
-        max-width: 480px;
-        margin: 0 auto;
-      }
+    .error-tip { color: #ef4444; font-size: 11px; font-weight: 600; margin-top: 4px; padding-left: 4px; }
+
+    .alt-action {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-muted);
     }
-  `]
+
+    .login-link {
+      color: var(--accent);
+      font-weight: 700;
+      text-decoration: none;
+      margin-left: 6px;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .login-link:hover { border-bottom-color: var(--accent); }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .slide-in { animation: slideIn 0.3s ease-out; }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+  `],
 })
 export class RegisterComponent {
   private authService = inject(AuthService);
@@ -479,6 +507,7 @@ export class RegisterComponent {
   passwordTouched = false;
   confirmPasswordTouched = false;
   userTypeTouched = false;
+  phoneTouched = false;
 
   // Password strength
   hasLowerCase = false;
@@ -559,18 +588,27 @@ export class RegisterComponent {
       next: (response) => {
         this.isLoading = false;
         if (response.success) {
-          this.successMessage = response.message || 'Registration successful! Please check your email to verify your account.';
-          // Redirect to login after 3 seconds
+          const user = response.user;
+          this.successMessage = 'Registration successful! Welcome to the system.';
+
           setTimeout(() => {
-            this.router.navigate(['/auth/login']);
-          }, 3000);
+            if (user.roles.includes('SuperAdmin') || user.companyId) {
+              this.router.navigate(['/dashboard']);
+            } else if (user.userType === 2) { // CompanyOwner
+              this.successMessage = 'Registration successful! Your company creation request has been sent for approval. You will be able to access all features once approved.';
+              // Since they are auto-logged in, they can stay on a waiting page or dashboard with limited access
+              this.router.navigate(['/dashboard']);
+            } else {
+              this.router.navigate(['/auth/company-selection']);
+            }
+          }, 1500);
         } else {
           this.errorMessage = response.message || 'Registration failed. Please try again.';
         }
       },
       error: (error) => {
         this.isLoading = false;
-        this.errorMessage = error.message || 'An error occurred during registration.';
+        this.errorMessage = error.error?.message || error.message || 'An error occurred during registration.';
       }
     });
   }

@@ -12,6 +12,7 @@ export interface User {
     roles: string[]; // Role array from backend
     createdAt: Date;
     userType: number;
+    companyId?: number;
     salary?: number;
     status?: string;
 }
@@ -39,11 +40,8 @@ export interface RegisterRequest {
 export interface RegisterResponse {
     success: boolean;
     message: string;
-    user?: {
-        userId: number;
-        fullName: string;
-        email: string;
-    };
+    token?: string;
+    user: User;
 }
 
 export interface ForgotPasswordRequest {
@@ -145,6 +143,7 @@ export class AuthService {
                     roles: roles,
                     createdAt: new Date(),
                     userType: userType,
+                    companyId: undefined,
                     salary: 5000,
                     status: 'Working'
                 };
@@ -166,7 +165,24 @@ export class AuthService {
     }
 
     register(request: RegisterRequest): Observable<RegisterResponse> {
-        return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, request);
+        return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, request).pipe(
+            tap(response => {
+                if (response.success && response.token) {
+                    // Normalize user object for consistency
+                    if (!response.user.role && response.user.roles?.length > 0) {
+                        response.user.role = response.user.roles[0];
+                    }
+                    if (response.user.userId && !response.user.id) {
+                        response.user.id = response.user.userId;
+                    }
+
+                    localStorage.setItem('authToken', response.token);
+                    localStorage.setItem('currentUser', JSON.stringify(response.user));
+                    this.currentUserSubject.next(response.user);
+                    this.isAuthenticatedSubject.next(true);
+                }
+            })
+        );
     }
 
     forgotPassword(request: ForgotPasswordRequest): Observable<ForgotPasswordResponse> {
@@ -199,6 +215,23 @@ export class AuthService {
                 }
             })
         );
+    }
+
+    updateProfile(fullName: string): Observable<{ message: string }> {
+        return this.http.put<{ message: string }>(`${this.apiUrl}/profile`, { fullName }).pipe(
+            tap(() => {
+                const user = this.getCurrentUser();
+                if (user) {
+                    user.fullName = fullName;
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    this.currentUserSubject.next({ ...user });
+                }
+            })
+        );
+    }
+
+    changePassword(request: any): Observable<{ message: string }> {
+        return this.http.post<{ message: string }>(`${this.apiUrl}/change-password`, request);
     }
 
     getToken(): string | null {

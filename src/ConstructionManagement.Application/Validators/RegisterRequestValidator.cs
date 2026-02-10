@@ -25,7 +25,7 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
 
         RuleFor(x => x.Phone)
             .MaximumLength(15).When(x => !string.IsNullOrEmpty(x.Phone))
-            .Matches(@"^01[0-2,5]\d{8}$").When(x => !string.IsNullOrEmpty(x.Phone))
-            .WithMessage("رقم التليفون يجب أن يكون رقم مصري صحيح (مثال: 0123456789)");
+            .Matches(@"^(\+20|0)1[0-2,5]\d{8}$").When(x => !string.IsNullOrEmpty(x.Phone))
+            .WithMessage("رقم التليفون يجب أن يكون رقم مصري صحيح (مثال: 01112765242 أو +201112765242)");
     }
 }

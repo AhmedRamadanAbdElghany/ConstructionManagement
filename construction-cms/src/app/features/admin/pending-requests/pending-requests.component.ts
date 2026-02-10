@@ -1,14 +1,15 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PendingRequestsService, CompanyRequest, JoinRequest } from '../../../core/services/pending-requests.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-    selector: 'app-pending-requests',
-    standalone: true,
-    imports: [CommonModule, TranslateModule, FormsModule],
-    template: `
+  selector: 'app-pending-requests',
+  standalone: true,
+  imports: [CommonModule, TranslateModule, FormsModule],
+  template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
@@ -24,26 +25,31 @@ import { FormsModule } from '@angular/forms';
 
         <!-- Navigation Hub -->
         <div class="flex items-center space-x-2 bg-slate-200/50 dark:bg-white/5 rounded-[2rem] p-2 mb-10 w-fit backdrop-blur-md">
-          <button (click)="activeTab = 'companies'"
-                  [class.bg-white]="activeTab === 'companies'"
-                  [class.dark:bg-slate-800]="activeTab === 'companies'"
-                  [class.shadow-xl]="activeTab === 'companies'"
-                  [class.text-amber-600]="activeTab === 'companies'"
-                  [class.dark:text-white]="activeTab === 'companies'"
-                  class="px-10 py-4 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest transition-all">
-            {{ 'pending_requests.company_requests' | translate }}
-            <span class="ml-2 px-2 py-0.5 rounded-full bg-amber-500 text-white text-[9px]">{{ companyRequests().length }}</span>
-          </button>
-          <button (click)="activeTab = 'joins'"
-                  [class.bg-white]="activeTab === 'joins'"
-                  [class.dark:bg-slate-800]="activeTab === 'joins'"
-                  [class.shadow-xl]="activeTab === 'joins'"
-                  [class.text-amber-600]="activeTab === 'joins'"
-                  [class.dark:text-white]="activeTab === 'joins'"
-                  class="px-10 py-4 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest transition-all text-slate-400 hover:text-slate-600">
-            {{ 'pending_requests.join_requests' | translate }}
-            <span class="ml-2 px-2 py-0.5 rounded-full bg-slate-400 text-white text-[9px]">{{ joinRequests().length }}</span>
-          </button>
+          @if (isSuperAdmin()) {
+            <button (click)="activeTab = 'companies'"
+                    [class.bg-white]="activeTab === 'companies'"
+                    [class.dark:bg-slate-800]="activeTab === 'companies'"
+                    [class.shadow-xl]="activeTab === 'companies'"
+                    [class.text-amber-600]="activeTab === 'companies'"
+                    [class.dark:text-white]="activeTab === 'companies'"
+                    class="px-10 py-4 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest transition-all">
+              {{ 'pending_requests.company_requests' | translate }}
+              <span class="ml-2 px-2 py-0.5 rounded-full bg-amber-500 text-white text-[9px]">{{ companyRequests().length }}</span>
+            </button>
+          }
+
+          @if (isCompanyAdmin()) {
+            <button (click)="activeTab = 'joins'"
+                    [class.bg-white]="activeTab === 'joins'"
+                    [class.dark:bg-slate-800]="activeTab === 'joins'"
+                    [class.shadow-xl]="activeTab === 'joins'"
+                    [class.text-amber-600]="activeTab === 'joins'"
+                    [class.dark:text-white]="activeTab === 'joins'"
+                    class="px-10 py-4 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest transition-all text-slate-400 hover:text-slate-600">
+              {{ 'pending_requests.join_requests' | translate }}
+              <span class="ml-2 px-2 py-0.5 rounded-full bg-slate-400 text-white text-[9px]">{{ joinRequests().length }}</span>
+            </button>
+          }
         </div>
 
         <!-- Viewport -->
@@ -149,47 +155,58 @@ import { FormsModule } from '@angular/forms';
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     .premium-card {
       @apply bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 shadow-xl hover:shadow-2xl transition-all duration-500;
     }
   `]
 })
 export class PendingRequestsComponent implements OnInit {
-    private service = inject(PendingRequestsService);
+  private service = inject(PendingRequestsService);
+  private authService = inject(AuthService);
 
-    activeTab: 'companies' | 'joins' = 'companies';
-    companyRequests = signal<CompanyRequest[]>([]);
-    joinRequests = signal<JoinRequest[]>([]);
+  isSuperAdmin = computed(() => this.authService.hasRole('SuperAdmin'));
+  isCompanyAdmin = computed(() => this.authService.hasRole('CompanyAdmin'));
 
-    ngOnInit(): void {
-        this.loadData();
+  activeTab: 'companies' | 'joins' = 'companies';
+  companyRequests = signal<CompanyRequest[]>([]);
+  joinRequests = signal<JoinRequest[]>([]);
+
+  ngOnInit(): void {
+    this.loadData();
+  }
+
+  loadData() {
+    if (this.isSuperAdmin()) {
+      this.activeTab = 'companies';
+      this.service.getPendingCompanyRequests().subscribe(reqs => this.companyRequests.set(reqs));
     }
 
-    loadData() {
-        this.service.getPendingCompanyRequests().subscribe(reqs => this.companyRequests.set(reqs));
-        this.service.getPendingJoinRequests().subscribe(reqs => this.joinRequests.set(reqs));
+    if (this.isCompanyAdmin()) {
+      this.activeTab = 'joins';
+      this.service.getPendingJoinRequests().subscribe(reqs => this.joinRequests.set(reqs));
     }
+  }
 
-    approveCompany(id: number) {
-        this.service.approveCompanyRequest(id).subscribe(() => this.loadData());
-    }
+  approveCompany(id: number) {
+    this.service.approveCompanyRequest(id).subscribe(() => this.loadData());
+  }
 
-    rejectCompany(id: number) {
-        const reason = prompt('Enter rejection reason:');
-        if (reason) {
-            this.service.rejectCompanyRequest(id, reason).subscribe(() => this.loadData());
-        }
+  rejectCompany(id: number) {
+    const reason = prompt('Enter rejection reason:');
+    if (reason) {
+      this.service.rejectCompanyRequest(id, reason).subscribe(() => this.loadData());
     }
+  }
 
-    approveJoin(id: number) {
-        this.service.approveJoinRequest(id).subscribe(() => this.loadData());
-    }
+  approveJoin(id: number) {
+    this.service.approveJoinRequest(id).subscribe(() => this.loadData());
+  }
 
-    rejectJoin(id: number) {
-        const reason = prompt('Enter rejection reason:');
-        if (reason) {
-            this.service.rejectJoinRequest(id, reason).subscribe(() => this.loadData());
-        }
+  rejectJoin(id: number) {
+    const reason = prompt('Enter rejection reason:');
+    if (reason) {
+      this.service.rejectJoinRequest(id, reason).subscribe(() => this.loadData());
     }
+  }
 }

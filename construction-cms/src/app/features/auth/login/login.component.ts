@@ -4,370 +4,490 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
+
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   template: `
-    <div class="auth-container">
-      <div class="auth-card">
-        <div class="auth-header">
-          <div class="logo">
-            <img *ngIf="logoUrl" [src]="logoUrl" alt="Company Logo">
-            <h1 *ngIf="!logoUrl">Construction CMS</h1>
+    <div class="auth-wrapper">
+      <div class="auth-box">
+        <!-- Visual Side -->
+        <div class="visual-side">
+          <div class="visual-overlay"></div>
+          <div class="visual-content">
+            <div class="branding">
+              <div class="logo-circle">
+                <svg class="w-12 h-12 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-7h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+              <h1 class="logo-text">Construction<span class="text-amber-500">CMS</span></h1>
+            </div>
+            
+            <div class="hero-quote">
+              <h2 class="quote-title">Building Integrity. <br><span class="highlight">Managing Excellence.</span></h2>
+              <p class="quote-desc">Streamline your workforce, inventory, and project life cycles with the industry's most advanced management platform.</p>
+            </div>
+
+            <div class="stats-grid">
+              <div class="stat-item">
+                <span class="stat-num">500+</span>
+                <span class="stat-label">Projects</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-num">12k</span>
+                <span class="stat-label">Users</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-num">99%</span>
+                <span class="stat-label">Uptime</span>
+              </div>
+            </div>
           </div>
-          <p class="subtitle">Sign in to access your account</p>
         </div>
 
-        <form (ngSubmit)="onSubmit()" class="auth-form">
-          <div class="form-group">
-            <label for="email">Email Address</label>
-            <input
-              type="email"
-              id="email"
-              [(ngModel)]="email"
-              name="email"
-              class="form-control"
-              placeholder="Enter your email"
-              required
-              email>
-            <div *ngIf="emailTouched && !email" class="error-message">Email is required</div>
-          </div>
+        <!-- Form Side -->
+        <div class="form-side">
+          <div class="form-container">
+            <div class="mobile-logo md:hidden">
+              <div class="logo-icon">
+                <svg class="w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-7h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+              <span class="logo-name">ConstructionCMS</span>
+            </div>
 
-          <div class="form-group">
-            <label for="password">Password</label>
-            <div class="password-input">
-              <input
-                [type]="showPassword ? 'text' : 'password'"
-                id="password"
-                [(ngModel)]="password"
-                name="password"
-                class="form-control"
-                placeholder="Enter your password"
-                required>
-              <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
-                <i [class]="showPassword ? 'icon-eye-off' : 'icon-eye'"></i>
+            <header class="form-header">
+              <h2 class="welcome-msg">Welcome Back</h2>
+              <p class="instruction">Enter your credentials to access the platform</p>
+            </header>
+
+            <form (ngSubmit)="onSubmit()" class="login-form">
+              <div class="input-group">
+                <label class="input-label">Email Address</label>
+                <div class="input-wrapper">
+                  <div class="input-icon">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206" /></svg>
+                  </div>
+                  <input type="email" [(ngModel)]="email" name="email" class="premium-input" placeholder="name@company.com" required (blur)="emailTouched = true">
+                </div>
+                <div *ngIf="emailTouched && !email" class="field-error">Email is required</div>
+              </div>
+
+              <div class="input-group">
+                <div class="label-row">
+                  <label class="input-label">Password</label>
+                  <a routerLink="/auth/forgot-password" class="forgot-link">Forgot?</a>
+                </div>
+                <div class="input-wrapper">
+                  <div class="input-icon">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                  </div>
+                  <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" class="premium-input" placeholder="••••••••" required (blur)="passwordTouched = true">
+                  <button type="button" class="visibility-toggle" (click)="showPassword = !showPassword">
+                    <svg *ngIf="!showPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                    <svg *ngIf="showPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.025 10.025 0 014.132-5.413m1.854-1.423A9.92 9.92 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.413m-1.854 1.423a3 3 0 00-4.243-4.243m4.243 4.243L3 3" /></svg>
+                  </button>
+                </div>
+                <div *ngIf="passwordTouched && !password" class="field-error">Password is required</div>
+              </div>
+
+              <div class="options">
+                <label class="remember-me">
+                  <input type="checkbox" [(ngModel)]="rememberMe" name="rememberMe">
+                  <span>Stay logged in</span>
+                </label>
+              </div>
+
+              <div *ngIf="errorMessage" class="error-toast slide-in">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                <span>{{ errorMessage }}</span>
+              </div>
+
+              <button type="submit" class="auth-button" [disabled]="isLoading">
+                <div *ngIf="isLoading" class="button-loader"></div>
+                <span>{{ isLoading ? 'Authenticating...' : 'Sign In' }}</span>
+                <svg *ngIf="!isLoading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </button>
-            </div>
-            <div *ngIf="passwordTouched && !password" class="error-message">Password is required</div>
+            </form>
+
+            <footer class="form-footer">
+              <p>New to the platform? <a routerLink="/auth/register" class="register-link">Create Account</a></p>
+            </footer>
           </div>
-
-          <div class="form-options">
-            <label class="checkbox-label">
-              <input type="checkbox" [(ngModel)]="rememberMe" name="rememberMe">
-              <span>Remember me</span>
-            </label>
-            <a routerLink="/auth/forgot-password" class="forgot-link">Forgot Password?</a>
-          </div>
-
-          <div *ngIf="errorMessage" class="alert alert-danger">
-            {{ errorMessage }}
-          </div>
-
-          <button type="submit" class="btn btn-primary btn-block" [disabled]="isLoading">
-            <span *ngIf="isLoading" class="spinner"></span>
-            <span *ngIf="!isLoading">Sign In</span>
-          </button>
-        </form>
-
-        <div class="auth-footer">
-          <p>Don't have an account? <a routerLink="/auth/register">Register here</a></p>
         </div>
-
-        <div class="auth-help">
-          <p>Need help? <a href="mailto:support&#64;company.com">Contact Support</a></p>
-        </div>
-      </div>
-
-      <div class="auth-features">
-        <h2>Welcome Back</h2>
-        <ul>
-          <li>
-            <i class="icon-project"></i>
-            <div>
-              <strong>Manage Projects</strong>
-              <p>Track and manage all your construction projects</p>
-            </div>
-          </li>
-          <li>
-            <i class="icon-team"></i>
-            <div>
-              <strong>Team Collaboration</strong>
-              <p>Work together with your team seamlessly</p>
-            </div>
-          </li>
-          <li>
-            <i class="icon-analytics"></i>
-            <div>
-              <strong>Analytics & Reports</strong>
-              <p>Get insights into your project performance</p>
-            </div>
-          </li>
-        </ul>
       </div>
     </div>
   `,
   styles: [`
-    .auth-container {
+    :host {
+      --primary: #0f172a;
+      --accent: #f59e0b;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --bg-visual: #0f172a;
+    }
+
+    .auth-wrapper {
       min-height: 100vh;
       display: flex;
-      background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
-    }
-
-    .auth-card {
-      flex: 0 0 450px;
-      background: white;
-      padding: 40px;
-      display: flex;
-      flex-direction: column;
+      align-items: center;
       justify-content: center;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      background: #f8fafc;
     }
 
-    .auth-header {
-      text-align: center;
-      margin-bottom: 32px;
+    .auth-box {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      background: #fff;
+      overflow: hidden;
     }
 
-    .logo img {
-      max-height: 60px;
-      margin-bottom: 16px;
+    /* Visual Side */
+    .visual-side {
+      flex: 1.2;
+      background: var(--bg-visual);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      overflow: hidden;
     }
 
-    .logo h1 {
-      font-size: 24px;
-      font-weight: 700;
-      color: #1e3a5f;
-      margin-bottom: 8px;
+    @media (max-width: 1024px) { .visual-side { display: none; } }
+
+    .visual-overlay {
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1541888946425-d81bb19480c5?auto=format&fit=crop&q=80&w=2070') center/cover no-repeat;
+      opacity: 0.2;
+      filter: grayscale(1);
     }
 
-    .subtitle {
-      color: #6b7280;
-      font-size: 14px;
+    .visual-content {
+      position: relative;
+      z-index: 10;
+      color: #fff;
+      max-width: 500px;
     }
 
-    .auth-form {
+    .branding {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 80px;
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    .logo-circle {
+      width: 56px;
+      height: 56px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-text {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-quote {
+      margin-bottom: 60px;
+      animation: fadeIn 1s ease-out 0.2s both;
+    }
+
+    .quote-title {
+      font-size: 48px;
+      font-weight: 800;
+      line-height: 1.1;
       margin-bottom: 24px;
     }
 
-    .form-group {
-      margin-bottom: 20px;
+    .highlight { color: var(--accent); }
+
+    .quote-desc {
+      font-size: 19px;
+      color: #94a3b8;
+      line-height: 1.6;
     }
 
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: #374151;
-      font-size: 14px;
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      animation: fadeInUp 1s ease-out 0.4s both;
     }
 
-    .form-control {
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stat-num {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .stat-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748b;
+    }
+
+    /* Form Side */
+    .form-side {
+      flex: 1;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      z-index: 20;
+    }
+
+    .form-container {
       width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 14px;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      max-width: 440px;
+      animation: fadeIn 0.6s ease-out;
     }
 
-    .form-control:focus {
-      outline: none;
-      border-color: #1e3a5f;
-      box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+    .mobile-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 40px;
     }
 
-    .error-message {
-      color: #dc2626;
-      font-size: 12px;
-      margin-top: 4px;
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: #fdf2f2;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .password-input {
-      position: relative;
+    .logo-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
     }
 
-    .toggle-password {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #6b7280;
+    .form-header {
+      margin-bottom: 40px;
     }
 
-    .form-options {
+    .welcome-msg {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .instruction {
+      font-size: 16px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .label-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
     }
 
-    .checkbox-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      color: #4b5563;
+    .input-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-left: 4px;
     }
 
     .forgot-link {
-      font-size: 14px;
-      color: #1e3a5f;
-      text-decoration: none;
-    }
-
-    .forgot-link:hover {
-      text-decoration: underline;
-    }
-
-    .btn {
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      border: none;
-      font-size: 14px;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
-      color: white;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(30, 58, 95, 0.4);
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .btn-block {
-      width: 100%;
-    }
-
-    .alert {
-      padding: 12px 16px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      font-size: 14px;
-    }
-
-    .alert-danger {
-      background: #fef2f2;
-      color: #dc2626;
-      border: 1px solid #fecaca;
-    }
-
-    .spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      border-top-color: white;
-      animation: spin 0.8s linear infinite;
-      margin-right: 8px;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .auth-footer {
-      text-align: center;
-      padding-top: 20px;
-      border-top: 1px solid #e5e7eb;
-    }
-
-    .auth-footer p {
-      color: #6b7280;
-      font-size: 14px;
-    }
-
-    .auth-footer a {
-      color: #1e3a5f;
-      text-decoration: none;
-    }
-
-    .auth-help {
-      text-align: center;
-      margin-top: 16px;
-    }
-
-    .auth-help p {
-      color: #9ca3af;
-      font-size: 12px;
-    }
-
-    .auth-help a {
-      color: #1e3a5f;
-      text-decoration: none;
-    }
-
-    .auth-features {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 40px 60px;
-      color: white;
-    }
-
-    .auth-features h2 {
-      font-size: 28px;
+      font-size: 13px;
       font-weight: 700;
-      margin-bottom: 32px;
+      color: var(--accent);
+      text-decoration: none;
     }
 
-    .auth-features ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    .auth-features li {
+    .input-wrapper {
+      position: relative;
       display: flex;
-      align-items: flex-start;
-      gap: 16px;
-      margin-bottom: 24px;
+      align-items: center;
     }
 
-    .auth-features li i {
-      font-size: 24px;
-      opacity: 0.9;
+    .premium-input {
+      width: 100%;
+      height: 56px;
+      background: #f1f5f9;
+      border: 2px solid transparent;
+      border-radius: 14px;
+      padding: 0 48px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--primary);
+      transition: all 0.2s;
     }
 
-    .auth-features li strong {
-      display: block;
-      font-size: 16px;
-      margin-bottom: 4px;
+    .premium-input:focus {
+      outline: none;
+      background: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
     }
 
-    .auth-features li p {
-      margin: 0;
+    .input-icon {
+      position: absolute;
+      left: 16px;
+      color: var(--text-muted);
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
+    }
+
+    .visibility-toggle {
+      position: absolute;
+      right: 14px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 6px;
+      display: flex;
+    }
+
+    .visibility-toggle:hover { color: var(--accent); background: rgba(0,0,0,0.05); }
+    .visibility-toggle svg { width: 20px; height: 20px; }
+
+    .options {
+      margin-top: -8px;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
       font-size: 14px;
-      opacity: 0.8;
+      font-weight: 600;
+      color: var(--text-muted);
     }
 
-    @media (max-width: 1024px) {
-      .auth-features {
-        display: none;
-      }
-
-      .auth-card {
-        flex: 1;
-        max-width: 450px;
-        margin: 0 auto;
-      }
+    .remember-me input {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      accent-color: var(--accent);
     }
-  `]
+
+    .auth-button {
+      width: 100%;
+      height: 60px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      font-size: 17px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-top: 10px;
+    }
+
+    .auth-button:hover:not(:disabled) {
+      background: #1e293b;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.3);
+    }
+
+    .auth-button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .button-loader {
+      width: 22px;
+      height: 22px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    .error-toast {
+      background: #fef2f2;
+      color: #ef4444;
+      padding: 14px 18px;
+      border-radius: 14px;
+      border: 1px solid #fee2e2;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .field-error { color: #ef4444; font-size: 11px; font-weight: 600; margin-top: 4px; padding-left: 4px; }
+
+    .form-footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .register-link {
+      color: var(--accent);
+      font-weight: 700;
+      text-decoration: none;
+      margin-left: 6px;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .register-link:hover { border-bottom-color: var(--accent); }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .slide-in { animation: slideIn 0.3s ease-out; }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+  `],
 })
 export class LoginComponent {
   private authService = inject(AuthService);
@@ -399,8 +519,16 @@ export class LoginComponent {
     this.authService.login({ email: this.email, password: this.password }).subscribe({
       next: (response) => {
         this.isLoading = false;
-        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
-        setTimeout(() => { this.router.navigate(["/dashboard"]); }, 100);
+        const user = response.user;
+
+        if (user.roles.includes('SuperAdmin') || user.companyId) {
+          this.router.navigate(['/dashboard']);
+        } else if (user.userType === 2) { // CompanyOwner
+          this.errorMessage = 'Your company request is still pending approval. You will be able to log in once it is approved.';
+          this.authService.logout();
+        } else {
+          this.router.navigate(['/auth/company-selection']);
+        }
       },
       error: (error) => {
         this.isLoading = false;

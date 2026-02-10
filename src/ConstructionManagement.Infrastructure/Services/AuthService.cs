@@ -20,17 +20,23 @@ public class AuthService : IAuthService
     private readonly IConfiguration _configuration;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ICompanyRequestRepository _companyRequestRepository;
+    private readonly INotificationService _notificationService;
 
     public AuthService(
         IUserRepository userRepository,
         IConfiguration configuration,
         IUnitOfWork unitOfWork,
-        IHttpContextAccessor httpContextAccessor)
+        IHttpContextAccessor httpContextAccessor,
+        ICompanyRequestRepository companyRequestRepository,
+        INotificationService notificationService)
     {
         _userRepository = userRepository;
         _configuration = configuration;
         _unitOfWork = unitOfWork;
         _httpContextAccessor = httpContextAccessor;
+        _companyRequestRepository = companyRequestRepository;
+        _notificationService = notificationService;
     }
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
@@ -52,7 +58,8 @@ public class AuthService : IAuthService
             user.Email,
             roles,
             user.CreatedAt,
-            user.UserType
+            user.UserType,
+            user.CompanyId
         );
 
         return new AuthResponse(true, "Login successful", token, userDto);
@@ -88,8 +95,8 @@ public class AuthService : IAuthService
             Phone = request.Phone,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
             CreatedAt = DateTime.UtcNow,
-            IsEmailVerified = false,
-            EmailVerificationToken = GenerateSecureToken(),
+            IsEmailVerified = true,
+            EmailVerificationToken = null,
             UserType = request.UserType
         };
 
@@ -98,8 +105,32 @@ public class AuthService : IAuthService
             await _userRepository.AddAsync(user);
             await _unitOfWork.SaveChangesAsync();
 
-            // TODO: Send verification email with user.EmailVerificationToken
+            // Auto-create CompanyRequest if user is a CompanyOwner
+            if (request.UserType == UserType.CompanyOwner)
+            {
+                var companyRequest = new CompanyRequest
+                {
+                    UserId = user.Id,
+                    CompanyName = request.FullName + "'s Company",
+                    ContactEmail = request.Email,
+                    ContactPhone = request.Phone,
+                    Status = "Pending",
+                    CreatedAt = DateTime.UtcNow,
+                    Notes = "Auto-created from registration"
+                };
+                await _companyRequestRepository.AddAsync(companyRequest);
+                await _unitOfWork.SaveChangesAsync();
 
+                // Notify Super Admins
+                var superAdmins = await _userRepository.GetUsersByRoleAsync("SuperAdmin");
+                foreach (var admin in superAdmins)
+                {
+                    await _notificationService.NotifyNewCompanyRequestAsync(admin.Id, companyRequest.CompanyName, companyRequest.Id);
+                }
+            }
+
+            // TODO: Send verification email with user.EmailVerificationToken
+            var token = GenerateJwtToken(user);
             var roles = new List<string> { "CompanyUser" };
             var userDto = new UserDto(
                 user.Id,
@@ -107,10 +138,11 @@ public class AuthService : IAuthService
                 user.Email,
                 roles,
                 user.CreatedAt,
-                user.UserType
+                user.UserType,
+                user.CompanyId
             );
 
-            return new AuthResponse(true, "Registration successful. Please check your email to verify your account.", null, userDto);
+            return new AuthResponse(true, "Registration successful. Welcome!", token, userDto);
         }
         catch (Exception ex)
         {
@@ -258,6 +290,62 @@ public class AuthService : IAuthService
     public async Task<int?> GetCurrentUserIdAsync()
     {
         return GetCurrentUserId();
+    }
+
+    public async Task<bool> UpdateProfileAsync(int userId, UpdateProfileRequest request)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null) return false;
+
+        var nameParts = request.FullName.Split(' ', 2);
+        user.FirstName = nameParts[0];
+        user.LastName = nameParts.Length > 1 ? nameParts[1] : string.Empty;
+
+        try
+        {
+            await _userRepository.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public async Task<bool> ChangePasswordAsync(int userId, ChangePasswordRequest request)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null) return false;
+
+        if (!BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.PasswordHash))
+        {
+            return false;
+        }
+
+        if (request.NewPassword != request.ConfirmPassword)
+        {
+            return false;
+        }
+
+        var passwordValidation = ValidatePasswordStrength(request.NewPassword);
+        if (!passwordValidation.IsValid)
+        {
+            return false;
+        }
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+
+        try
+        {
+            await _userRepository.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     public async Task<User?> GetCurrentUserAsync()

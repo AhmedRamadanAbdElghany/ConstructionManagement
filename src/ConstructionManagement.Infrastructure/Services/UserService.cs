@@ -111,7 +111,8 @@ public class UserService : IUserService
                 u.Id, $"{u.FirstName} {u.LastName}".Trim(), u.Email,
                 u.UserRoles.Select(ur => ur.Role.Name).ToList(),
                 u.CreatedAt,
-                u.UserType))
+                u.UserType,
+                u.CompanyId))
             .FirstOrDefaultAsync();
     }
 
@@ -125,7 +126,8 @@ public class UserService : IUserService
                 u.Id, $"{u.FirstName} {u.LastName}".Trim(), u.Email,
                 u.UserRoles.Select(ur => ur.Role.Name).ToList(),
                 u.CreatedAt,
-                u.UserType))
+                u.UserType,
+                u.CompanyId))
             .ToListAsync();
     }
 

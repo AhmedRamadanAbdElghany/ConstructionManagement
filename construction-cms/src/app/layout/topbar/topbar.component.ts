@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
 import { TranslateModule } from '@ngx-translate/core';
@@ -140,21 +140,23 @@ import { AppNotification } from '../../shared/interfaces';
 
           <!-- Profile Dropdown -->
           @if (showProfile) {
-            <div class="absolute ltr:right-0 rtl:left-0 top-[calc(100%+12px)] w-72 bg-white dark:bg-slate-900 rounded-[2rem] shadow-3xl border border-slate-200 dark:border-white/10 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+            <div class="fixed ltr:right-8 rtl:left-8 top-[84px] w-72 bg-white dark:bg-slate-900 rounded-[2rem] shadow-3xl border border-slate-200 dark:border-white/10 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
               <div class="p-8 border-b border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-slate-950/20">
                 <p class="text-lg font-black text-slate-900 dark:text-white tracking-tight leading-none mb-2">{{ authService.getCurrentUser()?.fullName || '' }}</p>
                 <p class="text-[11px] text-slate-400 dark:text-slate-500 font-bold break-all">{{ authService.getCurrentUser()?.email || '' }}</p>
               </div>
               <div class="p-3 space-y-1">
-                <a href="#" class="flex items-center gap-4 px-5 py-3.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/[0.03] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all group/item">
+                <a (click)="goToProfile()" class="flex items-center gap-4 px-5 py-3.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/[0.03] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all group/item cursor-pointer">
                   <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center group-hover/item:bg-cyan-500 transition-colors">
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    <svg class="w-5 h-5 text-slate-400 group-hover/item:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                   </div>
                   <span class="text-sm font-bold">{{ 'topbar.profile' | translate }}</span>
                 </a>
               </div>
               <div class="p-3 bg-slate-50 dark:bg-slate-950/30 border-t border-slate-200 dark:border-white/5">
-                <button class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-rose-500 bg-slate-200/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 hover:text-white transition-all group/item shadow-inner">
+                <button 
+                  (click)="confirmLogout()"
+                  class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-rose-500 bg-slate-200/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 hover:text-white transition-all group/item shadow-inner">
                   <div class="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center group-hover/item:bg-white/20 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                   </div>
@@ -166,6 +168,48 @@ import { AppNotification } from '../../shared/interfaces';
         </div>
       </div>
     </header>
+
+    <!-- Logout Confirmation Modal -->
+    @if (showLogoutConfirmation) {
+      <div class="fixed inset-0 z-[100] flex items-center justify-center p-6">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-md animate-in fade-in duration-300" (click)="showLogoutConfirmation = false"></div>
+        
+        <!-- Modal Card -->
+        <div class="relative w-full max-w-md bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-[3rem] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.5)] border border-white/20 dark:border-white/5 overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+          <div class="p-10 pt-12 flex flex-col items-center text-center">
+            <!-- Icon -->
+            <div class="w-24 h-24 rounded-[2.5rem] bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white mb-8 shadow-2xl shadow-rose-500/40 animate-bounce-subtle">
+              <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+              </svg>
+            </div>
+
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">
+              {{ 'logout_confirm.title' | translate }}
+            </h2>
+            <p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed mb-10 px-4">
+              {{ 'logout_confirm.subtitle' | translate }}
+            </p>
+
+            <div class="grid grid-cols-1 w-full gap-4">
+              <button 
+                (click)="logout()"
+                class="group relative h-16 rounded-3xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black uppercase tracking-widest overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98]">
+                <div class="absolute inset-0 bg-gradient-to-r from-rose-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <span class="relative z-10">{{ 'logout_confirm.confirm' | translate }}</span>
+              </button>
+              
+              <button 
+                (click)="showLogoutConfirmation = false"
+                class="h-16 rounded-3xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all active:scale-95">
+                {{ 'logout_confirm.cancel' | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
 
     <!-- Overlay to close dropdowns -->
     @if (showNotifications || showProfile) {
@@ -180,13 +224,20 @@ import { AppNotification } from '../../shared/interfaces';
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.05); border-radius: 10px; }
     .shadow-3xl { box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.5); }
+    @keyframes bounce-subtle {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .animate-bounce-subtle { animation: bounce-subtle 3s ease-in-out infinite; }
   `]
 })
 export class TopbarComponent implements OnInit {
   showNotifications = false;
   showProfile = false;
+  showLogoutConfirmation = false;
   notifications: AppNotification[] = [];
 
+  private router = inject(Router);
   public authService = inject(AuthService);
   public themeService = inject(ThemeService);
 
@@ -219,5 +270,21 @@ export class TopbarComponent implements OnInit {
 
   markAllRead() {
     this.notifications.forEach(n => n.read = true);
+  }
+
+  goToProfile() {
+    this.showProfile = false;
+    this.router.navigate(['/profile']);
+  }
+
+  confirmLogout() {
+    this.showLogoutConfirmation = true;
+    this.showProfile = false;
+  }
+
+  logout() {
+    this.authService.logout();
+    this.showLogoutConfirmation = false;
+    this.router.navigate(['/auth/login']);
   }
 }

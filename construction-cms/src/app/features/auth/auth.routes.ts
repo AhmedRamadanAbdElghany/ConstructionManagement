@@ -14,6 +14,10 @@ export const authRoutes: Routes = [
         loadComponent: () => import('./forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent)
     },
     {
+        path: 'company-selection',
+        loadComponent: () => import('./company-selection/company-selection.component').then(m => m.CompanySelectionComponent)
+    },
+    {
         path: '',
         redirectTo: 'login',
         pathMatch: 'full'

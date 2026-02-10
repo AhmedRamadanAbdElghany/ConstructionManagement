@@ -8,7 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Xunit;
-using BCrypt.Net; // تأكد إن الحزمة مثبتة (BCrypt.Net-Next)
+using BCrypt.Net;
+using ConstructionManagement.Application.Interfaces; // تأكد إن الحزمة مثبتة (BCrypt.Net-Next)
 
 namespace ConstructionManagement.Tests.Integration;
 
@@ -17,6 +18,8 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
     private readonly AuthService _service;
     private readonly Mock<IUserRepository> _userRepoMock = new();
     private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock = new();
+    private readonly Mock<ICompanyRequestRepository> _companyRequestRepoMock = new();
+    private readonly Mock<INotificationService> _notificationServiceMock = new();
 
     public AuthServiceIntegrationTests() : base()
     {
@@ -38,7 +41,9 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
             _userRepoMock.Object,
             configuration,
             UnitOfWork,
-            _httpContextAccessorMock.Object
+            _httpContextAccessorMock.Object,
+            _companyRequestRepoMock.Object,
+            _notificationServiceMock.Object
         );
     }
 
@@ -115,7 +120,7 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
         Context.Users.Add(user);
         await Context.SaveChangesAsync();
 
-        var service = new AuthService(new UserRepository(Context), config, UnitOfWork, _httpContextAccessorMock.Object);
+        var service = new AuthService(new UserRepository(Context), config, UnitOfWork, _httpContextAccessorMock.Object, _companyRequestRepoMock.Object, _notificationServiceMock.Object);
 
         // Act
         var result = await service.LoginAsync(new LoginRequest("auth@test.com", password));

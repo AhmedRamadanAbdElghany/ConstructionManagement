@@ -27,6 +27,7 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
     });
 
 builder.Services.AddFluentValidationAutoValidation();
@@ -73,6 +74,14 @@ builder.Services.AddScoped<IRepository<ProjectTeamRole>, Repository<ProjectTeamR
 builder.Services.AddScoped<IRepository<BOQExecutedDelta>, Repository<BOQExecutedDelta>>();
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<ICompanyRequestRepository, CompanyRequestRepository>();
+builder.Services.AddScoped<IJoinRequestRepository, JoinRequestRepository>();
+builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
+builder.Services.AddScoped<IMaterialCategoryRepository, MaterialCategoryRepository>();
+builder.Services.AddScoped<IMaterialStockRepository, MaterialStockRepository>();
+builder.Services.AddScoped<IMaterialRequestRepository, MaterialRequestRepository>();
+builder.Services.AddScoped<IMaterialRequestItemRepository, MaterialRequestItemRepository>();
+builder.Services.AddScoped<IMaterialConsumptionRepository, MaterialConsumptionRepository>();
+builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
 
 // 6. Services
 builder.Services.AddScoped<IRoleService, RoleService>();

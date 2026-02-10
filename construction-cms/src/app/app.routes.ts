@@ -22,6 +22,13 @@ export const routes: Routes = [
         canActivate: [roleGuard]
     },
 
+    // Profile
+    {
+        path: 'profile',
+        loadComponent: () => import('./features/common/profile/profile.component').then(m => m.ProfileComponent),
+        canActivate: [roleGuard]
+    },
+
     // Notifications
     {
         path: 'notifications',

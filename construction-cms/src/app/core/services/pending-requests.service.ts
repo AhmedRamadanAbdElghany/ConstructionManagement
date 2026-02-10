@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { AuthService } from './auth.service';
 
 export interface CompanyRequest {
     id: number;
@@ -40,6 +41,13 @@ export interface JoinRequest {
 export interface PendingCounts {
     pendingCompanyRequests: number;
     pendingJoinRequests: number;
+}
+
+export interface PublicCompany {
+    id: number;
+    name: string;
+    address?: string;
+    logoUrl?: string;
 }
 
 @Injectable({
@@ -102,20 +110,38 @@ export class PendingRequestsService {
         );
     }
 
+    getPublicCompanies(): Observable<PublicCompany[]> {
+        return this.http.get<PublicCompany[]>(`${this.apiUrl}/publiccompanies`);
+    }
+
+    submitJoinRequest(companyId: number, message?: string): Observable<JoinRequest> {
+        return this.http.post<JoinRequest>(`${this.apiUrl}/joinrequests`, { companyId, message });
+    }
+
     // Combined counts for badge
     getPendingCounts(): Observable<PendingCounts> {
         return this.http.get<PendingCounts>(`${this.apiUrl}/pending-requests/count`);
     }
 
+    private authService = inject(AuthService); // NEW
+
+    // ...
+
     // Refresh the pending count from server
     refreshPendingCount() {
-        this.getPendingCounts().subscribe({
-            next: (counts) => {
-                const total = counts.pendingCompanyRequests + counts.pendingJoinRequests;
-                this.pendingRequests.set(total);
-            },
-            error: (err) => console.error('Failed to refresh pending count:', err)
-        });
+        if (this.authService.hasRole('SuperAdmin')) {
+            this.getPendingCompanyRequestsCount().subscribe({
+                next: (res) => this.pendingRequests.set(res.pendingCount),
+                error: (err) => console.error('Failed to refresh pending count:', err)
+            });
+        } else if (this.authService.hasRole('CompanyAdmin')) {
+            this.getPendingJoinRequestsCount().subscribe({
+                next: (res) => this.pendingRequests.set(res.pendingCount),
+                error: (err) => console.error('Failed to refresh pending count:', err)
+            });
+        } else {
+            this.pendingRequests.set(0);
+        }
     }
 
     // Get count synchronously (for initial display)

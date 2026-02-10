@@ -59,6 +59,35 @@
     "settings": "Settings",
     "logout": "Logout"
   },
+  "logout_confirm": {
+    "title": "Ready to Leave?",
+    "subtitle": "Are you sure you want to sign out? You will need to login again to access your projects.",
+    "confirm": "Yes, Sign Out",
+    "cancel": "Stay Logged In"
+  },
+  "profile": {
+    "title": "My Profile",
+    "subtitle": "View and manage your account information",
+    "personal_info": "Personal Information",
+    "personal_info_desc": "Your basic account details",
+    "full_name": "Full Name",
+    "email": "Email Address",
+    "role": "Role",
+    "member_since": "Member Since",
+    "company_id": "Company",
+    "status": "Status",
+    "active": "Active",
+    "edit": "Edit",
+    "done": "Done",
+    "security": "Security",
+    "security_desc": "Manage your password and authentication settings",
+    "change_password": "Change Password",
+    "change_password_desc": "Update your account password",
+    "two_factor": "Two-Factor Authentication",
+    "two_factor_desc": "Add an extra layer of security",
+    "update": "Update",
+    "coming_soon": "Coming Soon"
+  },
   "dashboard": {
     "welcome": "Welcome back",
     "overview_subtitle": "Here's what's happening with your projects today",

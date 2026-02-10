@@ -103,6 +103,15 @@ public class ApplicationDbContext : DbContext
     public DbSet<DocumentVersion> DocumentVersions => Set<DocumentVersion>();
     public DbSet<DocumentApproval> DocumentApprovals => Set<DocumentApproval>();
 
+    // Material Management
+    public DbSet<Material> Materials => Set<Material>();
+    public DbSet<MaterialCategory> MaterialCategories => Set<MaterialCategory>();
+    public DbSet<MaterialStock> MaterialStocks => Set<MaterialStock>();
+    public DbSet<MaterialRequest> MaterialRequests => Set<MaterialRequest>();
+    public DbSet<MaterialRequestItem> MaterialRequestItems => Set<MaterialRequestItem>();
+    public DbSet<MaterialConsumption> MaterialConsumptions => Set<MaterialConsumption>();
+    public DbSet<Warehouse> Warehouses => Set<Warehouse>();
+
     // ── Inventory Order System ──────────────────────────────────────────────────
     // Warehouse & Stock
     public DbSet<InventoryWarehouse> InventoryWarehouses => Set<InventoryWarehouse>();
