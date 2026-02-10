@@ -148,6 +148,68 @@ public class User : BaseEntity, ICompanyEntity
     public virtual ICollection<ProjectTeamMember> Subordinates { get; set; } = new List<ProjectTeamMember>();
     // or name it ReportsFrom / ManagedTeamMembers / etc.
 
+    // -- Warehouse Partner Location Fields ------------------------------------
+    
+    /// <summary>
+    /// Geographic latitude for location-based search
+    /// </summary>
+    public double? Latitude { get; set; }
+
+    /// <summary>
+    /// Geographic longitude for location-based search
+    /// </summary>
+    public double? Longitude { get; set; }
+
+    /// <summary>
+    /// Physical address
+    /// </summary>
+    public string? Address { get; set; }
+
+    /// <summary>
+    /// City name
+    /// </summary>
+    public string? City { get; set; }
+
+    /// <summary>
+    /// District/neighborhood name
+    /// </summary>
+    public string? District { get; set; }
+
+    /// <summary>
+    /// Specialization for workers and engineers (plumbing, electrical, general construction, etc.)
+    /// </summary>
+    public string? Specialization { get; set; }
+
+    /// <summary>
+    /// Profile description/bio
+    /// </summary>
+    public string? Description { get; set; }
+
+    /// <summary>
+    /// Profile image URL
+    /// </summary>
+    public string? ProfileImageUrl { get; set; }
+
+    /// <summary>
+    /// Indicates if profile is complete enough for search results
+    /// </summary>
+    public bool IsProfileComplete { get; set; } = false;
+
+    /// <summary>
+    /// Average rating from reviews (1-5)
+    /// </summary>
+    public decimal? AverageRating { get; set; }
+
+    /// <summary>
+    /// Total number of reviews
+    /// </summary>
+    public int? TotalReviews { get; set; }
+
+    /// <summary>
+    /// Indicates if user has set their location
+    /// </summary>
+    public bool HasLocation => Latitude.HasValue && Longitude.HasValue;
+
     // -- Optional helpers (not mapped) -----------------------------------------
     // [NotMapped]
     // public bool IsAdmin => UserRoles.Any(ur => ur.Role.Name == "Admin");

@@ -23,5 +23,20 @@ public enum UserType
     /// <summary>
     /// Inventory owner who can manage inventory
     /// </summary>
-    InventoryOwner = 3
+    InventoryOwner = 3,
+
+    /// <summary>
+    /// Warehouse owner who provides construction materials
+    /// </summary>
+    WarehouseOwner = 4,
+
+    /// <summary>
+    /// Engineer (civil, architectural, etc.)
+    /// </summary>
+    Engineer = 5,
+
+    /// <summary>
+    /// Subcontractor for specialized work
+    /// </summary>
+    Subcontractor = 6
 }

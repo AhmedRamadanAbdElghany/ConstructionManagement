@@ -27,6 +27,36 @@ export const routes: Routes = [
         loadComponent: () => import('./features/common/notifications/notifications.component').then(m => m.NotificationsComponent)
     },
 
+    // Warehouse Partner Routes
+    {
+        path: 'warehouse-partner',
+        children: [
+            {
+                path: 'nearby-search',
+                loadComponent: () => import('./features/common/warehouse-partner/nearby-search.component').then(m => m.NearbySearchComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin', 'CompanyUser', 'WarehouseOwner'] }
+            },
+            {
+                path: 'create-order',
+                loadComponent: () => import('./features/common/warehouse-partner/create-order.component').then(m => m.CreateOrderComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin', 'CompanyUser'] }
+            },
+            {
+                path: 'barcode-scanner',
+                loadComponent: () => import('./features/common/warehouse-partner/barcode-scanner.component').then(m => m.BarcodeScannerComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin', 'CompanyUser', 'WarehouseOwner'] }
+            },
+            {
+                path: '',
+                redirectTo: 'nearby-search',
+                pathMatch: 'full'
+            }
+        ]
+    },
+
     // Admin Routes
     {
         path: 'admin',

@@ -28,7 +28,9 @@ namespace ConstructionManagement.Tests.Integration
             // 2. Pass CompanyContext to Context
             Context = new ApplicationDbContext(options, CompanyContext);
 
+            // Enable foreign key constraints for SQLite
             Context.Database.OpenConnection();
+            Context.Database.ExecuteSqlRaw("PRAGMA foreign_keys = ON;");
             try 
             {
                 Context.Database.EnsureCreated();

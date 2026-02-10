@@ -103,6 +103,34 @@ public class ApplicationDbContext : DbContext
     public DbSet<DocumentVersion> DocumentVersions => Set<DocumentVersion>();
     public DbSet<DocumentApproval> DocumentApprovals => Set<DocumentApproval>();
 
+    // ── Inventory Order System ──────────────────────────────────────────────────
+    // Warehouse & Stock
+    public DbSet<InventoryWarehouse> InventoryWarehouses => Set<InventoryWarehouse>();
+    public DbSet<InventoryStock> InventoryStocks => Set<InventoryStock>();
+    public DbSet<VendorReview> VendorReviews => Set<VendorReview>();
+    public DbSet<WarehouseOrderRequest> WarehouseOrderRequests => Set<WarehouseOrderRequest>();
+    
+    // Worker Management
+    public DbSet<Worker> Workers => Set<Worker>();
+    public DbSet<ProjectWorkerContact> ProjectWorkerContacts => Set<ProjectWorkerContact>();
+    
+    // Discounts
+    public DbSet<StockDiscountTier> StockDiscountTiers => Set<StockDiscountTier>();
+    public DbSet<CustomerTierDiscount> CustomerTierDiscounts => Set<CustomerTierDiscount>();
+    public DbSet<SpecialPromotion> SpecialPromotions => Set<SpecialPromotion>();
+    
+    // Orders
+    public DbSet<InventoryOrder> InventoryOrders => Set<InventoryOrder>();
+    public DbSet<InventoryOrderItem> InventoryOrderItems => Set<InventoryOrderItem>();
+    public DbSet<InventoryOrderEvent> InventoryOrderEvents => Set<InventoryOrderEvent>();
+    
+    // Payments
+    public DbSet<PaymentHistory> PaymentHistories => Set<PaymentHistory>();
+    
+    // Recurring Orders
+    public DbSet<RecurringOrder> RecurringOrders => Set<RecurringOrder>();
+    public DbSet<RecurringOrderItem> RecurringOrderItems => Set<RecurringOrderItem>();
+
     // Quality Management
     public DbSet<QualityStandard> QualityStandards => Set<QualityStandard>();
     public DbSet<QualityInspection> QualityInspections => Set<QualityInspection>();
@@ -269,6 +297,9 @@ public class ApplicationDbContext : DbContext
         // Equipment Management configurations
         ConfigureEquipmentEntities(modelBuilder);
         
+        // Inventory Order System configurations
+        ConfigureInventoryEntities(modelBuilder);
+        
         // 10. SEEDING
         SeedData(modelBuilder);
     }
@@ -367,6 +398,192 @@ public class ApplicationDbContext : DbContext
             .HasOne(eu => eu.Project)
             .WithMany()
             .HasForeignKey(eu => eu.ProjectId)
+            .OnDelete(DeleteBehavior.NoAction);
+    }
+
+    private void ConfigureInventoryEntities(ModelBuilder modelBuilder)
+    {
+        // InventoryWarehouse
+        modelBuilder.Entity<InventoryWarehouse>(entity =>
+        {
+            entity.HasIndex(e => e.OwnerUserId);
+            entity.HasIndex(e => e.IsActive);
+            entity.HasIndex(e => e.IsApproved);
+        });
+
+        // InventoryStock
+        modelBuilder.Entity<InventoryStock>(entity =>
+        {
+            entity.HasIndex(e => e.WarehouseId);
+            entity.HasIndex(e => e.MaterialType);
+            entity.HasIndex(e => new { e.WarehouseId, e.MaterialType });
+        });
+
+        // StockDiscountTier
+        modelBuilder.Entity<StockDiscountTier>(entity =>
+        {
+            entity.HasIndex(e => e.StockId);
+            entity.HasIndex(e => e.IsActive);
+        });
+
+        // CustomerTierDiscount
+        modelBuilder.Entity<CustomerTierDiscount>(entity =>
+        {
+            entity.HasIndex(e => new { e.CustomerUserId, e.SupplierUserId }).IsUnique();
+            entity.HasIndex(e => e.Tier);
+            
+            // Configure foreign keys with NoAction to prevent cascade cycles
+            entity.HasOne(e => e.CustomerUser)
+                .WithMany()
+                .HasForeignKey(e => e.CustomerUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasOne(e => e.SupplierUser)
+                .WithMany()
+                .HasForeignKey(e => e.SupplierUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        // SpecialPromotion
+        modelBuilder.Entity<SpecialPromotion>(entity =>
+        {
+            entity.HasIndex(e => e.SupplierUserId);
+            entity.HasIndex(e => e.DiscountCode).IsUnique();
+            entity.HasIndex(e => e.IsActive);
+        });
+
+        // InventoryOrder
+        modelBuilder.Entity<InventoryOrder>(entity =>
+        {
+            entity.HasIndex(e => e.OrderNumber).IsUnique();
+            entity.HasIndex(e => e.CompanyOwnerUserId);
+            entity.HasIndex(e => e.InventoryOwnerUserId);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.PaymentStatus);
+            entity.HasIndex(e => e.OrderDate);
+        });
+
+        // InventoryOrderItem
+        modelBuilder.Entity<InventoryOrderItem>(entity =>
+        {
+            entity.HasIndex(e => e.OrderId);
+            entity.HasIndex(e => e.StockId);
+        });
+
+        // InventoryOrderEvent
+        modelBuilder.Entity<InventoryOrderEvent>(entity =>
+        {
+            entity.HasIndex(e => e.OrderId);
+            entity.HasIndex(e => e.EventType);
+            entity.HasIndex(e => e.EventDate);
+        });
+
+        // PaymentHistory
+        modelBuilder.Entity<PaymentHistory>(entity =>
+        {
+            entity.HasIndex(e => e.OrderId);
+            entity.HasIndex(e => e.PaymentDate);
+        });
+
+        // RecurringOrder
+        modelBuilder.Entity<RecurringOrder>(entity =>
+        {
+            entity.HasIndex(e => e.CustomerUserId);
+            entity.HasIndex(e => e.SupplierUserId);
+            entity.HasIndex(e => e.IsActive);
+            entity.HasIndex(e => e.NextOrderDate);
+        });
+
+        // RecurringOrderItem
+        modelBuilder.Entity<RecurringOrderItem>(entity =>
+        {
+            entity.HasIndex(e => e.RecurringOrderId);
+            entity.HasIndex(e => e.StockId);
+        });
+
+        // Relationships
+        modelBuilder.Entity<InventoryWarehouse>()
+            .HasOne(w => w.OwnerUser)
+            .WithMany()
+            .HasForeignKey(w => w.OwnerUserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<InventoryStock>()
+            .HasOne(s => s.Warehouse)
+            .WithMany(w => w.Stocks)
+            .HasForeignKey(s => s.WarehouseId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<StockDiscountTier>()
+            .HasOne(t => t.Stock)
+            .WithMany(s => s.DiscountTiers)
+            .HasForeignKey(t => t.StockId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<InventoryOrder>()
+            .HasOne(o => o.CompanyOwnerUser)
+            .WithMany()
+            .HasForeignKey(o => o.CompanyOwnerUserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<InventoryOrder>()
+            .HasOne(o => o.InventoryOwnerUser)
+            .WithMany()
+            .HasForeignKey(o => o.InventoryOwnerUserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<InventoryOrder>()
+            .HasOne(o => o.Warehouse)
+            .WithMany(w => w.ReceivedOrders)
+            .HasForeignKey(o => o.WarehouseId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<InventoryOrderItem>()
+            .HasOne(i => i.Order)
+            .WithMany(o => o.Items)
+            .HasForeignKey(i => i.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<InventoryOrderItem>()
+            .HasOne(i => i.Stock)
+            .WithMany(s => s.OrderItems)
+            .HasForeignKey(i => i.StockId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<InventoryOrderEvent>()
+            .HasOne(e => e.Order)
+            .WithMany(o => o.Events)
+            .HasForeignKey(e => e.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<PaymentHistory>()
+            .HasOne(p => p.Order)
+            .WithMany(o => o.PaymentHistory)
+            .HasForeignKey(p => p.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<RecurringOrder>()
+            .HasOne(r => r.CustomerUser)
+            .WithMany()
+            .HasForeignKey(r => r.CustomerUserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<RecurringOrder>()
+            .HasOne(r => r.SupplierUser)
+            .WithMany()
+            .HasForeignKey(r => r.SupplierUserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<RecurringOrderItem>()
+            .HasOne(i => i.RecurringOrder)
+            .WithMany(r => r.Items)
+            .HasForeignKey(i => i.RecurringOrderId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<RecurringOrderItem>()
+            .HasOne(i => i.Stock)
+            .WithMany(s => s.RecurringItems)
+            .HasForeignKey(i => i.StockId)
             .OnDelete(DeleteBehavior.NoAction);
     }
 
