@@ -5,8 +5,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { ThemeService } from '../../core/theme/theme.service';
-
-import { AppNotification } from '../../shared/interfaces';
+import { NotificationsService, NotificationDto } from '../../core/services/notifications.service';
 
 @Component({
   selector: 'app-topbar',
@@ -59,47 +58,49 @@ import { AppNotification } from '../../shared/interfaces';
             </svg>
             @if (unreadCount > 0) {
               <span class="absolute -top-1 ltr:-right-1 rtl:-left-1 w-5 h-5 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 text-white text-[10px] font-black flex items-center justify-center shadow-lg shadow-rose-500/25 ring-2 ring-white dark:ring-slate-950">
-                {{ unreadCount }}
+                {{ unreadCount > 9 ? '9+' : unreadCount }}
               </span>
             }
           </button>
 
           <!-- Notifications Dropdown -->
           @if (showNotifications) {
-            <div class="absolute ltr:-right-4 rtl:-left-4 top-[calc(100%+16px)] w-[400px] bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-3xl border border-slate-200 dark:border-white/10 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+            <div class="absolute ltr:left-1/2 rtl:right-1/2 ltr:-translate-x-[85%] rtl:translate-x-[85%] top-[calc(100%+16px)] w-[400px] bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-3xl border border-slate-200 dark:border-white/10 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
               <div class="p-8 pb-4 flex items-center justify-between">
                 <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">{{ 'topbar.notifications' | translate }}</h3>
                 <button (click)="markAllRead()" class="px-4 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-[10px] font-black text-cyan-500 dark:text-cyan-400 uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
                   {{ 'topbar.mark_all_read' | translate }}
                 </button>
               </div>
-              <div class="max-h-[480px] overflow-y-auto px-4 space-y-2 mb-4 custom-scrollbar">
+              <div class="max-h-[360px] overflow-y-auto px-4 space-y-2 mb-4 custom-scrollbar">
                 @for (notification of notifications; track notification.id) {
-                  <div 
-                    class="group p-5 rounded-[1.5rem] transition-all cursor-pointer border border-transparent hover:bg-slate-50 dark:hover:bg-white/[0.03]"
-                    [class.bg-cyan-500/5]="!notification.read">
-                    <div class="flex items-start gap-4">
-                      <div class="w-12 h-12 rounded-[1rem] flex items-center justify-center flex-shrink-0 shadow-inner"
-                           [ngClass]="{
-                             'bg-amber-500/10 text-amber-500': notification.type === 'warning',
-                             'bg-cyan-500/10 text-cyan-400': notification.type === 'info',
-                             'bg-emerald-500/10 text-emerald-500': notification.type === 'success'
-                           }">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          @if (notification.type === 'warning') { <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path> }
-                          @if (notification.type === 'info') { <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path> }
-                          @if (notification.type === 'success') { <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path> }
-                        </svg>
-                      </div>
-                      <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between mb-1">
-                           <p class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-cyan-500 dark:group-hover:text-cyan-400 transition-colors" [class.font-black]="!notification.read">{{ notification.message }}</p>
-                           @if (!notification.read) { <span class="w-2 h-2 rounded-full bg-cyan-500"></span> }
+                    <div 
+                      class="group p-5 rounded-[1.5rem] transition-all cursor-pointer border border-transparent hover:bg-slate-50 dark:hover:bg-white/[0.03]"
+                      [class.bg-cyan-500/5]="!notification.isRead">
+                      <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-[1rem] flex items-center justify-center flex-shrink-0 shadow-inner"
+                             [ngClass]="{
+                               'bg-amber-500/10 text-amber-500': notification.type === 'warning',
+                               'bg-cyan-500/10 text-cyan-400': notification.type === 'info',
+                               'bg-emerald-500/10 text-emerald-500': notification.type === 'success',
+                               'bg-rose-500/10 text-rose-500': notification.type === 'error'
+                             }">
+                          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            @if (notification.type === 'warning') { <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path> }
+                            @if (notification.type === 'info') { <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path> }
+                            @if (notification.type === 'success') { <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path> }
+                            @if (notification.type === 'error') { <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path> }
+                          </svg>
                         </div>
-                        <p class="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest">{{ notification.timestamp }}</p>
+                        <div class="flex-1 min-w-0">
+                          <div class="flex items-center justify-between mb-1">
+                             <p class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-cyan-500 dark:group-hover:text-cyan-400 transition-colors" [class.font-black]="!notification.isRead">{{ notification.message }}</p>
+                             @if (!notification.isRead) { <span class="w-2 h-2 rounded-full bg-cyan-500"></span> }
+                          </div>
+                          <p class="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest">{{ getTimeAgo(notification.createdAt) }}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
                 }
               </div>
               <div class="p-6 bg-slate-50 dark:bg-slate-950/50 border-t border-slate-200 dark:border-white/5">
@@ -235,14 +236,15 @@ export class TopbarComponent implements OnInit {
   showNotifications = false;
   showProfile = false;
   showLogoutConfirmation = false;
-  notifications: AppNotification[] = [];
+  notifications: NotificationDto[] = [];
 
   private router = inject(Router);
   public authService = inject(AuthService);
   public themeService = inject(ThemeService);
+  private notificationsService = inject(NotificationsService);
 
   get unreadCount(): number {
-    return this.notifications.filter(n => !n.read).length;
+    return this.notifications.filter(n => !n.isRead).length;
   }
 
   get isPending(): boolean {
@@ -251,11 +253,16 @@ export class TopbarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.notifications = [
-      { id: 1, type: 'warning', message: 'Daily log pending submission', timestamp: '5 min ago', read: false },
-      { id: 2, type: 'info', message: 'New team member added to your project', timestamp: '1 hour ago', read: false },
-      { id: 3, type: 'success', message: 'Payment received for Tower Project', timestamp: '2 hours ago', read: true },
-    ];
+    this.loadNotifications();
+  }
+
+  loadNotifications() {
+    this.notificationsService.getNotifications().subscribe({
+      next: (data) => {
+        this.notifications = data;
+      },
+      error: (err) => console.error('Failed to load notifications', err)
+    });
   }
 
   toggleNotifications() {
@@ -274,7 +281,25 @@ export class TopbarComponent implements OnInit {
   }
 
   markAllRead() {
-    this.notifications.forEach(n => n.read = true);
+    this.notificationsService.markAllAsRead().subscribe(() => {
+      this.notifications.forEach(n => n.isRead = true);
+    });
+  }
+
+  getTimeAgo(timestamp: string): string {
+    const now = new Date();
+    const then = new Date(timestamp);
+    const diffMs = now.getTime() - then.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (isNaN(then.getTime())) return timestamp; // Fallback for non-ISO dates
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins} minutes ago`;
+    if (diffHours < 24) return `${diffHours} hours ago`;
+    if (diffDays < 7) return `${diffDays} days ago`;
+    return then.toLocaleDateString();
   }
 
   goToProfile() {
