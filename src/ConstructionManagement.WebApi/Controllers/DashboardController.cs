@@ -24,6 +24,14 @@ public class DashboardController : ControllerBase
         return Ok(stats);
     }
 
+    [HttpGet("super-admin/stats")]
+    [Authorize(Policy = "SuperAdminOnly")]
+    public async Task<ActionResult<SuperAdminStats>> GetSuperAdminStats()
+    {
+        var stats = await _dashboardStatisticsService.GetSuperAdminStatsAsync();
+        return Ok(stats);
+    }
+
     [HttpGet("subscriptions")]
     public async Task<ActionResult<List<CompanySubscription>>> GetCompanySubscriptions()
     {

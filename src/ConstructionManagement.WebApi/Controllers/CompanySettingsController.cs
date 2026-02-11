@@ -4,6 +4,8 @@ using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System.Linq;
 
 
 using ConstructionManagement.Domain.Enums;
@@ -28,7 +30,36 @@ public class CompanySettingsController : ControllerBase
     {
         // Query filter in DbContext will limit this to the current tenant if not SuperAdmin
         var settings = (await _repo.GetAllAsync()).FirstOrDefault();
-        if (settings == null) return NotFound("Settings not found for this company.");
+        
+        if (settings == null)
+        {
+            // Auto-heal: Create settings if they don't exist
+            var companyIdClaim = User.Claims.FirstOrDefault(c => c.Type == "companyId")?.Value;
+            if (string.IsNullOrEmpty(companyIdClaim) || !int.TryParse(companyIdClaim, out int companyId))
+            {
+                 return NotFound("Settings not found and Company ID not available in token.");
+            }
+
+            settings = new CompanySettings 
+            { 
+                CompanyId = companyId,
+                // Set some sensible defaults
+                EnableDelayNotification = true,
+                DelayNotificationIntervalDays = 7,
+                DelayGracePeriodDays = 3,
+                RequirePhotoReview = true,
+                PhotoApproverRole = "MediaReviewer",
+                ClientCanSeeFinancials = true,
+                AllowMeasured = true,
+                AllowSupervision = true,
+                AllowPackages = true,
+                DefaultMoneyCalculationMethod = CalculationMethod.Measured
+            };
+            
+            await _repo.AddAsync(settings);
+            await _uow.SaveChangesAsync();
+        }
+
         return Ok(settings);
     }
 

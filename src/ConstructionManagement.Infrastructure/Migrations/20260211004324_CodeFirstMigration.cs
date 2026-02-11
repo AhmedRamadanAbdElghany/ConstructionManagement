@@ -8,11 +8,34 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ConstructionManagement.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class FixCircularRefs : Migration
+    public partial class CodeFirstMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "CatalogItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
+                    ProjectId = table.Column<int>(type: "int", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DefaultRate = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Category = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CatalogItems", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "InvoiceSequences",
                 columns: table => new
@@ -23,6 +46,31 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_InvoiceSequences", x => x.YearPart);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MaterialCategories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Icon = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ParentCategoryId = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaterialCategories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MaterialCategories_MaterialCategories_ParentCategoryId",
+                        column: x => x.ParentCategoryId,
+                        principalTable: "MaterialCategories",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -631,6 +679,56 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Materials",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SKU = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Barcode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    WeightPerUnit = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Dimensions = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MinStockLevel = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ReorderQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    StandardCost = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    AverageCost = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    SupplierName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SupplierContact = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SupplierPhone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsTracked = table.Column<bool>(type: "bit", nullable: false),
+                    TrackExpiration = table.Column<bool>(type: "bit", nullable: false),
+                    ShelfLifeDays = table.Column<int>(type: "int", nullable: true),
+                    StorageLocation = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Materials", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Materials_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Materials_MaterialCategories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "MaterialCategories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "QualityStandards",
                 columns: table => new
                 {
@@ -787,6 +885,40 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         column: x => x.CompanyId,
                         principalTable: "Companies",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CompanyDefaultPhaseItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
+                    DefaultPhaseId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DefaultRate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Category = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Order = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CompanyDefaultPhaseItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CompanyDefaultPhaseItems_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_CompanyDefaultPhaseItems_CompanyDefaultPhases_DefaultPhaseId",
+                        column: x => x.DefaultPhaseId,
+                        principalTable: "CompanyDefaultPhases",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1308,6 +1440,45 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Warehouses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDefault = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    ManagerUserId = table.Column<int>(type: "int", nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OperatingHours = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Warehouses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Warehouses_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Warehouses_Users_ManagerUserId",
+                        column: x => x.ManagerUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -1983,6 +2154,66 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MaterialRequests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RequestNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProjectId = table.Column<int>(type: "int", nullable: false),
+                    RequestedByUserId = table.Column<int>(type: "int", nullable: false),
+                    ApprovedByUserId = table.Column<int>(type: "int", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Priority = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RequestDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RequiredDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ApprovalDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    SourceWarehouse = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DeliveryLocation = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RejectionReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EstimatedCost = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    ActualCost = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
+                    MaterialId = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaterialRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MaterialRequests_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MaterialRequests_Materials_MaterialId",
+                        column: x => x.MaterialId,
+                        principalTable: "Materials",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MaterialRequests_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MaterialRequests_Users_ApprovedByUserId",
+                        column: x => x.ApprovedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MaterialRequests_Users_RequestedByUserId",
+                        column: x => x.RequestedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MiscExpense",
                 columns: table => new
                 {
@@ -2564,6 +2795,50 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MaterialStocks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MaterialId = table.Column<int>(type: "int", nullable: false),
+                    WarehouseId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    WarehouseName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CurrentQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ReservedQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    BinLocation = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    BatchNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastRestockDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UnitCost = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
+                    WarehouseId1 = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaterialStocks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MaterialStocks_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MaterialStocks_Materials_MaterialId",
+                        column: x => x.MaterialId,
+                        principalTable: "Materials",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MaterialStocks_Warehouses_WarehouseId1",
+                        column: x => x.WarehouseId1,
+                        principalTable: "Warehouses",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProjectWorkerContacts",
                 columns: table => new
                 {
@@ -2780,6 +3055,42 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         name: "FK_DocumentVersions_Documents_DocumentId",
                         column: x => x.DocumentId,
                         principalTable: "Documents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MaterialRequestItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MaterialRequestId = table.Column<int>(type: "int", nullable: false),
+                    MaterialId = table.Column<int>(type: "int", nullable: false),
+                    RequestedQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ApprovedQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    FulfilledQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UnitCost = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaterialRequestItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MaterialRequestItems_MaterialRequests_MaterialRequestId",
+                        column: x => x.MaterialRequestId,
+                        principalTable: "MaterialRequests",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MaterialRequestItems_Materials_MaterialId",
+                        column: x => x.MaterialId,
+                        principalTable: "Materials",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -4025,6 +4336,86 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MaterialConsumptions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MaterialId = table.Column<int>(type: "int", nullable: false),
+                    ProjectId = table.Column<int>(type: "int", nullable: false),
+                    PhaseId = table.Column<int>(type: "int", nullable: true),
+                    BOQItemId = table.Column<int>(type: "int", nullable: true),
+                    ItemDailyLogId = table.Column<int>(type: "int", nullable: true),
+                    MaterialRequestId = table.Column<int>(type: "int", nullable: true),
+                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UnitCost = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    ConsumptionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RecordedByUserId = table.Column<int>(type: "int", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsVerified = table.Column<bool>(type: "bit", nullable: false),
+                    VerifiedByUserId = table.Column<int>(type: "int", nullable: true),
+                    VerifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaterialConsumptions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MaterialConsumptions_BOQItems_BOQItemId",
+                        column: x => x.BOQItemId,
+                        principalTable: "BOQItems",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MaterialConsumptions_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MaterialConsumptions_ItemDailyLogs_ItemDailyLogId",
+                        column: x => x.ItemDailyLogId,
+                        principalTable: "ItemDailyLogs",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MaterialConsumptions_MaterialRequests_MaterialRequestId",
+                        column: x => x.MaterialRequestId,
+                        principalTable: "MaterialRequests",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MaterialConsumptions_Materials_MaterialId",
+                        column: x => x.MaterialId,
+                        principalTable: "Materials",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MaterialConsumptions_Phases_PhaseId",
+                        column: x => x.PhaseId,
+                        principalTable: "Phases",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MaterialConsumptions_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MaterialConsumptions_Users_RecordedByUserId",
+                        column: x => x.RecordedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MaterialConsumptions_Users_VerifiedByUserId",
+                        column: x => x.VerifiedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ApprovalRequests",
                 columns: table => new
                 {
@@ -4280,19 +4671,35 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 columns: new[] { "Id", "CompanyId", "CreatedAt", "DeletedAt", "Description", "IsDeleted", "Name", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "All", null },
-                    { 2, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "ViewProjects", null },
-                    { 10, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "Project.Edit", null },
-                    { 11, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "Project.Close", null },
-                    { 12, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "Financials.View", null },
-                    { 13, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "Transaction.Add", null },
-                    { 14, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "Transaction.Review", null },
-                    { 15, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "Media.Review", null },
-                    { 16, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "DailyLog.Close", null },
-                    { 17, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "Settings.Manage", null },
-                    { 18, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "DailyLog.AddEntry", null },
-                    { 19, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "DailyLog.Reopen", null },
-                    { 20, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "DailyLog.Approve", null }
+                    { 1, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Full system access", false, "All", null },
+                    { 2, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Create and manage tenant companies", false, "System.ManageCompanies", null },
+                    { 3, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Manage subscription packages", false, "System.ManagePackages", null },
+                    { 11, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Manage company-wide settings", false, "Company.ManageSettings", null },
+                    { 12, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Manage company employees and roles", false, "Company.ManageUsers", null },
+                    { 13, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Access company-level dashboards", false, "Company.ViewAnalytics", null },
+                    { 14, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Manage company standard items", false, "Company.ManageCatalog", null },
+                    { 15, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Manage project phase templates", false, "Company.ManageHierarchy", null },
+                    { 31, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Create new projects", false, "Project.Create", null },
+                    { 32, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Edit any project information", false, "Project.EditAll", null },
+                    { 33, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Delete projects", false, "Project.Delete", null },
+                    { 34, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "View project details and progress", false, "Project.ViewDetails", null },
+                    { 35, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Assign and manage project members", false, "Project.ManageTeam", null },
+                    { 36, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Close or finalize projects", false, "Project.Close", null },
+                    { 61, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "View project budgets and costs", false, "Finance.ViewFinancials", null },
+                    { 62, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Create project invoices", false, "Finance.CreateInvoice", null },
+                    { 63, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Review and approve invoices", false, "Finance.ApproveInvoice", null },
+                    { 64, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Update BOQ quantities and rates", false, "Finance.ManageBOQ", null },
+                    { 65, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Add expenses and vouchers", false, "Finance.AddTransaction", null },
+                    { 66, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Approve or reject transactions", false, "Finance.ReviewTransaction", null },
+                    { 91, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Submit daily progress reports", false, "Ops.AddDailyLog", null },
+                    { 92, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Review and close daily logs", false, "Ops.ReviewDailyLog", null },
+                    { 93, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Review and approve site photos", false, "Ops.ApproveMedia", null },
+                    { 94, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Track materials and warehouse stock", false, "Ops.ManageInventory", null },
+                    { 95, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Manage equipment assignments", false, "Ops.EquipmentTracking", null },
+                    { 96, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Perform and log safety checks", false, "Ops.SafetyInspection", null },
+                    { 97, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Manage inspections and defects", false, "Ops.QualityControl", null },
+                    { 121, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Track site worker attendance and contacts", false, "HR.ManageWorkers", null },
+                    { 122, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Manage company job recruitment", false, "HR.JobPostings", null }
                 });
 
             migrationBuilder.InsertData(
@@ -4300,242 +4707,25 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 columns: new[] { "Id", "CompanyId", "CreatedAt", "DeletedAt", "Description", "IsDeleted", "Name", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "SuperAdmin", null },
-                    { 2, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "CompanyAdmin", null },
-                    { 3, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "User", null }
+                    { 1, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Platform-level system administrator", false, "SuperAdmin", null },
+                    { 2, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Organization administrator", false, "CompanyAdmin", null },
+                    { 3, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Default authenticated user", false, "User", null }
                 });
-
-            migrationBuilder.InsertData(
-                table: "Companies",
-                columns: new[] { "Id", "Address", "BusinessId", "ContactEmail", "ContactPhone", "CreatedAt", "DeletedAt", "EnableAccessControl", "EnableAnalytics", "EnableBOQManagement", "EnableClientPortal", "EnableDailyLogs", "EnableDesignManagement", "EnableDocumentManagement", "EnableEquipmentManagement", "EnableFinancialManagement", "EnableHRManagement", "EnableInventoryManagement", "EnableNotifications", "EnableProjectManagement", "EnableQualityControl", "EnableSafetyManagement", "EnableSiteMedia", "EnableSubcontractorManagement", "EnableUserManagement", "EnableVendorManagement", "IsActive", "IsDeleted", "LogoUrl", "Name", "PackageId", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, null, null, null, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, true, true, true, false, true, false, false, false, true, false, false, true, true, false, false, true, false, true, false, true, false, null, "BuildIt Solutions", 3, null },
-                    { 2, null, null, null, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, true, true, true, false, true, false, false, false, true, false, false, true, true, false, false, true, false, true, false, true, false, null, "Test Company 2", 1, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "RolePermissions",
-                columns: new[] { "PermissionId", "RoleId", "CompanyId" },
-                values: new object[,]
-                {
-                    { 1, 1, null },
-                    { 1, 2, null },
-                    { 2, 3, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "CompanySettings",
-                columns: new[] { "Id", "AllowAddProgressEntry", "AllowMeasured", "AllowPackages", "AllowReopenClosedDay", "AllowSupervision", "AllowedFileTypes", "AutoCloseDay", "AutoCloseDayTime", "AutoEscalateCriticalDefects", "CashVoucherApproverRole", "CashVoucherSubmitterRole", "ClientCanSeeBOQ", "ClientCanSeeFinancials", "ClientCanSeeMedia", "CompanyId", "CreatedAt", "DefaultDepreciationYears", "DefaultLowStockThreshold", "DefaultMoneyCalculationMethod", "DefaultRetentionPercentage", "DefaultSupervisionPercentage", "DefectResponseHours", "DefectTrackingEnabled", "DelayGracePeriodDays", "DelayNotificationIntervalDays", "DelayNotificationIsOneTimeOnly", "DelayNotificationSendEmail", "DeletedAt", "DocumentApproverRole", "DocumentExpirationWarningDays", "EnableAccessControl", "EnableAnalytics", "EnableAnalyticsReporting", "EnableBOQManagement", "EnableCashVoucher", "EnableClientPortal", "EnableDailyLogs", "EnableDelayNotification", "EnableDesignManagement", "EnableDocumentCategories", "EnableDocumentManagement", "EnableEquipmentDepreciation", "EnableEquipmentGpsTracking", "EnableEquipmentInsuranceTracking", "EnableEquipmentManagement", "EnableEquipmentRentalBilling", "EnableEquipmentUtilizationTracking", "EnableExpirationTracking", "EnableFinancialManagement", "EnableHRManagement", "EnableIncidentEscalation", "EnableInventoryManagement", "EnableInvoiceAggregation", "EnableInvoiceReview", "EnableMiscExpenses", "EnableMultiWarehouse", "EnableNotifications", "EnablePhotoUpload", "EnableProjectManagement", "EnableQualityControl", "EnableSafetyComplianceTracking", "EnableSafetyManagement", "EnableSiteMedia", "EnableStockAlerts", "EnableSubcontractorManagement", "EnableSubcontractorRatings", "EnableSubcontractorSafetyScore", "EnableUserManagement", "EnableVendorInvoiceUpload", "EnableVendorManagement", "EnableVersionControl", "EquipmentAssignmentApproverRole", "IncidentInvestigatorRole", "IncidentReportingHours", "InvoiceApproverRole", "IsDeleted", "MaintenanceReminderDays", "MaterialRequestApproverRole", "MaxFileSizeMB", "MaxPaymentWithoutApproval", "MaxPhotosPerUpload", "MaxVersionsPerDocument", "MinimumRatingThreshold", "MiscExpenseApproverRole", "PhotoApproverRole", "PunchListEnabled", "QualityInspectionFrequencyDays", "QualityScoreThreshold", "RecordCashVoucherToWorker", "RequireCashVoucherApproval", "RequireDocumentApproval", "RequireEquipmentAssignmentApproval", "RequireEquipmentOperatorCertification", "RequireInvoiceApproval", "RequireMaintenanceSchedule", "RequireMaterialRequestApproval", "RequireMiscExpenseApproval", "RequirePhotoReview", "RequireQualityInspections", "RequireRatingOnCompletion", "RequireSafetyInspections", "RequireSafetyTraining", "RequireSubcontractorApproval", "RequireSubcontractorContract", "RequireSubcontractorInsurance", "RequireSubcontractorPaymentApproval", "SafetyChecklistApproverRole", "SafetyInspectionFrequencyDays", "SafetyTrainingRenewalMonths", "SubcontractorInsuranceWarningDays", "SubcontractorPaymentApproverRole", "UpdatedAt" },
-                values: new object[] { 1, true, true, false, false, true, ".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.dwg,.dxf", false, null, true, null, null, true, false, true, 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, 0, 5m, null, 48, true, 3, 7, false, true, null, null, 30, true, true, true, true, false, false, true, true, false, true, false, false, false, true, false, true, true, true, true, false, true, false, true, true, false, false, true, true, true, false, true, false, true, true, false, true, true, true, false, false, true, null, null, 24, null, false, 7, null, 50, null, 10, 0, null, null, "MediaReviewer", true, 30, 80, true, true, false, false, true, true, true, true, true, true, true, false, true, true, true, true, true, true, null, 14, 12, 30, null, null });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Address", "AverageRating", "City", "CompanyId", "CreatedAt", "DeletedAt", "Description", "District", "Email", "EmailVerificationToken", "FirstName", "IsDeleted", "IsEmailVerified", "IsProfileComplete", "LastName", "Latitude", "Longitude", "PasswordHash", "PasswordResetToken", "PasswordResetTokenExpiry", "Phone", "ProfileImageUrl", "Specialization", "TotalReviews", "UpdatedAt", "UserType", "Username" },
-                values: new object[,]
-                {
-                    { 1, null, null, null, 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, "admin@construction.com", null, "System", false, false, false, "Admin", null, null, "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6", null, null, null, null, null, null, null, 0, "admin" },
-                    { 2, null, null, null, 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, "ahmed@construction.com", null, "Ahmed", false, false, false, "Ramadan", null, null, "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6", null, null, null, null, null, null, null, 0, "ahmed" },
-                    { 3, null, null, null, 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, "company_admin@construction.com", null, "Company", false, false, false, "Admin", null, null, "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6", null, null, null, null, null, null, null, 0, "company_admin" },
-                    { 4, null, null, null, 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, "pm@construction.com", null, "Project", false, false, false, "Manager", null, null, "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6", null, null, null, null, null, null, null, 0, "pm" },
-                    { 5, null, null, null, 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, "engineer@construction.com", null, "Site", false, false, false, "Engineer", null, null, "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6", null, null, null, null, null, null, null, 0, "engineer" },
-                    { 6, null, null, null, 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, "accountant@construction.com", null, "Project", false, false, false, "Accountant", null, null, "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6", null, null, null, null, null, null, null, 0, "accountant" },
-                    { 7, null, null, null, 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, "consultant@construction.com", null, "External", false, false, false, "Consultant", null, null, "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6", null, null, null, null, null, null, null, 0, "consultant" }
-                });
+                values: new object[] { 1, null, null, null, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, "admin@construction.com", null, "System", false, false, false, "Admin", null, null, "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6", null, null, null, null, null, null, null, 0, "admin" });
 
             migrationBuilder.InsertData(
-                table: "Notifications",
-                columns: new[] { "Id", "CompanyId", "CreatedAt", "DeletedAt", "IsDeleted", "IsRead", "Link", "Message", "OriginalUserType", "Priority", "ReadAt", "Title", "Type", "UpdatedAt", "UserId" },
-                values: new object[] { 1, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, false, false, null, "Welcome to the system", null, 1, null, "Welcome", 0, null, 2 });
-
-            migrationBuilder.InsertData(
-                table: "Projects",
-                columns: new[] { "Id", "AccountingSystem", "Budget", "ClosedAt", "ClosedByUserId", "CompanyId", "CompanyPackageId", "CreatedAt", "DeletedAt", "Description", "EndDate", "GeneralManagerUserId", "IsClosed", "IsDeleted", "OwnerUserId", "PackageId", "ProgressPercentage", "ProjectName", "StartDate", "Status", "TotalContractValue", "UpdatedAt", "UserId", "UserId1", "UserId2", "VariationCalculation" },
-                values: new object[,]
-                {
-                    { 1, 0, null, null, null, 1, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, null, false, false, 1, null, 0m, "Al-Massa Tower", null, "InProgress", null, null, null, null, null, 0 },
-                    { 2, 1, null, null, null, 1, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, null, false, false, 2, null, 0m, "Coastal Supervision", null, "جديد", null, null, null, null, null, 0 },
-                    { 3, 0, null, null, null, 1, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, null, false, false, 1, null, 0m, "Smart Mall Mixed", null, "InProgress", null, null, null, null, null, 0 }
-                });
+                table: "RolePermissions",
+                columns: new[] { "PermissionId", "RoleId", "CompanyId" },
+                values: new object[] { 1, 1, null });
 
             migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "RoleId", "UserId", "AssignedAt", "CompanyId" },
-                values: new object[,]
-                {
-                    { 1, 1, new DateTime(2026, 2, 10, 11, 36, 19, 877, DateTimeKind.Utc).AddTicks(8889), null },
-                    { 2, 3, new DateTime(2026, 2, 10, 11, 36, 19, 878, DateTimeKind.Utc).AddTicks(124), null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "BOQItems",
-                columns: new[] { "Id", "AccountingType", "CompanyId", "CreatedAt", "DeletedAt", "Description", "EndDate", "IsDeleted", "ItemCode", "ItemName", "PhaseId", "ProjectId", "StartDate", "Status", "Unit", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 101, 0, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, false, "CIV-01", "Excavation", null, 1, null, "InProgress", null, null },
-                    { 102, 0, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, false, "CIV-02", "Concrete Base", null, 1, null, "جديد", null, null },
-                    { 201, 1, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, false, "SUP-01", "Structural Audit", null, 2, null, "جديد", null, null },
-                    { 301, 0, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, false, "MIX-01", "MEP Installation", null, 3, null, "InProgress", null, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "CashVouchers",
-                columns: new[] { "Id", "Amount", "ApprovalStatus", "ApprovedByUserId", "ApprovedDate", "Category", "CompanyId", "CreatedAt", "CreatedByUserId", "DeletedAt", "Description", "IsDeleted", "Notes", "ProjectId", "RejectionReason", "UpdatedAt", "VoucherDate", "VoucherNumber", "WorkerUserId" },
-                values: new object[,]
-                {
-                    { 1, 10000m, 1, null, null, "Materials", null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2, null, "Site materials purchase", false, null, 1, null, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "CV-001", null },
-                    { 2, 5000m, 0, null, null, "Equipment", null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2, null, "Equipment rental", false, null, 1, null, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "CV-002", null },
-                    { 3, 15000m, 1, null, null, "Labor", null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2, null, "Labor payment", false, null, 2, null, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "CV-003", null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ClientPayments",
-                columns: new[] { "Id", "Amount", "AttachmentPath", "CompanyId", "CreatedAt", "Currency", "DeletedAt", "Description", "DueDate", "IsConfirmed", "IsDeleted", "PaymentDate", "PaymentNumber", "PaymentType", "ProjectId", "UpdatedAt" },
-                values: new object[] { 1, 50000m, null, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "USD", null, null, null, true, false, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Advance", 1, null });
-
-            migrationBuilder.InsertData(
-                table: "EscalationLogs",
-                columns: new[] { "Id", "BOQItemId", "CompanyId", "CreatedAt", "DeletedAt", "EscalationType", "IsDeleted", "Message", "ProjectId", "RecipientUserId", "SentAt", "SentByEmail", "UpdatedAt" },
-                values: new object[] { 1, null, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "StartDelay", false, "Project delayed", 1, 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), false, null });
-
-            migrationBuilder.InsertData(
-                table: "MiscExpense",
-                columns: new[] { "Id", "Amount", "ApprovalStatus", "ApprovedByUserId", "ApprovedDate", "Category", "CompanyId", "CreatedAt", "CreatedByUserId", "DeletedAt", "Description", "ExpenseDate", "ExpenseNumber", "IsDeleted", "Notes", "OriginalFileName", "ProjectId", "ReceiptUrl", "RejectionReason", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, 2500m, 1, null, null, "Office Supplies", null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2, null, "Office supplies", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "ME-001", false, null, null, 1, null, null, null },
-                    { 2, 5000m, 0, null, null, "Transportation", null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2, null, "Transportation", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "ME-002", false, null, null, 1, null, null, null },
-                    { 3, 7500m, 1, null, null, "Utilities", null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2, null, "Utilities", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "ME-003", false, null, null, 2, null, null, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProjectApprovalRules",
-                columns: new[] { "Id", "ApproverRole", "BOQItemId", "CompanyId", "CreatedAt", "DeletedAt", "EscalationRole", "IsDeleted", "ProjectId", "ResponseTimeoutHours", "Source", "UpdatedAt", "UploaderRole" },
-                values: new object[] { 1, "Manager", null, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "", false, 1, 0, 0, null, "Engineer" });
-
-            migrationBuilder.InsertData(
-                table: "ProjectRoles",
-                columns: new[] { "Id", "CompanyId", "CreatedAt", "DeletedAt", "Description", "IsDeleted", "Name", "ProjectId", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "Manager", 1, null },
-                    { 2, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "Engineer", 1, null },
-                    { 3, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "FinancialReviewer", 1, null },
-                    { 4, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, false, "MediaReviewer", 1, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProjectSettings",
-                columns: new[] { "Id", "AllowAddProgressEntry", "AllowReopenClosedDay", "AutoCloseDay", "AutoCloseDayTime", "ClientCanSeeBOQ", "ClientCanSeeFinancials", "ClientCanSeeMedia", "CompanyId", "CreatedAt", "DelayGracePeriodDays", "DelayNotificationIntervalDays", "DelayNotificationIsOneTimeOnly", "DelayNotificationSendEmail", "DeletedAt", "EnableDelayNotification", "EnableInvoiceAggregation", "EnableInvoiceReview", "EnablePhotoUpload", "IsDeleted", "MaxPhotosPerUpload", "MoneyCalculationMethod", "PhotoApproverRole", "RequirePhotoReview", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, null, null, null, null, null, null, null, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, null, null, true, null, true, null, false, null, null, null, true, null },
-                    { 2, null, null, null, null, null, null, null, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, null, null, true, null, false, null, false, null, null, null, false, null },
-                    { 3, null, null, null, null, null, null, null, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, null, null, null, false, null, true, null, false, null, null, null, true, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProjectTeamMember",
-                columns: new[] { "Id", "CompanyId", "CreatedAt", "DeletedAt", "HoursWorked", "IsDeleted", "JobTitle", "ProjectId", "ReportsToUserId", "Salary", "Status", "UpdatedAt", "UserId" },
-                values: new object[,]
-                {
-                    { 1, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, 0m, false, "", 1, null, 0m, 0, null, 2 },
-                    { 2, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, 0m, false, "", 1, null, 0m, 0, null, 4 },
-                    { 3, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, 0m, false, "", 1, null, 0m, 0, null, 5 },
-                    { 4, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, 0m, false, "", 1, null, 0m, 0, null, 6 },
-                    { 5, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, 0m, false, "", 1, null, 0m, 0, null, 7 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ApprovalRequests",
-                columns: new[] { "Id", "BOQItemId", "CompanyId", "CreatedAt", "DeletedAt", "FinalApprovedAt", "FinalApprovedByUserId", "IsDeleted", "ProjectApprovalRuleId", "ProjectId", "RejectionReason", "RequestedAt", "RequestedByUserId", "Source", "SourceId", "Status", "UpdatedAt" },
-                values: new object[] { 1, 101, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, false, 1, 1, null, new DateTime(2026, 2, 10, 11, 36, 19, 903, DateTimeKind.Utc).AddTicks(6241), 2, 0, 1, "Approved", null });
-
-            migrationBuilder.InsertData(
-                table: "BOQExecutedDeltas",
-                columns: new[] { "Id", "BOQItemId", "ChangeType", "CompanyId", "CreatedAt", "CreatedByUserId", "DeletedAt", "DeltaDate", "DeltaQuantity", "IsDeleted", "ProcessedAt", "ReferenceId", "UpdatedAt" },
-                values: new object[] { 1, 101, "DailyLog", null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 100m, false, null, null, null });
-
-            migrationBuilder.InsertData(
-                table: "BOQItemNotes",
-                columns: new[] { "Id", "BOQItemId", "CompanyId", "CreatedAt", "CreatorUserId", "DeletedAt", "IsDeleted", "NoteText", "NoteType", "ProjectId", "RelatedMediaId", "UpdatedAt", "VisibleToRole" },
-                values: new object[] { 1, 101, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, false, "Initial kickoff", "General", 1, null, null, "SiteEngineer" });
-
-            migrationBuilder.InsertData(
-                table: "BOQMeasured",
-                columns: new[] { "Id", "AgreedQuantity", "CompanyId", "CreatedAt", "DeletedAt", "ExecutedQuantity", "IsDeleted", "UnitPrice", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 101, 5000m, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, 1200m, false, 150m, null },
-                    { 102, 800m, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, 0m, false, 4200m, null },
-                    { 301, 1m, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, 0.25m, false, 500000m, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "BOQProfitabilityLogs",
-                columns: new[] { "Id", "BOQItemId", "CompanyId", "CreatedAt", "CurrentProfit", "DeletedAt", "EstimatedBudget", "IsDeleted", "LogDate", "ProfitPercentage", "TotalSpent", "UpdatedAt" },
-                values: new object[] { 1, 101, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 11000m, null, 15000m, false, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 73.33m, 4000m, null });
-
-            migrationBuilder.InsertData(
-                table: "BOQSupervision",
-                columns: new[] { "Id", "BaseCalculation", "CompanyId", "CreatedAt", "CustomBaseAmount", "DeletedAt", "EstimatedTotalCost", "IsDeleted", "SupervisionPercentage", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 201, "AllProjectInvoices", null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, 25000m, false, 5.0m, null },
-                    { 301, "ThisItemInvoices", null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, 12500m, false, 2.5m, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ItemDailyLogs",
-                columns: new[] { "Id", "BOQItemId", "ClosedAt", "ClosedByUserId", "ClosingNotes", "CompanyId", "CreatedAt", "CreatedByUserId", "DailyProgressPercentage", "DailyWorkDescription", "DeletedAt", "IsClosed", "IsDeleted", "LogDate", "ProgressNotes", "ReopenReason", "ReopenedAt", "ReopenedByUserId", "UpdatedAt", "UserId", "UserId1" },
-                values: new object[] { 1, 101, null, 1, null, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, null, null, true, false, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Testing seed data", null, null, null, null, null, null });
-
-            migrationBuilder.InsertData(
-                table: "ItemInvoice",
-                columns: new[] { "Id", "AttachmentPath", "BOQItemId", "CompanyId", "CreatedAt", "CreatedByUserId", "Currency", "DeletedAt", "Description", "DueDate", "InvoiceDate", "InvoiceNumber", "IsDeleted", "NetAmount", "ProjectId", "RejectionReason", "RetentionAmount", "RetentionRate", "ReviewDate", "ReviewerUserId", "Status", "SubTotal", "SupplierVendor", "TaxAmount", "TaxRate", "UpdatedAt", "UserId", "UserId1" },
-                values: new object[] { 1, null, 101, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, "EGP", null, null, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "V-INV-001", false, 1000m, 1, null, null, null, null, null, "Approved", 1000m, null, null, null, null, null, null });
-
-            migrationBuilder.InsertData(
-                table: "ProjectRolePermissions",
-                columns: new[] { "PermissionId", "ProjectRoleId", "CompanyId" },
-                values: new object[,]
-                {
-                    { 10, 1, null },
-                    { 11, 1, null },
-                    { 16, 1, null },
-                    { 17, 1, null },
-                    { 13, 2, null },
-                    { 12, 3, null },
-                    { 14, 3, null },
-                    { 15, 4, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProjectTeamRoles",
-                columns: new[] { "Id", "AssignedAt", "CompanyId", "CreatedAt", "DeletedAt", "IsDeleted", "ProjectRoleId", "ProjectTeamMemberId", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(6845), null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, false, 2, 1, null },
-                    { 2, new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(8198), null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, false, 1, 2, null },
-                    { 3, new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(8206), null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, false, 2, 3, null },
-                    { 4, new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(8208), null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, false, 3, 4, null },
-                    { 5, new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(8210), null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, false, 4, 5, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "SiteMedias",
-                columns: new[] { "Id", "BOQItemId", "CompanyId", "CreatedAt", "DeletedAt", "Description", "FilePath", "IsApproved", "IsDeleted", "MediaType", "ProjectId", "RejectionReason", "ReviewDate", "ReviewerUserId", "Source", "Status", "UpdatedAt", "UploaderUserId", "UserId", "UserId1" },
-                values: new object[] { 1, 101, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "site1.jpg", true, false, "image/jpeg", 1, null, null, null, 0, "Approved", null, 2, null, null });
-
-            migrationBuilder.InsertData(
-                table: "Transactions",
-                columns: new[] { "Id", "Amount", "AttachmentPath", "BOQItemId", "CompanyId", "CreatedAt", "CreatedByUserId", "DeletedAt", "Description", "InvoiceNumber", "IsDeleted", "ProjectId", "ReviewDate", "ReviewNotes", "ReviewedByUserId", "Status", "SupplierName", "TransactionDate", "Type", "UpdatedAt", "UserId", "UserId1" },
-                values: new object[] { 1, 5000m, null, 101, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, null, null, null, false, 1, null, null, null, 1, null, new DateTime(2026, 2, 10, 11, 36, 19, 897, DateTimeKind.Utc).AddTicks(9885), 0, null, null, null });
-
-            migrationBuilder.InsertData(
-                table: "ApprovalSteps",
-                columns: new[] { "Id", "ApprovalRequestId", "ApprovedAt", "ApproverRole", "ApproverUserId", "CompanyId", "CreatedAt", "DeletedAt", "IsActive", "IsDeleted", "Notes", "Status", "StepOrder", "UpdatedAt" },
-                values: new object[] { 1, 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "Manager", 1, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, false, false, null, "Approved", 1, null });
+                values: new object[] { 1, 1, new DateTime(2026, 2, 11, 0, 43, 20, 790, DateTimeKind.Utc).AddTicks(9103), null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnalyticsSnapshots_CompanyId",
@@ -4761,6 +4951,16 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "IX_Companies_PackageId",
                 table: "Companies",
                 column: "PackageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CompanyDefaultPhaseItems_CompanyId",
+                table: "CompanyDefaultPhaseItems",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CompanyDefaultPhaseItems_DefaultPhaseId",
+                table: "CompanyDefaultPhaseItems",
+                column: "DefaultPhaseId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CompanyDefaultPhases_CompanyId",
@@ -5273,6 +5473,116 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "IX_KPIResults_KPIDefinitionId",
                 table: "KPIResults",
                 column: "KPIDefinitionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialCategories_ParentCategoryId",
+                table: "MaterialCategories",
+                column: "ParentCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialConsumptions_BOQItemId",
+                table: "MaterialConsumptions",
+                column: "BOQItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialConsumptions_CompanyId",
+                table: "MaterialConsumptions",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialConsumptions_ItemDailyLogId",
+                table: "MaterialConsumptions",
+                column: "ItemDailyLogId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialConsumptions_MaterialId",
+                table: "MaterialConsumptions",
+                column: "MaterialId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialConsumptions_MaterialRequestId",
+                table: "MaterialConsumptions",
+                column: "MaterialRequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialConsumptions_PhaseId",
+                table: "MaterialConsumptions",
+                column: "PhaseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialConsumptions_ProjectId",
+                table: "MaterialConsumptions",
+                column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialConsumptions_RecordedByUserId",
+                table: "MaterialConsumptions",
+                column: "RecordedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialConsumptions_VerifiedByUserId",
+                table: "MaterialConsumptions",
+                column: "VerifiedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialRequestItems_MaterialId",
+                table: "MaterialRequestItems",
+                column: "MaterialId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialRequestItems_MaterialRequestId",
+                table: "MaterialRequestItems",
+                column: "MaterialRequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialRequests_ApprovedByUserId",
+                table: "MaterialRequests",
+                column: "ApprovedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialRequests_CompanyId",
+                table: "MaterialRequests",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialRequests_MaterialId",
+                table: "MaterialRequests",
+                column: "MaterialId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialRequests_ProjectId",
+                table: "MaterialRequests",
+                column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialRequests_RequestedByUserId",
+                table: "MaterialRequests",
+                column: "RequestedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Materials_CategoryId",
+                table: "Materials",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Materials_CompanyId",
+                table: "Materials",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialStocks_CompanyId",
+                table: "MaterialStocks",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialStocks_MaterialId",
+                table: "MaterialStocks",
+                column: "MaterialId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialStocks_WarehouseId1",
+                table: "MaterialStocks",
+                column: "WarehouseId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MessageAttachments_CompanyId",
@@ -5837,6 +6147,16 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "WarehouseOwnerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Warehouses_CompanyId",
+                table: "Warehouses",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Warehouses_ManagerUserId",
+                table: "Warehouses",
+                column: "ManagerUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Workers_UserId",
                 table: "Workers",
                 column: "UserId");
@@ -5873,6 +6193,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "CashVouchers");
 
             migrationBuilder.DropTable(
+                name: "CatalogItems");
+
+            migrationBuilder.DropTable(
                 name: "ChangeOrderDocuments");
 
             migrationBuilder.DropTable(
@@ -5888,7 +6211,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "ClientProjectAccesses");
 
             migrationBuilder.DropTable(
-                name: "CompanyDefaultPhases");
+                name: "CompanyDefaultPhaseItems");
 
             migrationBuilder.DropTable(
                 name: "CompanyRequests");
@@ -5930,9 +6253,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "InvoiceSequences");
 
             migrationBuilder.DropTable(
-                name: "ItemDailyLogs");
-
-            migrationBuilder.DropTable(
                 name: "ItemInvoice");
 
             migrationBuilder.DropTable(
@@ -5943,6 +6263,15 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "KPIResults");
+
+            migrationBuilder.DropTable(
+                name: "MaterialConsumptions");
+
+            migrationBuilder.DropTable(
+                name: "MaterialRequestItems");
+
+            migrationBuilder.DropTable(
+                name: "MaterialStocks");
 
             migrationBuilder.DropTable(
                 name: "MessageAttachments");
@@ -6041,6 +6370,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "ChangeOrderRequests");
 
             migrationBuilder.DropTable(
+                name: "CompanyDefaultPhases");
+
+            migrationBuilder.DropTable(
                 name: "DocumentVersions");
 
             migrationBuilder.DropTable(
@@ -6048,6 +6380,15 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "KPIDefinitions");
+
+            migrationBuilder.DropTable(
+                name: "ItemDailyLogs");
+
+            migrationBuilder.DropTable(
+                name: "MaterialRequests");
+
+            migrationBuilder.DropTable(
+                name: "Warehouses");
 
             migrationBuilder.DropTable(
                 name: "ClientMessages");
@@ -6104,6 +6445,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "EquipmentTypes");
 
             migrationBuilder.DropTable(
+                name: "Materials");
+
+            migrationBuilder.DropTable(
                 name: "ClientUsers");
 
             migrationBuilder.DropTable(
@@ -6123,6 +6467,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "DocumentCategories");
+
+            migrationBuilder.DropTable(
+                name: "MaterialCategories");
 
             migrationBuilder.DropTable(
                 name: "InventoryWarehouses");

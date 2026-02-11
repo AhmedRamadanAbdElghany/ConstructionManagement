@@ -28,13 +28,21 @@ public class ProjectRoleHandler : AuthorizationHandler<ProjectRoleRequirement>
         if (userIdClaim == null) return;
         var userId = int.Parse(userIdClaim.Value);
 
-        // 2. استخدام الـ Scope للوصول للـ DbContext
+        // 2. SuperAdmin Bypass
+        // If the user is a SuperAdmin, grant full access regardless of project membership
+        if (context.User.IsInRole("SuperAdmin"))
+        {
+            context.Succeed(requirement);
+            return;
+        }
+
+        // 3. استخدام الـ Scope للوصول للـ DbContext
         using var scope = _scopeFactory.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         int? projectId = null;
 
-        // 3. استخراج الـ ProjectId من مسار الـ URL
+        // 4. استخراج الـ ProjectId من مسار الـ URL
         if (httpContext.Request.RouteValues["projectId"] != null && int.TryParse(httpContext.Request.RouteValues["projectId"]!.ToString(), out var pId))
         {
             projectId = pId;
@@ -52,7 +60,7 @@ public class ProjectRoleHandler : AuthorizationHandler<ProjectRoleRequirement>
 
         if (projectId == null) return;
 
-        // 3.5. التحقق مما إذا كان المستخدم هو مالك المشروع (Owner)
+        // 5. التحقق مما إذا كان المستخدم هو مالك المشروع (Owner)
         var project = await db.Projects.FindAsync(projectId);
         if (project != null && project.OwnerUserId == userId)
         {
@@ -60,13 +68,14 @@ public class ProjectRoleHandler : AuthorizationHandler<ProjectRoleRequirement>
             return;
         }
 
-        // 4. البحث في شجرة الصلاحيات (User -> TeamMember -> Roles -> Permissions)
+        // 6. البحث في شجرة الصلاحيات (User -> TeamMember -> Roles -> Permissions)
+        // Check for exact permission match OR the "All" wildcard
         var hasPermission = await db.ProjectTeamMembers
             .Where(m => m.ProjectId == projectId && m.UserId == userId)
             .SelectMany(m => m.ProjectTeamRoles)
             .Select(tr => tr.ProjectRole)
             .SelectMany(pr => pr.Permissions)
-            .AnyAsync(rp => rp.Permission.Name == requirement.PermissionName);
+            .AnyAsync(rp => rp.Permission.Name == requirement.PermissionName || rp.Permission.Name == "All");
 
         if (hasPermission)
         {

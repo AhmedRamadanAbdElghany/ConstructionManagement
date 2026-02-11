@@ -49,8 +49,27 @@ namespace ConstructionManagement.Infrastructure.Services
             // If not super, ignore requested companyId and use user's companyId
             int? targetCompanyId = isSuper ? companyId : user.CompanyId;
 
-            return await _roleRepository.AsQueryable()
-                .Where(r => r.CompanyId == targetCompanyId || r.CompanyId == null)
+            // Strict filtering: If asking for a specific company, ONLY return its roles.
+            // If super and no company passed, return global roles.
+            // We use IgnoreQueryFilters here because the global filter includes 'CompanyId == null'.
+            var rolesQuery = _roleRepository.AsQueryable().IgnoreQueryFilters();
+            
+            if (targetCompanyId.HasValue)
+            {
+                rolesQuery = rolesQuery.Where(r => r.CompanyId == targetCompanyId.Value);
+            }
+            else if (isSuper)
+            {
+                // SuperAdmin can see global roles if no company specified
+                rolesQuery = rolesQuery.Where(r => r.CompanyId == null);
+            }
+            else
+            {
+                // Non-super users with no company ID see nothing
+                return new List<RoleDto>();
+            }
+
+            return await rolesQuery
                 .Select(r => new RoleDto
                 {
                     Id = r.Id,

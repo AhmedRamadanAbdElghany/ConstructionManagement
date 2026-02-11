@@ -51,12 +51,14 @@ public class ApplicationDbContext : DbContext
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<UserTypeHistory> UserTypeHistories => Set<UserTypeHistory>();
     public DbSet<Package> Packages => Set<Package>();
+    public DbSet<CatalogItem> CatalogItems => Set<CatalogItem>();
     public DbSet<ApprovalRequest> ApprovalRequests => Set<ApprovalRequest>();
     public DbSet<ApprovalStep> ApprovalSteps => Set<ApprovalStep>();
     public DbSet<BOQPackage> BOQPackages => Set<BOQPackage>();
     public DbSet<CompanyPackage> CompanyPackages => Set<CompanyPackage>(); // Renamed from ClientPackage
     public DbSet<InvoiceSequence> InvoiceSequences => Set<InvoiceSequence>();
     public DbSet<Phase> Phases => Set<Phase>();
+    public DbSet<CompanyDefaultPhaseItem> CompanyDefaultPhaseItems => Set<CompanyDefaultPhaseItem>();
 
     // HR / Job Postings
     public DbSet<JobPosting> JobPostings => Set<JobPosting>();
@@ -230,6 +232,12 @@ public class ApplicationDbContext : DbContext
             .WithMany(p => p.Children)
             .HasForeignKey(p => p.ParentId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<CompanyDefaultPhaseItem>()
+            .HasOne(i => i.DefaultPhase)
+            .WithMany(p => p.Items)
+            .HasForeignKey(i => i.DefaultPhaseId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<BOQItem>()
             .HasOne(b => b.Phase)
@@ -599,239 +607,105 @@ public class ApplicationDbContext : DbContext
     private void SeedData(ModelBuilder modelBuilder)
     {
         var fixedDate = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        const string passwordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6"; // Hash for "admin"
-
-        // --- Companies ---
-        modelBuilder.Entity<Company>().HasData(
-            new Company { Id = 1, Name = "BuildIt Solutions", CreatedAt = fixedDate, PackageId = 3 },
-            new Company { Id = 2, Name = "Test Company 2", CreatedAt = fixedDate, PackageId = 1 }
-        );
+        const string passwordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6"; // "admin"
 
         // --- Users ---
         modelBuilder.Entity<User>().HasData(
-            new User { Id = 1, FirstName = "System", LastName = "Admin", Email = "admin@construction.com", Username = "admin", PasswordHash = passwordHash, CreatedAt = fixedDate, CompanyId = 1 },
-            new User { Id = 2, FirstName = "Ahmed", LastName = "Ramadan", Email = "ahmed@construction.com", Username = "ahmed", PasswordHash = passwordHash, CreatedAt = fixedDate, CompanyId = 1 },
-            new User { Id = 3, FirstName = "Company", LastName = "Admin", Email = "company_admin@construction.com", Username = "company_admin", PasswordHash = passwordHash, CreatedAt = fixedDate, CompanyId = 1 },
-            new User { Id = 4, FirstName = "Project", LastName = "Manager", Email = "pm@construction.com", Username = "pm", PasswordHash = passwordHash, CreatedAt = fixedDate, CompanyId = 1 },
-            new User { Id = 5, FirstName = "Site", LastName = "Engineer", Email = "engineer@construction.com", Username = "engineer", PasswordHash = passwordHash, CreatedAt = fixedDate, CompanyId = 1 },
-            new User { Id = 6, FirstName = "Project", LastName = "Accountant", Email = "accountant@construction.com", Username = "accountant", PasswordHash = passwordHash, CreatedAt = fixedDate, CompanyId = 1 },
-            new User { Id = 7, FirstName = "External", LastName = "Consultant", Email = "consultant@construction.com", Username = "consultant", PasswordHash = passwordHash, CreatedAt = fixedDate, CompanyId = 1 }
+            new User 
+            { 
+                Id = 1, 
+                FirstName = "System", 
+                LastName = "Admin", 
+                Email = "admin@construction.com", 
+                Username = "admin", 
+                PasswordHash = passwordHash, 
+                CreatedAt = fixedDate, 
+                CompanyId = null // Super Admin is global
+            }
         );
 
-        // --- Global Roles ---
+        // --- Global Permissions (CompanyId = null) ---
+        var permissions = new List<Permission>
+        {
+            // System Administration (1-10)
+            new Permission { Id = 1, Name = "All", Description = "Full system access", CreatedAt = fixedDate },
+            new Permission { Id = 2, Name = "System.ManageCompanies", Description = "Create and manage tenant companies", CreatedAt = fixedDate },
+            new Permission { Id = 3, Name = "System.ManagePackages", Description = "Manage subscription packages", CreatedAt = fixedDate },
+            
+            // Company Management (11-30)
+            new Permission { Id = 11, Name = "Company.ManageSettings", Description = "Manage company-wide settings", CreatedAt = fixedDate },
+            new Permission { Id = 12, Name = "Company.ManageUsers", Description = "Manage company employees and roles", CreatedAt = fixedDate },
+            new Permission { Id = 13, Name = "Company.ViewAnalytics", Description = "Access company-level dashboards", CreatedAt = fixedDate },
+            new Permission { Id = 14, Name = "Company.ManageCatalog", Description = "Manage company standard items", CreatedAt = fixedDate },
+            new Permission { Id = 15, Name = "Company.ManageHierarchy", Description = "Manage project phase templates", CreatedAt = fixedDate },
+
+            // Project Management (31-60)
+            new Permission { Id = 31, Name = "Project.Create", Description = "Create new projects", CreatedAt = fixedDate },
+            new Permission { Id = 32, Name = "Project.EditAll", Description = "Edit any project information", CreatedAt = fixedDate },
+            new Permission { Id = 33, Name = "Project.Delete", Description = "Delete projects", CreatedAt = fixedDate },
+            new Permission { Id = 34, Name = "Project.ViewDetails", Description = "View project details and progress", CreatedAt = fixedDate },
+            new Permission { Id = 35, Name = "Project.ManageTeam", Description = "Assign and manage project members", CreatedAt = fixedDate },
+            new Permission { Id = 36, Name = "Project.Close", Description = "Close or finalize projects", CreatedAt = fixedDate },
+
+            // BOQ & Financials (61-90)
+            new Permission { Id = 61, Name = "Finance.ViewFinancials", Description = "View project budgets and costs", CreatedAt = fixedDate },
+            new Permission { Id = 62, Name = "Finance.CreateInvoice", Description = "Create project invoices", CreatedAt = fixedDate },
+            new Permission { Id = 63, Name = "Finance.ApproveInvoice", Description = "Review and approve invoices", CreatedAt = fixedDate },
+            new Permission { Id = 64, Name = "Finance.ManageBOQ", Description = "Update BOQ quantities and rates", CreatedAt = fixedDate },
+            new Permission { Id = 65, Name = "Finance.AddTransaction", Description = "Add expenses and vouchers", CreatedAt = fixedDate },
+            new Permission { Id = 66, Name = "Finance.ReviewTransaction", Description = "Approve or reject transactions", CreatedAt = fixedDate },
+
+            // Site Operations (91-120)
+            new Permission { Id = 91, Name = "Ops.AddDailyLog", Description = "Submit daily progress reports", CreatedAt = fixedDate },
+            new Permission { Id = 92, Name = "Ops.ReviewDailyLog", Description = "Review and close daily logs", CreatedAt = fixedDate },
+            new Permission { Id = 93, Name = "Ops.ApproveMedia", Description = "Review and approve site photos", CreatedAt = fixedDate },
+            new Permission { Id = 94, Name = "Ops.ManageInventory", Description = "Track materials and warehouse stock", CreatedAt = fixedDate },
+            new Permission { Id = 95, Name = "Ops.EquipmentTracking", Description = "Manage equipment assignments", CreatedAt = fixedDate },
+            new Permission { Id = 96, Name = "Ops.SafetyInspection", Description = "Perform and log safety checks", CreatedAt = fixedDate },
+            new Permission { Id = 97, Name = "Ops.QualityControl", Description = "Manage inspections and defects", CreatedAt = fixedDate },
+
+            // Human Resources (121-140)
+            new Permission { Id = 121, Name = "HR.ManageWorkers", Description = "Track site worker attendance and contacts", CreatedAt = fixedDate },
+            new Permission { Id = 122, Name = "HR.JobPostings", Description = "Manage company job recruitment", CreatedAt = fixedDate }
+        };
+        modelBuilder.Entity<Permission>().HasData(permissions);
+
+        // --- System-Level Roles (CompanyId = null) ---
+        // These are the only roles that exist at the platform level.
+        // Company-internal roles (ProjectManager, SiteEngineer, etc.) are
+        // created at runtime per-company by the Company Admin.
         modelBuilder.Entity<Role>().HasData(
-            new Role { Id = 1, Name = "SuperAdmin", CreatedAt = fixedDate },
-            new Role { Id = 2, Name = "CompanyAdmin", CreatedAt = fixedDate }, 
-            new Role { Id = 3, Name = "User", CreatedAt = fixedDate }
+            new Role { Id = 1, Name = "SuperAdmin", Description = "Platform-level system administrator", CreatedAt = fixedDate, CompanyId = null },
+            new Role { Id = 2, Name = "CompanyAdmin", Description = "Organization administrator", CreatedAt = fixedDate, CompanyId = null },
+            new Role { Id = 3, Name = "User", Description = "Default authenticated user", CreatedAt = fixedDate, CompanyId = null }
         );
 
-        // --- Global Permissions ---
-        // Basic permissions 1-9
-        modelBuilder.Entity<Permission>().HasData(
-            new Permission { Id = 1, Name = "All", CreatedAt = fixedDate },
-            new Permission { Id = 2, Name = "ViewProjects", CreatedAt = fixedDate }
-        );
+        // --- Role-Permission Mapping ---
+        var rolePermissions = new List<RolePermission>();
 
-        // Policy-Specific Permissions (Project Level) 10-20
-        modelBuilder.Entity<Permission>().HasData(
-            new Permission { Id = 10, Name = "Project.Edit", CreatedAt = fixedDate },
-            new Permission { Id = 11, Name = "Project.Close", CreatedAt = fixedDate },
-            new Permission { Id = 12, Name = "Financials.View", CreatedAt = fixedDate },
-            new Permission { Id = 13, Name = "Transaction.Add", CreatedAt = fixedDate },
-            new Permission { Id = 14, Name = "Transaction.Review", CreatedAt = fixedDate },
-            new Permission { Id = 15, Name = "Media.Review", CreatedAt = fixedDate },
-            new Permission { Id = 16, Name = "DailyLog.Close", CreatedAt = fixedDate },
-            new Permission { Id = 17, Name = "Settings.Manage", CreatedAt = fixedDate },
-            new Permission { Id = 18, Name = "DailyLog.AddEntry", CreatedAt = fixedDate },
-            new Permission { Id = 19, Name = "DailyLog.Reopen", CreatedAt = fixedDate },
-            new Permission { Id = 20, Name = "DailyLog.Approve", CreatedAt = fixedDate }
-        );
+        // 1. SuperAdmin (Role 1) -> ONLY role to get the "All" wildcard
+        // This grants absolute access to every corner of the system.
+        rolePermissions.Add(new RolePermission { RoleId = 1, PermissionId = 1 });
 
-        // --- Global Role Permissions ---
-        modelBuilder.Entity<RolePermission>().HasData(
-            new RolePermission { RoleId = 1, PermissionId = 1 }, // SuperAdmin -> All
-            new RolePermission { RoleId = 2, PermissionId = 1 }, // CompanyAdmin -> All (simplified)
-            new RolePermission { RoleId = 3, PermissionId = 2 }  // User -> ViewProjects
-        );
+        // 2. CompanyAdmin (Role 2) & User (Role 3)
+        // We do NOT assign global permissions here. 
+        // CompanyAdmin permissions are synced dynamically in the CompaniesController
+        // based on enabled features and subscription packages.
 
-        // --- User Global Roles Assignments ---
+        modelBuilder.Entity<RolePermission>().HasData(rolePermissions);
+
+        // --- Global User Assignments ---
         modelBuilder.Entity<UserRole>().HasData(
-            new UserRole { UserId = 1, RoleId = 1 }, // Admin -> SuperAdmin
-            new UserRole { UserId = 3, RoleId = 2 }  // CompanyAdmin -> CompanyAdmin
+            new UserRole { UserId = 1, RoleId = 1 } // Admin -> SuperAdmin
         );
 
-        // --- Packages ---
+        // --- Base Packages ---
         modelBuilder.Entity<Package>().HasData(
             new Package { Id = 1, Name = "Free", Description = "Starter plan", Price = 0, MaxTeamMembers = 5, MaxBOQItems = 50, CreatedAt = fixedDate },
             new Package { Id = 2, Name = "Pro", Description = "Professional tracking", Price = 1500, MaxTeamMembers = 20, MaxBOQItems = 200, CreatedAt = fixedDate },
             new Package { Id = 3, Name = "Premium", Description = "Full enterprise features", Price = 5000, MaxTeamMembers = 100, MaxBOQItems = 1000, AllowAIAssistance = true, CreatedAt = fixedDate }
         );
 
-        // --- Projects ---
-        modelBuilder.Entity<Project>().HasData(
-            new Project { Id = 1, ProjectName = "Al-Massa Tower", CompanyId = 1, AccountingSystem = CalculationMethod.Measured, Status = "InProgress", OwnerUserId = 1, CreatedAt = fixedDate },
-            new Project { Id = 2, ProjectName = "Coastal Supervision", CompanyId = 1, AccountingSystem = CalculationMethod.Supervision, Status = "جديد", OwnerUserId = 2, CreatedAt = fixedDate },
-            new Project { Id = 3, ProjectName = "Smart Mall Mixed", CompanyId = 1, AccountingSystem = CalculationMethod.Measured, Status = "InProgress", OwnerUserId = 1, CreatedAt = fixedDate } // Mixed removed or mapped to Measured/Supervision appropriately if needed, or Enum updated. Assuming Measured for now or Mixed if Enum has it. Enum has Measured=0, Supervision=1, Package=2. No Mixed. User request was "Method to calculate costs...". I'll assume 0 for now or add Mixed to Enum if intended. Looking at previous code, Enum has Measured, Supervision, Package. I will use Measured for now to fix build, or check if I should add Mixed. The user removed Mixed in favor of explicit methods. I'll use Measured for project 3 or Supervision.
-        );
-
-        // --- Project Settings ---
-        modelBuilder.Entity<ProjectSettings>().HasData(
-            new ProjectSettings { Id = 1, EnableDelayNotification = true, RequirePhotoReview = true, EnableInvoiceReview = true, CreatedAt = fixedDate },
-            new ProjectSettings { Id = 2, EnableDelayNotification = true, RequirePhotoReview = false, EnableInvoiceReview = false, CreatedAt = fixedDate },
-            new ProjectSettings { Id = 3, EnableDelayNotification = false, RequirePhotoReview = true, EnableInvoiceReview = true, CreatedAt = fixedDate }
-        );
-
-        // --- BOQ Items (Parent Items) ---
-        modelBuilder.Entity<BOQItem>().HasData(
-            // Measured Items
-            new BOQItem { Id = 101, ProjectId = 1, ItemCode = "CIV-01", ItemName = "Excavation", AccountingType = CalculationMethod.Measured, Status = "InProgress", CreatedAt = fixedDate },
-            new BOQItem { Id = 102, ProjectId = 1, ItemCode = "CIV-02", ItemName = "Concrete Base", AccountingType = CalculationMethod.Measured, Status = "جديد", CreatedAt = fixedDate },
-            // Supervision Items
-            new BOQItem { Id = 201, ProjectId = 2, ItemCode = "SUP-01", ItemName = "Structural Audit", AccountingType = CalculationMethod.Supervision, Status = "جديد", CreatedAt = fixedDate },
-            // Mixed Item - mapped to Measured as per Enum constraints
-            new BOQItem { Id = 301, ProjectId = 3, ItemCode = "MIX-01", ItemName = "MEP Installation", AccountingType = CalculationMethod.Measured, Status = "InProgress", CreatedAt = fixedDate }
-        );
-
-        // --- 1:1 Dependent Data (BOQMeasured / BOQSupervision) ---
-        modelBuilder.Entity<BOQMeasured>().HasData(
-            new BOQMeasured { Id = 101, AgreedQuantity = 5000, UnitPrice = 150, ExecutedQuantity = 1200, CreatedAt = fixedDate },
-            new BOQMeasured { Id = 102, AgreedQuantity = 800, UnitPrice = 4200, ExecutedQuantity = 0, CreatedAt = fixedDate },
-            new BOQMeasured { Id = 301, AgreedQuantity = 1, UnitPrice = 500000, ExecutedQuantity = 0.25m, CreatedAt = fixedDate } // Part of Mixed
-        );
-
-        modelBuilder.Entity<BOQSupervision>().HasData(
-            new BOQSupervision { Id = 201, SupervisionPercentage = 5.0m, BaseCalculation = "AllProjectInvoices", EstimatedTotalCost = 25000, CreatedAt = fixedDate },
-            new BOQSupervision { Id = 301, SupervisionPercentage = 2.5m, BaseCalculation = "ThisItemInvoices", EstimatedTotalCost = 12500, CreatedAt = fixedDate } // Part of Mixed
-        );
-
-        // --- Project Roles ---
-        modelBuilder.Entity<ProjectRole>().HasData(
-            new ProjectRole { Id = 1, ProjectId = 1, Name = "Manager", CreatedAt = fixedDate },
-            new ProjectRole { Id = 2, ProjectId = 1, Name = "Engineer", CreatedAt = fixedDate },
-            new ProjectRole { Id = 3, ProjectId = 1, Name = "FinancialReviewer", CreatedAt = fixedDate },
-            new ProjectRole { Id = 4, ProjectId = 1, Name = "MediaReviewer", CreatedAt = fixedDate }
-        );
-
-        // --- Project Role Permissions Assignments ---
-        modelBuilder.Entity<ProjectRolePermission>().HasData(
-            // Manager: Edit, Close, Settings, DailyLog
-            new ProjectRolePermission { ProjectRoleId = 1, PermissionId = 10 },
-            new ProjectRolePermission { ProjectRoleId = 1, PermissionId = 11 },
-            new ProjectRolePermission { ProjectRoleId = 1, PermissionId = 17 },
-            new ProjectRolePermission { ProjectRoleId = 1, PermissionId = 16 },
-            
-            // Engineer: Add Transaction
-            new ProjectRolePermission { ProjectRoleId = 2, PermissionId = 13 },
-
-            // FinancialReviewer: View Financials, Review Transaction
-            new ProjectRolePermission { ProjectRoleId = 3, PermissionId = 12 },
-            new ProjectRolePermission { ProjectRoleId = 3, PermissionId = 14 },
-
-            // MediaReviewer: Review Media
-            new ProjectRolePermission { ProjectRoleId = 4, PermissionId = 15 }
-        );
-
-        // --- Project Team (Linking Users to Projects) ---
-        modelBuilder.Entity<ProjectTeamMember>().HasData(
-            new ProjectTeamMember { Id = 1, ProjectId = 1, UserId = 2, CreatedAt = fixedDate }, // Ahmed (Old)
-            new ProjectTeamMember { Id = 2, ProjectId = 1, UserId = 4, CreatedAt = fixedDate }, // PM
-            new ProjectTeamMember { Id = 3, ProjectId = 1, UserId = 5, CreatedAt = fixedDate }, // Engineer
-            new ProjectTeamMember { Id = 4, ProjectId = 1, UserId = 6, CreatedAt = fixedDate }, // Accountant
-            new ProjectTeamMember { Id = 5, ProjectId = 1, UserId = 7, CreatedAt = fixedDate }  // Consultant
-        );
-
-        // --- Project Team Roles (Assigning Roles to Team Members) ---
-        modelBuilder.Entity<ProjectTeamRole>().HasData(
-            new ProjectTeamRole { Id = 1, ProjectTeamMemberId = 1, ProjectRoleId = 2, CreatedAt = fixedDate }, // Ahmed -> Engineer
-            new ProjectTeamRole { Id = 2, ProjectTeamMemberId = 2, ProjectRoleId = 1, CreatedAt = fixedDate }, // PM -> Manager
-            new ProjectTeamRole { Id = 3, ProjectTeamMemberId = 3, ProjectRoleId = 2, CreatedAt = fixedDate }, // Engineer -> Engineer
-            new ProjectTeamRole { Id = 4, ProjectTeamMemberId = 4, ProjectRoleId = 3, CreatedAt = fixedDate }, // Accountant -> FinancialReviewer
-            new ProjectTeamRole { Id = 5, ProjectTeamMemberId = 5, ProjectRoleId = 4, CreatedAt = fixedDate }  // Consultant -> MediaReviewer
-        );
-
-        // --- Approval Rules ---
-        modelBuilder.Entity<ProjectApprovalRule>().HasData(
-            new ProjectApprovalRule { Id = 1, ProjectId = 1, Source = SourceType.OnlineUpload, UploaderRole = "Engineer", ApproverRole = "Manager", CreatedAt = fixedDate }
-        );
-
-        // --- Site Media ---
-        modelBuilder.Entity<SiteMedia>().HasData(
-            new SiteMedia { Id = 1, ProjectId = 1, BOQItemId = 101, MediaType = "image/jpeg", FilePath = "site1.jpg", UploaderUserId = 2, Status = "Approved", IsApproved = true, CreatedAt = fixedDate }
-        );
-
-        // --- Daily Logs ---
-        modelBuilder.Entity<ItemDailyLog>().HasData(
-            new ItemDailyLog { Id = 1, BOQItemId = 101, LogDate = fixedDate, ProgressNotes = "Testing seed data", IsClosed = true, ClosedByUserId = 1, CreatedByUserId = 1, CreatedAt = fixedDate }
-        );
-
-        // --- Invoices ---
-        modelBuilder.Entity<ItemInvoice>().HasData(
-            new ItemInvoice { Id = 1, ProjectId = 1, BOQItemId = 101, InvoiceNumber = "V-INV-001", InvoiceDate = fixedDate, NetAmount = 1000, SubTotal = 1000, Status = "Approved", CreatedByUserId = 1, CreatedAt = fixedDate }
-        );
-
-        // --- Transactions ---
-        modelBuilder.Entity<Transaction>().HasData(
-            new Transaction { Id = 1, ProjectId = 1, BOQItemId = 101, Amount = 5000, Type = TransactionType.MaterialPurchase, Status = TransactionStatus.Approved, CreatedByUserId = 1, CreatedAt = fixedDate }
-        );
-
-        // --- Cash Vouchers ---
-        modelBuilder.Entity<CashVoucher>().HasData(
-            new CashVoucher { Id = 1, VoucherNumber = "CV-001", ProjectId = 1, Amount = 10000, Description = "Site materials purchase", Category = "Materials", ApprovalStatus = VoucherApprovalStatus.Approved, VoucherDate = fixedDate, CreatedAt = fixedDate, CreatedByUserId = 2 },
-            new CashVoucher { Id = 2, VoucherNumber = "CV-002", ProjectId = 1, Amount = 5000, Description = "Equipment rental", Category = "Equipment", ApprovalStatus = VoucherApprovalStatus.Pending, VoucherDate = fixedDate, CreatedAt = fixedDate, CreatedByUserId = 2 },
-            new CashVoucher { Id = 3, VoucherNumber = "CV-003", ProjectId = 2, Amount = 15000, Description = "Labor payment", Category = "Labor", ApprovalStatus = VoucherApprovalStatus.Approved, VoucherDate = fixedDate, CreatedAt = fixedDate, CreatedByUserId = 2 }
-        );
-
-        // --- Misc Expenses ---
-        modelBuilder.Entity<MiscExpense>().HasData(
-            new MiscExpense { Id = 1, ExpenseNumber = "ME-001", ProjectId = 1, Category = "Office Supplies", Amount = 2500, Description = "Office supplies", ApprovalStatus = ExpenseApprovalStatus.Approved, ExpenseDate = fixedDate, CreatedAt = fixedDate, CreatedByUserId = 2 },
-            new MiscExpense { Id = 2, ExpenseNumber = "ME-002", ProjectId = 1, Category = "Transportation", Amount = 5000, Description = "Transportation", ApprovalStatus = ExpenseApprovalStatus.Pending, ExpenseDate = fixedDate, CreatedAt = fixedDate, CreatedByUserId = 2 },
-            new MiscExpense { Id = 3, ExpenseNumber = "ME-003", ProjectId = 2, Category = "Utilities", Amount = 7500, Description = "Utilities", ApprovalStatus = ExpenseApprovalStatus.Approved, ExpenseDate = fixedDate, CreatedAt = fixedDate, CreatedByUserId = 2 }
-        );
-
-        // --- Notifications ---
-        modelBuilder.Entity<Notification>().HasData(
-            new Notification { Id = 1, UserId = 2, Title = "Welcome", Message = "Welcome to the system", Type = NotificationType.General, IsRead = false, CreatedAt = fixedDate }
-        );
-
-        // --- Escalations ---
-        modelBuilder.Entity<EscalationLog>().HasData(
-            new EscalationLog { Id = 1, ProjectId = 1, EscalationType = "StartDelay", RecipientUserId = 1, Message = "Project delayed", SentAt = fixedDate, CreatedAt = fixedDate }
-        );
-
-        // --- Deltas ---
-        modelBuilder.Entity<BOQExecutedDelta>().HasData(
-            new BOQExecutedDelta { Id = 1, BOQItemId = 101, DeltaQuantity = 100, DeltaDate = fixedDate, ChangeType = "DailyLog", CreatedByUserId = 1, CreatedAt = fixedDate }
-        );
-
-        // --- Profitability ---
-        modelBuilder.Entity<BOQProfitabilityLog>().HasData(
-            new BOQProfitabilityLog { Id = 1, BOQItemId = 101, TotalSpent = 4000, EstimatedBudget = 15000, CurrentProfit = 11000, ProfitPercentage = 73.33m, LogDate = fixedDate, CreatedAt = fixedDate }
-        );
-
-        // --- Client Payments ---
-        modelBuilder.Entity<ClientPayment>().HasData(
-            new ClientPayment { Id = 1, ProjectId = 1, Amount = 50000, PaymentDate = fixedDate, PaymentType = "Advance", IsConfirmed = true, CreatedAt = fixedDate }
-        );
-
-        // --- Notes ---
-        modelBuilder.Entity<BOQItemNote>().HasData(
-            new BOQItemNote { Id = 1, BOQItemId = 101, ProjectId = 1, NoteText = "Initial kickoff", NoteType = "General", CreatorUserId = 1, VisibleToRole = "SiteEngineer", CreatedAt = fixedDate }
-        );
-
-        // --- Company Settings ---
-        modelBuilder.Entity<CompanySettings>().HasData(
-            new CompanySettings { Id = 1, CompanyId = 1, EnableDelayNotification = true, CreatedAt = fixedDate }
-        );
-
-        // --- Approval Requests ---
-        modelBuilder.Entity<ApprovalRequest>().HasData(
-            new ApprovalRequest { Id = 1, ProjectId = 1, BOQItemId = 101, ProjectApprovalRuleId = 1, Source = SourceType.OnlineUpload, SourceId = 1, RequestedByUserId = 2, Status = "Approved", FinalApprovedByUserId = 1, FinalApprovedAt = fixedDate, CreatedAt = fixedDate }
-        );
-
-        // --- Approval Steps ---
-        modelBuilder.Entity<ApprovalStep>().HasData(
-            new ApprovalStep { Id = 1, ApprovalRequestId = 1, StepOrder = 1, ApproverRole = "Manager", ApproverUserId = 1, Status = "Approved", ApprovedAt = fixedDate, CreatedAt = fixedDate }
-        );
     }
 
     public override int SaveChanges()
@@ -885,6 +759,7 @@ public class ApplicationDbContext : DbContext
     {
         modelBuilder.Entity<T>().HasQueryFilter(e => 
             _companyContext.CompanyId == null || 
+            e.CompanyId == null ||
             e.CompanyId == _companyContext.CompanyId);
     }
 }

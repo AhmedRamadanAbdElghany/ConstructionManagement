@@ -12,7 +12,7 @@ VALUES (
     'admin', 
     '$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6',  -- BCrypt hash for "admin"
     GETUTCDATE(), 
-    1, 
+    NULL, 
     1, 
     NULL, 
     0

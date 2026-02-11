@@ -233,24 +233,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("RequestedByUserId");
 
                     b.ToTable("ApprovalRequests");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            BOQItemId = 101,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            FinalApprovedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            FinalApprovedByUserId = 1,
-                            IsDeleted = false,
-                            ProjectApprovalRuleId = 1,
-                            ProjectId = 1,
-                            RequestedAt = new DateTime(2026, 2, 10, 11, 36, 19, 903, DateTimeKind.Utc).AddTicks(6241),
-                            RequestedByUserId = 2,
-                            Source = 0,
-                            SourceId = 1,
-                            Status = "Approved"
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ApprovalStep", b =>
@@ -309,21 +291,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ApproverUserId");
 
                     b.ToTable("ApprovalSteps");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ApprovalRequestId = 1,
-                            ApprovedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ApproverRole = "Manager",
-                            ApproverUserId = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsActive = false,
-                            IsDeleted = false,
-                            Status = "Approved",
-                            StepOrder = 1
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.BOQExecutedDelta", b =>
@@ -380,19 +347,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ProcessedAt");
 
                     b.ToTable("BOQExecutedDeltas");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            BOQItemId = 101,
-                            ChangeType = "DailyLog",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 1,
-                            DeltaDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DeltaQuantity = 100m,
-                            IsDeleted = false
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.BOQItem", b =>
@@ -458,52 +412,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("BOQItems");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 101,
-                            AccountingType = 0,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            ItemCode = "CIV-01",
-                            ItemName = "Excavation",
-                            ProjectId = 1,
-                            Status = "InProgress"
-                        },
-                        new
-                        {
-                            Id = 102,
-                            AccountingType = 0,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            ItemCode = "CIV-02",
-                            ItemName = "Concrete Base",
-                            ProjectId = 1,
-                            Status = "جديد"
-                        },
-                        new
-                        {
-                            Id = 201,
-                            AccountingType = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            ItemCode = "SUP-01",
-                            ItemName = "Structural Audit",
-                            ProjectId = 2,
-                            Status = "جديد"
-                        },
-                        new
-                        {
-                            Id = 301,
-                            AccountingType = 0,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            ItemCode = "MIX-01",
-                            ItemName = "MEP Installation",
-                            ProjectId = 3,
-                            Status = "InProgress"
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.BOQItemNote", b =>
@@ -564,20 +472,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("RelatedMediaId");
 
                     b.ToTable("BOQItemNotes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            BOQItemId = 101,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatorUserId = 1,
-                            IsDeleted = false,
-                            NoteText = "Initial kickoff",
-                            NoteType = "General",
-                            ProjectId = 1,
-                            VisibleToRole = "SiteEngineer"
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.BOQMeasured", b =>
@@ -612,35 +506,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BOQMeasured");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 101,
-                            AgreedQuantity = 5000m,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ExecutedQuantity = 1200m,
-                            IsDeleted = false,
-                            UnitPrice = 150m
-                        },
-                        new
-                        {
-                            Id = 102,
-                            AgreedQuantity = 800m,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ExecutedQuantity = 0m,
-                            IsDeleted = false,
-                            UnitPrice = 4200m
-                        },
-                        new
-                        {
-                            Id = 301,
-                            AgreedQuantity = 1m,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ExecutedQuantity = 0.25m,
-                            IsDeleted = false,
-                            UnitPrice = 500000m
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.BOQPackage", b =>
@@ -723,20 +588,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("BOQItemId");
 
                     b.ToTable("BOQProfitabilityLogs");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            BOQItemId = 101,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CurrentProfit = 11000m,
-                            EstimatedBudget = 15000m,
-                            IsDeleted = false,
-                            LogDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ProfitPercentage = 73.33m,
-                            TotalSpent = 4000m
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.BOQSupervision", b =>
@@ -775,26 +626,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BOQSupervision");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 201,
-                            BaseCalculation = "AllProjectInvoices",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            EstimatedTotalCost = 25000m,
-                            IsDeleted = false,
-                            SupervisionPercentage = 5.0m
-                        },
-                        new
-                        {
-                            Id = 301,
-                            BaseCalculation = "ThisItemInvoices",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            EstimatedTotalCost = 12500m,
-                            IsDeleted = false,
-                            SupervisionPercentage = 2.5m
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CashVoucher", b =>
@@ -875,50 +706,54 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("WorkerUserId");
 
                     b.ToTable("CashVouchers");
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Amount = 10000m,
-                            ApprovalStatus = 1,
-                            Category = "Materials",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 2,
-                            Description = "Site materials purchase",
-                            IsDeleted = false,
-                            ProjectId = 1,
-                            VoucherDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            VoucherNumber = "CV-001"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Amount = 5000m,
-                            ApprovalStatus = 0,
-                            Category = "Equipment",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 2,
-                            Description = "Equipment rental",
-                            IsDeleted = false,
-                            ProjectId = 1,
-                            VoucherDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            VoucherNumber = "CV-002"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Amount = 15000m,
-                            ApprovalStatus = 1,
-                            Category = "Labor",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 2,
-                            Description = "Labor payment",
-                            IsDeleted = false,
-                            ProjectId = 2,
-                            VoucherDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            VoucherNumber = "CV-003"
-                        });
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.CatalogItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("DefaultRate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CatalogItems");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ChangeOrderDocument", b =>
@@ -1236,20 +1071,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ClientPayments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Amount = 50000m,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Currency = "USD",
-                            IsConfirmed = true,
-                            IsDeleted = false,
-                            PaymentDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            PaymentType = "Advance",
-                            ProjectId = 1
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ClientPortalSettings", b =>
@@ -1566,64 +1387,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("PackageId");
 
                     b.ToTable("Companies");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            EnableAccessControl = true,
-                            EnableAnalytics = true,
-                            EnableBOQManagement = true,
-                            EnableClientPortal = false,
-                            EnableDailyLogs = true,
-                            EnableDesignManagement = false,
-                            EnableDocumentManagement = false,
-                            EnableEquipmentManagement = false,
-                            EnableFinancialManagement = true,
-                            EnableHRManagement = false,
-                            EnableInventoryManagement = false,
-                            EnableNotifications = true,
-                            EnableProjectManagement = true,
-                            EnableQualityControl = false,
-                            EnableSafetyManagement = false,
-                            EnableSiteMedia = true,
-                            EnableSubcontractorManagement = false,
-                            EnableUserManagement = true,
-                            EnableVendorManagement = false,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "BuildIt Solutions",
-                            PackageId = 3
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            EnableAccessControl = true,
-                            EnableAnalytics = true,
-                            EnableBOQManagement = true,
-                            EnableClientPortal = false,
-                            EnableDailyLogs = true,
-                            EnableDesignManagement = false,
-                            EnableDocumentManagement = false,
-                            EnableEquipmentManagement = false,
-                            EnableFinancialManagement = true,
-                            EnableHRManagement = false,
-                            EnableInventoryManagement = false,
-                            EnableNotifications = true,
-                            EnableProjectManagement = true,
-                            EnableQualityControl = false,
-                            EnableSafetyManagement = false,
-                            EnableSiteMedia = true,
-                            EnableSubcontractorManagement = false,
-                            EnableUserManagement = true,
-                            EnableVendorManagement = false,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "Test Company 2",
-                            PackageId = 1
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyDefaultPhase", b =>
@@ -1669,6 +1432,58 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ParentId");
 
                     b.ToTable("CompanyDefaultPhases");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyDefaultPhaseItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DefaultPhaseId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("DefaultRate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("DefaultPhaseId");
+
+                    b.ToTable("CompanyDefaultPhaseItems");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyPackage", b =>
@@ -2135,106 +1950,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasFilter("[CompanyId] IS NOT NULL");
 
                     b.ToTable("CompanySettings");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AllowAddProgressEntry = true,
-                            AllowMeasured = true,
-                            AllowPackages = false,
-                            AllowReopenClosedDay = false,
-                            AllowSupervision = true,
-                            AllowedFileTypes = ".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.dwg,.dxf",
-                            AutoCloseDay = false,
-                            AutoEscalateCriticalDefects = true,
-                            ClientCanSeeBOQ = true,
-                            ClientCanSeeFinancials = false,
-                            ClientCanSeeMedia = true,
-                            CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DefaultMoneyCalculationMethod = 0,
-                            DefaultRetentionPercentage = 5m,
-                            DefectResponseHours = 48,
-                            DefectTrackingEnabled = true,
-                            DelayGracePeriodDays = 3,
-                            DelayNotificationIntervalDays = 7,
-                            DelayNotificationIsOneTimeOnly = false,
-                            DelayNotificationSendEmail = true,
-                            DocumentExpirationWarningDays = 30,
-                            EnableAccessControl = true,
-                            EnableAnalytics = true,
-                            EnableAnalyticsReporting = true,
-                            EnableBOQManagement = true,
-                            EnableCashVoucher = false,
-                            EnableClientPortal = false,
-                            EnableDailyLogs = true,
-                            EnableDelayNotification = true,
-                            EnableDesignManagement = false,
-                            EnableDocumentCategories = true,
-                            EnableDocumentManagement = false,
-                            EnableEquipmentDepreciation = false,
-                            EnableEquipmentGpsTracking = false,
-                            EnableEquipmentInsuranceTracking = true,
-                            EnableEquipmentManagement = false,
-                            EnableEquipmentRentalBilling = true,
-                            EnableEquipmentUtilizationTracking = true,
-                            EnableExpirationTracking = true,
-                            EnableFinancialManagement = true,
-                            EnableHRManagement = false,
-                            EnableIncidentEscalation = true,
-                            EnableInventoryManagement = false,
-                            EnableInvoiceAggregation = true,
-                            EnableInvoiceReview = true,
-                            EnableMiscExpenses = false,
-                            EnableMultiWarehouse = false,
-                            EnableNotifications = true,
-                            EnablePhotoUpload = true,
-                            EnableProjectManagement = true,
-                            EnableQualityControl = false,
-                            EnableSafetyComplianceTracking = true,
-                            EnableSafetyManagement = false,
-                            EnableSiteMedia = true,
-                            EnableStockAlerts = true,
-                            EnableSubcontractorManagement = false,
-                            EnableSubcontractorRatings = true,
-                            EnableSubcontractorSafetyScore = true,
-                            EnableUserManagement = true,
-                            EnableVendorInvoiceUpload = false,
-                            EnableVendorManagement = false,
-                            EnableVersionControl = true,
-                            IncidentReportingHours = 24,
-                            IsDeleted = false,
-                            MaintenanceReminderDays = 7,
-                            MaxFileSizeMB = 50,
-                            MaxPhotosPerUpload = 10,
-                            MaxVersionsPerDocument = 0,
-                            PhotoApproverRole = "MediaReviewer",
-                            PunchListEnabled = true,
-                            QualityInspectionFrequencyDays = 30,
-                            QualityScoreThreshold = 80,
-                            RecordCashVoucherToWorker = true,
-                            RequireCashVoucherApproval = true,
-                            RequireDocumentApproval = false,
-                            RequireEquipmentAssignmentApproval = false,
-                            RequireEquipmentOperatorCertification = true,
-                            RequireInvoiceApproval = true,
-                            RequireMaintenanceSchedule = true,
-                            RequireMaterialRequestApproval = true,
-                            RequireMiscExpenseApproval = true,
-                            RequirePhotoReview = true,
-                            RequireQualityInspections = true,
-                            RequireRatingOnCompletion = false,
-                            RequireSafetyInspections = true,
-                            RequireSafetyTraining = true,
-                            RequireSubcontractorApproval = true,
-                            RequireSubcontractorContract = true,
-                            RequireSubcontractorInsurance = true,
-                            RequireSubcontractorPaymentApproval = true,
-                            SafetyInspectionFrequencyDays = 14,
-                            SafetyTrainingRenewalMonths = 12,
-                            SubcontractorInsuranceWarningDays = 30
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CustomerTierDiscount", b =>
@@ -3564,20 +3279,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("RecipientUserId");
 
                     b.ToTable("EscalationLogs");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            EscalationType = "StartDelay",
-                            IsDeleted = false,
-                            Message = "Project delayed",
-                            ProjectId = 1,
-                            RecipientUserId = 1,
-                            SentAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            SentByEmail = false
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.InventoryOrder", b =>
@@ -4090,20 +3791,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("ItemDailyLogs");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            BOQItemId = 101,
-                            ClosedByUserId = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 1,
-                            IsClosed = true,
-                            IsDeleted = false,
-                            LogDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ProgressNotes = "Testing seed data"
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ItemInvoice", b =>
@@ -4224,23 +3911,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("UserId1");
 
                     b.ToTable("ItemInvoice");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            BOQItemId = 101,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 1,
-                            Currency = "EGP",
-                            InvoiceDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            InvoiceNumber = "V-INV-001",
-                            IsDeleted = false,
-                            NetAmount = 1000m,
-                            ProjectId = 1,
-                            Status = "Approved",
-                            SubTotal = 1000m
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.JobPosting", b =>
@@ -4537,6 +4207,451 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.ToTable("KPIResults");
                 });
 
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Material", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("AverageCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Barcode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Dimensions")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTracked")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("MinStockLevel")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("ReorderQuantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("SKU")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ShelfLifeDays")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("StandardCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("StorageLocation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SupplierContact")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SupplierName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SupplierPhone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TrackExpiration")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("WeightPerUnit")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("Materials");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.MaterialCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ParentCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentCategoryId");
+
+                    b.ToTable("MaterialCategories");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.MaterialConsumption", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BOQItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ConsumptionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ItemDailyLogId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaterialId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaterialRequestId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PhaseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RecordedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("UnitCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("VerifiedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("VerifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BOQItemId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("ItemDailyLogId");
+
+                    b.HasIndex("MaterialId");
+
+                    b.HasIndex("MaterialRequestId");
+
+                    b.HasIndex("PhaseId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("RecordedByUserId");
+
+                    b.HasIndex("VerifiedByUserId");
+
+                    b.ToTable("MaterialConsumptions");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.MaterialRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("ActualCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("ApprovalDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ApprovedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeliveryLocation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("EstimatedCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("MaterialId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RejectionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RequestNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RequestedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("RequiredDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SourceWarehouse")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovedByUserId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("MaterialId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("RequestedByUserId");
+
+                    b.ToTable("MaterialRequests");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.MaterialRequestItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("ApprovedQuantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("FulfilledQuantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MaterialId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaterialRequestId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("RequestedQuantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("UnitCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaterialId");
+
+                    b.HasIndex("MaterialRequestId");
+
+                    b.ToTable("MaterialRequestItems");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.MaterialStock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BatchNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BinLocation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("CurrentQuantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastRestockDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MaterialId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ReservedQuantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("UnitCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("WarehouseId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("WarehouseId1")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WarehouseName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("MaterialId");
+
+                    b.HasIndex("WarehouseId1");
+
+                    b.ToTable("MaterialStocks");
+                });
+
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.MessageAttachment", b =>
                 {
                     b.Property<int>("Id")
@@ -4712,50 +4827,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("MiscExpense");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Amount = 2500m,
-                            ApprovalStatus = 1,
-                            Category = "Office Supplies",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 2,
-                            Description = "Office supplies",
-                            ExpenseDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ExpenseNumber = "ME-001",
-                            IsDeleted = false,
-                            ProjectId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Amount = 5000m,
-                            ApprovalStatus = 0,
-                            Category = "Transportation",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 2,
-                            Description = "Transportation",
-                            ExpenseDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ExpenseNumber = "ME-002",
-                            IsDeleted = false,
-                            ProjectId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Amount = 7500m,
-                            ApprovalStatus = 1,
-                            Category = "Utilities",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 2,
-                            Description = "Utilities",
-                            ExpenseDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ExpenseNumber = "ME-003",
-                            IsDeleted = false,
-                            ProjectId = 2
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Notification", b =>
@@ -4815,20 +4886,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            IsRead = false,
-                            Message = "Welcome to the system",
-                            Priority = 1,
-                            Title = "Welcome",
-                            Type = 0,
-                            UserId = 2
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.OrderStatusHistory", b =>
@@ -4979,6 +5036,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             Id = 1,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Full system access",
                             IsDeleted = false,
                             Name = "All"
                         },
@@ -4986,85 +5044,225 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             Id = 2,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Create and manage tenant companies",
                             IsDeleted = false,
-                            Name = "ViewProjects"
+                            Name = "System.ManageCompanies"
                         },
                         new
                         {
-                            Id = 10,
+                            Id = 3,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage subscription packages",
                             IsDeleted = false,
-                            Name = "Project.Edit"
+                            Name = "System.ManagePackages"
                         },
                         new
                         {
                             Id = 11,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage company-wide settings",
                             IsDeleted = false,
-                            Name = "Project.Close"
+                            Name = "Company.ManageSettings"
                         },
                         new
                         {
                             Id = 12,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage company employees and roles",
                             IsDeleted = false,
-                            Name = "Financials.View"
+                            Name = "Company.ManageUsers"
                         },
                         new
                         {
                             Id = 13,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Access company-level dashboards",
                             IsDeleted = false,
-                            Name = "Transaction.Add"
+                            Name = "Company.ViewAnalytics"
                         },
                         new
                         {
                             Id = 14,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage company standard items",
                             IsDeleted = false,
-                            Name = "Transaction.Review"
+                            Name = "Company.ManageCatalog"
                         },
                         new
                         {
                             Id = 15,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage project phase templates",
                             IsDeleted = false,
-                            Name = "Media.Review"
+                            Name = "Company.ManageHierarchy"
                         },
                         new
                         {
-                            Id = 16,
+                            Id = 31,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Create new projects",
                             IsDeleted = false,
-                            Name = "DailyLog.Close"
+                            Name = "Project.Create"
                         },
                         new
                         {
-                            Id = 17,
+                            Id = 32,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Edit any project information",
                             IsDeleted = false,
-                            Name = "Settings.Manage"
+                            Name = "Project.EditAll"
                         },
                         new
                         {
-                            Id = 18,
+                            Id = 33,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Delete projects",
                             IsDeleted = false,
-                            Name = "DailyLog.AddEntry"
+                            Name = "Project.Delete"
                         },
                         new
                         {
-                            Id = 19,
+                            Id = 34,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "View project details and progress",
                             IsDeleted = false,
-                            Name = "DailyLog.Reopen"
+                            Name = "Project.ViewDetails"
                         },
                         new
                         {
-                            Id = 20,
+                            Id = 35,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Assign and manage project members",
                             IsDeleted = false,
-                            Name = "DailyLog.Approve"
+                            Name = "Project.ManageTeam"
+                        },
+                        new
+                        {
+                            Id = 36,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Close or finalize projects",
+                            IsDeleted = false,
+                            Name = "Project.Close"
+                        },
+                        new
+                        {
+                            Id = 61,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "View project budgets and costs",
+                            IsDeleted = false,
+                            Name = "Finance.ViewFinancials"
+                        },
+                        new
+                        {
+                            Id = 62,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Create project invoices",
+                            IsDeleted = false,
+                            Name = "Finance.CreateInvoice"
+                        },
+                        new
+                        {
+                            Id = 63,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Review and approve invoices",
+                            IsDeleted = false,
+                            Name = "Finance.ApproveInvoice"
+                        },
+                        new
+                        {
+                            Id = 64,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Update BOQ quantities and rates",
+                            IsDeleted = false,
+                            Name = "Finance.ManageBOQ"
+                        },
+                        new
+                        {
+                            Id = 65,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Add expenses and vouchers",
+                            IsDeleted = false,
+                            Name = "Finance.AddTransaction"
+                        },
+                        new
+                        {
+                            Id = 66,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Approve or reject transactions",
+                            IsDeleted = false,
+                            Name = "Finance.ReviewTransaction"
+                        },
+                        new
+                        {
+                            Id = 91,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Submit daily progress reports",
+                            IsDeleted = false,
+                            Name = "Ops.AddDailyLog"
+                        },
+                        new
+                        {
+                            Id = 92,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Review and close daily logs",
+                            IsDeleted = false,
+                            Name = "Ops.ReviewDailyLog"
+                        },
+                        new
+                        {
+                            Id = 93,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Review and approve site photos",
+                            IsDeleted = false,
+                            Name = "Ops.ApproveMedia"
+                        },
+                        new
+                        {
+                            Id = 94,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Track materials and warehouse stock",
+                            IsDeleted = false,
+                            Name = "Ops.ManageInventory"
+                        },
+                        new
+                        {
+                            Id = 95,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage equipment assignments",
+                            IsDeleted = false,
+                            Name = "Ops.EquipmentTracking"
+                        },
+                        new
+                        {
+                            Id = 96,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Perform and log safety checks",
+                            IsDeleted = false,
+                            Name = "Ops.SafetyInspection"
+                        },
+                        new
+                        {
+                            Id = 97,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage inspections and defects",
+                            IsDeleted = false,
+                            Name = "Ops.QualityControl"
+                        },
+                        new
+                        {
+                            Id = 121,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Track site worker attendance and contacts",
+                            IsDeleted = false,
+                            Name = "HR.ManageWorkers"
+                        },
+                        new
+                        {
+                            Id = 122,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage company job recruitment",
+                            IsDeleted = false,
+                            Name = "HR.JobPostings"
                         });
                 });
 
@@ -5222,50 +5420,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("UserId2");
 
                     b.ToTable("Projects");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AccountingSystem = 0,
-                            CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsClosed = false,
-                            IsDeleted = false,
-                            OwnerUserId = 1,
-                            ProgressPercentage = 0m,
-                            ProjectName = "Al-Massa Tower",
-                            Status = "InProgress",
-                            VariationCalculation = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AccountingSystem = 1,
-                            CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsClosed = false,
-                            IsDeleted = false,
-                            OwnerUserId = 2,
-                            ProgressPercentage = 0m,
-                            ProjectName = "Coastal Supervision",
-                            Status = "جديد",
-                            VariationCalculation = 0
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AccountingSystem = 0,
-                            CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsClosed = false,
-                            IsDeleted = false,
-                            OwnerUserId = 1,
-                            ProgressPercentage = 0m,
-                            ProjectName = "Smart Mall Mixed",
-                            Status = "InProgress",
-                            VariationCalculation = 0
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectApprovalRule", b =>
@@ -5322,20 +5476,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ProjectApprovalRules");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ApproverRole = "Manager",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            EscalationRole = "",
-                            IsDeleted = false,
-                            ProjectId = 1,
-                            ResponseTimeoutHours = 0,
-                            Source = 0,
-                            UploaderRole = "Engineer"
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectRole", b =>
@@ -5376,40 +5516,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ProjectRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            Name = "Manager",
-                            ProjectId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            Name = "Engineer",
-                            ProjectId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            Name = "FinancialReviewer",
-                            ProjectId = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            Name = "MediaReviewer",
-                            ProjectId = 1
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectRolePermission", b =>
@@ -5428,48 +5534,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("PermissionId");
 
                     b.ToTable("ProjectRolePermissions");
-
-                    b.HasData(
-                        new
-                        {
-                            ProjectRoleId = 1,
-                            PermissionId = 10
-                        },
-                        new
-                        {
-                            ProjectRoleId = 1,
-                            PermissionId = 11
-                        },
-                        new
-                        {
-                            ProjectRoleId = 1,
-                            PermissionId = 17
-                        },
-                        new
-                        {
-                            ProjectRoleId = 1,
-                            PermissionId = 16
-                        },
-                        new
-                        {
-                            ProjectRoleId = 2,
-                            PermissionId = 13
-                        },
-                        new
-                        {
-                            ProjectRoleId = 3,
-                            PermissionId = 12
-                        },
-                        new
-                        {
-                            ProjectRoleId = 3,
-                            PermissionId = 14
-                        },
-                        new
-                        {
-                            ProjectRoleId = 4,
-                            PermissionId = 15
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectSettings", b =>
@@ -5552,35 +5616,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ProjectSettings");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            EnableDelayNotification = true,
-                            EnableInvoiceReview = true,
-                            IsDeleted = false,
-                            RequirePhotoReview = true
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            EnableDelayNotification = true,
-                            EnableInvoiceReview = false,
-                            IsDeleted = false,
-                            RequirePhotoReview = false
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            EnableDelayNotification = false,
-                            EnableInvoiceReview = true,
-                            IsDeleted = false,
-                            RequirePhotoReview = true
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectTeamMember", b =>
@@ -5638,68 +5673,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("ProjectTeamMember");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            HoursWorked = 0m,
-                            IsDeleted = false,
-                            JobTitle = "",
-                            ProjectId = 1,
-                            Salary = 0m,
-                            Status = 0,
-                            UserId = 2
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            HoursWorked = 0m,
-                            IsDeleted = false,
-                            JobTitle = "",
-                            ProjectId = 1,
-                            Salary = 0m,
-                            Status = 0,
-                            UserId = 4
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            HoursWorked = 0m,
-                            IsDeleted = false,
-                            JobTitle = "",
-                            ProjectId = 1,
-                            Salary = 0m,
-                            Status = 0,
-                            UserId = 5
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            HoursWorked = 0m,
-                            IsDeleted = false,
-                            JobTitle = "",
-                            ProjectId = 1,
-                            Salary = 0m,
-                            Status = 0,
-                            UserId = 6
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            HoursWorked = 0m,
-                            IsDeleted = false,
-                            JobTitle = "",
-                            ProjectId = 1,
-                            Salary = 0m,
-                            Status = 0,
-                            UserId = 7
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectTeamRole", b =>
@@ -5741,53 +5714,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ProjectTeamMemberId");
 
                     b.ToTable("ProjectTeamRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AssignedAt = new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(6845),
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            ProjectRoleId = 2,
-                            ProjectTeamMemberId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AssignedAt = new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(8198),
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            ProjectRoleId = 1,
-                            ProjectTeamMemberId = 2
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AssignedAt = new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(8206),
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            ProjectRoleId = 2,
-                            ProjectTeamMemberId = 3
-                        },
-                        new
-                        {
-                            Id = 4,
-                            AssignedAt = new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(8208),
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            ProjectRoleId = 3,
-                            ProjectTeamMemberId = 4
-                        },
-                        new
-                        {
-                            Id = 5,
-                            AssignedAt = new DateTime(2026, 2, 10, 11, 36, 19, 894, DateTimeKind.Utc).AddTicks(8210),
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            ProjectRoleId = 4,
-                            ProjectTeamMemberId = 5
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectWorkerContact", b =>
@@ -6665,6 +6591,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             Id = 1,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Platform-level system administrator",
                             IsDeleted = false,
                             Name = "SuperAdmin"
                         },
@@ -6672,6 +6599,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             Id = 2,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Organization administrator",
                             IsDeleted = false,
                             Name = "CompanyAdmin"
                         },
@@ -6679,6 +6607,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             Id = 3,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Default authenticated user",
                             IsDeleted = false,
                             Name = "User"
                         });
@@ -6706,16 +6635,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             RoleId = 1,
                             PermissionId = 1
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 1
-                        },
-                        new
-                        {
-                            RoleId = 3,
-                            PermissionId = 2
                         });
                 });
 
@@ -7232,22 +7151,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("UserId1");
 
                     b.ToTable("SiteMedias");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            BOQItemId = 101,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            FilePath = "site1.jpg",
-                            IsApproved = true,
-                            IsDeleted = false,
-                            MediaType = "image/jpeg",
-                            ProjectId = 1,
-                            Source = 0,
-                            Status = "Approved",
-                            UploaderUserId = 2
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.SpecialPromotion", b =>
@@ -7996,21 +7899,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("UserId1");
 
                     b.ToTable("Transactions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Amount = 5000m,
-                            BOQItemId = 101,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 1,
-                            IsDeleted = false,
-                            ProjectId = 1,
-                            Status = 1,
-                            TransactionDate = new DateTime(2026, 2, 10, 11, 36, 19, 897, DateTimeKind.Utc).AddTicks(9885),
-                            Type = 0
-                        });
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.User", b =>
@@ -8117,7 +8005,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CompanyId = 1,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@construction.com",
                             FirstName = "System",
@@ -8128,96 +8015,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
                             UserType = 0,
                             Username = "admin"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "ahmed@construction.com",
-                            FirstName = "Ahmed",
-                            IsDeleted = false,
-                            IsEmailVerified = false,
-                            IsProfileComplete = false,
-                            LastName = "Ramadan",
-                            PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
-                            UserType = 0,
-                            Username = "ahmed"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "company_admin@construction.com",
-                            FirstName = "Company",
-                            IsDeleted = false,
-                            IsEmailVerified = false,
-                            IsProfileComplete = false,
-                            LastName = "Admin",
-                            PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
-                            UserType = 0,
-                            Username = "company_admin"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "pm@construction.com",
-                            FirstName = "Project",
-                            IsDeleted = false,
-                            IsEmailVerified = false,
-                            IsProfileComplete = false,
-                            LastName = "Manager",
-                            PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
-                            UserType = 0,
-                            Username = "pm"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "engineer@construction.com",
-                            FirstName = "Site",
-                            IsDeleted = false,
-                            IsEmailVerified = false,
-                            IsProfileComplete = false,
-                            LastName = "Engineer",
-                            PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
-                            UserType = 0,
-                            Username = "engineer"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "accountant@construction.com",
-                            FirstName = "Project",
-                            IsDeleted = false,
-                            IsEmailVerified = false,
-                            IsProfileComplete = false,
-                            LastName = "Accountant",
-                            PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
-                            UserType = 0,
-                            Username = "accountant"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            CompanyId = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "consultant@construction.com",
-                            FirstName = "External",
-                            IsDeleted = false,
-                            IsEmailVerified = false,
-                            IsProfileComplete = false,
-                            LastName = "Consultant",
-                            PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
-                            UserType = 0,
-                            Username = "consultant"
                         });
                 });
 
@@ -8246,13 +8043,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             UserId = 1,
                             RoleId = 1,
-                            AssignedAt = new DateTime(2026, 2, 10, 11, 36, 19, 877, DateTimeKind.Utc).AddTicks(8889)
-                        },
-                        new
-                        {
-                            UserId = 3,
-                            RoleId = 2,
-                            AssignedAt = new DateTime(2026, 2, 10, 11, 36, 19, 878, DateTimeKind.Utc).AddTicks(124)
+                            AssignedAt = new DateTime(2026, 2, 11, 0, 43, 20, 790, DateTimeKind.Utc).AddTicks(9103)
                         });
                 });
 
@@ -8371,6 +8162,76 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("WarehouseId");
 
                     b.ToTable("VendorReviews");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Warehouse", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ManagerUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OperatingHours")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("ManagerUserId");
+
+                    b.ToTable("Warehouses");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.WarehouseOrderItem", b =>
@@ -9116,6 +8977,23 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("Parent");
                 });
 
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyDefaultPhaseItem", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.CompanyDefaultPhase", "DefaultPhase")
+                        .WithMany("Items")
+                        .HasForeignKey("DefaultPhaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("DefaultPhase");
+                });
+
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyPackage", b =>
                 {
                     b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
@@ -9674,6 +9552,170 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("Company");
 
                     b.Navigation("KPIDefinition");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Material", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.MaterialCategory", "Category")
+                        .WithMany("Materials")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.MaterialCategory", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.MaterialCategory", "ParentCategory")
+                        .WithMany("SubCategories")
+                        .HasForeignKey("ParentCategoryId");
+
+                    b.Navigation("ParentCategory");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.MaterialConsumption", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.BOQItem", "BOQItem")
+                        .WithMany()
+                        .HasForeignKey("BOQItemId");
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.ItemDailyLog", "ItemDailyLog")
+                        .WithMany()
+                        .HasForeignKey("ItemDailyLogId");
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.Material", "Material")
+                        .WithMany("Consumptions")
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.MaterialRequest", "MaterialRequest")
+                        .WithMany()
+                        .HasForeignKey("MaterialRequestId");
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.Phase", "Phase")
+                        .WithMany()
+                        .HasForeignKey("PhaseId");
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "RecordedByUser")
+                        .WithMany()
+                        .HasForeignKey("RecordedByUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "VerifiedByUser")
+                        .WithMany()
+                        .HasForeignKey("VerifiedByUserId");
+
+                    b.Navigation("BOQItem");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("ItemDailyLog");
+
+                    b.Navigation("Material");
+
+                    b.Navigation("MaterialRequest");
+
+                    b.Navigation("Phase");
+
+                    b.Navigation("Project");
+
+                    b.Navigation("RecordedByUser");
+
+                    b.Navigation("VerifiedByUser");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.MaterialRequest", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "ApprovedByUser")
+                        .WithMany()
+                        .HasForeignKey("ApprovedByUserId");
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.Material", null)
+                        .WithMany("Requests")
+                        .HasForeignKey("MaterialId");
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "RequestedByUser")
+                        .WithMany()
+                        .HasForeignKey("RequestedByUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApprovedByUser");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Project");
+
+                    b.Navigation("RequestedByUser");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.MaterialRequestItem", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Material", "Material")
+                        .WithMany()
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.MaterialRequest", "MaterialRequest")
+                        .WithMany("Items")
+                        .HasForeignKey("MaterialRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Material");
+
+                    b.Navigation("MaterialRequest");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.MaterialStock", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.Material", "Material")
+                        .WithMany("Stocks")
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.Warehouse", null)
+                        .WithMany("Stocks")
+                        .HasForeignKey("WarehouseId1");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Material");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.MessageAttachment", b =>
@@ -10517,6 +10559,21 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("Warehouse");
                 });
 
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Warehouse", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "ManagerUser")
+                        .WithMany()
+                        .HasForeignKey("ManagerUserId");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("ManagerUser");
+                });
+
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.WarehouseOrderItem", b =>
                 {
                     b.HasOne("ConstructionManagement.Domain.Entities.WarehouseOrderRequest", "Order")
@@ -10637,6 +10694,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyDefaultPhase", b =>
                 {
                     b.Navigation("Children");
+
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Defect", b =>
@@ -10704,6 +10763,27 @@ namespace ConstructionManagement.Infrastructure.Migrations
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.KPIDefinition", b =>
                 {
                     b.Navigation("Results");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Material", b =>
+                {
+                    b.Navigation("Consumptions");
+
+                    b.Navigation("Requests");
+
+                    b.Navigation("Stocks");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.MaterialCategory", b =>
+                {
+                    b.Navigation("Materials");
+
+                    b.Navigation("SubCategories");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.MaterialRequest", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Permission", b =>
@@ -10861,6 +10941,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("UploadedMedias");
 
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Warehouse", b =>
+                {
+                    b.Navigation("Stocks");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.WarehouseOrderRequest", b =>

@@ -17,4 +17,7 @@ public interface IPhaseService
     Task<IEnumerable<PhaseDto>> GetDefaultPhasesAsync(int companyId);
     Task UpdateDefaultPhaseAsync(int defaultPhaseId, UpdatePhaseRequest request);
     Task DeleteDefaultPhaseAsync(int defaultPhaseId);
+    Task ClearDefaultPhasesAsync(int companyId);
+    Task AddItemsToDefaultPhaseAsync(int phaseId, IEnumerable<int> catalogItemIds);
+    Task ReorderDefaultPhaseAsync(int phaseId, int direction);
 }

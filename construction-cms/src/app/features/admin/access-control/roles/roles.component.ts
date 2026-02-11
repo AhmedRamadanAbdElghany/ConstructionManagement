@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { RolesService } from '../../../../core/services/roles.service';
 import { Role, Permission } from '../../../../shared/interfaces';
 import { AuthService } from '../../../../core/services/auth.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-roles',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   template: `
     <div class="roles-container p-6 lg:p-10 bg-slate-50 dark:bg-slate-950 min-h-screen">
       <div class="max-w-7xl mx-auto">
@@ -20,17 +21,17 @@ import { AuthService } from '../../../../core/services/auth.service';
               Security Infrastructure
             </div>
             <h1 class="text-5xl font-black text-slate-900 dark:text-white tracking-tighter italic">Manage Roles</h1>
-            <p class="text-slate-500 dark:text-slate-400 font-medium">Configure organizational archetypes and granular engine capabilities.</p>
+            <p class="text-slate-500 dark:text-slate-400 font-medium">Configure roles and granular permissions.</p>
           </div>
           <button (click)="openCreateModal()" 
                   class="bg-indigo-600 text-white px-10 py-5 rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-2xl shadow-indigo-500/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-4">
-            <span class="text-xl leading-none font-light">+</span> Define Archetype
+            <span class="text-xl leading-none font-light">+</span> {{ 'addRole' | translate }}
           </button>
         </div>
 
         <!-- Role Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-          <div *ngFor="let role of mockRoles" 
+          <div *ngFor="let role of roles" 
                class="bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-100 dark:border-white/5 shadow-2xl shadow-slate-200/50 dark:shadow-none hover:shadow-indigo-500/10 transition-all duration-500 overflow-hidden group">
             <div class="p-10">
               <div class="flex justify-between items-start mb-6">
@@ -45,16 +46,16 @@ import { AuthService } from '../../../../core/services/auth.service';
               <p class="text-slate-500 dark:text-slate-400 text-xs font-medium leading-relaxed mb-8 line-clamp-2">{{ role.description }}</p>
               
               <div class="flex flex-wrap gap-2 mb-8">
-                <span *ngFor="let permName of role.perms" 
+                <span *ngFor="let perm of role.permissions" 
                       class="px-3 py-1 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 text-[9px] font-black uppercase tracking-widest rounded-full border border-indigo-100 dark:border-indigo-800">
-                  {{ permName }}
+                  {{ perm.name }}
                 </span>
-                <span *ngIf="!role.perms.length" class="text-slate-400 text-[10px] italic">No permissions assigned</span>
+                <span *ngIf="!role.permissions?.length" class="text-slate-400 text-[10px] italic">No permissions assigned</span>
               </div>
             </div>
 
             <div class="px-10 py-6 bg-slate-50/50 dark:bg-white/5 border-t border-slate-50 dark:border-white/5 flex justify-between items-center group/btn">
-              <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Capabilities: {{ role.perms.length }}</span>
+              <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Capabilities: {{ role.permissions?.length || 0 }}</span>
               <button (click)="openEditPermissions(role)" class="text-indigo-600 font-black text-[10px] uppercase tracking-widest flex items-center gap-2 group-hover/btn:gap-4 transition-all">
                 Config Matrix &rarr;
               </button>
@@ -68,22 +69,22 @@ import { AuthService } from '../../../../core/services/auth.service';
          <div class="bg-white dark:bg-slate-900 rounded-[3rem] shadow-2xl w-full max-w-xl p-10 transform animate-in zoom-in-95 duration-500 relative border border-white/10">
             <button (click)="showRoleModal = false" class="absolute top-8 right-8 text-slate-400 hover:text-slate-600 text-3xl font-light">&times;</button>
             
-            <h3 class="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-2 italic">{{ editingRole ? 'Update' : 'New' }} Archetype</h3>
-            <p class="text-slate-500 dark:text-slate-400 font-medium text-xs mb-10">Define the identification model and operational scope.</p>
+            <h3 class="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-2 italic">{{ editingRole ? 'Update' : 'New' }} Role</h3>
+            <p class="text-slate-500 dark:text-slate-400 font-medium text-xs mb-10">Define the role and its application scope.</p>
 
             <div class="space-y-6">
                <div class="space-y-2">
-                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Archetype Name</label>
+                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Role Name</label>
                  <input [(ngModel)]="roleForm.name" placeholder="e.g., Regional Supervisor" class="w-full p-5 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-3xl outline-none font-bold text-slate-900 dark:text-white transition-all">
                </div>
                <div class="space-y-2">
-                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Identity Description</label>
+                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Description</label>
                  <textarea [(ngModel)]="roleForm.description" placeholder="Explain the responsibilities..." rows="3" class="w-full p-5 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-3xl outline-none font-bold text-slate-900 dark:text-white resize-none transition-all"></textarea>
                </div>
 
                <div class="pt-6 flex gap-4">
                   <button (click)="showRoleModal = false" class="flex-1 py-4 text-slate-500 font-black uppercase tracking-widest text-[10px] border border-slate-200 dark:border-white/5 rounded-2xl hover:bg-slate-50 transition-all">Abort</button>
-                  <button (click)="saveRole()" [disabled]="!roleForm.name" class="flex-[2] py-4 bg-indigo-600 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl shadow-xl shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-40">Save Identity Model</button>
+                  <button (click)="saveRole()" [disabled]="!roleForm.name" class="flex-[2] py-4 bg-indigo-600 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl shadow-xl shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-40">Save Role</button>
                </div>
             </div>
          </div>
@@ -104,12 +105,12 @@ import { AuthService } from '../../../../core/services/auth.service';
           
           <div class="p-10 bg-slate-50/30 dark:bg-white/5 max-h-[500px] overflow-y-auto custom-scrollbar">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-               <div *ngFor="let perm of mockPermissions" 
-                    (click)="togglePermission(perm.name)"
+               <div *ngFor="let perm of permissions" 
+                    (click)="togglePermission(perm.id)"
                     class="p-5 bg-white dark:bg-slate-900 border rounded-2xl flex items-center justify-between cursor-pointer group transition-all"
-                    [class.border-indigo-500]="isPermissionSelected(perm.name)"
-                    [class.bg-indigo-50/20]="isPermissionSelected(perm.name)"
-                    [class.border-slate-100]="!isPermissionSelected(perm.name)">
+                    [class.border-indigo-500]="isPermissionSelected(perm.id)"
+                    [class.bg-indigo-50/20]="isPermissionSelected(perm.id)"
+                    [class.border-slate-100]="!isPermissionSelected(perm.id)">
                  <div class="flex items-center gap-4">
                    <div class="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">⚙️</div>
                    <div>
@@ -118,10 +119,10 @@ import { AuthService } from '../../../../core/services/auth.service';
                    </div>
                  </div>
                  <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all"
-                      [class.bg-indigo-600]="isPermissionSelected(perm.name)"
-                      [class.border-indigo-600]="isPermissionSelected(perm.name)"
-                      [class.border-slate-200]="!isPermissionSelected(perm.name)">
-                    <span *ngIf="isPermissionSelected(perm.name)" class="text-white text-[10px]">✓</span>
+                      [class.bg-indigo-600]="isPermissionSelected(perm.id)"
+                      [class.border-indigo-600]="isPermissionSelected(perm.id)"
+                      [class.border-slate-200]="!isPermissionSelected(perm.id)">
+                    <span *ngIf="isPermissionSelected(perm.id)" class="text-white text-[10px]">✓</span>
                  </div>
                </div>
             </div>
@@ -143,19 +144,14 @@ import { AuthService } from '../../../../core/services/auth.service';
   `]
 })
 export class RolesComponent implements OnInit {
-  mockPermissions: Permission[] = [];
-
-  mockRoles: any[] = [
-    { id: 1, name: 'General Manager', description: 'Enterprise-level strategic oversight with full capital control.', perms: ['Project.Audit', 'Finance.Release', 'Analytics.Export'] },
-    { id: 2, name: 'Project Lead', description: 'Execution oversight for regional mission-critical infrastructure.', perms: ['Project.Audit', 'Media.Approve'] },
-    { id: 3, name: 'Financial Auditor', description: 'Specialized ledger oversight and expenditure verification.', perms: ['Finance.Release', 'Analytics.Export'] }
-  ];
+  permissions: Permission[] = [];
+  roles: Role[] = [];
 
   showRoleModal = false;
   showPermissionsModal = false;
-  editingRole: any = null;
-  selectedRole: any = null;
-  tempPermissions: string[] = [];
+  editingRole: Role | null = null;
+  selectedRole: Role | null = null;
+  tempPermissionIds: number[] = [];
 
   roleForm = {
     name: '',
@@ -165,17 +161,19 @@ export class RolesComponent implements OnInit {
   constructor(private rolesService: RolesService) { }
 
   ngOnInit() {
-    // Load permissions from backend
-    this.rolesService.getPermissions().subscribe(permissions => {
-      this.mockPermissions = permissions;
-    });
+    this.loadRoles();
+    this.loadPermissions();
+  }
 
-    // Load roles from backend
+  loadRoles() {
     this.rolesService.getRoles().subscribe(roles => {
-      this.mockRoles = roles;
-      if (this.mockRoles.length > 0) {
-        this.selectedRole = this.mockRoles[0];
-      }
+      this.roles = roles;
+    });
+  }
+
+  loadPermissions() {
+    this.rolesService.getPermissions().subscribe(permissions => {
+      this.permissions = permissions;
     });
   }
 
@@ -192,51 +190,54 @@ export class RolesComponent implements OnInit {
   }
 
   saveRole() {
+    if (!this.roleForm.name) return;
+
     if (this.editingRole) {
-      this.editingRole.name = this.roleForm.name;
-      this.editingRole.description = this.roleForm.description;
+      this.rolesService.updateRole(this.editingRole.id, this.roleForm).subscribe(() => {
+        this.loadRoles();
+        this.showRoleModal = false;
+      });
     } else {
-      const nextId = Math.max(...this.mockRoles.map(r => r.id)) + 1;
-      this.mockRoles.push({
-        id: nextId,
-        name: this.roleForm.name,
-        description: this.roleForm.description,
-        perms: []
+      this.rolesService.createRole(this.roleForm).subscribe(() => {
+        this.loadRoles();
+        this.showRoleModal = false;
       });
     }
-    this.showRoleModal = false;
   }
 
   deleteRole(id: number) {
     if (confirm('CRITICAL: Removing this role will revoke access for all associated personnel. Proceed?')) {
-      this.mockRoles = this.mockRoles.filter(r => r.id !== id);
+      this.rolesService.deleteRole(id).subscribe(() => {
+        this.loadRoles();
+      });
     }
   }
 
-  openEditPermissions(role: any) {
+  openEditPermissions(role: Role) {
     this.selectedRole = role;
-    this.tempPermissions = [...role.perms];
+    this.tempPermissionIds = role.permissions?.map(p => p.id) || [];
     this.showPermissionsModal = true;
   }
 
-  togglePermission(permName: string) {
-    const index = this.tempPermissions.indexOf(permName);
+  togglePermission(permId: number) {
+    const index = this.tempPermissionIds.indexOf(permId);
     if (index === -1) {
-      this.tempPermissions.push(permName);
+      this.tempPermissionIds.push(permId);
     } else {
-      this.tempPermissions.splice(index, 1);
+      this.tempPermissionIds.splice(index, 1);
     }
   }
 
-  isPermissionSelected(permName: string): boolean {
-    return this.tempPermissions.includes(permName);
+  isPermissionSelected(permId: number): boolean {
+    return this.tempPermissionIds.includes(permId);
   }
 
   savePermissions() {
     if (this.selectedRole) {
-      this.selectedRole.perms = [...this.tempPermissions];
-      this.showPermissionsModal = false;
-      alert(`Architecture Updated: ${this.selectedRole.name} now has ${this.selectedRole.perms.length} active capabilities.`);
+      this.rolesService.updateRolePermissions(this.selectedRole.id, this.tempPermissionIds).subscribe(() => {
+        this.loadRoles();
+        this.showPermissionsModal = false;
+      });
     }
   }
 }

@@ -86,10 +86,12 @@ import { FormsModule } from '@angular/forms';
                   </div>
 
                   <div class="flex gap-4">
-                    <button (click)="approveCompany(request.id)" class="flex-1 py-4 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all">
+                    <button (click)="approveCompany(request.id)" class="flex-1 py-4 rounded-xl bg-emerald-600 dark:bg-emerald-500 text-white font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all flex items-center justify-center gap-2">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                       {{ 'pending_requests.approve' | translate }}
                     </button>
-                    <button (click)="rejectCompany(request.id)" class="flex-1 py-4 rounded-xl bg-rose-500 text-white font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all">
+                    <button (click)="rejectCompany(request.id)" class="flex-1 py-4 rounded-xl bg-rose-500 text-white font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all flex items-center justify-center gap-2">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
                       {{ 'pending_requests.reject' | translate }}
                     </button>
                   </div>
@@ -135,10 +137,12 @@ import { FormsModule } from '@angular/forms';
                   </div>
 
                   <div class="flex gap-4">
-                    <button (click)="approveJoin(request.id)" class="flex-1 py-4 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all">
+                    <button (click)="approveJoin(request.id)" class="flex-1 py-4 rounded-xl bg-emerald-600 dark:bg-emerald-500 text-white font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all flex items-center justify-center gap-2">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                       {{ 'pending_requests.approve' | translate }}
                     </button>
-                    <button (click)="rejectJoin(request.id)" class="flex-1 py-4 rounded-xl bg-rose-500 text-white font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all">
+                    <button (click)="rejectJoin(request.id)" class="flex-1 py-4 rounded-xl bg-rose-500 text-white font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all flex items-center justify-center gap-2">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
                       {{ 'pending_requests.reject' | translate }}
                     </button>
                   </div>

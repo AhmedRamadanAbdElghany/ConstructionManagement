@@ -752,11 +752,15 @@ import { map } from 'rxjs/operators';
                          @for (phase of projectPhases; track phase.id) {
                          <app-phase-node 
                              [node]="phase"
+                             [loadingMap]="loadingPhases"
                              (onAddChild)="openPhaseModal(undefined, $event)"
                              (onEdit)="openPhaseModal($event)"
                              (onDelete)="deletePhase($event)"
+                             (onMoveUp)="movePhase($event, -1)"
+                             (onMoveDown)="movePhase($event, 1)"
                              (onAddItems)="openItemModal($event)"
-                             (onEditItem)="openItemModal($event.phase, $event.item)">
+                             (onEditItem)="openItemModal($event.phase, $event.item)"
+                             (onDeleteItem)="onDeleteItem($event)">
                          </app-phase-node>
                          } @empty {
                              <div class="py-16 text-center bg-slate-50/50 dark:bg-white/[0.02] rounded-[2.5rem] border border-dashed border-slate-200 dark:border-white/5">
@@ -1406,10 +1410,20 @@ import { map } from 'rxjs/operators';
                      }
                   </div>
 
-                  <div class="p-10 pt-4 flex space-x-4 shrink-0 bg-slate-50/50 dark:bg-white/5">
-                     <button (click)="showAddBoqModal = false" class="flex-1 py-5 rounded-[1.5rem] bg-white dark:bg-slate-800 text-slate-500 font-black text-[11px] uppercase tracking-widest border border-slate-200 dark:border-white/5">Cancel</button>
-                     <button (click)="addBoqItem()" [disabled]="!boqForm.description || !boqForm.unit || boqForm.totalQuantity <= 0" class="flex-[2] py-5 rounded-[1.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-[11px] uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50">{{ selectedBoqItem ? 'Update Configuration' : 'Add Item' }}</button>
-                  </div>
+                   <div class="p-10 pt-4 flex space-x-4 shrink-0 bg-slate-50/50 dark:bg-white/5">
+                      <button (click)="showAddBoqModal = false" class="flex-1 py-5 rounded-[1.5rem] bg-white dark:bg-slate-800 text-slate-500 font-black text-[11px] uppercase tracking-widest border border-slate-200 dark:border-white/5">Cancel</button>
+                      <button (click)="addBoqItem()" [disabled]="!boqForm.description || !boqForm.unit || boqForm.totalQuantity <= 0 || isSavingBoq" class="flex-[2] py-5 rounded-[1.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-[11px] uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 flex items-center justify-center space-x-3">
+                         @if (isSavingBoq) {
+                            <svg class="animate-spin h-4 w-4 text-white dark:text-slate-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span>Processing...</span>
+                         } @else {
+                            <span>{{ selectedBoqItem ? 'Update Configuration' : 'Add Item' }}</span>
+                         }
+                      </button>
+                   </div>
                </div>
             </div>
           }
@@ -1648,7 +1662,17 @@ import { map } from 'rxjs/operators';
 
                   <div class="p-10 pt-4 flex space-x-4 shrink-0 bg-slate-50/30 dark:bg-slate-950/20">
                      <button (click)="showPhaseModal = false" class="flex-1 py-5 rounded-[1.5rem] bg-white dark:bg-slate-800 text-slate-500 font-black text-[11px] uppercase tracking-widest border border-slate-200 dark:border-white/5">Cancel</button>
-                     <button (click)="savePhase()" [disabled]="!phaseForm.name" class="flex-[2] py-5 rounded-[1.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-[11px] uppercase tracking-widest shadow-xl shadow-slate-900/20 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50">Save Phase</button>
+                     <button (click)="savePhase()" [disabled]="!phaseForm.name || isSaving" class="flex-[2] py-5 rounded-[1.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-[11px] uppercase tracking-widest shadow-xl shadow-slate-900/20 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 flex items-center justify-center space-x-3">
+                        @if (isSaving) {
+                           <svg class="animate-spin h-4 w-4 text-white dark:text-slate-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                           </svg>
+                           <span>Saving...</span>
+                        } @else {
+                           <span>Save Phase</span>
+                        }
+                     </button>
                   </div>
                </div>
             </div>
@@ -2076,41 +2100,26 @@ export class ProjectDetailComponent implements OnInit {
 
    addBoqItem() {
       if (!this.project) return;
+      const projectId = this.project.id;
+      this.isSavingBoq = true;
 
-      if (this.selectedBoqItem) {
-         // Find and update the existing item in the array
-         const index = this.boqItems.findIndex(i => i.id === this.selectedBoqItem!.id);
-         if (index !== -1) {
-            this.boqItems[index] = {
-               ...this.boqItems[index],
-               description: this.boqForm.description,
-               unit: this.boqForm.unit,
-               totalQuantity: this.boqForm.totalQuantity,
-               rate: this.boqForm.rate,
-               startDate: this.boqForm.startDate || undefined,
-               endDate: this.boqForm.endDate || undefined
-            };
-         }
-      } else {
-         const newItem: BOQItem = {
-            id: Math.floor(Math.random() * 10000),
-            projectId: this.project.id,
-            phaseId: this.selectedPhase?.id, // Link to phase if adding from hierarchy
-            description: this.boqForm.description,
-            unit: this.boqForm.unit,
-            totalQuantity: this.boqForm.totalQuantity,
-            executedQuantity: 0,
-            rate: this.boqForm.rate,
-            startDate: this.boqForm.startDate || undefined,
-            endDate: this.boqForm.endDate || undefined
-         } as any;
-         this.boqItems.push(newItem);
-      }
+      const operation = this.selectedBoqItem
+         // Re-save to fix argument mismatch
+         ? this.boqService.updateItem(projectId, this.selectedBoqItem.id, this.boqForm)
+         : this.boqService.createItem(projectId, { ...this.boqForm, phaseId: this.selectedPhase?.id });
 
-      this.showAddBoqModal = false;
-      this.resetBoqForm();
-      // Refresh phases to show new item if we have a project ID
-      if (this.project) this.loadProjectPhases(this.project.id);
+      operation.subscribe({
+         next: () => {
+            this.boqService.getItems(projectId).subscribe(items => {
+               this.boqItems = items;
+               this.loadProjectPhases(projectId);
+               this.showAddBoqModal = false;
+               this.isSavingBoq = false;
+               this.resetBoqForm();
+            });
+         },
+         error: () => this.isSavingBoq = false
+      });
    }
 
    resetBoqForm() {
@@ -2320,7 +2329,10 @@ export class ProjectDetailComponent implements OnInit {
 
    // --- Phases Logic ---
    projectPhases: Phase[] = [];
+   loadingPhases: { [key: number]: string } = {};
    isPhasesInitialized = false;
+   isSaving = false;
+   isSavingBoq = false;
    showPhaseModal = false;
    selectedPhase?: Phase;
    parentPhase?: Phase;
@@ -2394,27 +2406,59 @@ export class ProjectDetailComponent implements OnInit {
 
    savePhase() {
       if (!this.project) return;
+      this.isSaving = true;
       if (this.selectedPhase) {
-         this.phaseService.updatePhase(this.selectedPhase.id, this.phaseForm).subscribe(() => {
-            if (this.project) this.loadProjectPhases(this.project.id);
-            this.showPhaseModal = false;
+         this.phaseService.updatePhase(this.selectedPhase.id, this.phaseForm).subscribe({
+            next: () => {
+               if (this.project) this.loadProjectPhases(this.project.id);
+               this.showPhaseModal = false;
+               this.isSaving = false;
+            },
+            error: () => this.isSaving = false
          });
       } else {
          const request = {
             ...this.phaseForm,
             parentPhaseId: this.parentPhase?.id
          };
-         this.phaseService.createProjectPhase(this.project.id, request).subscribe(() => {
-            if (this.project) this.loadProjectPhases(this.project.id);
-            this.showPhaseModal = false;
+         this.phaseService.createProjectPhase(this.project.id, request).subscribe({
+            next: () => {
+               if (this.project) this.loadProjectPhases(this.project.id);
+               this.showPhaseModal = false;
+               this.isSaving = false;
+            },
+            error: () => this.isSaving = false
          });
       }
    }
 
    deletePhase(id: number) {
-      if (confirm('Delete this phase?')) {
-         if (this.project) this.phaseService.deletePhase(id).subscribe(() => this.loadProjectPhases(this.project!.id));
+      if (confirm('Delete this phase? All descendants and associated items will be removed.')) {
+         this.loadingPhases[id] = 'deleting';
+         this.phaseService.deletePhase(id).subscribe({
+            next: () => {
+               if (this.project) this.loadProjectPhases(this.project.id);
+               delete this.loadingPhases[id];
+            },
+            error: () => delete this.loadingPhases[id]
+         });
       }
+   }
+
+   onDeleteItem(event: { phase: Phase, itemId: number }) {
+      this.deleteBoqItem(event.itemId);
+   }
+
+   movePhase(id: number, direction: number) {
+      if (!this.project) return;
+      this.loadingPhases[id] = direction > 0 ? 'moving-down' : 'moving-up';
+      this.phaseService.reorderPhase(id, direction).subscribe({
+         next: () => {
+            this.loadProjectPhases(this.project!.id);
+            delete this.loadingPhases[id];
+         },
+         error: () => delete this.loadingPhases[id]
+      });
    }
 
    openLogDetails(log: any) {

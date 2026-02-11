@@ -21,4 +21,5 @@ public class CompanyDefaultPhase : BaseEntity, ICompanyEntity
     public virtual CompanyDefaultPhase? Parent { get; set; }
 
     public virtual ICollection<CompanyDefaultPhase> Children { get; set; } = new List<CompanyDefaultPhase>();
+    public virtual ICollection<CompanyDefaultPhaseItem> Items { get; set; } = new List<CompanyDefaultPhaseItem>();
 }

@@ -17,16 +17,23 @@ import { ProjectService } from '../../../../core/services/project.service';
       <div class="max-w-7xl mx-auto">
         <!-- Breadcrumbs & Actions -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-          <div class="space-y-1">
-            <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-              <a routerLink="/admin/companies" class="hover:text-indigo-600 transition-colors">Organizations</a>
-              <span>/</span>
-              <span class="text-indigo-600">{{ company?.name }}</span>
+          <div class="flex items-center gap-6">
+            <button routerLink="/admin/companies" class="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-slate-400 hover:text-indigo-600 flex items-center justify-center transition-all shadow-sm hover:shadow-md hover:scale-105 active:scale-95 group">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+            </button>
+            <div class="space-y-1">
+              <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                <a routerLink="/admin/companies" class="hover:text-indigo-600 transition-colors">Organizations</a>
+                <span>/</span>
+                <span class="text-indigo-600">{{ company?.name }}</span>
+              </div>
+              <h1 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-4">
+                <span class="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-xl shadow-lg shadow-indigo-500/20">{{ company?.name?.charAt(0) }}</span>
+                {{ company?.name }}
+              </h1>
             </div>
-            <h1 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-4">
-              <span class="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-xl shadow-lg shadow-indigo-500/20">{{ company?.name?.charAt(0) }}</span>
-              {{ company?.name }}
-            </h1>
           </div>
           <div class="flex items-center gap-3">
              <button routerLink="/admin/companies" class="px-6 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-slate-500 font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm">
@@ -58,6 +65,7 @@ import { ProjectService } from '../../../../core/services/project.service';
           <!-- TAB 1: IDENTITY & CONFIG -->
           <div *ngIf="activeTab === 'identity'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
             <form [formGroup]="companyForm" class="space-y-12">
+                <!-- Basic Info -->
                 <section>
                   <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
                     <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
@@ -79,41 +87,369 @@ import { ProjectService } from '../../../../core/services/project.service';
                   </div>
                 </section>
 
-                <section class="pt-8">
-                  <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-[0.2em] mb-8">Allowed Calculation Methods</h3>
-                  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div (click)="toggleFormControl('allowMeasured')" [class.border-amber-500]="companyForm.get('allowMeasured')?.value" [class.bg-amber-50/30]="companyForm.get('allowMeasured')?.value" class="p-8 border-2 border-slate-100 dark:border-slate-800 rounded-[2.5rem] cursor-pointer transition-all flex flex-col items-center">
-                      <span class="text-4xl mb-4">📏</span><span class="font-black text-sm uppercase tracking-tighter">Measured Method</span>
-                      <p class="text-[10px] text-slate-400 mt-2 font-black uppercase">Quantity Based</p>
+               <!-- Unified Feature Management -->
+               <section class="pt-6 space-y-10">
+                 <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-[0.2em] mb-4 flex items-center gap-3 border-b border-slate-100 dark:border-white/5 pb-4">
+                   <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                   Platform Features
+                 </h3>
+
+                 <!-- Core Platform Features -->
+                 <div class="space-y-4">
+                    <h4 class="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      <span class="w-1 h-1 rounded-full bg-blue-500"></span> Infrastructure & Core
+                    </h4>
+                    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 text-center">
+                        <div (click)="toggleFormControl('enableUserManagement')" 
+                             [ngClass]="companyForm.get('enableUserManagement')?.value ? 'border-blue-500 bg-blue-50/40 text-blue-900 dark:text-blue-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                             class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
+                            <span class="text-xl mb-1">👥</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">User Mgmt</span>
+                        </div>
+                        <div (click)="toggleFormControl('enableProjectManagement')" 
+                             [ngClass]="companyForm.get('enableProjectManagement')?.value ? 'border-blue-500 bg-blue-50/40 text-blue-900 dark:text-blue-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                             class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
+                            <span class="text-xl mb-1">🏗️</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">Projects</span>
+                        </div>
+                        <div (click)="toggleFormControl('enableAccessControl')" 
+                             [ngClass]="companyForm.get('enableAccessControl')?.value ? 'border-blue-500 bg-blue-50/40 text-blue-900 dark:text-blue-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                             class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
+                            <span class="text-xl mb-1">🔐</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">Access Control</span>
+                        </div>
+                        <div (click)="toggleFormControl('enableNotifications')" 
+                             [ngClass]="companyForm.get('enableNotifications')?.value ? 'border-blue-500 bg-blue-50/40 text-blue-900 dark:text-blue-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                             class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
+                            <span class="text-xl mb-1">🔔</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">Notifications</span>
+                        </div>
+                        <div (click)="toggleFormControl('enableAnalytics')" 
+                             [ngClass]="companyForm.get('enableAnalytics')?.value ? 'border-blue-500 bg-blue-50/40 text-blue-900 dark:text-blue-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                             class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
+                            <span class="text-xl mb-1">📈</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">Analytics</span>
+                        </div>
                     </div>
-                    <div (click)="toggleFormControl('allowSupervision')" [class.border-purple-500]="companyForm.get('allowSupervision')?.value" [class.bg-purple-50/30]="companyForm.get('allowSupervision')?.value" class="p-8 border-2 border-slate-100 dark:border-slate-800 rounded-[2.5rem] cursor-pointer transition-all flex flex-col items-center">
-                      <span class="text-4xl mb-4">👁️</span><span class="font-black text-sm uppercase tracking-tighter">Supervision</span>
-                      <p class="text-[10px] text-slate-400 mt-2 font-black uppercase">Percentage Based</p>
+                 </div>
+
+                 <!-- Site Operations -->
+                 <div class="space-y-4">
+                    <h4 class="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                       <span class="w-1 h-1 rounded-full bg-emerald-500"></span> Site Operations
+                    </h4>
+                    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 text-center">
+                        <div (click)="toggleFormControl('enableDailyLogs')" 
+                             [ngClass]="companyForm.get('enableDailyLogs')?.value ? 'border-emerald-500 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                             class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
+                            <span class="text-xl mb-1">📝</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">Daily Logs</span>
+                        </div>
+                        <div (click)="toggleFormControl('enableSiteMedia')" 
+                             [ngClass]="companyForm.get('enableSiteMedia')?.value ? 'border-emerald-500 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                             class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
+                            <span class="text-xl mb-1">📸</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">Site Media</span>
+                        </div>
+                        <div (click)="toggleFormControl('enableBOQManagement')" 
+                             [ngClass]="companyForm.get('enableBOQManagement')?.value ? 'border-emerald-500 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                             class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
+                            <span class="text-xl mb-1">📊</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">BOQ Mgmt</span>
+                        </div>
+                        <div (click)="toggleFormControl('enableDocumentManagement')" 
+                             [ngClass]="companyForm.get('enableDocumentManagement')?.value ? 'border-emerald-500 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                             class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
+                            <span class="text-xl mb-1">📁</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">Documents</span>
+                        </div>
+                        <div (click)="toggleFormControl('enableDesignManagement')" 
+                             [ngClass]="companyForm.get('enableDesignManagement')?.value ? 'border-emerald-500 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                             class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
+                            <span class="text-xl mb-1">🎨</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">Design QA</span>
+                        </div>
                     </div>
-                    <div (click)="toggleFormControl('allowPackages')" [class.border-orange-500]="companyForm.get('allowPackages')?.value" [class.bg-orange-50/30]="companyForm.get('allowPackages')?.value" class="p-8 border-2 border-slate-100 dark:border-slate-800 rounded-[2.5rem] cursor-pointer transition-all flex flex-col items-center">
-                      <span class="text-4xl mb-4">📦</span><span class="font-black text-sm uppercase tracking-tighter">Fixed Package</span>
-                      <p class="text-[10px] text-slate-400 mt-2 font-black uppercase">Lump Sum Contract</p>
+                 </div>
+
+                 <!-- Supply Chain & Assets -->
+                 <div class="space-y-4">
+                    <h4 class="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                       <span class="w-1 h-1 rounded-full bg-violet-500"></span> Supply Chain & Assets
+                    </h4>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+                        <div (click)="toggleFormControl('enableInventoryManagement')" 
+                             [ngClass]="companyForm.get('enableInventoryManagement')?.value ? 'border-violet-500 bg-violet-50/40 text-violet-900 dark:text-violet-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                             class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
+                            <span class="text-xl mb-1">📦</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">Inventory</span>
+                        </div>
+                        <div (click)="toggleFormControl('enableEquipmentManagement')" 
+                             [ngClass]="companyForm.get('enableEquipmentManagement')?.value ? 'border-violet-500 bg-violet-50/40 text-violet-900 dark:text-violet-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                             class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
+                            <span class="text-xl mb-1">🚜</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">Equipment</span>
+                        </div>
+                        <div (click)="toggleFormControl('enableVendorManagement')" 
+                             [ngClass]="companyForm.get('enableVendorManagement')?.value ? 'border-violet-500 bg-violet-50/40 text-violet-900 dark:text-violet-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                             class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
+                            <span class="text-xl mb-1">🏪</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">Vendors</span>
+                        </div>
+                        <div (click)="toggleFormControl('enableSubcontractorManagement')" 
+                             [ngClass]="companyForm.get('enableSubcontractorManagement')?.value ? 'border-violet-500 bg-violet-50/40 text-violet-900 dark:text-violet-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                             class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
+                            <span class="text-xl mb-1">🤝</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">Subcontractors</span>
+                        </div>
                     </div>
+                 </div>
+
+                 <!-- Governance & Workforce -->
+                 <div class="space-y-4">
+                    <h4 class="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                       <span class="w-1 h-1 rounded-full bg-amber-500"></span> Governance & Workforce
+                    </h4>
+                    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 text-center">
+                        <div (click)="toggleFormControl('enableFinancialManagement')" 
+                             [ngClass]="companyForm.get('enableFinancialManagement')?.value ? 'border-amber-500 bg-amber-50/40 text-amber-900 dark:text-amber-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                             class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
+                            <span class="text-xl mb-1">💰</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">Financials</span>
+                        </div>
+                        <div (click)="toggleFormControl('enableHRManagement')" 
+                             [ngClass]="companyForm.get('enableHRManagement')?.value ? 'border-amber-500 bg-amber-50/40 text-amber-900 dark:text-amber-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                             class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
+                            <span class="text-xl mb-1">👔</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">HR Mgmt</span>
+                        </div>
+                        <div (click)="toggleFormControl('enableQualityControl')" 
+                             [ngClass]="companyForm.get('enableQualityControl')?.value ? 'border-rose-500 bg-rose-50/40 text-rose-900 dark:text-rose-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                             class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
+                            <span class="text-xl mb-1">✅</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">Quality</span>
+                        </div>
+                        <div (click)="toggleFormControl('enableSafetyManagement')" 
+                             [ngClass]="companyForm.get('enableSafetyManagement')?.value ? 'border-rose-500 bg-rose-50/40 text-rose-900 dark:text-rose-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                             class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
+                            <span class="text-xl mb-1">🦺</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">Safety</span>
+                        </div>
+                        <div (click)="toggleFormControl('enableClientPortal')" 
+                             [ngClass]="companyForm.get('enableClientPortal')?.value ? 'border-amber-500 bg-amber-50/40 text-amber-900 dark:text-amber-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                             class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
+                            <span class="text-xl mb-1">🏢</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">Client Portal</span>
+                        </div>
+                    </div>
+                 </div>
+               </section>
+
+                <!-- Inventory Configuration -->
+                <section class="pt-6" *ngIf="companyForm.get('enableInventoryManagement')?.value">
+                  <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
+                    <span class="w-2 h-2 rounded-full bg-violet-500"></span>
+                    Inventory Configuration
+                  </h3>
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                     <!-- Material Request Approval -->
+                     <div class="p-6 border-2 rounded-3xl" [ngClass]="companyForm.get('requireMaterialRequestApproval')?.value ? 'border-violet-500 bg-violet-50/40 text-violet-900 dark:text-violet-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
+                        <div class="flex items-center justify-between mb-4">
+                           <span class="font-black text-[10px] uppercase tracking-widest">Material Request Approval</span>
+                           <label class="relative inline-flex items-center cursor-pointer">
+                             <input type="checkbox" formControlName="requireMaterialRequestApproval" class="sr-only peer">
+                             <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-violet-500"></div>
+                           </label>
+                        </div>
+                        <input formControlName="materialRequestApproverRole" placeholder="Approver Role"
+                               class="w-full p-3 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-violet-500 rounded-xl outline-none text-xs font-bold text-slate-900 dark:text-white placeholder:text-slate-400">
+                     </div>
+                     <!-- Multi Warehouse -->
+                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableMultiWarehouse')?.value ? 'border-violet-500 bg-violet-50/40 text-violet-900 dark:text-violet-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Multi Warehouse</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Enable multiple warehouses</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" formControlName="enableMultiWarehouse" class="sr-only peer">
+                          <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-violet-500"></div>
+                        </label>
+                     </div>
+                     <!-- Stock Alerts -->
+                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableStockAlerts')?.value ? 'border-violet-500 bg-violet-50/40 text-violet-900 dark:text-violet-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Stock Alerts</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Enable low stock notifications</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" formControlName="enableStockAlerts" class="sr-only peer">
+                          <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-violet-500"></div>
+                        </label>
+                     </div>
+                     <!-- Low Stock Threshold -->
+                     <div class="p-6 border-2 rounded-3xl" [ngClass]="companyForm.get('defaultLowStockThreshold')?.value ? 'border-violet-500 bg-violet-50/40 text-violet-900 dark:text-violet-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
+                        <span class="font-black text-[10px] uppercase tracking-widest block mb-4">Low Stock Threshold</span>
+                        <input type="number" formControlName="defaultLowStockThreshold" 
+                               class="w-full p-3 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-violet-500 rounded-xl outline-none text-xs font-bold text-slate-900 dark:text-white">
+                     </div>
                   </div>
                 </section>
 
-                <section class="pt-8">
-                  <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-[0.2em] mb-8">Feature Entitlements</h3>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div *ngFor="let feat of featureToggles" (click)="toggleFormControl(feat.ctrl)" class="flex items-center justify-between p-6 bg-slate-50 dark:bg-slate-800/40 rounded-[2rem] border border-slate-100 dark:border-slate-800 cursor-pointer hover:bg-slate-100 transition-all">
-                      <div class="flex items-center gap-5">
-                        <div class="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 flex items-center justify-center shadow-md text-2xl border border-slate-100">{{ feat.icon }}</div>
+                <!-- Equipment Configuration -->
+                <section class="pt-6" *ngIf="companyForm.get('enableEquipmentManagement')?.value">
+                  <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
+                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                    Equipment Configuration
+                  </h3>
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                     <!-- Maintenance Scheduling -->
+                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentMaintenanceScheduling')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
                         <div>
-                          <h4 class="font-black text-slate-800 dark:text-slate-200 text-sm italic">{{ feat.label }}</h4>
-                          <p class="text-[10px] text-slate-500 font-medium tracking-tight">{{ feat.desc }}</p>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Maintenance Scheduling</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Enable scheduled maintenance</p>
                         </div>
-                      </div>
-                      <div class="w-14 h-7 rounded-full transition-all relative" [ngClass]="companyForm.get(feat.ctrl)?.value ? 'bg-indigo-600' : 'bg-slate-300'">
-                        <div class="absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-all shadow-sm" [class.translate-x-7]="companyForm.get(feat.ctrl)?.value"></div>
-                      </div>
-                    </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" formControlName="enableEquipmentMaintenanceScheduling" class="sr-only peer">
+                          <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                        </label>
+                     </div>
+                     <!-- Utilization Tracking -->
+                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentUtilizationTracking')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Utilization Tracking</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Track equipment usage hours</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" formControlName="enableEquipmentUtilizationTracking" class="sr-only peer">
+                          <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                        </label>
+                     </div>
+                     <!-- GPS Tracking -->
+                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentGPSTracking')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">GPS Tracking</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Track equipment location</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" formControlName="enableEquipmentGPSTracking" class="sr-only peer">
+                          <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                        </label>
+                     </div>
+                     <!-- Billing Integration -->
+                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentBilling')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Billing Integration</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Equipment rental billing</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" formControlName="enableEquipmentBilling" class="sr-only peer">
+                          <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                        </label>
+                     </div>
+                     <!-- Maintenance Alert Threshold -->
+                     <div class="p-6 border-2 rounded-3xl" [ngClass]="companyForm.get('equipmentMaintenanceAlertThreshold')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
+                        <span class="font-black text-[10px] uppercase tracking-widest block mb-4">Maintenance Alert (Hours)</span>
+                        <input type="number" formControlName="equipmentMaintenanceAlertThreshold" 
+                               class="w-full p-3 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-emerald-600 rounded-xl outline-none text-xs font-bold text-slate-900 dark:text-white">
+                     </div>
                   </div>
                 </section>
+
+               <!-- Daily Log Policy -->
+               <section class="pt-6">
+                 <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
+                   <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                   Daily Log Policy
+                 </h3>
+                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div (click)="toggleFormControl('allowAddProgressEntry')" 
+                         [ngClass]="companyForm.get('allowAddProgressEntry')?.value ? 'border-emerald-500 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-400'"
+                         class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm">📝</div>
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Log Progress</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Allow Workers to Log</p>
+                        </div>
+                    </div>
+                    <div (click)="toggleFormControl('allowReopenClosedDay')" 
+                         [ngClass]="companyForm.get('allowReopenClosedDay')?.value ? 'border-rose-500 bg-rose-50/40 text-rose-900 dark:text-rose-100' : 'border-slate-100 dark:border-slate-800 text-slate-400'"
+                         class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm">🔓</div>
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Reopen Day</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Unlock Closed Logs</p>
+                        </div>
+                    </div>
+                    <div (click)="toggleFormControl('autoCloseDay')" 
+                         [ngClass]="companyForm.get('autoCloseDay')?.value ? 'border-indigo-500 bg-indigo-50/40 text-indigo-900 dark:text-indigo-100' : 'border-slate-100 dark:border-slate-800 text-slate-400'"
+                         class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm">⏰</div>
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Auto Close</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Schedule-based Locking</p>
+                        </div>
+                    </div>
+                 </div>
+               </section>
+
+               <!-- Reviews & Visibility -->
+               <section class="pt-6 pb-4">
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <!-- Governance -->
+                    <div>
+                       <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+                         <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                         Governance & Reviews
+                       </h3>
+                       <div class="space-y-4">
+                          <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
+                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Require Photo Approval</span>
+                             <label class="relative inline-flex items-center cursor-pointer">
+                               <input type="checkbox" formControlName="requirePhotoReview" class="sr-only peer">
+                               <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
+                             </label>
+                          </div>
+                          <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
+                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Require Invoice Approval</span>
+                             <label class="relative inline-flex items-center cursor-pointer">
+                               <input type="checkbox" formControlName="enableInvoiceReview" class="sr-only peer">
+                               <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
+                             </label>
+                          </div>
+                       </div>
+                    </div>
+                    <!-- Client Edge -->
+                    <div>
+                       <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+                         <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                         Client Visibility
+                       </h3>
+                       <div class="space-y-4">
+                          <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
+                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Share Financial Status</span>
+                             <label class="relative inline-flex items-center cursor-pointer">
+                               <input type="checkbox" formControlName="clientCanSeeFinancials" class="sr-only peer">
+                               <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500"></div>
+                             </label>
+                          </div>
+                          <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
+                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Share Site Media</span>
+                             <label class="relative inline-flex items-center cursor-pointer">
+                               <input type="checkbox" formControlName="clientCanSeeMedia" class="sr-only peer">
+                               <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500"></div>
+                             </label>
+                          </div>
+                          <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
+                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Share BOQ Details</span>
+                             <label class="relative inline-flex items-center cursor-pointer">
+                               <input type="checkbox" formControlName="clientCanSeeBOQ" class="sr-only peer">
+                               <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500"></div>
+                             </label>
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+               </section>
 
                 <div class="pt-10 border-t border-slate-50 flex items-center justify-between">
                   <div class="flex items-center gap-4">
@@ -562,15 +898,6 @@ export class CompanyDetailComponent implements OnInit {
     { id: 'perms', label: 'Platform Capabilities' }
   ];
 
-  featureToggles = [
-    { ctrl: 'enableDelayNotification', icon: '🔔', label: 'Delay Notifications', desc: 'Auto-alerts for project and task deadlines' },
-    { ctrl: 'requirePhotoReview', icon: '📸', label: 'Mandatory Photo Review', desc: 'Professional approval flow for all site media' },
-    { ctrl: 'clientCanSeeFinancials', icon: '💰', label: 'Client Financial Portal', desc: 'Allow clients transparency over project budgets' },
-    { ctrl: 'enableInventoryManagement', icon: '📦', label: 'Inventory Management', desc: 'Track materials, stock levels, and warehouse operations' },
-    { ctrl: 'enableEquipmentManagement', icon: '🏗️', label: 'Equipment Management', desc: 'Manage heavy machinery and equipment fleet' },
-    { ctrl: 'enableSafetyManagement', icon: '🛡️', label: 'Safety Management', desc: 'Safety checklists, inspections, incidents, and training' },
-    { ctrl: 'enableSubcontractorManagement', icon: '🤝', label: 'Subcontractor Management', desc: 'Manage subcontractors, contracts, payments, and performance ratings' }
-  ];
 
   bills: any[] = [];
 
@@ -594,16 +921,55 @@ export class CompanyDetailComponent implements OnInit {
       name: ['', [Validators.required, Validators.minLength(3)]],
       packageId: [1, Validators.required],
       isActive: [true],
+
+      // Feature Toggles
+      enableUserManagement: [true],
+      enableProjectManagement: [true],
+      enableBOQManagement: [true],
+      enableDailyLogs: [true],
+      enableSiteMedia: [true],
+      enableEquipmentManagement: [true],
+      enableInventoryManagement: [true],
+      enableQualityControl: [true],
+      enableSafetyManagement: [true],
+      enableSubcontractorManagement: [true],
+      enableFinancialManagement: [true],
+      enableAnalytics: [true],
+      enableNotifications: [true],
+      enableDocumentManagement: [true],
+      enableDesignManagement: [true],
+      enableClientPortal: [true],
+      enableAccessControl: [true],
+      enableHRManagement: [true],
+      enableVendorManagement: [true],
+
+      // Settings
       enableDelayNotification: [true],
       requirePhotoReview: [true],
-      clientCanSeeFinancials: [false],
+      clientCanSeeFinancials: [true],
+      allowPackages: [true],
+      allowLocations: [true],
+      allowHR: [true],
+      enableEquipmentMaintenanceScheduling: [true],
+      enableEquipmentUtilizationTracking: [true],
+      enableEquipmentGPSTracking: [true],
+      enableEquipmentBilling: [true],
+      equipmentMaintenanceAlertThreshold: [50],
+      requireMaterialRequestApproval: [true],
+      materialRequestApproverRole: [''],
+      enableMultiWarehouse: [true],
+      enableStockAlerts: [true],
+      defaultLowStockThreshold: [10],
+      allowAddProgressEntry: [true],
+      allowReopenClosedDay: [true],
+      autoCloseDay: [true],
+      enableInvoiceReview: [true],
+      clientCanSeeMedia: [true],
+      clientCanSeeBOQ: [true],
+
+      // Legacy but kept for compatibility if needed, though mostly covered by new settings
       allowMeasured: [true],
       allowSupervision: [true],
-      allowPackages: [false],
-      enableInventoryManagement: [false],
-      enableEquipmentManagement: [false],
-      enableSafetyManagement: [false],
-      enableSubcontractorManagement: [false]
     });
 
     this.onboardForm = this.fb.group({
@@ -675,8 +1041,33 @@ export class CompanyDetailComponent implements OnInit {
         clientCanSeeFinancials: company.settings.clientCanSeeFinancials,
         allowMeasured: company.settings.allowMeasured,
         allowSupervision: company.settings.allowSupervision,
-        allowPackages: company.settings.allowPackages
+        allowPackages: company.settings.allowPackages,
+
+        // Patch new settings
+        allowLocations: company.settings.allowLocations,
+        allowHR: company.settings.allowHR,
+        enableEquipmentMaintenanceScheduling: company.settings.enableEquipmentMaintenanceScheduling,
+        enableEquipmentUtilizationTracking: company.settings.enableEquipmentUtilizationTracking,
+        enableEquipmentGPSTracking: company.settings.enableEquipmentGPSTracking,
+        enableEquipmentBilling: company.settings.enableEquipmentBilling,
+        equipmentMaintenanceAlertThreshold: company.settings.equipmentMaintenanceAlertThreshold,
+        requireMaterialRequestApproval: company.settings.requireMaterialRequestApproval,
+        materialRequestApproverRole: company.settings.materialRequestApproverRole,
+        enableMultiWarehouse: company.settings.enableMultiWarehouse,
+        enableStockAlerts: company.settings.enableStockAlerts,
+        defaultLowStockThreshold: company.settings.defaultLowStockThreshold,
+        allowAddProgressEntry: company.settings.allowAddProgressEntry,
+        allowReopenClosedDay: company.settings.allowReopenClosedDay,
+        autoCloseDay: company.settings.autoCloseDay,
+        enableInvoiceReview: company.settings.enableInvoiceReview,
+        clientCanSeeMedia: company.settings.clientCanSeeMedia,
+        clientCanSeeBOQ: company.settings.clientCanSeeBOQ
       });
+      // Ensure any other matching settings are patched
+      this.companyForm.patchValue(company.settings);
+
+      // Patch Feature Toggles if they exist on the company object (assuming they are mapped)
+      this.companyForm.patchValue(company);
     }
   }
 

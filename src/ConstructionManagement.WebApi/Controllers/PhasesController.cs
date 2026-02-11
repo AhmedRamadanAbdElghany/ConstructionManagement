@@ -79,4 +79,28 @@ public class PhasesController : ControllerBase
         await _phaseService.DeleteDefaultPhaseAsync(defaultPhaseId);
         return NoContent();
     }
+
+    [HttpDelete("api/companies/{companyId}/default-phases/clear")]
+    [Authorize(Policy = "CanManageUsers")]
+    public async Task<IActionResult> ClearDefaultPhases(int companyId)
+    {
+        await _phaseService.ClearDefaultPhasesAsync(companyId);
+        return NoContent();
+    }
+
+    [HttpPost("api/default-phases/{defaultPhaseId}/reorder")]
+    [Authorize(Policy = "CanManageUsers")]
+    public async Task<IActionResult> ReorderDefaultPhase(int defaultPhaseId, [FromQuery] int direction)
+    {
+        await _phaseService.ReorderDefaultPhaseAsync(defaultPhaseId, direction);
+        return NoContent();
+    }
+
+    [HttpPost("api/default-phases/{defaultPhaseId}/items")]
+    [Authorize(Policy = "CanManageUsers")]
+    public async Task<IActionResult> AddItemsToDefaultPhase(int defaultPhaseId, [FromBody] int[] catalogItemIds)
+    {
+        await _phaseService.AddItemsToDefaultPhaseAsync(defaultPhaseId, catalogItemIds);
+        return Ok();
+    }
 }

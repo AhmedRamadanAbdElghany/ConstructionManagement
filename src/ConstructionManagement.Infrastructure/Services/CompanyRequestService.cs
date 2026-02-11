@@ -11,6 +11,7 @@ public class CompanyRequestService : ICompanyRequestService
     private readonly ICompanyRequestRepository _companyRequestRepository;
     private readonly IUserRepository _userRepository;
     private readonly ICompanyRepository _companyRepository;
+    private readonly IRepository<CompanySettings> _companySettingsRepository;
     private readonly INotificationService _notificationService;
     private readonly IEmailService _emailService;
 
@@ -18,12 +19,14 @@ public class CompanyRequestService : ICompanyRequestService
         ICompanyRequestRepository companyRequestRepository,
         IUserRepository userRepository,
         ICompanyRepository companyRepository,
+        IRepository<CompanySettings> companySettingsRepository,
         INotificationService notificationService,
         IEmailService emailService)
     {
         _companyRequestRepository = companyRequestRepository;
         _userRepository = userRepository;
         _companyRepository = companyRepository;
+        _companySettingsRepository = companySettingsRepository;
         _notificationService = notificationService;
         _emailService = emailService;
     }
@@ -123,6 +126,10 @@ public class CompanyRequestService : ICompanyRequestService
         };
 
         await _companyRepository.AddAsync(company);
+
+        // Create default CompanySettings for the new company
+        var settings = new CompanySettings { CompanyId = company.Id };
+        await _companySettingsRepository.AddAsync(settings);
 
         // Update user to be Company Admin of the new company
         var user = await _userRepository.GetByIdAsync(request.UserId);

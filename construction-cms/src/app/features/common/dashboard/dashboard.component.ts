@@ -924,6 +924,9 @@ export class DashboardComponent implements OnInit {
   }
 
   loadSuperAdminView() {
+    this.dashboardService.getSuperAdminStats().subscribe(stats => {
+      this.saStats = stats;
+    });
     this.dashboardService.getDashboardStats().subscribe(stats => {
       this.stats = stats;
     });

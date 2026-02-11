@@ -275,7 +275,13 @@
     "build_from_scratch": "قم ببناء الهيكل الخاص بك من الصفر",
     "billing_parameters": "معايير الفوترة",
     "override": "تجاوز",
-    "change_role": "تغيير الدور"
+    "change_role": "تغيير الدور",
+    "clearAll": "مسح الكل",
+    "phaseHierarchy": "تسلسل المراحل",
+    "determineStructure": "تحديد الهيكل",
+    "addPhase": "إضافة مرحلة",
+    "editPhase": "تعديل مرحلة",
+    "noPhases": "لا توجد مراحل"
   },
   "locations": {
     "title": "مواقع المشاريع",

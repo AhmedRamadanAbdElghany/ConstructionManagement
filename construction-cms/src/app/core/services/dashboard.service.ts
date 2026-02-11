@@ -54,6 +54,11 @@ export class DashboardService {
         return this.http.get<DashboardStats>(`${this.apiUrl}/stats`);
     }
 
+    // GET: api/dashboard/super-admin/stats
+    getSuperAdminStats(): Observable<SuperAdminStats> {
+        return this.http.get<SuperAdminStats>(`${this.apiUrl}/super-admin/stats`);
+    }
+
     // GET: api/dashboard/subscriptions
     getCompanySubscriptions(): Observable<CompanySubscription[]> {
         return this.http.get<CompanySubscription[]>(`${this.apiUrl}/subscriptions`);

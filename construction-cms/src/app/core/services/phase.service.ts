@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 export interface PhaseItem {
     id: number;
     name: string;
+    description?: string;
     unit?: string;
     totalQuantity: number;
     executedQuantity: number;
@@ -67,6 +68,10 @@ export class PhaseService {
         return this.http.delete<void>(`${this.apiUrl}/phases/${phaseId}`);
     }
 
+    reorderPhase(id: number, direction: number): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/phases/${id}/reorder?direction=${direction}`, {});
+    }
+
     // --- Company Default Phases (Templates) ---
 
     getDefaultPhases(companyId: number): Observable<Phase[]> {
@@ -83,6 +88,22 @@ export class PhaseService {
 
     deleteDefaultPhase(defaultPhaseId: number): Observable<void> {
         return this.http.delete<void>(`${this.apiUrl}/default-phases/${defaultPhaseId}`);
+    }
+
+    clearDefaultPhases(companyId: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/companies/${companyId}/default-phases/clear`);
+    }
+
+    reorderDefaultPhase(id: number, direction: number): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/default-phases/${id}/reorder?direction=${direction}`, {});
+    }
+
+    addItemsToDefaultPhase(id: number, catalogItemIds: number[]): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/default-phases/${id}/items`, catalogItemIds);
+    }
+
+    deleteDefaultPhaseItem(defaultPhaseId: number, itemId: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/default-phases/${defaultPhaseId}/items/${itemId}`);
     }
 
     // --- Initialize Project Phases from Company Defaults ---

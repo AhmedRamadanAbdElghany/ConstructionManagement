@@ -106,6 +106,12 @@ export class AuthService {
                 if (response.user.userId && !response.user.id) {
                     response.user.id = response.user.userId;
                 }
+                if ((response.user as any).userID && !response.user.id) {
+                    response.user.id = (response.user as any).userID;
+                }
+                if (response.user.id && !response.user.userId) {
+                    response.user.userId = response.user.id;
+                }
                 localStorage.setItem('authToken', response.token);
 
                 localStorage.setItem('currentUser', JSON.stringify(response.user));
@@ -119,7 +125,7 @@ export class AuthService {
                 let userType = 2;
                 let fullName = 'Demo User';
 
-                if (request.email.includes('super') || request.email.includes('admin@super')) {
+                if (request.email.includes('super') || request.email.includes('admin@super') || request.email === 'admin@construction.com') {
                     roles = ['SuperAdmin'];
                     userType = 0;
                     fullName = 'Super Admin';

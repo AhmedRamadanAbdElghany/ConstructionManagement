@@ -274,7 +274,13 @@
     "build_from_scratch": "Build your own from scratch",
     "billing_parameters": "Billing Parameters",
     "override": "Override",
-    "change_role": "Change Role"
+    "change_role": "Change Role",
+    "clearAll": "Clear All",
+    "phaseHierarchy": "Phase Hierarchy",
+    "determineStructure": "Determine Structure",
+    "addPhase": "Add Phase",
+    "editPhase": "Edit Phase",
+    "noPhases": "No Phases"
   },
   "locations": {
     "title": "Project Locations",

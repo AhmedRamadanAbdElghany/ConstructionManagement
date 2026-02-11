@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { PhaseService, Phase } from '../../../core/services/phase.service';
 import { CatalogService } from '../../../core/services/catalog.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { CatalogItem } from '../../../shared/interfaces';
 import { PhaseNodeComponent } from './phase-node.component';
 
@@ -25,9 +26,22 @@ import { PhaseNodeComponent } from './phase-node.component';
                {{ 'determineStructure' | translate }}
             </p>
           </div>
-          <button (click)="openModal()" class="px-8 py-4 rounded-3xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-xs uppercase tracking-widest shadow-2xl hover:scale-105 active:scale-95 transition-all">
-            + {{ 'addPhase' | translate }}
-          </button>
+          <div class="flex items-center space-x-4">
+             <button (click)="clearAll()" [disabled]="isCleaning" class="px-8 py-4 rounded-3xl bg-rose-500/10 text-rose-500 font-black text-xs uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all flex items-center space-x-2">
+                @if (isCleaning) {
+                   <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                   </svg>
+                   <span>{{ 'common.processing' | translate }}</span>
+                } @else {
+                   {{ 'clearAll' | translate }}
+                }
+             </button>
+             <button (click)="openModal()" class="px-8 py-4 rounded-3xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-xs uppercase tracking-widest shadow-2xl hover:scale-105 active:scale-95 transition-all">
+               + {{ 'addPhase' | translate }}
+             </button>
+          </div>
         </div>
 
         <!-- Hierarchy Tree -->
@@ -35,41 +49,15 @@ import { PhaseNodeComponent } from './phase-node.component';
           @for (phase of phases; track phase.id) {
             <app-phase-node 
               [node]="phase"
+              [loadingMap]="loadingPhases"
               (onAddChild)="openModal(undefined, $event)"
               (onEdit)="openModal($event)"
               (onDelete)="deletePhase($event)"
-              (onAddItems)="openItemModal($event)">
+              (onAddItems)="openItemModal($event)"
+              (onDeleteItem)="onDeleteItem($event)"
+              (onMoveUp)="movePhase($event, -1)"
+              (onMoveDown)="movePhase($event, 1)">
             </app-phase-node>
-          } @empty {
-            <div class="py-16 bg-white dark:bg-slate-900 rounded-[4rem] border border-dashed border-slate-200 dark:border-white/5 shadow-xl">
-               <div class="text-center mb-12">
-                  <div class="w-24 h-24 rounded-[3rem] bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-8 opacity-50">
-                     <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                  </div>
-                  <p class="text-slate-400 font-black uppercase tracking-[0.2em] text-xs mb-2">{{ 'noPhases' | translate }}</p>
-                  <p class="text-slate-500 text-sm font-bold max-w-md mx-auto">Choose how to initialize your project hierarchy structure</p>
-               </div>
-
-               <div class="grid grid-cols-1 md:grid-cols-2 gap-6 px-12">
-                  <!-- Use Global Template -->
-                  <button (click)="useGlobalTemplate()" class="p-8 rounded-[2.5rem] bg-gradient-to-br from-cyan-500/10 to-indigo-500/10 border-2 border-cyan-500/30 hover:border-cyan-500 text-left transition-all group hover:scale-[1.02] active:scale-[0.98]">
-                     <div class="w-14 h-14 rounded-2xl bg-cyan-500/20 flex items-center justify-center text-cyan-600 mb-4 group-hover:bg-cyan-500 group-hover:text-white transition-all">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
-                     </div>
-                     <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">Use Global Template</h3>
-                     <p class="text-[11px] text-slate-500 font-bold uppercase tracking-widest">Import a pre-configured construction phase structure</p>
-                  </button>
-
-                  <!-- Start Empty -->
-                  <button (click)="openModal()" class="p-8 rounded-[2.5rem] bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-200 dark:border-white/10 hover:border-emerald-500 text-left transition-all group hover:scale-[1.02] active:scale-[0.98]">
-                     <div class="w-14 h-14 rounded-2xl bg-slate-200 dark:bg-white/10 flex items-center justify-center text-slate-500 mb-4 group-hover:bg-emerald-500 group-hover:text-white transition-all">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                     </div>
-                     <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">Start Empty</h3>
-                     <p class="text-[11px] text-slate-500 font-bold uppercase tracking-widest">Create your own custom hierarchy from scratch</p>
-                  </button>
-               </div>
-            </div>
           }
         </div>
       </div>
@@ -105,9 +93,17 @@ import { PhaseNodeComponent } from './phase-node.component';
                      <button (click)="showModal = false" class="flex-1 py-6 rounded-[2.5rem] bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
                         {{ 'common.cancel' | translate }}
                      </button>
-                     <button (click)="save()" [disabled]="!form.name" class="flex-[2] py-6 rounded-[2.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-xs uppercase tracking-widest shadow-2xl disabled:opacity-30 disabled:grayscale transition-all hover:scale-105 active:scale-95">
-                        {{ 'common.save' | translate }}
-                     </button>
+                      <button (click)="save()" [disabled]="!form.name || isSaving" class="flex-[2] py-6 rounded-[2.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-xs uppercase tracking-widest shadow-2xl disabled:opacity-30 disabled:grayscale transition-all hover:scale-105 active:scale-95 flex items-center justify-center space-x-3">
+                         @if (isSaving) {
+                            <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span>{{ 'common.processing' | translate }}</span>
+                         } @else {
+                            <span>{{ 'common.save' | translate }}</span>
+                         }
+                      </button>
                   </div>
                </div>
             </div>
@@ -153,9 +149,17 @@ import { PhaseNodeComponent } from './phase-node.component';
                                     Remove
                                  </button>
                               } @else {
-                                 <button (click)="linkItem(item)" class="px-6 py-3 rounded-2xl bg-white dark:bg-slate-800 text-slate-400 hover:text-emerald-500 hover:shadow-lg transition-all font-black text-[10px] uppercase tracking-widest border border-slate-200 dark:border-white/5">
-                                    Add to Phase
-                                 </button>
+                                  <button (click)="linkItem(item)" [disabled]="loadingLinkIds[item.id]" class="px-6 py-3 rounded-2xl bg-white dark:bg-slate-800 text-slate-400 hover:text-emerald-500 hover:shadow-lg transition-all font-black text-[10px] uppercase tracking-widest border border-slate-200 dark:border-white/5 flex items-center space-x-2">
+                                     @if (loadingLinkIds[item.id]) {
+                                        <svg class="animate-spin h-3 w-3 text-emerald-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <span>Adding...</span>
+                                     } @else {
+                                        <span>Add to Phase</span>
+                                     }
+                                  </button>
                               }
                            </div>
                         }
@@ -198,8 +202,16 @@ import { PhaseNodeComponent } from './phase-node.component';
                            <span class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Add to company global catalog</span>
                         </div>
                      </div>
-                     <button (click)="createNewItem()" [disabled]="!newItemForm.name" class="w-full py-6 rounded-[2.5rem] bg-emerald-500 text-white font-black text-xs uppercase tracking-widest shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50">
-                        Create & Attach to Phase
+                     <button (click)="createNewItem()" [disabled]="!newItemForm.name || isCreatingItem" class="w-full py-6 rounded-[2.5rem] bg-emerald-500 text-white font-black text-xs uppercase tracking-widest shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center space-x-3">
+                        @if (isCreatingItem) {
+                           <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                           </svg>
+                           <span>Creating & Linking...</span>
+                        } @else {
+                           <span>Create & Attach to Phase</span>
+                        }
                      </button>
                   </div>
                }
@@ -223,6 +235,11 @@ export class ProjectHierarchyComponent implements OnInit {
    selectedPhase?: Phase;
    parentPhase?: Phase;
    form = { name: '' };
+   isSaving = false;
+   isCleaning = false;
+   isCreatingItem = false;
+   loadingLinkIds: { [key: number]: boolean } = {};
+   loadingPhases: { [key: number]: string } = {};
    newItemForm: Partial<CatalogItem> = {
       name: '',
       unit: 'm2',
@@ -232,7 +249,8 @@ export class ProjectHierarchyComponent implements OnInit {
 
    constructor(
       private phaseService: PhaseService,
-      private catalogService: CatalogService
+      private catalogService: CatalogService,
+      private authService: AuthService
    ) { }
 
    ngOnInit() {
@@ -241,7 +259,8 @@ export class ProjectHierarchyComponent implements OnInit {
    }
 
    loadPhases() {
-      this.phaseService.getDefaultPhases(1).subscribe((p: Phase[]) => this.phases = p);
+      const companyId = this.authService.getCurrentUser()?.companyId || 1;
+      this.phaseService.getDefaultPhases(companyId).subscribe((p: Phase[]) => this.phases = p);
    }
 
    loadCatalog() {
@@ -264,7 +283,7 @@ export class ProjectHierarchyComponent implements OnInit {
          { name: 'تشطيب خارجي', order: 1, parentPhaseId: undefined, isChild: 5 }
       ];
 
-      const companyId = 1;
+      const companyId = this.authService.getCurrentUser()?.companyId || 1;
       const parentMap: { [key: number]: number } = {};
       let rootIndex = 0;
 
@@ -319,39 +338,43 @@ export class ProjectHierarchyComponent implements OnInit {
       // Check if already linked
       if (this.isItemLinked(item.id)) return;
 
-      this.selectedPhase.items.push({
-         id: item.id,
-         name: item.name,
-         unit: item.unit,
-         rate: item.defaultRate || 0,
-         totalQuantity: 0,
-         executedQuantity: 0
+      this.loadingLinkIds[item.id] = true;
+      this.phaseService.addItemsToDefaultPhase(this.selectedPhase.id, [item.id]).subscribe({
+         next: () => {
+            this.loadPhases();
+            delete this.loadingLinkIds[item.id];
+         },
+         error: () => delete this.loadingLinkIds[item.id]
       });
-
-      // Persist to service for demo
-      this.phaseService.updateDefaultPhase(this.selectedPhase.id, {
-         items: this.selectedPhase.items
-      } as any).subscribe();
    }
 
    unlinkItem(itemId: number) {
-      if (!this.selectedPhase || !this.selectedPhase.items) return;
-      this.selectedPhase.items = this.selectedPhase.items.filter(i => i.id !== itemId);
+      if (!this.selectedPhase) return;
+      this.phaseService.deleteDefaultPhaseItem(this.selectedPhase.id, itemId).subscribe(() => {
+         this.loadPhases();
+      });
+   }
 
-      // Persist to service for demo
-      this.phaseService.updateDefaultPhase(this.selectedPhase.id, {
-         items: this.selectedPhase.items
-      } as any).subscribe();
+   onDeleteItem(event: { phase: Phase, itemId: number }) {
+      if (confirm('Unlink this item?')) {
+         this.selectedPhase = event.phase;
+         this.unlinkItem(event.itemId);
+      }
    }
 
    createNewItem() {
       if (!this.selectedPhase || !this.newItemForm.name) return;
+      this.isCreatingItem = true;
 
       if (this.addToGlobal) {
-         this.catalogService.addCatalogItem(this.newItemForm).subscribe(createdItem => {
-            this.linkItem(createdItem);
-            this.loadCatalog();
-            this.closeNewItemForm();
+         this.catalogService.addCatalogItem(this.newItemForm).subscribe({
+            next: (createdItem) => {
+               this.linkItem(createdItem);
+               this.loadCatalog();
+               this.closeNewItemForm();
+               this.isCreatingItem = false;
+            },
+            error: () => this.isCreatingItem = false
          });
       } else {
          // Create local-only item for this phase (not added to global service)
@@ -361,6 +384,7 @@ export class ProjectHierarchyComponent implements OnInit {
          };
          this.linkItem(localItem);
          this.closeNewItemForm();
+         this.isCreatingItem = false;
       }
    }
 
@@ -375,29 +399,70 @@ export class ProjectHierarchyComponent implements OnInit {
    }
 
    save() {
-      const companyId = 1;
+      const companyId = this.authService.getCurrentUser()?.companyId || 1;
+      this.isSaving = true;
       if (!this.selectedPhase) {
          this.phaseService.createDefaultPhase(companyId, {
             name: this.form.name,
             parentPhaseId: this.parentPhase?.id,
             order: 0
-         }).subscribe(() => {
-            this.loadPhases();
-            this.showModal = false;
+         }).subscribe({
+            next: () => {
+               this.loadPhases();
+               this.showModal = false;
+               this.isSaving = false;
+            },
+            error: () => this.isSaving = false
          });
       } else {
          this.phaseService.updateDefaultPhase(this.selectedPhase.id, {
             name: this.form.name
-         }).subscribe(() => {
-            this.loadPhases();
-            this.showModal = false;
+         }).subscribe({
+            next: () => {
+               this.loadPhases();
+               this.showModal = false;
+               this.isSaving = false;
+            },
+            error: () => this.isSaving = false
          });
       }
    }
 
    deletePhase(id: number) {
       if (confirm('Delete this phase? All descendants will also be removed.')) {
-         this.phaseService.deleteDefaultPhase(id).subscribe(() => this.loadPhases());
+         this.loadingPhases[id] = 'deleting';
+         this.phaseService.deleteDefaultPhase(id).subscribe({
+            next: () => {
+               this.loadPhases();
+               delete this.loadingPhases[id];
+            },
+            error: () => delete this.loadingPhases[id]
+         });
       }
+   }
+
+   clearAll() {
+      if (confirm('Are you sure you want to clear the entire phase hierarchy? This cannot be undone.')) {
+         this.isCleaning = true;
+         const companyId = this.authService.getCurrentUser()?.companyId || 1;
+         this.phaseService.clearDefaultPhases(companyId).subscribe({
+            next: () => {
+               this.loadPhases();
+               this.isCleaning = false;
+            },
+            error: () => this.isCleaning = false
+         });
+      }
+   }
+
+   movePhase(id: number, direction: number) {
+      this.loadingPhases[id] = direction > 0 ? 'moving-down' : 'moving-up';
+      this.phaseService.reorderDefaultPhase(id, direction).subscribe({
+         next: () => {
+            this.loadPhases();
+            delete this.loadingPhases[id];
+         },
+         error: () => delete this.loadingPhases[id]
+      });
    }
 }

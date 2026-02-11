@@ -13,6 +13,7 @@ public class DashboardStatisticsService : IDashboardStatisticsService
     private readonly IRepository<CompanyPackage> _companyPackageRepository;
     private readonly IRepository<Company> _companyRepository;
     private readonly INotificationRepository _notificationRepository;
+    private readonly IRepository<CompanyRequest> _companyRequestRepository;
     private readonly ILogger<DashboardStatisticsService> _logger;
 
     public DashboardStatisticsService(
@@ -20,12 +21,14 @@ public class DashboardStatisticsService : IDashboardStatisticsService
         IRepository<CompanyPackage> companyPackageRepository,
         IRepository<Company> companyRepository,
         INotificationRepository notificationRepository,
+        IRepository<CompanyRequest> companyRequestRepository,
         ILogger<DashboardStatisticsService> logger)
     {
         _projectRepository = projectRepository ?? throw new ArgumentNullException(nameof(projectRepository));
         _companyPackageRepository = companyPackageRepository ?? throw new ArgumentNullException(nameof(companyPackageRepository));
         _companyRepository = companyRepository ?? throw new ArgumentNullException(nameof(companyRepository));
         _notificationRepository = notificationRepository ?? throw new ArgumentNullException(nameof(notificationRepository));
+        _companyRequestRepository = companyRequestRepository ?? throw new ArgumentNullException(nameof(companyRequestRepository));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -52,6 +55,31 @@ public class DashboardStatisticsService : IDashboardStatisticsService
             CompletedProjects = completedProjects,
             DelayedProjects = delayedProjects,
             TotalRevenue = totalRevenue
+        };
+    }
+
+    public async Task<SuperAdminStats> GetSuperAdminStatsAsync()
+    {
+        _logger.LogDebug("Fetching super admin dashboard stats");
+
+        var totalCompanies = await _companyRepository.AsQueryable().CountAsync();
+        var activeSubscriptions = await _companyRepository.AsQueryable().CountAsync(c => c.IsActive);
+        
+        // Sum of all active company package prices
+        var mrr = await _companyPackageRepository.AsQueryable()
+            .Include(cp => cp.Company)
+            .Where(cp => cp.Company != null && cp.Company.IsActive)
+            .SumAsync(cp => cp.Price);
+
+        var pendingOnboardings = await _companyRequestRepository.AsQueryable()
+            .CountAsync(cr => cr.Status == "Pending");
+
+        return new SuperAdminStats
+        {
+            TotalCompanies = totalCompanies,
+            ActiveSubscriptions = activeSubscriptions,
+            MonthlyRecurringRevenue = mrr,
+            PendingOnboardings = pendingOnboardings
         };
     }
 
@@ -140,24 +168,41 @@ public class DashboardStatisticsService : IDashboardStatisticsService
 
     public async Task<List<SuperAdminActivity>> GetSuperAdminActivitiesAsync(int? limit = null)
     {
-        _logger.LogDebug("Fetching super admin activities. Limit: {Limit}", limit);
+        _logger.LogDebug("Fetching real super admin activities. Limit: {Limit}", limit);
 
-        // For now, return mock data since we don't have an Activity entity
-        var activities = new List<SuperAdminActivity>
-        {
-            new() { Id = 1, Company = "Al-Massa Construction", Action = "Upgraded to Enterprise Tier", Time = "10 MIN AGO", Status = "success" },
-            new() { Id = 2, Company = "BuildIt Solutions", Action = "Monthly payment processed successfully", Time = "1 HOUR AGO", Status = "success" },
-            new() { Id = 3, Company = "Skyline Architects", Action = "Subscription canceled", Time = "3 HOURS AGO", Status = "danger" },
-            new() { Id = 4, Company = "Urban Development", Action = "New organization onboarded", Time = "5 HOURS AGO", Status = "success" }
-        };
+        // Fetch company requests as activities
+        var requests = await _companyRequestRepository.AsQueryable()
+            .OrderByDescending(r => r.CreatedAt)
+            .Take(limit ?? 5)
+            .Select(r => new SuperAdminActivity
+            {
+                Id = r.Id,
+                Company = r.CompanyName,
+                Action = r.Status == "Pending" ? "New boarding request submitted" : $"Request {r.Status.ToLower()}",
+                Time = GetTimeAgo(r.CreatedAt),
+                Status = r.Status == "Pending" ? "info" : (r.Status == "Approved" ? "success" : "danger")
+            })
+            .ToListAsync();
 
-        if (limit.HasValue && limit.Value > 0)
+        // If we have very few requests, add new companies as activities
+        if (requests.Count < (limit ?? 5))
         {
-            activities = activities.Take(limit.Value).ToList();
+            var companies = await _companyRepository.AsQueryable()
+                .OrderByDescending(c => c.CreatedAt)
+                .Take((limit ?? 5) - requests.Count)
+                .Select(c => new SuperAdminActivity
+                {
+                    Id = c.Id + 1000, // Offset for unique ID in this list
+                    Company = c.Name,
+                    Action = "Organization is now live",
+                    Time = GetTimeAgo(c.CreatedAt),
+                    Status = "success"
+                })
+                .ToListAsync();
+            
+            requests.AddRange(companies);
         }
 
-        _logger.LogDebug("Returning {Count} super admin activities", activities.Count);
-
-        return activities;
+        return requests.OrderByDescending(a => a.Id).Take(limit ?? 5).ToList();
     }
 }

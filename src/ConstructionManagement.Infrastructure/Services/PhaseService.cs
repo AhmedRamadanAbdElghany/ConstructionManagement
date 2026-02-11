@@ -1,6 +1,7 @@
 using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Domain.Enums;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,15 +11,24 @@ public class PhaseService : IPhaseService
 {
     private readonly IRepository<Phase> _phaseRepository;
     private readonly IRepository<CompanyDefaultPhase> _defaultPhaseRepository;
+    private readonly IRepository<CompanyDefaultPhaseItem> _defaultPhaseItemRepository;
+    private readonly IRepository<BOQItem> _boqItemRepository;
+    private readonly IRepository<CatalogItem> _catalogItemRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public PhaseService(
         IRepository<Phase> phaseRepository,
         IRepository<CompanyDefaultPhase> defaultPhaseRepository,
+        IRepository<CompanyDefaultPhaseItem> defaultPhaseItemRepository,
+        IRepository<BOQItem> boqItemRepository,
+        IRepository<CatalogItem> catalogItemRepository,
         IUnitOfWork unitOfWork)
     {
         _phaseRepository = phaseRepository;
         _defaultPhaseRepository = defaultPhaseRepository;
+        _defaultPhaseItemRepository = defaultPhaseItemRepository;
+        _boqItemRepository = boqItemRepository;
+        _catalogItemRepository = catalogItemRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -153,6 +163,7 @@ public class PhaseService : IPhaseService
     {
         var defaults = await _defaultPhaseRepository.AsQueryable()
             .Where(d => d.CompanyId == companyId)
+            .Include(d => d.Items)
             .ToListAsync();
 
         if (!defaults.Any()) return;
@@ -175,6 +186,22 @@ public class PhaseService : IPhaseService
             await _unitOfWork.SaveChangesAsync();
             oldToNewIdMap[def.Id] = newPhase.Id;
 
+            // Clone items
+            foreach (var defItem in def.Items)
+            {
+                var boqItem = new BOQItem
+                {
+                    ProjectId = projectId,
+                    PhaseId = newPhase.Id,
+                    ItemName = defItem.Name,
+                    ItemCode = "TEMPL-" + defItem.Id,
+                    Status = "جديد",
+                    AccountingType = CalculationMethod.Measured, // Default to measured
+                    CompanyId = companyId
+                };
+                await _boqItemRepository.AddAsync(boqItem);
+            }
+
             await CloneChildren(def, newPhase.Id, projectId, companyId, defaults, oldToNewIdMap);
         }
     }
@@ -195,6 +222,22 @@ public class PhaseService : IPhaseService
             await _phaseRepository.AddAsync(newPhase);
             await _unitOfWork.SaveChangesAsync();
             map[childDef.Id] = newPhase.Id;
+
+            // Clone items
+            foreach (var defItem in childDef.Items)
+            {
+                var boqItem = new BOQItem
+                {
+                    ProjectId = projectId,
+                    PhaseId = newPhase.Id,
+                    ItemName = defItem.Name,
+                    ItemCode = "TEMPL-" + defItem.Id,
+                    Status = "جديد",
+                    AccountingType = CalculationMethod.Measured,
+                    CompanyId = companyId
+                };
+                await _boqItemRepository.AddAsync(boqItem);
+            }
 
             await CloneChildren(childDef, newPhase.Id, projectId, companyId, allDefaults, map);
         }
@@ -222,10 +265,45 @@ public class PhaseService : IPhaseService
     {
         var defaults = await _defaultPhaseRepository.AsQueryable()
             .Where(d => d.CompanyId == companyId)
-            .OrderBy(d => d.Order)
+            .Include(d => d.Items)
             .ToListAsync();
 
-        return defaults.Select(d => new PhaseDto(d.Id, d.Name, d.Description, d.Order, d.ParentId, !d.Children.Any(), null, null, null, null));
+        var rootPhases = defaults.Where(d => d.ParentId == null).OrderBy(d => d.Order).ToList();
+        return rootPhases.Select(d => BuildDefaultPhaseTree(d, defaults));
+    }
+
+    private PhaseDto BuildDefaultPhaseTree(CompanyDefaultPhase phase, List<CompanyDefaultPhase> allPhases)
+    {
+        var children = allPhases
+            .Where(p => p.ParentId == phase.Id)
+            .OrderBy(p => p.Order)
+            .Select(p => BuildDefaultPhaseTree(p, allPhases))
+            .ToList();
+
+        var items = phase.Items.Select(i => new BOQItemDto(
+            i.Id,
+            "", // Template items don't have codes yet
+            i.Name,
+            "Measured",
+            "Template",
+            null,
+            null,
+            0,
+            i.Category
+        )).ToList();
+
+        return new PhaseDto(
+            phase.Id,
+            phase.Name,
+            phase.Description,
+            phase.Order,
+            phase.ParentId,
+            !children.Any(),
+            null,
+            null,
+            children,
+            items
+        );
     }
 
     public async Task UpdateDefaultPhaseAsync(int defaultPhaseId, UpdatePhaseRequest request)
@@ -247,6 +325,79 @@ public class PhaseService : IPhaseService
         if (def == null) return;
 
         await _defaultPhaseRepository.DeleteAsync(def);
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task ClearDefaultPhasesAsync(int companyId)
+    {
+        var defaults = await _defaultPhaseRepository.AsQueryable()
+            .Where(d => d.CompanyId == companyId)
+            .ToListAsync();
+        
+        foreach (var def in defaults)
+        {
+            await _defaultPhaseRepository.DeleteAsync(def);
+        }
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task AddItemsToDefaultPhaseAsync(int phaseId, IEnumerable<int> catalogItemIds)
+    {
+        var phase = await _defaultPhaseRepository.GetByIdAsync(phaseId);
+        if (phase == null) return;
+
+        var catalogItems = await _catalogItemRepository.AsQueryable()
+            .Where(ci => catalogItemIds.Contains(ci.Id))
+            .ToListAsync();
+
+        foreach (var ci in catalogItems)
+        {
+            await _defaultPhaseItemRepository.AddAsync(new CompanyDefaultPhaseItem
+            {
+                CompanyId = phase.CompanyId,
+                DefaultPhaseId = phase.Id,
+                Name = ci.Name,
+                Unit = ci.Unit,
+                DefaultRate = (decimal)ci.DefaultRate,
+                Category = ci.Category,
+                Order = 0 // Position at start or end?
+            });
+        }
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task ReorderDefaultPhaseAsync(int phaseId, int direction)
+    {
+        var phase = await _defaultPhaseRepository.GetByIdAsync(phaseId);
+        if (phase == null) return;
+
+        var siblings = await _defaultPhaseRepository.AsQueryable()
+            .Where(d => d.CompanyId == phase.CompanyId && d.ParentId == phase.ParentId)
+            .OrderBy(d => d.Order)
+            .ToListAsync();
+
+        var index = siblings.FindIndex(s => s.Id == phase.Id);
+        if (index == -1) return;
+
+        int newIndex = index + direction;
+        if (newIndex < 0 || newIndex >= siblings.Count) return;
+
+        var other = siblings[newIndex];
+
+        // Swap orders
+        int tempOrder = phase.Order;
+        phase.Order = other.Order;
+        other.Order = tempOrder;
+
+        // If orders are identical (shouldn't happen with OrderBy, but for safety)
+        if (phase.Order == other.Order)
+        {
+            if (direction < 0) phase.Order--;
+            else phase.Order++;
+        }
+
+        await _defaultPhaseRepository.UpdateAsync(phase);
+        await _defaultPhaseRepository.UpdateAsync(other);
         await _unitOfWork.SaveChangesAsync();
     }
 

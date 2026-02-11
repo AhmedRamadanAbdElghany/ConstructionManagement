@@ -16,7 +16,7 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
 @Component({
    selector: 'app-company-settings',
    standalone: true,
-   imports: [CommonModule, FormsModule, TranslateModule, RolesComponent, ProjectHierarchyComponent],
+   imports: [CommonModule, FormsModule, TranslateModule, ProjectHierarchyComponent],
    template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
@@ -44,6 +44,15 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                       class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
                   Roles & Permissions
               </button>
+              <button (click)="activeTab = 'catalog'" 
+                      [class.bg-white]="activeTab === 'catalog'" 
+                      [class.shadow-sm]="activeTab === 'catalog'"
+                      [class.text-slate-900]="activeTab === 'catalog'"
+                      [class.dark:bg-slate-700]="activeTab === 'catalog'"
+                      [class.dark:text-white]="activeTab === 'catalog'"
+                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
+                  Catalog
+              </button>
               <button (click)="activeTab = 'hierarchy'" 
                       [class.bg-white]="activeTab === 'hierarchy'" 
                       [class.shadow-sm]="activeTab === 'hierarchy'"
@@ -51,7 +60,7 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                       [class.dark:bg-slate-700]="activeTab === 'hierarchy'"
                       [class.dark:text-white]="activeTab === 'hierarchy'"
                       class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
-                  Project Hierarchy
+                  Phases
               </button>
             </div>
           </div>
@@ -328,13 +337,20 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                                   <p class="text-[10px] text-slate-500 font-medium">{{ role.description || 'Global System Role' }}</p>
                                </div>
                                <div class="flex space-x-1 opacity-0 group-hover/role:opacity-100 transition-opacity">
-                                  <button (click)="openRoleModal(role)" class="p-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-500 transition-all">
-                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                  </button>
-                                  <button (click)="deleteRole(role.id)" class="p-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-400 hover:text-red-500 transition-all">
-                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                  </button>
-                               </div>
+                                 <button (click)="openRoleModal(role)" [disabled]="isDeletingRoleId === role.id" class="p-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-500 transition-all">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                 </button>
+                                 <button (click)="deleteRole(role.id)" [disabled]="isDeletingRoleId === role.id" class="p-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-400 hover:text-red-500 transition-all flex items-center justify-center">
+                                    @if (isDeletingRoleId === role.id) {
+                                       <svg class="animate-spin w-3.5 h-3.5 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                       </svg>
+                                    } @else {
+                                       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    }
+                                 </button>
+                              </div>
                             </div>
                             }
                          </div>
@@ -690,7 +706,7 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
 
                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       @for (item of catalogItems; track item.id) {
-                      <div class="p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 hover:border-cyan-500/50 transition-all group/catalogItem">
+                      <div class="p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 hover:border-cyan-500/50 transition-all group/catalogItem">
                          <div class="flex justify-between items-start mb-4">
                             <div>
                                <div class="flex items-center space-x-2 mb-1">
@@ -777,9 +793,16 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                               <button (click)="openPackageModal(pkg)" class="p-2 rounded-xl text-slate-400 hover:text-amber-500 transition-colors">
                                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                               </button>
-                              <button (click)="deletePackage(pkg.id)" class="p-2 rounded-xl text-slate-400 hover:text-red-500 transition-colors">
-                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                              </button>
+                               <button (click)="deletePackage(pkg.id)" [disabled]="isDeletingPackageId === pkg.id" class="p-2 rounded-xl text-slate-400 hover:text-red-500 transition-colors flex items-center justify-center">
+                                  @if (isDeletingPackageId === pkg.id) {
+                                     <svg class="animate-spin w-4 h-4 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                     </svg>
+                                  } @else {
+                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                  }
+                               </button>
                            </div>
                         </div>
                         <p class="text-xs text-slate-500 line-clamp-2">{{ pkg.description }}</p>
@@ -802,11 +825,132 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
         }
 
         @if (activeTab === 'roles') {
-           <app-roles></app-roles>
+           <div class="space-y-12">
+              <section class="space-y-8">
+                  <div class="flex items-center justify-between mb-2">
+                     <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
+                           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A10.003 10.003 0 0022 10V3l-7 3-7-3v7c0 1.259.231 2.464.653 3.571"></path>
+                           </svg>
+                        </div>
+                        <div>
+                           <h2 class="text-sm font-black text-slate-400 uppercase tracking-[0.2em]">Roles & Permissions</h2>
+                           <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">Access Control Management</p>
+                        </div>
+                     </div>
+                     <button (click)="openRoleModal()" class="px-5 py-2.5 rounded-xl bg-indigo-500 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-500/20">
+                        + Add Role
+                     </button>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                     @for (role of companyRoles; track role.id) {
+                     <div class="p-6 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 shadow-xl hover:border-indigo-500/50 transition-all group/role">
+                        <div class="flex justify-between items-start mb-4">
+                           <div>
+                              <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ role.name }}</h4>
+                              <p class="text-[10px] text-slate-500 font-medium">{{ role.description || 'No description' }}</p>
+                           </div>
+                            <div class="flex space-x-1">
+                               <button (click)="openLinkModal(role)" [disabled]="isDeletingRoleId === role.id" title="Manage Permissions" class="p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 hover:text-fuchsia-500 transition-all">
+                                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                               </button>
+                               <button (click)="openRoleModal(role)" [disabled]="isDeletingRoleId === role.id" title="Edit Role" class="p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-500 transition-all">
+                                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                               </button>
+                               <button (click)="deleteRole(role.id)" [disabled]="isDeletingRoleId === role.id" title="Delete Role" class="p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 hover:text-red-500 transition-all flex items-center justify-center">
+                                  @if (isDeletingRoleId === role.id) {
+                                     <svg class="animate-spin w-3.5 h-3.5 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                     </svg>
+                                  } @else {
+                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                  }
+                               </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-slate-100 dark:border-white/5">
+                           <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Permissions</p>
+                           <div class="flex flex-wrap gap-1">
+                              @for (perm of role.permissions; track perm.id) {
+                                 <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[8px] font-bold">{{ perm.name }}</span>
+                              } @empty {
+                                 <span class="text-[8px] text-slate-400 italic">No permissions assigned</span>
+                              }
+                           </div>
+                        </div>
+                     </div>
+                     }
+                  </div>
+              </section>
+           </div>
         }
 
         @if (activeTab === 'hierarchy') {
-           <app-project-hierarchy></app-project-hierarchy>
+           <div class="bg-white dark:bg-slate-900 rounded-[3rem] shadow-xl border border-slate-200 dark:border-white/5 overflow-hidden">
+              <app-project-hierarchy></app-project-hierarchy>
+           </div>
+        }
+
+        @if (activeTab === 'catalog') { <!-- catalog-tab-start -->
+           <div class="space-y-12">
+              <!-- Catalog Section -->
+              <section class="space-y-8">
+                 <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center space-x-4">
+                       <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-500">
+                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+                          </svg>
+                       </div>
+                       <div>
+                          <h2 class="text-sm font-black text-slate-400 uppercase tracking-[0.2em]">Company Catalog</h2>
+                          <p class="text-[10px] text-cyan-500 font-bold uppercase tracking-widest">Master Items for Projects</p>
+                       </div>
+                    </div>
+                    <button (click)="openCatalogModal()" class="px-5 py-2.5 rounded-xl bg-cyan-500 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-cyan-500/20">
+                       + Add Item
+                    </button>
+                 </div>
+
+                 <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                       @for (item of catalogItems; track item.id) {
+                        <div class="p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 hover:border-cyan-500/50 transition-all group/catalog">
+                           <div class="flex justify-between items-start mb-4">
+                              <div class="flex-1">
+                                 <h4 class="font-bold text-slate-900 dark:text-white tracking-tight">{{ item.name }}</h4>
+                                 <p class="text-[11px] text-slate-500 italic mt-2">{{ item.description || 'No description provided' }}</p>
+                              </div>
+                              <div class="flex space-x-1 opacity-0 group-hover/catalog:opacity-100 transition-opacity">
+                                 <button (click)="openCatalogModal(item)" [disabled]="isDeletingCatalogId === item.id" class="p-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-400 hover:text-cyan-500 transition-all">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                 </button>
+                                 <button (click)="deleteCatalogItem(item.id)" [disabled]="isDeletingCatalogId === item.id" class="p-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-400 hover:text-red-500 transition-all flex items-center justify-center">
+                                    @if (isDeletingCatalogId === item.id) {
+                                       <svg class="animate-spin w-3.5 h-3.5 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                       </svg>
+                                    } @else {
+                                       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    }
+                                 </button>
+                              </div>
+                           </div>
+                        </div>
+                       } @empty {
+                          <div class="col-span-full py-12 text-center border-2 border-dashed border-slate-100 dark:border-white/5 rounded-[2.5rem]">
+                             <p class="text-slate-400 font-bold text-sm uppercase tracking-widest">Your catalog is empty</p>
+                          </div>
+                       }
+                    </div>
+                 </div>
+              </section>
+           </div>
         }
       </div>
 
@@ -844,8 +988,16 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                <button (click)="showPackageModal = false" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest">
                   {{ 'common.cancel' | translate }}
                </button>
-               <button (click)="savePackage()" class="flex-1 py-4 rounded-2xl bg-amber-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-amber-500/20">
-                  {{ 'common.save' | translate }}
+               <button (click)="savePackage()" [disabled]="!packageForm.name || isSavingPackage" class="flex-[2] py-4 rounded-2xl bg-amber-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-3 transition-all hover:scale-105 active:scale-95 disabled:opacity-50">
+                  @if (isSavingPackage) {
+                     <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                     </svg>
+                     <span>Processing...</span>
+                  } @else {
+                     <span>{{ 'common.save' | translate }}</span>
+                  }
                </button>
             </div>
          </div>
@@ -871,14 +1023,22 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                </div>
             </div>
 
-            <div class="flex space-x-4 mt-8">
-               <button (click)="showRoleModal = false" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest">
-                  {{ 'common.cancel' | translate }}
-               </button>
-               <button (click)="saveRole()" class="flex-1 py-4 rounded-2xl bg-indigo-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20">
-                  {{ 'common.save' | translate }}
-               </button>
-            </div>
+                  <div class="flex space-x-4 pt-10">
+                     <button (click)="showRoleModal = false" class="flex-1 py-6 rounded-[2.5rem] bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+                        {{ 'common.cancel' | translate }}
+                     </button>
+                     <button (click)="saveRole()" [disabled]="!roleForm.name || isSavingRole" class="flex-[2] py-6 rounded-[2.5rem] bg-indigo-600 text-white font-black text-xs uppercase tracking-widest shadow-2xl disabled:opacity-30 transition-all hover:scale-105 flex items-center justify-center space-x-3">
+                        @if (isSavingRole) {
+                           <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                           </svg>
+                           <span>Processing...</span>
+                        } @else {
+                           <span>{{ (selectedRole ? 'common.update' : 'common.save') | translate }}</span>
+                        }
+                     </button>
+                  </div>
          </div>
       </div>
       }
@@ -919,8 +1079,16 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                <button (click)="showLinkModal = false" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest">
                   {{ 'common.cancel' | translate }}
                </button>
-               <button (click)="saveLink()" class="flex-1 py-4 rounded-2xl bg-fuchsia-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-fuchsia-500/20">
-                  {{ 'common.save' | translate }}
+               <button (click)="saveLink()" [disabled]="isSavingRole" class="flex-[2] py-4 rounded-2xl bg-fuchsia-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-fuchsia-500/20 flex items-center justify-center space-x-3 transition-all hover:scale-105 active:scale-95 disabled:opacity-50">
+                  @if (isSavingRole) {
+                     <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                     </svg>
+                     <span>Processing...</span>
+                  } @else {
+                     <span>{{ 'common.save' | translate }}</span>
+                  }
                </button>
             </div>
          </div>
@@ -935,59 +1103,33 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                {{ (selectedCatalogItem ? 'editItem' : 'addItem') | translate }}
             </h2>
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-6">
                <div class="col-span-2">
                   <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'itemName' | translate }}</label>
                   <input type="text" [(ngModel)]="catalogForm.name" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold">
                </div>
-               <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'itemUnit' | translate }}</label>
-                  <input type="text" [(ngModel)]="catalogForm.unit" placeholder="e.g. m3, Ton, LS" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold">
-               </div>
-               <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'itemRate' | translate }}</label>
-                  <input type="number" [(ngModel)]="catalogForm.defaultRate" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold">
-               </div>
                <div class="col-span-2">
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'itemCategory' | translate }}</label>
-                  <select [(ngModel)]="catalogForm.category" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold appearance-none">
-                     <option value="Preliminaries">Preliminaries</option>
-                     <option value="Labor">Labor</option>
-                     <option value="Material">Material</option>
-                     <option value="Equipment">Equipment</option>
-                     <option value="Other">Other</option>
-                  </select>
-               </div>
-               <div class="col-span-2">
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Assignment</label>
-                  <div class="flex space-x-2">
-                     <button (click)="catalogForm.projectId = undefined" 
-                             [class.bg-cyan-500]="!catalogForm.projectId"
-                             [class.text-white]="!catalogForm.projectId"
-                             [class.bg-slate-100]="catalogForm.projectId"
-                             [class.dark:bg-slate-800]="catalogForm.projectId"
-                             class="flex-1 py-3 rounded-xl font-bold text-[10px] uppercase transition-all">
-                        {{ 'companyGlobal' | translate }}
-                     </button>
-                     <div class="flex-1 relative">
-                        <input type="number" [(ngModel)]="catalogForm.projectId" placeholder="Project ID"
-                               class="w-full py-3 px-4 rounded-xl bg-slate-100 dark:bg-slate-950 font-bold text-[10px] outline-none">
-                        @if (catalogForm.projectId) {
-                           <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[8px] font-black text-amber-500 uppercase">{{ 'projectSpecific' | translate }}</span>
-                        }
-                     </div>
-                  </div>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'itemDesc' | translate }}</label>
+                  <textarea [(ngModel)]="catalogForm.description" rows="3" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-medium"></textarea>
                </div>
             </div>
 
-            <div class="flex space-x-4 mt-8">
-               <button (click)="showCatalogModal = false" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest">
-                  {{ 'common.cancel' | translate }}
-               </button>
-               <button (click)="saveCatalogItem()" class="flex-1 py-4 rounded-2xl bg-cyan-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-cyan-500/20">
-                  {{ 'common.save' | translate }}
-               </button>
-            </div>
+                  <div class="flex space-x-4 pt-12">
+                     <button (click)="showCatalogModal = false" class="flex-1 py-6 rounded-[2.5rem] bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+                        {{ 'common.cancel' | translate }}
+                     </button>
+                     <button (click)="saveCatalogItem()" [disabled]="!catalogForm.name || isSavingCatalog" class="flex-[2] py-6 rounded-[2.5rem] bg-cyan-500 text-white font-black text-xs uppercase tracking-widest shadow-2xl disabled:opacity-30 transition-all hover:scale-105 flex items-center justify-center space-x-3">
+                        @if (isSavingCatalog) {
+                           <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                           </svg>
+                           <span>Processing...</span>
+                        } @else {
+                           <span>{{ (selectedCatalogItem ? 'common.update' : 'common.save') | translate }}</span>
+                        }
+                     </button>
+                  </div>
          </div>
       </div>
       }
@@ -1013,8 +1155,16 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                <button (click)="showPermissionModal = false" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest">
                   {{ 'common.cancel' | translate }}
                </button>
-               <button (click)="savePermission()" class="flex-1 py-4 rounded-2xl bg-indigo-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20">
-                  {{ 'common.save' | translate }}
+               <button (click)="savePermission()" [disabled]="!permissionForm.name || isSavingPermission" class="flex-[2] py-4 rounded-2xl bg-indigo-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20 flex items-center justify-center space-x-3 transition-all hover:scale-105 active:scale-95 disabled:opacity-50">
+                  @if (isSavingPermission) {
+                     <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                     </svg>
+                     <span>Processing...</span>
+                  } @else {
+                     <span>{{ 'common.save' | translate }}</span>
+                  }
                </button>
             </div>
          </div>
@@ -1032,12 +1182,21 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
   `]
 })
 export class CompanySettingsComponent implements OnInit {
-   activeTab: 'settings' | 'roles' | 'hierarchy' = 'settings';
+   activeTab: 'settings' | 'roles' | 'hierarchy' | 'catalog' = 'settings';
    settings?: CompanySettings;
    private originalSettings?: string;
+   isCreatingGlobal = false;
    loading = false;
 
    companyPackages: CompanyPackage[] = [];
+   isSavingPackage = false;
+   isDeletingPackageId: number | null = null;
+   isSavingRole = false;
+   isDeletingRoleId: number | null = null;
+   isSavingPermission = false;
+   isDeletingPermissionId: number | null = null;
+   isSavingCatalog = false;
+   isDeletingCatalogId: number | null = null;
    companyRoles: Role[] = [];
    companyPermissions: Permission[] = [];
    catalogItems: CatalogItem[] = [];
@@ -1072,9 +1231,7 @@ export class CompanySettingsComponent implements OnInit {
 
    catalogForm: Partial<CatalogItem> = {
       name: '',
-      unit: '',
-      defaultRate: 0,
-      category: 'Other'
+      description: ''
    };
 
    linkForm: Permission[] = [];
@@ -1098,7 +1255,8 @@ export class CompanySettingsComponent implements OnInit {
    }
 
    get isOnlyCompanyAdmin(): boolean {
-      return this.authService.getCurrentUser()?.role === 'CompanyAdmin';
+      const user = this.authService.getCurrentUser();
+      return user?.role === 'CompanyAdmin' && user?.userType === 2; // 2 = CompanyOwner
    }
 
    get isDirty(): boolean {
@@ -1108,9 +1266,9 @@ export class CompanySettingsComponent implements OnInit {
 
    ngOnInit() {
       this.loadSettings();
-      // Assuming companyId 1 or fetching from context
-      this.loadPackages(1);
-      this.loadRolesAndPermissions();
+      const companyId = this.authService.getCurrentUser()?.companyId || 1;
+      this.loadPackages(companyId);
+      this.loadRolesAndPermissions(companyId);
       this.loadCatalogItems();
    }
 
@@ -1125,8 +1283,8 @@ export class CompanySettingsComponent implements OnInit {
       this.packageService.getPackages(companyId).subscribe(pkgs => this.companyPackages = pkgs);
    }
 
-   loadRolesAndPermissions() {
-      this.rolesService.getRoles().subscribe(roles => this.companyRoles = roles);
+   loadRolesAndPermissions(companyId?: number) {
+      this.rolesService.getRoles(companyId).subscribe(roles => this.companyRoles = roles);
       this.rolesService.getPermissions().subscribe(perms => this.companyPermissions = perms);
    }
 
@@ -1174,23 +1332,40 @@ export class CompanySettingsComponent implements OnInit {
    }
 
    savePackage() {
-      const companyId = 1; // Placeholder
+      const companyId = this.authService.getCurrentUser()?.companyId || 1;
+      this.isSavingPackage = true;
       if (this.selectedPackage) {
-         this.packageService.updatePackage(this.selectedPackage.id, this.packageForm).subscribe(() => {
-            this.loadPackages(companyId);
-            this.showPackageModal = false;
+         this.packageService.updatePackage(this.selectedPackage.id, this.packageForm).subscribe({
+            next: () => {
+               this.loadPackages(companyId);
+               this.showPackageModal = false;
+               this.isSavingPackage = false;
+            },
+            error: () => this.isSavingPackage = false
          });
       } else {
-         this.packageService.createPackage(this.packageForm as any).subscribe(() => {
-            this.loadPackages(companyId);
-            this.showPackageModal = false;
+         this.packageService.createPackage(this.packageForm as any).subscribe({
+            next: () => {
+               this.loadPackages(companyId);
+               this.showPackageModal = false;
+               this.isSavingPackage = false;
+            },
+            error: () => this.isSavingPackage = false
          });
       }
    }
 
    deletePackage(id: number) {
       if (confirm('Are you sure?')) {
-         this.packageService.deletePackage(id).subscribe(() => this.loadPackages(1));
+         this.isDeletingPackageId = id;
+         const companyId = this.authService.getCurrentUser()?.companyId || 1;
+         this.packageService.deletePackage(id).subscribe({
+            next: () => {
+               this.loadPackages(companyId);
+               this.isDeletingPackageId = null;
+            },
+            error: () => this.isDeletingPackageId = null
+         });
       }
    }
 
@@ -1206,22 +1381,40 @@ export class CompanySettingsComponent implements OnInit {
    }
 
    saveRole() {
+      this.isSavingRole = true;
+      const companyId = this.authService.getCurrentUser()?.companyId || 1;
       if (this.selectedRole) {
-         this.rolesService.updateRole(this.selectedRole.id, this.roleForm).subscribe(() => {
-            this.loadRolesAndPermissions();
-            this.showRoleModal = false;
+         this.rolesService.updateRole(this.selectedRole.id, this.roleForm).subscribe({
+            next: () => {
+               this.loadRolesAndPermissions(companyId);
+               this.showRoleModal = false;
+               this.isSavingRole = false;
+            },
+            error: () => this.isSavingRole = false
          });
       } else {
-         this.rolesService.createRole(this.roleForm).subscribe(() => {
-            this.loadRolesAndPermissions();
-            this.showRoleModal = false;
+         this.rolesService.createRole({ ...this.roleForm, companyId }).subscribe({
+            next: () => {
+               this.loadRolesAndPermissions(companyId);
+               this.showRoleModal = false;
+               this.isSavingRole = false;
+            },
+            error: () => this.isSavingRole = false
          });
       }
    }
 
    deleteRole(id: number) {
       if (confirm('Delete this role?')) {
-         this.rolesService.deleteRole(id).subscribe(() => this.loadRolesAndPermissions());
+         this.isDeletingRoleId = id;
+         const companyId = this.authService.getCurrentUser()?.companyId || 1;
+         this.rolesService.deleteRole(id).subscribe({
+            next: () => {
+               this.loadRolesAndPermissions(companyId);
+               this.isDeletingRoleId = null;
+            },
+            error: () => this.isDeletingRoleId = null
+         });
       }
    }
 
@@ -1232,15 +1425,29 @@ export class CompanySettingsComponent implements OnInit {
    }
 
    savePermission() {
-      this.rolesService.createPermission(this.permissionForm).subscribe(() => {
-         this.loadRolesAndPermissions();
-         this.showPermissionModal = false;
+      this.isSavingPermission = true;
+      this.rolesService.createPermission(this.permissionForm).subscribe({
+         next: () => {
+            const companyId = this.authService.getCurrentUser()?.companyId || 1;
+            this.loadRolesAndPermissions(companyId);
+            this.showPermissionModal = false;
+            this.isSavingPermission = false;
+         },
+         error: () => this.isSavingPermission = false
       });
    }
 
    deletePermission(id: number) {
       if (confirm('Delete this permission? It will be removed from all roles.')) {
-         this.rolesService.deletePermission(id).subscribe(() => this.loadRolesAndPermissions());
+         this.isDeletingPermissionId = id;
+         const companyId = this.authService.getCurrentUser()?.companyId || 1;
+         this.rolesService.deletePermission(id).subscribe({
+            next: () => {
+               this.loadRolesAndPermissions(companyId);
+               this.isDeletingPermissionId = null;
+            },
+            error: () => this.isDeletingPermissionId = null
+         });
       }
    }
 
@@ -1253,9 +1460,15 @@ export class CompanySettingsComponent implements OnInit {
 
    saveLink() {
       if (this.selectedRole) {
-         this.rolesService.updateRole(this.selectedRole.id, { permissions: this.linkForm }).subscribe(() => {
-            this.loadRolesAndPermissions();
-            this.showLinkModal = false;
+         this.isSavingRole = true;
+         this.rolesService.updateRole(this.selectedRole.id, { permissions: this.linkForm }).subscribe({
+            next: () => {
+               const companyId = this.authService.getCurrentUser()?.companyId || 1;
+               this.loadRolesAndPermissions(companyId);
+               this.showLinkModal = false;
+               this.isSavingRole = false;
+            },
+            error: () => this.isSavingRole = false
          });
       }
    }
@@ -1274,35 +1487,50 @@ export class CompanySettingsComponent implements OnInit {
    }
 
    // Catalog Management
-   openCatalogModal(item?: CatalogItem) {
+   openCatalogModal(item?: CatalogItem, isGlobal = false) {
       this.selectedCatalogItem = item;
+      this.isCreatingGlobal = isGlobal;
       if (item) {
          this.catalogForm = { ...item };
       } else {
-         this.catalogForm = { name: '', unit: '', defaultRate: 0, category: 'Other' };
+         this.catalogForm = { name: '', description: '' };
       }
       this.showCatalogModal = true;
    }
 
    saveCatalogItem() {
+      this.isSavingCatalog = true;
       if (this.selectedCatalogItem) {
-         this.catalogService.updateCatalogItem(this.selectedCatalogItem.id, this.catalogForm).subscribe(() => {
-            this.loadCatalogItems();
-            this.showCatalogModal = false;
+         this.catalogService.updateCatalogItem(this.selectedCatalogItem.id, this.catalogForm).subscribe({
+            next: () => {
+               this.loadCatalogItems();
+               this.showCatalogModal = false;
+               this.isSavingCatalog = false;
+            },
+            error: () => this.isSavingCatalog = false
          });
       } else {
-         this.catalogService.addCatalogItem(this.catalogForm).subscribe(() => {
-            this.loadCatalogItems();
-            this.showCatalogModal = false;
+         this.catalogService.addCatalogItem(this.catalogForm).subscribe({
+            next: () => {
+               this.loadCatalogItems();
+               this.showCatalogModal = false;
+               this.isSavingCatalog = false;
+            },
+            error: () => this.isSavingCatalog = false
          });
       }
    }
 
    deleteCatalogItem(id: number) {
       if (confirm('Delete this item from catalog?')) {
-         this.catalogService.deleteCatalogItem(id).subscribe(() => this.loadCatalogItems());
+         this.isDeletingCatalogId = id;
+         this.catalogService.deleteCatalogItem(id).subscribe({
+            next: () => {
+               this.loadCatalogItems();
+               this.isDeletingCatalogId = null;
+            },
+            error: () => this.isDeletingCatalogId = null
+         });
       }
    }
 }
-
-
