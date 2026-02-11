@@ -358,7 +358,7 @@ public class PhaseService : IPhaseService
                 DefaultPhaseId = phase.Id,
                 Name = ci.Name,
                 Unit = ci.Unit,
-                DefaultRate = (decimal)ci.DefaultRate,
+                DefaultRate = ci.DefaultRate ?? 0m,
                 Category = ci.Category,
                 Order = 0 // Position at start or end?
             });

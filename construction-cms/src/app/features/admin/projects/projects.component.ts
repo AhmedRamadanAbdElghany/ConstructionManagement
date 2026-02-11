@@ -266,7 +266,7 @@ import { map } from 'rxjs/operators';
       <!-- Create Project Modal -->
       @if (showCreateModal) {
        <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md animate-in fade-in duration-500">
-          <div class="bg-white dark:bg-slate-900 w-full max-w-5xl max-h-[90vh] rounded-[3.5rem] shadow-[0_32px_120px_-15px_rgba(0,0,0,0.5)] flex flex-col relative overflow-hidden animate-in zoom-in-95 duration-500 border border-white/10">
+          <div class="bg-white dark:bg-slate-900 w-full max-w-7xl max-h-[90vh] rounded-[3.5rem] shadow-[0_32px_120px_-15px_rgba(0,0,0,0.5)] flex flex-col relative overflow-hidden animate-in zoom-in-95 duration-500 border border-white/10">
              
              <!-- Decorative Background elements -->
              <div class="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2"></div>

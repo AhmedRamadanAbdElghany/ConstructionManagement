@@ -86,12 +86,20 @@ import { FormsModule } from '@angular/forms';
                   </div>
 
                   <div class="flex gap-4">
-                    <button (click)="approveCompany(request.id)" class="flex-1 py-4 rounded-xl bg-emerald-600 dark:bg-emerald-500 text-white font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all flex items-center justify-center gap-2">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    <button (click)="approveCompany(request.id)" [disabled]="processingId === request.id" class="flex-1 py-4 rounded-xl bg-emerald-600 dark:bg-emerald-500 text-white font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed">
+                      @if (processingId === request.id && processingAction === 'approve') {
+                        <svg class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                      } @else {
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                      }
                       {{ 'pending_requests.approve' | translate }}
                     </button>
-                    <button (click)="rejectCompany(request.id)" class="flex-1 py-4 rounded-xl bg-rose-500 text-white font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all flex items-center justify-center gap-2">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    <button (click)="rejectCompany(request.id)" [disabled]="processingId === request.id" class="flex-1 py-4 rounded-xl bg-rose-500 text-white font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed">
+                      @if (processingId === request.id && processingAction === 'reject') {
+                        <svg class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                      } @else {
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      }
                       {{ 'pending_requests.reject' | translate }}
                     </button>
                   </div>
@@ -137,12 +145,20 @@ import { FormsModule } from '@angular/forms';
                   </div>
 
                   <div class="flex gap-4">
-                    <button (click)="approveJoin(request.id)" class="flex-1 py-4 rounded-xl bg-emerald-600 dark:bg-emerald-500 text-white font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all flex items-center justify-center gap-2">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    <button (click)="approveJoin(request.id)" [disabled]="processingId === request.id" class="flex-1 py-4 rounded-xl bg-emerald-600 dark:bg-emerald-500 text-white font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed">
+                      @if (processingId === request.id && processingAction === 'approve') {
+                        <svg class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                      } @else {
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                      }
                       {{ 'pending_requests.approve' | translate }}
                     </button>
-                    <button (click)="rejectJoin(request.id)" class="flex-1 py-4 rounded-xl bg-rose-500 text-white font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all flex items-center justify-center gap-2">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    <button (click)="rejectJoin(request.id)" [disabled]="processingId === request.id" class="flex-1 py-4 rounded-xl bg-rose-500 text-white font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed">
+                      @if (processingId === request.id && processingAction === 'reject') {
+                        <svg class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                      } @else {
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      }
                       {{ 'pending_requests.reject' | translate }}
                     </button>
                   </div>
@@ -173,6 +189,8 @@ export class PendingRequestsComponent implements OnInit {
   isCompanyAdmin = computed(() => this.authService.hasRole('CompanyAdmin'));
 
   activeTab: 'companies' | 'joins' = 'companies';
+  processingId: number | null = null;
+  processingAction: 'approve' | 'reject' | '' = '';
   companyRequests = signal<CompanyRequest[]>([]);
   joinRequests = signal<JoinRequest[]>([]);
 
@@ -193,24 +211,44 @@ export class PendingRequestsComponent implements OnInit {
   }
 
   approveCompany(id: number) {
-    this.service.approveCompanyRequest(id).subscribe(() => this.loadData());
+    this.processingId = id;
+    this.processingAction = 'approve';
+    this.service.approveCompanyRequest(id).subscribe({
+      next: () => { this.processingId = null; this.processingAction = ''; this.loadData(); },
+      error: () => { this.processingId = null; this.processingAction = ''; }
+    });
   }
 
   rejectCompany(id: number) {
     const reason = prompt('Enter rejection reason:');
     if (reason) {
-      this.service.rejectCompanyRequest(id, reason).subscribe(() => this.loadData());
+      this.processingId = id;
+      this.processingAction = 'reject';
+      this.service.rejectCompanyRequest(id, reason).subscribe({
+        next: () => { this.processingId = null; this.processingAction = ''; this.loadData(); },
+        error: () => { this.processingId = null; this.processingAction = ''; }
+      });
     }
   }
 
   approveJoin(id: number) {
-    this.service.approveJoinRequest(id).subscribe(() => this.loadData());
+    this.processingId = id;
+    this.processingAction = 'approve';
+    this.service.approveJoinRequest(id).subscribe({
+      next: () => { this.processingId = null; this.processingAction = ''; this.loadData(); },
+      error: () => { this.processingId = null; this.processingAction = ''; }
+    });
   }
 
   rejectJoin(id: number) {
     const reason = prompt('Enter rejection reason:');
     if (reason) {
-      this.service.rejectJoinRequest(id, reason).subscribe(() => this.loadData());
+      this.processingId = id;
+      this.processingAction = 'reject';
+      this.service.rejectJoinRequest(id, reason).subscribe({
+        next: () => { this.processingId = null; this.processingAction = ''; this.loadData(); },
+        error: () => { this.processingId = null; this.processingAction = ''; }
+      });
     }
   }
 }

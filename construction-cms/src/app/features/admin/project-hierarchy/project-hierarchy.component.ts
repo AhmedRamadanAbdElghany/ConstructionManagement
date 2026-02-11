@@ -27,6 +27,7 @@ import { PhaseNodeComponent } from './phase-node.component';
             </p>
           </div>
           <div class="flex items-center space-x-4">
+             @if (phases.length > 0) {
              <button (click)="clearAll()" [disabled]="isCleaning" class="px-8 py-4 rounded-3xl bg-rose-500/10 text-rose-500 font-black text-xs uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all flex items-center space-x-2">
                 @if (isCleaning) {
                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -38,6 +39,7 @@ import { PhaseNodeComponent } from './phase-node.component';
                    {{ 'clearAll' | translate }}
                 }
              </button>
+             }
              <button (click)="openModal()" class="px-8 py-4 rounded-3xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-xs uppercase tracking-widest shadow-2xl hover:scale-105 active:scale-95 transition-all">
                + {{ 'addPhase' | translate }}
              </button>

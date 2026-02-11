@@ -377,105 +377,146 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
             }
 
             <!-- Inventory Settings Section -->
-            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
-               <div class="absolute top-0 right-0 w-32 h-32 bg-violet-500/5 rounded-full blur-3xl"></div>
-               <div class="flex items-center justify-between mb-8">
-                  <div class="flex items-center space-x-4">
-                     <div class="w-12 h-12 rounded-2xl bg-violet-500/10 flex items-center justify-center text-violet-500">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                        </svg>
-                     </div>
-                     <div>
-                        <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Inventory Management</h3>
-                        <p class="text-[10px] text-violet-500 font-bold uppercase tracking-widest">Module Settings</p>
-                     </div>
-                  </div>
-               </div>
+             @if (isSuperAdmin || settings.enableInventoryManagement) {
+             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-violet-500/5 rounded-full blur-3xl"></div>
+                <!-- Header -->
+                <div class="flex items-center justify-between mb-8">
+                   <div class="flex items-center space-x-4">
+                      <div class="w-12 h-12 rounded-2xl bg-violet-500/10 flex items-center justify-center text-violet-500">
+                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                      </div>
+                      <div>
+                         <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Inventory Management</h3>
+                         <p class="text-[10px] text-violet-500 font-bold uppercase tracking-widest">Module Settings</p>
+                      </div>
+                   </div>
+                   @if (!settings.enableInventoryManagement) {
+                      <span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 text-[10px] font-black uppercase tracking-widest">Disabled</span>
+                   } @else {
+                      <span class="px-3 py-1 rounded-full bg-violet-500/10 text-violet-600 text-[10px] font-black uppercase tracking-widest">Active</span>
+                   }
+                </div>
 
-               @if (isSuperAdmin) {
-               <div class="flex items-center justify-between p-4 rounded-2xl bg-violet-50 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/20 mb-4">
-                  <div>
-                     <span class="text-xs font-black text-violet-700 dark:text-violet-300 uppercase block">Enable Inventory Module</span>
-                     <span class="text-[8px] text-violet-500">Control whether inventory management is active</span>
-                  </div>
-                  <label class="relative inline-flex items-center cursor-pointer">
-                     <input type="checkbox" [(ngModel)]="settings.enableInventoryManagement" class="sr-only peer">
-                     <div class="w-14 h-8 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-violet-500"></div>
-                  </label>
-               </div>
-               }
+                @if (isSuperAdmin) {
+                <div class="flex items-center justify-between p-4 rounded-2xl bg-violet-50 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/20 mb-6">
+                   <div>
+                      <span class="text-xs font-black text-violet-700 dark:text-violet-300 uppercase block">Enable Inventory Module</span>
+                      <span class="text-[8px] text-violet-500">Control whether inventory management is active</span>
+                   </div>
+                   <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" [(ngModel)]="settings.enableInventoryManagement" class="sr-only peer">
+                      <div class="w-14 h-8 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-violet-500"></div>
+                   </label>
+                </div>
+                }
 
-               @if (settings.enableInventoryManagement) {
-               <div class="space-y-4">
-                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                     <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Require Material Approval</span>
-                     <input type="checkbox" [(ngModel)]="settings.requireMaterialRequestApproval" class="w-5 h-5 accent-violet-500">
-                  </div>
-                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                     <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Enable Stock Alerts</span>
-                     <input type="checkbox" [(ngModel)]="settings.enableStockAlerts" class="w-5 h-5 accent-violet-500">
-                  </div>
-               </div>
-               } @else {
-                  <p class="text-[10px] text-slate-400 italic">Inventory module is disabled. Contact Super Admin to enable it.</p>
-               }
-            </div>
+                @if (settings.enableInventoryManagement) {
+                <div class="space-y-4 animate-in slide-in-from-top-2 duration-300">
+                   <!-- Require Approval -->
+                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <div>
+                         <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">Require Material Approval</span>
+                         <span class="text-[9px] text-slate-400 font-medium">Requests need manager sign-off</span>
+                      </div>
+                      <label class="relative inline-flex items-center cursor-pointer">
+                         <input type="checkbox" [(ngModel)]="settings.requireMaterialRequestApproval" class="sr-only peer">
+                         <div class="w-11 h-6 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-violet-500"></div>
+                      </label>
+                   </div>
+                   <!-- Stock Alerts -->
+                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <div>
+                         <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">Enable Stock Alerts</span>
+                         <span class="text-[9px] text-slate-400 font-medium">Notify on low inventory levels</span>
+                      </div>
+                      <label class="relative inline-flex items-center cursor-pointer">
+                         <input type="checkbox" [(ngModel)]="settings.enableStockAlerts" class="sr-only peer">
+                         <div class="w-11 h-6 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-violet-500"></div>
+                      </label>
+                   </div>
+                </div>
+                }
+             </div>
+             }
 
             <!-- Equipment Management Settings Section -->
-            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
-               <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl"></div>
-               <div class="flex items-center justify-between mb-8">
-                  <div class="flex items-center space-x-4">
-                     <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path>
-                        </svg>
-                     </div>
-                     <div>
-                        <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Equipment Management</h3>
-                        <p class="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">Asset tracking & Maintenance</p>
-                     </div>
-                  </div>
-               </div>
+             @if (isSuperAdmin || settings.enableEquipmentManagement) {
+             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl"></div>
+                <div class="flex items-center justify-between mb-8">
+                   <div class="flex items-center space-x-4">
+                      <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path></svg>
+                      </div>
+                      <div>
+                         <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Equipment Management</h3>
+                         <p class="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">Asset tracking & Maintenance</p>
+                      </div>
+                   </div>
+                      @if (!settings.enableEquipmentManagement) {
+                      <span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 text-[10px] font-black uppercase tracking-widest">Disabled</span>
+                   } @else {
+                      <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 text-[10px] font-black uppercase tracking-widest">Active</span>
+                   }
+                </div>
 
-               @if (isSuperAdmin) {
-               <div class="flex items-center justify-between p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 mb-4">
-                  <div>
-                     <span class="text-xs font-black text-emerald-700 dark:text-emerald-300 uppercase block">Enable Equipment Module</span>
-                     <span class="text-[8px] text-emerald-500">Control asset tracking and billing</span>
-                  </div>
-                  <label class="relative inline-flex items-center cursor-pointer">
-                     <input type="checkbox" [(ngModel)]="settings.enableEquipmentManagement" class="sr-only peer">
-                     <div class="w-14 h-8 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500"></div>
-                  </label>
-               </div>
-               }
+                @if (isSuperAdmin) {
+                <div class="flex items-center justify-between p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 mb-6">
+                   <div>
+                      <span class="text-xs font-black text-emerald-700 dark:text-emerald-300 uppercase block">Enable Equipment Module</span>
+                      <span class="text-[8px] text-emerald-500">Control asset tracking and billing</span>
+                   </div>
+                   <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" [(ngModel)]="settings.enableEquipmentManagement" class="sr-only peer">
+                      <div class="w-14 h-8 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500"></div>
+                   </label>
+                </div>
+                }
 
-               @if (settings.enableEquipmentManagement) {
-               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                     <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">GPS Tracking</span>
-                     <input type="checkbox" [(ngModel)]="settings.enableEquipmentGpsTracking" class="w-5 h-5 accent-emerald-500">
-                  </div>
-                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                     <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Rental Billing</span>
-                     <input type="checkbox" [(ngModel)]="settings.enableEquipmentRentalBilling" class="w-5 h-5 accent-emerald-500">
-                  </div>
-                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                     <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Utilization Tracking</span>
-                     <input type="checkbox" [(ngModel)]="settings.enableEquipmentUtilizationTracking" class="w-5 h-5 accent-emerald-500">
-                  </div>
-                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                     <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Maintenance Alert (Days)</span>
-                     <input type="number" [(ngModel)]="settings.maintenanceReminderDays" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
-                  </div>
-               </div>
-               } @else {
-                  <p class="text-[10px] text-slate-400 italic">Equipment module is disabled. Contact Super Admin to enable it.</p>
-               }
-            </div>
+                @if (settings.enableEquipmentManagement) {
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in slide-in-from-top-2 duration-300">
+                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <div>
+                        <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">GPS Tracking</span>
+                        <span class="text-[9px] text-slate-400 font-medium">Real-time location updates</span>
+                      </div>
+                      <label class="relative inline-flex items-center cursor-pointer">
+                         <input type="checkbox" [(ngModel)]="settings.enableEquipmentGpsTracking" class="sr-only peer">
+                         <div class="w-11 h-6 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                      </label>
+                   </div>
+                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <div>
+                        <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">Rental Billing</span>
+                        <span class="text-[9px] text-slate-400 font-medium">Track costs for rented gear</span>
+                      </div>
+                      <label class="relative inline-flex items-center cursor-pointer">
+                         <input type="checkbox" [(ngModel)]="settings.enableEquipmentRentalBilling" class="sr-only peer">
+                         <div class="w-11 h-6 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                      </label>
+                   </div>
+                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <div>
+                        <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">Utilization</span>
+                        <span class="text-[9px] text-slate-400 font-medium">Track usage hours</span>
+                      </div>
+                      <label class="relative inline-flex items-center cursor-pointer">
+                         <input type="checkbox" [(ngModel)]="settings.enableEquipmentUtilizationTracking" class="sr-only peer">
+                         <div class="w-11 h-6 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                      </label>
+                   </div>
+                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                      <div>
+                         <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">Maintenance Alert</span>
+                         <span class="text-[9px] text-slate-400 font-medium">Days before service due</span>
+                      </div>
+                      <input type="number" [(ngModel)]="settings.maintenanceReminderDays" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs text-center">
+                   </div>
+                </div>
+                }
+             </div>
+             }
 
             <!-- Safety Management Settings Section -->
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
@@ -1051,27 +1092,54 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
             <p class="text-[10px] font-black text-fuchsia-500 uppercase tracking-widest mb-8">{{ selectedRole?.name }}</p>
 
             <div class="space-y-6">
-               <div class="p-6 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">{{ 'selectPermissions' | translate }}</label>
-                  <div class="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
-                     @for (perm of companyPermissions; track perm.id) {
-                     <button 
-                        (click)="togglePermissionInMapping(perm)"
-                        [class.ring-2]="isPermissionSelectedInMapping(perm.id)"
-                        [class.ring-fuchsia-500]="isPermissionSelectedInMapping(perm.id)"
-                        [class.bg-white]="!isPermissionSelectedInMapping(perm.id)"
-                        [class.dark:bg-slate-800]="!isPermissionSelectedInMapping(perm.id)"
-                        [class.bg-fuchsia-500/5]="isPermissionSelectedInMapping(perm.id)"
-                        class="p-4 rounded-xl text-left transition-all border border-slate-200 dark:border-white/5 hover:border-fuchsia-500/30 group/p">
-                        <div class="flex items-center justify-between">
-                           <span class="text-xs font-bold text-slate-900 dark:text-white">{{ perm.name }}</span>
-                           @if (isPermissionSelectedInMapping(perm.id)) {
-                              <svg class="w-4 h-4 text-fuchsia-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-                           }
-                        </div>
-                     </button>
-                     }
+               <!-- Search & Filter -->
+               <div class="relative">
+                  <input type="text" [(ngModel)]="permissionSearch" placeholder="Search permissions..." 
+                         class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-sm font-bold outline-none focus:ring-2 focus:ring-fuchsia-500/20 transition-all">
+                  <svg class="absolute left-3 top-3.5 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+               </div>
+
+               <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-400 px-1">
+                  <span>{{ availablePermissionsForLinking.length }} Permissions Available</span>
+                  <div class="flex space-x-2">
+                     <button (click)="selectAllPermissions()" class="hover:text-fuchsia-500 transition-colors">Select All</button>
+                     <span>/</span>
+                     <button (click)="deselectAllPermissions()" class="hover:text-slate-600 transition-colors">None</button>
                   </div>
+               </div>
+
+               <div class="p-2 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 max-h-[400px] overflow-y-auto custom-scrollbar">
+                  @for (group of permissionGroups; track group.name) {
+                     @if (group.permissions.length > 0) {
+                        <div class="mb-4 last:mb-0">
+                           <h3 class="sticky top-0 bg-slate-50 dark:bg-slate-950/95 backdrop-blur-sm py-2 px-2 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-200 dark:border-white/5 mb-2 z-10">
+                              {{ group.name }}
+                              <span class="ml-2 px-1.5 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-500 text-[8px]">{{ group.permissions.length }}</span>
+                           </h3>
+                           <div class="grid grid-cols-1 gap-2">
+                              @for (perm of group.permissions; track perm.id) {
+                              <button 
+                                 (click)="togglePermissionInMapping(perm)"
+                                 [class.bg-fuchsia-500]="isPermissionSelectedInMapping(perm.id)"
+                                 [class.text-white]="isPermissionSelectedInMapping(perm.id)"
+                                 [class.bg-white]="!isPermissionSelectedInMapping(perm.id)"
+                                 [class.dark:bg-slate-900]="!isPermissionSelectedInMapping(perm.id)"
+                                 [class.text-slate-600]="!isPermissionSelectedInMapping(perm.id)"
+                                 [class.dark:text-slate-300]="!isPermissionSelectedInMapping(perm.id)"
+                                 class="p-3 rounded-xl text-left transition-all border border-slate-200 dark:border-white/5 hover:border-fuchsia-500/50 group/p flex items-center justify-between shadow-sm">
+                                 <div class="flex flex-col">
+                                    <span class="text-xs font-bold">{{ perm.name }}</span>
+                                    <span class="text-[9px] opacity-70 font-medium">{{ perm.desc || 'No description' }}</span>
+                                 </div>
+                                 @if (isPermissionSelectedInMapping(perm.id)) {
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                 }
+                              </button>
+                              }
+                           </div>
+                        </div>
+                     }
+                  }
                </div>
             </div>
 
@@ -1484,6 +1552,57 @@ export class CompanySettingsComponent implements OnInit {
       } else {
          this.linkForm.splice(index, 1);
       }
+   }
+
+   permissionSearch = '';
+
+   get availablePermissionsForLinking(): Permission[] {
+      let perms = this.companyPermissions;
+
+      // Filter out System.* permissions for non-SuperAdmins
+      if (!this.isSuperAdmin) {
+         perms = perms.filter(p => !p.name.startsWith('System.'));
+      }
+
+      // Filter by search query
+      if (this.permissionSearch) {
+         const query = this.permissionSearch.toLowerCase();
+         perms = perms.filter(p =>
+            p.name.toLowerCase().includes(query) ||
+            (p.desc && p.desc.toLowerCase().includes(query))
+         );
+      }
+
+      return perms;
+   }
+
+   get permissionGroups() {
+      const groups: { [key: string]: Permission[] } = {};
+      const perms = this.availablePermissionsForLinking;
+
+      perms.forEach(p => {
+         const prefix = p.name.includes('.') ? p.name.split('.')[0] : 'Other';
+         if (!groups[prefix]) groups[prefix] = [];
+         groups[prefix].push(p);
+      });
+
+      return Object.keys(groups).sort().map(name => ({
+         name,
+         permissions: groups[name]
+      }));
+   }
+
+   selectAllPermissions() {
+      this.availablePermissionsForLinking.forEach(p => {
+         if (!this.isPermissionSelectedInMapping(p.id)) {
+            this.linkForm.push(p);
+         }
+      });
+   }
+
+   deselectAllPermissions() {
+      const availableIds = new Set(this.availablePermissionsForLinking.map(p => p.id));
+      this.linkForm = this.linkForm.filter(p => !availableIds.has(p.id));
    }
 
    // Catalog Management
