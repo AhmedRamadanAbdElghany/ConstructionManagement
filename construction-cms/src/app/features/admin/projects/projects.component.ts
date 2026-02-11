@@ -410,9 +410,9 @@ import { map } from 'rxjs/operators';
                    <div class="lg:col-span-6 space-y-10">
 
                       <!-- Calculation Hub -->
-                      <div class="p-8 rounded-[2.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-2xl relative overflow-hidden group">
-                         <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-                            <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z"/></svg>
+                      <div class="p-8 rounded-[2.5rem] bg-white dark:bg-white/[0.03] border border-rose-100 dark:border-white/5 shadow-xl shadow-rose-500/5 relative overflow-hidden group">
+                         <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <svg class="w-24 h-24 text-rose-500" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z"/></svg>
                          </div>
 
                          <div class="flex items-center space-x-3 mb-8">
@@ -422,22 +422,22 @@ import { map } from 'rxjs/operators';
 
                          <div class="space-y-8">
                             <!-- Premium Switcher -->
-                            <div class="flex p-2 rounded-[1.5rem] bg-white/10 dark:bg-slate-900/10 border border-white/5">
+                            <div class="flex p-1.5 rounded-[1.5rem] bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-white/5">
                                @for (method of calculationMethods; track method) {
                                   <button (click)="createForm.calculationMethod = method"
-                                          [class]="createForm.calculationMethod === method ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl scale-100' : 'text-white/50 dark:text-slate-500 hover:text-white hover:bg-white/5 scale-95'"
+                                          [class]="createForm.calculationMethod === method ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-lg scale-100' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 hover:bg-white/50 scale-95'"
                                           class="flex-1 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300">{{ 'projects.' + method.toLowerCase() | translate }}</button>
                                }
                             </div>
 
                             <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
                                @if (createForm.calculationMethod === 'Measured') {
-                                  <div class="p-6 rounded-3xl bg-white/5 border border-white/10">
-                                     <label class="text-[10px] font-black uppercase tracking-widest block mb-4 opacity-60">{{ 'projects.contract_cost' | translate }}</label>
+                                  <div class="p-6 rounded-3xl bg-rose-50/50 dark:bg-rose-500/5 border border-rose-100 dark:border-white/10">
+                                     <label class="text-[10px] font-black text-rose-400 uppercase tracking-widest block mb-4">{{ 'projects.contract_cost' | translate }}</label>
                                      <div class="relative group/val">
-                                        <span class="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-cyan-500 group-focus-within/val:scale-125 transition-transform">$</span>
+                                        <span class="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-rose-500 group-focus-within/val:scale-125 transition-transform">$</span>
                                         <input type="number" [(ngModel)]="createForm.totalContractValue"
-                                               class="w-full p-6 pl-12 rounded-2xl bg-white/10 border border-white/10 focus:border-cyan-500/50 outline-none font-black text-2xl text-white transition-all shadow-inner">
+                                               class="w-full p-6 pl-12 rounded-2xl bg-white dark:bg-slate-900 border border-rose-200 dark:border-white/10 focus:border-rose-500/50 outline-none font-black text-2xl text-slate-900 dark:text-white transition-all shadow-sm">
                                      </div>
                                   </div>
                                }
@@ -445,24 +445,25 @@ import { map } from 'rxjs/operators';
                                @if (createForm.calculationMethod === 'Supervision') {
                                   <div class="space-y-4">
                                      <div (click)="createForm.useCompanyPercentage = !createForm.useCompanyPercentage"
-                                          [class]="createForm.useCompanyPercentage ? 'bg-cyan-500 border-transparent' : 'bg-white/5 border-white/10'"
-                                          class="flex items-center justify-between p-6 rounded-3xl border transition-all cursor-pointer">
+                                          [class]="createForm.useCompanyPercentage ? 'bg-white dark:bg-slate-900 border-rose-500 ring-1 ring-rose-500' : 'bg-slate-50 dark:bg-slate-900/50 border-slate-200'"
+                                          class="flex items-center justify-between p-6 rounded-3xl border transition-all cursor-pointer shadow-sm hover:shadow-md">
                                         <div>
                                            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{{ 'projects.company_default' | translate }}</p>
                                            <p class="text-[9px] text-slate-400 font-bold">{{ 'projects.configured_at' | translate }} {{ (companySettings?.defaultSupervisionPercentage || 0) }}%</p>
                                         </div>
-                                        <div class="w-10 h-10 rounded-full flex items-center justify-center bg-white/20">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center transition-colors"
+                                             [class]="createForm.useCompanyPercentage ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/30' : 'bg-slate-200 text-slate-400'">
                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" [attr.d]="createForm.useCompanyPercentage ? 'M5 13l4 4L19 7' : 'M12 4v16m8-8H4'"></path></svg>
                                         </div>
                                      </div>
 
                                      @if (!createForm.useCompanyPercentage) {
-                                        <div class="p-6 rounded-3xl bg-white/5 border border-white/10 animate-in zoom-in-95 duration-300">
-                                           <label class="text-[10px] font-black uppercase tracking-widest block mb-4 opacity-60">{{ 'projects.custom_override' | translate }}</label>
+                                        <div class="p-6 rounded-3xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 animate-in zoom-in-95 duration-300">
+                                           <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-4">{{ 'projects.custom_override' | translate }}</label>
                                            <div class="relative">
-                                              <span class="absolute right-6 top-1/2 -translate-y-1/2 text-2xl font-black text-cyan-400">%</span>
+                                              <span class="absolute right-6 top-1/2 -translate-y-1/2 text-2xl font-black text-rose-500">%</span>
                                               <input type="number" [(ngModel)]="createForm.supervisionPercentage"
-                                                     class="w-full p-6 rounded-2xl bg-white/10 border border-white/10 focus:border-cyan-500 outline-none font-black text-2xl text-white">
+                                                     class="w-full p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 focus:border-rose-500 outline-none font-black text-2xl text-slate-900 dark:text-white shadow-sm">
                                            </div>
                                         </div>
                                      }
@@ -470,17 +471,17 @@ import { map } from 'rxjs/operators';
                                }
 
                                @if (createForm.calculationMethod === 'Packages') {
-                                  <div class="p-6 rounded-3xl bg-white/5 border border-white/10">
-                                     <label class="text-[10px] font-black uppercase tracking-widest block mb-4 opacity-60">{{ 'projects.service_package' | translate }}</label>
+                                  <div class="p-6 rounded-3xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10">
+                                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-4">{{ 'projects.service_package' | translate }}</label>
                                      <div class="relative">
                                         <select [(ngModel)]="createForm.packageId"
-                                                class="w-full p-6 pr-12 rounded-2xl bg-white/10 border border-white/10 focus:border-cyan-500 outline-none font-black text-lg text-white appearance-none cursor-pointer">
-                                           <option [ngValue]="null" class="text-slate-900">{{ 'projects.select_package' | translate }}</option>
+                                                class="w-full p-6 pr-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 focus:border-rose-500 outline-none font-black text-lg text-slate-900 dark:text-white appearance-none cursor-pointer shadow-sm">
+                                           <option [ngValue]="null" class="text-slate-400">{{ 'projects.select_package' | translate }}</option>
                                            @for (pkg of availablePackages; track pkg.id) {
                                               <option [value]="pkg.id" class="text-slate-900">{{ pkg.name }} — {{ pkg.price | currency }}</option>
                                            }
                                         </select>
-                                        <svg class="absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 pointer-events-none opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                                        <svg class="absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 pointer-events-none text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
                                      </div>
                                   </div>
                                }
