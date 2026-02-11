@@ -150,7 +150,7 @@ public class DashboardStatisticsService : IDashboardStatisticsService
         };
     }
 
-    private string GetTimeAgo(DateTime dateTime)
+    private static string GetTimeAgo(DateTime dateTime)
     {
         var timeSpan = DateTime.UtcNow - dateTime;
 
@@ -171,10 +171,12 @@ public class DashboardStatisticsService : IDashboardStatisticsService
         _logger.LogDebug("Fetching real super admin activities. Limit: {Limit}", limit);
 
         // Fetch company requests as activities
-        var requests = await _companyRequestRepository.AsQueryable()
+        var requestsData = await _companyRequestRepository.AsQueryable()
             .OrderByDescending(r => r.CreatedAt)
             .Take(limit ?? 5)
-            .Select(r => new SuperAdminActivity
+            .ToListAsync();
+
+        var requests = requestsData.Select(r => new SuperAdminActivity
             {
                 Id = r.Id,
                 Company = r.CompanyName,
@@ -182,15 +184,17 @@ public class DashboardStatisticsService : IDashboardStatisticsService
                 Time = GetTimeAgo(r.CreatedAt),
                 Status = r.Status == "Pending" ? "info" : (r.Status == "Approved" ? "success" : "danger")
             })
-            .ToListAsync();
+            .ToList();
 
         // If we have very few requests, add new companies as activities
         if (requests.Count < (limit ?? 5))
         {
-            var companies = await _companyRepository.AsQueryable()
+            var companiesData = await _companyRepository.AsQueryable()
                 .OrderByDescending(c => c.CreatedAt)
                 .Take((limit ?? 5) - requests.Count)
-                .Select(c => new SuperAdminActivity
+                .ToListAsync();
+
+            var companies = companiesData.Select(c => new SuperAdminActivity
                 {
                     Id = c.Id + 1000, // Offset for unique ID in this list
                     Company = c.Name,
@@ -198,7 +202,7 @@ public class DashboardStatisticsService : IDashboardStatisticsService
                     Time = GetTimeAgo(c.CreatedAt),
                     Status = "success"
                 })
-                .ToListAsync();
+                .ToList();
             
             requests.AddRange(companies);
         }
