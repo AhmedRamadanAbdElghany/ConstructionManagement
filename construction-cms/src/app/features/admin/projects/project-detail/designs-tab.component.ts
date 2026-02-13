@@ -17,710 +17,300 @@ interface DesignGroup {
     standalone: true,
     imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule],
     template: `
-        <div class="min-h-screen bg-slate-50/50 dark:bg-slate-950/50 transition-colors duration-500 pb-20">
-            <!-- Premium Header -->
-            <div class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-100 dark:border-white/5 mb-8">
-                <div class="max-w-[1600px] mx-auto px-8 py-6 flex items-center justify-between">
-                    <div>
-                        <div class="flex items-center space-x-3 mb-1">
-                            <div class="w-2 h-8 bg-gradient-to-b from-cyan-500 to-blue-600 rounded-full"></div>
-                            <h2 class="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
-                                {{ 'designs.title' | translate }}
-                            </h2>
-                        </div>
-                        <p class="text-slate-500 dark:text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px] ml-5">
-                            {{ 'project_detail.designs_desc' | translate }}
-                        </p>
+        <div class="min-h-screen bg-transparent transition-colors duration-500 pb-20">
+            <!-- Breadcrumbs / Navigation -->
+            <div class="mb-8 flex flex-wrap items-center gap-3">
+                <button (click)="selectCategory(null)" 
+                        class="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-slate-400 hover:text-cyan-500 transition-all shadow-sm group">
+                    <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                </button>
+                
+                @for (crumb of breadcrumbs; track crumb.id) {
+                    <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                        <button (click)="selectCategory(crumb.id)"
+                                class="px-5 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-cyan-500 transition-all shadow-sm">
+                            {{ crumb.name }}
+                        </button>
                     </div>
+                }
 
-                    <div class="flex items-center space-x-4">
-                        @if (canAddCategory) {
-                            <button (click)="openCreateCategoryModal()" 
-                                    class="px-6 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-white/5">
-                                {{ 'designs.create_category' | translate }}
-                            </button>
-                        }
-                        @if (canAddDesign) {
-                            <button (click)="showUploadModal = true" 
-                                    class="group relative px-8 py-3.5 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[10px] uppercase tracking-[0.2em] shadow-2xl hover:scale-105 active:scale-95 transition-all overflow-hidden">
-                                <span class="relative z-10 flex items-center space-x-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
-                                    <span>{{ 'designs.add_design' | translate }}</span>
-                                </span>
-                                <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                            </button>
-                        }
-                    </div>
+                <div class="ml-auto flex items-center gap-3">
+                    <button *ngIf="companyId" (click)="openImportTemplateModal()" 
+                            class="px-5 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-cyan-500 transition-all shadow-sm flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Import Template
+                    </button>
+                    <button *ngIf="canAddCategory" (click)="openCreateCategoryModal()" 
+                            class="px-5 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-emerald-500 transition-all shadow-sm flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
+                        New Folder
+                    </button>
+                    <button *ngIf="canAddDesign" (click)="showUploadModal = true" 
+                            class="px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                        Add Drawing
+                    </button>
                 </div>
             </div>
 
-            <div class="max-w-[1600px] mx-auto px-8">
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
-                    <!-- Category Tree Sidebar -->
-                    <div class="lg:col-span-1 space-y-6">
-                        <div class="sticky top-32">
-                            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-white/5 p-6 shadow-sm">
-                                <div class="flex items-center justify-between mb-8 px-2">
-                                    <h3 class="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">
-                                        {{ 'designs.select_category' | translate }}
-                                    </h3>
-                                    <span class="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-[10px] font-black text-slate-500">{{ getTotalDesignCount() }}</span>
+            @if (loading) {
+                <div class="py-24 flex flex-col items-center justify-center space-y-4">
+                    <div class="w-12 h-12 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin"></div>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] animate-pulse">Loading Explorer...</p>
+                </div>
+            } @else {
+                <!-- Grid Container -->
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                    <!-- Folders -->
+                    @for (folder of currentChildCategoriesList; track folder.id) {
+                        <div (click)="selectCategory(folder.id)" 
+                             class="group relative bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-white/5 p-8 hover:shadow-2xl hover:shadow-cyan-500/10 hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden">
+                            <div class="relative z-10">
+                                <div class="flex items-start justify-between mb-10">
+                                    <div class="w-16 h-16 rounded-3xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center group-hover:bg-cyan-500 group-hover:text-white transition-all duration-500">
+                                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path></svg>
+                                    </div>
+                                    <div class="flex items-center opacity-0 group-hover:opacity-100 transition-all">
+                                        <button (click)="openEditCategoryModal(folder); $event.stopPropagation()" class="p-2 text-slate-400 hover:text-cyan-500 transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                        </button>
+                                        <button (click)="deleteCategory(folder.id, $event); $event.stopPropagation()" class="p-2 text-slate-400 hover:text-rose-500 transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        </button>
+                                    </div>
                                 </div>
-                                
-                                <div class="space-y-2">
-                                    <!-- All Categories Button -->
-                                    <button (click)="selectCategory(null)"
-                                            [ngClass]="{
-                                                'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl shadow-slate-900/10 dark:shadow-white/10': !selectedCategoryId,
-                                                'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800': selectedCategoryId
-                                            }"
-                                            class="w-full text-left px-5 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all flex items-center justify-between">
-                                        <div class="flex items-center space-x-3">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-                                            <span>{{ 'designs.all_categories' | translate }}</span>
-                                        </div>
-                                    </button>
-
-                                    <!-- Category Tree -->
-                                    <div class="space-y-2 mt-4">
-                                        @for (category of categoryTree; track category.id) {
-                                            <div class="space-y-1">
-                                                <button (click)="selectCategory(category.id)"
-                                                        [ngClass]="{
-                                                            'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20': selectedCategoryId === category.id,
-                                                            'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 border-transparent': selectedCategoryId !== category.id
-                                                        }"
-                                                        class="w-full text-left px-5 py-3.5 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all flex items-center justify-between border">
-                                                    <div class="flex items-center space-x-3 min-w-0">
-                                                        @if (category.photoUrl) {
-                                                            <div class="w-8 h-8 rounded-lg overflow-hidden shrink-0 shadow-sm border border-slate-200/50 dark:border-white/10">
-                                                                <img [src]="category.photoUrl" class="w-full h-full object-cover">
-                                                            </div>
-                                                        } @else {
-                                                            <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">
-                                                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path></svg>
-                                                            </div>
-                                                        }
-                                                        <span class="truncate">{{ category.name }}</span>
-                                                    </div>
-                                                    <div class="flex items-center space-x-2 shrink-0 ml-4">
-                                                        @if (canAddCategory) {
-                                                            <div class="flex items-center opacity-0 group-hover:opacity-100 transition-opacity space-x-1">
-                                                                <button (click)="openCreateSubCategoryModal(category); $event.stopPropagation()"
-                                                                        title="Add Sub-category"
-                                                                        class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400 hover:text-emerald-500">
-                                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                                                </button>
-                                                                <button (click)="openEditCategoryModal(category); $event.stopPropagation()"
-                                                                        class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400 hover:text-cyan-500">
-                                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                                                </button>
-                                                                <button (click)="deleteCategory(category.id, $event)"
-                                                                        class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400 hover:text-rose-500">
-                                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                                                </button>
-                                                            </div>
-                                                        }
-                                                        @if ((category.childCategories ?? []).length > 0) {
-                                                            <button (click)="toggleCategory(category.id); $event.stopPropagation()"
-                                                                    class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors">
-                                                                <svg class="w-3.5 h-3.5 transition-transform duration-300" 
-                                                                     [class.rotate-90]="expandedCategories.has(category.id)"
-                                                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path>
-                                                                </svg>
-                                                            </button>
-                                                        }
-                                                        <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md"
-                                                              [ngClass]="selectedCategoryId === category.id ? 'bg-emerald-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'">
-                                                            {{ category.designCount || 0 }}
-                                                        </span>
-                                                    </div>
-                                                </button>
-                                                
-                                                <!-- Child Categories -->
-                                                @if (expandedCategories.has(category.id) && (category.childCategories ?? []).length > 0) {
-                                                    <div class="ml-6 py-1 space-y-1 relative">
-                                                        <div class="absolute left-[-1.5rem] top-0 bottom-4 w-px bg-slate-100 dark:bg-white/5 ml-4"></div>
-                                                        @for (child of (category.childCategories ?? []); track child.id) {
-                                                            <button (click)="selectCategory(child.id)"
-                                                                    [ngClass]="{
-                                                                        'text-emerald-500 dark:text-emerald-400 font-black': selectedCategoryId === child.id,
-                                                                        'text-slate-500 dark:text-slate-500 font-bold hover:text-slate-900 dark:hover:text-white': selectedCategoryId !== child.id
-                                                                    }"
-                                                                    class="w-full text-left pl-6 pr-4 py-2.5 text-[10px] uppercase tracking-widest transition-all flex items-center justify-between relative">
-                                                                <div class="absolute left-[-1.5rem] top-1/2 w-4 h-px bg-slate-100 dark:bg-white/5"></div>
-                                                                <span class="truncate">{{ child.name }}</span>
-                                                                <div class="flex items-center space-x-1 ml-2">
-                                                                    @if (canAddCategory) {
-                                                                        <div class="flex items-center opacity-0 group-hover:opacity-100 transition-opacity space-x-1">
-                                                                            <button (click)="openEditCategoryModal(child); $event.stopPropagation()"
-                                                                                    class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400 hover:text-cyan-500">
-                                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                                                            </button>
-                                                                            <button (click)="deleteCategory(child.id, $event)"
-                                                                                    class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400 hover:text-rose-500">
-                                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                                                            </button>
-                                                                        </div>
-                                                                    }
-                                                                    <span class="text-[9px] opacity-60">{{ child.designCount || 0 }}</span>
-                                                                </div>
-                                                            </button>
-                                                        }
-                                                    </div>
-                                                }
-                                            </div>
-                                        }
-
-                                        <!-- Uncategorized -->
-                                        @if (uncategorizedDesigns.length > 0) {
-                                            <button (click)="selectCategory(-1)"
-                                                    [ngClass]="{
-                                                        'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20': selectedCategoryId === -1,
-                                                        'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 border-transparent': selectedCategoryId !== -1
-                                                    }"
-                                                    class="w-full text-left px-5 py-3.5 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all flex items-center justify-between border mt-4">
-                                                <div class="flex items-center space-x-3">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                                                    <span>{{ 'designs.uncategorized' | translate }}</span>
-                                                </div>
-                                                <span class="text-[9px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">{{ uncategorizedDesigns.length }}</span>
-                                            </button>
-                                        }
+                                <h4 class="text-base font-black text-slate-900 dark:text-white uppercase tracking-tight truncate mb-1">{{ folder.name }}</h4>
+                                <div class="flex items-center justify-between mt-4">
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ folder.designCount || 0 }} Drawings</span>
+                                    <div class="w-8 h-8 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center text-slate-300 group-hover:text-cyan-500 transition-all">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    }
 
-                    <!-- Designs Grid Area -->
-                    <div class="lg:col-span-3">
-                        @if (selectedCategoryId && selectedCategoryId !== -1) {
-                            <div class="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                <div class="flex items-center justify-between mb-6">
-                                    <div class="flex items-center space-x-3">
-                                        <div class="w-1 h-4 bg-cyan-500 rounded-full"></div>
-                                        <h4 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">{{ 'designs.subcategories' | translate }}</h4>
-                                    </div>
-                                    @if (canAddCategory && (currentChildCategories.length > 0)) {
-                                        <button (click)="openCreateSubCategoryModal(currentCategory!)" 
-                                                class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold text-[10px] uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center gap-2 border border-slate-200 dark:border-white/5">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                            <span>{{ 'designs.create_subcategory' | translate }}</span>
-                                        </button>
-                                    }
-                                </div>
-                                
-                                @if (currentChildCategories.length > 0) {
-                                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                                        @for (child of currentChildCategories; track child.id) {
-                                            <div (click)="selectCategory(child.id)" 
-                                                 class="group p-6 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/5 hover:border-cyan-500/30 hover:shadow-xl hover:shadow-cyan-500/10 transition-all cursor-pointer relative overflow-hidden">
-                                                <div class="flex items-center space-x-4 relative z-10">
-                                                    <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center group-hover:bg-cyan-500 group-hover:text-white transition-colors duration-300">
-                                                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path></svg>
-                                                    </div>
-                                                    <div class="flex-1 min-w-0">
-                                                        <h5 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight truncate">{{ child.name }}</h5>
-                                                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">{{ child.designCount || 0 }} Designs</p>
-                                                    </div>
-                                                    <div class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-300 group-hover:text-cyan-500 transition-colors">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                                                    </div>
-                                                </div>
-                                                 <!-- Background Gradient -->
-                                                <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                            </div>
-                                        }
-                                    </div>
+                    <!-- Files -->
+                    @for (group of currentDesignsInFolder; track group.latestDesign.id) {
+                        <div class="group relative bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-white/5 overflow-hidden hover:shadow-2xl hover:shadow-slate-200/50 dark:hover:shadow-cyan-500/10 hover:-translate-y-2 transition-all duration-500">
+                            <div class="relative aspect-square overflow-hidden bg-slate-100 dark:bg-slate-800">
+                                @if (group.latestDesign.fileUrl && isImage(group.latestDesign.fileType)) {
+                                    <img [src]="group.latestDesign.fileUrl" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                                 } @else {
-                                    <div class="p-10 rounded-[2rem] bg-slate-50/50 dark:bg-slate-900/50 border border-dashed border-slate-200 dark:border-white/10 text-center group hover:border-cyan-500/30 transition-colors cursor-pointer" 
-                                         (click)="canAddCategory ? openCreateSubCategoryModal(currentCategory!) : null"
-                                         [class.cursor-pointer]="canAddCategory"
-                                         [class.cursor-default]="!canAddCategory">
-                                        <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-3 group-hover:bg-cyan-500/10 group-hover:text-cyan-500 transition-colors">
-                                            <svg class="w-6 h-6 text-slate-400 group-hover:text-cyan-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                                    <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900">
+                                        <div class="w-20 h-20 rounded-3xl bg-white dark:bg-slate-950 shadow-xl flex items-center justify-center text-slate-400 group-hover:scale-110 transition-all">
+                                            @if (group.latestDesign.fileType?.includes('pdf')) {
+                                                <svg class="w-10 h-10 text-rose-500" fill="currentColor" viewBox="0 0 24 24"><path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M14,18H10V16H14V18M14,14H10V12H14V14M13,9V3.5L18.5,9H13Z"></path></svg>
+                                            } @else {
+                                                <svg class="w-10 h-10 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                            }
                                         </div>
-                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic mb-1">{{ 'designs.no_subcategories' | translate }}</p>
-                                        @if (canAddCategory) {
-                                            <p class="text-[9px] font-black text-cyan-500 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Click to create subcategory</p>
-                                        }
                                     </div>
                                 }
+                                <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-sm flex flex-col items-center justify-center gap-4">
+                                    <div class="flex gap-2">
+                                        <button (click)="viewDesign(group.latestDesign)" class="w-12 h-12 rounded-2xl bg-white text-slate-900 flex items-center justify-center hover:scale-110 transition-all shadow-xl">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                        </button>
+                                        <button *ngIf="canAddDesign" (click)="openNewVersionModal(group.latestDesign)" class="w-12 h-12 rounded-2xl bg-cyan-500 text-white flex items-center justify-center hover:scale-110 transition-all shadow-xl shadow-cyan-500/20">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                                        </button>
+                                    </div>
+                                    <button *ngIf="canAddDesign" (click)="deleteDesign(group.latestDesign)" class="text-[10px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-500 transition-colors">Delete</button>
+                                </div>
+                                <div class="absolute top-4 left-4">
+                                    <span class="px-2 py-1 rounded-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur text-[8px] font-black uppercase tracking-widest text-slate-900 dark:text-white">v{{ group.latestDesign.version }}</span>
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider truncate mb-1">{{ group.latestDesign.name }}</h4>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">{{ group.latestDesign.originalFileName }}</p>
+                                <div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-50 dark:border-white/5">
+                                    <span class="text-[9px] font-black uppercase tracking-widest" [ngClass]="{
+                                        'text-amber-500': group.latestDesign.status === 'Draft',
+                                        'text-emerald-500': group.latestDesign.status === 'Active'
+                                    }">{{ group.latestDesign.status }}</span>
+                                    <button *ngIf="group.versions.length > 1" (click)="openVersionHistory(group)" class="text-[9px] font-black text-cyan-500 uppercase tracking-widest hover:underline">{{ group.versions.length }} Versions</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                @if (currentDesignsInFolder.length === 0 && currentChildCategoriesList.length === 0) {
+                    <div class="py-24 text-center">
+                        <div class="w-20 h-20 rounded-[2rem] bg-slate-50 dark:bg-white/5 flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">Folder is empty</h3>
+                        <div class="flex justify-center gap-4">
+                            <button *ngIf="canAddCategory" (click)="openCreateCategoryModal()" class="px-8 py-3.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all">New Folder</button>
+                            <button *ngIf="canAddDesign" (click)="showUploadModal = true" class="px-8 py-3.5 rounded-2xl bg-cyan-500 text-white text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl">Upload Drawing</button>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <!-- Modals -->
+        
+        <!-- Upload Modal -->
+        <div *ngIf="showUploadModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4" (click)="closeUploadModal()">
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] w-full max-w-lg shadow-2xl overflow-hidden" (click)="$event.stopPropagation()">
+                <div class="p-8 border-b border-slate-100 dark:border-white/5">
+                    <h3 class="text-xl font-black uppercase tracking-tight">{{ (isNewVersionMode ? 'Upload New Version' : 'Add New Drawing') }}</h3>
+                </div>
+                <div class="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Design Name</label>
+                        <input type="text" [(ngModel)]="newDesign.name" class="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5 focus:outline-none focus:ring-4 focus:ring-cyan-500/10 font-bold transition-all">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Category</label>
+                        <select [(ngModel)]="newDesign.categoryId" class="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5 focus:outline-none focus:ring-4 focus:ring-cyan-500/10 font-bold transition-all">
+                            <option [value]="null">Uncategorized</option>
+                            @for (cat of allCategories; track cat.id) {
+                                <option [value]="cat.id">{{ cat.name }}</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Description</label>
+                        <textarea [(ngModel)]="newDesign.description" rows="3" class="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5 focus:outline-none focus:ring-4 focus:ring-cyan-500/10 font-medium transition-all"></textarea>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">File</label>
+                        <div class="border-2 border-dashed border-slate-200 dark:border-white/10 rounded-[2rem] p-12 text-center hover:border-cyan-500/50 cursor-pointer transition-all group" (click)="fileInput.click()">
+                            <input #fileInput type="file" class="hidden" (change)="handleFileSelect($event)" accept=".pdf,.dwg,.dxf,.png,.jpg,.jpeg">
+                            <div class="w-16 h-16 rounded-3xl bg-slate-50 dark:bg-white/5 flex items-center justify-center mx-auto mb-4 group-hover:bg-cyan-500/10 group-hover:text-cyan-500 transition-all">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12"></path></svg>
+                            </div>
+                            <p *ngIf="!selectedFile" class="text-xs text-slate-400 font-bold uppercase tracking-widest">Select Drawing File</p>
+                            <p *ngIf="selectedFile" class="text-sm text-cyan-500 font-black">{{ selectedFile.name }}</p>
+                            <p class="text-[9px] text-slate-400 mt-2 uppercase tracking-tighter">PDF, DWG, PNG or JPG max 20MB</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-8 border-t border-slate-100 dark:border-white/5 flex items-center gap-4 bg-slate-50/50 dark:bg-white/5">
+                    <button (click)="closeUploadModal()" class="flex-1 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-slate-100 dark:hover:bg-white/5 transition-all">Cancel</button>
+                    <button (click)="uploadDesign()" [disabled]="!newDesign.name || !selectedFile || uploading" class="flex-1 px-8 py-4 rounded-2xl bg-cyan-500 text-white text-[10px] font-black uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-cyan-500/20 disabled:opacity-50 disabled:grayscale">
+                        {{ uploading ? 'Uploading...' : 'Save Drawing' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Modal -->
+        <div *ngIf="showCreateCategoryModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4" (click)="showCreateCategoryModal = false">
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] w-full max-w-md shadow-2xl overflow-hidden" (click)="$event.stopPropagation()">
+                <div class="p-8 border-b border-slate-100 dark:border-white/5">
+                    <h3 class="text-xl font-black uppercase tracking-tight">{{ (isEditCategoryMode ? 'Edit Folder' : 'New Folder') }}</h3>
+                </div>
+                <div class="p-8 space-y-6">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Folder Name</label>
+                        <input type="text" [(ngModel)]="newCategory.name" class="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 font-bold transition-all">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Description</label>
+                        <textarea [(ngModel)]="newCategory.description" rows="3" class="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 font-medium transition-all"></textarea>
+                    </div>
+                </div>
+                <div class="p-8 border-t border-slate-100 dark:border-white/5 flex items-center gap-4 bg-slate-50/50 dark:bg-white/5">
+                    <button (click)="showCreateCategoryModal = false" class="flex-1 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-slate-100 dark:hover:bg-white/5 transition-all">Cancel</button>
+                    <button (click)="isEditCategoryMode ? updateCategory() : createCategory()" [disabled]="!newCategory.name || creatingCategory" class="flex-1 px-8 py-4 rounded-2xl bg-emerald-500 text-white text-[10px] font-black uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-emerald-500/20 disabled:opacity-50">
+                        {{ creatingCategory ? 'Saving...' : 'Save Folder' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Version History Modal -->
+        <div *ngIf="showVersionHistoryModal && selectedDesign" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4" (click)="showVersionHistoryModal = false">
+            <div class="bg-white dark:bg-slate-900 rounded-[3rem] w-full max-w-2xl shadow-2xl max-h-[85vh] overflow-hidden flex flex-col" (click)="$event.stopPropagation()">
+                <div class="p-10 border-b border-slate-100 dark:border-white/5 flex items-center justify-between">
+                    <div>
+                        <h3 class="text-2xl font-black uppercase tracking-tight">{{ selectedDesign.name }}</h3>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Version History</p>
+                    </div>
+                    <button (click)="showVersionHistoryModal = false" class="p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 transition-all group">
+                        <svg class="w-6 h-6 text-slate-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                <div class="p-10 overflow-y-auto space-y-4">
+                    @for (version of selectedDesignVersions; track version.id) {
+                        <div class="flex items-center justify-between p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5 hover:border-cyan-500/30 transition-all duration-300">
+                            <div class="flex items-center gap-6">
+                                <span class="w-14 h-14 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 flex items-center justify-center font-black text-sm shadow-sm">v{{ version.version }}</span>
+                                <div>
+                                    <p class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ version.createdAt | date:'medium' }}</p>
+                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">By {{ version.createdByUserName }}</p>
+                                </div>
+                            </div>
+                            <button (click)="viewDesign(version)" class="w-14 h-14 rounded-2xl bg-cyan-500/10 text-cyan-600 hover:bg-cyan-500 hover:text-white transition-all flex items-center justify-center shadow-sm group">
+                                <svg class="w-7 h-7 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Import Modal -->
+        <div *ngIf="showImportTemplateModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4" (click)="showImportTemplateModal = false">
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] w-full max-w-md shadow-2xl overflow-hidden" (click)="$event.stopPropagation()">
+                <div class="p-8 border-b border-slate-100 dark:border-white/5">
+                    <h3 class="text-xl font-black uppercase tracking-tight">Import Standard Template</h3>
+                </div>
+                <div class="p-8 space-y-4 max-h-80 overflow-y-auto">
+                    @if (templatesLoading) {
+                        <div class="py-12 text-center flex flex-col items-center justify-center gap-3">
+                            <div class="w-10 h-10 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin"></div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest animate-pulse">Loading templates...</p>
+                        </div>
+                    } @else if (companyTemplates.length === 0) {
+                        <div class="py-12 text-center">
+                            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">No Templates Found</p>
+                        </div>
+                    } @else {
+                        @for (template of companyTemplates; track template.id) {
+                            <div (click)="selectedTemplateId = template.id" 
+                                 class="p-5 rounded-2xl border-2 transition-all cursor-pointer group"
+                                 [class.border-cyan-500]="selectedTemplateId === template.id"
+                                 [class.bg-cyan-500/[0.02]]="selectedTemplateId === template.id"
+                                 [class.border-slate-100]="selectedTemplateId !== template.id"
+                                 [class.dark:border-white/5]="selectedTemplateId !== template.id">
+                                <h4 class="text-sm font-black uppercase tracking-tight group-hover:text-cyan-500 transition-colors">{{ template.name }}</h4>
+                                <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-tighter">{{ template.description || 'No description' }}</p>
                             </div>
                         }
-                        @if (loading) {
-                            <div class="flex flex-col items-center justify-center h-96 space-y-4">
-                                <div class="relative w-23.5 h-23.5">
-                                    <div class="absolute inset-0 border-4 border-slate-100 dark:border-white/5 rounded-full"></div>
-                                    <div class="absolute inset-0 border-4 border-cyan-500 rounded-full border-t-transparent animate-spin"></div>
-                                </div>
-                                <p class="text-slate-500 dark:text-slate-400 font-black text-[10px] uppercase tracking-[0.3em] animate-pulse">Loading Designs...</p>
-                            </div>
-                        } @else if (filteredDesigns.length === 0) {
-                            <div class="bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-100 dark:border-white/5 p-20 text-center shadow-sm">
-                                <div class="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-[2rem] flex items-center justify-center mx-auto mb-8">
-                                    <svg class="w-10 h-10 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                </div>
-                                <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-3 uppercase tracking-tight">{{ 'designs.no_designs' | translate }}</h3>
-                                <p class="text-slate-500 dark:text-slate-400 font-medium mb-10 max-w-sm mx-auto leading-relaxed">{{ 'designs.no_designs_desc' | translate }}</p>
-                                @if (canAddDesign) {
-                                    <button (click)="showUploadModal = true" 
-                                            class="px-10 py-4 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-2xl">
-                                        {{ 'designs.add_design' | translate }}
-                                    </button>
-                                }
-                            </div>
-                        } @else {
-                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                            @for (group of filteredDesigns; track group.latestDesign.id) {
-                                <div class="group relative bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-white/5 overflow-hidden hover:shadow-2xl hover:shadow-slate-200/50 dark:hover:shadow-cyan-500/10 hover:-translate-y-2 transition-all duration-500">
-                                    <!-- Image Container -->
-                                    <div class="relative aspect-[4/3] overflow-hidden bg-slate-100 dark:bg-slate-800">
-                                        @if (group.latestDesign.fileUrl && (group.latestDesign.fileType?.includes('image') || group.latestDesign.fileType?.includes('png') || group.latestDesign.fileType?.includes('jpg') || group.latestDesign.fileType?.includes('jpeg'))) {
-                                            <img [src]="group.latestDesign.fileUrl" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="{{ group.latestDesign.name }}">
-                                        } @else {
-                                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900">
-                                                @if (group.latestDesign.fileType?.includes('pdf')) {
-                                                    <svg class="w-16 h-16 text-red-500/20" fill="currentColor" viewBox="0 0 24 24"><path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M14,18H10V16H14V18M14,14H10V12H14V14M13,9V3.5L18.5,9H13Z"></path></svg>
-                                                } @else {
-                                                    <svg class="w-16 h-16 text-slate-300 dark:text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                                }
-                                            </div>
-                                        }
-                                        <!-- Card Badges -->
-                                        <div class="absolute top-5 left-5 flex gap-2">
-                                            <span class="px-3 py-1.5 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white shadow-sm">
-                                                v{{ group.latestDesign.version }}
-                                            </span>
-                                        </div>
-
-                                        <div class="absolute top-5 right-5 flex gap-2">
-                                            <span class="px-3 py-1.5 rounded-xl backdrop-blur-md text-[10px] font-black uppercase tracking-widest shadow-sm"
-                                                  [ngClass]="{
-                                                      'bg-amber-500 text-white shadow-amber-500/20': group.latestDesign.status === 'Draft',
-                                                      'bg-emerald-500 text-white shadow-emerald-500/20': group.latestDesign.status === 'Active',
-                                                      'bg-slate-900/80 text-white': group.latestDesign.status === 'Archived'
-                                                  }">
-                                                {{ group.latestDesign.status }}
-                                            </span>
-                                        </div>
-
-                                        <!-- Hover Actions Overlay -->
-                                        <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 backdrop-blur-[2px]">
-                                            <button (click)="viewDesign(group.latestDesign)" 
-                                                    class="w-12 h-12 rounded-2xl bg-white text-slate-900 flex items-center justify-center hover:scale-110 active:scale-90 transition-all shadow-xl">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                            </button>
-                                            @if (canAddDesign) {
-                                                <button (click)="openNewVersionModal(group.latestDesign)" 
-                                                        class="w-12 h-12 rounded-2xl bg-cyan-500 text-white flex items-center justify-center hover:scale-110 active:scale-90 transition-all shadow-xl shadow-cyan-500/30">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                                </button>
-                                                <button (click)="deleteDesign(group.latestDesign)" 
-                                                        class="w-12 h-12 rounded-2xl bg-rose-500 text-white flex items-center justify-center hover:scale-110 active:scale-90 transition-all shadow-xl shadow-rose-500/30">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                                </button>
-                                            }
-                                        </div>
-                                    </div>
-
-                                        <!-- Content -->
-                                        <div class="p-6">
-                                        <div class="flex items-start justify-between mb-4">
-                                            <div class="min-w-0 flex-1">
-                                                <h4 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider truncate mb-1">
-                                                    {{ group.latestDesign.name }}
-                                                </h4>
-                                                <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest truncate">
-                                                    {{ group.latestDesign.originalFileName }}
-                                                </p>
-                                            </div>
-                                            @if (group.versions.length > 1) {
-                                                <button (click)="openVersionHistory(group)"
-                                                        class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-[9px] font-black uppercase tracking-widest text-slate-500 hover:text-cyan-500 transition-colors">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                    <span>{{ group.versions.length }} Versions</span>
-                                                </button>
-                                            }
-                                        </div>
-
-                                        <div class="flex items-center justify-between pt-4 border-t border-slate-50 dark:border-white/5">
-                                            <div class="flex items-center space-x-3">
-                                                <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                                                </div>
-                                                <div class="min-w-0">
-                                                    <p class="text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-tight truncate">{{ group.latestDesign.createdByUserName }}</p>
-                                                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">{{ group.latestDesign.createdAt | date:'shortDate' }}</p>
-                                                </div>
-                                            </div>
-                                            
-                                            @if (group.latestDesign.approvalStatus) {
-                                                <span [ngClass]="{
-                                                          'text-amber-500': group.latestDesign.approvalStatus === 'Pending',
-                                                          'text-emerald-500': group.latestDesign.approvalStatus === 'Approved',
-                                                          'text-rose-500': group.latestDesign.approvalStatus === 'Rejected'
-                                                      }"
-                                                      class="text-[9px] font-black uppercase tracking-[0.2em] flex items-center gap-1.5">
-                                                    <div class="w-1.5 h-1.5 rounded-full bg-current"></div>
-                                                    {{ group.latestDesign.approvalStatus }}
-                                                </span>
-                                            }
-                                        </div>
-                                        </div>
-                                    @if (group.isExpanded) {
-                                        <div class="border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-slate-800/30 p-4">
-                                            <h5 class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">{{ 'designs.version_history' | translate }}</h5>
-                                            <div class="space-y-2">
-                                                @for (version of group.versions; track version.id) {
-                                                    <div class="flex items-center gap-3 p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 hover:border-cyan-500/30 transition-colors"
-                                                         [class.border-cyan-500]="version.id === group.latestDesign.id"
-                                                         [class.bg-cyan-50]="version.id === group.latestDesign.id"
-                                                         [class.dark:bg-cyan-900/10]="version.id === group.latestDesign.id">
-                                                        <div class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center flex-shrink-0">
-                                                            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                                            </svg>
-                                                        </div>
-                                                        <div class="flex-1 min-w-0">
-                                                            <div class="flex items-center gap-2">
-                                                                <span class="font-medium text-slate-900 dark:text-white">v{{ version.version }}</span>
-                                                                @if (version.id === group.latestDesign.id) {
-                                                                    <span class="px-1.5 py-0.5 rounded bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 text-[10px] font-bold uppercase">
-                                                                        {{ 'designs.latest' | translate }}
-                                                                    </span>
-                                                                }
-                                                                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase"
-                                                                      [ngClass]="{
-                                                                          'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400': version.status === 'Draft',
-                                                                          'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400': version.status === 'Active'
-                                                                      }">
-                                                                    {{ 'designs.' + version.status.toLowerCase() | translate }}
-                                                                </span>
-                                                                @if (version.approvalStatus) {
-                                                                    <span class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase"
-                                                                          [ngClass]="{
-                                                                              'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400': version.approvalStatus === 'Pending',
-                                                                              'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400': version.approvalStatus === 'Approved',
-                                                                              'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400': version.approvalStatus === 'Rejected'
-                                                                          }">
-                                                                        {{ 'designs.approval_' + version.approvalStatus.toLowerCase() | translate }}
-                                                                    </span>
-                                                                }
-                                                            </div>
-                                                            <div class="flex items-center gap-3 mt-1 text-xs text-slate-500 dark:text-slate-400">
-                                                                <span>{{ version.createdByUserName }}</span>
-                                                                <span>{{ version.createdAt | date:'medium' }}</span>
-                                                                @if (version.fileSize) {
-                                                                    <span>{{ formatFileSize(version.fileSize) }}</span>
-                                                                }
-                                                            </div>
-                                                            @if (version.changeNotes) {
-                                                                <p class="mt-1 text-xs text-slate-600 dark:text-slate-400">{{ version.changeNotes }}</p>
-                                                            }
-                                                            @if (version.approvalStatus === 'Rejected' && version.rejectionReason) {
-                                                                <p class="mt-1 text-xs text-rose-600 dark:text-rose-400">
-                                                                    <span class="font-medium">{{ 'designs.rejection_reason' | translate }}:</span> {{ version.rejectionReason }}
-                                                                </p>
-                                                            }
-                                                        </div>
-                                                        <button (click)="viewDesign(version)"
-                                                                class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-cyan-500 transition-colors">
-                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                            </svg>
-                                                        </button>
-                                                    </div>
-                                                }
-                                            </div>
-                                        </div>
-                                    }
-                                </div> <!-- Closes group relative -->
-                            } <!-- Closes @for -->
-                        </div> <!-- Closes grid grid-cols-1 ... -->
-                    } <!-- Closes @else (line 190) -->
-                </div> <!-- Closes lg:col-span-3 (line 167) -->
-            </div> <!-- Closes grid grid-cols-1 lg:grid-cols-4 (line 58) -->
-        </div> <!-- Closes max-w-1600px (line 57) -->
-
-            <!-- Upload Modal -->
-            @if (showUploadModal) {
-                <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" (click)="closeUploadModal()">
-                    <div class="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-lg shadow-2xl" (click)="$event.stopPropagation()">
-                        <div class="p-6 border-b border-slate-200 dark:border-white/5">
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ (isNewVersionMode ? 'designs.upload_new_version' : 'designs.add_design') | translate }}</h3>
-                        </div>
-                        <div class="p-6 space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ 'designs.design_name' | translate }}</label>
-                                <input type="text" [(ngModel)]="newDesign.name" 
-                                       class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                                       placeholder="Enter design name">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ 'designs.description' | translate }}</label>
-                                <textarea [(ngModel)]="newDesign.description" rows="3"
-                                          class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                                          placeholder="Enter description"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ 'designs.select_category' | translate }}</label>
-                                <select [(ngModel)]="newDesign.categoryId"
-                                        class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                                    <option [value]="null">{{ 'designs.uncategorized' | translate }}</option>
-                                    @for (cat of allCategories; track cat.id) {
-                                        <option [value]="cat.id">{{ cat.name }}</option>
-                                    }
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ 'designs.status' | translate }}</label>
-                                <select [(ngModel)]="newDesign.status"
-                                        class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                                    <option value="Draft">{{ 'designs.draft' | translate }}</option>
-                                    <option value="Active">{{ 'designs.active' | translate }}</option>
-                                </select>
-                            </div>
-                            @if (isNewVersionMode) {
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ 'designs.change_notes' | translate }}</label>
-                                    <textarea [(ngModel)]="changeNotes" rows="2"
-                                            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                                            placeholder="Enter change notes"></textarea>
-                                </div>
-                            }
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ 'designs.upload_file' | translate }}</label>
-                                <div class="border-2 border-dashed border-slate-200 dark:border-white/10 rounded-xl p-6 text-center hover:border-cyan-500/50 transition-colors cursor-pointer"
-                                     (click)="fileInput.click()"
-                                     (dragover)="$event.preventDefault()"
-                                     (drop)="handleFileDrop($event)">
-                                    <input #fileInput type="file" class="hidden" (change)="handleFileSelect($event)" accept=".pdf,.dwg,.dxf,.png,.jpg,.jpeg">
-                                    @if (selectedFile) {
-                                        <p class="text-sm text-slate-600 dark:text-slate-400">{{ selectedFile.name }}</p>
-                                        <p class="text-xs text-slate-400 mt-1">{{ formatFileSize(selectedFile.size) }}</p>
-                                    } @else {
-                                        <svg class="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                                        </svg>
-                                        <p class="text-sm text-slate-500 dark:text-slate-400">{{ 'designs.drag_drop_hint' | translate }}</p>
-                                        <p class="text-xs text-slate-400 mt-1">{{ 'designs.supported_formats' | translate }}</p>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-6 border-t border-slate-200 dark:border-white/5 flex justify-end gap-3">
-                            <button (click)="closeUploadModal()" 
-                                    class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                                {{ 'common.cancel' | translate }}
-                            </button>
-                            <button (click)="uploadDesign()" 
-                                    [disabled]="!newDesign.name || !selectedFile || uploading"
-                                    class="px-4 py-2 rounded-xl bg-cyan-500 text-white font-medium text-sm hover:bg-cyan-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
-                                @if (uploading) {
-                                    <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                                    </svg>
-                                }
-                                {{ 'designs.upload_file' | translate }}
-                            </button>
-                        </div>
-                    </div>
+                    }
                 </div>
-            }
-
-            <!-- Create Category Modal -->
-            @if (showCreateCategoryModal) {
-                <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" (click)="showCreateCategoryModal = false">
-                    <div class="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md shadow-2xl" (click)="$event.stopPropagation()">
-                        <div class="p-6 border-b border-slate-200 dark:border-white/5">
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ (isEditCategoryMode ? 'designs.edit_category' : 'designs.create_category') | translate }}</h3>
-                        </div>
-                        <div class="p-6 space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ 'designs.category_name' | translate }}</label>
-                                <input type="text" [(ngModel)]="newCategory.name" 
-                                       class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                                       placeholder="Enter category name">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ 'designs.description' | translate }}</label>
-                                <textarea [(ngModel)]="newCategory.description" rows="3"
-                                          class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                                          placeholder="Enter description (optional)"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ 'designs.subcategory' | translate }}</label>
-                                <select [(ngModel)]="newCategory.parentCategoryId"
-                                        class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                                    <option [value]="null">{{ 'designs.new_category' | translate }}</option>
-                                    @for (cat of categoryTree; track cat.id) {
-                                        <option [value]="cat.id">{{ cat.name }}</option>
-                                    }
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ 'designs.category_image' | translate }}</label>
-                                <div class="relative w-full h-32 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-200 dark:border-white/10 flex flex-col items-center justify-center cursor-pointer hover:border-cyan-500/50 transition-colors group"
-                                     (click)="categoryFileInput.click()">
-                                     <input #categoryFileInput type="file" class="hidden" (change)="handleCategoryFileSelect($event)" accept="image/*">
-                                     @if (selectedCategoryFile) {
-                                         <div class="text-center">
-                                            <svg class="w-8 h-8 mx-auto text-cyan-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                            <p class="text-xs font-bold text-slate-700 dark:text-slate-200">{{ selectedCategoryFile.name }}</p>
-                                         </div>
-                                     } @else {
-                                         <div class="text-center">
-                                            <svg class="w-8 h-8 mx-auto text-slate-300 dark:text-slate-600 mb-2 group-hover:text-cyan-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                            <p class="text-xs text-slate-400 group-hover:text-cyan-500 transition-colors">Click to upload image</p>
-                                         </div>
-                                     }
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-6 border-t border-slate-200 dark:border-white/5 flex justify-end gap-3">
-                            <button (click)="showCreateCategoryModal = false" 
-                                    class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                                {{ 'common.cancel' | translate }}
-                            </button>
-                             <button (click)="isEditCategoryMode ? updateCategory() : createCategory()" 
-                                    [disabled]="!newCategory.name || creatingCategory"
-                                    class="px-4 py-2 rounded-xl bg-cyan-500 text-white font-medium text-sm hover:bg-cyan-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                                {{ (isEditCategoryMode ? 'common.save' : 'designs.create_category') | translate }}
-                            </button>
-                        </div>
-                    </div>
+                <div class="p-8 border-t border-slate-100 dark:border-white/5 flex items-center gap-4 bg-slate-50/50 dark:bg-white/5">
+                    <button (click)="showImportTemplateModal = false" class="flex-1 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-slate-100 dark:hover:bg-white/5 transition-all">Cancel</button>
+                    <button (click)="importTemplate()" [disabled]="!selectedTemplateId || importingTemplate" class="flex-1 px-8 py-4 rounded-2xl bg-cyan-500 text-white text-[10px] font-black uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-cyan-500/20 disabled:opacity-50">
+                        {{ importingTemplate ? 'Importing...' : 'Import Now' }}
+                    </button>
                 </div>
-            }
-
-            <!-- Version History Modal -->
-            @if (showVersionHistoryModal && selectedDesign) {
-                <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" (click)="showVersionHistoryModal = false">
-                    <div class="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-2xl shadow-2xl max-h-[80vh] overflow-hidden" (click)="$event.stopPropagation()">
-                        <div class="p-6 border-b border-slate-200 dark:border-white/5 flex items-center justify-between">
-                            <div>
-                                <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ 'designs.version_history' | translate }}</h3>
-                                <p class="text-sm text-slate-500 dark:text-slate-400">{{ selectedDesign.name }}</p>
-                            </div>
-                            <button (click)="showVersionHistoryModal = false" 
-                                    class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="p-6 overflow-y-auto max-h-[60vh]">
-                            <div class="space-y-3">
-                                @for (version of selectedDesignVersions; track version.id) {
-                                    <div class="flex items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/5 hover:border-cyan-500/30 transition-colors"
-                                         [class.border-cyan-500]="version.id === selectedDesign.id"
-                                         [class.bg-cyan-50]="version.id === selectedDesign.id"
-                                         [class.dark:bg-cyan-900/10]="version.id === selectedDesign.id">
-                                        <div class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center flex-shrink-0">
-                                            @if (version.fileType?.includes('pdf')) {
-                                                <svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M14,18H10V16H14V18M14,14H10V12H14V14M13,9V3.5L18.5,9H13Z"></path>
-                                                </svg>
-                                            } @else {
-                                                <svg class="w-6 h-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                                </svg>
-                                            }
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <div class="flex items-center gap-2 flex-wrap">
-                                                <span class="font-bold text-slate-900 dark:text-white">v{{ version.version }}</span>
-                                                @if (version.id === selectedDesign.id) {
-                                                    <span class="px-2 py-0.5 rounded bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 text-xs font-bold uppercase">
-                                                        {{ 'designs.latest' | translate }}
-                                                    </span>
-                                                }
-                                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase"
-                                                      [ngClass]="{
-                                                          'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400': version.status === 'Draft',
-                                                          'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400': version.status === 'Active'
-                                                      }">
-                                                    {{ 'designs.' + version.status.toLowerCase() | translate }}
-                                                </span>
-                                                @if (version.approvalStatus) {
-                                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase"
-                                                          [ngClass]="{
-                                                              'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400': version.approvalStatus === 'Pending',
-                                                              'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400': version.approvalStatus === 'Approved',
-                                                              'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400': version.approvalStatus === 'Rejected'
-                                                          }">
-                                                        {{ 'designs.approval_' + version.approvalStatus.toLowerCase() | translate }}
-                                                    </span>
-                                                }
-                                            </div>
-                                            <div class="mt-2 space-y-1 text-sm">
-                                                <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                                    </svg>
-                                                    <span>{{ 'designs.submitted_by' | translate }}: {{ version.createdByUserName }}</span>
-                                                </div>
-                                                <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                                    </svg>
-                                                    <span>{{ 'designs.submitted_at' | translate }}: {{ version.createdAt | date:'medium' }}</span>
-                                                </div>
-                                                @if (version.fileSize) {
-                                                    <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
-                                                        </svg>
-                                                        <span>{{ 'designs.file_size' | translate }}: {{ formatFileSize(version.fileSize) }}</span>
-                                                    </div>
-                                                }
-                                                @if (version.changeNotes) {
-                                                    <div class="mt-2 p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs">
-                                                        <span class="font-medium">{{ 'designs.change_notes' | translate }}:</span> {{ version.changeNotes }}
-                                                    </div>
-                                                }
-                                                @if (version.approvalStatus === 'Approved' && version.approvedByUserName) {
-                                                    <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                        </svg>
-                                                        <span>{{ 'designs.approved_by' | translate }}: {{ version.approvedByUserName }} ({{ version.approvedDate | date:'shortDate' }})</span>
-                                                    </div>
-                                                }
-                                                @if (version.approvalStatus === 'Rejected' && version.rejectionReason) {
-                                                    <div class="flex items-center gap-2 text-rose-600 dark:text-rose-400">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                        </svg>
-                                                        <span>{{ 'designs.rejected_reason' | translate }}: {{ version.rejectionReason }}</span>
-                                                    </div>
-                                                }
-                                            </div>
-                                        </div>
-                                        <button (click)="viewDesign(version)"
-                                                class="p-3 rounded-xl bg-cyan-500 text-white hover:bg-cyan-600 transition-colors">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
+            </div>
         </div>
     `
 })
 export class DesignsTabComponent implements OnInit, OnChanges {
     @Input() projectId!: number;
+    @Input() companyId?: number;
 
+    // Import Modal State
+    showImportTemplateModal = false;
+    templatesLoading = false;
+    companyTemplates: DesignCategory[] = [];
+    selectedTemplateId: number | null = null;
+    importingTemplate = false;
+
+    // General State
     loading = true;
     uploading = false;
     creatingCategory = false;
@@ -762,6 +352,43 @@ export class DesignsTabComponent implements OnInit, OnChanges {
     };
     selectedCategoryFile: File | null = null;
 
+    get breadcrumbs(): { id: number | null, name: string }[] {
+        const crumbs: { id: number | null, name: string }[] = [];
+        let currentId = this.selectedCategoryId;
+
+        while (currentId && currentId !== -1) {
+            const cat = this.allCategories.find(c => c.id === currentId);
+            if (cat) {
+                crumbs.unshift({ id: cat.id, name: cat.name });
+                currentId = cat.parentCategoryId ?? null;
+            } else {
+                break;
+            }
+        }
+        return crumbs;
+    }
+
+    get currentChildCategoriesList(): DesignCategory[] {
+        if (!this.selectedCategoryId) {
+            return this.categoryTree;
+        }
+        const category = this.allCategories.find(c => c.id === this.selectedCategoryId);
+        return category?.childCategories ?? [];
+    }
+
+    get currentDesignsInFolder(): DesignGroup[] {
+        if (!this.selectedCategoryId) {
+            return this.designGroups.filter(g => !g.latestDesign.categoryId);
+        }
+        return this.designGroups.filter(g => g.latestDesign.categoryId === this.selectedCategoryId);
+    }
+
+    isImage(fileType?: string): boolean {
+        if (!fileType) return false;
+        const types = ['image', 'png', 'jpg', 'jpeg'];
+        return types.some(t => fileType.toLowerCase().includes(t));
+    }
+
     get canAddDesign(): boolean {
         return this.authService.hasProjectPermission('Design.Add');
     }
@@ -772,27 +399,6 @@ export class DesignsTabComponent implements OnInit, OnChanges {
 
     get canAddCategory(): boolean {
         return this.authService.hasProjectPermission('Category.Add') || this.canAddDesign || this.authService.hasRole(['SuperAdmin', 'CompanyAdmin']);
-    }
-
-    get filteredDesigns(): DesignGroup[] {
-        if (this.selectedCategoryId === null) {
-            return this.designGroups;
-        } else if (this.selectedCategoryId === -1) {
-            return this.designGroups.filter(g => !g.latestDesign.categoryId);
-        } else {
-            const categoryIds = this.getCategoryAndSubcategoryIds(this.selectedCategoryId);
-            return this.designGroups.filter(g => g.latestDesign.categoryId && categoryIds.includes(g.latestDesign.categoryId));
-        }
-    }
-
-    get currentChildCategories(): DesignCategory[] {
-        if (!this.selectedCategoryId || this.selectedCategoryId === -1) return [];
-        const category = this.allCategories.find(c => c.id === this.selectedCategoryId);
-        return category?.childCategories ?? [];
-    }
-
-    get currentCategory(): DesignCategory | undefined {
-        return this.allCategories.find(c => c.id === this.selectedCategoryId);
     }
 
     constructor(
@@ -816,17 +422,14 @@ export class DesignsTabComponent implements OnInit, OnChanges {
         this.designService.getCategoryTree(this.projectId).subscribe({
             next: (categories) => {
                 this.categoryTree = categories;
-                this.allCategories = []; // Clear to prevent accumulation
+                this.allCategories = [];
                 this.flattenCategories(categories);
-
-                // Load dummy categories if no real categories exist
                 if (categories.length === 0) {
                     this.loading = false;
                 }
             },
             error: (err) => {
                 console.error('Error loading categories:', err);
-                // Load dummy categories on error for demo
                 this.loading = false;
             }
         });
@@ -844,7 +447,6 @@ export class DesignsTabComponent implements OnInit, OnChanges {
             }
         });
     }
-
 
     groupDesignsByVersion(): void {
         const groups = new Map<number, Design[]>();
@@ -878,6 +480,7 @@ export class DesignsTabComponent implements OnInit, OnChanges {
 
     selectCategory(categoryId: number | null): void {
         this.selectedCategoryId = categoryId;
+        this.newDesign.categoryId = categoryId;
     }
 
     toggleCategory(categoryId: number): void {
@@ -897,10 +500,6 @@ export class DesignsTabComponent implements OnInit, OnChanges {
             }
         }
         return ids;
-    }
-
-    getTotalDesignCount(): number {
-        return this.designGroups.length;
     }
 
     handleFileSelect(event: Event): void {
@@ -938,7 +537,7 @@ export class DesignsTabComponent implements OnInit, OnChanges {
         };
 
         this.designService.createDesign(this.projectId, request).subscribe({
-            next: (designId) => {
+            next: () => {
                 this.uploading = false;
                 this.closeUploadModal();
                 this.loadData();
@@ -952,6 +551,9 @@ export class DesignsTabComponent implements OnInit, OnChanges {
 
     openCreateCategoryModal(): void {
         this.resetNewCategory();
+        if (this.selectedCategoryId) {
+            this.newCategory.parentCategoryId = this.selectedCategoryId;
+        }
         this.showCreateCategoryModal = true;
     }
 
@@ -980,12 +582,6 @@ export class DesignsTabComponent implements OnInit, OnChanges {
                 this.creatingCategory = false;
             }
         });
-    }
-
-    openCreateSubCategoryModal(parentCategory: DesignCategory): void {
-        this.resetNewCategory();
-        this.newCategory.parentCategoryId = parentCategory.id;
-        this.showCreateCategoryModal = true;
     }
 
     openEditCategoryModal(category: DesignCategory): void {
@@ -1022,14 +618,10 @@ export class DesignsTabComponent implements OnInit, OnChanges {
 
     deleteCategory(categoryId: number, event: Event): void {
         event.stopPropagation();
-        if (confirm('Are you sure you want to delete this category? All designs in this category will become uncategorized.')) {
+        if (confirm('Are you sure? All designs in this folder will become uncategorized.')) {
             this.designService.deleteCategory(categoryId).subscribe({
-                next: () => {
-                    this.loadData();
-                },
-                error: (err) => {
-                    console.error('Error deleting category:', err);
-                }
+                next: () => this.loadData(),
+                error: (err) => console.error('Error deleting category:', err)
             });
         }
     }
@@ -1054,29 +646,18 @@ export class DesignsTabComponent implements OnInit, OnChanges {
         this.selectedParentDesignId = null;
         this.changeNotes = '';
         this.selectedFile = null;
-        this.newDesign = {
-            name: '',
-            description: '',
-            categoryId: null,
-            status: 'Draft'
-        };
+        this.resetNewDesign();
     }
 
     viewDesign(design: Design): void {
-        if (design.fileUrl) {
-            window.open(design.fileUrl, '_blank');
-        }
+        if (design.fileUrl) window.open(design.fileUrl, '_blank');
     }
 
     deleteDesign(design: Design): void {
-        if (confirm('Are you sure you want to delete this design?')) {
+        if (confirm('Delete this drawing?')) {
             this.designService.deleteDesign(design.id).subscribe({
-                next: () => {
-                    this.loadData();
-                },
-                error: (err) => {
-                    console.error('Error deleting design:', err);
-                }
+                next: () => this.loadData(),
+                error: (err) => console.error('Error deleting design:', err)
             });
         }
     }
@@ -1087,11 +668,43 @@ export class DesignsTabComponent implements OnInit, OnChanges {
         this.showVersionHistoryModal = true;
     }
 
+    openImportTemplateModal() {
+        if (!this.companyId) return;
+        this.showImportTemplateModal = true;
+        this.templatesLoading = true;
+        this.designService.getCompanyTemplates(this.companyId).subscribe({
+            next: (templates) => {
+                this.companyTemplates = templates;
+                this.templatesLoading = false;
+            },
+            error: (err) => {
+                console.error('Error loading templates:', err);
+                this.templatesLoading = false;
+            }
+        });
+    }
+
+    importTemplate() {
+        if (!this.selectedTemplateId || !this.projectId) return;
+        this.importingTemplate = true;
+        this.designService.importTemplate(this.projectId, this.selectedTemplateId).subscribe({
+            next: () => {
+                this.importingTemplate = false;
+                this.showImportTemplateModal = false;
+                this.loadData();
+            },
+            error: (err) => {
+                console.error('Error importing template:', err);
+                this.importingTemplate = false;
+            }
+        });
+    }
+
     private resetNewDesign(): void {
         this.newDesign = {
             name: '',
             description: '',
-            categoryId: null,
+            categoryId: this.selectedCategoryId,
             status: 'Draft'
         };
         this.selectedFile = null;

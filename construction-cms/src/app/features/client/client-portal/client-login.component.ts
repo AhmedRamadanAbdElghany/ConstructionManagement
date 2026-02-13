@@ -3,38 +3,39 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ClientPortalService, ClientLoginRequest, ClientLoginResponse } from '../../../core/services/client-portal.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-client-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
   template: `
     <div class="login-container">
       <div class="login-card">
         <div class="login-header">
           <div class="logo">
             <img *ngIf="logoUrl" [src]="logoUrl" alt="Company Logo">
-            <h1 *ngIf="!logoUrl">Client Portal</h1>
+            <h1 *ngIf="!logoUrl">{{ 'client_login.title' | translate }}</h1>
           </div>
-          <p class="subtitle">Sign in to access your project portal</p>
+          <p class="subtitle">{{ 'client_login.subtitle' | translate }}</p>
         </div>
 
         <form (ngSubmit)="onSubmit()" class="login-form">
           <div class="form-group">
-            <label for="email">Email Address</label>
+            <label for="email">{{ 'client_login.email_label' | translate }}</label>
             <input
               type="email"
               id="email"
               [(ngModel)]="email"
               name="email"
               class="form-control"
-              placeholder="Enter your email"
+              [attr.placeholder]="'client_login.email_placeholder' | translate"
               required
               email>
           </div>
 
           <div class="form-group">
-            <label for="password">Password</label>
+            <label for="password">{{ 'client_login.password_label' | translate }}</label>
             <div class="password-input">
               <input
                 [type]="showPassword ? 'text' : 'password'"
@@ -42,7 +43,7 @@ import { ClientPortalService, ClientLoginRequest, ClientLoginResponse } from '..
                 [(ngModel)]="password"
                 name="password"
                 class="form-control"
-                placeholder="Enter your password"
+                [attr.placeholder]="'client_login.password_placeholder' | translate"
                 required>
               <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
                 <svg *ngIf="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,9 +60,9 @@ import { ClientPortalService, ClientLoginRequest, ClientLoginResponse } from '..
           <div class="form-options">
             <label class="checkbox-label">
               <input type="checkbox" [(ngModel)]="rememberMe" name="rememberMe">
-              <span>Remember me</span>
+              <span>{{ 'client_login.remember_me' | translate }}</span>
             </label>
-            <a routerLink="/client-portal/forgot-password" class="forgot-link">Forgot Password?</a>
+            <a routerLink="/client-portal/forgot-password" class="forgot-link">{{ 'client_login.forgot_password' | translate }}</a>
           </div>
 
           <div *ngIf="errorMessage" class="alert alert-danger">
@@ -70,48 +71,49 @@ import { ClientPortalService, ClientLoginRequest, ClientLoginResponse } from '..
 
           <button type="submit" class="btn btn-primary btn-block" [disabled]="isLoading">
             <span *ngIf="isLoading" class="spinner"></span>
-            <span *ngIf="!isLoading">Sign In</span>
+            <span *ngIf="!isLoading">{{ 'client_login.submit' | translate }}</span>
+            <span *ngIf="isLoading">{{ 'client_login.signing_in' | translate }}</span>
           </button>
         </form>
 
         <div class="login-footer">
-          <p>Don't have an account? <a routerLink="/client-portal/register">Contact your project manager</a></p>
+          <p>{{ 'client_login.no_account' | translate }} <a routerLink="/client-portal/register">{{ 'client_login.contact_manager' | translate }}</a></p>
         </div>
 
         <div class="login-help">
-          <p>Need help? <a href="mailto:support&#64;company.com">Contact Support</a></p>
+          <p>{{ 'client_login.need_help' | translate }} <a href="mailto:support&#64;company.com">{{ 'client_login.contact_support' | translate }}</a></p>
         </div>
       </div>
 
       <div class="login-features">
-        <h2>Welcome to Your Project Portal</h2>
+        <h2>{{ 'client_login.welcome_title' | translate }}</h2>
         <ul>
           <li>
             <i class="icon-project"></i>
             <div>
-              <strong>Track Project Progress</strong>
-              <p>View real-time updates on your project status</p>
+              <strong>{{ 'client_login.feature_track' | translate }}</strong>
+              <p>{{ 'client_login.feature_track_desc' | translate }}</p>
             </div>
           </li>
           <li>
             <i class="icon-document"></i>
             <div>
-              <strong>Access Documents</strong>
-              <p>Download project documents and reports</p>
+              <strong>{{ 'client_login.feature_docs' | translate }}</strong>
+              <p>{{ 'client_login.feature_docs_desc' | translate }}</p>
             </div>
           </li>
           <li>
             <i class="icon-payment"></i>
             <div>
-              <strong>View Payment History</strong>
-              <p>Track payments and invoices</p>
+              <strong>{{ 'client_login.feature_payments' | translate }}</strong>
+              <p>{{ 'client_login.feature_payments_desc' | translate }}</p>
             </div>
           </li>
           <li>
             <i class="icon-message"></i>
             <div>
-              <strong>Communication Hub</strong>
-              <p>Send messages to your project team</p>
+              <strong>{{ 'client_login.feature_comms' | translate }}</strong>
+              <p>{{ 'client_login.feature_comms_desc' | translate }}</p>
             </div>
           </li>
         </ul>
@@ -377,6 +379,7 @@ import { ClientPortalService, ClientLoginRequest, ClientLoginResponse } from '..
 export class ClientLoginComponent {
   private clientPortalService = inject(ClientPortalService);
   private router = inject(Router);
+  private translateService = inject(TranslateService);
 
   email = '';
   password = '';
@@ -388,7 +391,7 @@ export class ClientLoginComponent {
 
   onSubmit(): void {
     if (!this.email || !this.password) {
-      this.errorMessage = 'Please enter your email and password';
+      this.errorMessage = this.translateService.instant('client_login.error_required');
       return;
     }
 
@@ -408,7 +411,7 @@ export class ClientLoginComponent {
       },
       error: (error) => {
         this.isLoading = false;
-        this.errorMessage = error.error?.message || 'Invalid email or password';
+        this.errorMessage = error.error?.message || this.translateService.instant('client_login.error_invalid');
       }
     });
   }

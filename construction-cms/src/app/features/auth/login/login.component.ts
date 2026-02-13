@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
   template: `
     <div class="auth-wrapper">
       <div class="auth-box">
@@ -60,26 +61,26 @@ import { AuthService } from '../../../core/services/auth.service';
             </div>
 
             <header class="form-header">
-              <h2 class="welcome-msg">Welcome Back</h2>
-              <p class="instruction">Enter your credentials to access the platform</p>
+              <h2 class="welcome-msg">{{ 'login.title' | translate }}</h2>
+              <p class="instruction">{{ 'login.subtitle' | translate }}</p>
             </header>
 
             <form (ngSubmit)="onSubmit()" class="login-form">
               <div class="input-group">
-                <label class="input-label">Email Address</label>
+                <label class="input-label">{{ 'login.email_label' | translate }}</label>
                 <div class="input-wrapper">
                   <div class="input-icon">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206" /></svg>
                   </div>
                   <input type="email" [(ngModel)]="email" name="email" class="premium-input" placeholder="name@company.com" required (blur)="emailTouched = true">
                 </div>
-                <div *ngIf="emailTouched && !email" class="field-error">Email is required</div>
+                <div *ngIf="emailTouched && !email" class="field-error">{{ 'login.error_required' | translate }}</div>
               </div>
 
               <div class="input-group">
                 <div class="label-row">
-                  <label class="input-label">Password</label>
-                  <a routerLink="/auth/forgot-password" class="forgot-link">Forgot?</a>
+                  <label class="input-label">{{ 'login.password_label' | translate }}</label>
+                  <a routerLink="/auth/forgot-password" class="forgot-link">{{ 'login.forgot_password' | translate }}</a>
                 </div>
                 <div class="input-wrapper">
                   <div class="input-icon">
@@ -91,13 +92,13 @@ import { AuthService } from '../../../core/services/auth.service';
                     <svg *ngIf="showPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.025 10.025 0 014.132-5.413m1.854-1.423A9.92 9.92 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.413m-1.854 1.423a3 3 0 00-4.243-4.243m4.243 4.243L3 3" /></svg>
                   </button>
                 </div>
-                <div *ngIf="passwordTouched && !password" class="field-error">Password is required</div>
+                <div *ngIf="passwordTouched && !password" class="field-error">{{ 'login.error_required' | translate }}</div>
               </div>
 
               <div class="options">
                 <label class="remember-me">
                   <input type="checkbox" [(ngModel)]="rememberMe" name="rememberMe">
-                  <span>Stay logged in</span>
+                  <span>{{ 'login.remember_me' | translate }}</span>
                 </label>
               </div>
 
@@ -108,13 +109,13 @@ import { AuthService } from '../../../core/services/auth.service';
 
               <button type="submit" class="auth-button" [disabled]="isLoading">
                 <div *ngIf="isLoading" class="button-loader"></div>
-                <span>{{ isLoading ? 'Authenticating...' : 'Sign In' }}</span>
+                <span>{{ isLoading ? ('login.signing_in' | translate) : ('login.submit' | translate) }}</span>
                 <svg *ngIf="!isLoading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </button>
             </form>
 
             <footer class="form-footer">
-              <p>New to the platform? <a routerLink="/auth/register" class="register-link">Create Account</a></p>
+              <p>{{ 'login.no_account' | translate }} <a routerLink="/auth/register" class="register-link">{{ 'login.register_link' | translate }}</a></p>
             </footer>
           </div>
         </div>
@@ -493,6 +494,7 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private translate = inject(TranslateService);
 
   email = '';
   password = '';
@@ -509,7 +511,7 @@ export class LoginComponent {
     this.passwordTouched = true;
 
     if (!this.email || !this.password) {
-      this.errorMessage = 'Please enter your email and password';
+      this.errorMessage = this.translate.instant('login.error_required');
       return;
     }
 
@@ -537,7 +539,7 @@ export class LoginComponent {
             .map(key => validationErrors[key].join(', '));
           this.errorMessage = messages.join(' | ');
         } else {
-          this.errorMessage = error.error?.message || 'Invalid email or password';
+          this.errorMessage = error.error?.message || this.translate.instant('login.error_invalid');
         }
       }
     });

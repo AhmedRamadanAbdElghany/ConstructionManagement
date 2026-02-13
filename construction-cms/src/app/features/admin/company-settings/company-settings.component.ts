@@ -10,12 +10,13 @@ import { CatalogService } from '../../../core/services/catalog.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { PhaseService } from '../../../core/services/phase.service';
 import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarchy.component';
+import { CompanyDesignSettingsComponent } from './company-design-settings.component';
 import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '../../../shared/interfaces';
 
 @Component({
    selector: 'app-company-settings',
    standalone: true,
-   imports: [CommonModule, FormsModule, TranslateModule, ProjectHierarchyComponent],
+   imports: [CommonModule, FormsModule, TranslateModule, ProjectHierarchyComponent, CompanyDesignSettingsComponent],
    template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
@@ -51,6 +52,15 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                       [class.dark:text-white]="activeTab === 'hierarchy'"
                       class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
                   Phases
+              </button>
+              <button (click)="activeTab = 'designs'" 
+                      [class.bg-white]="activeTab === 'designs'" 
+                      [class.shadow-sm]="activeTab === 'designs'"
+                      [class.text-slate-900]="activeTab === 'designs'"
+                      [class.dark:bg-slate-700]="activeTab === 'designs'"
+                      [class.dark:text-white]="activeTab === 'designs'"
+                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
+                  Designs
               </button>
             </div>
           </div>
@@ -953,6 +963,12 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
               <app-project-hierarchy></app-project-hierarchy>
            </div>
         }
+
+         @if (activeTab === 'designs' && settings) {
+            <div class="bg-white dark:bg-slate-900 rounded-[3rem] shadow-xl border border-slate-200 dark:border-white/5 p-8 overflow-hidden">
+               <app-company-design-settings [companyId]="authService.getCurrentUser()?.companyId || 1"></app-company-design-settings>
+            </div>
+         }
       </div>
 
       <!-- Package Modal (Shared Logic) -->
@@ -1223,7 +1239,7 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
   `]
 })
 export class CompanySettingsComponent implements OnInit {
-   activeTab: 'settings' | 'roles' | 'hierarchy' | 'catalog' = 'settings';
+   activeTab: 'settings' | 'roles' | 'hierarchy' | 'catalog' | 'designs' = 'settings';
    settings?: CompanySettings;
    private originalSettings?: string;
    isCreatingGlobal = false;
@@ -1286,7 +1302,7 @@ export class CompanySettingsComponent implements OnInit {
       private rolesService: RolesService,
       private catalogService: CatalogService,
       private phaseService: PhaseService,
-      private authService: AuthService
+      public authService: AuthService
    ) { }
 
    get isSuperAdmin(): boolean {

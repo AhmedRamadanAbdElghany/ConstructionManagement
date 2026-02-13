@@ -19,6 +19,7 @@ export class MockDataService {
     {
       id: 1,
       name: 'Residential Tower Dubai',
+      companyId: 1,
       status: 'Active',
       progress: 65,
       cashFlow: { earned: 1200000, collected: 900000 },
@@ -30,6 +31,7 @@ export class MockDataService {
     {
       id: 2,
       name: 'Commercial Mall Cairo',
+      companyId: 1,
       status: 'Delayed',
       progress: 30,
       cashFlow: { earned: 500000, collected: 300000 },
@@ -41,6 +43,7 @@ export class MockDataService {
     {
       id: 3,
       name: 'Villa Complex Riyadh',
+      companyId: 1,
       status: 'Active',
       progress: 45,
       cashFlow: { earned: 850000, collected: 650000 },
@@ -52,6 +55,7 @@ export class MockDataService {
     {
       id: 4,
       name: 'Office Building Abu Dhabi',
+      companyId: 1,
       status: 'Completed',
       progress: 100,
       cashFlow: { earned: 2500000, collected: 2400000 },
@@ -63,6 +67,7 @@ export class MockDataService {
     {
       id: 5,
       name: 'Shopping Center Kuwait',
+      companyId: 1,
       status: 'Active',
       progress: 78,
       cashFlow: { earned: 1800000, collected: 1500000 },
@@ -74,6 +79,7 @@ export class MockDataService {
     {
       id: 6,
       name: 'Airport Extension Phase 1',
+      companyId: 1,
       status: 'Delayed',
       progress: 15,
       cashFlow: { earned: 200000, collected: 50000 },

@@ -46,6 +46,7 @@ export interface User {
 
 export interface Project {
   id: number;
+  companyId: number;
   name: string;
   status: 'Active' | 'Completed' | 'Delayed';
   progress: number;
@@ -538,6 +539,7 @@ export interface CreateCategoryRequest {
   description?: string;
   parentCategoryId?: number;
   projectId?: number;
+  companyId?: number;
   order: number;
   file?: File;
 }

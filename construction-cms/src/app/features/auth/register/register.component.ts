@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
   template: `
     <div class="auth-wrapper">
       <div class="auth-box">
@@ -50,29 +51,29 @@ import { AuthService } from '../../../core/services/auth.service';
         <div class="form-side">
           <div class="form-content">
             <header class="form-header">
-              <h2 class="form-title">Onboard Your Team</h2>
-              <p class="form-subtitle">Register to begin managing high-scale projects</p>
+              <h2 class="form-title">{{ 'register.title' | translate }}</h2>
+              <p class="form-subtitle">{{ 'register.subtitle' | translate }}</p>
             </header>
 
             <form (ngSubmit)="onSubmit()" class="register-layout">
               <div class="form-row">
                 <div class="form-field">
-                  <label class="field-label">Full Name</label>
-                  <input type="text" [(ngModel)]="fullName" name="fullName" class="modern-input" placeholder="e.g. Hassan Ibrahim" required (blur)="fullNameTouched = true">
-                  <div *ngIf="fullNameTouched && !fullName" class="error-tip">Name is required</div>
+                  <label class="field-label">{{ 'register.full_name' | translate }}</label>
+                  <input type="text" [(ngModel)]="fullName" name="fullName" class="modern-input" [attr.placeholder]="'register.full_name_placeholder' | translate" required (blur)="fullNameTouched = true">
+                  <div *ngIf="fullNameTouched && !fullName" class="error-tip">{{ 'register.error_required' | translate }}</div>
                 </div>
 
                 <div class="form-field">
-                  <label class="field-label">Email Address</label>
-                  <input type="email" [(ngModel)]="email" name="email" class="modern-input" placeholder="work@company.com" required email (blur)="emailTouched = true">
-                  <div *ngIf="emailTouched && !isEmailValid" class="error-tip">Valid email required</div>
+                  <label class="field-label">{{ 'register.email_label' | translate }}</label>
+                  <input type="email" [(ngModel)]="email" name="email" class="modern-input" [attr.placeholder]="'register.email_placeholder' | translate" required email (blur)="emailTouched = true">
+                  <div *ngIf="emailTouched && !isEmailValid" class="error-tip">{{ 'register.error_required' | translate }}</div>
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="form-field">
-                  <label class="field-label">Phone Number</label>
-                  <input type="tel" [(ngModel)]="phone" name="phone" class="modern-input" placeholder="+20 123 456 7890">
+                  <label class="field-label">{{ 'register.phone' | translate }}</label>
+                  <input type="tel" [(ngModel)]="phone" name="phone" class="modern-input" [attr.placeholder]="'register.phone_placeholder' | translate">
                 </div>
 
                 <div class="form-field">
@@ -88,7 +89,7 @@ import { AuthService } from '../../../core/services/auth.service';
               </div>
 
               <div class="form-field">
-                <label class="field-label">Secure Password</label>
+                <label class="field-label">{{ 'register.password_label' | translate }}</label>
                 <div class="input-action">
                   <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" class="modern-input" placeholder="Minimum 8 characters" required (input)="checkPasswordStrength()" (blur)="passwordTouched = true">
                   <button type="button" class="action-toggle" (click)="showPassword = !showPassword">
@@ -110,7 +111,7 @@ import { AuthService } from '../../../core/services/auth.service';
               </div>
 
               <div class="form-field">
-                <label class="field-label">Confirm Authorization</label>
+                <label class="field-label">{{ 'register.confirm_password' | translate }}</label>
                 <div class="input-action">
                   <input [type]="showConfirmPassword ? 'text' : 'password'" [(ngModel)]="confirmPassword" name="confirmPassword" class="modern-input" placeholder="Repeat your password" required (blur)="confirmPasswordTouched = true">
                   <button type="button" class="action-toggle" (click)="showConfirmPassword = !showConfirmPassword">
@@ -118,7 +119,7 @@ import { AuthService } from '../../../core/services/auth.service';
                     <svg *ngIf="showConfirmPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.025 10.025 0 014.132-5.413m1.854-1.423A9.92 9.92 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.413m-1.854 1.423a3 3 0 00-4.243-4.243m4.243 4.243L3 3" /></svg>
                   </button>
                 </div>
-                <div *ngIf="confirmPasswordTouched && password !== confirmPassword" class="error-tip">Verification must match original password</div>
+                <div *ngIf="confirmPasswordTouched && password !== confirmPassword" class="error-tip">{{ 'register.password_mismatch' | translate }}</div>
               </div>
 
               <div class="alert-area">
@@ -134,13 +135,13 @@ import { AuthService } from '../../../core/services/auth.service';
 
               <button type="submit" class="primary-button" [disabled]="isLoading || !isFormValid">
                 <div *ngIf="isLoading" class="btn-loader"></div>
-                <span>{{ isLoading ? 'Deploying Account...' : 'Initialize Dashboard' }}</span>
+                <span>{{ isLoading ? ('register.creating' | translate) : ('register.submit' | translate) }}</span>
                 <svg *ngIf="!isLoading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
               </button>
             </form>
 
             <footer class="alt-action">
-              Member already? <a routerLink="/auth/login" class="login-link">Sign in to your portal</a>
+              {{ 'register.have_account' | translate }} <a routerLink="/auth/login" class="login-link">{{ 'register.login_link' | translate }}</a>
             </footer>
           </div>
         </div>
@@ -488,6 +489,7 @@ import { AuthService } from '../../../core/services/auth.service';
 export class RegisterComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private translateService = inject(TranslateService);
 
   fullName = '';
   email = '';
@@ -589,13 +591,13 @@ export class RegisterComponent {
         this.isLoading = false;
         if (response.success) {
           const user = response.user;
-          this.successMessage = 'Registration successful! Welcome to the system.';
+          this.successMessage = this.translateService.instant('register.success_message');
 
           setTimeout(() => {
             if (user.roles.includes('SuperAdmin') || user.companyId) {
               this.router.navigate(['/dashboard']);
             } else if (user.userType === 2) { // CompanyOwner
-              this.successMessage = 'Registration successful! Your company creation request has been sent for approval. You will be able to access all features once approved.';
+              this.successMessage = this.translateService.instant('register.success_message');
               // Since they are auto-logged in, they can stay on a waiting page or dashboard with limited access
               this.router.navigate(['/dashboard']);
             } else {

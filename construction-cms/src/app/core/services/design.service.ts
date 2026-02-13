@@ -108,6 +108,32 @@ export class DesignService {
         return this.http.get<DesignCategory[]>(`${this.baseUrl}/companies/${companyId}/design-templates`);
     }
 
+    createCompanyTemplate(companyId: number, request: CreateCategoryRequest): Observable<number> {
+        const formData = new FormData();
+        formData.append('name', request.name);
+        formData.append('order', (request.order || 0).toString());
+        if (request.description) formData.append('description', request.description);
+        if (request.parentCategoryId) formData.append('parentCategoryId', request.parentCategoryId.toString());
+        if (request.file) formData.append('file', request.file);
+
+        return this.http.post<number>(`${this.baseUrl}/companies/${companyId}/design-templates`, formData);
+    }
+
+    updateCompanyTemplate(templateId: number, request: UpdateCategoryRequest): Observable<void> {
+        const formData = new FormData();
+        if (request.name) formData.append('name', request.name);
+        if (request.description) formData.append('description', request.description);
+        if (request.parentCategoryId) formData.append('parentCategoryId', request.parentCategoryId.toString());
+        if (request.order !== undefined) formData.append('order', request.order.toString());
+        if (request.file) formData.append('file', request.file);
+
+        return this.http.put<void>(`${this.baseUrl}/companies/design-templates/${templateId}`, formData);
+    }
+
+    deleteCompanyTemplate(templateId: number): Observable<void> {
+        return this.http.delete<void>(`${this.baseUrl}/companies/design-templates/${templateId}`);
+    }
+
     importTemplate(projectId: number, templateId: number): Observable<void> {
         return this.http.post<void>(`${this.baseUrl}/projects/${projectId}/designs/templates/${templateId}/import`, {});
     }

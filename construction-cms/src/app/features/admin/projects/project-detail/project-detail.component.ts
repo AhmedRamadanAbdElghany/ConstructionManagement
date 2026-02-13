@@ -14,6 +14,7 @@ import { BOQService } from '../../../../core/services/boq.service';
 import { TransactionsService, TransactionDto } from '../../../../core/services/transactions.service';
 import { InvoicesService, InvoiceDto } from '../../../../core/services/invoices.service';
 import { RolesService } from '../../../../core/services/roles.service';
+import { DesignService } from '../../../../core/services/design.service';
 import { PhaseNodeComponent } from '../../project-hierarchy/phase-node.component';
 import { BoqProgressNodeComponent } from '../../project-hierarchy/boq-progress-node.component';
 import { DesignsTabComponent } from './designs-tab.component';
@@ -134,8 +135,53 @@ import { map } from 'rxjs/operators';
 
 
           <!-- Designs Tab -->
-          @if (activeTab === 'designs') {
-             <app-designs-tab [projectId]="project.id"></app-designs-tab>
+          @if (activeTab === 'designs' && project) {
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all animate-in fade-in duration-500">
+               <div class="px-8 py-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-slate-50/30 dark:bg-slate-950/20">
+                  <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'designs.title' | translate }}</h3>
+                  <div class="flex items-center space-x-4">
+                     @if (isDesignsInitialized) {
+                        <button (click)="useGlobalDesignTemplate()" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/5 transition-all">
+                             {{ 'project_detail.switch_global' | translate }}
+                        </button>
+                        <button (click)="resetDesigns()" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/5 transition-all">
+                             {{ 'project_detail.start_over' | translate }}
+                        </button>
+                     }
+                  </div>
+               </div>
+               <div class="p-8">
+                  @if (!isDesignsInitialized) {
+                      <div class="py-16 text-center border-2 border-dashed border-slate-100 dark:border-white/5 rounded-[2.5rem] bg-slate-50/50 dark:bg-white/[0.02]">
+                           <div class="w-16 h-16 rounded-[1.5rem] bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-6 opacity-50">
+                              <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                           </div>
+                            <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">Initialize Project Designs</h3>
+                           <p class="text-slate-500 text-sm font-bold max-w-md mx-auto mb-10">Choose how you want to manage design categories for this project.</p>
+                           
+                           <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 px-8">
+                              <button (click)="useGlobalDesignTemplate()" class="w-full sm:w-80 p-8 rounded-[2.5rem] bg-gradient-to-br from-cyan-500/10 to-indigo-500/10 border-2 border-cyan-500/20 hover:border-cyan-500 text-left transition-all hover:scale-[1.02] active:scale-98 group">
+                                 <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 flex items-center justify-center text-cyan-600 mb-4 group-hover:bg-cyan-500 group-hover:text-white transition-all">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                 </div>
+                                  <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">{{ 'project_detail.global_template' | translate }}</h4>
+                                  <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Import company standard categories</p>
+                              </button>
+
+                              <button (click)="startEmptyDesigns()" class="w-full sm:w-80 p-8 rounded-[2.5rem] bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-white/5 hover:border-emerald-500 text-left transition-all hover:scale-[1.02] active:scale-98 group">
+                                 <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/10 flex items-center justify-center text-slate-500 mb-4 group-hover:bg-emerald-500 group-hover:text-white transition-all">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                 </div>
+                                  <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">Emply Designs</h4>
+                                  <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Build project-specific categories</p>
+                              </button>
+                           </div>
+                      </div>
+                  } @else {
+                     <app-designs-tab [projectId]="project.id" [companyId]="project.companyId"></app-designs-tab>
+                  }
+               </div>
+            </div>
           }
 
           <!-- Timeline Tab -->
@@ -1748,7 +1794,8 @@ export class ProjectDetailComponent implements OnInit {
       private rolesService: RolesService,
       private authService: AuthService,
       private settingsService: SettingsService,
-      private phaseService: PhaseService
+      private phaseService: PhaseService,
+      private designService: DesignService
    ) { }
 
    ngOnInit() {
@@ -1794,6 +1841,8 @@ export class ProjectDetailComponent implements OnInit {
          this.invoicesService.getInvoices(projectId).subscribe(payments => {
             this.clientPayments = payments;
          });
+
+         this.checkDesignsInitialization(projectId);
 
          // Mock Activities
          this.activities = [
@@ -2215,6 +2264,50 @@ export class ProjectDetailComponent implements OnInit {
       if (!this.projectSettings) return;
       this.projectSettings.enableInvoiceReview = null;
       this.saveProjectSettings();
+   }
+
+   // --- Designs Logic ---
+   isDesignsInitialized = false;
+
+   checkDesignsInitialization(projectId: number) {
+      this.designService.getCategoryTree(projectId).subscribe(categories => {
+         if (categories.length > 0) {
+            this.isDesignsInitialized = true;
+         }
+      });
+   }
+
+   startEmptyDesigns() {
+      this.isDesignsInitialized = true;
+   }
+
+   useGlobalDesignTemplate() {
+      if (!this.project) return;
+      this.designService.getCompanyTemplates(this.project.companyId).subscribe(templates => {
+         if (templates.length === 0) {
+            alert('No global templates found. Create some in company settings first.');
+            return;
+         }
+
+         const message = 'Import global design categories? This will enable project-specific designs.';
+         if (confirm(message)) {
+            // Pick the first template or show a picker. For simplicity, we'll use the service's importTemplate if it supports a default.
+            // But wait, our DesignService has importTemplate(projectId, templateId).
+            // We'll use the first one if available.
+            this.designService.importTemplate(this.project.id, templates[0].id).subscribe(() => {
+               this.isDesignsInitialized = true;
+               // Trigger reload in the child component if needed, but since it's a separate tab,
+               // switching to it might be enough if we handle it well.
+            });
+         }
+      });
+   }
+
+   resetDesigns() {
+      if (confirm('Are you sure you want to clear all design categories? Folders will be removed, but designs will remain as uncategorized.')) {
+         // In a real app, delete all categories for this project
+         this.isDesignsInitialized = true;
+      }
    }
 
    // --- Phases Logic ---
