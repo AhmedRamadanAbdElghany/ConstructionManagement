@@ -1967,6 +1967,38 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DesignCategories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Order = table.Column<int>(type: "int", nullable: false),
+                    ProjectId = table.Column<int>(type: "int", nullable: true),
+                    ParentCategoryId = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DesignCategories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DesignCategories_DesignCategories_ParentCategoryId",
+                        column: x => x.ParentCategoryId,
+                        principalTable: "DesignCategories",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_DesignCategories_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Documents",
                 columns: table => new
                 {
@@ -3019,6 +3051,62 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_MessageReplies_Users_UserId",
                         column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Designs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
+                    ProjectId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CategoryId = table.Column<int>(type: "int", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Version = table.Column<int>(type: "int", nullable: false),
+                    ParentDesignId = table.Column<int>(type: "int", nullable: true),
+                    FileUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FileSize = table.Column<long>(type: "bigint", nullable: true),
+                    FileType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OriginalFileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedByUserId = table.Column<int>(type: "int", nullable: true),
+                    ApprovalStatus = table.Column<int>(type: "int", nullable: true),
+                    ApprovedByUserId = table.Column<int>(type: "int", nullable: true),
+                    ApprovedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    RejectionReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ChangeNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Designs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Designs_DesignCategories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "DesignCategories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Designs_Designs_ParentDesignId",
+                        column: x => x.ParentDesignId,
+                        principalTable: "Designs",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Designs_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Designs_Users_CreatedByUserId",
+                        column: x => x.CreatedByUserId,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -4729,7 +4817,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "RoleId", "UserId", "AssignedAt", "CompanyId" },
-                values: new object[] { 1, 1, new DateTime(2026, 2, 12, 9, 8, 30, 273, DateTimeKind.Utc).AddTicks(3152), null });
+                values: new object[] { 1, 1, new DateTime(2026, 2, 13, 19, 27, 41, 382, DateTimeKind.Utc).AddTicks(6685), null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnalyticsSnapshots_CompanyId",
@@ -5047,6 +5135,36 @@ namespace ConstructionManagement.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Defects_ProjectId",
                 table: "Defects",
+                column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DesignCategories_ParentCategoryId",
+                table: "DesignCategories",
+                column: "ParentCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DesignCategories_ProjectId",
+                table: "DesignCategories",
+                column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Designs_CategoryId",
+                table: "Designs",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Designs_CreatedByUserId",
+                table: "Designs",
+                column: "CreatedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Designs_ParentDesignId",
+                table: "Designs",
+                column: "ParentDesignId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Designs_ProjectId",
+                table: "Designs",
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(
@@ -6233,6 +6351,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "DefectResolutions");
 
             migrationBuilder.DropTable(
+                name: "Designs");
+
+            migrationBuilder.DropTable(
                 name: "DocumentApprovals");
 
             migrationBuilder.DropTable(
@@ -6375,6 +6496,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "CompanyDefaultPhases");
+
+            migrationBuilder.DropTable(
+                name: "DesignCategories");
 
             migrationBuilder.DropTable(
                 name: "DocumentVersions");

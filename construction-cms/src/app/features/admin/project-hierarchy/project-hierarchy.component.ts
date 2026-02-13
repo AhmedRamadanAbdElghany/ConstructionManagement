@@ -121,7 +121,14 @@ import { PhaseNodeComponent } from './phase-node.component';
                     <h2 class="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
                        {{ showNewItemForm ? 'Add New Item' : 'Allocate Items' }}
                     </h2>
-                    <p class="text-[10px] text-emerald-500 font-black uppercase tracking-widest mt-2">Node: {{ selectedPhase?.name }}</p>
+                    <div class="flex items-center space-x-3 mt-2">
+                       <p class="text-[10px] text-emerald-500 font-black uppercase tracking-widest">Node: {{ selectedPhase?.name }}</p>
+                       @if (!showNewItemForm && selectedPhase?.items?.length) {
+                          <span class="px-2.5 py-1 rounded-xl bg-emerald-500/10 text-[9px] font-black text-emerald-600 uppercase tracking-widest border border-emerald-500/20">
+                             {{ selectedPhase!.items!.length }} linked
+                          </span>
+                       }
+                    </div>
                   </div>
                   <div class="flex items-center space-x-3">
                      @if (showNewItemForm) {
@@ -133,50 +140,79 @@ import { PhaseNodeComponent } from './phase-node.component';
                            + New Item
                         </button>
                      }
-                     <button (click)="showItemModal = false" class="p-4 rounded-3xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all shadow-sm group">
+                     <button (click)="showItemModal = false; itemSearchQuery = ''" class="p-4 rounded-3xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all shadow-sm group">
                         <svg class="w-6 h-6 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
                      </button>
                   </div>
                </div>
 
                @if (!showNewItemForm) {
-                  <div class="p-12 space-y-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
-                     <div class="grid grid-cols-1 gap-4">
-                        @for (item of catalogItems; track item.id) {
-                           <div class="p-6 rounded-[2.5rem] bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 flex items-center space-x-6 hover:border-emerald-500/30 transition-all group/item">
-                              <div class="w-14 h-14 rounded-2xl bg-white dark:bg-slate-900 shadow-sm flex items-center justify-center text-emerald-500">
-                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+                  <!-- Search Bar -->
+                  <div class="px-12 pt-8 pb-4">
+                     <div class="relative">
+                        <svg class="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <input type="text" [(ngModel)]="itemSearchQuery" placeholder="Search items by name or description..."
+                               class="w-full pl-14 pr-12 py-5 rounded-[2rem] bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 outline-none font-bold text-sm text-slate-900 dark:text-white focus:ring-4 focus:ring-emerald-500/10 transition-all placeholder:text-slate-400">
+                        @if (itemSearchQuery) {
+                           <button (click)="itemSearchQuery = ''" class="absolute right-6 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                           </button>
+                        }
+                     </div>
+                     <div class="flex items-center justify-between mt-3 px-2">
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                           Showing {{ filteredCatalogItems.length }} available items
+                        </span>
+                     </div>
+                  </div>
+                  <div class="px-12 pb-8 space-y-6 max-h-[50vh] overflow-y-auto custom-scrollbar">
+                     <div class="grid grid-cols-1 gap-3">
+                        @for (item of filteredCatalogItems; track item.id) {
+                           <div class="p-5 rounded-[2rem] border flex items-center space-x-5 transition-all group/item"
+                                [ngClass]="{
+                                  'bg-emerald-50/50 dark:bg-emerald-500/5 border-emerald-200/50 dark:border-emerald-500/15 ring-2 ring-emerald-500/20': isItemLinked(item.name),
+                                  'bg-slate-50 dark:bg-slate-950 border-slate-100 dark:border-white/5 hover:border-emerald-500/30': !isItemLinked(item.name)
+                                }">
+                              <div class="w-12 h-12 rounded-2xl shadow-sm flex items-center justify-center shrink-0"
+                                   [ngClass]="{
+                                     'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-500': isItemLinked(item.name),
+                                     'bg-white dark:bg-slate-900 text-slate-400': !isItemLinked(item.name)
+                                   }">
+                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
                               </div>
-                              <div class="flex-1">
-                                 <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tight text-sm">{{ item.name }}</h4>
-                                 <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ item.description || 'No description' }}</p>
+                              <div class="flex-1 min-w-0">
+                                 <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tight text-sm truncate">{{ item.name }}</h4>
+                                 <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest truncate">{{ item.description || 'No description' }}</p>
                               </div>
                               
-                              <div>
-                                 @if (isItemLinked(item.name)) {
-                                    <button (click)="unlinkItem(item.id)" 
-                                            class="px-6 py-3 rounded-2xl bg-emerald-500/10 text-emerald-600 font-black text-[10px] uppercase tracking-widest flex items-center space-x-2 border border-emerald-200 dark:border-emerald-500/20 group/selected hover:bg-rose-500 hover:text-white hover:border-rose-500 transition-all">
-                                       <span class="flex items-center space-x-2 group-hover/selected:hidden">
-                                          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                          <span>Added</span>
-                                       </span>
-                                       <span class="hidden group-hover/selected:inline">Remove</span>
-                                    </button>
-                                 } @else {
-                                     <button (click)="linkItem(item)" [disabled]="loadingLinkIds[item.id]" 
-                                             class="px-6 py-3 rounded-2xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 transition-all font-black text-[10px] uppercase tracking-widest flex items-center space-x-2">
-                                        @if (loadingLinkIds[item.id]) {
-                                           <svg class="animate-spin h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                           </svg>
-                                           <span>...</span>
-                                        } @else {
-                                           <span>Add to Phase</span>
-                                        }
+                               <div class="shrink-0">
+                                  @if (isItemLinked(item.name)) {
+                                     <button (click)="unlinkItem(item.id, item.name)" 
+                                             class="px-5 py-2.5 rounded-2xl bg-rose-500 text-white font-black text-[10px] uppercase tracking-widest flex items-center space-x-2 shadow-lg shadow-rose-500/20 hover:scale-105 active:scale-95 transition-all group/remove">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        <span>Remove</span>
                                      </button>
-                                 }
-                              </div>
+                                  } @else {
+                                      <button (click)="linkItem(item)" [disabled]="loadingLinkIds[item.id]" 
+                                              class="px-5 py-2.5 rounded-2xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 transition-all font-black text-[10px] uppercase tracking-widest flex items-center space-x-2 hover:scale-105 active:scale-95">
+                                         @if (loadingLinkIds[item.id]) {
+                                            <svg class="animate-spin h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            <span>...</span>
+                                         } @else {
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+                                            <span>Add to Phase</span>
+                                         }
+                                      </button>
+                                  }
+                               </div>
+                           </div>
+                        } @empty {
+                           <div class="py-16 text-center">
+                              <svg class="w-12 h-12 text-slate-300 dark:text-slate-700 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">No items match your search</p>
                            </div>
                         }
                      </div>
@@ -221,10 +257,10 @@ import { PhaseNodeComponent } from './phase-node.component';
                }
 
                <div class="p-12 pt-0 flex justify-end bg-slate-50/30 dark:bg-white/5 border-t border-slate-100 dark:border-white/5">
-                  <button (click)="showItemModal = false" 
-                          class="px-12 py-5 rounded-[2.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[10px] uppercase tracking-[0.2em] mt-8 hover:scale-105 active:scale-95 transition-all shadow-xl">
-                     Done
-                  </button>
+                   <button (click)="showItemModal = false; itemSearchQuery = ''" 
+                           class="px-12 py-5 rounded-[2.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[10px] uppercase tracking-[0.2em] mt-8 hover:scale-105 active:scale-95 transition-all shadow-xl">
+                      Done
+                   </button>
                </div>
             </div>
          </div>
@@ -247,7 +283,8 @@ export class ProjectHierarchyComponent implements OnInit {
    isCreatingItem = false;
    loadingLinkIds: { [key: number]: boolean } = {};
    loadingPhases: { [key: number]: string } = {};
-   private localPhaseItemNames = new Set<string>();
+   private localLinkedItemNames = new Set<string>();
+   itemSearchQuery = '';
    newItemForm: Partial<CatalogItem> = {
       name: '',
       description: '',
@@ -261,6 +298,26 @@ export class ProjectHierarchyComponent implements OnInit {
       private catalogService: CatalogService,
       private authService: AuthService
    ) { }
+
+   get filteredCatalogItems(): CatalogItem[] {
+      let items = this.catalogItems;
+
+      // Filter by search query
+      if (this.itemSearchQuery.trim()) {
+         const q = this.itemSearchQuery.trim().toLowerCase();
+         items = items.filter(i =>
+            i.name.toLowerCase().includes(q) ||
+            (i.description && i.description.toLowerCase().includes(q))
+         );
+      }
+
+      // Sort: linked items first
+      return [...items].sort((a, b) => {
+         const aLinked = this.isItemLinked(a.name) ? 0 : 1;
+         const bLinked = this.isItemLinked(b.name) ? 0 : 1;
+         return aLinked - bLinked;
+      });
+   }
 
    ngOnInit() {
       this.loadPhases();
@@ -276,8 +333,9 @@ export class ProjectHierarchyComponent implements OnInit {
             if (freshPhase) {
                this.selectedPhase = freshPhase;
                // Sync local set with real items from server
+               this.localLinkedItemNames.clear();
                freshPhase.items?.forEach(i => {
-                  if (i.name) this.localPhaseItemNames.add(i.name.trim().toLowerCase());
+                  if (i.name) this.localLinkedItemNames.add(i.name.trim().toLowerCase());
                });
             }
          }
@@ -356,18 +414,19 @@ export class ProjectHierarchyComponent implements OnInit {
    openItemModal(phase: Phase) {
       this.selectedPhase = phase;
       this.showNewItemForm = false;
+      this.itemSearchQuery = '';
       this.showItemModal = true;
 
       // Initialize local link state
-      this.localPhaseItemNames.clear();
+      this.localLinkedItemNames.clear();
       phase.items?.forEach(i => {
-         if (i.name) this.localPhaseItemNames.add(i.name.trim().toLowerCase());
+         if (i.name) this.localLinkedItemNames.add(i.name.trim().toLowerCase());
       });
    }
 
    isItemLinked(itemName: string): boolean {
       if (!itemName) return false;
-      return this.localPhaseItemNames.has(itemName.trim().toLowerCase());
+      return this.localLinkedItemNames.has(itemName.trim().toLowerCase());
    }
 
    linkItem(item: CatalogItem) {
@@ -380,7 +439,7 @@ export class ProjectHierarchyComponent implements OnInit {
       this.loadingLinkIds[item.id] = true;
 
       // Optimistic locally
-      this.localPhaseItemNames.add(normalizedName);
+      this.localLinkedItemNames.add(normalizedName);
 
       this.phaseService.addItemsToDefaultPhase(this.selectedPhase.id, [item.id]).subscribe({
          next: () => {
@@ -388,7 +447,7 @@ export class ProjectHierarchyComponent implements OnInit {
             delete this.loadingLinkIds[item.id];
          },
          error: () => {
-            this.localPhaseItemNames.delete(normalizedName);
+            this.localLinkedItemNames.delete(normalizedName);
             delete this.loadingLinkIds[item.id];
          }
       });
@@ -400,12 +459,12 @@ export class ProjectHierarchyComponent implements OnInit {
       const normalizedName = itemName?.trim().toLowerCase();
 
       // Optimistic locally
-      if (normalizedName) this.localPhaseItemNames.delete(normalizedName);
+      if (normalizedName) this.localLinkedItemNames.delete(normalizedName);
 
       this.phaseService.deleteDefaultPhaseItem(this.selectedPhase.id, itemId).subscribe({
          next: () => this.loadPhases(),
          error: () => {
-            if (normalizedName) this.localPhaseItemNames.add(normalizedName);
+            if (normalizedName) this.localLinkedItemNames.add(normalizedName);
          }
       });
    }

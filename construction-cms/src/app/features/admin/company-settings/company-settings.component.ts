@@ -670,51 +670,104 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
             </div>
             }
 
-            <!-- Analytics & Reporting Settings Section -->
-            @if (isSuperAdmin || settings.enableAnalytics) {
-            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
-               <div class="flex items-center justify-between mb-8">
-                  <div class="flex items-center space-x-4">
-                     <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
-                     </div>
-                     <div>
-                        <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Analytics & Intelligence</h3>
-                        <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">Data Insights & Forecasting</p>
-                     </div>
-                  </div>
-               </div>
-
-               @if (isSuperAdmin) {
-               <div class="flex items-center justify-between p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 mb-4">
-                  <div>
-                     <span class="text-xs font-black text-indigo-700 dark:text-indigo-300 uppercase block">Enable Advanced Analytics</span>
-                     <span class="text-[8px] text-indigo-500">Allow detailed reporting and AI insights</span>
-                  </div>
-                  <label class="relative inline-flex items-center cursor-pointer">
-                     <input type="checkbox" [(ngModel)]="settings.enableAnalytics" class="sr-only peer">
-                     <div class="w-14 h-8 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-indigo-500"></div>
-                  </label>
-               </div>
-               }
-
-               @if (settings.enableAnalytics) {
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                   <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Enable Scheduled Reports</span>
-                      <input type="checkbox" [(ngModel)]="settings.enableAnalyticsReporting" class="w-5 h-5 accent-indigo-500">
-                   </div>
-                </div>
-               }
-            </div>
-            }
-
             <!-- SECTION 2: MODULE CONFIGURATION (Company Admin ONLY) -->
             @if (isOnlyCompanyAdmin) {
             <section class="space-y-8">
+               <!-- Global Company Configurations (Saveable Settings) -->
+               <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
+                  <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                  
+                  <!-- Info Alert -->
+                  <div class="mb-8 p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20">
+                     <div class="flex items-start space-x-3">
+                        <svg class="w-5 h-5 text-indigo-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div>
+                           <p class="text-[11px] font-bold text-indigo-700 dark:text-indigo-300">
+                              Note: The configurations below are saved collectively when you click the primary "Save Settings" button in the header.
+                           </p>
+                           <p class="text-[9px] text-indigo-500 mt-1 uppercase font-black tracking-widest">
+                              Catalog items, Packages, and Roles are managed independently through their respective modals.
+                           </p>
+                        </div>
+                     </div>
+                  </div>
+
+                  <div class="flex items-center justify-between mb-8 relative z-10">
+                     <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
+                           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 002.572-1.065z"></path>
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                           </svg>
+                        </div>
+                        <div>
+                           <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Configuration Settings</h3>
+                           <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">Global Operational Variables</p>
+                        </div>
+                     </div>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <!-- Analytics Master Switch (Super Admin ONLY) -->
+                      @if (isSuperAdmin) {
+                      <div class="flex items-center justify-between p-6 rounded-3xl bg-indigo-500/5 border border-indigo-200/50 dark:border-indigo-500/20 transition-all shadow-sm">
+                         <div class="flex items-center space-x-4">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
+                               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            </div>
+                            <div>
+                               <span class="text-xs font-black text-indigo-700 dark:text-indigo-300 uppercase block">Analytics Master Switch</span>
+                               <span class="text-[9px] text-indigo-400 font-medium">Enable AI Insights for Company</span>
+                            </div>
+                         </div>
+                         <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="settings.enableAnalytics" class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
+                         </label>
+                      </div>
+                      }
+
+                      <!-- Supervision Percentage (if enabled) -->
+                      @if (settings.allowSupervision) {
+                      <div class="space-y-4 p-6 rounded-3xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 transition-all">
+                         <div class="flex items-center space-x-3 mb-2">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                            </div>
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'supervision' | translate }}</span>
+                         </div>
+                         <label class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest block">{{ 'defaultSupervisionPercentage' | translate }}</label>
+                         <div class="relative">
+                            <input type="number" [(ngModel)]="settings.defaultSupervisionPercentage" 
+                                   class="w-full px-5 py-4 pl-5 pr-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-black text-sm outline-none transition-all focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 shadow-inner">
+                            <span class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">%</span>
+                         </div>
+                         <p class="text-[9px] text-slate-500 italic">This percentage is applied by default to projects using the Supervision calculation method.</p>
+                      </div>
+                      }
+
+                      <!-- Analytics Reporting (if enabled) -->
+                      @if (settings.enableAnalytics) {
+                      <div class="flex items-center justify-between p-6 rounded-3xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 transition-all hover:bg-slate-100 dark:hover:bg-slate-900">
+                         <div class="flex items-center space-x-4">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
+                               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                            </div>
+                            <div>
+                               <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">Enable Scheduled Reports</span>
+                               <span class="text-[9px] text-slate-400 font-medium">Auto-generate weekly insights</span>
+                            </div>
+                         </div>
+                         <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="settings.enableAnalyticsReporting" class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
+                         </label>
+                      </div>
+                      }
+                   </div>
+                </div>
                 <!-- General Items Catalog (Company Admin) -->
                 <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
@@ -768,29 +821,6 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                    </div>
                 </div>
 
-               <!-- Supervision Config -->
-                @if (settings.allowSupervision) {
-                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
-                   <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
-                   <div class="flex items-center space-x-4 mb-6">
-                      <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                         </svg>
-                      </div>
-                      <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'supervision' | translate }}</h3>
-                   </div>
-
-                   <div class="space-y-2 max-w-md">
-                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{{ 'defaultSupervisionPercentage' | translate }}</label>
-                     <div class="relative">
-                        <input type="number" [(ngModel)]="settings.defaultSupervisionPercentage" 
-                               class="w-full px-5 py-4 pl-5 pr-12 rounded-2xl bg-white dark:bg-slate-950/50 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-black text-sm outline-none transition-all focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 shadow-inner">
-                        <span class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">%</span>
-                     </div>
-                   </div>
-                </div>
-                }
 
                <!-- Package Management -->
                @if (settings.allowPackages) {

@@ -105,6 +105,10 @@ public class ApplicationDbContext : DbContext
     public DbSet<DocumentVersion> DocumentVersions => Set<DocumentVersion>();
     public DbSet<DocumentApproval> DocumentApprovals => Set<DocumentApproval>();
 
+    // Design Management
+    public DbSet<DesignCategory> DesignCategories => Set<DesignCategory>();
+    public DbSet<Design> Designs => Set<Design>();
+
     // Material Management
     public DbSet<Material> Materials => Set<Material>();
     public DbSet<MaterialCategory> MaterialCategories => Set<MaterialCategory>();
@@ -307,6 +311,37 @@ public class ApplicationDbContext : DbContext
             .HasOne(r => r.SafetyChecklistItem)
             .WithMany()
             .HasForeignKey(r => r.SafetyChecklistItemId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        // 11. Design & Categories
+        modelBuilder.Entity<DesignCategory>()
+            .HasOne(c => c.ParentCategory)
+            .WithMany(c => c.ChildCategories)
+            .HasForeignKey(c => c.ParentCategoryId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<DesignCategory>()
+            .HasOne(c => c.Project)
+            .WithMany()
+            .HasForeignKey(c => c.ProjectId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Design>()
+            .HasOne(d => d.Category)
+            .WithMany(c => c.Designs)
+            .HasForeignKey(d => d.CategoryId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Design>()
+            .HasOne(d => d.Project)
+            .WithMany()
+            .HasForeignKey(d => d.ProjectId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Design>()
+            .HasOne(d => d.ParentDesign)
+            .WithMany(d => d.Versions)
+            .HasForeignKey(d => d.ParentDesignId)
             .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<CompanySettings>().HasOne(cs => cs.Company).WithOne(c => c.Settings).HasForeignKey<CompanySettings>(cs => cs.CompanyId).OnDelete(DeleteBehavior.Cascade);

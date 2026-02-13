@@ -49,7 +49,12 @@
     "reject": "Reject",
     "target_company": "Target Company",
     "no_company_requests": "Superior! No pending company requests found",
-    "no_join_requests": "All clear! No pending join requests found"
+    "no_join_requests": "All clear! No pending join requests found",
+    "approve_default": "Approve (Default)",
+    "configure_approve": "Configure & Approve",
+    "configure_company": "Configure Company Profile",
+    "configure_subtitle": "Fine-tune platform capabilities and financial logic before activation",
+    "save_approve": "Finalize & Activate Organization"
   },
   "topbar": {
     "search_placeholder": "Search projects, users, documents...",

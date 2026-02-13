@@ -84,10 +84,10 @@ public class CompanyRequestsController : ControllerBase
     /// </summary>
     [HttpPost("{id}/approve")]
     [Authorize(Roles = "SuperAdmin")]
-    public async Task<IActionResult> ApproveRequest(int id)
+    public async Task<IActionResult> ApproveRequest(int id, [FromBody] ApproveCompanyRequestDto? dto = null)
     {
         var reviewedByUserId = _authService.GetCurrentUserId();
-        var request = await _companyRequestService.ApproveRequestAsync(id, reviewedByUserId);
+        var request = await _companyRequestService.ApproveRequestAsync(id, reviewedByUserId, dto);
         return Ok(request);
     }
 

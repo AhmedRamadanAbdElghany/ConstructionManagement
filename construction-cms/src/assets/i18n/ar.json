@@ -49,7 +49,12 @@
     "reject": "رفض",
     "target_company": "الشركة المستهدفة",
     "no_company_requests": "ممتاز! لا يوجد طلبات شركات معلقة",
-    "no_join_requests": "كل شيء واضح! لا يوجد طلبات انضمام معلقة"
+    "no_join_requests": "كل شيء واضح! لا يوجد طلبات انضمام معلقة",
+    "approve_default": "موافقة (افتراضي)",
+    "configure_approve": "تكوين وموافقة",
+    "configure_company": "تكوين ملف الشركة",
+    "configure_subtitle": "ضبط قدرات المنصة والمنطق المالي قبل التفعيل",
+    "save_approve": "إنهاء وتفعيل المنظمة"
   },
   "topbar": {
     "search_placeholder": "البحث في المشاريع والمستخدمين والمستندات...",

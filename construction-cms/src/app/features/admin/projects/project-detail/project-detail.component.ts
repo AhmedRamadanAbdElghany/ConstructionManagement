@@ -108,157 +108,28 @@ import { map } from 'rxjs/operators';
           </div>
 
           <div class="flex flex-wrap gap-2 mb-8">
-            <button 
-              (click)="activeTab = 'designs'"
-              [class.bg-slate-900]="activeTab === 'designs'"
-              [class.dark:bg-white]="activeTab === 'designs'"
-              [class.text-white]="activeTab === 'designs'"
-              [class.dark:text-slate-900]="activeTab === 'designs'"
-              [class.bg-white]="activeTab !== 'designs'"
-              [class.dark:bg-slate-900]="activeTab !== 'designs'"
-              [class.text-slate-500]="activeTab !== 'designs'"
-              [class.border-transparent]="activeTab === 'designs'"
-              [class.border-slate-200]="activeTab !== 'designs'"
-              [class.dark:border-white/5]="activeTab !== 'designs'"
-              class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-               {{ 'project_detail.designs' | translate }}
-            </button>
-            <button 
-              (click)="activeTab = 'timeline'"
-              [class.bg-slate-900]="activeTab === 'timeline'"
-              [class.dark:bg-white]="activeTab === 'timeline'"
-              [class.text-white]="activeTab === 'timeline'"
-              [class.dark:text-slate-900]="activeTab === 'timeline'"
-              [class.bg-white]="activeTab !== 'timeline'"
-              [class.dark:bg-slate-900]="activeTab !== 'timeline'"
-              [class.text-slate-500]="activeTab !== 'timeline'"
-              [class.border-transparent]="activeTab === 'timeline'"
-              [class.border-slate-200]="activeTab !== 'timeline'"
-              [class.dark:border-white/5]="activeTab !== 'timeline'"
-              class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-              {{ 'project_detail.timeline' | translate }}
-            </button>
-            <button 
-              (click)="activeTab = 'settings'"
-              [class.bg-slate-900]="activeTab === 'settings'"
-              [class.dark:bg-white]="activeTab === 'settings'"
-              [class.text-white]="activeTab === 'settings'"
-              [class.dark:text-slate-900]="activeTab === 'settings'"
-              [class.bg-white]="activeTab !== 'settings'"
-              [class.dark:bg-slate-900]="activeTab !== 'settings'"
-              [class.text-slate-500]="activeTab !== 'settings'"
-              [class.border-transparent]="activeTab === 'settings'"
-              [class.border-slate-200]="activeTab !== 'settings'"
-              [class.dark:border-white/5]="activeTab !== 'settings'"
-              class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-              {{ 'projects.ops_logic' | translate }}
-            </button>
-            <button 
-              (click)="activeTab = 'team'"
-              [class.bg-slate-900]="activeTab === 'team'"
-              [class.dark:bg-white]="activeTab === 'team'"
-              [class.text-white]="activeTab === 'team'"
-              [class.dark:text-slate-900]="activeTab === 'team'"
-              [class.bg-white]="activeTab !== 'team'"
-              [class.dark:bg-slate-900]="activeTab !== 'team'"
-              [class.text-slate-500]="activeTab !== 'team'"
-              [class.border-transparent]="activeTab === 'team'"
-              [class.border-slate-200]="activeTab !== 'team'"
-              [class.dark:border-white/5]="activeTab !== 'team'"
-              class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-              {{ 'project_detail.team_management' | translate }}
-            </button>
-            <button 
-              (click)="activeTab = 'history'"
-              [class.bg-slate-900]="activeTab === 'history'"
-              [class.dark:bg-white]="activeTab === 'history'"
-              [class.text-white]="activeTab === 'history'"
-              [class.dark:text-slate-900]="activeTab === 'history'"
-              [class.bg-white]="activeTab !== 'history'"
-              [class.dark:bg-slate-900]="activeTab !== 'history'"
-              [class.text-slate-500]="activeTab !== 'history'"
-              [class.border-transparent]="activeTab === 'history'"
-              [class.border-slate-200]="activeTab !== 'history'"
-              [class.dark:border-white/5]="activeTab !== 'history'"
-              class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-               {{ 'project_detail.activity_logs' | translate }}
-            </button>
-            <button 
-              (click)="activeTab = 'boq'"
-              [class.bg-slate-900]="activeTab === 'boq'"
-              [class.dark:bg-white]="activeTab === 'boq'"
-              [class.text-white]="activeTab === 'boq'"
-              [class.dark:text-slate-900]="activeTab === 'boq'"
-              [class.bg-white]="activeTab !== 'boq'"
-              [class.dark:bg-slate-900]="activeTab !== 'boq'"
-              [class.text-slate-500]="activeTab !== 'boq'"
-              [class.border-transparent]="activeTab === 'boq'"
-              [class.border-slate-200]="activeTab !== 'boq'"
-              [class.dark:border-white/5]="activeTab !== 'boq'"
-              class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-               {{ 'project_detail.boq_progress' | translate }}
-            </button>
-            <button 
-              (click)="activeTab = 'finances'"
-              [class.bg-slate-900]="activeTab === 'finances'"
-              [class.dark:bg-white]="activeTab === 'finances'"
-              [class.text-white]="activeTab === 'finances'"
-              [class.dark:text-slate-900]="activeTab === 'finances'"
-              [class.bg-white]="activeTab !== 'finances'"
-              [class.dark:bg-slate-900]="activeTab !== 'finances'"
-              [class.text-slate-500]="activeTab !== 'finances'"
-              [class.border-transparent]="activeTab === 'finances'"
-              [class.border-slate-200]="activeTab !== 'finances'"
-              [class.dark:border-white/5]="activeTab !== 'finances'"
-              class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-               {{ 'project_detail.financial_overview' | translate }}
-            </button>
-            <button 
-              (click)="activeTab = 'bills'"
-              [class.bg-slate-900]="activeTab === 'bills'"
-              [class.dark:bg-white]="activeTab === 'bills'"
-              [class.text-white]="activeTab === 'bills'"
-              [class.dark:text-slate-900]="activeTab === 'bills'"
-              [class.bg-white]="activeTab !== 'bills'"
-              [class.dark:bg-slate-900]="activeTab !== 'bills'"
-              [class.text-slate-500]="activeTab !== 'bills'"
-              [class.border-transparent]="activeTab === 'bills'"
-              [class.border-slate-200]="activeTab !== 'bills'"
-              [class.dark:border-white/5]="activeTab !== 'bills'"
-              class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-               {{ 'sidebar.bills' | translate }}
-            </button>
-            <button 
-              (click)="activeTab = 'phases'"
-              [class.bg-slate-900]="activeTab === 'phases'"
-              [class.dark:bg-white]="activeTab === 'phases'"
-              [class.text-white]="activeTab === 'phases'"
-              [class.dark:text-slate-900]="activeTab === 'phases'"
-              [class.bg-white]="activeTab !== 'phases'"
-              [class.dark:bg-slate-900]="activeTab !== 'phases'"
-              [class.text-slate-500]="activeTab !== 'phases'"
-              [class.border-transparent]="activeTab === 'phases'"
-              [class.border-slate-200]="activeTab !== 'phases'"
-              [class.dark:border-white/5]="activeTab !== 'phases'"
-              class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-               {{ 'project_detail.phases_hierarchy' | translate }}
-            </button>
-            <button 
-              (click)="activeTab = 'payments'"
-              [class.bg-slate-900]="activeTab === 'payments'"
-              [class.dark:bg-white]="activeTab === 'payments'"
-              [class.text-white]="activeTab === 'payments'"
-              [class.dark:text-slate-900]="activeTab === 'payments'"
-              [class.bg-white]="activeTab !== 'payments'"
-              [class.dark:bg-slate-900]="activeTab !== 'payments'"
-              [class.text-slate-500]="activeTab !== 'payments'"
-              [class.border-transparent]="activeTab === 'payments'"
-              [class.border-slate-200]="activeTab !== 'payments'"
-              [class.dark:border-white/5]="activeTab !== 'payments'"
-              class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-               {{ 'project_detail.client_payments' | translate }}
-            </button>
-
+            @for (tab of [
+              { key: 'designs', label: 'project_detail.designs' },
+              { key: 'phases', label: 'project_detail.phases_hierarchy' },
+              { key: 'boq', label: 'project_detail.boq_progress' },
+              { key: 'timeline', label: 'project_detail.timeline' },
+              { key: 'team', label: 'project_detail.team_management' },
+              { key: 'bills', label: 'sidebar.bills' },
+              { key: 'payments', label: 'project_detail.client_payments' },
+              { key: 'finances', label: 'project_detail.financial_overview' },
+              { key: 'history', label: 'project_detail.activity_logs' },
+              { key: 'settings', label: 'projects.ops_logic' }
+            ]; track tab.key) {
+              <button 
+                (click)="setActiveTab(tab.key)"
+                [ngClass]="{
+                  'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-transparent shadow-lg': activeTab === tab.key,
+                  'bg-white dark:bg-slate-900 text-slate-500 border-slate-200 dark:border-white/5 hover:text-slate-700 dark:hover:text-slate-300 hover:border-slate-300 dark:hover:border-white/10': activeTab !== tab.key
+                }"
+                class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
+                {{ tab.label | translate }}
+              </button>
+            }
           </div>
 
 
@@ -306,6 +177,41 @@ import { map } from 'rxjs/operators';
                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Configure automated behaviors</p>
                     </div>
                   </div>
+
+                  @if (companySettings?.allowLocations) {
+                    <div class="p-8 mb-8 rounded-[2.5rem] bg-slate-950 dark:bg-white text-white dark:text-slate-900 shadow-2xl relative overflow-hidden group border border-white/5">
+                      <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform">
+                        <svg class="w-16 h-16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                      </div>
+                      <div class="relative z-10">
+                        <p class="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 mb-8">Site Logistics & Positioning</p>
+                        
+                        <div class="space-y-8">
+                           <!-- Physical Address -->
+                           <div class="space-y-2">
+                              <label class="text-[9px] font-black uppercase tracking-widest opacity-50">Physical Site Address</label>
+                              <input type="text" [(ngModel)]="editForm.address" (change)="updateProject()"
+                                     class="w-full bg-transparent border-b border-white/20 dark:border-slate-900/10 py-3 text-xl font-black outline-none focus:border-cyan-400 transition-colors uppercase tracking-tight"
+                                     placeholder="ENTER COMPLETE SITE ADDRESS...">
+                           </div>
+
+                           <!-- GPS Coordinates -->
+                           <div class="grid grid-cols-2 gap-10">
+                             <div class="space-y-2">
+                               <label class="text-[9px] font-black uppercase tracking-widest opacity-50">Latitude</label>
+                               <input type="number" [(ngModel)]="editForm.lat" (change)="updateProject()" step="any"
+                                      class="w-full bg-transparent border-b border-white/20 dark:border-slate-900/10 py-3 text-2xl font-black outline-none focus:border-cyan-400 transition-colors">
+                             </div>
+                             <div class="space-y-2">
+                               <label class="text-[9px] font-black uppercase tracking-widest opacity-50">Longitude</label>
+                               <input type="number" [(ngModel)]="editForm.lng" (change)="updateProject()" step="any"
+                                      class="w-full bg-transparent border-b border-white/20 dark:border-slate-900/10 py-3 text-2xl font-black outline-none focus:border-cyan-400 transition-colors">
+                             </div>
+                           </div>
+                        </div>
+                      </div>
+                    </div>
+                  }
 
                   <div class="space-y-6">
                     @if (companySettings?.delayNotificationSendEmail) {
@@ -373,7 +279,6 @@ import { map } from 'rxjs/operators';
                       }
                     </div>
                     }
-
                     @if (companySettings?.allowAddProgressEntry) {
                     <div class="flex items-center justify-between p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 transition-all hover:border-emerald-500/30">
                       <div>
@@ -394,8 +299,8 @@ import { map } from 'rxjs/operators';
                           <span [class.translate-x-8]="projectSettings?.allowAddProgressEntry ?? companySettings?.allowAddProgressEntry"
                                 [class.translate-x-1]="!(projectSettings?.allowAddProgressEntry ?? companySettings?.allowAddProgressEntry)"
                                 class="absolute left-0 top-1 w-6 h-6 rounded-full bg-white shadow-md transform transition-transform"></span>
-                        </button>
-                      </div>
+                          </button>
+                        </div>
                     </div>
                     }
                   </div>
@@ -1151,11 +1056,7 @@ import { map } from 'rxjs/operators';
                               <input type="text" [(ngModel)]="editForm.name" 
                                      class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 outline-none transition-all">
                            </div>
-                           <div class="relative group">
-                              <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest transition-colors group-focus-within:text-cyan-500">Site Physical Address</label>
-                              <input type="text" [(ngModel)]="editForm.address" 
-                                     class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 outline-none transition-all">
-                           </div>
+
                         </div>
                         
                         <div class="grid grid-cols-2 gap-5">
@@ -1171,20 +1072,7 @@ import { map } from 'rxjs/operators';
                            </div>
                         </div>
 
-                        @if (companySettings?.allowLocations) {
-                           <div class="grid grid-cols-2 gap-5 p-6 rounded-[2rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl">
-                              <div class="relative">
-                                 <label class="text-[8px] font-black uppercase opacity-50 mb-1 block">Latitude</label>
-                                 <input type="number" [(ngModel)]="editForm.lat" 
-                                        class="w-full bg-transparent border-b border-white/20 dark:border-slate-900/20 py-2 font-black text-lg focus:border-cyan-400 outline-none">
-                              </div>
-                              <div class="relative">
-                                 <label class="text-[8px] font-black uppercase opacity-50 mb-1 block">Longitude</label>
-                                 <input type="number" [(ngModel)]="editForm.lng" 
-                                        class="w-full bg-transparent border-b border-white/20 dark:border-slate-900/20 py-2 font-black text-lg focus:border-cyan-400 outline-none">
-                              </div>
-                           </div>
-                        }
+
                      </div>
 
                       <!-- 2. Financial Config -->
@@ -1742,8 +1630,8 @@ import { map } from 'rxjs/operators';
                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                       </button>
                    </div>
-                </div>
-             </div>
+               </div>
+            </div>
            }
         </div>
       }
@@ -1774,6 +1662,10 @@ export class ProjectDetailComponent implements OnInit {
 
    // Daily Log View Logic (at the end of template context conceptually, but physically before properties)
 
+
+   setActiveTab(key: any) {
+      this.activeTab = key;
+   }
 
    // Edit State
    showEditModal = false;

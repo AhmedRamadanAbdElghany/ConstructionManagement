@@ -30,11 +30,7 @@ public class CreateCompanyRequestDto
     public string? Notes { get; set; }
 }
 
-public class ApproveCompanyRequestDto
-{
-    public int? ReviewedByUserId { get; set; }
-    public string? Notes { get; set; }
-}
+
 
 public class RejectCompanyRequestDto
 {

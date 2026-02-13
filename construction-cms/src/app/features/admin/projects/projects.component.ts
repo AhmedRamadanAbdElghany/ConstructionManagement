@@ -22,50 +22,59 @@ import { map } from 'rxjs/operators';
             <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ 'projects.title' | translate }}</h1>
             <p class="text-slate-500 dark:text-slate-400 font-medium tracking-tight">{{ 'projects.subtitle' | translate }}</p>
           </div>
-          <button (click)="openCreateModal()" class="px-6 py-3 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-all flex items-center group">
-            <svg class="w-5 h-5 mr-2 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-            </svg>
-            {{ 'projects.create_new' | translate }}
+          <button (click)="openCreateModal()" class="px-8 py-4 rounded-[1.5rem] bg-gradient-to-r from-cyan-600 to-indigo-700 text-white font-black text-xs uppercase tracking-widest shadow-[0_10px_30px_-5px_rgba(6,182,212,0.4)] hover:scale-[1.05] hover:shadow-[0_20px_40px_-5px_rgba(6,182,212,0.5)] active:scale-95 transition-all flex items-center group">
+            <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center mr-3 group-hover:rotate-90 transition-transform">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+            </div>
+            {{ 'projects.establish_project' | translate }}
           </button>
         </div>
 
         <!-- Filters -->
         <div class="flex flex-col md:flex-row items-center justify-between gap-6 mb-10">
-          <div class="flex items-center space-x-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-1.5 shadow-xl shadow-slate-200/50 dark:shadow-none">
+          <div class="flex items-center space-x-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-[2rem] p-2 shadow-2xl shadow-slate-200/50 dark:shadow-none">
             <button 
               (click)="filterStatus = 'all'"
-              [class.bg-slate-900]="filterStatus === 'all'"
+              [class.bg-slate-950]="filterStatus === 'all'"
               [class.dark:bg-white]="filterStatus === 'all'"
               [class.text-white]="filterStatus === 'all'"
               [class.dark:text-slate-950]="filterStatus === 'all'"
-              [class.text-slate-500]="filterStatus !== 'all'"
-              class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
-              {{ 'projects.all' | translate }}
+              [class.shadow-xl]="filterStatus === 'all'"
+              [class.text-slate-400]="filterStatus !== 'all'"
+              class="px-6 py-3 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.15em] transition-all hover:bg-slate-100 dark:hover:bg-white/5">
+              {{ 'projects.all_inventory' | translate }}
             </button>
             <button 
               (click)="filterStatus = 'Active'"
-              [class.bg-cyan-500/10]="filterStatus === 'Active'"
-              [class.text-cyan-600]="filterStatus === 'Active'"
-              [class.text-slate-500]="filterStatus !== 'Active'"
-              class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
-              {{ 'projects.active' | translate }}
+              [class.bg-cyan-500]="filterStatus === 'Active'"
+              [class.text-white]="filterStatus === 'Active'"
+              [class.shadow-lg]="filterStatus === 'Active'"
+              [class.shadow-cyan-500/30]="filterStatus === 'Active'"
+              [class.text-slate-400]="filterStatus !== 'Active'"
+              class="px-6 py-3 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.15em] transition-all hover:bg-cyan-50 dark:hover:bg-cyan-500/10">
+              {{ 'projects.active_ops' | translate }}
             </button>
             <button 
               (click)="filterStatus = 'Completed'"
-              [class.bg-emerald-500/10]="filterStatus === 'Completed'"
-              [class.text-emerald-600]="filterStatus === 'Completed'"
-              [class.text-slate-500]="filterStatus !== 'Completed'"
-              class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
-              {{ 'projects.completed' | translate }}
+              [class.bg-emerald-500]="filterStatus === 'Completed'"
+              [class.text-white]="filterStatus === 'Completed'"
+              [class.shadow-lg]="filterStatus === 'Completed'"
+              [class.shadow-emerald-500/30]="filterStatus === 'Completed'"
+              [class.text-slate-400]="filterStatus !== 'Completed'"
+              class="px-6 py-3 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.15em] transition-all hover:bg-emerald-50 dark:hover:bg-emerald-500/10">
+              {{ 'projects.delivered' | translate }}
             </button>
             <button 
               (click)="filterStatus = 'Delayed'"
-              [class.bg-rose-500/10]="filterStatus === 'Delayed'"
-              [class.text-rose-600]="filterStatus === 'Delayed'"
-              [class.text-slate-500]="filterStatus !== 'Delayed'"
-              class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
-              {{ 'projects.delayed' | translate }}
+              [class.bg-rose-500]="filterStatus === 'Delayed'"
+              [class.text-white]="filterStatus === 'Delayed'"
+              [class.shadow-lg]="filterStatus === 'Delayed'"
+              [class.shadow-rose-500/30]="filterStatus === 'Delayed'"
+              [class.text-slate-400]="filterStatus !== 'Active'"
+              class="px-6 py-3 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.15em] transition-all hover:bg-rose-50 dark:hover:bg-rose-500/10">
+              {{ 'projects.delayed_alerts' | translate }}
             </button>
           </div>
 
@@ -168,11 +177,13 @@ import { map } from 'rxjs/operators';
                   </div>
 
                   <a [routerLink]="['/admin/projects', project.id]" 
-                     class="flex items-center justify-center w-full py-4 rounded-2xl bg-slate-100 dark:bg-white text-slate-900 dark:text-slate-950 font-black text-xs uppercase tracking-widest hover:bg-cyan-500 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-white transition-all group/btn shadow-sm">
-                    <span>{{ 'projects.view_details' | translate }}</span>
-                    <svg class="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                    </svg>
+                     class="flex items-center justify-center w-full py-5 rounded-[1.5rem] bg-slate-950 dark:bg-white text-white dark:text-slate-950 font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-slate-900/20 hover:bg-cyan-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-white hover:scale-[1.02] transition-all group/btn border border-white/10 dark:border-none">
+                    <span>{{ 'projects.inspect_project' | translate }}</span>
+                    <div class="ml-3 w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center transition-transform group-hover/btn:translate-x-1">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                      </svg>
+                    </div>
                   </a>
                 </div>
               </div>
@@ -236,10 +247,10 @@ import { map } from 'rxjs/operators';
                     </td>
                     <td class="px-8 py-6">
                       <a [routerLink]="['/admin/projects', project.id]" 
-                         class="px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg flex items-center w-fit">
-                        {{ 'dashboard.view' | translate }}
-                        <svg class="w-3.5 h-3.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path>
+                         class="px-6 py-3 rounded-xl bg-slate-950 dark:bg-white text-white dark:text-slate-950 text-[10px] font-black uppercase tracking-widest hover:bg-cyan-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-white hover:scale-110 transition-all shadow-xl flex items-center w-fit group/btn">
+                        {{ 'dashboard.inspect' | translate }}
+                        <svg class="w-3.5 h-3.5 ml-2 transition-transform group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                         </svg>
                       </a>
                     </td>
@@ -265,8 +276,8 @@ import { map } from 'rxjs/operators';
 
       <!-- Create Project Modal -->
       @if (showCreateModal) {
-       <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md animate-in fade-in duration-500">
-          <div class="bg-white dark:bg-slate-900 w-full max-w-7xl max-h-[90vh] rounded-[3.5rem] shadow-[0_32px_120px_-15px_rgba(0,0,0,0.5)] flex flex-col relative overflow-hidden animate-in zoom-in-95 duration-500 border border-white/10">
+       <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 md:p-10 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-700">
+          <div class="bg-white dark:bg-slate-900 w-full max-w-[1400px] max-h-[95vh] rounded-[4rem] shadow-[0_40px_150px_-20px_rgba(0,0,0,0.7)] flex flex-col relative overflow-hidden animate-in zoom-in-[0.98] duration-500 border border-white/10">
              
              <!-- Decorative Background elements -->
              <div class="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2"></div>
@@ -312,17 +323,12 @@ import { map } from 'rxjs/operators';
                          </div>
 
                          <div class="space-y-5">
-                            <div class="relative group/field">
-                               <input type="text" [(ngModel)]="createForm.name" placeholder=" "
-                                      class="peer w-full p-5 pt-7 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-sm shadow-inner">
-                               <label class="absolute left-5 top-5 text-[10px] font-black text-slate-400 uppercase tracking-widest transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-5 peer-focus:top-2 peer-focus:text-[9px] peer-focus:text-rose-500 pointer-events-none">{{ 'projects.project_title' | translate }}</label>
-                            </div>
+                             <div class="relative group/field">
+                                <input type="text" [(ngModel)]="createForm.name" placeholder=" "
+                                       class="peer w-full p-6 pt-9 rounded-[2rem] bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 focus:border-cyan-500/50 focus:ring-4 focus:ring-cyan-500/10 outline-none font-bold text-slate-900 dark:text-white transition-all text-base shadow-inner">
+                                <label class="absolute left-7 top-7 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-7 peer-focus:top-3 peer-focus:text-[9px] peer-focus:text-cyan-500 pointer-events-none">{{ 'projects.project_title' | translate }}</label>
+                             </div>
 
-                            <div class="relative group/field">
-                               <input type="text" [(ngModel)]="createForm.address" placeholder=" "
-                                      class="peer w-full p-5 pt-7 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-sm shadow-inner">
-                               <label class="absolute left-5 top-5 text-[10px] font-black text-slate-400 uppercase tracking-widest transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-5 peer-focus:top-2 peer-focus:text-[9px] peer-focus:text-cyan-500 pointer-events-none">{{ 'projects.site_address' | translate }}</label>
-                            </div>
 
                             <div class="grid grid-cols-2 gap-5">
                                <div class="relative group/field">
@@ -335,26 +341,9 @@ import { map } from 'rxjs/operators';
                                          class="w-full p-5 pt-7 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-xs shadow-inner">
                                   <label class="absolute left-5 top-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'projects.handover_target' | translate }}</label>
                                </div>
-                            </div>
-
-                            @if (companySettings?.allowLocations) {
-                               <div class="grid grid-cols-2 gap-5 pt-2">
-                                  <div class="relative group/field">
-                                     <input type="number" [(ngModel)]="createForm.lat" step="any" placeholder="0.0000"
-                                            class="w-full p-5 pt-7 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-xs shadow-inner">
-                                     <label class="absolute left-5 top-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'projects.gps_lat' | translate }}</label>
-                                  </div>
-                                  <div class="relative group/field">
-                                     <input type="number" [(ngModel)]="createForm.lng" step="any" placeholder="0.0000"
-                                            class="w-full p-5 pt-7 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 focus:border-cyan-500/50 outline-none font-bold text-slate-900 dark:text-white transition-all text-xs shadow-inner">
-                                     <label class="absolute left-5 top-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'projects.gps_lng' | translate }}</label>
-                                  </div>
-                               </div>
-                            }
-                         </div>
-                      </div>
-
-
+                             </div>
+                          </div>
+                       </div>
                    </div>
 
                    <!-- Right Column (Financial Wing) -->
@@ -520,23 +509,25 @@ import { map } from 'rxjs/operators';
                 </div>
 
                 <div class="flex space-x-6 w-full md:w-auto">
-                   <button (click)="showCreateModal = false" class="px-10 py-5 rounded-[1.5rem] text-slate-500 font-black text-[11px] uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-white/5 transition-all active:scale-95">{{ 'projects.discard' | translate }}</button>
-                   <button (click)="createProject()"
-                           [disabled]="!isFormValid || isCreatingProject"
-                           class="flex items-center space-x-3 px-12 py-5 rounded-[1.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[11px] uppercase tracking-widest shadow-2xl shadow-slate-900/40 hover:scale-105 active:scale-95 transition-all disabled:opacity-20 disabled:grayscale disabled:cursor-not-allowed group">
-                      @if (isCreatingProject) {
-                         <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                         </svg>
-                         <span>Creating...</span>
-                      } @else {
-                         <span>{{ 'projects.establish' | translate }}</span>
-                         <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                         </svg>
-                      }
-                   </button>
+                   <button (click)="showCreateModal = false" class="px-10 py-6 rounded-[2rem] text-slate-400 font-extrabold text-[11px] uppercase tracking-[0.2em] hover:bg-rose-500/10 hover:text-rose-500 transition-all active:scale-95">{{ 'projects.cancel_setup' | translate }}</button>
+                    <button (click)="createProject()"
+                            [disabled]="!isFormValid || isCreatingProject"
+                            class="flex items-center space-x-4 px-16 py-6 rounded-[2rem] bg-gradient-to-r from-emerald-600 to-teal-700 text-white font-black text-xs uppercase tracking-[0.3em] shadow-2xl shadow-emerald-500/40 hover:scale-[1.05] active:scale-95 transition-all disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed group">
+                       @if (isCreatingProject) {
+                          <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          <span>Establishing Ecosystem...</span>
+                       } @else {
+                          <span>Establish New Project</span>
+                          <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
+                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                             </svg>
+                          </div>
+                       }
+                    </button>
                 </div>
              </div>
           </div>
@@ -589,10 +580,7 @@ export class ProjectsComponent implements OnInit {
     // Basic Info
     if (!f.name || !f.startDate || !f.endDate) return false;
 
-    // Location is optional now
-    // if (this.companySettings?.allowLocations) {
-    //   if (f.lat === null || f.lng === null) return false;
-    // }
+
 
     // Calculation Method
     if (f.calculationMethod === 'Measured' && (!f.totalContractValue || f.totalContractValue <= 0)) return false;
@@ -610,13 +598,11 @@ export class ProjectsComponent implements OnInit {
     const errors: string[] = [];
 
     if (!f.name) errors.push('Project Name');
-    if (!f.address) errors.push('Location Address');
+
     if (!f.startDate) errors.push('Start Date');
     if (!f.endDate) errors.push('Target End Date');
 
-    if (this.companySettings?.allowLocations) {
-      if (f.lat === null || f.lng === null) errors.push('GPS Coordinates (Lat/Lng)');
-    }
+
 
     if (f.calculationMethod === 'Measured' && (!f.totalContractValue || f.totalContractValue <= 0)) {
       errors.push('Total Project Cost');
@@ -679,8 +665,7 @@ export class ProjectsComponent implements OnInit {
       deductedAmount: 0,
       deductedAmountDescription: '',
       lat: null,
-      lng: null,
-
+      lng: null
     };
     this.showCreateModal = true;
   }

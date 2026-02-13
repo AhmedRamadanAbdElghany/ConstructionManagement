@@ -22,6 +22,10 @@ export interface CompanyRequest {
     notes?: string;
 }
 
+export interface ApproveCompanyRequestDto {
+    config?: any; // Use the same structure as UpdateCompanyRequest in backend
+}
+
 export interface JoinRequest {
     id: number;
     userId: number;
@@ -73,8 +77,8 @@ export class PendingRequestsService {
         return this.http.get<{ pendingCount: number }>(`${this.apiUrl}/companyrequests/count`);
     }
 
-    approveCompanyRequest(id: number): Observable<CompanyRequest> {
-        return this.http.post<CompanyRequest>(`${this.apiUrl}/companyrequests/${id}/approve`, {}).pipe(
+    approveCompanyRequest(id: number, dto?: ApproveCompanyRequestDto): Observable<CompanyRequest> {
+        return this.http.post<CompanyRequest>(`${this.apiUrl}/companyrequests/${id}/approve`, dto || {}).pipe(
             tap(() => this.refreshPendingCount())
         );
     }

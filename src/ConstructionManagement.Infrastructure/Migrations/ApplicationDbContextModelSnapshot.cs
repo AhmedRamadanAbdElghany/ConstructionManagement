@@ -2311,6 +2311,145 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.ToTable("DefectResolutions");
                 });
 
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Design", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ApprovalStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ApprovedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ApprovedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ChangeNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("FileType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OriginalFileName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ParentDesignId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RejectionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("ParentDesignId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("Designs");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.DesignCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ParentCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentCategoryId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("DesignCategories");
+                });
+
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Document", b =>
                 {
                     b.Property<int>("Id")
@@ -8055,7 +8194,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             UserId = 1,
                             RoleId = 1,
-                            AssignedAt = new DateTime(2026, 2, 12, 9, 8, 30, 273, DateTimeKind.Utc).AddTicks(3152)
+                            AssignedAt = new DateTime(2026, 2, 13, 19, 27, 41, 382, DateTimeKind.Utc).AddTicks(6685)
                         });
                 });
 
@@ -9112,6 +9251,54 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("Company");
 
                     b.Navigation("Defect");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Design", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.DesignCategory", "Category")
+                        .WithMany("Designs")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId");
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.Design", "ParentDesign")
+                        .WithMany("Versions")
+                        .HasForeignKey("ParentDesignId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("ParentDesign");
+
+                    b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.DesignCategory", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.DesignCategory", "ParentCategory")
+                        .WithMany("ChildCategories")
+                        .HasForeignKey("ParentCategoryId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("ParentCategory");
+
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Document", b =>
@@ -10715,6 +10902,18 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("PunchListItems");
 
                     b.Navigation("Resolutions");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Design", b =>
+                {
+                    b.Navigation("Versions");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.DesignCategory", b =>
+                {
+                    b.Navigation("ChildCategories");
+
+                    b.Navigation("Designs");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Document", b =>

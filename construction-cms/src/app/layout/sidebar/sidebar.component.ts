@@ -5,7 +5,7 @@ import { SettingsService } from '../../core/services/settings.service';
 import { PendingRequestsService } from '../../core/services/pending-requests.service';
 import { CompanySettings } from '../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
@@ -364,30 +364,7 @@ import { RouterModule } from '@angular/router';
         }
       </nav>
 
-      @if (!isPending) {
-      <div class="p-4 m-4 rounded-[2rem] bg-slate-100/50 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 backdrop-blur-3xl transition-all duration-500 shrink-0 shadow-inner"
-           [class.mx-2]="isCollapsed()">
-        <label class="block text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] mb-3 px-1 truncate" [class.text-center]="isCollapsed()">{{ 'sidebar.demo_role_switch' | translate }}</label>
 
-        <div class="relative group/select">
-          <select 
-            (change)="switchUserType($event)"
-            [value]="currentUserType"
-            class="w-full pl-3 pr-10 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-300 text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-cyan-500/10 focus:border-cyan-500/30 transition-all cursor-pointer appearance-none outline-none shadow-xl">
-            <option value="0">{{ 'sidebar.role_super' | translate }}</option>
-            <option value="1">{{ 'sidebar.role_worker' | translate }}</option>
-            <option value="2">{{ 'sidebar.role_admin' | translate }}</option>
-            <option value="3">{{ 'sidebar.role_client' | translate }}</option>
-
-          </select>
-          <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400 dark:text-slate-600 group-hover/select:text-cyan-500 dark:group-hover/select:text-cyan-400 transition-colors" [class.hidden]="isCollapsed()">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          </div>
-        </div>
-      </div>
-      }
 
       <!-- User Profile -->
       <div class="p-6 bg-slate-100/30 dark:bg-slate-950/40 border-t border-slate-200 dark:border-slate-800/60 mt-auto shrink-0 group/profile cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-950/60 transition-colors">
@@ -402,7 +379,7 @@ import { RouterModule } from '@angular/router';
             <p class="text-[15px] font-black text-slate-900 dark:text-white truncate leading-none mb-1.5">{{ authService.getCurrentUser()?.fullName || '' }}</p>
             <p class="text-[10px] text-slate-400 dark:text-slate-600 truncate font-black uppercase tracking-widest">{{ authService.getCurrentUser()?.email || '' }}</p>
           </div>
-          <button class="p-3 rounded-2xl text-slate-400 dark:text-slate-600 hover:bg-rose-500/10 hover:text-rose-500 transition-all active:scale-90 group/logout" [class.hidden]="isCollapsed()">
+      <button (click)="logout()" class="p-3 rounded-2xl text-slate-400 dark:text-slate-600 hover:bg-rose-500/10 hover:text-rose-500 transition-all active:scale-90 group/logout" [class.hidden]="isCollapsed()">
             <svg class="w-6 h-6 transition-transform group-hover/logout:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
             </svg>
@@ -464,6 +441,7 @@ export class SidebarComponent {
   isCollapsed = signal(false);
   settings?: CompanySettings;
   pendingRequestsCount = signal(0);
+  private router = inject(Router);
 
   constructor(
     public authService: AuthService,
@@ -526,21 +504,9 @@ export class SidebarComponent {
     this.isCollapsed.update(v => !v);
   }
 
-  switchUserType(event: Event) {
-    const select = event.target as HTMLSelectElement;
-    const newType = parseInt(select.value, 10);
-
-    this.authService.switchUserType(newType).subscribe({
-      next: () => {
-        // Optionally reload the page or refresh the UI
-        window.location.reload();
-      },
-      error: (err: any) => {
-        console.error('Failed to switch user type:', err);
-        // Revert selection
-        select.value = this.currentUserType.toString();
-      }
-    });
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/auth/login']);
   }
 }
 
