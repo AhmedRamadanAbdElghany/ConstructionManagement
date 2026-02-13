@@ -196,6 +196,60 @@ interface DesignGroup {
 
                     <!-- Designs Grid Area -->
                     <div class="lg:col-span-3">
+                        @if (selectedCategoryId && selectedCategoryId !== -1) {
+                            <div class="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <div class="flex items-center justify-between mb-6">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-1 h-4 bg-cyan-500 rounded-full"></div>
+                                        <h4 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">{{ 'designs.subcategories' | translate }}</h4>
+                                    </div>
+                                    @if (canAddCategory && (currentChildCategories.length > 0)) {
+                                        <button (click)="openCreateSubCategoryModal(currentCategory!)" 
+                                                class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold text-[10px] uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center gap-2 border border-slate-200 dark:border-white/5">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                            <span>{{ 'designs.create_subcategory' | translate }}</span>
+                                        </button>
+                                    }
+                                </div>
+                                
+                                @if (currentChildCategories.length > 0) {
+                                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                                        @for (child of currentChildCategories; track child.id) {
+                                            <div (click)="selectCategory(child.id)" 
+                                                 class="group p-6 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/5 hover:border-cyan-500/30 hover:shadow-xl hover:shadow-cyan-500/10 transition-all cursor-pointer relative overflow-hidden">
+                                                <div class="flex items-center space-x-4 relative z-10">
+                                                    <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center group-hover:bg-cyan-500 group-hover:text-white transition-colors duration-300">
+                                                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path></svg>
+                                                    </div>
+                                                    <div class="flex-1 min-w-0">
+                                                        <h5 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight truncate">{{ child.name }}</h5>
+                                                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">{{ child.designCount || 0 }} Designs</p>
+                                                    </div>
+                                                    <div class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-300 group-hover:text-cyan-500 transition-colors">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                                    </div>
+                                                </div>
+                                                 <!-- Background Gradient -->
+                                                <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                            </div>
+                                        }
+                                    </div>
+                                } @else {
+                                    <div class="p-10 rounded-[2rem] bg-slate-50/50 dark:bg-slate-900/50 border border-dashed border-slate-200 dark:border-white/10 text-center group hover:border-cyan-500/30 transition-colors cursor-pointer" 
+                                         (click)="canAddCategory ? openCreateSubCategoryModal(currentCategory!) : null"
+                                         [class.cursor-pointer]="canAddCategory"
+                                         [class.cursor-default]="!canAddCategory">
+                                        <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-3 group-hover:bg-cyan-500/10 group-hover:text-cyan-500 transition-colors">
+                                            <svg class="w-6 h-6 text-slate-400 group-hover:text-cyan-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                                        </div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic mb-1">{{ 'designs.no_subcategories' | translate }}</p>
+                                        @if (canAddCategory) {
+                                            <p class="text-[9px] font-black text-cyan-500 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Click to create subcategory</p>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
                         @if (loading) {
                             <div class="flex flex-col items-center justify-center h-96 space-y-4">
                                 <div class="relative w-23.5 h-23.5">
@@ -509,6 +563,24 @@ interface DesignGroup {
                                     }
                                 </select>
                             </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ 'designs.category_image' | translate }}</label>
+                                <div class="relative w-full h-32 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-200 dark:border-white/10 flex flex-col items-center justify-center cursor-pointer hover:border-cyan-500/50 transition-colors group"
+                                     (click)="categoryFileInput.click()">
+                                     <input #categoryFileInput type="file" class="hidden" (change)="handleCategoryFileSelect($event)" accept="image/*">
+                                     @if (selectedCategoryFile) {
+                                         <div class="text-center">
+                                            <svg class="w-8 h-8 mx-auto text-cyan-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                            <p class="text-xs font-bold text-slate-700 dark:text-slate-200">{{ selectedCategoryFile.name }}</p>
+                                         </div>
+                                     } @else {
+                                         <div class="text-center">
+                                            <svg class="w-8 h-8 mx-auto text-slate-300 dark:text-slate-600 mb-2 group-hover:text-cyan-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                            <p class="text-xs text-slate-400 group-hover:text-cyan-500 transition-colors">Click to upload image</p>
+                                         </div>
+                                     }
+                                </div>
+                            </div>
                         </div>
                         <div class="p-6 border-t border-slate-200 dark:border-white/5 flex justify-end gap-3">
                             <button (click)="showCreateCategoryModal = false" 
@@ -688,6 +760,7 @@ export class DesignsTabComponent implements OnInit, OnChanges {
         description: '',
         parentCategoryId: undefined as number | undefined
     };
+    selectedCategoryFile: File | null = null;
 
     get canAddDesign(): boolean {
         return this.authService.hasProjectPermission('Design.Add');
@@ -710,6 +783,16 @@ export class DesignsTabComponent implements OnInit, OnChanges {
             const categoryIds = this.getCategoryAndSubcategoryIds(this.selectedCategoryId);
             return this.designGroups.filter(g => g.latestDesign.categoryId && categoryIds.includes(g.latestDesign.categoryId));
         }
+    }
+
+    get currentChildCategories(): DesignCategory[] {
+        if (!this.selectedCategoryId || this.selectedCategoryId === -1) return [];
+        const category = this.allCategories.find(c => c.id === this.selectedCategoryId);
+        return category?.childCategories ?? [];
+    }
+
+    get currentCategory(): DesignCategory | undefined {
+        return this.allCategories.find(c => c.id === this.selectedCategoryId);
     }
 
     constructor(
@@ -738,13 +821,12 @@ export class DesignsTabComponent implements OnInit, OnChanges {
 
                 // Load dummy categories if no real categories exist
                 if (categories.length === 0) {
-                    this.loadDummyCategories();
+                    this.loading = false;
                 }
             },
             error: (err) => {
                 console.error('Error loading categories:', err);
                 // Load dummy categories on error for demo
-                this.loadDummyCategories();
                 this.loading = false;
             }
         });
@@ -758,263 +840,11 @@ export class DesignsTabComponent implements OnInit, OnChanges {
             },
             error: (err) => {
                 console.error('Error loading designs:', err);
-                // Load dummy designs on error for demo
-                this.loadDummyDesigns();
+                this.loading = false;
             }
         });
     }
 
-    loadDummyCategories(): void {
-        // Demo categories with photos - using the new interface structure
-        this.categoryTree = [
-            {
-                id: 1,
-                name: 'Architectural',
-                description: 'Architectural drawings and plans',
-                projectId: this.projectId,
-                order: 1,
-                createdAt: '2024-01-15T10:00:00Z',
-                photoUrl: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=400&h=300&fit=crop',
-                createdByUserId: 2,
-                childCategories: [],
-                designs: [],
-                designCount: 0
-            },
-            {
-                id: 2,
-                name: 'Structural',
-                description: 'Structural engineering designs',
-                projectId: this.projectId,
-                order: 2,
-                createdAt: '2024-01-15T10:30:00Z',
-                photoUrl: 'https://images.unsplash.com/photo-1518098268026-4e1875127430?w=400&h=300&fit=crop',
-                createdByUserId: 2,
-                childCategories: [],
-                designs: [],
-                designCount: 0
-            },
-            {
-                id: 3,
-                name: 'Electrical',
-                description: 'Electrical systems and schematics',
-                projectId: this.projectId,
-                order: 3,
-                createdAt: '2024-01-16T09:00:00Z',
-                photoUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop',
-                createdByUserId: 2,
-                childCategories: [],
-                designs: [],
-                designCount: 0
-            },
-            {
-                id: 4,
-                name: 'Floor Plans',
-                description: 'Detailed floor plans and layouts',
-                parentCategoryId: 1,
-                projectId: this.projectId,
-                order: 1,
-                createdAt: '2024-01-17T08:00:00Z',
-                photoUrl: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop',
-                createdByUserId: 2,
-                childCategories: [],
-                designs: [],
-                designCount: 0
-            },
-            {
-                id: 5,
-                name: 'Elevations',
-                description: 'Building elevations and facades',
-                parentCategoryId: 1,
-                projectId: this.projectId,
-                order: 2,
-                createdAt: '2024-01-18T14:00:00Z',
-                photoUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop',
-                createdByUserId: 2,
-                childCategories: [],
-                designs: [],
-                designCount: 0
-            }
-        ];
-        this.flattenCategories(this.categoryTree);
-
-        // Also load dummy designs for demo
-        this.loadDummyDesigns();
-    }
-
-    loadDummyDesigns(): void {
-        // Demo designs with multiple versions for testing version history
-        this.allDesigns = [
-            // Architectural - Floor Plans - Multiple versions (v1, v2, v3)
-            {
-                id: 1,
-                name: 'Ground Floor Plan v1',
-                description: 'Initial ground floor layout',
-                categoryId: 4,
-                projectId: this.projectId,
-                version: 1,
-                fileName: 'ground_floor_v1.pdf',
-                fileType: 'application/pdf',
-                fileSize: 2456000,
-                fileUrl: '/assets/designs/ground_floor_v1.pdf',
-                status: 'Archived',
-                createdByUserId: 2,
-                createdByUserName: 'Maria Hassan',
-                createdAt: '2024-01-20T10:00:00Z',
-                updatedAt: '2024-01-20T10:00:00Z',
-                approvalStatus: 'Approved',
-                approvedByUserId: 1,
-                approvedByUserName: 'Ahmed Ali',
-                approvedDate: '2024-01-22T14:30:00Z',
-                versionCount: 3,
-                changeNotes: 'Initial version'
-            },
-            {
-                id: 2,
-                name: 'Ground Floor Plan v2',
-                description: 'Updated ground floor layout with modifications',
-                categoryId: 4,
-                projectId: this.projectId,
-                version: 2,
-                fileName: 'ground_floor_v2.pdf',
-                fileType: 'application/pdf',
-                fileSize: 2680000,
-                fileUrl: '/assets/designs/ground_floor_v2.pdf',
-                status: 'Archived',
-                createdByUserId: 2,
-                createdByUserName: 'Maria Hassan',
-                createdAt: '2024-02-05T09:00:00Z',
-                updatedAt: '2024-02-05T09:00:00Z',
-                approvalStatus: 'Approved',
-                approvedByUserId: 1,
-                approvedByUserName: 'Ahmed Ali',
-                approvedDate: '2024-02-07T11:00:00Z',
-                versionCount: 3,
-                parentDesignId: 1,
-                changeNotes: 'Modified entrance layout and added additional restroom'
-            },
-            {
-                id: 3,
-                name: 'Ground Floor Plan v3',
-                description: 'Final approved version with all changes',
-                categoryId: 4,
-                projectId: this.projectId,
-                version: 3,
-                fileName: 'ground_floor_v3.pdf',
-                fileType: 'application/pdf',
-                fileSize: 2890000,
-                fileUrl: '/assets/designs/ground_floor_v3.pdf',
-                status: 'Active',
-                createdByUserId: 2,
-                createdByUserName: 'Maria Hassan',
-                createdAt: '2024-03-10T15:00:00Z',
-                updatedAt: '2024-03-10T15:00:00Z',
-                approvalStatus: 'Approved',
-                approvedByUserId: 1,
-                approvedByUserName: 'Ahmed Ali',
-                approvedDate: '2024-03-12T09:00:00Z',
-                versionCount: 3,
-                parentDesignId: 2,
-                changeNotes: 'Final revision incorporating client feedback'
-            },
-            // Structural - Foundation designs
-            {
-                id: 4,
-                name: 'Foundation Layout v1',
-                description: 'Main foundation design',
-                categoryId: 2,
-                projectId: this.projectId,
-                version: 1,
-                fileName: 'foundation_v1.dwg',
-                fileType: 'application/dwg',
-                fileSize: 5200000,
-                fileUrl: '/assets/designs/foundation_v1.dwg',
-                status: 'Active',
-                createdByUserId: 7,
-                createdByUserName: 'Mohamed Farid',
-                createdAt: '2024-01-25T08:00:00Z',
-                updatedAt: '2024-01-25T08:00:00Z',
-                approvalStatus: 'Approved',
-                approvedByUserId: 1,
-                approvedByUserName: 'Ahmed Ali',
-                approvedDate: '2024-01-28T10:00:00Z',
-                versionCount: 1,
-                changeNotes: 'Initial foundation design'
-            },
-            // Electrical - Single version - Pending approval
-            {
-                id: 5,
-                name: 'Electrical Wiring Diagram v1',
-                description: 'Complete electrical wiring layout',
-                categoryId: 3,
-                projectId: this.projectId,
-                version: 1,
-                fileName: 'electrical_wiring_v1.pdf',
-                fileType: 'application/pdf',
-                fileSize: 1850000,
-                fileUrl: '/assets/designs/electrical_wiring_v1.pdf',
-                status: 'Active',
-                createdByUserId: 2,
-                createdByUserName: 'Maria Hassan',
-                createdAt: '2024-02-15T11:00:00Z',
-                updatedAt: '2024-02-15T11:00:00Z',
-                approvalStatus: 'Pending',
-                versionCount: 1,
-                changeNotes: 'Initial electrical design'
-            },
-            // Architectural - Elevations - Rejected version
-            {
-                id: 6,
-                name: 'Main Facade Elevation v1',
-                description: 'Initial facade design',
-                categoryId: 5,
-                projectId: this.projectId,
-                version: 1,
-                fileName: 'facade_v1.pdf',
-                fileType: 'application/pdf',
-                fileSize: 3200000,
-                fileUrl: '/assets/designs/facade_v1.pdf',
-                status: 'Archived',
-                createdByUserId: 2,
-                createdByUserName: 'Maria Hassan',
-                createdAt: '2024-02-20T14:00:00Z',
-                updatedAt: '2024-02-20T14:00:00Z',
-                approvalStatus: 'Rejected',
-                approvedByUserId: 1,
-                approvedByUserName: 'Ahmed Ali',
-                approvedDate: '2024-02-25T16:00:00Z',
-                versionCount: 2,
-                rejectionReason: 'Does not match client requirements. Please revise facade to include more glass elements.',
-                changeNotes: 'Initial facade design'
-            },
-            {
-                id: 7,
-                name: 'Main Facade Elevation v2',
-                description: 'Revised facade with glass elements',
-                categoryId: 5,
-                projectId: this.projectId,
-                version: 2,
-                fileName: 'facade_v2.pdf',
-                fileType: 'application/pdf',
-                fileSize: 3500000,
-                fileUrl: '/assets/designs/facade_v2.pdf',
-                status: 'Active',
-                createdByUserId: 2,
-                createdByUserName: 'Maria Hassan',
-                createdAt: '2024-03-01T10:00:00Z',
-                updatedAt: '2024-03-01T10:00:00Z',
-                approvalStatus: 'Approved',
-                approvedByUserId: 1,
-                approvedByUserName: 'Ahmed Ali',
-                approvedDate: '2024-03-05T14:00:00Z',
-                parentDesignId: 6,
-                changeNotes: 'Added 40% glass coverage per client request'
-            }
-        ];
-
-        this.uncategorizedDesigns = this.allDesigns.filter(d => !d.categoryId);
-        this.groupDesignsByVersion();
-        this.loading = false;
-    }
 
     groupDesignsByVersion(): void {
         const groups = new Map<number, Design[]>();
@@ -1134,7 +964,8 @@ export class DesignsTabComponent implements OnInit, OnChanges {
             description: this.newCategory.description || undefined,
             parentCategoryId: this.newCategory.parentCategoryId || undefined,
             projectId: this.projectId,
-            order: 0
+            order: 0,
+            file: this.selectedCategoryFile || undefined
         };
 
         this.designService.createCategory(this.projectId, request).subscribe({
@@ -1172,7 +1003,10 @@ export class DesignsTabComponent implements OnInit, OnChanges {
         if (!this.newCategory.name || !this.selectedCategoryIdToEdit) return;
 
         this.creatingCategory = true;
-        this.designService.updateCategory(this.selectedCategoryIdToEdit, this.newCategory).subscribe({
+        this.designService.updateCategory(this.selectedCategoryIdToEdit, {
+            ...this.newCategory,
+            file: this.selectedCategoryFile || undefined
+        }).subscribe({
             next: () => {
                 this.creatingCategory = false;
                 this.showCreateCategoryModal = false;
@@ -1271,5 +1105,13 @@ export class DesignsTabComponent implements OnInit, OnChanges {
         };
         this.isEditCategoryMode = false;
         this.selectedCategoryIdToEdit = null;
+        this.selectedCategoryFile = null;
+    }
+
+    handleCategoryFileSelect(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        if (input.files && input.files.length > 0) {
+            this.selectedCategoryFile = input.files[0];
+        }
     }
 }

@@ -539,6 +539,7 @@ export interface CreateCategoryRequest {
   parentCategoryId?: number;
   projectId?: number;
   order: number;
+  file?: File;
 }
 
 export interface UpdateCategoryRequest {
@@ -546,6 +547,7 @@ export interface UpdateCategoryRequest {
   description?: string;
   parentCategoryId?: number;
   order?: number;
+  file?: File;
 }
 
 // Analytics & Reports Interfaces

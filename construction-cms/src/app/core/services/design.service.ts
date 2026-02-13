@@ -77,11 +77,25 @@ export class DesignService {
     }
 
     createCategory(projectId: number, request: CreateCategoryRequest): Observable<number> {
-        return this.http.post<number>(`${this.baseUrl}/projects/${projectId}/designs/categories`, request);
+        const formData = new FormData();
+        formData.append('name', request.name);
+        formData.append('order', request.order.toString());
+        if (request.description) formData.append('description', request.description);
+        if (request.parentCategoryId) formData.append('parentCategoryId', request.parentCategoryId.toString());
+        if (request.file) formData.append('file', request.file);
+
+        return this.http.post<number>(`${this.baseUrl}/projects/${projectId}/designs/categories`, formData);
     }
 
     updateCategory(categoryId: number, request: UpdateCategoryRequest): Observable<void> {
-        return this.http.put<void>(`${this.baseUrl}/designs/categories/${categoryId}`, request);
+        const formData = new FormData();
+        if (request.name) formData.append('name', request.name);
+        if (request.description) formData.append('description', request.description);
+        if (request.parentCategoryId) formData.append('parentCategoryId', request.parentCategoryId.toString());
+        if (request.order !== undefined) formData.append('order', request.order.toString());
+        if (request.file) formData.append('file', request.file);
+
+        return this.http.put<void>(`${this.baseUrl}/designs/categories/${categoryId}`, formData);
     }
 
     deleteCategory(categoryId: number): Observable<void> {
