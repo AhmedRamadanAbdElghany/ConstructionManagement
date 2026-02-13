@@ -2296,17 +2296,20 @@ export class ProjectDetailComponent implements OnInit {
             // We'll use the first one if available.
             this.designService.importTemplate(this.project.id, templates[0].id).subscribe(() => {
                this.isDesignsInitialized = true;
-               // Trigger reload in the child component if needed, but since it's a separate tab,
-               // switching to it might be enough if we handle it well.
+               // Reload page or force refresh designs tab if needed
+               window.location.reload();
             });
          }
       });
    }
 
    resetDesigns() {
-      if (confirm('Are you sure you want to clear all design categories? Folders will be removed, but designs will remain as uncategorized.')) {
-         // In a real app, delete all categories for this project
-         this.isDesignsInitialized = true;
+      if (!this.project) return;
+      if (confirm('Are you sure you want to clear all design categories? Folders and their contents will be permanently removed.')) {
+         this.designService.clearCategories(this.project.id).subscribe(() => {
+            this.isDesignsInitialized = false;
+            window.location.reload();
+         });
       }
    }
 

@@ -44,9 +44,9 @@ interface DesignGroup {
                         Import Template
                     </button>
                     <button *ngIf="canAddCategory" (click)="openCreateCategoryModal()" 
-                            class="px-5 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-emerald-500 transition-all shadow-sm flex items-center gap-2">
+                            class="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-white/5 text-[10px] font-black uppercase tracking-widest text-slate-700 dark:text-slate-300 hover:text-emerald-500 transition-all shadow-sm flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
-                        New Folder
+                        {{ 'designs.new_folder' | translate }}
                     </button>
                     <button *ngIf="canAddDesign" (click)="showUploadModal = true" 
                             class="px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl flex items-center gap-2">
@@ -145,9 +145,8 @@ interface DesignGroup {
                         <div class="w-20 h-20 rounded-[2rem] bg-slate-50 dark:bg-white/5 flex items-center justify-center mx-auto mb-6">
                             <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path></svg>
                         </div>
-                        <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">Folder is empty</h3>
+                        <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">{{ 'designs.empty_folder' | translate }}</h3>
                         <div class="flex justify-center gap-4">
-                            <button *ngIf="canAddCategory" (click)="openCreateCategoryModal()" class="px-8 py-3.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all">New Folder</button>
                             <button *ngIf="canAddDesign" (click)="showUploadModal = true" class="px-8 py-3.5 rounded-2xl bg-cyan-500 text-white text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl">Upload Drawing</button>
                         </div>
                     </div>
@@ -159,23 +158,17 @@ interface DesignGroup {
         
         <!-- Upload Modal -->
         <div *ngIf="showUploadModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4" (click)="closeUploadModal()">
-            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] w-full max-w-lg shadow-2xl overflow-hidden" (click)="$event.stopPropagation()">
-                <div class="p-8 border-b border-slate-100 dark:border-white/5">
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] w-full max-w-2xl shadow-2xl overflow-hidden" (click)="$event.stopPropagation()">
+                <div class="p-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between">
                     <h3 class="text-xl font-black uppercase tracking-tight">{{ (isNewVersionMode ? 'Upload New Version' : 'Add New Drawing') }}</h3>
+                    <button (click)="closeUploadModal()" class="p-2 text-slate-400 hover:text-slate-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
                 </div>
                 <div class="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Design Name</label>
                         <input type="text" [(ngModel)]="newDesign.name" class="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5 focus:outline-none focus:ring-4 focus:ring-cyan-500/10 font-bold transition-all">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Category</label>
-                        <select [(ngModel)]="newDesign.categoryId" class="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5 focus:outline-none focus:ring-4 focus:ring-cyan-500/10 font-bold transition-all">
-                            <option [value]="null">Uncategorized</option>
-                            @for (cat of allCategories; track cat.id) {
-                                <option [value]="cat.id">{{ cat.name }}</option>
-                            }
-                        </select>
                     </div>
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Description</label>
@@ -195,7 +188,7 @@ interface DesignGroup {
                     </div>
                 </div>
                 <div class="p-8 border-t border-slate-100 dark:border-white/5 flex items-center gap-4 bg-slate-50/50 dark:bg-white/5">
-                    <button (click)="closeUploadModal()" class="flex-1 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-slate-100 dark:hover:bg-white/5 transition-all">Cancel</button>
+                    <button (click)="closeUploadModal()" class="flex-1 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 transition-all text-slate-600 dark:text-slate-400">{{ 'common.cancel' | translate }}</button>
                     <button (click)="uploadDesign()" [disabled]="!newDesign.name || !selectedFile || uploading" class="flex-1 px-8 py-4 rounded-2xl bg-cyan-500 text-white text-[10px] font-black uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-cyan-500/20 disabled:opacity-50 disabled:grayscale">
                         {{ uploading ? 'Uploading...' : 'Save Drawing' }}
                     </button>
@@ -206,23 +199,28 @@ interface DesignGroup {
         <!-- Category Modal -->
         <div *ngIf="showCreateCategoryModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4" (click)="showCreateCategoryModal = false">
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] w-full max-w-md shadow-2xl overflow-hidden" (click)="$event.stopPropagation()">
-                <div class="p-8 border-b border-slate-100 dark:border-white/5">
-                    <h3 class="text-xl font-black uppercase tracking-tight">{{ (isEditCategoryMode ? 'Edit Folder' : 'New Folder') }}</h3>
+                <div class="p-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between">
+                    <h3 class="text-xl font-black uppercase tracking-tight">{{ (isEditCategoryMode ? ('designs.edit_category' | translate) : ('designs.new_folder' | translate)) }}</h3>
+                    <button (click)="showCreateCategoryModal = false" class="p-2 text-slate-400 hover:text-slate-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
                 </div>
                 <div class="p-8 space-y-6">
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Folder Name</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">{{ 'designs.category_name' | translate }}</label>
                         <input type="text" [(ngModel)]="newCategory.name" class="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 font-bold transition-all">
                     </div>
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Description</label>
                         <textarea [(ngModel)]="newCategory.description" rows="3" class="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 font-medium transition-all"></textarea>
                     </div>
+
+
                 </div>
                 <div class="p-8 border-t border-slate-100 dark:border-white/5 flex items-center gap-4 bg-slate-50/50 dark:bg-white/5">
-                    <button (click)="showCreateCategoryModal = false" class="flex-1 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-slate-100 dark:hover:bg-white/5 transition-all">Cancel</button>
+                    <button (click)="showCreateCategoryModal = false" class="flex-1 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 transition-all text-slate-600 dark:text-slate-400">{{ 'common.cancel' | translate }}</button>
                     <button (click)="isEditCategoryMode ? updateCategory() : createCategory()" [disabled]="!newCategory.name || creatingCategory" class="flex-1 px-8 py-4 rounded-2xl bg-emerald-500 text-white text-[10px] font-black uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-emerald-500/20 disabled:opacity-50">
-                        {{ creatingCategory ? 'Saving...' : 'Save Folder' }}
+                        {{ creatingCategory ? ('common.processing' | translate) : ('common.save' | translate) }}
                     </button>
                 </div>
             </div>
@@ -290,7 +288,7 @@ interface DesignGroup {
                     }
                 </div>
                 <div class="p-8 border-t border-slate-100 dark:border-white/5 flex items-center gap-4 bg-slate-50/50 dark:bg-white/5">
-                    <button (click)="showImportTemplateModal = false" class="flex-1 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-slate-100 dark:hover:bg-white/5 transition-all">Cancel</button>
+                    <button (click)="showImportTemplateModal = false" class="flex-1 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-slate-100 dark:hover:bg-white/5 transition-all text-slate-600 dark:text-slate-400">{{ 'common.cancel' | translate }}</button>
                     <button (click)="importTemplate()" [disabled]="!selectedTemplateId || importingTemplate" class="flex-1 px-8 py-4 rounded-2xl bg-cyan-500 text-white text-[10px] font-black uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-cyan-500/20 disabled:opacity-50">
                         {{ importingTemplate ? 'Importing...' : 'Import Now' }}
                     </button>
@@ -324,6 +322,7 @@ export class DesignsTabComponent implements OnInit, OnChanges {
     designGroups: DesignGroup[] = [];
 
     selectedCategoryId: number | null = null;
+    folderPlacement: 'subfolder' | 'sibling' = 'subfolder';
     expandedCategories = new Set<number>();
 
     showUploadModal = false;
@@ -551,20 +550,20 @@ export class DesignsTabComponent implements OnInit, OnChanges {
 
     openCreateCategoryModal(): void {
         this.resetNewCategory();
-        if (this.selectedCategoryId) {
-            this.newCategory.parentCategoryId = this.selectedCategoryId;
-        }
+        this.folderPlacement = 'subfolder';
         this.showCreateCategoryModal = true;
     }
 
     createCategory(): void {
         if (!this.newCategory.name) return;
 
+        let parentId: number | undefined = this.selectedCategoryId || undefined;
+
         this.creatingCategory = true;
         const request: CreateCategoryRequest = {
             name: this.newCategory.name,
             description: this.newCategory.description || undefined,
-            parentCategoryId: this.newCategory.parentCategoryId || undefined,
+            parentCategoryId: parentId,
             projectId: this.projectId,
             order: 0,
             file: this.selectedCategoryFile || undefined

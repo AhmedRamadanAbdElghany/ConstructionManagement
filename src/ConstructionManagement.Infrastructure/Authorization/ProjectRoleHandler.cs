@@ -42,34 +42,66 @@ public class ProjectRoleHandler : AuthorizationHandler<ProjectRoleRequirement>
 
         int? projectId = null;
 
-        // 4. استخراج الـ ProjectId من مسار الـ URL
+        // 4. Resolve ProjectId from various sources (Route, Design, Category, Item)
         if (httpContext.Request.RouteValues["projectId"] != null && int.TryParse(httpContext.Request.RouteValues["projectId"]!.ToString(), out var pId))
         {
             projectId = pId;
         }
         else if (httpContext.Request.RouteValues["itemId"] != null && int.TryParse(httpContext.Request.RouteValues["itemId"]!.ToString(), out var itemId))
         {
-            // جلب الـ ProjectId من خلال الـ BOQItem
-            projectId = await db.BOQItems
-                .Where(i => i.Id == itemId)
-                .Select(i => i.ProjectId)
-                .FirstOrDefaultAsync();
-            
-            if (projectId == 0) projectId = null; // لم يتم العثور عليه
+            projectId = await db.BOQItems.Where(i => i.Id == itemId).Select(i => i.ProjectId).FirstOrDefaultAsync();
+        }
+        else if (httpContext.Request.RouteValues["categoryId"] != null && int.TryParse(httpContext.Request.RouteValues["categoryId"]!.ToString(), out var catId))
+        {
+            projectId = await db.DesignCategories.Where(c => c.Id == catId).Select(c => c.ProjectId).FirstOrDefaultAsync();
+        }
+        else if (httpContext.Request.RouteValues["designId"] != null && int.TryParse(httpContext.Request.RouteValues["designId"]!.ToString(), out var dId))
+        {
+            projectId = await db.Designs.Where(d => d.Id == dId).Select(d => d.ProjectId).FirstOrDefaultAsync();
+        }
+
+        if (projectId == 0) projectId = null;
+
+        // 5. Bypass for CompanyAdmin if they belong to the same company
+        if (context.User.IsInRole("CompanyAdmin"))
+        {
+            var companyIdClaim = context.User.FindFirst("companyId");
+            if (companyIdClaim != null && int.TryParse(companyIdClaim.Value, out var userCompanyId))
+            {
+                if (projectId != null)
+                {
+                    var proj = await db.Projects.AsNoTracking().FirstOrDefaultAsync(p => p.Id == projectId);
+                    if (proj != null && proj.CompanyId == userCompanyId)
+                    {
+                        context.Succeed(requirement);
+                        return;
+                    }
+                }
+                else
+                {
+                    if (httpContext.Request.RouteValues["companyId"] != null && int.TryParse(httpContext.Request.RouteValues["companyId"]!.ToString(), out var routeCompanyId))
+                    {
+                        if (routeCompanyId == userCompanyId)
+                        {
+                            context.Succeed(requirement);
+                            return;
+                        }
+                    }
+                }
+            }
         }
 
         if (projectId == null) return;
 
-        // 5. التحقق مما إذا كان المستخدم هو مالك المشروع (Owner)
-        var project = await db.Projects.FindAsync(projectId);
-        if (project != null && project.OwnerUserId == userId)
+        // 6. Check if user is Project Owner
+        var projOwner = await db.Projects.FindAsync(projectId);
+        if (projOwner != null && projOwner.OwnerUserId == userId)
         {
             context.Succeed(requirement);
             return;
         }
 
-        // 6. البحث في شجرة الصلاحيات (User -> TeamMember -> Roles -> Permissions)
-        // Check for exact permission match OR the "All" wildcard
+        // 7. Check Project-Specific Permissions
         var hasPermission = await db.ProjectTeamMembers
             .Where(m => m.ProjectId == projectId && m.UserId == userId)
             .SelectMany(m => m.ProjectTeamRoles)

@@ -130,7 +130,7 @@ public class DesignsController : ControllerBase
     /// </summary>
     [HttpPost("api/projects/{projectId}/designs/categories")]
     [Authorize(Policy = "CanAddDesign")]
-    public async Task<IActionResult> CreateCategory(int projectId, [FromBody] CreateCategoryRequest request)
+    public async Task<IActionResult> CreateCategory(int projectId, [FromForm] CreateCategoryRequest request)
     {
         request.ProjectId = projectId;
         var categoryId = await _designService.CreateCategoryAsync(request);
@@ -142,24 +142,24 @@ public class DesignsController : ControllerBase
     /// </summary>
     [HttpPut("api/designs/categories/{categoryId}")]
     [Authorize(Policy = "CanAddDesign")]
-    public async Task<IActionResult> UpdateCategory(int categoryId, [FromBody] UpdateCategoryRequest request)
+    public async Task<IActionResult> UpdateCategory(int categoryId, [FromForm] UpdateCategoryRequest request)
     {
         await _designService.UpdateCategoryAsync(categoryId, request);
         return NoContent();
     }
 
+    #endregion
+
     /// <summary>
-    /// Delete a category (and all its contents)
+    /// Delete all categories and designs for a project (Start Over)
     /// </summary>
-    [HttpDelete("api/designs/categories/{categoryId}")]
+    [HttpDelete("api/projects/{projectId}/designs/categories")]
     [Authorize(Policy = "CanAddDesign")]
-    public async Task<IActionResult> DeleteCategory(int categoryId)
+    public async Task<IActionResult> DeleteProjectCategories(int projectId)
     {
-        await _designService.DeleteCategoryAsync(categoryId);
+        await _designService.ClearProjectCategoriesAsync(projectId);
         return NoContent();
     }
-
-    #endregion
 
     #region Template Operations
 
@@ -172,6 +172,41 @@ public class DesignsController : ControllerBase
     {
         var templates = await _designService.GetCompanyDesignTemplatesAsync(companyId);
         return Ok(templates);
+    }
+
+    /// <summary>
+    /// Create a new company design template category
+    /// </summary>
+    [HttpPost("api/companies/{companyId}/design-templates")]
+    [Authorize(Policy = "CanManageUsers")]
+    public async Task<IActionResult> CreateCompanyTemplate(int companyId, [FromForm] CreateCategoryRequest request)
+    {
+        request.CompanyId = companyId;
+        request.ProjectId = null;
+        var categoryId = await _designService.CreateTemplateCategoryAsync(request);
+        return Ok(new { id = categoryId });
+    }
+
+    /// <summary>
+    /// Update a company design template category
+    /// </summary>
+    [HttpPut("api/companies/design-templates/{templateId}")]
+    [Authorize(Policy = "CanManageUsers")]
+    public async Task<IActionResult> UpdateCompanyTemplate(int templateId, [FromForm] UpdateCategoryRequest request)
+    {
+        await _designService.UpdateTemplateCategoryAsync(templateId, request);
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Delete a company design template category
+    /// </summary>
+    [HttpDelete("api/companies/design-templates/{templateId}")]
+    [Authorize(Policy = "CanManageUsers")]
+    public async Task<IActionResult> DeleteCompanyTemplate(int templateId)
+    {
+        await _designService.DeleteTemplateCategoryAsync(templateId);
+        return NoContent();
     }
 
     /// <summary>

@@ -31,10 +31,10 @@ import { DesignCategory, CreateCategoryRequest, UpdateCategoryRequest } from '..
             }
 
             <div class="ml-auto flex items-center gap-3">
-                 <button (click)="openCreateCategoryModal()" 
+                  <button (click)="openCreateCategoryModal()" 
                         class="px-6 py-3 rounded-2xl bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-indigo-500/20 flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-                    New Folder
+                    {{ 'designs.new_folder' | translate }}
                 </button>
             </div>
         </div>
@@ -71,16 +71,7 @@ import { DesignCategory, CreateCategoryRequest, UpdateCategoryRequest } from '..
           </div>
         }
 
-        @if (!selectedCategoryId) {
-            <div (click)="openCreateCategoryModal()" 
-                 class="group p-8 rounded-[2.5rem] bg-slate-50/50 dark:bg-white/[0.02] border-2 border-dashed border-slate-200 dark:border-white/10 hover:border-indigo-500 transition-all cursor-pointer flex flex-col items-center justify-center text-center">
-                <div class="w-16 h-16 rounded-3xl bg-white dark:bg-slate-900 shadow-xl flex items-center justify-center text-slate-400 group-hover:text-indigo-500 group-hover:scale-110 transition-all mb-4">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
-                </div>
-                <h4 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">Create Folder</h4>
-                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Global template root</p>
-            </div>
-        }
+
       </div>
 
        <!-- Empty State -->
@@ -90,7 +81,7 @@ import { DesignCategory, CreateCategoryRequest, UpdateCategoryRequest } from '..
                    <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path></svg>
                </div>
                <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">Empty Template Folder</h3>
-               <button (click)="openCreateCategoryModal()" class="mt-6 px-8 py-3.5 rounded-2xl bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-indigo-500/20">Add First Category</button>
+               <p class="text-slate-500 mb-6 uppercase text-[10px] font-bold tracking-widest">No subfolders found in this path</p>
            </div>
        }
 
@@ -98,8 +89,11 @@ import { DesignCategory, CreateCategoryRequest, UpdateCategoryRequest } from '..
         @if (showCreateCategoryModal) {
             <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" (click)="showCreateCategoryModal = false">
                 <div class="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md shadow-2xl" (click)="$event.stopPropagation()">
-                    <div class="p-6 border-b border-slate-200 dark:border-white/5">
-                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ isEditCategoryMode ? 'Edit Template Category' : 'New Template Category' }}</h3>
+                    <div class="p-6 border-b border-slate-200 dark:border-white/5 flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ isEditCategoryMode ? ('designs.edit_category' | translate) : ('designs.new_folder' | translate) }}</h3>
+                        <button (click)="showCreateCategoryModal = false" class="p-2 text-slate-400 hover:text-slate-600 transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
                     </div>
                     <div class="p-6 space-y-4">
                         <div>
@@ -114,6 +108,8 @@ import { DesignCategory, CreateCategoryRequest, UpdateCategoryRequest } from '..
                                         class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                         placeholder="Enter description"></textarea>
                         </div>
+
+
 
                          <!-- Image Upload -->
                         <div>
@@ -136,13 +132,13 @@ import { DesignCategory, CreateCategoryRequest, UpdateCategoryRequest } from '..
                     </div>
                     <div class="p-6 border-t border-slate-200 dark:border-white/5 flex justify-end gap-3">
                         <button (click)="showCreateCategoryModal = false" 
-                                class="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-white/5">
+                                class="px-5 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-400 font-black text-[10px] uppercase tracking-widest hover:bg-slate-100 dark:hover:bg-white/10 transition-colors border border-slate-200 dark:border-white/10">
                             Cancel
                         </button>
                         <button (click)="isEditCategoryMode ? updateCategory() : createCategory()" 
                                 [disabled]="!newCategory.name || creatingCategory"
                                 class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-black text-[10px] uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/20 disabled:opacity-50">
-                            {{ isEditCategoryMode ? 'Save Template' : 'Create Template' }}
+                            {{ isEditCategoryMode ? ('common.save' | translate) : ('common.add_new' | translate) }}
                         </button>
                     </div>
                 </div>
@@ -160,6 +156,7 @@ export class CompanyDesignSettingsComponent implements OnInit {
 
     // Navigation State
     selectedCategoryId: number | null = null;
+    folderPlacement: 'subfolder' | 'sibling' = 'subfolder';
 
     get breadcrumbs(): { id: number | null, name: string }[] {
         const crumbs: { id: number | null, name: string }[] = [];
@@ -230,7 +227,7 @@ export class CompanyDesignSettingsComponent implements OnInit {
 
     openCreateCategoryModal() {
         this.resetNewCategory();
-        this.newCategory.parentCategoryId = this.selectedCategoryId;
+        this.folderPlacement = 'subfolder';
         this.showCreateCategoryModal = true;
     }
 
@@ -261,11 +258,13 @@ export class CompanyDesignSettingsComponent implements OnInit {
     createCategory() {
         if (!this.newCategory.name) return;
 
+        let parentId: number | undefined = this.selectedCategoryId || undefined;
+
         this.creatingCategory = true;
         const request: CreateCategoryRequest = {
             name: this.newCategory.name,
             description: this.newCategory.description || undefined,
-            parentCategoryId: this.newCategory.parentCategoryId || undefined,
+            parentCategoryId: parentId,
             companyId: this.companyId,
             order: 0,
             file: this.selectedCategoryFile || undefined

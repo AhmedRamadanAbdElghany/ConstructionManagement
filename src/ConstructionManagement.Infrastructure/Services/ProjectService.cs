@@ -62,7 +62,8 @@ public class ProjectService : IProjectService
                 CompanyId = owner?.CompanyId,
                 AccountingSystem = Enum.TryParse<CalculationMethod>(request.AccountingSystem, true, out var parsedMethod) ? parsedMethod : CalculationMethod.Measured,
                 TotalContractValue = request.TotalContractValue,
-                IsClosed = false
+                IsClosed = false,
+                Status = "Active"
             };
 
             await _projectRepository.AddAsync(project);
@@ -209,6 +210,8 @@ public class ProjectService : IProjectService
         p.TotalContractValue,
         p.CreatedAt,
         p.IsClosed,
-        p.ClosedAt
+        p.ClosedAt,
+        p.CompanyId
     );
+
 }

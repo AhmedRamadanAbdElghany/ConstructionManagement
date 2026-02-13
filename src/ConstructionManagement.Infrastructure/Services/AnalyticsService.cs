@@ -38,10 +38,10 @@ namespace ConstructionManagement.Infrastructure.Services
                 .ToListAsync();
 
             summary.TotalProjects = projects.Count;
-            summary.ActiveProjects = projects.Count(p => p.Status == "InProgress");
-            summary.CompletedProjects = projects.Count(p => p.Status == "Completed");
+            summary.ActiveProjects = projects.Count(p => p.Status == "InProgress" || p.Status == "Active" || p.Status == "????");
+            summary.CompletedProjects = projects.Count(p => p.Status == "Completed" || p.IsClosed);
             summary.OnHoldProjects = projects.Count(p => p.Status == "OnHold");
-            summary.DelayedProjects = projects.Count(p => p.EndDate < end && p.Status == "InProgress");
+            summary.DelayedProjects = projects.Count(p => p.EndDate < end && (p.Status == "InProgress" || p.Status == "Active" || p.Status == "????"));
             summary.AverageProgress = projects.Any() ? projects.Average(p => p.ProgressPercentage) : 0;
             summary.ProjectHealthScore = CalculateProjectHealthScore(projects);
 
@@ -473,7 +473,7 @@ namespace ConstructionManagement.Infrastructure.Services
         public async Task<ChartDataDto> GetProjectProgressChartDataAsync(int companyId)
         {
             var projects = await _context.Projects
-                .Where(p => p.CompanyId == companyId && !p.IsDeleted && p.Status == "InProgress")
+                .Where(p => p.CompanyId == companyId && !p.IsDeleted && (p.Status == "InProgress" || p.Status == "Active" || p.Status == "????"))
                 .AsNoTracking()
                 .Take(10)
                 .ToListAsync();

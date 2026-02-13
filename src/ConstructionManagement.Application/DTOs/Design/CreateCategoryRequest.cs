@@ -5,7 +5,8 @@ namespace ConstructionManagement.Application.DTOs.Design;
 /// </summary>
 public class CreateCategoryRequest
 {
-    public int ProjectId { get; set; }
+    public int? ProjectId { get; set; }
+    public int? CompanyId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
     public int? ParentCategoryId { get; set; }

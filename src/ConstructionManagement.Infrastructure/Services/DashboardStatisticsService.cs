@@ -37,16 +37,16 @@ public class DashboardStatisticsService : IDashboardStatisticsService
         _logger.LogDebug("Fetching dashboard stats");
 
         var activeProjects = await _projectRepository.AsQueryable()
-            .CountAsync(p => p.Status == "InProgress");
+            .CountAsync(p => p.Status == "InProgress" || p.Status == "Active" || p.Status == "????");
 
         var completedProjects = await _projectRepository.AsQueryable()
-            .CountAsync(p => p.Status == "Completed");
+            .CountAsync(p => p.Status == "Completed" || p.IsClosed);
 
         var delayedProjects = await _projectRepository.AsQueryable()
             .CountAsync(p => p.Status == "Delayed");
 
         var totalRevenue = await _projectRepository.AsQueryable()
-            .Where(p => p.Status == "Completed")
+            .Where(p => p.Status == "Completed" || p.IsClosed)
             .SumAsync(p => p.Budget ?? 0);
 
         return new DashboardStats

@@ -12,7 +12,9 @@ namespace ConstructionManagement.Application.DTOs
         string? AccountingSystem,
         decimal? TotalContractValue,
         DateTime CreatedAt,
-        bool IsClosed,           // ← new
-        DateTime? ClosedAt       // ← new
+        bool IsClosed,
+        DateTime? ClosedAt,
+        int? CompanyId
     );
 }
+

@@ -202,7 +202,7 @@ public class DesignService : IDesignService
             Order = request.Order ?? 0,
             ParentCategoryId = request.ParentCategoryId,
             ProjectId = request.ProjectId,
-            CompanyId = _companyContext.CompanyId
+            CompanyId = request.CompanyId ?? _companyContext.CompanyId
         };
 
         await _categoryRepository.AddAsync(category);
@@ -301,6 +301,64 @@ public class DesignService : IDesignService
         return templates.Select(MapCategoryToDto);
     }
 
+    public async Task<int> CreateTemplateCategoryAsync(CreateCategoryRequest request)
+    {
+        var category = new DesignCategory
+        {
+            Name = request.Name,
+            Description = request.Description,
+            Order = request.Order ?? 0,
+            ParentCategoryId = request.ParentCategoryId,
+            CompanyId = request.CompanyId ?? _companyContext.CompanyId,
+            ProjectId = null // Explicitly null for company-wide templates
+        };
+
+        await _categoryRepository.AddAsync(category);
+        await _unitOfWork.SaveChangesAsync();
+        return category.Id;
+    }
+
+    public async Task UpdateTemplateCategoryAsync(int categoryId, UpdateCategoryRequest request)
+    {
+        var category = await _categoryRepository.GetByIdAsync(categoryId);
+        if (category == null) throw new KeyNotFoundException($"Template Category with ID {categoryId} not found");
+
+        if (request.Name != null) category.Name = request.Name;
+        if (request.Description != null) category.Description = request.Description;
+        if (request.Order != null) category.Order = request.Order.Value;
+        if (request.ParentCategoryId != null && request.ParentCategoryId.Value != categoryId)
+            category.ParentCategoryId = request.ParentCategoryId;
+
+        await _categoryRepository.UpdateAsync(category);
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task DeleteTemplateCategoryAsync(int categoryId)
+    {
+        var category = await _categoryRepository.AsQueryable()
+            .Include(c => c.ChildCategories)
+            .Include(c => c.Designs)
+            .FirstOrDefaultAsync(c => c.Id == categoryId);
+
+        if (category == null) throw new KeyNotFoundException($"Template Category with ID {categoryId} not found");
+        if (category.ProjectId != null) throw new InvalidOperationException($"Category with ID {categoryId} is a project category, not a template category.");
+
+        // Recursively delete child categories
+        foreach (var child in category.ChildCategories.ToList())
+        {
+            await DeleteTemplateCategoryAsync(child.Id);
+        }
+
+        // Delete all designs/templates in this category
+        foreach (var design in category.Designs.ToList())
+        {
+            await DeleteDesignAsync(design.Id);
+        }
+
+        await _categoryRepository.DeleteAsync(category);
+        await _unitOfWork.SaveChangesAsync();
+    }
+
     public async Task ImportDesignTemplateAsync(int templateId, int projectId)
     {
         var template = await _categoryRepository.AsQueryable()
@@ -385,6 +443,30 @@ public class DesignService : IDesignService
     }
 
     #endregion
+
+    public async Task ClearProjectCategoriesAsync(int projectId)
+    {
+        var rootCategories = await _categoryRepository.AsQueryable()
+            .Where(c => c.ProjectId == projectId && c.ParentCategoryId == null)
+            .ToListAsync();
+
+        foreach (var category in rootCategories)
+        {
+            await DeleteCategoryAsync(category.Id);
+        }
+
+        // Also delete any uncategorized designs for this project
+        var uncategorizedDesigns = await _designRepository.AsQueryable()
+            .Where(d => d.ProjectId == projectId && d.CategoryId == null)
+            .ToListAsync();
+
+        foreach (var design in uncategorizedDesigns)
+        {
+            await DeleteDesignAsync(design.Id);
+        }
+
+        await _unitOfWork.SaveChangesAsync();
+    }
 
     #region Mapping Methods
 

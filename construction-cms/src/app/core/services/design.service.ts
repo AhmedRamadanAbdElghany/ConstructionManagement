@@ -138,6 +138,10 @@ export class DesignService {
         return this.http.post<void>(`${this.baseUrl}/projects/${projectId}/designs/templates/${templateId}/import`, {});
     }
 
+    clearCategories(projectId: number): Observable<void> {
+        return this.http.delete<void>(`${this.baseUrl}/projects/${projectId}/designs/categories`);
+    }
+
     // Utility Methods
 
     formatFileSize(bytes: number): string {
