@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, of } from 'rxjs';
 import { CompanySettings, ProjectSettings, CompanyPackage } from '../../shared/interfaces';
+import { AuthService } from './auth.service';
 
 export interface UpdateCompanySettingsRequest {
     // Master Switches
@@ -140,12 +141,35 @@ export interface UpdateProjectSettingsRequest {
 })
 export class SettingsService {
     private apiUrl = 'api';
+    private authService = inject(AuthService);
 
     constructor(private http: HttpClient) { }
 
     // --- Company Settings ---
 
     getCompanySettings(): Observable<CompanySettings> {
+        const user = this.authService.getCurrentUser();
+        const isSuperAdmin = user?.roles?.includes('SuperAdmin');
+
+        if (isSuperAdmin || !user?.companyId) {
+            // Return default settings for SuperAdmins or users without a company
+            return of({
+                allowHR: true,
+                allowLocations: true,
+                enableInventoryManagement: true,
+                enableEquipmentManagement: true,
+                enableSafetyManagement: true,
+                enableSubcontractorManagement: true,
+                enableDocumentManagement: true,
+                enableQualityControl: true,
+                enableAnalyticsReporting: true,
+                allowMeasured: true,
+                allowSupervision: true,
+                allowPackages: true,
+                defaultSupervisionPercentage: 10
+            } as CompanySettings);
+        }
+
         return this.http.get<CompanySettings>(`${this.apiUrl}/company-settings`);
     }
 

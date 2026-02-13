@@ -22,7 +22,7 @@ import { map } from 'rxjs/operators';
 @Component({
    selector: 'app-project-detail',
    standalone: true,
-   imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ReactiveFormsModule, PhaseNodeComponent, BoqProgressNodeComponent], // Added FormsModule and ReactiveFormsModule
+   imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ReactiveFormsModule, PhaseNodeComponent, BoqProgressNodeComponent, DesignsTabComponent], // Added FormsModule and ReactiveFormsModule
    template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       @if (project) {
@@ -109,6 +109,21 @@ import { map } from 'rxjs/operators';
 
           <div class="flex flex-wrap gap-2 mb-8">
             <button 
+              (click)="activeTab = 'designs'"
+              [class.bg-slate-900]="activeTab === 'designs'"
+              [class.dark:bg-white]="activeTab === 'designs'"
+              [class.text-white]="activeTab === 'designs'"
+              [class.dark:text-slate-900]="activeTab === 'designs'"
+              [class.bg-white]="activeTab !== 'designs'"
+              [class.dark:bg-slate-900]="activeTab !== 'designs'"
+              [class.text-slate-500]="activeTab !== 'designs'"
+              [class.border-transparent]="activeTab === 'designs'"
+              [class.border-slate-200]="activeTab !== 'designs'"
+              [class.dark:border-white/5]="activeTab !== 'designs'"
+              class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
+               {{ 'project_detail.designs' | translate }}
+            </button>
+            <button 
               (click)="activeTab = 'timeline'"
               [class.bg-slate-900]="activeTab === 'timeline'"
               [class.dark:bg-white]="activeTab === 'timeline'"
@@ -121,7 +136,22 @@ import { map } from 'rxjs/operators';
               [class.border-slate-200]="activeTab !== 'timeline'"
               [class.dark:border-white/5]="activeTab !== 'timeline'"
               class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-              {{ 'project_detail.timeline_settings' | translate }}
+              {{ 'project_detail.timeline' | translate }}
+            </button>
+            <button 
+              (click)="activeTab = 'settings'"
+              [class.bg-slate-900]="activeTab === 'settings'"
+              [class.dark:bg-white]="activeTab === 'settings'"
+              [class.text-white]="activeTab === 'settings'"
+              [class.dark:text-slate-900]="activeTab === 'settings'"
+              [class.bg-white]="activeTab !== 'settings'"
+              [class.dark:bg-slate-900]="activeTab !== 'settings'"
+              [class.text-slate-500]="activeTab !== 'settings'"
+              [class.border-transparent]="activeTab === 'settings'"
+              [class.border-slate-200]="activeTab !== 'settings'"
+              [class.dark:border-white/5]="activeTab !== 'settings'"
+              class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
+              {{ 'projects.ops_logic' | translate }}
             </button>
             <button 
               (click)="activeTab = 'team'"
@@ -228,295 +258,263 @@ import { map } from 'rxjs/operators';
               class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
                {{ 'project_detail.client_payments' | translate }}
             </button>
-            <button 
-              (click)="activeTab = 'designs'"
-              [class.bg-slate-900]="activeTab === 'designs'"
-              [class.dark:bg-white]="activeTab === 'designs'"
-              [class.text-white]="activeTab === 'designs'"
-              [class.dark:text-slate-900]="activeTab === 'designs'"
-              [class.bg-white]="activeTab !== 'designs'"
-              [class.dark:bg-slate-900]="activeTab !== 'designs'"
-              [class.text-slate-500]="activeTab !== 'designs'"
-              [class.border-transparent]="activeTab === 'designs'"
-              [class.border-slate-200]="activeTab !== 'designs'"
-              [class.dark:border-white/5]="activeTab !== 'designs'"
-              class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
-               {{ 'project_detail.designs' | translate }}
-            </button>
+
           </div>
+
+
+          <!-- Designs Tab -->
+          @if (activeTab === 'designs') {
+             <app-designs-tab [projectId]="project.id"></app-designs-tab>
+          }
 
           <!-- Timeline Tab -->
           @if (activeTab === 'timeline') {
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div class="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-white/5 shadow-xl transition-all">
+            <div class="grid grid-cols-1 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-200 dark:border-white/5 shadow-xl transition-all">
                 <div class="flex items-center justify-between mb-8">
-                  <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'project_detail.timeline_settings' | translate }}</h3>
+                  <h3 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'project_detail.timeline' | translate }}</h3>
                 </div>
-                <div class="space-y-6">
-                  <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                    <p class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">{{ 'project_detail.start_date' | translate }}</p>
-                    <p class="text-lg font-black text-slate-900 dark:text-white tracking-tight">{{ project.startDate | date:'fullDate' }}</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div class="p-8 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 border-l-8 border-l-cyan-500 shadow-sm">
+                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">{{ 'project_detail.start_date' | translate }}</p>
+                    <p class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{{ project.startDate | date:'fullDate' }}</p>
                   </div>
-                  <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                    <p class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">{{ 'project_detail.end_date' | translate }}</p>
-                    <p class="text-lg font-black text-slate-900 dark:text-white tracking-tight">{{ project.endDate ? (project.endDate | date:'fullDate') : 'Not Set' }}</p>
+                  <div class="p-8 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 border-l-8 border-l-indigo-500 shadow-sm">
+                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">{{ 'project_detail.end_date' | translate }}</p>
+                    <p class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{{ project.endDate ? (project.endDate | date:'fullDate') : 'Not Set' }}</p>
                   </div>
-                  <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                     <p class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">{{ 'personal_hr.duration' | translate }}</p>
-                     <p class="text-lg font-black text-slate-900 dark:text-white tracking-tight">{{ calculateDuration() }} {{ 'personal_hr.business_days' | translate }}</p>
+                  <div class="p-8 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 border-l-8 border-l-emerald-500 shadow-sm">
+                     <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">{{ 'personal_hr.duration' | translate }}</p>
+                     <p class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{{ calculateDuration() }} {{ 'personal_hr.business_days' | translate }}</p>
                   </div>
                 </div>
               </div>
-              <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
-                @if (companySettings?.delayNotificationSendEmail || companySettings?.autoCloseDay || companySettings?.allowAddProgressEntry || companySettings?.allowReopenClosedDay || 
-                    companySettings?.clientCanSeeFinancials || companySettings?.clientCanSeeMedia || companySettings?.clientCanSeeBOQ || 
-                    companySettings?.requirePhotoReview || companySettings?.enableInvoiceReview) {
-                 <h3 class="text-lg font-bold text-white mb-6">{{ 'sidebar.settings' | translate }}</h3>
-                <div class="space-y-4">
-                  <!-- Email Settings (Only if allowed by company) -->
-                  @if (companySettings?.delayNotificationSendEmail) {
-                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
-                      <div>
-                         <p class="text-white font-medium">{{ 'project_detail.email_notifications' | translate }}</p>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
-                           {{ projectSettings?.delayNotificationSendEmail === null ? ('project_detail.inherited_from_company' | translate) : ('project_detail.local_override' | translate) }}
-                        </p>
-                      </div>
-                      <div class="flex items-center space-x-3">
-                        @if (projectSettings?.delayNotificationSendEmail !== null) {
-                           <button (click)="resetEmailNotify()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
-                        }
-                        <button (click)="toggleEmailNotify()" 
-                                [class.bg-cyan-500]="projectSettings?.delayNotificationSendEmail ?? companySettings?.delayNotificationSendEmail"
-                                [class.bg-slate-600]="!(projectSettings?.delayNotificationSendEmail ?? companySettings?.delayNotificationSendEmail)"
-                                class="w-12 h-6 rounded-full relative transition-all">
-                          <span [class.right-1]="projectSettings?.delayNotificationSendEmail ?? companySettings?.delayNotificationSendEmail"
-                                [class.left-1]="!(projectSettings?.delayNotificationSendEmail ?? companySettings?.delayNotificationSendEmail)"
-                                class="absolute top-1 w-4 h-4 rounded-full bg-white transition-all"></span>
-                        </button>
-                      </div>
-                    </div>
-                  }
+            </div>
+          }
 
-                  <!-- Auto Close Day Settings -->
-                  @if (companySettings?.autoCloseDay) {
-                  <div class="p-4 rounded-xl bg-slate-700/30 space-y-4">
-                    <div class="flex items-center justify-between">
-                      <div>
-                         <p class="text-white font-medium">{{ 'project_detail.auto_close_logs' | translate }}</p>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
-                           {{ projectSettings?.autoCloseDay === null ? ('project_detail.inherited_from_company' | translate) : ('project_detail.local_override' | translate) }}
-                        </p>
-                      </div>
-                      <div class="flex items-center space-x-3">
-                        @if (projectSettings?.autoCloseDay !== null) {
-                           <button (click)="resetAutoClose()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
-                        }
-                        <button (click)="toggleAutoClose()" 
-                                [class.bg-fuchsia-500]="projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay"
-                                [class.bg-slate-600]="!(projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay)"
-                                class="w-12 h-6 rounded-full relative transition-all">
-                          <span [class.right-1]="projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay"
-                                [class.left-1]="!(projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay)"
-                                class="absolute top-1 w-4 h-4 rounded-full bg-white transition-all"></span>
-                        </button>
-                      </div>
+          <!-- Operational Logic (Settings) Tab -->
+          @if (activeTab === 'settings') {
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+               <!-- Daily Log Controls -->
+               <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-200 dark:border-white/5 shadow-xl h-fit">
+                  <div class="flex items-center space-x-4 mb-10">
+                    <div class="w-14 h-14 rounded-[1.5rem] bg-indigo-500/10 flex items-center justify-center text-indigo-500 shadow-inner">
+                       <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
                     </div>
+                    <div>
+                       <h3 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'projects.ops_logic' | translate }}</h3>
+                       <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Configure automated behaviors</p>
+                    </div>
+                  </div>
 
-                    @if (projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay) {
-                      <div class="pt-4 border-t border-slate-600/30">
-                        <div class="flex items-center justify-between">
-                           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'projects.close_time' | translate }}</p>
-                          @if (projectSettings?.autoCloseDayTime !== null) {
-                             <button (click)="resetAutoCloseTime()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
-                          }
+                  <div class="space-y-6">
+                    @if (companySettings?.delayNotificationSendEmail) {
+                      <div class="flex items-center justify-between p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 transition-all hover:border-cyan-500/30">
+                        <div>
+                           <p class="text-slate-900 dark:text-white font-black text-base uppercase tracking-tight mb-1">{{ 'project_detail.email_notifications' | translate }}</p>
+                          <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest italic">
+                             {{ projectSettings?.delayNotificationSendEmail === null ? ('project_detail.inherited_from_company' | translate) : ('project_detail.local_override' | translate) }}
+                          </p>
                         </div>
-                        <input type="time" [ngModel]="projectSettings?.autoCloseDayTime ?? companySettings?.autoCloseDayTime"
-                               (ngModelChange)="updateAutoCloseTime($event)"
-                               class="w-full mt-2 p-2 rounded-lg bg-slate-800 border border-slate-600 text-white text-xs font-bold outline-none">
+                        <div class="flex items-center space-x-4">
+                          @if (projectSettings?.delayNotificationSendEmail !== null) {
+                             <button (click)="resetEmailNotify()" class="px-4 py-2 rounded-xl bg-rose-500/10 text-[9px] font-black text-rose-500 uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all shadow-sm">Reset</button>
+                          }
+                          <button (click)="toggleEmailNotify()" 
+                                  [class.bg-cyan-500]="projectSettings?.delayNotificationSendEmail ?? companySettings?.delayNotificationSendEmail"
+                                  [class.bg-slate-300]="!(projectSettings?.delayNotificationSendEmail ?? companySettings?.delayNotificationSendEmail)"
+                                  [class.dark:bg-slate-800]="!(projectSettings?.delayNotificationSendEmail ?? companySettings?.delayNotificationSendEmail)"
+                                  class="w-16 h-8 rounded-full relative transition-all shadow-inner">
+                            <span [class.translate-x-8]="projectSettings?.delayNotificationSendEmail ?? companySettings?.delayNotificationSendEmail"
+                                  [class.translate-x-1]="!(projectSettings?.delayNotificationSendEmail ?? companySettings?.delayNotificationSendEmail)"
+                                  class="absolute left-0 top-1 w-6 h-6 rounded-full bg-white shadow-md transform transition-transform"></span>
+                          </button>
+                        </div>
                       </div>
                     }
-                  </div>
-                  }
 
-                  <!-- Log Progress Settings -->
-                  @if (companySettings?.allowAddProgressEntry) {
-                  <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
-                    <div>
-                       <p class="text-white font-medium">{{ 'project_detail.allow_add_progress' | translate }}</p>
-                      <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
-                         {{ projectSettings?.allowAddProgressEntry === null ? ('project_detail.inherited_from_company' | translate) : ('project_detail.local_override' | translate) }}
-                      </p>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                      @if (projectSettings?.allowAddProgressEntry !== null) {
-                         <button (click)="resetProgressEntry()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
-                      }
-                      <button (click)="toggleProgressEntry()" 
-                              [class.bg-cyan-500]="projectSettings?.allowAddProgressEntry ?? companySettings?.allowAddProgressEntry"
-                              [class.bg-slate-600]="!(projectSettings?.allowAddProgressEntry ?? companySettings?.allowAddProgressEntry)"
-                              class="w-12 h-6 rounded-full relative transition-all">
-                        <span [class.right-1]="projectSettings?.allowAddProgressEntry ?? companySettings?.allowAddProgressEntry"
-                              [class.left-1]="!(projectSettings?.allowAddProgressEntry ?? companySettings?.allowAddProgressEntry)"
-                              class="absolute top-1 w-4 h-4 rounded-full bg-white transition-all"></span>
-                      </button>
-                    </div>
-                  </div>
-                  }
+                    @if (companySettings?.autoCloseDay) {
+                    <div class="p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 space-y-6 transition-all hover:border-fuchsia-500/30">
+                      <div class="flex items-center justify-between">
+                        <div>
+                           <p class="text-slate-900 dark:text-white font-black text-base uppercase tracking-tight mb-1">{{ 'project_detail.auto_close_logs' | translate }}</p>
+                          <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest italic">
+                             {{ projectSettings?.autoCloseDay === null ? ('project_detail.inherited_from_company' | translate) : ('project_detail.local_override' | translate) }}
+                          </p>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                          @if (projectSettings?.autoCloseDay !== null) {
+                             <button (click)="resetAutoClose()" class="px-4 py-2 rounded-xl bg-rose-500/10 text-[9px] font-black text-rose-500 uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all shadow-sm">Reset</button>
+                          }
+                          <button (click)="toggleAutoClose()" 
+                                  [class.bg-fuchsia-500]="projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay"
+                                  [class.bg-slate-300]="!(projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay)"
+                                  [class.dark:bg-slate-800]="!(projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay)"
+                                  class="w-16 h-8 rounded-full relative transition-all shadow-inner">
+                            <span [class.translate-x-8]="projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay"
+                                  [class.translate-x-1]="!(projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay)"
+                                  class="absolute left-0 top-1 w-6 h-6 rounded-full bg-white shadow-md transform transition-transform"></span>
+                          </button>
+                        </div>
+                      </div>
 
-                  <!-- Reopen Settings -->
-                  @if (companySettings?.allowReopenClosedDay) {
-                  <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
-                    <div>
-                       <p class="text-white font-medium">{{ 'project_detail.allow_reopen_day' | translate }}</p>
-                      <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
-                         {{ projectSettings?.allowReopenClosedDay === null ? ('project_detail.inherited_from_company' | translate) : ('project_detail.local_override' | translate) }}
-                      </p>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                      @if (projectSettings?.allowReopenClosedDay !== null) {
-                         <button (click)="resetReopenDay()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
-                      }
-                      <button (click)="toggleReopenDay()" 
-                              [class.bg-emerald-500]="projectSettings?.allowReopenClosedDay ?? companySettings?.allowReopenClosedDay"
-                              [class.bg-slate-600]="!(projectSettings?.allowReopenClosedDay ?? companySettings?.allowReopenClosedDay)"
-                              class="w-12 h-6 rounded-full relative transition-all">
-                        <span [class.right-1]="projectSettings?.allowReopenClosedDay ?? companySettings?.allowReopenClosedDay"
-                              [class.left-1]="!(projectSettings?.allowReopenClosedDay ?? companySettings?.allowReopenClosedDay)"
-                              class="absolute top-1 w-4 h-4 rounded-full bg-white transition-all"></span>
-                      </button>
-                    </div>
-                  </div>
-                  }
-
-                  <!-- Governance Overrides -->
-                  @if (companySettings?.requirePhotoReview || companySettings?.enableInvoiceReview) {
-                    <div class="pt-4 mt-2 border-t border-white/5">
-                       <p class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">{{ 'project_detail.governance_reviews' | translate }}</p>
-                      <div class="space-y-3">
-                        @if (companySettings?.requirePhotoReview) {
-                          <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
-                            <div>
-                               <p class="text-white text-xs font-bold">{{ 'project_detail.photo_approval' | translate }}</p>
-                              <p class="text-[8px] text-slate-400 font-bold uppercase">{{ projectSettings?.requirePhotoReview === null ? 'Inherited' : 'Override' }}</p>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                              @if (projectSettings?.requirePhotoReview !== null) {
-                                 <button (click)="resetPhotoReview()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
-                              }
-                              <button (click)="togglePhotoReview()" 
-                                      [class.bg-orange-500]="projectSettings?.requirePhotoReview ?? companySettings?.requirePhotoReview"
-                                      [class.bg-slate-600]="!(projectSettings?.requirePhotoReview ?? companySettings?.requirePhotoReview)"
-                                      class="w-10 h-5 rounded-full relative transition-all">
-                                <span [class.right-1]="projectSettings?.requirePhotoReview ?? companySettings?.requirePhotoReview"
-                                      [class.left-1]="!(projectSettings?.requirePhotoReview ?? companySettings?.requirePhotoReview)"
-                                      class="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"></span>
-                              </button>
-                            </div>
+                      @if (projectSettings?.autoCloseDay ?? companySettings?.autoCloseDay) {
+                        <div class="pt-6 border-t border-slate-200 dark:border-white/5 animate-in slide-in-from-top-4 duration-300">
+                          <div class="flex items-center justify-between mb-4">
+                             <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ 'projects.close_time' | translate }}</p>
+                            @if (projectSettings?.autoCloseDayTime !== null) {
+                               <button (click)="resetAutoCloseTime()" class="text-[9px] font-black text-rose-500 uppercase tracking-widest hover:text-rose-400">Default</button>
+                            }
                           </div>
-                        }
+                          <input type="time" [ngModel]="projectSettings?.autoCloseDayTime ?? companySettings?.autoCloseDayTime"
+                                 (ngModelChange)="updateAutoCloseTime($event)"
+                                 class="w-full p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xl font-black outline-none focus:ring-4 focus:ring-fuchsia-500/20 transition-all shadow-inner">
+                        </div>
+                      }
+                    </div>
+                    }
 
-                        @if (companySettings?.enableInvoiceReview) {
-                          <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
-                            <div>
-                               <p class="text-white text-xs font-bold">{{ 'project_detail.invoice_approval' | translate }}</p>
-                              <p class="text-[8px] text-slate-400 font-bold uppercase">{{ projectSettings?.enableInvoiceReview === null ? 'Inherited' : 'Override' }}</p>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                              @if (projectSettings?.enableInvoiceReview !== null) {
-                                 <button (click)="resetInvoiceReview()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
-                              }
-                              <button (click)="toggleInvoiceReview()" 
-                                      [class.bg-orange-500]="projectSettings?.enableInvoiceReview ?? companySettings?.enableInvoiceReview"
-                                      [class.bg-slate-600]="!(projectSettings?.enableInvoiceReview ?? companySettings?.enableInvoiceReview)"
-                                      class="w-10 h-5 rounded-full relative transition-all">
-                                <span [class.right-1]="projectSettings?.enableInvoiceReview ?? companySettings?.enableInvoiceReview"
-                                      [class.left-1]="!(projectSettings?.enableInvoiceReview ?? companySettings?.enableInvoiceReview)"
-                                      class="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"></span>
-                              </button>
-                            </div>
-                          </div>
+                    @if (companySettings?.allowAddProgressEntry) {
+                    <div class="flex items-center justify-between p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 transition-all hover:border-emerald-500/30">
+                      <div>
+                         <p class="text-slate-900 dark:text-white font-black text-base uppercase tracking-tight mb-1">{{ 'project_detail.allow_add_progress' | translate }}</p>
+                        <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest italic">
+                           {{ projectSettings?.allowAddProgressEntry === null ? ('project_detail.inherited_from_company' | translate) : ('project_detail.local_override' | translate) }}
+                        </p>
+                      </div>
+                      <div class="flex items-center space-x-4">
+                        @if (projectSettings?.allowAddProgressEntry !== null) {
+                           <button (click)="resetProgressEntry()" class="px-4 py-2 rounded-xl bg-emerald-500/10 text-[9px] font-black text-emerald-500 uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all shadow-sm">Reset</button>
                         }
+                        <button (click)="toggleProgressEntry()" 
+                                [class.bg-emerald-500]="projectSettings?.allowAddProgressEntry ?? companySettings?.allowAddProgressEntry"
+                                [class.bg-slate-300]="!(projectSettings?.allowAddProgressEntry ?? companySettings?.allowAddProgressEntry)"
+                                [class.dark:bg-slate-800]="!(projectSettings?.allowAddProgressEntry ?? companySettings?.allowAddProgressEntry)"
+                                class="w-16 h-8 rounded-full relative transition-all shadow-inner">
+                          <span [class.translate-x-8]="projectSettings?.allowAddProgressEntry ?? companySettings?.allowAddProgressEntry"
+                                [class.translate-x-1]="!(projectSettings?.allowAddProgressEntry ?? companySettings?.allowAddProgressEntry)"
+                                class="absolute left-0 top-1 w-6 h-6 rounded-full bg-white shadow-md transform transition-transform"></span>
+                        </button>
                       </div>
                     </div>
-                  }
+                    }
+                  </div>
+               </div>
 
-                  <!-- Client Visibility Overrides -->
-                  @if (companySettings?.clientCanSeeFinancials || companySettings?.clientCanSeeMedia || companySettings?.clientCanSeeBOQ) {
-                    <div class="pt-4 mt-2 border-t border-white/5">
-                       <p class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">{{ 'project_detail.client_portal_visibility' | translate }}</p>
-                      <div class="space-y-3">
-                        @if (companySettings?.clientCanSeeFinancials) {
-                          <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
-                            <div>
-                               <p class="text-white text-xs font-bold">{{ 'project_detail.financial_status' | translate }}</p>
-                              <p class="text-[8px] text-slate-400 font-bold uppercase">{{ projectSettings?.clientCanSeeFinancials === null ? 'Inherited' : 'Override' }}</p>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                              @if (projectSettings?.clientCanSeeFinancials !== null) {
-                                 <button (click)="resetClientFinancials()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
-                              }
-                              <button (click)="toggleClientFinancials()" 
-                                      [class.bg-blue-500]="projectSettings?.clientCanSeeFinancials ?? companySettings?.clientCanSeeFinancials"
-                                      [class.bg-slate-600]="!(projectSettings?.clientCanSeeFinancials ?? companySettings?.clientCanSeeFinancials)"
-                                      class="w-10 h-5 rounded-full relative transition-all">
-                                <span [class.right-1]="projectSettings?.clientCanSeeFinancials ?? companySettings?.clientCanSeeFinancials"
-                                      [class.left-1]="!(projectSettings?.clientCanSeeFinancials ?? companySettings?.clientCanSeeFinancials)"
-                                      class="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"></span>
-                              </button>
-                            </div>
-                          </div>
-                        }
-
-                        @if (companySettings?.clientCanSeeMedia) {
-                          <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
-                            <div>
-                               <p class="text-white text-xs font-bold">{{ 'daily_log.site_photos' | translate }}</p>
-                              <p class="text-[8px] text-slate-400 font-bold uppercase">{{ projectSettings?.clientCanSeeMedia === null ? 'Inherited' : 'Override' }}</p>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                              @if (projectSettings?.clientCanSeeMedia !== null) {
-                                 <button (click)="resetClientMedia()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
-                              }
-                              <button (click)="toggleClientMedia()" 
-                                      [class.bg-blue-500]="projectSettings?.clientCanSeeMedia ?? companySettings?.clientCanSeeMedia"
-                                      [class.bg-slate-600]="!(projectSettings?.clientCanSeeMedia ?? companySettings?.clientCanSeeMedia)"
-                                      class="w-10 h-5 rounded-full relative transition-all">
-                                <span [class.right-1]="projectSettings?.clientCanSeeMedia ?? companySettings?.clientCanSeeMedia"
-                                      [class.left-1]="!(projectSettings?.clientCanSeeMedia ?? companySettings?.clientCanSeeMedia)"
-                                      class="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"></span>
-                              </button>
-                            </div>
-                          </div>
-                        }
-
-                        @if (companySettings?.clientCanSeeBOQ) {
-                          <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
-                            <div>
-                               <p class="text-white text-xs font-bold">{{ 'project_detail.boq_details' | translate }}</p>
-                              <p class="text-[8px] text-slate-400 font-bold uppercase">{{ projectSettings?.clientCanSeeBOQ === null ? 'Inherited' : 'Override' }}</p>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                              @if (projectSettings?.clientCanSeeBOQ !== null) {
-                                 <button (click)="resetClientBOQ()" class="text-[8px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-300">{{ 'common.reset' | translate }}</button>
-                              }
-                              <button (click)="toggleClientBOQ()" 
-                                      [class.bg-blue-500]="projectSettings?.clientCanSeeBOQ ?? companySettings?.clientCanSeeBOQ"
-                                      [class.bg-slate-600]="!(projectSettings?.clientCanSeeBOQ ?? companySettings?.clientCanSeeBOQ)"
-                                      class="w-10 h-5 rounded-full relative transition-all">
-                                <span [class.right-1]="projectSettings?.clientCanSeeBOQ ?? companySettings?.clientCanSeeBOQ"
-                                      [class.left-1]="!(projectSettings?.clientCanSeeBOQ ?? companySettings?.clientCanSeeBOQ)"
-                                      class="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"></span>
-                              </button>
-                            </div>
-                          </div>
-                        }
-                      </div>
+               <!-- Governance & Governance Status -->
+               <div class="space-y-8">
+                  <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-200 dark:border-white/5 shadow-xl">
+                    <div class="flex items-center space-x-4 mb-10">
+                       <div class="w-14 h-14 rounded-[1.5rem] bg-orange-500/10 flex items-center justify-center text-orange-500 shadow-inner">
+                          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04M12 2.944a11.955 11.955 0 01-8.618 3.04M12 2.944V12.5m-8.618-6.516L12 12.5m0 0l8.618-6.516"></path></svg>
+                       </div>
+                       <div>
+                          <h3 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'project_detail.governance_visibility' | translate }}</h3>
+                          <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Access & Approval Rules</p>
+                       </div>
                     </div>
-                  }
-                </div>
-                }
-              </div>
+
+                    <div class="space-y-8">
+                       <!-- Approvals Section -->
+                       <div class="space-y-4">
+                          <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6">Execution Assurance</p>
+                          
+                          @if (companySettings?.requirePhotoReview) {
+                            <div class="flex items-center justify-between p-5 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                              <div>
+                                 <p class="text-slate-900 dark:text-white font-black text-base uppercase tracking-tight mb-1">{{ 'project_detail.photo_approval' | translate }}</p>
+                                <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest italic">{{ projectSettings?.requirePhotoReview === null ? 'Inherited' : 'Override' }}</p>
+                              </div>
+                              <div class="flex items-center space-x-4">
+                                @if (projectSettings?.requirePhotoReview !== null) {
+                                   <button (click)="resetPhotoReview()" class="text-[9px] font-black text-rose-500 uppercase tracking-widest border-b border-rose-500/20">Reset</button>
+                                }
+                                <button (click)="togglePhotoReview()" 
+                                        [class.bg-orange-500]="projectSettings?.requirePhotoReview ?? companySettings?.requirePhotoReview"
+                                        [class.bg-slate-300] ="!(projectSettings?.requirePhotoReview ?? companySettings?.requirePhotoReview)"
+                                        [class.dark:bg-slate-800]="!(projectSettings?.requirePhotoReview ?? companySettings?.requirePhotoReview)"
+                                        class="w-14 h-7 rounded-full relative transition-all shadow-inner">
+                                  <span [class.translate-x-7]="projectSettings?.requirePhotoReview ?? companySettings?.requirePhotoReview"
+                                        [class.translate-x-1]="!(projectSettings?.requirePhotoReview ?? companySettings?.requirePhotoReview)"
+                                        class="absolute left-0 top-1 w-5 h-5 rounded-full bg-white shadow-md transform transition-transform"></span>
+                                </button>
+                              </div>
+                            </div>
+                          }
+
+                          @if (companySettings?.enableInvoiceReview) {
+                            <div class="flex items-center justify-between p-5 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                              <div>
+                                 <p class="text-slate-900 dark:text-white font-black text-base uppercase tracking-tight mb-1">{{ 'project_detail.invoice_approval' | translate }}</p>
+                                <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest italic">{{ projectSettings?.enableInvoiceReview === null ? 'Inherited' : 'Override' }}</p>
+                              </div>
+                              <div class="flex items-center space-x-4">
+                                @if (projectSettings?.enableInvoiceReview !== null) {
+                                   <button (click)="resetInvoiceReview()" class="text-[9px] font-black text-rose-500 uppercase tracking-widest border-b border-rose-500/20">Reset</button>
+                                }
+                                <button (click)="toggleInvoiceReview()" 
+                                        [class.bg-orange-500]="projectSettings?.enableInvoiceReview ?? companySettings?.enableInvoiceReview"
+                                        [class.bg-slate-300] ="!(projectSettings?.enableInvoiceReview ?? companySettings?.enableInvoiceReview)"
+                                        [class.dark:bg-slate-800]="!(projectSettings?.enableInvoiceReview ?? companySettings?.enableInvoiceReview)"
+                                        class="w-14 h-7 rounded-full relative transition-all shadow-inner">
+                                  <span [class.translate-x-7]="projectSettings?.enableInvoiceReview ?? companySettings?.enableInvoiceReview"
+                                        [class.translate-x-1]="!(projectSettings?.enableInvoiceReview ?? companySettings?.enableInvoiceReview)"
+                                        class="absolute left-0 top-1 w-5 h-5 rounded-full bg-white shadow-md transform transition-transform"></span>
+                                </button>
+                              </div>
+                            </div>
+                          }
+                       </div>
+
+                       <!-- Client Portal Section -->
+                       @if (companySettings?.clientCanSeeFinancials || companySettings?.clientCanSeeMedia || companySettings?.clientCanSeeBOQ) {
+                        <div class="space-y-4 pt-8 border-t border-slate-200 dark:border-white/10">
+                           <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6">{{ 'project_detail.client_portal_visibility' | translate }}</p>
+                          
+                          @if (companySettings?.clientCanSeeFinancials) {
+                            <div class="flex items-center justify-between p-5 rounded-2xl bg-blue-500/5 dark:bg-blue-500/[0.02] border border-blue-500/10">
+                              <div>
+                                 <p class="text-blue-900 dark:text-blue-400 font-black text-sm uppercase tracking-tight mb-1">{{ 'project_detail.financial_status' | translate }}</p>
+                                <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest italic">{{ projectSettings?.clientCanSeeFinancials === null ? 'Inherited' : 'Override' }}</p>
+                              </div>
+                              <div class="flex items-center space-x-4">
+                                <button (click)="toggleClientFinancials()" 
+                                        [class.bg-blue-500]="projectSettings?.clientCanSeeFinancials ?? companySettings?.clientCanSeeFinancials"
+                                        [class.bg-slate-300] ="!(projectSettings?.clientCanSeeFinancials ?? companySettings?.clientCanSeeFinancials)"
+                                        [class.dark:bg-slate-800]="!(projectSettings?.clientCanSeeFinancials ?? companySettings?.clientCanSeeFinancials)"
+                                        class="w-14 h-7 rounded-full relative transition-all shadow-inner">
+                                  <span [class.translate-x-7]="projectSettings?.clientCanSeeFinancials ?? companySettings?.clientCanSeeFinancials"
+                                        [class.translate-x-1]="!(projectSettings?.clientCanSeeFinancials ?? companySettings?.clientCanSeeFinancials)"
+                                        class="absolute left-0 top-1 w-5 h-5 rounded-full bg-white shadow-md transform transition-transform"></span>
+                                </button>
+                              </div>
+                            </div>
+                          }
+
+                          @if (companySettings?.clientCanSeeMedia) {
+                            <div class="flex items-center justify-between p-5 rounded-2xl bg-blue-500/5 dark:bg-blue-500/[0.02] border border-blue-500/10">
+                              <div>
+                                 <p class="text-blue-900 dark:text-blue-400 font-black text-sm uppercase tracking-tight mb-1">{{ 'daily_log.site_photos' | translate }}</p>
+                                <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest italic">{{ projectSettings?.clientCanSeeMedia === null ? 'Inherited' : 'Override' }}</p>
+                              </div>
+                              <div class="flex items-center space-x-4">
+                                <button (click)="toggleClientMedia()" 
+                                        [class.bg-blue-500]="projectSettings?.clientCanSeeMedia ?? companySettings?.clientCanSeeMedia"
+                                        [class.bg-slate-300] ="!(projectSettings?.clientCanSeeMedia ?? companySettings?.clientCanSeeMedia)"
+                                        [class.dark:bg-slate-800]="!(projectSettings?.clientCanSeeMedia ?? companySettings?.clientCanSeeMedia)"
+                                        class="w-14 h-7 rounded-full relative transition-all shadow-inner">
+                                  <span [class.translate-x-7]="projectSettings?.clientCanSeeMedia ?? companySettings?.clientCanSeeMedia"
+                                        [class.translate-x-1]="!(projectSettings?.clientCanSeeMedia ?? companySettings?.clientCanSeeMedia)"
+                                        class="absolute left-0 top-1 w-5 h-5 rounded-full bg-white shadow-md transform transition-transform"></span>
+                                </button>
+                              </div>
+                            </div>
+                          }
+                        </div>
+                       }
+                    </div>
+                  </div>
+               </div>
             </div>
           }
 
@@ -1755,7 +1753,7 @@ import { map } from 'rxjs/operators';
 })
 export class ProjectDetailComponent implements OnInit {
    project: any | undefined;
-   activeTab: 'timeline' | 'team' | 'history' | 'boq' | 'finances' | 'bills' | 'payments' | 'phases' | 'designs' = 'timeline';
+   activeTab: 'timeline' | 'team' | 'history' | 'boq' | 'finances' | 'bills' | 'payments' | 'phases' | 'designs' | 'settings' = 'designs';
    teamMembers: any[] = [];
    companyUsers: User[] = [];
    dailyLogs: any[] = [];

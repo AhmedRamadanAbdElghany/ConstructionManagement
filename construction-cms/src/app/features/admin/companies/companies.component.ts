@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CompaniesService } from '../../../core/services/companies.service';
@@ -26,8 +28,17 @@ import { TranslateModule } from '@ngx-translate/core';
         </button>
       </div>
 
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="flex flex-col items-center justify-center p-20 h-64">
+         <div class="relative w-20 h-20">
+            <div class="absolute top-0 left-0 w-full h-full border-4 border-indigo-100 rounded-full"></div>
+            <div class="absolute top-0 left-0 w-full h-full border-4 border-indigo-500 rounded-full border-t-transparent animate-spin"></div>
+         </div>
+         <p class="mt-8 text-slate-400 font-bold text-xs uppercase tracking-widest animate-pulse">Synchronizing Enterprise Directory...</p>
+      </div>
+
       <!-- Companies Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-10">
+      <div *ngIf="!isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-10">
         <div *ngFor="let company of companies" 
              class="company-card group bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2.5rem] shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden relative">
           
@@ -113,7 +124,7 @@ import { TranslateModule } from '@ngx-translate/core';
                     <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Subscription Package</label>
                     <select formControlName="packageId" 
                             class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-slate-900 dark:text-white appearance-none cursor-pointer">
-                      <option *ngFor="let pkg of packages" [value]="pkg.id" class="text-slate-900 dark:text-white dark:bg-slate-900">{{ pkg.name }}</option>
+                      <option *ngFor="let pkg of packages" [ngValue]="pkg.id" class="text-slate-900 dark:text-white dark:bg-slate-900">{{ pkg.name }}</option>
                     </select>
                   </div>
                 </div>
@@ -447,6 +458,43 @@ import { TranslateModule } from '@ngx-translate/core';
                  </div>
                </section>
 
+               <!-- Project Financial Logic -->
+               <section class="pt-6">
+                 <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
+                   <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
+                   Project Financial Logic
+                 </h3>
+                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div (click)="toggleFormControl('allowMeasured')"
+                         [ngClass]="companyForm.get('allowMeasured')?.value ? 'border-teal-500 bg-teal-50/40 text-teal-900 dark:text-teal-100' : 'border-slate-100 dark:border-slate-800 text-slate-400'"
+                         class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center space-x-4 hover:scale-[1.02]">
+                        <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm">📏</div>
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Measured</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Bill of Quantities</p>
+                        </div>
+                    </div>
+                    <div (click)="toggleFormControl('allowSupervision')"
+                         [ngClass]="companyForm.get('allowSupervision')?.value ? 'border-teal-500 bg-teal-50/40 text-teal-900 dark:text-teal-100' : 'border-slate-100 dark:border-slate-800 text-slate-400'"
+                         class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center space-x-4 hover:scale-[1.02]">
+                        <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm">👁️</div>
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Supervision</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Cost Plus / Percentage</p>
+                        </div>
+                    </div>
+                    <div (click)="toggleFormControl('allowPackages')"
+                         [ngClass]="companyForm.get('allowPackages')?.value ? 'border-teal-500 bg-teal-50/40 text-teal-900 dark:text-teal-100' : 'border-slate-100 dark:border-slate-800 text-slate-400'"
+                         class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center space-x-4 hover:scale-[1.02]">
+                        <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm">📦</div>
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Packages</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Fixed Price Services</p>
+                        </div>
+                    </div>
+                 </div>
+               </section>
+
                <!-- Reviews & Visibility -->
                <section class="pt-6 pb-4">
                  <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -525,9 +573,13 @@ import { TranslateModule } from '@ngx-translate/core';
           <!-- Modal Footer -->
           <div class="px-10 py-8 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 flex gap-4 shrink-0">
             <button (click)="closeModal()" class="flex-1 py-4 text-slate-500 font-black hover:bg-white dark:hover:bg-slate-700/50 rounded-2xl transition-all border border-slate-200 dark:border-white/5 uppercase tracking-widest text-[10px]">Abandon Changes</button>
-            <button (click)="saveCompany()" [disabled]="companyForm.invalid"
-                    class="flex-[2] bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-black shadow-lg shadow-indigo-500/20 transition-all uppercase tracking-widest text-[10px] disabled:opacity-40">
-              {{ isEdit ? 'Commit Configuration' : 'Authorize & Onboard' }}
+            <button (click)="saveCompany()" [disabled]="companyForm.invalid || isSaving"
+                    class="flex-[2] bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-black shadow-lg shadow-indigo-500/20 transition-all uppercase tracking-widest text-[10px] disabled:opacity-40 flex items-center justify-center gap-3">
+              <svg *ngIf="isSaving" class="animate-spin -ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              {{ isSaving ? 'Processing...' : (isEdit ? 'Commit Configuration' : 'Authorize & Onboard') }}
             </button>
           </div>
         </div>
@@ -569,6 +621,8 @@ export class CompaniesComponent implements OnInit {
   selectedCompanyId: number | null = null;
   selectedCompany: Company | null = null;
   companyForm: FormGroup;
+  isLoading = true;
+  isSaving = false;
 
   constructor(
     private companiesService: CompaniesService,
@@ -607,6 +661,8 @@ export class CompaniesComponent implements OnInit {
       enableDelayNotification: [true],
       requirePhotoReview: [true],
       clientCanSeeFinancials: [true],
+      allowMeasured: [true],
+      allowSupervision: [true],
       allowPackages: [true],
       allowLocations: [true],
       allowHR: [true],
@@ -635,8 +691,21 @@ export class CompaniesComponent implements OnInit {
   }
 
   loadData() {
-    this.companiesService.getCompanies().subscribe((data: Company[]) => this.companies = data);
-    this.packagesService.getAllPackages().subscribe((data: Package[]) => this.packages = data);
+    this.isLoading = true;
+    forkJoin({
+      companies: this.companiesService.getCompanies().pipe(catchError(() => of([] as any[]))),
+      packages: this.packagesService.getAllPackages().pipe(catchError(() => of([] as any[])))
+    }).subscribe({
+      next: (res) => {
+        this.companies = res.companies;
+        this.packages = res.packages;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.isLoading = false;
+      }
+    });
   }
 
   getPackageName(id?: number): string {
@@ -679,6 +748,8 @@ export class CompaniesComponent implements OnInit {
       enableDelayNotification: true,
       requirePhotoReview: true,
       clientCanSeeFinancials: true,
+      allowMeasured: true,
+      allowSupervision: true,
       allowPackages: true,
       allowLocations: true,
       allowHR: true,
@@ -746,6 +817,8 @@ export class CompaniesComponent implements OnInit {
         enableDelayNotification: company.settings.enableDelayNotification,
         requirePhotoReview: company.settings.requirePhotoReview,
         clientCanSeeFinancials: company.settings.clientCanSeeFinancials,
+        allowMeasured: company.settings.allowMeasured,
+        allowSupervision: company.settings.allowSupervision,
         allowPackages: company.settings.allowPackages,
         allowLocations: company.settings.allowLocations,
         allowHR: company.settings.allowHR,
@@ -780,20 +853,26 @@ export class CompaniesComponent implements OnInit {
 
   saveCompany() {
     if (this.companyForm.valid) {
+      this.isSaving = true;
       const payload = { ...this.companyForm.value };
       payload.packageId = Number(payload.packageId);
 
-      if (this.isEdit && this.selectedCompanyId) {
-        this.companiesService.updateCompany(this.selectedCompanyId, payload).subscribe(() => {
-          this.loadData();
+      const request = (this.isEdit && this.selectedCompanyId)
+        ? this.companiesService.updateCompany(this.selectedCompanyId, payload)
+        : this.companiesService.createCompany(payload);
+
+      request.subscribe({
+        next: () => {
+          this.loadData(); // This will trigger isLoading=true again, which is good visually
           this.closeModal();
-        });
-      } else {
-        this.companiesService.createCompany(payload).subscribe(() => {
-          this.loadData();
-          this.closeModal();
-        });
-      }
+          this.isSaving = false;
+        },
+        error: (err) => {
+          console.error(err);
+          this.isSaving = false;
+          alert('Operation failed. Please try again.');
+        }
+      });
     }
   }
 

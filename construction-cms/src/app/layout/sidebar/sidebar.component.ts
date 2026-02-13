@@ -470,7 +470,13 @@ export class SidebarComponent {
     private settingsService: SettingsService,
     public pendingRequestsService: PendingRequestsService
   ) {
-    this.settingsService.getCompanySettings().subscribe(s => this.settings = s);
+    const user = this.authService.getCurrentUser();
+    const isSuperAdmin = user?.roles?.includes('SuperAdmin');
+
+    if (!isSuperAdmin && user?.companyId) {
+      this.settingsService.getCompanySettings().subscribe(s => this.settings = s);
+    }
+
     this.loadPendingRequestsCount();
   }
 

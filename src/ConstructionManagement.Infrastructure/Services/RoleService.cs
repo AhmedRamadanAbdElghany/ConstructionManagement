@@ -56,7 +56,7 @@ namespace ConstructionManagement.Infrastructure.Services
             
             if (targetCompanyId.HasValue)
             {
-                rolesQuery = rolesQuery.Where(r => r.CompanyId == targetCompanyId.Value);
+                rolesQuery = rolesQuery.Where(r => r.CompanyId == targetCompanyId.Value && r.Name != "CompanyAdmin" && r.Name != "SuperAdmin");
             }
             else if (isSuper)
             {

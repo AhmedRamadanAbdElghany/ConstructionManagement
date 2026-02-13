@@ -421,6 +421,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     AllowMeasured = table.Column<bool>(type: "bit", nullable: false),
                     AllowSupervision = table.Column<bool>(type: "bit", nullable: false),
                     AllowPackages = table.Column<bool>(type: "bit", nullable: false),
+                    AllowLocations = table.Column<bool>(type: "bit", nullable: false),
+                    AllowHR = table.Column<bool>(type: "bit", nullable: false),
                     DefaultSupervisionPercentage = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     DefaultMoneyCalculationMethod = table.Column<int>(type: "int", nullable: false),
                     AllowAddProgressEntry = table.Column<bool>(type: "bit", nullable: false),
@@ -447,8 +449,10 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     EquipmentAssignmentApproverRole = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EnableEquipmentGpsTracking = table.Column<bool>(type: "bit", nullable: false),
                     EnableEquipmentRentalBilling = table.Column<bool>(type: "bit", nullable: false),
+                    EnableEquipmentMaintenanceScheduling = table.Column<bool>(type: "bit", nullable: false),
                     RequireMaintenanceSchedule = table.Column<bool>(type: "bit", nullable: false),
                     MaintenanceReminderDays = table.Column<int>(type: "int", nullable: false),
+                    EquipmentMaintenanceAlertThreshold = table.Column<int>(type: "int", nullable: false),
                     EnableEquipmentUtilizationTracking = table.Column<bool>(type: "bit", nullable: false),
                     EnableEquipmentInsuranceTracking = table.Column<bool>(type: "bit", nullable: false),
                     EnableEquipmentDepreciation = table.Column<bool>(type: "bit", nullable: false),
@@ -4725,7 +4729,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "RoleId", "UserId", "AssignedAt", "CompanyId" },
-                values: new object[] { 1, 1, new DateTime(2026, 2, 11, 0, 43, 20, 790, DateTimeKind.Utc).AddTicks(9103), null });
+                values: new object[] { 1, 1, new DateTime(2026, 2, 12, 9, 8, 30, 273, DateTimeKind.Utc).AddTicks(3152), null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnalyticsSnapshots_CompanyId",

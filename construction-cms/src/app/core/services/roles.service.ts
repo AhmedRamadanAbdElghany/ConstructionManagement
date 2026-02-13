@@ -36,17 +36,17 @@ export class RolesService {
 
     createRole(role: Partial<Role>): Observable<any> {
         return this.http.post<any>(this.rolesUrl, {
-            roleName: role.name,
-            description: role.description,
-            companyId: role.companyId
+            roleName: role.name || (role as any).RoleName || (role as any).roleName || '',
+            description: role.description || (role as any).Description || '',
+            companyId: role.companyId || (role as any).CompanyId
         });
     }
 
     updateRole(id: number, role: Partial<Role>): Observable<any> {
         return this.http.put<any>(`${this.rolesUrl}/${id}`, {
-            roleName: role.name,
-            description: role.description,
-            companyId: role.companyId
+            roleName: role.name || (role as any).RoleName || (role as any).roleName || '',
+            description: role.description || (role as any).Description || '',
+            companyId: role.companyId || (role as any).CompanyId
         });
     }
 

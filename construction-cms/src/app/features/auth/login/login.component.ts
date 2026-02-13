@@ -529,7 +529,16 @@ export class LoginComponent {
       },
       error: (error) => {
         this.isLoading = false;
-        this.errorMessage = error.error?.message || 'Invalid email or password';
+
+        if (error.error?.errors) {
+          // Handle ASP.NET Core Validation Errors (RFC 7807)
+          const validationErrors = error.error.errors;
+          const messages = Object.keys(validationErrors)
+            .map(key => validationErrors[key].join(', '));
+          this.errorMessage = messages.join(' | ');
+        } else {
+          this.errorMessage = error.error?.message || 'Invalid email or password';
+        }
       }
     });
   }

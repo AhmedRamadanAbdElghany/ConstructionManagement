@@ -110,6 +110,8 @@ public class CompanySettings : BaseEntity, ICompanyEntity
     public bool AllowMeasured { get; set; } = true;
     public bool AllowSupervision { get; set; } = true;
     public bool AllowPackages { get; set; } = false; // "Packages" calculation method
+    public bool AllowLocations { get; set; } = true;
+    public bool AllowHR { get; set; } = true;
         
     public decimal? DefaultSupervisionPercentage { get; set; }
 
@@ -192,6 +194,11 @@ public class CompanySettings : BaseEntity, ICompanyEntity
     /// Enable equipment rental billing
     /// </summary>
     public bool EnableEquipmentRentalBilling { get; set; } = true;
+
+    /// <summary>
+    /// Master switch for maintenance scheduling
+    /// </summary>
+    public bool EnableEquipmentMaintenanceScheduling { get; set; } = true;
     
     /// <summary>
     /// Require maintenance schedule tracking
@@ -202,6 +209,7 @@ public class CompanySettings : BaseEntity, ICompanyEntity
     /// Default maintenance reminder days before due
     /// </summary>
     public int MaintenanceReminderDays { get; set; } = 7;
+    public int EquipmentMaintenanceAlertThreshold { get; set; } = 50;
     
     /// <summary>
     /// Enable equipment utilization tracking

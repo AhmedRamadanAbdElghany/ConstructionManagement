@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { DesignService } from '../../../../core/services/design.service';
-import { Design, DesignCategory, CreateCategoryRequest } from '../../../../shared/interfaces';
+import { Design, DesignCategory, CreateCategoryRequest, CreateDesignRequest } from '../../../../shared/interfaces';
 import { AuthService } from '../../../../core/services/auth.service';
 
 interface DesignGroup {
@@ -234,26 +234,38 @@ interface DesignGroup {
                                                     }
                                                 </div>
                                                 
-                                                <div class="flex items-center justify-between mt-3">
-                                                    <span class="text-xs text-slate-400">{{ group.latestDesign.createdAt | date:'medium' }}</span>
-                                                    <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        <button (click)="viewDesign(group.latestDesign)" 
-                                                                class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-cyan-500 transition-colors">
-                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                            </svg>
-                                                        </button>
-                                                        @if (canAddDesign) {
-                                                            <button (click)="deleteDesign(group.latestDesign)" 
-                                                                    class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-rose-500 transition-colors">
+
+                                                    
+                                                    <!-- Actions -->
+                                                    <div class="flex items-center justify-between mt-3">
+                                                        <span class="text-xs text-slate-400">{{ group.latestDesign.createdAt | date:'medium' }}</span>
+                                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            @if (canAddDesign) {
+                                                                <button (click)="openNewVersionModal(group.latestDesign)" 
+                                                                        class="px-2 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-cyan-500 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 transition-colors text-xs font-medium flex items-center gap-1">
+                                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                                                    </svg>
+                                                                    {{ 'designs.new_version' | translate }}
+                                                                </button>
+                                                            }
+                                                            <button (click)="viewDesign(group.latestDesign)" 
+                                                                    class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-cyan-500 transition-colors">
                                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                                                 </svg>
                                                             </button>
-                                                        }
+                                                            @if (canAddDesign) {
+                                                                <button (click)="deleteDesign(group.latestDesign)" 
+                                                                        class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-rose-500 transition-colors">
+                                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                                    </svg>
+                                                                </button>
+                                                            }
+                                                        </div>
                                                     </div>
-                                                </div>
                                                 
                                                 <!-- Change Notes -->
                                                 @if (group.latestDesign.changeNotes) {
@@ -343,10 +355,10 @@ interface DesignGroup {
 
             <!-- Upload Modal -->
             @if (showUploadModal) {
-                <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" (click)="showUploadModal = false">
+                <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" (click)="closeUploadModal()">
                     <div class="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-lg shadow-2xl" (click)="$event.stopPropagation()">
                         <div class="p-6 border-b border-slate-200 dark:border-white/5">
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ 'designs.add_design' | translate }}</h3>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ (isNewVersionMode ? 'designs.upload_new_version' : 'designs.add_design') | translate }}</h3>
                         </div>
                         <div class="p-6 space-y-4">
                             <div>
@@ -379,6 +391,14 @@ interface DesignGroup {
                                     <option value="Active">{{ 'designs.active' | translate }}</option>
                                 </select>
                             </div>
+                            @if (isNewVersionMode) {
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ 'designs.change_notes' | translate }}</label>
+                                    <textarea [(ngModel)]="changeNotes" rows="2"
+                                            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                                            placeholder="Enter change notes"></textarea>
+                                </div>
+                            }
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ 'designs.upload_file' | translate }}</label>
                                 <div class="border-2 border-dashed border-slate-200 dark:border-white/10 rounded-xl p-6 text-center hover:border-cyan-500/50 transition-colors cursor-pointer"
@@ -400,7 +420,7 @@ interface DesignGroup {
                             </div>
                         </div>
                         <div class="p-6 border-t border-slate-200 dark:border-white/5 flex justify-end gap-3">
-                            <button (click)="showUploadModal = false" 
+                            <button (click)="closeUploadModal()" 
                                     class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
                                 {{ 'common.cancel' | translate }}
                             </button>
@@ -609,6 +629,11 @@ export class DesignsTabComponent implements OnInit, OnChanges {
     selectedDesign: Design | null = null;
     selectedDesignVersions: Design[] = [];
     selectedFile: File | null = null;
+
+    // Versioning
+    isNewVersionMode = false;
+    selectedParentDesignId: number | null = null;
+    changeNotes = '';
 
     newDesign = {
         name: '',
@@ -1028,20 +1053,22 @@ export class DesignsTabComponent implements OnInit, OnChanges {
         if (!this.newDesign.name || !this.selectedFile) return;
 
         this.uploading = true;
-        const request = {
+
+        const request: CreateDesignRequest = {
             name: this.newDesign.name,
-            description: this.newDesign.description || undefined,
+            description: this.newDesign.description,
             categoryId: this.newDesign.categoryId || undefined,
-            status: this.newDesign.status as 'Draft' | 'Active',
-            createAsNewVersion: false,
-            file: this.selectedFile
+            status: this.newDesign.status as any,
+            file: this.selectedFile,
+            createAsNewVersion: this.isNewVersionMode,
+            parentDesignId: this.isNewVersionMode && this.selectedParentDesignId ? this.selectedParentDesignId : undefined,
+            changeNotes: this.isNewVersionMode ? this.changeNotes : undefined
         };
 
         this.designService.createDesign(this.projectId, request).subscribe({
-            next: () => {
+            next: (designId) => {
                 this.uploading = false;
-                this.showUploadModal = false;
-                this.resetNewDesign();
+                this.closeUploadModal();
                 this.loadData();
             },
             error: (err) => {
@@ -1075,6 +1102,34 @@ export class DesignsTabComponent implements OnInit, OnChanges {
                 this.creatingCategory = false;
             }
         });
+    }
+
+    openNewVersionModal(design: Design): void {
+        this.newDesign = {
+            name: design.name,
+            description: design.description || '',
+            categoryId: design.categoryId || null,
+            status: 'Draft'
+        };
+        this.selectedParentDesignId = design.id;
+        this.isNewVersionMode = true;
+        this.showUploadModal = true;
+        this.changeNotes = '';
+        this.selectedFile = null;
+    }
+
+    closeUploadModal(): void {
+        this.showUploadModal = false;
+        this.isNewVersionMode = false;
+        this.selectedParentDesignId = null;
+        this.changeNotes = '';
+        this.selectedFile = null;
+        this.newDesign = {
+            name: '',
+            description: '',
+            categoryId: null,
+            status: 'Draft'
+        };
     }
 
     viewDesign(design: Design): void {

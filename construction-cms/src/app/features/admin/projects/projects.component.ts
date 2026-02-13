@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Project, CatalogItem, User, CompanyPackage, CompanySettings } from '../../../shared/interfaces';
+import { Project, CatalogItem, User, CompanyPackage, CompanySettings, CreateProjectRequest } from '../../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { CatalogService } from '../../../core/services/catalog.service';
@@ -354,56 +354,7 @@ import { map } from 'rxjs/operators';
                          </div>
                       </div>
 
-                      <!-- Operational Settings (Moved here for better balance) -->
-                      <div class="p-8 rounded-[2.5rem] bg-indigo-500/5 border border-indigo-500/10 shadow-lg relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                            <svg class="w-20 h-24 text-indigo-500" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                         </div>
 
-                         <div class="flex items-center space-x-3 mb-8">
-                             <p class="text-[11px] font-black text-indigo-500 uppercase tracking-[0.3em]">{{ 'projects.ops_logic' | translate }}</p>
-                            <div class="h-px flex-1 bg-gradient-to-r from-indigo-500/20 to-transparent"></div>
-                         </div>
-
-                         <div class="grid grid-cols-2 gap-4">
-                            <!-- Toggle Card -->
-                            <div (click)="createForm.allowAddProgressEntry = !createForm.allowAddProgressEntry"
-                                 [class]="createForm.allowAddProgressEntry ? 'bg-indigo-500 text-white shadow-xl shadow-indigo-500/20' : 'bg-slate-50 dark:bg-slate-950 text-slate-400 border-slate-100 dark:border-white/5'"
-                                 class="p-4 rounded-2xl border transition-all cursor-pointer group/toggle">
-                               <div class="flex items-center justify-between mb-2">
-                                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-                                  <div class="w-2 h-2 rounded-full" [class]="createForm.allowAddProgressEntry ? 'bg-white animate-pulse' : 'bg-slate-300'"></div>
-                               </div>
-                               <p class="text-[9px] font-black uppercase tracking-widest">{{ 'projects.enable_logging' | translate }}</p>
-                            </div>
-
-                            <div (click)="createForm.allowReopenClosedDay = !createForm.allowReopenClosedDay"
-                                 [class]="createForm.allowReopenClosedDay ? 'bg-indigo-500 text-white shadow-xl shadow-indigo-500/20' : 'bg-slate-50 dark:bg-slate-950 text-slate-400 border-slate-100 dark:border-white/5'"
-                                 class="p-4 rounded-2xl border transition-all cursor-pointer group/toggle">
-                               <div class="flex items-center justify-between mb-2">
-                                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
-                                  <div class="w-2 h-2 rounded-full" [class]="createForm.allowReopenClosedDay ? 'bg-white animate-pulse' : 'bg-slate-300'"></div>
-                               </div>
-                               <p class="text-[9px] font-black uppercase tracking-widest">{{ 'projects.reopen_days' | translate }}</p>
-                            </div>
-
-                            <div (click)="createForm.autoCloseDay = !createForm.autoCloseDay"
-                                 [class]="createForm.autoCloseDay ? 'bg-indigo-500 text-white shadow-xl shadow-indigo-500/20' : 'bg-slate-50 dark:bg-slate-950 text-slate-400 border-slate-100 dark:border-white/5'"
-                                 class="p-4 rounded-2xl border transition-all cursor-pointer group/toggle">
-                               <div class="flex items-center justify-between mb-2">
-                                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                  <div class="w-2 h-2 rounded-full" [class]="createForm.autoCloseDay ? 'bg-white animate-pulse' : 'bg-slate-300'"></div>
-                               </div>
-                               <p class="text-[9px] font-black uppercase tracking-widest">{{ 'projects.auto_locking' | translate }}</p>
-                            </div>
-
-                            <div [class.opacity-40]="!createForm.autoCloseDay" class="p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/5 transition-all">
-                               <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ 'projects.close_time' | translate }}</p>
-                               <input type="time" [(ngModel)]="createForm.autoCloseDayTime" [disabled]="!createForm.autoCloseDay"
-                                      class="w-full bg-transparent text-slate-900 dark:text-white font-black text-sm outline-none cursor-pointer">
-                            </div>
-                         </div>
-                      </div>
                    </div>
 
                    <!-- Right Column (Financial Wing) -->
@@ -571,12 +522,20 @@ import { map } from 'rxjs/operators';
                 <div class="flex space-x-6 w-full md:w-auto">
                    <button (click)="showCreateModal = false" class="px-10 py-5 rounded-[1.5rem] text-slate-500 font-black text-[11px] uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-white/5 transition-all active:scale-95">{{ 'projects.discard' | translate }}</button>
                    <button (click)="createProject()"
-                           [disabled]="!isFormValid"
+                           [disabled]="!isFormValid || isCreatingProject"
                            class="flex items-center space-x-3 px-12 py-5 rounded-[1.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[11px] uppercase tracking-widest shadow-2xl shadow-slate-900/40 hover:scale-105 active:scale-95 transition-all disabled:opacity-20 disabled:grayscale disabled:cursor-not-allowed group">
-                      <span>{{ 'projects.establish' | translate }}</span>
-                      <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                      </svg>
+                      @if (isCreatingProject) {
+                         <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                         </svg>
+                         <span>Creating...</span>
+                      } @else {
+                         <span>{{ 'projects.establish' | translate }}</span>
+                         <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                         </svg>
+                      }
                    </button>
                 </div>
              </div>
@@ -615,11 +574,7 @@ export class ProjectsComponent implements OnInit {
     deductedAmountDescription: '',
     lat: 0 as number | null,
     lng: 0 as number | null,
-    // Daily Log Overrides
-    allowAddProgressEntry: true,
-    allowReopenClosedDay: false,
-    autoCloseDay: false,
-    autoCloseDayTime: '18:00'
+
   };
 
   get filteredProjects(): Project[] {
@@ -632,12 +587,12 @@ export class ProjectsComponent implements OnInit {
   get isFormValid(): boolean {
     const f = this.createForm;
     // Basic Info
-    if (!f.name || !f.address || !f.startDate || !f.endDate) return false;
+    if (!f.name || !f.startDate || !f.endDate) return false;
 
-    // Location
-    if (this.companySettings?.allowLocations) {
-      if (f.lat === null || f.lng === null) return false;
-    }
+    // Location is optional now
+    // if (this.companySettings?.allowLocations) {
+    //   if (f.lat === null || f.lng === null) return false;
+    // }
 
     // Calculation Method
     if (f.calculationMethod === 'Measured' && (!f.totalContractValue || f.totalContractValue <= 0)) return false;
@@ -694,6 +649,14 @@ export class ProjectsComponent implements OnInit {
     });
     this.settingsService.getCompanySettings().subscribe(settings => {
       this.companySettings = settings;
+
+      this.calculationMethods = [];
+      if (settings.allowMeasured) this.calculationMethods.push('Measured');
+      if (settings.allowSupervision) this.calculationMethods.push('Supervision');
+      if (settings.allowPackages) this.calculationMethods.push('Packages');
+
+      // Fallback if nothing enabled (shouldn't happen in valid config)
+      if (this.calculationMethods.length === 0) this.calculationMethods = ['Measured'];
     });
     this.settingsService.getCompanyPackages().subscribe(packages => {
       this.availablePackages = packages;
@@ -717,16 +680,14 @@ export class ProjectsComponent implements OnInit {
       deductedAmountDescription: '',
       lat: null,
       lng: null,
-      // Initialize with Company Defaults
-      allowAddProgressEntry: this.companySettings?.allowAddProgressEntry ?? true,
-      allowReopenClosedDay: this.companySettings?.allowReopenClosedDay ?? false,
-      autoCloseDay: this.companySettings?.autoCloseDay ?? false,
-      autoCloseDayTime: this.companySettings?.autoCloseDayTime ?? '18:00'
+
     };
     this.showCreateModal = true;
   }
 
 
+
+  isCreatingProject = false;
 
   createProject() {
     const isExtraFeesValid = !this.createForm.extraFees || (this.createForm.extraFees > 0 && this.createForm.extraFeesDescription);
@@ -737,36 +698,30 @@ export class ProjectsComponent implements OnInit {
       return;
     }
 
-    const newProject: Project = {
-      id: Math.max(0, ...this.projects.map(p => p.id)) + 1,
-      name: this.createForm.name,
-      status: 'Active',
-      progress: 0,
-      cashFlow: { earned: 0, collected: 0 },
-      location: {
-        lat: Number(this.createForm.lat) || 0,
-        lng: Number(this.createForm.lng) || 0,
-        address: this.createForm.address
-      },
-      startDate: this.createForm.startDate,
-      endDate: this.createForm.endDate,
-      packageId: this.createForm.calculationMethod === 'Packages' ? Number(this.createForm.packageId) : undefined
+    this.isCreatingProject = true;
+
+    const request: CreateProjectRequest = {
+      projectName: this.createForm.name,
+      description: this.createForm.address,
+      startDate: this.createForm.startDate || undefined,
+      endDate: this.createForm.endDate || undefined,
+      accountingSystem: this.createForm.calculationMethod,
+      totalContractValue: this.createForm.calculationMethod === 'Measured' ? this.createForm.totalContractValue : undefined,
     };
 
-    this.projects.unshift(newProject);
-    this.showCreateModal = false;
-
-    console.log('Project created with config:', {
-      project: newProject,
-      calculation: {
-        method: this.createForm.calculationMethod,
-        value: this.createForm.calculationMethod === 'Measured' ? this.createForm.totalContractValue :
-          this.createForm.calculationMethod === 'Supervision' ? (this.createForm.useCompanyPercentage ? 'Default' : this.createForm.supervisionPercentage) :
-            this.createForm.packageId
+    this.projectService.createProject(request).subscribe({
+      next: (result) => {
+        this.isCreatingProject = false;
+        this.showCreateModal = false;
+        // Reload projects from server
+        this.projectService.getMyProjects().subscribe(projects => {
+          this.projects = projects;
+        });
       },
-      adjustments: {
-        extra: { amount: this.createForm.extraFees, desc: this.createForm.extraFeesDescription },
-        deducted: { amount: this.createForm.deductedAmount, desc: this.createForm.deductedAmountDescription }
+      error: (err) => {
+        this.isCreatingProject = false;
+        console.error('Failed to create project:', err);
+        alert('Failed to create project. Please check the form and try again.');
       }
     });
   }

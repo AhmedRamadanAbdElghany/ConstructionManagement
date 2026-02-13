@@ -81,11 +81,48 @@ import { ProjectService } from '../../../../core/services/project.service';
                       <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Subscription Package</label>
                       <select formControlName="packageId" 
                               class="w-full p-5 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-indigo-500 rounded-3xl outline-none transition-all font-bold text-lg appearance-none text-slate-900 dark:text-white">
-                        <option *ngFor="let pkg of packages" [value]="pkg.id" class="text-slate-900 dark:text-white dark:bg-slate-900">{{ pkg.name }}</option>
+                        <option *ngFor="let pkg of packages" [ngValue]="pkg.id" class="text-slate-900 dark:text-white dark:bg-slate-900">{{ pkg.name }}</option>
                       </select>
                     </div>
                   </div>
                 </section>
+
+               <!-- Project Financial Logic -->
+               <section class="mb-10">
+                 <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
+                   <span class="w-2 h-2 rounded-full bg-teal-500"></span>
+                   Project Financial Logic
+                 </h3>
+                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div (click)="toggleFormControl('allowMeasured')"
+                         [ngClass]="companyForm.get('allowMeasured')?.value ? 'border-teal-500 bg-teal-50/40 text-teal-900 dark:text-teal-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                         class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center space-x-4 hover:scale-[1.02]">
+                        <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm">📏</div>
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Measured</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Bill of Quantities</p>
+                        </div>
+                    </div>
+                    <div (click)="toggleFormControl('allowSupervision')"
+                         [ngClass]="companyForm.get('allowSupervision')?.value ? 'border-teal-500 bg-teal-50/40 text-teal-900 dark:text-teal-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                         class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center space-x-4 hover:scale-[1.02]">
+                        <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm">👁️</div>
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Supervision</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Cost Plus / Percentage</p>
+                        </div>
+                    </div>
+                    <div (click)="toggleFormControl('allowPackages')"
+                         [ngClass]="companyForm.get('allowPackages')?.value ? 'border-teal-500 bg-teal-50/40 text-teal-900 dark:text-teal-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                         class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center space-x-4 hover:scale-[1.02]">
+                        <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm">📦</div>
+                        <div>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">Packages</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">Fixed Price Services</p>
+                        </div>
+                    </div>
+                 </div>
+               </section>
 
                <!-- Unified Feature Management -->
                <section class="pt-6 space-y-10">
@@ -325,24 +362,28 @@ import { ProjectService } from '../../../../core/services/project.service';
                         </label>
                      </div>
                      <!-- GPS Tracking -->
-                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentGPSTracking')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
+                     <div (click)="toggleFormControl('enableEquipmentGpsTracking')" 
+                          [ngClass]="companyForm.get('enableEquipmentGpsTracking')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'"
+                          class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center justify-between">
                         <div>
                            <span class="font-black text-[10px] uppercase tracking-widest block">GPS Tracking</span>
                            <p class="text-[8px] font-bold uppercase opacity-60">Track equipment location</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
-                          <input type="checkbox" formControlName="enableEquipmentGPSTracking" class="sr-only peer">
+                          <input type="checkbox" formControlName="enableEquipmentGpsTracking" class="sr-only peer">
                           <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
                         </label>
                      </div>
                      <!-- Billing Integration -->
-                     <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentBilling')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
+                     <div (click)="toggleFormControl('enableEquipmentRentalBilling')" 
+                          [ngClass]="companyForm.get('enableEquipmentRentalBilling')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'"
+                          class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center justify-between">
                         <div>
                            <span class="font-black text-[10px] uppercase tracking-widest block">Billing Integration</span>
                            <p class="text-[8px] font-bold uppercase opacity-60">Equipment rental billing</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
-                          <input type="checkbox" formControlName="enableEquipmentBilling" class="sr-only peer">
+                          <input type="checkbox" formControlName="enableEquipmentRentalBilling" class="sr-only peer">
                           <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
                         </label>
                      </div>
@@ -459,7 +500,13 @@ import { ProjectService } from '../../../../core/services/project.service';
                     </label>
                     <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest italic">Company Active Status</span>
                   </div>
-                  <button (click)="saveChanges()" class="px-10 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-[1.5rem] font-black text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-xl">Sync Configurations</button>
+                  <button (click)="saveChanges()" [disabled]="isSaving" class="px-10 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-[1.5rem] font-black text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-xl disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-3">
+                    <svg *ngIf="isSaving" class="animate-spin -ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    {{ isSaving ? 'Syncing...' : 'Sync Configurations' }}
+                  </button>
                 </div>
               </form>
           </div>
@@ -887,7 +934,10 @@ export class CompanyDetailComponent implements OnInit {
   roleAddForm: FormGroup;
   editingRole: any = null;
   showProjectModal = false;
+
   projectForm: FormGroup;
+  isSaving = false;
+  isLoading = false;
 
   tabs = [
     { id: 'identity', label: 'Identity & Config' },
@@ -952,8 +1002,8 @@ export class CompanyDetailComponent implements OnInit {
       allowHR: [true],
       enableEquipmentMaintenanceScheduling: [true],
       enableEquipmentUtilizationTracking: [true],
-      enableEquipmentGPSTracking: [true],
-      enableEquipmentBilling: [true],
+      enableEquipmentGpsTracking: [true],
+      enableEquipmentRentalBilling: [true],
       equipmentMaintenanceAlertThreshold: [50],
       requireMaterialRequestApproval: [true],
       materialRequestApproverRole: [''],
@@ -998,10 +1048,16 @@ export class CompanyDetailComponent implements OnInit {
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (id) {
-      this.companiesService.getCompanies().subscribe(companies => {
-        this.company = companies.find(c => c.id === id) || null;
-        if (this.company) {
-          this.initForm(this.company);
+      this.isLoading = true;
+      this.companiesService.getCompany(id).subscribe({
+        next: (company) => {
+          this.company = company;
+          this.initForm(company);
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Error loading company:', err);
+          this.isLoading = false;
         }
       });
     }
@@ -1048,8 +1104,8 @@ export class CompanyDetailComponent implements OnInit {
         allowHR: company.settings.allowHR,
         enableEquipmentMaintenanceScheduling: company.settings.enableEquipmentMaintenanceScheduling,
         enableEquipmentUtilizationTracking: company.settings.enableEquipmentUtilizationTracking,
-        enableEquipmentGPSTracking: company.settings.enableEquipmentGPSTracking,
-        enableEquipmentBilling: company.settings.enableEquipmentBilling,
+        enableEquipmentGpsTracking: company.settings.enableEquipmentGpsTracking,
+        enableEquipmentRentalBilling: company.settings.enableEquipmentRentalBilling,
         equipmentMaintenanceAlertThreshold: company.settings.equipmentMaintenanceAlertThreshold,
         requireMaterialRequestApproval: company.settings.requireMaterialRequestApproval,
         materialRequestApproverRole: company.settings.materialRequestApproverRole,
@@ -1079,11 +1135,29 @@ export class CompanyDetailComponent implements OnInit {
   }
 
   saveChanges() {
-    if (this.companyForm.valid && this.company) {
-      this.companiesService.updateCompany(this.company.id, this.companyForm.value).subscribe(() => {
-        alert('Configurations synced successfully!');
-      });
+    if (this.companyForm.invalid) {
+      this.companyForm.markAllAsTouched();
+      alert('Please check the form for invalid fields.');
+      return;
     }
+
+    if (!this.company) {
+      alert('Company data not loaded correctly.');
+      return;
+    }
+
+    this.isSaving = true;
+    this.companiesService.updateCompany(this.company.id, this.companyForm.value).subscribe({
+      next: () => {
+        this.isSaving = false;
+        alert('Configurations synced successfully!');
+      },
+      error: (err) => {
+        this.isSaving = false;
+        console.error('Error syncing configurations:', err);
+        alert('Failed to sync configurations. Please try again.');
+      }
+    });
   }
 
   getPermIcon(name: string): string {

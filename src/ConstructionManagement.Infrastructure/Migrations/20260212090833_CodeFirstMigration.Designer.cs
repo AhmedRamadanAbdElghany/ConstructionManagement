@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ConstructionManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260211004324_CodeFirstMigration")]
+    [Migration("20260212090833_CodeFirstMigration")]
     partial class CodeFirstMigration
     {
         /// <inheritdoc />
@@ -1612,6 +1612,12 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<bool>("AllowAddProgressEntry")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("AllowHR")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("AllowLocations")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("AllowMeasured")
                         .HasColumnType("bit");
 
@@ -1741,6 +1747,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<bool>("EnableEquipmentInsuranceTracking")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("EnableEquipmentMaintenanceScheduling")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("EnableEquipmentManagement")
                         .HasColumnType("bit");
 
@@ -1824,6 +1833,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
                     b.Property<string>("EquipmentAssignmentApproverRole")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EquipmentMaintenanceAlertThreshold")
+                        .HasColumnType("int");
 
                     b.Property<string>("IncidentInvestigatorRole")
                         .HasColumnType("nvarchar(max)");
@@ -8046,7 +8058,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             UserId = 1,
                             RoleId = 1,
-                            AssignedAt = new DateTime(2026, 2, 11, 0, 43, 20, 790, DateTimeKind.Utc).AddTicks(9103)
+                            AssignedAt = new DateTime(2026, 2, 12, 9, 8, 30, 273, DateTimeKind.Utc).AddTicks(3152)
                         });
                 });
 

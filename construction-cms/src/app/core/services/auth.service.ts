@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, of } from 'rxjs';
+import { Observable, BehaviorSubject, of, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 
 export interface User {
@@ -119,7 +119,13 @@ export class AuthService {
                 this.isAuthenticatedSubject.next(true);
             }),
 
-            catchError(() => {
+            catchError((error) => {
+                // Only provide mock fallback if it's a connection error or endpoint doesn't exist
+                // This allows real backend errors (like 400 validation) to be showed to the user
+                if (error.status !== 0 && error.status !== 404) {
+                    return throwError(() => error);
+                }
+
                 // Determine user role based on email for mock authentication
                 let roles: string[] = ['CompanyAdmin'];
                 let userType = 2;

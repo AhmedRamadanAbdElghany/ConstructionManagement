@@ -116,19 +116,25 @@ import { PhaseNodeComponent } from './phase-node.component';
       @if (showItemModal) {
          <div class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-xl animate-in fade-in duration-300">
             <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-[4rem] shadow-2xl overflow-hidden animate-in scale-in-95 duration-500 border border-white/10">
-               <div class="p-12 pb-8 flex items-center justify-between bg-slate-50/50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
+               <div class="p-12 pb-8 flex items-center justify-between bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-white/5">
                   <div>
                     <h2 class="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
-                       {{ showNewItemForm ? 'Create New Item' : 'Allocate Catalog Items' }}
+                       {{ showNewItemForm ? 'Add New Item' : 'Allocate Items' }}
                     </h2>
                     <p class="text-[10px] text-emerald-500 font-black uppercase tracking-widest mt-2">Node: {{ selectedPhase?.name }}</p>
                   </div>
-                  <div class="flex space-x-2">
-                     <button (click)="showNewItemForm = !showNewItemForm" class="px-4 py-2 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all">
-                        {{ showNewItemForm ? 'Back to List' : '+ New Item' }}
-                     </button>
-                     <button (click)="showItemModal = false" class="p-4 rounded-3xl hover:bg-white dark:hover:bg-slate-800 transition-all shadow-sm">
-                        <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                  <div class="flex items-center space-x-3">
+                     @if (showNewItemForm) {
+                        <button (click)="showNewItemForm = false" class="px-6 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-black text-[10px] uppercase tracking-widest hover:bg-slate-100 transition-all">
+                           Back to List
+                        </button>
+                     } @else {
+                        <button (click)="showNewItemForm = true" class="px-6 py-3 rounded-2xl bg-emerald-500 text-white font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-emerald-500/20">
+                           + New Item
+                        </button>
+                     }
+                     <button (click)="showItemModal = false" class="p-4 rounded-3xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all shadow-sm group">
+                        <svg class="w-6 h-6 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
                      </button>
                   </div>
                </div>
@@ -137,80 +143,76 @@ import { PhaseNodeComponent } from './phase-node.component';
                   <div class="p-12 space-y-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
                      <div class="grid grid-cols-1 gap-4">
                         @for (item of catalogItems; track item.id) {
-                           <div class="p-6 rounded-[2.5rem] bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 flex items-center space-x-6 hover:border-emerald-500/30 transition-all group">
-                              <div class="w-16 h-16 rounded-[1.5rem] bg-white dark:bg-slate-900 shadow-sm flex items-center justify-center text-emerald-500 font-black text-lg">
-                                 {{ item.unit }}
+                           <div class="p-6 rounded-[2.5rem] bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 flex items-center space-x-6 hover:border-emerald-500/30 transition-all group/item">
+                              <div class="w-14 h-14 rounded-2xl bg-white dark:bg-slate-900 shadow-sm flex items-center justify-center text-emerald-500">
+                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
                               </div>
                               <div class="flex-1">
                                  <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tight text-sm">{{ item.name }}</h4>
-                                 <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Rate: {{ item.defaultRate | currency }} • {{ item.category }}</p>
+                                 <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ item.description || 'No description' }}</p>
                               </div>
                               
-                              @if (isItemLinked(item.id)) {
-                                 <button (click)="unlinkItem(item.id)" class="px-6 py-3 rounded-2xl bg-rose-500 text-white shadow-lg shadow-rose-500/20 transition-all font-black text-[10px] uppercase tracking-widest">
-                                    Remove
-                                 </button>
-                              } @else {
-                                  <button (click)="linkItem(item)" [disabled]="loadingLinkIds[item.id]" class="px-6 py-3 rounded-2xl bg-white dark:bg-slate-800 text-slate-400 hover:text-emerald-500 hover:shadow-lg transition-all font-black text-[10px] uppercase tracking-widest border border-slate-200 dark:border-white/5 flex items-center space-x-2">
-                                     @if (loadingLinkIds[item.id]) {
-                                        <svg class="animate-spin h-3 w-3 text-emerald-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        <span>Adding...</span>
-                                     } @else {
-                                        <span>Add to Phase</span>
-                                     }
-                                  </button>
-                              }
+                              <div>
+                                 @if (isItemLinked(item.name)) {
+                                    <button (click)="unlinkItem(item.id)" 
+                                            class="px-6 py-3 rounded-2xl bg-emerald-500/10 text-emerald-600 font-black text-[10px] uppercase tracking-widest flex items-center space-x-2 border border-emerald-200 dark:border-emerald-500/20 group/selected hover:bg-rose-500 hover:text-white hover:border-rose-500 transition-all">
+                                       <span class="flex items-center space-x-2 group-hover/selected:hidden">
+                                          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                          <span>Added</span>
+                                       </span>
+                                       <span class="hidden group-hover/selected:inline">Remove</span>
+                                    </button>
+                                 } @else {
+                                     <button (click)="linkItem(item)" [disabled]="loadingLinkIds[item.id]" 
+                                             class="px-6 py-3 rounded-2xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 transition-all font-black text-[10px] uppercase tracking-widest flex items-center space-x-2">
+                                        @if (loadingLinkIds[item.id]) {
+                                           <svg class="animate-spin h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                           </svg>
+                                           <span>...</span>
+                                        } @else {
+                                           <span>Add to Phase</span>
+                                        }
+                                     </button>
+                                 }
+                              </div>
                            </div>
                         }
                      </div>
                   </div>
                } @else {
-                  <div class="p-12 space-y-6">
-                     <div class="grid grid-cols-2 gap-4">
-                        <div class="col-span-2">
-                           <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 mb-2 block">Item Name</label>
-                           <input type="text" [(ngModel)]="newItemForm.name" class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 outline-none font-bold text-slate-900 dark:text-white">
-                        </div>
+                  <div class="p-12 space-y-8">
+                     <div class="space-y-6">
                         <div>
-                           <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 mb-2 block">Unit</label>
-                           <input type="text" [(ngModel)]="newItemForm.unit" class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 outline-none font-bold text-slate-900 dark:text-white">
-                        </div>
-                        <div>
-                           <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 mb-2 block">Default Rate</label>
-                           <input type="number" [(ngModel)]="newItemForm.defaultRate" class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 outline-none font-bold text-slate-900 dark:text-white">
-                        </div>
-                        <div class="col-span-2 relative">
-                           <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 mb-2 block">Category</label>
-                           <select [(ngModel)]="newItemForm.category" class="w-full p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 outline-none font-bold text-slate-900 dark:text-white appearance-none cursor-pointer">
-                              <option value="Labor" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Labor</option>
-                              <option value="Material" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Material</option>
-                              <option value="Equipment" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Equipment</option>
-                              <option value="Preliminaries" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Preliminaries</option>
-                              <option value="Other" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Other</option>
-                           </select>
-                           <div class="absolute right-4 bottom-4 pointer-events-none text-slate-400">
-                              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                           </div>
+                           <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2 block">Item Name</label>
+                           <input type="text" [(ngModel)]="newItemForm.name" placeholder="Item Name"
+                                  class="w-full p-6 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 rounded-[2.5rem] outline-none font-bold text-slate-900 dark:text-white focus:ring-4 focus:ring-emerald-500/10 transition-all">
                         </div>
 
-                        <div class="col-span-2 flex items-center space-x-4 p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10">
+                        <div>
+                           <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2 block">Description</label>
+                           <textarea [(ngModel)]="newItemForm.description" rows="3" placeholder="Optional details..."
+                                     class="w-full p-6 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 rounded-[2.5rem] outline-none font-medium text-slate-900 dark:text-white focus:ring-4 focus:ring-emerald-500/10 transition-all"></textarea>
+                        </div>
+
+                        <div class="flex items-center justify-between p-6 rounded-[2.5rem] bg-indigo-50/50 dark:bg-white/5 border border-indigo-100 dark:border-white/10">
+                           <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Add to company global catalog</span>
                            <label class="relative inline-flex items-center cursor-pointer">
                               <input type="checkbox" [(ngModel)]="addToGlobal" class="sr-only peer">
-                              <div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                              <div class="w-14 h-7 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-7 after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
                            </label>
-                           <span class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Add to company global catalog</span>
                         </div>
                      </div>
-                     <button (click)="createNewItem()" [disabled]="!newItemForm.name || isCreatingItem" class="w-full py-6 rounded-[2.5rem] bg-emerald-500 text-white font-black text-xs uppercase tracking-widest shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center space-x-3">
+
+                     <button (click)="createNewItem()" [disabled]="!newItemForm.name || isCreatingItem" 
+                             class="w-full py-7 rounded-[2.5rem] bg-emerald-500 text-white font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center space-x-3">
                         @if (isCreatingItem) {
-                           <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                           <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                            </svg>
-                           <span>Creating & Linking...</span>
+                           <span>CREATING & LINKING...</span>
                         } @else {
                            <span>Create & Attach to Phase</span>
                         }
@@ -218,8 +220,11 @@ import { PhaseNodeComponent } from './phase-node.component';
                   </div>
                }
 
-               <div class="p-12 pt-0 flex justify-end bg-slate-50/50 dark:bg-white/5 border-t border-slate-100 dark:border-white/5">
-                  <button (click)="showItemModal = false" class="px-12 py-5 rounded-[2.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-xs uppercase tracking-widest mt-8">Done</button>
+               <div class="p-12 pt-0 flex justify-end bg-slate-50/30 dark:bg-white/5 border-t border-slate-100 dark:border-white/5">
+                  <button (click)="showItemModal = false" 
+                          class="px-12 py-5 rounded-[2.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[10px] uppercase tracking-[0.2em] mt-8 hover:scale-105 active:scale-95 transition-all shadow-xl">
+                     Done
+                  </button>
                </div>
             </div>
          </div>
@@ -242,8 +247,10 @@ export class ProjectHierarchyComponent implements OnInit {
    isCreatingItem = false;
    loadingLinkIds: { [key: number]: boolean } = {};
    loadingPhases: { [key: number]: string } = {};
+   private localPhaseItemNames = new Set<string>();
    newItemForm: Partial<CatalogItem> = {
       name: '',
+      description: '',
       unit: 'm2',
       defaultRate: 0,
       category: 'Material'
@@ -262,7 +269,30 @@ export class ProjectHierarchyComponent implements OnInit {
 
    loadPhases() {
       const companyId = this.authService.getCurrentUser()?.companyId || 1;
-      this.phaseService.getDefaultPhases(companyId).subscribe((p: Phase[]) => this.phases = p);
+      this.phaseService.getDefaultPhases(companyId).subscribe((p: Phase[]) => {
+         this.phases = p;
+         if (this.selectedPhase) {
+            const freshPhase = this.findPhaseById(this.phases, this.selectedPhase.id);
+            if (freshPhase) {
+               this.selectedPhase = freshPhase;
+               // Sync local set with real items from server
+               freshPhase.items?.forEach(i => {
+                  if (i.name) this.localPhaseItemNames.add(i.name.trim().toLowerCase());
+               });
+            }
+         }
+      });
+   }
+
+   private findPhaseById(phases: Phase[], id: number): Phase | undefined {
+      for (const phase of phases) {
+         if (phase.id === id) return phase;
+         if (phase.children) {
+            const found = this.findPhaseById(phase.children, id);
+            if (found) return found;
+         }
+      }
+      return undefined;
    }
 
    loadCatalog() {
@@ -327,40 +357,64 @@ export class ProjectHierarchyComponent implements OnInit {
       this.selectedPhase = phase;
       this.showNewItemForm = false;
       this.showItemModal = true;
+
+      // Initialize local link state
+      this.localPhaseItemNames.clear();
+      phase.items?.forEach(i => {
+         if (i.name) this.localPhaseItemNames.add(i.name.trim().toLowerCase());
+      });
    }
 
-   isItemLinked(itemId: number): boolean {
-      return this.selectedPhase?.items?.some(i => i.id === itemId) || false;
+   isItemLinked(itemName: string): boolean {
+      if (!itemName) return false;
+      return this.localPhaseItemNames.has(itemName.trim().toLowerCase());
    }
 
    linkItem(item: CatalogItem) {
-      if (!this.selectedPhase) return;
+      if (!this.selectedPhase || !item.name) return;
       if (!this.selectedPhase.items) this.selectedPhase.items = [];
 
-      // Check if already linked
-      if (this.isItemLinked(item.id)) return;
+      const normalizedName = item.name.trim().toLowerCase();
+      if (this.isItemLinked(normalizedName)) return;
 
       this.loadingLinkIds[item.id] = true;
+
+      // Optimistic locally
+      this.localPhaseItemNames.add(normalizedName);
+
       this.phaseService.addItemsToDefaultPhase(this.selectedPhase.id, [item.id]).subscribe({
          next: () => {
             this.loadPhases();
             delete this.loadingLinkIds[item.id];
          },
-         error: () => delete this.loadingLinkIds[item.id]
+         error: () => {
+            this.localPhaseItemNames.delete(normalizedName);
+            delete this.loadingLinkIds[item.id];
+         }
       });
    }
 
-   unlinkItem(itemId: number) {
+   unlinkItem(itemId: number, itemName?: string) {
       if (!this.selectedPhase) return;
-      this.phaseService.deleteDefaultPhaseItem(this.selectedPhase.id, itemId).subscribe(() => {
-         this.loadPhases();
+
+      const normalizedName = itemName?.trim().toLowerCase();
+
+      // Optimistic locally
+      if (normalizedName) this.localPhaseItemNames.delete(normalizedName);
+
+      this.phaseService.deleteDefaultPhaseItem(this.selectedPhase.id, itemId).subscribe({
+         next: () => this.loadPhases(),
+         error: () => {
+            if (normalizedName) this.localPhaseItemNames.add(normalizedName);
+         }
       });
    }
 
    onDeleteItem(event: { phase: Phase, itemId: number }) {
       if (confirm('Unlink this item?')) {
          this.selectedPhase = event.phase;
-         this.unlinkItem(event.itemId);
+         const item = event.phase.items?.find(i => i.id === event.itemId);
+         this.unlinkItem(event.itemId, item?.name);
       }
    }
 
@@ -394,6 +448,7 @@ export class ProjectHierarchyComponent implements OnInit {
       this.showNewItemForm = false;
       this.newItemForm = {
          name: '',
+         description: '',
          unit: 'm2',
          defaultRate: 0,
          category: 'Material'

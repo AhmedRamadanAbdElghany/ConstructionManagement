@@ -6,12 +6,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SettingsService } from '../../../core/services/settings.service';
 import { CompanyPackagesService } from '../../../core/services/company-packages.service';
 import { RolesService } from '../../../core/services/roles.service';
-import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '../../../shared/interfaces';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { PhaseService, Phase } from '../../../core/services/phase.service';
-import { RolesComponent } from '../access-control/roles/roles.component';
+import { PhaseService } from '../../../core/services/phase.service';
 import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarchy.component';
+import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '../../../shared/interfaces';
 
 @Component({
    selector: 'app-company-settings',
@@ -43,15 +42,6 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                       [class.dark:text-white]="activeTab === 'roles'"
                       class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
                   Roles & Permissions
-              </button>
-              <button (click)="activeTab = 'catalog'" 
-                      [class.bg-white]="activeTab === 'catalog'" 
-                      [class.shadow-sm]="activeTab === 'catalog'"
-                      [class.text-slate-900]="activeTab === 'catalog'"
-                      [class.dark:bg-slate-700]="activeTab === 'catalog'"
-                      [class.dark:text-white]="activeTab === 'catalog'"
-                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
-                  Catalog
               </button>
               <button (click)="activeTab = 'hierarchy'" 
                       [class.bg-white]="activeTab === 'hierarchy'" 
@@ -302,8 +292,8 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
 
                <!-- SECTION: Master Setup (Super Admin ONLY) -->
                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
-                  <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl"></div>
-                   <div class="flex items-center justify-between mb-8">
+                  <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                   <div class="flex items-center justify-between mb-8 relative z-10">
                       <div class="flex items-center space-x-4">
                          <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -379,9 +369,9 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
             <!-- Inventory Settings Section -->
              @if (isSuperAdmin || settings.enableInventoryManagement) {
              <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-violet-500/5 rounded-full blur-3xl"></div>
+                <div class="absolute top-0 right-0 w-32 h-32 bg-violet-500/5 rounded-full blur-3xl pointer-events-none"></div>
                 <!-- Header -->
-                <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center justify-between mb-8 relative z-10">
                    <div class="flex items-center space-x-4">
                       <div class="w-12 h-12 rounded-2xl bg-violet-500/10 flex items-center justify-center text-violet-500">
                          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
@@ -443,8 +433,8 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
             <!-- Equipment Management Settings Section -->
              @if (isSuperAdmin || settings.enableEquipmentManagement) {
              <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl"></div>
-                <div class="flex items-center justify-between mb-8">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="flex items-center justify-between mb-8 relative z-10">
                    <div class="flex items-center space-x-4">
                       <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
                          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path></svg>
@@ -519,9 +509,10 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
              }
 
             <!-- Safety Management Settings Section -->
+            @if (isSuperAdmin || settings.enableSafetyManagement) {
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
-               <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl"></div>
-               <div class="flex items-center justify-between mb-8">
+               <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+               <div class="flex items-center justify-between mb-8 relative z-10">
                   <div class="flex items-center space-x-4">
                      <div class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -567,15 +558,15 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                       <input type="number" [(ngModel)]="settings.incidentReportingHours" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
                    </div>
                 </div>
-               } @else {
-                  <p class="text-[10px] text-slate-400 italic">Safety module is disabled. Contact Super Admin to enable it.</p>
                }
             </div>
+            }
 
             <!-- Subcontractor Management Settings Section -->
+            @if (isSuperAdmin || settings.enableSubcontractorManagement) {
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
-               <div class="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full blur-3xl"></div>
-               <div class="flex items-center justify-between mb-8">
+               <div class="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full blur-3xl pointer-events-none"></div>
+               <div class="flex items-center justify-between mb-8 relative z-10">
                   <div class="flex items-center space-x-4">
                      <div class="w-12 h-12 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -621,15 +612,15 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                       <input type="number" [(ngModel)]="settings.subcontractorInsuranceWarningDays" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
                    </div>
                 </div>
-               } @else {
-                  <p class="text-[10px] text-slate-400 italic">Subcontractor module is disabled. Contact Super Admin to enable it.</p>
                }
             </div>
+            }
 
             <!-- Quality Control Settings Section -->
+            @if (isSuperAdmin || settings.enableQualityControl) {
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
-               <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl"></div>
-               <div class="flex items-center justify-between mb-8">
+               <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
+               <div class="flex items-center justify-between mb-8 relative z-10">
                   <div class="flex items-center space-x-4">
                      <div class="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -675,14 +666,14 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                       <input type="number" [(ngModel)]="settings.defectResponseHours" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
                    </div>
                 </div>
-               } @else {
-                  <p class="text-[10px] text-slate-400 italic">Quality Control module is disabled. Contact Super Admin to enable it.</p>
                }
             </div>
+            }
 
             <!-- Analytics & Reporting Settings Section -->
+            @if (isSuperAdmin || settings.enableAnalytics) {
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
-               <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl"></div>
+                <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
                <div class="flex items-center justify-between mb-8">
                   <div class="flex items-center space-x-4">
                      <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
@@ -717,28 +708,27 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                       <input type="checkbox" [(ngModel)]="settings.enableAnalyticsReporting" class="w-5 h-5 accent-indigo-500">
                    </div>
                 </div>
-               } @else {
-                  <p class="text-[10px] text-slate-400 italic">Analytics module is disabled. Contact Super Admin to enable it.</p>
                }
             </div>
+            }
 
             <!-- SECTION 2: MODULE CONFIGURATION (Company Admin ONLY) -->
             @if (isOnlyCompanyAdmin) {
             <section class="space-y-8">
                 <!-- General Items Catalog (Company Admin) -->
                 <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
-                   <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-3xl"></div>
-                   <div class="flex items-center justify-between mb-8">
+                   <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                   <div class="flex items-center justify-between mb-8 relative z-10">
                       <div class="flex items-center space-x-4">
                          <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-500">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                             </svg>
                          </div>
-                         <div>
-                            <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'generalCatalog' | translate }}</h3>
-                            <p class="text-[10px] text-cyan-500 font-bold uppercase tracking-widest">{{ 'manageCatalog' | translate }}</p>
-                         </div>
+                          <div>
+                             <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Catalog</h3>
+                             <p class="text-[10px] text-cyan-500 font-bold uppercase tracking-widest">Master Items for Projects</p>
+                          </div>
                       </div>
                       <button (click)="openCatalogModal()" class="px-6 py-3 rounded-2xl bg-cyan-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-cyan-500/20 hover:scale-105 active:scale-95 transition-all">
                          + {{ 'addItem' | translate }}
@@ -751,15 +741,13 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                          <div class="flex justify-between items-start mb-4">
                             <div>
                                <div class="flex items-center space-x-2 mb-1">
-                                  <span class="px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-500 text-[8px] font-black uppercase tracking-widest">{{ item.category || 'Other' }}</span>
-                                  @if (item.projectId) {
-                                     <span class="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-500 text-[8px] font-black uppercase tracking-widest">Project #{{item.projectId}}</span>
-                                  } @else {
-                                     <span class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-500 text-[8px] font-black uppercase tracking-widest">{{ 'companyGlobal' | translate }}</span>
-                                  }
-                               </div>
+                                   @if (item.projectId) {
+                                      <span class="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-500 text-[8px] font-black uppercase tracking-widest">Project #{{item.projectId}}</span>
+                                   } @else {
+                                      <span class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-500 text-[8px] font-black uppercase tracking-widest">{{ 'companyGlobal' | translate }}</span>
+                                   }
+                                </div>
                                <h4 class="font-bold text-slate-900 dark:text-white">{{ item.name }}</h4>
-                               <p class="text-[10px] text-slate-500 font-medium">{{ item.unit }} • {{ item.defaultRate | currency }}</p>
                             </div>
                             <div class="flex space-x-1 opacity-0 group-hover/catalogItem:opacity-100 transition-opacity">
                                <button (click)="openCatalogModal(item)" class="p-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-400 hover:text-cyan-500 transition-all">
@@ -783,7 +771,7 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                <!-- Supervision Config -->
                 @if (settings.allowSupervision) {
                 <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
-                   <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl"></div>
+                   <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
                    <div class="flex items-center space-x-4 mb-6">
                       <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -807,8 +795,8 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                <!-- Package Management -->
                @if (settings.allowPackages) {
                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
-                  <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl"></div>
-                  <div class="flex items-center justify-between mb-8">
+                  <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                  <div class="flex items-center justify-between mb-8 relative z-10">
                      <div class="flex items-center space-x-4">
                         <div class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500">
                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -935,64 +923,6 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
               <app-project-hierarchy></app-project-hierarchy>
            </div>
         }
-
-        @if (activeTab === 'catalog') { <!-- catalog-tab-start -->
-           <div class="space-y-12">
-              <!-- Catalog Section -->
-              <section class="space-y-8">
-                 <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center space-x-4">
-                       <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-500">
-                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
-                          </svg>
-                       </div>
-                       <div>
-                          <h2 class="text-sm font-black text-slate-400 uppercase tracking-[0.2em]">Company Catalog</h2>
-                          <p class="text-[10px] text-cyan-500 font-bold uppercase tracking-widest">Master Items for Projects</p>
-                       </div>
-                    </div>
-                    <button (click)="openCatalogModal()" class="px-5 py-2.5 rounded-xl bg-cyan-500 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-cyan-500/20">
-                       + Add Item
-                    </button>
-                 </div>
-
-                 <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                       @for (item of catalogItems; track item.id) {
-                        <div class="p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 hover:border-cyan-500/50 transition-all group/catalog">
-                           <div class="flex justify-between items-start mb-4">
-                              <div class="flex-1">
-                                 <h4 class="font-bold text-slate-900 dark:text-white tracking-tight">{{ item.name }}</h4>
-                                 <p class="text-[11px] text-slate-500 italic mt-2">{{ item.description || 'No description provided' }}</p>
-                              </div>
-                              <div class="flex space-x-1 opacity-0 group-hover/catalog:opacity-100 transition-opacity">
-                                 <button (click)="openCatalogModal(item)" [disabled]="isDeletingCatalogId === item.id" class="p-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-400 hover:text-cyan-500 transition-all">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                 </button>
-                                 <button (click)="deleteCatalogItem(item.id)" [disabled]="isDeletingCatalogId === item.id" class="p-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-400 hover:text-red-500 transition-all flex items-center justify-center">
-                                    @if (isDeletingCatalogId === item.id) {
-                                       <svg class="animate-spin w-3.5 h-3.5 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                       </svg>
-                                    } @else {
-                                       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                    }
-                                 </button>
-                              </div>
-                           </div>
-                        </div>
-                       } @empty {
-                          <div class="col-span-full py-12 text-center border-2 border-dashed border-slate-100 dark:border-white/5 rounded-[2.5rem]">
-                             <p class="text-slate-400 font-bold text-sm uppercase tracking-widest">Your catalog is empty</p>
-                          </div>
-                       }
-                    </div>
-                 </div>
-              </section>
-           </div>
-        }
       </div>
 
       <!-- Package Modal (Shared Logic) -->
@@ -1020,7 +950,7 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
                   <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'variationCalc' | translate }}</label>
                   <select [(ngModel)]="packageForm.variationCalculation" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold text-slate-900 dark:text-white appearance-none">
                      <option value="AddFullCost">Add Full Cost</option>
-                     <option value="AddDifference">Add Difference</option>
+                     <option value="Differential">Add Difference</option>
                   </select>
                </div>
             </div>
@@ -1165,39 +1095,52 @@ import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarch
 
       <!-- Catalog Modal -->
       @if (showCatalogModal) {
-      <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-         <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative overflow-hidden">
-            <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-6">
-               {{ (selectedCatalogItem ? 'editItem' : 'addItem') | translate }}
-            </h2>
+      <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xl animate-in fade-in duration-300">
+         <div class="bg-white dark:bg-slate-900 w-full max-w-xl rounded-[4rem] shadow-2xl p-12 relative overflow-hidden animate-in scale-in-95 duration-500 border border-white/10">
+            <div class="flex items-center justify-between mb-10">
+               <div>
+                  <h2 class="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                     {{ (selectedCatalogItem ? 'EDIT ITEM' : 'CREATE NEW ITEM') }}
+                  </h2>
+                  <p class="text-[10px] text-cyan-500 font-black uppercase tracking-widest mt-2">Company Global Catalog</p>
+               </div>
+               <button (click)="showCatalogModal = false" class="p-4 rounded-3xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all shadow-sm group">
+                  <svg class="w-6 h-6 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+               </button>
+            </div>
 
             <div class="space-y-6">
-               <div class="col-span-2">
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'itemName' | translate }}</label>
-                  <input type="text" [(ngModel)]="catalogForm.name" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold">
+               <div>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2 block">Item Name</label>
+                  <input type="text" [(ngModel)]="catalogForm.name" placeholder="Enter item name..."
+                         class="w-full p-6 rounded-[2.5rem] bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 outline-none font-bold text-slate-900 dark:text-white focus:ring-4 focus:ring-cyan-500/10 transition-all">
                </div>
-               <div class="col-span-2">
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'itemDesc' | translate }}</label>
-                  <textarea [(ngModel)]="catalogForm.description" rows="3" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-medium"></textarea>
+
+               <div>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2 block">Description</label>
+                  <textarea [(ngModel)]="catalogForm.description" rows="3" placeholder="Optional details..."
+                            class="w-full p-6 rounded-[2.5rem] bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 outline-none font-medium text-slate-900 dark:text-white focus:ring-4 focus:ring-cyan-500/10 transition-all"></textarea>
                </div>
             </div>
 
-                  <div class="flex space-x-4 pt-12">
-                     <button (click)="showCatalogModal = false" class="flex-1 py-6 rounded-[2.5rem] bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
-                        {{ 'common.cancel' | translate }}
-                     </button>
-                     <button (click)="saveCatalogItem()" [disabled]="!catalogForm.name || isSavingCatalog" class="flex-[2] py-6 rounded-[2.5rem] bg-cyan-500 text-white font-black text-xs uppercase tracking-widest shadow-2xl disabled:opacity-30 transition-all hover:scale-105 flex items-center justify-center space-x-3">
-                        @if (isSavingCatalog) {
-                           <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                           </svg>
-                           <span>Processing...</span>
-                        } @else {
-                           <span>{{ (selectedCatalogItem ? 'common.update' : 'common.save') | translate }}</span>
-                        }
-                     </button>
-                  </div>
+            <div class="flex space-x-4 mt-12 bg-slate-50/50 dark:bg-white/5 -mx-12 -mb-12 p-12 pt-8">
+               <button (click)="showCatalogModal = false" 
+                       class="flex-1 py-6 rounded-[2.5rem] bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+                  {{ 'common.cancel' | translate }}
+               </button>
+               <button (click)="saveCatalogItem()" [disabled]="!catalogForm.name || isSavingCatalog" 
+                       class="flex-[2] py-6 rounded-[2.5rem] bg-cyan-500 text-white font-black text-xs uppercase tracking-widest shadow-2xl shadow-cyan-500/20 disabled:opacity-30 transition-all hover:scale-105 flex items-center justify-center space-x-3">
+                  @if (isSavingCatalog) {
+                     <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                     </svg>
+                     <span>{{ 'common.processing' | translate }}</span>
+                  } @else {
+                     <span>{{ (selectedCatalogItem ? 'common.update' : 'common.save') | translate }}</span>
+                  }
+               </button>
+            </div>
          </div>
       </div>
       }
@@ -1299,7 +1242,10 @@ export class CompanySettingsComponent implements OnInit {
 
    catalogForm: Partial<CatalogItem> = {
       name: '',
-      description: ''
+      description: '',
+      unit: 'm2',
+      defaultRate: 0,
+      category: 'Material'
    };
 
    linkForm: Permission[] = [];
@@ -1323,8 +1269,7 @@ export class CompanySettingsComponent implements OnInit {
    }
 
    get isOnlyCompanyAdmin(): boolean {
-      const user = this.authService.getCurrentUser();
-      return user?.role === 'CompanyAdmin' && user?.userType === 2; // 2 = CompanyOwner
+      return this.isCompanyAdmin;
    }
 
    get isDirty(): boolean {

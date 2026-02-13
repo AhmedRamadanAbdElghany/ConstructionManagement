@@ -86,6 +86,8 @@ public class CompaniesController : ControllerBase
             AllowMeasured = request.AllowMeasured,
             AllowSupervision = request.AllowSupervision,
             AllowPackages = request.AllowPackages,
+            AllowLocations = request.AllowLocations,
+            AllowHR = request.AllowHR,
             
             // Fixed Defaults as per requirements
             DelayNotificationIntervalDays = 7,
@@ -203,6 +205,32 @@ public class CompaniesController : ControllerBase
         company.Settings.AllowMeasured = request.AllowMeasured;
         company.Settings.AllowSupervision = request.AllowSupervision;
         company.Settings.AllowPackages = request.AllowPackages;
+        company.Settings.AllowLocations = request.AllowLocations;
+        company.Settings.AllowHR = request.AllowHR;
+
+        // Inventory Configuration
+        company.Settings.RequireMaterialRequestApproval = request.RequireMaterialRequestApproval;
+        company.Settings.MaterialRequestApproverRole = request.MaterialRequestApproverRole;
+        company.Settings.EnableMultiWarehouse = request.EnableMultiWarehouse;
+        company.Settings.EnableStockAlerts = request.EnableStockAlerts;
+        company.Settings.DefaultLowStockThreshold = request.DefaultLowStockThreshold;
+
+        // Equipment Configuration
+        company.Settings.EnableEquipmentMaintenanceScheduling = request.EnableEquipmentMaintenanceScheduling;
+        company.Settings.EnableEquipmentUtilizationTracking = request.EnableEquipmentUtilizationTracking;
+        company.Settings.EnableEquipmentGpsTracking = request.EnableEquipmentGpsTracking;
+        company.Settings.EnableEquipmentRentalBilling = request.EnableEquipmentRentalBilling;
+        company.Settings.EquipmentMaintenanceAlertThreshold = request.EquipmentMaintenanceAlertThreshold;
+
+        // Daily Log Policy
+        company.Settings.AllowAddProgressEntry = request.AllowAddProgressEntry;
+        company.Settings.AllowReopenClosedDay = request.AllowReopenClosedDay;
+        company.Settings.AutoCloseDay = request.AutoCloseDay;
+
+        // Reviews & Visibility
+        company.Settings.EnableInvoiceReview = request.EnableInvoiceReview;
+        company.Settings.ClientCanSeeMedia = request.ClientCanSeeMedia;
+        company.Settings.ClientCanSeeBOQ = request.ClientCanSeeBOQ;
 
         // Sync permissions on update
         await SyncCompanyPermissions(company.Id, new CreateCompanyRequest 
@@ -210,9 +238,11 @@ public class CompaniesController : ControllerBase
             AllowMeasured = request.AllowMeasured,
             AllowSupervision = request.AllowSupervision,
             AllowPackages = request.AllowPackages,
+            AllowLocations = request.AllowLocations,
+            AllowHR = request.AllowHR,
             EnableDelayNotification = request.EnableDelayNotification,
-            RequirePhotoReview = request.RequirePhotoReview,
             EnablePhotoUpload = request.EnablePhotoUpload,
+            RequirePhotoReview = request.RequirePhotoReview,
             ClientCanSeeFinancials = request.ClientCanSeeFinancials
         });
 
@@ -244,6 +274,8 @@ public class CompaniesController : ControllerBase
             (request.AllowMeasured, "Finance.Measured", "Access to measured BOQ items"),
             (request.AllowSupervision, "Finance.Supervision", "Access to supervision BOQ items"),
             (request.AllowPackages, "Finance.Packages", "Access to lump sum package billing"),
+            (request.AllowLocations, "Operations.Locations", "Access to site locations and mapping"),
+            (request.AllowHR, "Operations.HR", "Access to human resources management"),
             (request.EnableDelayNotification, "Operations.Delays", "Ability to manage project delays"),
             (request.RequirePhotoReview || request.EnablePhotoUpload, "Operations.Media", "Ability to manage site media"),
             (request.ClientCanSeeFinancials, "Client.Financials", "Access to view financial data in client portal")

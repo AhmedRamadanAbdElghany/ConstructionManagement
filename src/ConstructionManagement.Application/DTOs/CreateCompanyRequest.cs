@@ -20,6 +20,8 @@ public class CreateCompanyRequest
     public bool AllowMeasured { get; set; } = true;
     public bool AllowSupervision { get; set; } = true;
     public bool AllowPackages { get; set; } = false;
+    public bool AllowLocations { get; set; } = true;
+    public bool AllowHR { get; set; } = true;
 
     // Feature Toggles
     public bool EnableUserManagement { get; set; } = true;
@@ -59,8 +61,34 @@ public class UpdateCompanyRequest
     public bool AllowMeasured { get; set; }
     public bool AllowSupervision { get; set; }
     public bool AllowPackages { get; set; }
+    public bool AllowLocations { get; set; }
+    public bool AllowHR { get; set; }
 
-    // Feature Toggles
+    // Inventory Configuration
+    public bool RequireMaterialRequestApproval { get; set; }
+    public string? MaterialRequestApproverRole { get; set; }
+    public bool EnableMultiWarehouse { get; set; }
+    public bool EnableStockAlerts { get; set; }
+    public decimal? DefaultLowStockThreshold { get; set; }
+
+    // Equipment Configuration
+    public bool EnableEquipmentMaintenanceScheduling { get; set; }
+    public bool EnableEquipmentUtilizationTracking { get; set; }
+    public bool EnableEquipmentGpsTracking { get; set; }
+    public bool EnableEquipmentRentalBilling { get; set; }
+    public int EquipmentMaintenanceAlertThreshold { get; set; }
+
+    // Daily Log Policy
+    public bool AllowAddProgressEntry { get; set; }
+    public bool AllowReopenClosedDay { get; set; }
+    public bool AutoCloseDay { get; set; }
+
+    // Reviews & Visibility
+    public bool EnableInvoiceReview { get; set; }
+    public bool ClientCanSeeMedia { get; set; }
+    public bool ClientCanSeeBOQ { get; set; }
+
+    // Feature Toggles (entity-level)
     public bool EnableUserManagement { get; set; }
     public bool EnableProjectManagement { get; set; }
     public bool EnableBOQManagement { get; set; }

@@ -37,7 +37,7 @@ namespace ConstructionManagement.Infrastructure.Services
                 throw new InvalidOperationException("لا يمكن للمستخدم أن يرفع تقاريره لنفسه");
 
             var alreadyExists = await _teamRepository.AsQueryable()
-                .AnyAsync(t => t.Id == projectId && t.UserId == userId);
+                .AnyAsync(t => t.ProjectId == projectId && t.UserId == userId);
 
             if (alreadyExists)
                 throw new InvalidOperationException("هذا المستخدم عضو بالفعل في فريق عمل المشروع");
@@ -59,13 +59,13 @@ namespace ConstructionManagement.Infrastructure.Services
         public async Task AssignRoleToMemberAsync(int teamId, int projectRoleId)
         {
             var alreadyHasRole = await _teamRoleRepository.AsQueryable()
-                .AnyAsync(tr => tr.Id == teamId && tr.ProjectRoleId == projectRoleId);
+                .AnyAsync(tr => tr.ProjectTeamMemberId == teamId && tr.ProjectRoleId == projectRoleId);
 
             if (alreadyHasRole) return;
 
             var assignment = new ProjectTeamRole
             {
-                Id = teamId,
+                ProjectTeamMemberId = teamId,
                 ProjectRoleId = projectRoleId,
                 AssignedAt = DateTime.UtcNow
             };
@@ -94,9 +94,10 @@ namespace ConstructionManagement.Infrastructure.Services
         public async Task<List<ProjectTeamDto>> GetProjectTeamAsync(int projectId)
         {
             var teams = await _teamRepository.AsQueryable()
-                .Where(t => t.Id == projectId)
+                .Where(t => t.ProjectId == projectId)
                 .Include(t => t.User)
-                .Include(t => t.Roles).ThenInclude(r => r.Name)
+                .Include(t => t.ProjectTeamRoles)
+                    .ThenInclude(ptr => ptr.ProjectRole)
                 .ToListAsync();
 
             return teams.Select(t => new ProjectTeamDto
@@ -105,7 +106,7 @@ namespace ConstructionManagement.Infrastructure.Services
                 UserID = t.UserId,
                 UserFullName = t.User?.FullName ?? "غير معروف",
                 ReportsToUserID = t.ReportsToUserId,
-                Roles = t.Roles.Select(r => r.Name).ToList()
+                Roles = t.ProjectTeamRoles.Select(ptr => ptr.ProjectRole.Name).ToList()
             }).ToList();
         }
 
@@ -114,7 +115,8 @@ namespace ConstructionManagement.Infrastructure.Services
             var teamMembers = await _teamRepository.AsQueryable()
                 .Include(t => t.User)
                 .Include(t => t.Project)
-                .Include(t => t.Roles).ThenInclude(r => r.Name)
+                .Include(t => t.ProjectTeamRoles)
+                    .ThenInclude(ptr => ptr.ProjectRole)
                 .ToListAsync();
 
             return teamMembers
@@ -124,9 +126,9 @@ namespace ConstructionManagement.Infrastructure.Services
                     g.First().User?.FullName ?? "غير معروف",
                     g.First().User?.Email ?? "",
                     g.Select(t => new WorkerProjectRoleDto(
-                        t.Id,
-                        t.Project.ProjectName,
-                        t.Roles.Select(r => r.Name).ToList(),
+                        t.ProjectId,
+                        t.Project?.ProjectName ?? "بدون اسم",
+                        t.ProjectTeamRoles.Select(ptr => ptr.ProjectRole.Name).ToList(),
                         t.CreatedAt
                     )).ToList()
                 )).ToList();
@@ -135,7 +137,7 @@ namespace ConstructionManagement.Infrastructure.Services
         public async Task<List<ProjectRoleDto>> GetProjectRolesAsync(int projectId)
         {
             var roles = await _roleRepository.AsQueryable()
-                .Where(r => r.Id == projectId)
+                .Where(r => r.ProjectId == projectId)
                 .ToListAsync();
 
             return roles.Select(r => new ProjectRoleDto
