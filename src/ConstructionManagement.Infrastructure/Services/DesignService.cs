@@ -223,14 +223,14 @@ public class DesignService : IDesignService
 
     public async Task<IEnumerable<DesignCategoryDto>> GetProjectCategoriesAsync(int projectId)
     {
-        var categories = await _categoryRepository.AsQueryable()
-            .Where(c => c.ProjectId == projectId && c.ParentCategoryId == null)
-            .Include(c => c.ChildCategories)
+        var allCategories = await _categoryRepository.AsQueryable()
+            .Where(c => c.ProjectId == projectId)
             .Include(c => c.Designs)
-            .OrderBy(c => c.Order)
             .ToListAsync();
 
-        return categories.Select(MapCategoryToDto);
+        var rootCategories = allCategories.Where(c => c.ParentCategoryId == null).OrderBy(c => c.Order).ToList();
+
+        return rootCategories.Select(c => BuildCategoryTree(c, allCategories));
     }
 
     public async Task<IEnumerable<DesignCategoryDto>> GetCategoryTreeAsync(int projectId)
@@ -291,14 +291,14 @@ public class DesignService : IDesignService
 
     public async Task<IEnumerable<DesignCategoryDto>> GetCompanyDesignTemplatesAsync(int companyId)
     {
-        var templates = await _categoryRepository.AsQueryable()
-            .Where(c => c.CompanyId == companyId && c.ProjectId == null && c.ParentCategoryId == null)
-            .Include(c => c.ChildCategories)
+        var allCategories = await _categoryRepository.AsQueryable()
+            .Where(c => c.CompanyId == companyId && c.ProjectId == null)
             .Include(c => c.Designs)
-            .OrderBy(c => c.Order)
             .ToListAsync();
 
-        return templates.Select(MapCategoryToDto);
+        var rootCategories = allCategories.Where(c => c.ParentCategoryId == null).OrderBy(c => c.Order).ToList();
+
+        return rootCategories.Select(c => BuildCategoryTree(c, allCategories));
     }
 
     public async Task<int> CreateTemplateCategoryAsync(CreateCategoryRequest request)
