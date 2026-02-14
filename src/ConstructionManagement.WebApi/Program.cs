@@ -255,21 +255,46 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Ensure WebRootPath is set
+if (string.IsNullOrEmpty(app.Environment.WebRootPath))
+{
+    app.Environment.WebRootPath = Path.Combine(app.Environment.ContentRootPath, "wwwroot");
+}
+
 app.UseHttpsRedirection();
 
 // Explicitly serve files from wwwroot/uploads
-var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "wwwroot", "uploads");
+var contentRoot = app.Environment.ContentRootPath;
+var uploadsPath = Path.Combine(contentRoot, "wwwroot", "uploads");
+
+// Log paths for debugging (optional, will show in console)
+Console.WriteLine($"[StaticFiles] ContentRoot: {contentRoot}");
+Console.WriteLine($"[StaticFiles] UploadsPath: {uploadsPath}");
+
 if (!Directory.Exists(uploadsPath))
 {
     Directory.CreateDirectory(uploadsPath);
 }
 
-app.UseStaticFiles(); // Serve default wwwroot files
+// Setup ContentType provider for CAD files
+var contentTypeProvider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
+contentTypeProvider.Mappings[".dwg"] = "application/acad";
+contentTypeProvider.Mappings[".dxf"] = "application/dxf";
+contentTypeProvider.Mappings[".pdf"] = "application/pdf";
+
+app.UseStaticFiles(); // Default wwwroot
 
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(uploadsPath),
-    RequestPath = "/uploads"
+    RequestPath = "/uploads",
+    ContentTypeProvider = contentTypeProvider,
+    ServeUnknownFileTypes = true,
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+        ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=31536000");
+    }
 });
 
 app.UseRouting();
