@@ -53,6 +53,7 @@ public class JoinRequestService : IJoinRequestService
             UserId = userId.Value,
             CompanyId = dto.CompanyId,
             Message = dto.Message,
+            RequestedRole = dto.RequestedRole ?? "NormalUser",
             Status = "Pending",
             CreatedAt = DateTime.UtcNow
         };
@@ -192,7 +193,8 @@ public class JoinRequestService : IJoinRequestService
             ReviewedByFullName = request.ReviewedBy?.FullName,
             ReviewedAt = request.ReviewedAt,
             CreatedAt = request.CreatedAt,
-            Message = request.Message
+            Message = request.Message,
+            RequestedRole = request.RequestedRole
         };
     }
 }

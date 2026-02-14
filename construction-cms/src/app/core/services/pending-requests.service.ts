@@ -40,6 +40,7 @@ export interface JoinRequest {
     reviewedAt?: Date;
     createdAt: Date;
     message?: string;
+    requestedRole?: string;
 }
 
 export interface PendingCounts {

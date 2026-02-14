@@ -33,6 +33,7 @@ public class RecentActivity
     public string Type { get; set; } = string.Empty; // 'success', 'info', 'warning', 'danger'
     public string Message { get; set; } = string.Empty;
     public string Time { get; set; } = string.Empty;
+    public DateTime Timestamp { get; set; }
 }
 
 public class SuperAdminActivity

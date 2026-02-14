@@ -47,4 +47,9 @@ public class JoinRequest : BaseEntity
     /// Message from the user explaining why they want to join
     /// </summary>
     public string? Message { get; set; }
+
+    /// <summary>
+    /// The role the user is requesting to join as (NormalUser, Worker, InventoryOwner)
+    /// </summary>
+    public string? RequestedRole { get; set; }
 }

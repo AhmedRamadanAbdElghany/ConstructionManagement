@@ -43,6 +43,16 @@ public class CreateCompanyRequest
     public bool EnableAccessControl { get; set; } = true;
     public bool EnableHRManagement { get; set; } = false;
     public bool EnableVendorManagement { get; set; } = false;
+    public bool EnableInvoiceReview { get; set; } = true;
+
+    // Financial Governance
+    public bool EnableVendorInvoiceUpload { get; set; }
+    public string? InvoiceApproverRole { get; set; }
+    public bool EnableCashVoucher { get; set; }
+    public bool RequireCashVoucherApproval { get; set; }
+    public string? CashVoucherApproverRole { get; set; }
+    public string? CashVoucherSubmitterRole { get; set; }
+    public bool RecordCashVoucherToWorker { get; set; }
 }
 
 public class UpdateCompanyRequest
@@ -108,4 +118,13 @@ public class UpdateCompanyRequest
     public bool EnableAccessControl { get; set; }
     public bool EnableHRManagement { get; set; }
     public bool EnableVendorManagement { get; set; }
+
+    // Financial Governance
+    public bool EnableVendorInvoiceUpload { get; set; }
+    public string? InvoiceApproverRole { get; set; }
+    public bool EnableCashVoucher { get; set; }
+    public bool RequireCashVoucherApproval { get; set; }
+    public string? CashVoucherApproverRole { get; set; }
+    public string? CashVoucherSubmitterRole { get; set; }
+    public bool RecordCashVoucherToWorker { get; set; }
 }

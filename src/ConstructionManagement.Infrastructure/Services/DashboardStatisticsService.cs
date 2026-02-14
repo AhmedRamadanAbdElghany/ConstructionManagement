@@ -121,11 +121,40 @@ public class DashboardStatisticsService : IDashboardStatisticsService
         {
             Id = n.Id,
             Type = MapNotificationTypeToActivityType(n.Type),
-            Message = n.Title + ": " + n.Message, // Combining Title and Message for better context
-            Time = GetTimeAgo(n.CreatedAt)
+            Message = n.Title + ": " + n.Message,
+            Time = GetTimeAgo(n.CreatedAt),
+            Timestamp = n.CreatedAt
         }).ToList();
 
         _logger.LogDebug("Returning {Count} real activities", activities.Count);
+
+        return activities;
+    }
+
+    public async Task<List<RecentActivity>> GetProjectActivitiesAsync(int projectId, int? limit = null)
+    {
+        _logger.LogDebug("Fetching activities for project {ProjectId}. Limit: {Limit}", projectId, limit);
+
+        // Project activities are derived from notifications that link to this project
+        // Notifications with Link containing "/projects/{projectId}"
+        var projectLinkPart = $"/projects/{projectId}";
+        
+        var notifications = await _notificationRepository.AsQueryable()
+            .Where(n => n.Link != null && n.Link.Contains(projectLinkPart))
+            .OrderByDescending(n => n.CreatedAt)
+            .Take(limit ?? 10)
+            .ToListAsync();
+
+        var activities = notifications.Select(n => new RecentActivity
+        {
+            Id = n.Id,
+            Type = MapNotificationTypeToActivityType(n.Type),
+            Message = n.Title + ": " + n.Message,
+            Time = GetTimeAgo(n.CreatedAt),
+            Timestamp = n.CreatedAt
+        }).ToList();
+
+        _logger.LogDebug("Found {Count} activities for project {ProjectId}", activities.Count, projectId);
 
         return activities;
     }

@@ -433,6 +433,91 @@ import { ProjectService } from '../../../../core/services/project.service';
                  </div>
                </section>
 
+               <!-- Financial Governance & Approvals -->
+               <section class="pt-6">
+                 <h3 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
+                   <span class="w-2 h-2 rounded-full bg-orange-600"></span>
+                   Financial Governance & Approvals
+                 </h3>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Material Invoices Config -->
+                    <div class="bg-white dark:bg-slate-800/50 border-2 rounded-[2.5rem] p-8 space-y-6" [ngClass]="companyForm.get('enableVendorInvoiceUpload')?.value ? 'border-indigo-500' : 'border-slate-100 dark:border-white/5 opacity-80'">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 flex items-center justify-center text-2xl shadow-inner">🏗️</div>
+                                <div>
+                                    <h4 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-widest">Material Invoices</h4>
+                                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">فواتير مواد بناء (cement, iron, etc)</p>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                              <input type="checkbox" formControlName="enableVendorInvoiceUpload" class="sr-only peer">
+                              <div class="w-12 h-6 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-6 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                            </label>
+                        </div>
+
+                        <div *ngIf="companyForm.get('enableVendorInvoiceUpload')?.value" class="space-y-6 animate-in slide-in-from-top-2 duration-300">
+                            <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl">
+                                <span class="text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest italic">Require Formal Approval</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                  <input type="checkbox" formControlName="enableInvoiceReview" class="sr-only peer">
+                                  <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
+                                </label>
+                            </div>
+                            
+                            <div *ngIf="companyForm.get('enableInvoiceReview')?.value" class="space-y-2">
+                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Authorized Approver Archetype</label>
+                                <div class="relative">
+                                    <select formControlName="invoiceApproverRole" class="w-full p-4 bg-slate-50 dark:bg-slate-900/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none font-bold text-xs appearance-none text-slate-900 dark:text-white">
+                                        <option value="">Select Role...</option>
+                                        <option *ngFor="let role of roles" [value]="role.name">{{ role.name }}</option>
+                                    </select>
+                                    <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs italic font-black">SELECT</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Orders Config -->
+                    <div class="bg-white dark:bg-slate-800/50 border-2 rounded-[2.5rem] p-8 space-y-6" [ngClass]="companyForm.get('enableCashVoucher')?.value ? 'border-teal-500' : 'border-slate-100 dark:border-white/5 opacity-80'">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-2xl bg-teal-50 dark:bg-teal-900/20 text-teal-600 flex items-center justify-center text-2xl shadow-inner">💸</div>
+                                <div>
+                                    <h4 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-widest">Payment Orders</h4>
+                                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">إذن صرف (Workers, cash needs)</p>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                              <input type="checkbox" formControlName="enableCashVoucher" class="sr-only peer">
+                              <div class="w-12 h-6 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-6 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-500"></div>
+                            </label>
+                        </div>
+
+                        <div *ngIf="companyForm.get('enableCashVoucher')?.value" class="space-y-6 animate-in slide-in-from-top-2 duration-300">
+                            <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl">
+                                <span class="text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest italic">Require Formal Approval</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                  <input type="checkbox" formControlName="requireCashVoucherApproval" class="sr-only peer">
+                                  <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
+                                </label>
+                            </div>
+                            
+                            <div *ngIf="companyForm.get('requireCashVoucherApproval')?.value" class="space-y-2">
+                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Authorized Approver Archetype</label>
+                                <div class="relative">
+                                    <select formControlName="cashVoucherApproverRole" class="w-full p-4 bg-slate-50 dark:bg-slate-900/50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none font-bold text-xs appearance-none text-slate-900 dark:text-white">
+                                        <option value="">Select Role...</option>
+                                        <option *ngFor="let role of roles" [value]="role.name">{{ role.name }}</option>
+                                    </select>
+                                    <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs italic font-black">SELECT</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+               </section>
+
                <!-- Reviews & Visibility -->
                <section class="pt-6 pb-4">
                  <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -1017,6 +1102,15 @@ export class CompanyDetailComponent implements OnInit {
       clientCanSeeMedia: [true],
       clientCanSeeBOQ: [true],
 
+      // Financial Governance
+      enableVendorInvoiceUpload: [false],
+      invoiceApproverRole: [''],
+      enableCashVoucher: [false],
+      requireCashVoucherApproval: [true],
+      cashVoucherApproverRole: [''],
+      cashVoucherSubmitterRole: [''],
+      recordCashVoucherToWorker: [true],
+
       // Legacy but kept for compatibility if needed, though mostly covered by new settings
       allowMeasured: [true],
       allowSupervision: [true],
@@ -1117,7 +1211,16 @@ export class CompanyDetailComponent implements OnInit {
         autoCloseDay: company.settings.autoCloseDay,
         enableInvoiceReview: company.settings.enableInvoiceReview,
         clientCanSeeMedia: company.settings.clientCanSeeMedia,
-        clientCanSeeBOQ: company.settings.clientCanSeeBOQ
+        clientCanSeeBOQ: company.settings.clientCanSeeBOQ,
+
+        // Patch financial governance
+        enableVendorInvoiceUpload: company.settings.enableVendorInvoiceUpload,
+        invoiceApproverRole: company.settings.invoiceApproverRole,
+        enableCashVoucher: company.settings.enableCashVoucher,
+        requireCashVoucherApproval: company.settings.requireCashVoucherApproval,
+        cashVoucherApproverRole: company.settings.cashVoucherApproverRole,
+        cashVoucherSubmitterRole: company.settings.cashVoucherSubmitterRole,
+        recordCashVoucherToWorker: company.settings.recordCashVoucherToWorker
       });
       // Ensure any other matching settings are patched
       this.companyForm.patchValue(company.settings);

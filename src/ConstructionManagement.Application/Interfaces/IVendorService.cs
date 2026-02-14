@@ -18,6 +18,7 @@ namespace ConstructionManagement.Application.Interfaces
         Task<VendorInvoiceDto> CreateInvoiceAsync(CreateVendorInvoiceRequest request);
         Task<VendorInvoiceDto> ReviewInvoiceAsync(int invoiceId, ReviewVendorInvoiceRequest request, int reviewerUserId);
         Task<VendorInvoiceDto?> GetInvoiceByIdAsync(int id);
+        Task<IEnumerable<VendorInvoiceDto>> GetInvoicesByProjectAsync(int projectId);
 
         // Summary operations
         Task<IEnumerable<VendorInvoiceSummary>> GetVendorInvoiceSummaryAsync();

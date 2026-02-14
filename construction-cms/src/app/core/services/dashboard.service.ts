@@ -73,6 +73,14 @@ export class DashboardService {
         return this.http.get<RecentActivity[]>(url);
     }
 
+    getProjectActivities(projectId: number, limit?: number): Observable<RecentActivity[]> {
+        let url = `${this.apiUrl}/projects/${projectId}/activities`;
+        if (limit !== undefined) {
+            url += `?limit=${limit}`;
+        }
+        return this.http.get<RecentActivity[]>(url);
+    }
+
     // GET: api/dashboard/super-admin-activities
     getSuperAdminActivities(limit?: number): Observable<SuperAdminActivity[]> {
         let url = `${this.apiUrl}/super-admin-activities`;

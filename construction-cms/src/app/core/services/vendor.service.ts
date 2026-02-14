@@ -116,6 +116,10 @@ export class VendorService {
         return this.http.get<VendorInvoice[]>(`${this.baseUrl}/${vendorId}/invoices`);
     }
 
+    getInvoicesByProject(projectId: number): Observable<VendorInvoice[]> {
+        return this.http.get<VendorInvoice[]>(`${this.baseUrl}/projects/${projectId}/invoices`);
+    }
+
     getPendingInvoices(): Observable<VendorInvoice[]> {
         return this.http.get<VendorInvoice[]>(`${this.baseUrl}/invoices/pending`);
     }

@@ -128,7 +128,19 @@ import { TranslateService } from '@ngx-translate/core';
                     <div class="flex items-center gap-4">
                       <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white flex items-center justify-center text-xl shadow-lg shadow-indigo-500/20">👤</div>
                       <div>
-                        <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">{{ request.userFullName }}</h3>
+                        <div class="flex items-center gap-2 mb-1">
+                          <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">{{ request.userFullName }}</h3>
+                          @if (request.requestedRole) {
+                            <span class="px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest"
+                                  [ngClass]="{
+                                    'bg-blue-500/10 text-blue-600 dark:text-blue-400': request.requestedRole === 'NormalUser',
+                                    'bg-amber-500/10 text-amber-600 dark:text-amber-400': request.requestedRole === 'Worker',
+                                    'bg-purple-500/10 text-purple-600 dark:text-purple-400': request.requestedRole === 'InventoryOwner'
+                                  }">
+                              {{ request.requestedRole === 'NormalUser' ? 'User' : request.requestedRole === 'InventoryOwner' ? 'Inventory' : request.requestedRole }}
+                            </span>
+                          }
+                        </div>
                         <p class="text-xs font-black text-slate-400 uppercase tracking-widest">{{ request.userEmail }}</p>
                       </div>
                     </div>
@@ -140,6 +152,19 @@ import { TranslateService } from '@ngx-translate/core';
                       <span class="text-slate-400 font-bold uppercase tracking-widest">{{ 'pending_requests.target_company' | translate }}</span>
                       <span class="text-slate-900 dark:text-white font-black">{{ request.companyName }}</span>
                     </div>
+                    @if (request.requestedRole) {
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-400 font-bold uppercase tracking-widest">Requested Role</span>
+                        <span class="px-3 py-1 rounded-lg font-black text-[10px] uppercase tracking-widest"
+                              [ngClass]="{
+                                'bg-blue-500/10 text-blue-600': request.requestedRole === 'NormalUser',
+                                'bg-amber-500/10 text-amber-600': request.requestedRole === 'Worker',
+                                'bg-purple-500/10 text-purple-600': request.requestedRole === 'InventoryOwner'
+                              }">
+                          {{ request.requestedRole === 'NormalUser' ? 'Normal User' : request.requestedRole === 'InventoryOwner' ? 'Inventory Owner' : request.requestedRole }}
+                        </span>
+                      </div>
+                    }
                     <div class="flex items-center justify-between text-xs">
                       <span class="text-slate-400 font-bold uppercase tracking-widest">{{ 'pending_requests.request_date' | translate }}</span>
                       <span class="text-slate-900 dark:text-white font-black">{{ request.createdAt | date:'medium' }}</span>

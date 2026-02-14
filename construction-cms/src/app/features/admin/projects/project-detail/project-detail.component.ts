@@ -12,9 +12,11 @@ import { ProjectTeamService, TeamMemberDto } from '../../../../core/services/pro
 import { DailyLogsService, DailyLogDto } from '../../../../core/services/daily-logs.service';
 import { BOQService } from '../../../../core/services/boq.service';
 import { TransactionsService, TransactionDto } from '../../../../core/services/transactions.service';
-import { InvoicesService, InvoiceDto } from '../../../../core/services/invoices.service';
+import { InvoicesService } from '../../../../core/services/invoices.service';
 import { RolesService } from '../../../../core/services/roles.service';
 import { DesignService } from '../../../../core/services/design.service';
+import { VendorService } from '../../../../core/services/vendor.service';
+import { DashboardService } from '../../../../core/services/dashboard.service';
 import { PhaseNodeComponent } from '../../project-hierarchy/phase-node.component';
 import { BoqProgressNodeComponent } from '../../project-hierarchy/boq-progress-node.component';
 import { DesignsTabComponent } from './designs-tab.component';
@@ -28,87 +30,115 @@ import { map } from 'rxjs/operators';
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       @if (project) {
         <div class="max-w-7xl mx-auto">
-          <!-- Header -->
-          <div class="flex items-start justify-between mb-10">
-            <div>
-              <div class="flex items-center space-x-4 mb-3">
-                <a routerLink="/admin/projects" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-slate-500 dark:text-slate-400 hover:text-cyan-500 dark:hover:text-cyan-400 hover:border-cyan-500/30 transition-all shadow-sm">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                  </svg>
-                </a>
-                <div class="flex items-center space-x-2">
-                   <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight uppercase">{{ project.name }}</h1>
-                   <div class="flex space-x-2">
-                      <button (click)="openEditModal()" class="p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-slate-400 hover:text-cyan-500 transition-all shadow-sm group">
-                         <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                         </svg>
-                      </button>
-                      <button (click)="deleteProject()" class="p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-slate-400 hover:text-rose-500 transition-all shadow-sm group">
-                         <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                      </button>
-                   </div>
+          <!-- Hero Header -->
+          <div class="relative bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900 rounded-[2.5rem] p-8 mb-8 overflow-hidden shadow-2xl shadow-slate-900/20 border border-white/5">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4"></div>
+            <div class="relative z-10">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center space-x-5">
+                  <a routerLink="/admin/projects" class="p-2.5 rounded-xl bg-white/10 backdrop-blur-xl border border-white/10 text-white/70 hover:text-white hover:bg-white/20 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                  </a>
+                  <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-cyan-500/30 ring-2 ring-white/20">
+                    {{ project.name.charAt(0) }}
+                  </div>
+                  <div>
+                    <h1 class="text-3xl font-black text-white tracking-tight uppercase mb-1">{{ project.name }}</h1>
+                    <div class="flex items-center space-x-3">
+                      <p class="text-white/50 font-medium flex items-center text-sm">
+                        <svg class="w-4 h-4 mr-1.5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        </svg>
+                        {{ project.location?.address || 'Main Site' }}
+                      </p>
+                      <span class="px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest backdrop-blur-xl border"
+                            [ngClass]="{
+                              'bg-cyan-500/20 text-cyan-300 border-cyan-500/30': project.status === 'Active',
+                              'bg-emerald-500/20 text-emerald-300 border-emerald-500/30': project.status === 'Completed',
+                              'bg-rose-500/20 text-rose-300 border-rose-500/30': project.status === 'Delayed'
+                            }">
+                        {{ 'projects.' + project.status.toLowerCase() | translate }}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <span class="px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all mt-3 inline-block"
-                      [ngClass]="{
-                        'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/10': project.status === 'Active',
-                        'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/10': project.status === 'Completed',
-                        'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/10': project.status === 'Delayed'
-                      }">
-                  {{ 'projects.' + project.status.toLowerCase() | translate }}
-                </span>
+                <div class="flex items-center space-x-3">
+                  <!-- Health Score -->
+                  <div class="flex items-center space-x-3 bg-white/10 backdrop-blur-xl rounded-2xl p-3 pr-5 border border-white/10">
+                    <div class="relative w-10 h-10 flex items-center justify-center">
+                      <svg class="w-full h-full transform -rotate-90">
+                        <circle cx="20" cy="20" r="16" stroke="currentColor" stroke-width="3" fill="transparent" class="text-white/10" />
+                        <circle cx="20" cy="20" r="16" stroke="currentColor" stroke-width="3" fill="transparent" stroke-dasharray="100.5" stroke-dashoffset="10.05" class="text-emerald-400" />
+                      </svg>
+                      <span class="absolute text-[9px] font-black text-white">98</span>
+                    </div>
+                    <div>
+                      <p class="text-[9px] font-black text-white/40 uppercase tracking-widest">{{ 'project_detail.health_score' | translate }}</p>
+                      <p class="text-xs font-black text-emerald-400 uppercase">{{ 'project_detail.excellent' | translate }}</p>
+                    </div>
+                  </div>
+                  <!-- Delete -->
+                  <button (click)="deleteProject()" class="p-3 rounded-xl bg-white/10 backdrop-blur-xl border border-white/10 text-white/50 hover:text-rose-400 hover:bg-rose-500/20 hover:border-rose-500/30 transition-all group">
+                    <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                  </button>
+                </div>
               </div>
-              <p class="text-slate-500 dark:text-slate-400 font-medium flex items-center ml-14">
-                <svg class="w-4 h-4 mr-2 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                </svg>
-                {{ project.location?.address }}
-              </p>
-            </div>
-            <div class="flex items-center space-x-6 bg-white dark:bg-slate-900 rounded-2xl p-2 pr-6 border border-slate-200 dark:border-white/5 shadow-sm">
-               <div class="relative w-12 h-12 flex items-center justify-center">
-                  <svg class="w-full h-full transform -rotate-90">
-                     <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" fill="transparent" class="text-slate-100 dark:text-slate-800" />
-                     <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" fill="transparent" stroke-dasharray="125.6" stroke-dashoffset="12.56" class="text-emerald-500" />
-                  </svg>
-                  <span class="absolute text-[10px] font-black text-slate-900 dark:text-white">98%</span>
-               </div>
-               <div>
-                   <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ 'project_detail.health_score' | translate }}</p>
-                   <p class="text-sm font-black text-emerald-500 uppercase tracking-tight">{{ 'project_detail.excellent' | translate }}</p>
-               </div>
             </div>
           </div>
 
           <!-- Stats -->
           <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-5 border border-slate-700/50">
-               <p class="text-sm text-slate-400 mb-1">{{ 'dashboard.progress' | translate }}</p>
-              <div class="flex items-center justify-between">
-                <p class="text-3xl font-bold text-white">{{ project.progress }}%</p>
-                <div class="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center">
-                  <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                  </svg>
-                </div>
-              </div>
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-white/5 shadow-lg shadow-slate-200/50 dark:shadow-none group hover:border-cyan-500/30 transition-all">
+               <div class="flex items-center justify-between mb-3">
+                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'dashboard.progress' | translate }}</p>
+                 <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                   <svg class="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                   </svg>
+                 </div>
+               </div>
+              <p class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{{ project.progress }}%</p>
             </div>
-            <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-5 border border-slate-700/50">
-               <p class="text-sm text-slate-400 mb-1">{{ 'projects.earned' | translate }}</p>
-              <p class="text-3xl font-bold text-emerald-400">{{ project.cashFlow.earned | currency:'USD':'symbol':'1.0-0' }}</p>
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-white/5 shadow-lg shadow-slate-200/50 dark:shadow-none group hover:border-emerald-500/30 transition-all">
+               <div class="flex items-center justify-between mb-3">
+                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'projects.earned' | translate }}</p>
+                 <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                   <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                   </svg>
+                 </div>
+               </div>
+              <p class="text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">{{ project.cashFlow.earned | currency:'USD':'symbol':'1.0-0' }}</p>
             </div>
-            <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-5 border border-slate-700/50">
-               <p class="text-sm text-slate-400 mb-1">{{ 'projects.collected' | translate }}</p>
-              <p class="text-3xl font-bold text-cyan-400">{{ totalCollected | currency:'USD':'symbol':'1.0-0' }}</p>
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-white/5 shadow-lg shadow-slate-200/50 dark:shadow-none group hover:border-cyan-500/30 transition-all">
+               <div class="flex items-center justify-between mb-3">
+                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'projects.collected' | translate }}</p>
+                 <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                   <svg class="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                   </svg>
+                 </div>
+               </div>
+              <p class="text-3xl font-black text-cyan-600 dark:text-cyan-400 tracking-tight">{{ totalCollected | currency:'USD':'symbol':'1.0-0' }}</p>
             </div>
-            <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-5 border border-slate-700/50">
-               <p class="text-sm text-slate-400 mb-1">{{ 'project_detail.team_size' | translate }}</p>
-              <p class="text-3xl font-bold text-white">{{ teamMembers.length }}</p>
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-white/5 shadow-lg shadow-slate-200/50 dark:shadow-none group hover:border-indigo-500/30 transition-all">
+               <div class="flex items-center justify-between mb-3">
+                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'project_detail.team_size' | translate }}</p>
+                 <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                   <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                   </svg>
+                 </div>
+               </div>
+              <p class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{{ teamMembers.length }}</p>
             </div>
           </div>
 
-          <div class="flex flex-wrap gap-2 mb-8">
+          <!-- Tabs -->
+          <div class="flex flex-wrap gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide">
             @for (tab of [
               { key: 'designs', label: 'project_detail.designs' },
               { key: 'phases', label: 'project_detail.phases_hierarchy' },
@@ -127,7 +157,7 @@ import { map } from 'rxjs/operators';
                   'bg-gradient-to-r from-cyan-600 to-indigo-700 text-white border-transparent shadow-lg shadow-cyan-500/20': activeTab === tab.key,
                   'bg-white dark:bg-slate-900 text-slate-500 border-slate-200 dark:border-white/5 hover:text-slate-700 dark:hover:text-slate-300 hover:border-slate-300 dark:hover:border-white/10': activeTab !== tab.key
                 }"
-                class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
+                class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm whitespace-nowrap">
                 {{ tab.label | translate }}
               </button>
             }
@@ -1795,7 +1825,9 @@ export class ProjectDetailComponent implements OnInit {
       private authService: AuthService,
       private settingsService: SettingsService,
       private phaseService: PhaseService,
-      private designService: DesignService
+      private designService: DesignService,
+      private vendorService: VendorService,
+      private dashboardService: DashboardService
    ) { }
 
    ngOnInit() {
@@ -1834,24 +1866,57 @@ export class ProjectDetailComponent implements OnInit {
             this.availableRoles = roles;
          });
 
-         this.invoicesService.getInvoices(projectId).subscribe(bills => {
-            this.bills = bills;
+         // Fetch Vendor Bills
+         this.vendorService.getInvoicesByProject(projectId).subscribe((bills: any[]) => {
+            this.bills = bills.map(b => ({
+               id: b.id,
+               projectId: b.projectId,
+               billNumber: b.invoiceNumber,
+               amount: b.amount,
+               date: b.invoiceDate,
+               status: b.approvalStatus,
+               actionBy: b.approvedByUserName,
+               notes: b.notes,
+               photoUrl: b.photoUrl
+            }));
          });
 
-         this.invoicesService.getInvoices(projectId).subscribe(payments => {
-            this.clientPayments = payments;
+         // Fetch Client Payments
+         this.invoicesService.getInvoices(projectId).subscribe((payments: any[]) => {
+            this.clientPayments = payments.map(p => ({
+               id: p.id,
+               projectId: p.projectId,
+               amount: p.amount,
+               date: p.invoiceDate,
+               method: 'Bank Transfer', // Default for now
+               status: p.status,
+               actionBy: p.reviewerName
+            }));
+         });
+
+         this.dashboardService.getProjectActivities(projectId).subscribe((acts: any[]) => {
+            this.activities = acts.map(a => ({
+               id: a.id,
+               projectId,
+               userId: 0,
+               userName: 'System',
+               type: this.mapActivityType(a.type),
+               action: a.message.split(': ')[0],
+               details: a.message.split(': ')[1] || a.message,
+               timestamp: a.timestamp
+            }));
          });
 
          this.checkDesignsInitialization(projectId);
+      }
+   }
 
-         // Mock Activities
-         this.activities = [
-            { id: 1, projectId, userId: 1, userName: 'Ahmed Ramadan', type: 'Log', action: 'Daily Log Sealed', details: 'Phase 1 - Concrete pouring for foundation was verified and closed.', timestamp: new Date(Date.now() - 3600000).toISOString() },
-            { id: 2, projectId, userId: 2, userName: 'Sarah Khalil', type: 'Finance', action: 'New Invoice Issued', details: 'Client Bill #2026-004 for $15,000 has been sent for approval.', timestamp: new Date(Date.now() - 86400000).toISOString() },
-            { id: 3, projectId, userId: 1, userName: 'Ahmed Ramadan', type: 'Team', action: 'Assigned New Engineer', details: 'Basem Ali was added to the project as a Company User.', timestamp: new Date(Date.now() - 172800000).toISOString() },
-            { id: 4, projectId, userId: 3, userName: 'System Bot', type: 'Setting', action: 'Auto-Close Enabled', details: 'Project was updated to automatically close daily logs at 18:00.', timestamp: new Date(Date.now() - 259200000).toISOString() },
-            { id: 5, projectId, userId: 2, userName: 'Sarah Khalil', type: 'Media', action: 'Site Photos Uploaded', details: '4 New photos of the electrical installations were added to the site media.', timestamp: new Date(Date.now() - 432000000).toISOString() }
-         ];
+   private mapActivityType(backendType: string): string {
+      switch (backendType) {
+         case 'success': return 'Log';
+         case 'warning': return 'Setting';
+         case 'danger': return 'Media'; // Or something else
+         default: return 'Finance';
       }
    }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Project, CatalogItem, User, CompanyPackage, CompanySettings, CreateProjectRequest } from '../../../shared/interfaces';
+import { Project, CatalogItem, User, CompanyPackage, CompanySettings, CreateProjectRequest, UpdateProjectRequest } from '../../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { CatalogService } from '../../../core/services/catalog.service';
@@ -135,14 +135,21 @@ import { map } from 'rxjs/operators';
                         </p>
                       </div>
                     </div>
-                    <span class="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
-                          [ngClass]="{
-                            'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400': project.status === 'Active',
-                            'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400': project.status === 'Completed',
-                            'bg-rose-500/10 text-rose-600 dark:text-rose-400': project.status === 'Delayed'
-                          }">
-                      {{ 'projects.' + project.status.toLowerCase() | translate }}
-                    </span>
+                    <div class="flex items-center space-x-2">
+                      <button (click)="openEditModal(project); $event.stopPropagation()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-white/5 text-slate-400 hover:text-cyan-500 hover:border-cyan-500/30 transition-all shadow-sm opacity-0 group-hover:opacity-100" title="Edit Project">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                      </button>
+                      <span class="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                            [ngClass]="{
+                              'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400': project.status === 'Active',
+                              'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400': project.status === 'Completed',
+                              'bg-rose-500/10 text-rose-600 dark:text-rose-400': project.status === 'Delayed'
+                            }">
+                        {{ 'projects.' + project.status.toLowerCase() | translate }}
+                      </span>
+                    </div>
                   </div>
 
                   <!-- Progress -->
@@ -252,13 +259,20 @@ import { map } from 'rxjs/operators';
                       {{ project.cashFlow.collected | currency:'USD':'symbol':'1.0-0' }}
                     </td>
                     <td class="px-8 py-6">
-                      <a [routerLink]="['/admin/projects', project.id]" 
-                         class="px-6 py-3 rounded-xl bg-slate-950 dark:bg-white text-white dark:text-slate-950 text-[10px] font-black uppercase tracking-widest hover:bg-cyan-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-white hover:scale-110 transition-all shadow-xl flex items-center w-fit group/btn">
-                        {{ 'dashboard.inspect' | translate }}
-                        <svg class="w-3.5 h-3.5 ml-2 transition-transform group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                        </svg>
-                      </a>
+                      <div class="flex items-center space-x-3">
+                        <button (click)="openEditModal(project)" class="p-3 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-white/5 text-slate-400 hover:text-cyan-500 hover:border-cyan-500/30 transition-all shadow-sm" title="Edit Project">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                          </svg>
+                        </button>
+                        <a [routerLink]="['/admin/projects', project.id]" 
+                           class="px-6 py-3 rounded-xl bg-slate-950 dark:bg-white text-white dark:text-slate-950 text-[10px] font-black uppercase tracking-widest hover:bg-cyan-600 hover:text-white dark:hover:bg-cyan-500 dark:hover:text-white hover:scale-110 transition-all shadow-xl flex items-center w-fit group/btn">
+                          {{ 'dashboard.inspect' | translate }}
+                          <svg class="w-3.5 h-3.5 ml-2 transition-transform group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                          </svg>
+                        </a>
+                      </div>
                     </td>
                   </tr>
                 }
@@ -539,6 +553,83 @@ import { map } from 'rxjs/operators';
           </div>
        </div>
       }
+
+      <!-- Edit Project Modal -->
+      @if (showEditModal && editingProject) {
+        <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 md:p-10 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-700">
+          <div class="bg-white dark:bg-slate-900 w-full max-w-2xl max-h-[90vh] rounded-[3rem] shadow-[0_40px_150px_-20px_rgba(0,0,0,0.7)] flex flex-col relative overflow-hidden animate-in zoom-in-[0.98] duration-500 border border-white/10">
+            <div class="absolute top-0 right-0 w-80 h-80 bg-cyan-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2"></div>
+
+            <!-- Modal Header -->
+            <div class="p-8 pb-4 flex items-center justify-between shrink-0 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border-b border-slate-100 dark:border-white/5 relative z-10">
+              <div class="flex items-center space-x-4">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-2xl shadow-cyan-500/20">
+                  <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Edit Project</h2>
+                  <p class="text-sm text-slate-400 font-bold">{{ editingProject.name }}</p>
+                </div>
+              </div>
+              <button (click)="showEditModal = false" class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center hover:bg-rose-500/10 hover:text-rose-500 transition-all text-slate-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-8 overflow-y-auto flex-1 space-y-6">
+              <!-- Project Name -->
+              <div>
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Project Name</label>
+                <input [(ngModel)]="editForm.name" type="text" class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white font-bold placeholder-slate-300 dark:placeholder-slate-600 focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500/50 transition-all" />
+              </div>
+
+              <!-- Address -->
+              <div>
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Address</label>
+                <input [(ngModel)]="editForm.address" type="text" class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white font-bold placeholder-slate-300 dark:placeholder-slate-600 focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500/50 transition-all" />
+              </div>
+
+              <!-- Dates -->
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Start Date</label>
+                  <input [(ngModel)]="editForm.startDate" type="date" class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500/50 transition-all" />
+                </div>
+                <div>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">End Date</label>
+                  <input [(ngModel)]="editForm.endDate" type="date" class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500/50 transition-all" />
+                </div>
+              </div>
+
+              <!-- Total Contract Value -->
+              @if (editForm.calculationMethod === 'Measured') {
+                <div>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Total Contract Value</label>
+                  <input [(ngModel)]="editForm.totalContractValue" type="number" class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500/50 transition-all" />
+                </div>
+              }
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-8 pt-4 flex justify-end space-x-4 shrink-0 border-t border-slate-100 dark:border-white/5 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl">
+              <button (click)="showEditModal = false" class="px-8 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-black text-xs uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+                Cancel
+              </button>
+              <button (click)="updateProject()" [disabled]="isUpdatingProject || !editForm.name || !editForm.startDate" class="px-10 py-4 rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-700 text-white font-black text-xs uppercase tracking-widest shadow-2xl shadow-cyan-500/30 hover:scale-[1.03] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center space-x-3">
+                @if (isUpdatingProject) {
+                  <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                  <span>Saving...</span>
+                } @else {
+                  <span>Save Changes</span>
+                }
+              </button>
+            </div>
+          </div>
+        </div>
+      }
     </div>
   `
 })
@@ -572,6 +663,19 @@ export class ProjectsComponent implements OnInit {
     lat: 0 as number | null,
     lng: 0 as number | null,
 
+  };
+
+  // Edit Project State
+  showEditModal = false;
+  editingProject: Project | null = null;
+  isUpdatingProject = false;
+  editForm = {
+    name: '',
+    address: '',
+    startDate: '',
+    endDate: '',
+    calculationMethod: 'Measured' as string,
+    totalContractValue: 0,
   };
 
   get filteredProjects(): Project[] {
@@ -713,6 +817,59 @@ export class ProjectsComponent implements OnInit {
         this.isCreatingProject = false;
         console.error('Failed to create project:', err);
         alert('Failed to create project. Please check the form and try again.');
+      }
+    });
+  }
+
+  openEditModal(project: Project) {
+    this.editingProject = project;
+    this.editForm = {
+      name: project.name,
+      address: project.location?.address || '',
+      startDate: project.startDate?.split('T')[0] || '',
+      endDate: project.endDate?.split('T')[0] || '',
+      calculationMethod: project.calculationMethod || 'Measured',
+      totalContractValue: project.totalContractValue || 0,
+    };
+    this.showEditModal = true;
+  }
+
+  updateProject() {
+    if (!this.editingProject || !this.editForm.name) return;
+
+    this.isUpdatingProject = true;
+
+    const request: UpdateProjectRequest = {
+      projectName: this.editForm.name,
+      description: this.editForm.address,
+      startDate: this.editForm.startDate || undefined,
+      endDate: this.editForm.endDate || undefined,
+      totalContractValue: this.editForm.totalContractValue,
+      generalManagerUserId: this.editingProject.generalManagerUserId,
+    };
+
+    this.projectService.updateProject(this.editingProject.id, request).subscribe({
+      next: () => {
+        // Update local project data
+        if (this.editingProject) {
+          this.editingProject.name = this.editForm.name;
+          this.editingProject.location = {
+            ...this.editingProject.location,
+            address: this.editForm.address,
+            lat: this.editingProject.location?.lat || 0,
+            lng: this.editingProject.location?.lng || 0,
+          };
+          this.editingProject.startDate = this.editForm.startDate;
+          this.editingProject.endDate = this.editForm.endDate;
+          this.editingProject.totalContractValue = this.editForm.totalContractValue;
+        }
+        this.isUpdatingProject = false;
+        this.showEditModal = false;
+      },
+      error: (err) => {
+        this.isUpdatingProject = false;
+        console.error('Failed to update project:', err);
+        alert('Failed to update project. Please try again.');
       }
     });
   }

@@ -55,6 +55,19 @@ import { RouterModule, Router } from '@angular/router';
           <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.dashboard' | translate }}</span>
         </a>
 
+        @if (isPending || isClient) {
+          <a routerLink="/browse-firms"
+             routerLinkActive="nav-active"
+             class="nav-item group">
+            <div class="nav-icon-box">
+              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+              </svg>
+            </div>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Browse Firms</span>
+          </a>
+        }
+
         @if (!isPending) {
         <p class="px-4 py-2 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
            [class.opacity-0]="isCollapsed()">{{ (isClient ? 'sidebar.client_portal' : 'sidebar.administration') | translate }}</p>

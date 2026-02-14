@@ -228,6 +228,21 @@ public class VendorService : IVendorService
         return invoices.Select(i => MapInvoiceToDto(i));
     }
 
+    public async Task<IEnumerable<VendorInvoiceDto>> GetInvoicesByProjectAsync(int projectId)
+    {
+        var companyId = _companyContext.CompanyId;
+        var invoices = await _invoiceRepository.AsQueryable()
+            .Where(i => i.ProjectId == projectId && i.CompanyId == companyId)
+            .Include(i => i.Vendor)
+            .Include(i => i.CreatedByUser)
+            .Include(i => i.ApprovedByUser)
+            .Include(i => i.Project)
+            .OrderByDescending(i => i.CreatedAt)
+            .ToListAsync();
+
+        return invoices.Select(i => MapInvoiceToDto(i));
+    }
+
     public async Task<VendorInvoiceDto> CreateInvoiceAsync(CreateVendorInvoiceRequest request)
     {
         var companyId = _companyContext.CompanyId;

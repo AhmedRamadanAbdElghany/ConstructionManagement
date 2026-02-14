@@ -90,6 +90,16 @@ public class CompaniesController : ControllerBase
             AllowHR = request.AllowHR,
             
             // Fixed Defaults as per requirements
+            RequireInvoiceApproval = request.EnableInvoiceReview,
+            InvoiceApproverRole = request.InvoiceApproverRole,
+            EnableVendorInvoiceUpload = request.EnableVendorInvoiceUpload,
+            EnableCashVoucher = request.EnableCashVoucher,
+            RequireCashVoucherApproval = request.RequireCashVoucherApproval,
+            CashVoucherApproverRole = request.CashVoucherApproverRole,
+            CashVoucherSubmitterRole = request.CashVoucherSubmitterRole,
+            RecordCashVoucherToWorker = request.RecordCashVoucherToWorker,
+            
+            // Fixed Defaults as per requirements
             DelayNotificationIntervalDays = 7,
             DelayGracePeriodDays = 3,
             PhotoApproverRole = "MediaReviewer",
@@ -229,6 +239,15 @@ public class CompaniesController : ControllerBase
 
         // Reviews & Visibility
         company.Settings.EnableInvoiceReview = request.EnableInvoiceReview;
+        company.Settings.InvoiceApproverRole = request.InvoiceApproverRole;
+        company.Settings.EnableVendorInvoiceUpload = request.EnableVendorInvoiceUpload;
+        
+        company.Settings.EnableCashVoucher = request.EnableCashVoucher;
+        company.Settings.RequireCashVoucherApproval = request.RequireCashVoucherApproval;
+        company.Settings.CashVoucherApproverRole = request.CashVoucherApproverRole;
+        company.Settings.CashVoucherSubmitterRole = request.CashVoucherSubmitterRole;
+        company.Settings.RecordCashVoucherToWorker = request.RecordCashVoucherToWorker;
+
         company.Settings.ClientCanSeeMedia = request.ClientCanSeeMedia;
         company.Settings.ClientCanSeeBOQ = request.ClientCanSeeBOQ;
 

@@ -15,12 +15,14 @@ public class JoinRequestDto
     public DateTime? ReviewedAt { get; set; }
     public DateTime CreatedAt { get; set; }
     public string? Message { get; set; }
+    public string? RequestedRole { get; set; }
 }
 
 public class CreateJoinRequestDto
 {
     public int CompanyId { get; set; }
     public string? Message { get; set; }
+    public string? RequestedRole { get; set; }
 }
 
 public class ApproveJoinRequestDto

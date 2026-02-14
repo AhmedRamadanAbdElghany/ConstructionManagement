@@ -83,11 +83,18 @@ namespace ConstructionManagement.WebApi.Controllers
             return Ok(invoices);
         }
 
-        // GET: api/vendors/invoices/pending
         [HttpGet("invoices/pending")]
         public async Task<ActionResult<IEnumerable<VendorInvoiceDto>>> GetPendingInvoices()
         {
             var invoices = await _vendorService.GetPendingInvoicesAsync();
+            return Ok(invoices);
+        }
+
+        // GET: api/vendors/projects/5/invoices
+        [HttpGet("projects/{projectId}/invoices")]
+        public async Task<ActionResult<IEnumerable<VendorInvoiceDto>>> GetProjectInvoices(int projectId)
+        {
+            var invoices = await _vendorService.GetInvoicesByProjectAsync(projectId);
             return Ok(invoices);
         }
 

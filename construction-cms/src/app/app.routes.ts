@@ -36,6 +36,13 @@ export const routes: Routes = [
         canActivate: [roleGuard]
     },
 
+    // Browse Firms (for users not yet in a company)
+    {
+        path: 'browse-firms',
+        loadComponent: () => import('./features/common/browse-firms/browse-firms.component').then(m => m.BrowseFirmsComponent),
+        canActivate: [roleGuard]
+    },
+
     // Warehouse Partner Routes
     {
         path: 'warehouse-partner',
