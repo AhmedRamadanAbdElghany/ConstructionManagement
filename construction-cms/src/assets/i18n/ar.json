@@ -971,6 +971,7 @@
     "role_stakeholder": "صاحب مصلحة عام",
     "role_engineer": "مهندس / مدير موقع",
     "role_owner": "مقاول / صاحب شركة",
+    "role_inventory": "مالك مخزون",
     "password_hint": "٨ أحرف كحد أدنى",
     "password_repeat": "كرر كلمة المرور",
     "strength_lowercase": "أحرف صغيرة",

@@ -90,6 +90,7 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
                       <option [value]="0">{{ 'register.role_stakeholder' | translate }}</option>
                       <option [value]="1">{{ 'register.role_engineer' | translate }}</option>
                       <option [value]="2">{{ 'register.role_owner' | translate }}</option>
+                      <option [value]="3">{{ 'register.role_inventory' | translate }}</option>
                     </select>
                   </div>
                 </div>
