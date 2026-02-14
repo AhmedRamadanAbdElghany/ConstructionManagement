@@ -22,6 +22,12 @@ export const routes: Routes = [
         canActivate: [roleGuard]
     },
 
+    // Inventory Owner Dashboard
+    {
+        path: 'inventory-dashboard',
+        loadChildren: () => import('./features/inventory-dashboard/inventory-dashboard.routes').then(m => m.inventoryRoutes)
+    },
+
     // Profile
     {
         path: 'profile',

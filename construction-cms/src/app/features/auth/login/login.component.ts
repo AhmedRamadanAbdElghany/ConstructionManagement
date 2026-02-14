@@ -533,6 +533,8 @@ export class LoginComponent {
 
         if (user.roles.includes('SuperAdmin') || user.companyId || user.userType === 2) {
           this.router.navigate(['/dashboard']);
+        } else if (user.userType === 3) {
+          this.router.navigate(['/inventory-dashboard']);
         } else {
           this.router.navigate(['/auth/company-selection']);
         }

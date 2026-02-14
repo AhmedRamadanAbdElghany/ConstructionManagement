@@ -30,8 +30,13 @@ namespace ConstructionManagement.Application.Interfaces
         // Product Management
         Task<IEnumerable<VendorProductDto>> GetVendorProductsAsync(int vendorId);
         Task<VendorProductDto> AddProductAsync(int vendorId, CreateVendorProductRequest request);
+        Task<VendorProductDto> UpdateProductAsync(int productId, UpdateVendorProductRequest request);
         Task<bool> DeleteProductAsync(int productId);
 
+        // Inventory & Transactions
+        Task<VendorTransactionDto> RecordTransactionAsync(int vendorId, CreateVendorTransactionRequest request);
+        Task<IEnumerable<VendorTransactionDto>> GetVendorTransactionsAsync(int vendorId);
+        
         // Profile Management
         Task<VendorDto> UpdateVendorProfileAsync(int userId, UpdateVendorRequest request);
         Task<VendorDto?> GetVendorByUserIdAsync(int userId);

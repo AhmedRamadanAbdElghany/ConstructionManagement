@@ -8253,7 +8253,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             UserId = 1,
                             RoleId = 1,
-                            AssignedAt = new DateTime(2026, 2, 14, 22, 33, 58, 738, DateTimeKind.Utc).AddTicks(1427)
+                            AssignedAt = new DateTime(2026, 2, 14, 23, 5, 40, 463, DateTimeKind.Utc).AddTicks(4886)
                         });
                 });
 
@@ -8502,11 +8502,20 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<decimal>("LowStockThreshold")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PurchasePrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("QuantityInStock")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Unit")

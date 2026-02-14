@@ -29,7 +29,9 @@ public class AuthService : IAuthService
         IUnitOfWork unitOfWork,
         IHttpContextAccessor httpContextAccessor,
         ICompanyRequestRepository companyRequestRepository,
-        INotificationService notificationService)
+        ICompanyRequestRepository companyRequestRepository,
+        INotificationService notificationService,
+        IRepository<Vendor> vendorRepository)
     {
         _userRepository = userRepository;
         _configuration = configuration;
@@ -37,7 +39,10 @@ public class AuthService : IAuthService
         _httpContextAccessor = httpContextAccessor;
         _companyRequestRepository = companyRequestRepository;
         _notificationService = notificationService;
+        _vendorRepository = vendorRepository;
     }
+
+    private readonly IRepository<Vendor> _vendorRepository;
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
     {
@@ -105,7 +110,25 @@ public class AuthService : IAuthService
             await _userRepository.AddAsync(user);
             await _unitOfWork.SaveChangesAsync();
 
-            // Auto-create CompanyRequest if user is a CompanyOwner
+            // Auto-create Vendor profile if user is an InventoryOwner
+            if (request.UserType == UserType.InventoryOwner)
+            {
+                var vendor = new Vendor
+                {
+                    Name = request.FullName, // Default name, can be changed later
+                    UserId = user.Id,
+                    IsPublic = true,         // Visible in public search by default? Or maybe waiting for location? 
+                                             // Let's set it to true but without location it won't show up in nearby.
+                    CompanyId = null,        // Independent vendor
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                };
+                
+                await _vendorRepository.AddAsync(vendor);
+                await _unitOfWork.SaveChangesAsync();
+            }
+
+            // Auto-create CompanyRequest ONLY if user is a CompanyOwner
             if (request.UserType == UserType.CompanyOwner)
             {
                 var companyRequest = new CompanyRequest
@@ -137,6 +160,8 @@ public class AuthService : IAuthService
                     NotificationType.General
                 );
             }
+            // For InventoryOwner and NormalUser, we skip the "Pending" status and company request.
+            // They are effectively "Active" (confirmed by email check usually, but for now we proceed).
 
             // TODO: Send verification email with user.EmailVerificationToken
             var token = GenerateJwtToken(user);

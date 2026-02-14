@@ -20,6 +20,16 @@ namespace ConstructionManagement.Domain.Entities
         public decimal Price { get; set; }
         public string? Unit { get; set; } // e.g., Ton, m3, Bag
         public string? Description { get; set; }
+        
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal QuantityInStock { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal LowStockThreshold { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal PurchasePrice { get; set; }
+
         public bool IsActive { get; set; } = true;
     }
 }

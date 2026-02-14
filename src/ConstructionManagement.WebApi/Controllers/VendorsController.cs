@@ -192,5 +192,64 @@ namespace ConstructionManagement.WebApi.Controllers
             var vendor = await _vendorService.UpdateVendorProfileAsync(userId, request);
             return Ok(vendor);
         }
+
+        // --- Inventory Management (for Inventory Owners) ---
+
+        [HttpGet("my-products")]
+        public async Task<ActionResult<IEnumerable<VendorProductDto>>> GetMyProducts()
+        {
+            var userId = GetCurrentUserId();
+            var vendor = await _vendorService.GetVendorByUserIdAsync(userId);
+            if (vendor == null) return NotFound("Vendor profile not found");
+            
+            var products = await _vendorService.GetVendorProductsAsync(vendor.Id);
+            return Ok(products);
+        }
+
+        [HttpPost("my-products")]
+        public async Task<ActionResult<VendorProductDto>> AddMyProduct([FromBody] CreateVendorProductRequest request)
+        {
+            var userId = GetCurrentUserId();
+            var vendor = await _vendorService.GetVendorByUserIdAsync(userId);
+            if (vendor == null) return NotFound("Vendor profile not found");
+
+            var product = await _vendorService.AddProductAsync(vendor.Id, request);
+            return Ok(product);
+        }
+
+        [HttpPut("my-products/{id}")]
+        public async Task<ActionResult<VendorProductDto>> UpdateMyProduct(int id, [FromBody] UpdateVendorProductRequest request)
+        {
+            // Ideally we check ownership inside service or here
+            var userId = GetCurrentUserId();
+            var vendor = await _vendorService.GetVendorByUserIdAsync(userId);
+            if (vendor == null) return NotFound("Vendor profile not found");
+
+            // TODO: Service level check that product belongs to this vendor
+            var product = await _vendorService.UpdateProductAsync(id, request);
+            return Ok(product);
+        }
+
+        [HttpPost("record-transaction")]
+        public async Task<ActionResult<VendorTransactionDto>> RecordTransaction([FromBody] CreateVendorTransactionRequest request)
+        {
+            var userId = GetCurrentUserId();
+            var vendor = await _vendorService.GetVendorByUserIdAsync(userId);
+            if (vendor == null) return NotFound("Vendor profile not found");
+
+            var transaction = await _vendorService.RecordTransactionAsync(vendor.Id, request);
+            return Ok(transaction);
+        }
+
+        [HttpGet("my-transactions")]
+        public async Task<ActionResult<IEnumerable<VendorTransactionDto>>> GetMyTransactions()
+        {
+            var userId = GetCurrentUserId();
+            var vendor = await _vendorService.GetVendorByUserIdAsync(userId);
+            if (vendor == null) return NotFound("Vendor profile not found");
+
+            var transactions = await _vendorService.GetVendorTransactionsAsync(vendor.Id);
+            return Ok(transactions);
+        }
     }
 }

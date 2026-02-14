@@ -606,8 +606,9 @@ export class RegisterComponent {
               this.router.navigate(['/dashboard']);
             } else if (user.userType === 2) { // CompanyOwner
               this.successMessage = this.translateService.instant('register.success_message');
-              // Since they are auto-logged in, they can stay on a waiting page or dashboard with limited access
               this.router.navigate(['/dashboard']);
+            } else if (user.userType === 3) { // InventoryOwner
+              this.router.navigate(['/inventory-dashboard']);
             } else {
               this.router.navigate(['/auth/company-selection']);
             }

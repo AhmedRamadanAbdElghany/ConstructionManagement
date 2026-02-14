@@ -18,6 +18,9 @@ namespace ConstructionManagement.Application.DTOs.Vendor
         public int InvoiceCount { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsRegistered { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public bool IsPublic { get; set; }
     }
 
     public class CreateVendorRequest
@@ -30,6 +33,9 @@ namespace ConstructionManagement.Application.DTOs.Vendor
         public string? ContactPerson { get; set; }
         public string? Notes { get; set; }
         public string? VendorType { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public bool IsPublic { get; set; }
     }
 
     public class UpdateVendorRequest
@@ -43,5 +49,8 @@ namespace ConstructionManagement.Application.DTOs.Vendor
         public string? Notes { get; set; }
         public string? VendorType { get; set; }
         public bool IsActive { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public bool IsPublic { get; set; }
     }
 }
