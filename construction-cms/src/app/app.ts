@@ -3,6 +3,7 @@ import { RouterOutlet, Router } from '@angular/router';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { TopbarComponent } from './layout/topbar/topbar.component';
 import { ThemeService } from './core/theme/theme.service';
+import { TranslateService } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -15,6 +16,12 @@ import { CommonModule } from '@angular/common';
 export class App {
   private themeService = inject(ThemeService);
   private router = inject(Router);
+  private translate = inject(TranslateService);
+
+  constructor() {
+    this.translate.setDefaultLang('en');
+    this.translate.use('en');
+  }
 
   get showLayout(): boolean {
     const currentUrl = this.router.url;
