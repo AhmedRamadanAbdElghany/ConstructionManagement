@@ -23,6 +23,8 @@ export class ProjectService {
                 lat: 0,
                 lng: 0
             },
+            startDate: dto.startDate || dto.StartDate,
+            endDate: dto.endDate || dto.EndDate,
             status: (dto.isClosed || dto.IsClosed) ? 'Completed' : 'Active', // Simple status mapping
             progress: 0,
             cashFlow: {

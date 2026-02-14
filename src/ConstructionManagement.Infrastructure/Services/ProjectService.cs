@@ -134,9 +134,18 @@ public class ProjectService : IProjectService
             !await _userRepository.ExistsAsync(request.GeneralManagerUserId.Value))
             throw new InvalidOperationException("المدير العام الجديد غير موجود.");
 
+        // Validate dates if both provided or mixed with existing
+        var newStart = request.StartDate ?? project.StartDate;
+        var newEnd = request.EndDate ?? project.EndDate;
+
+        if (newEnd.HasValue && newStart.HasValue && newEnd < newStart)
+             throw new InvalidOperationException("تاريخ نهاية المشروع لا يمكن أن يكون قبل تاريخ البداية.");
+
         // Update only provided fields
         if (request.ProjectName != null) project.ProjectName = request.ProjectName;
         if (request.Description != null) project.Description = request.Description;
+        if (request.StartDate.HasValue) project.StartDate = request.StartDate.Value;
+        if (request.EndDate.HasValue) project.EndDate = request.EndDate.Value;
         if (request.GeneralManagerUserId != null) project.GeneralManagerUserId = request.GeneralManagerUserId;
         if (request.TotalContractValue != null) project.TotalContractValue = request.TotalContractValue;
 

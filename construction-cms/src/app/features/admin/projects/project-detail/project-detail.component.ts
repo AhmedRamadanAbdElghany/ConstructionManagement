@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { Project, User, DailyLog, BOQItem, CompanySettings, ProjectSettings, Role, Transaction, ProjectBill, ClientPayment, ProjectActivity } from '../../../../shared/interfaces';
+import { Project, User, DailyLog, BOQItem, CompanySettings, ProjectSettings, Role, Transaction, ProjectBill, ClientPayment, ProjectActivity, UpdateProjectRequest } from '../../../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../../../core/services/auth.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -1907,38 +1907,53 @@ export class ProjectDetailComponent implements OnInit {
    updateProject() {
       if (!this.project || !this.isEditFormValid) return;
 
-      // In a real app, this would call a service
-      this.project.name = this.editForm.name;
-      this.project.location = {
-         ...this.project.location,
-         address: this.editForm.address,
-         lat: Number(this.editForm.lat) || 0,
-         lng: Number(this.editForm.lng) || 0
-      };
-      this.project.startDate = this.editForm.startDate;
-      this.project.endDate = this.editForm.endDate;
-
-      // Update extended properties
-      Object.assign(this.project, {
-         calculationMethod: this.editForm.calculationMethod,
+      const request: UpdateProjectRequest = {
+         projectName: this.editForm.name,
+         description: this.editForm.address,
+         startDate: this.editForm.startDate,
+         endDate: this.editForm.endDate || undefined, // Send undefined if empty string
          totalContractValue: this.editForm.totalContractValue,
-         extraFees: this.editForm.extraFees,
-         extraFeesDescription: this.editForm.extraFeesDescription,
-         deductedAmount: this.editForm.deductedAmount,
-         deductedAmountDescription: this.editForm.deductedAmountDescription
+         generalManagerUserId: this.project.generalManagerUserId
+      };
+
+      this.projectService.updateProject(this.project.id, request).subscribe({
+         next: () => {
+            // In a real app, this would call a service - NOW IT DOES!
+            this.project.name = this.editForm.name;
+            this.project.location = {
+               ...this.project.location,
+               address: this.editForm.address,
+               lat: Number(this.editForm.lat) || 0,
+               lng: Number(this.editForm.lng) || 0
+            };
+            this.project.startDate = this.editForm.startDate;
+            this.project.endDate = this.editForm.endDate;
+
+            // Update extended properties
+            Object.assign(this.project, {
+               calculationMethod: this.editForm.calculationMethod,
+               totalContractValue: this.editForm.totalContractValue,
+               extraFees: this.editForm.extraFees,
+               extraFeesDescription: this.editForm.extraFeesDescription,
+               deductedAmount: this.editForm.deductedAmount,
+               deductedAmountDescription: this.editForm.deductedAmountDescription
+            });
+
+            // Update settings if changed
+            if (this.projectSettings) {
+               this.projectSettings.autoCloseDay = this.editForm.autoCloseDay;
+               this.projectSettings.autoCloseDayTime = this.editForm.autoCloseDayTime;
+               this.projectSettings.allowAddProgressEntry = this.editForm.allowAddProgressEntry;
+               this.projectSettings.allowReopenClosedDay = this.editForm.allowReopenClosedDay;
+               this.projectSettings.delayNotificationSendEmail = this.editForm.delayNotificationSendEmail;
+               this.saveProjectSettings();
+            }
+
+            console.log('Project updated:', this.project);
+            this.showEditModal = false;
+         },
+         error: (err) => console.error('Failed to update project', err)
       });
-
-      // Update settings if changed
-      if (this.projectSettings) {
-         this.projectSettings.autoCloseDay = this.editForm.autoCloseDay;
-         this.projectSettings.autoCloseDayTime = this.editForm.autoCloseDayTime;
-         this.projectSettings.allowAddProgressEntry = this.editForm.allowAddProgressEntry;
-         this.projectSettings.allowReopenClosedDay = this.editForm.allowReopenClosedDay;
-         this.projectSettings.delayNotificationSendEmail = this.editForm.delayNotificationSendEmail;
-         this.saveProjectSettings();
-      }
-
-      console.log('Project updated:', this.project);
    }
 
    deleteProject() {
