@@ -5,12 +5,19 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
+import { LanguageSwitcherComponent } from '../../../layout/language-switcher/language-switcher.component';
+
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, LanguageSwitcherComponent],
   template: `
     <div class="auth-wrapper">
+      <!-- Language Switcher -->
+      <div class="absolute top-8 right-8 z-50">
+        <app-language-switcher></app-language-switcher>
+      </div>
+
       <div class="auth-box">
         <!-- Visual Side -->
         <div class="visual-side">
@@ -77,12 +84,12 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                 </div>
 
                 <div class="form-field">
-                  <label class="field-label">Professional Role</label>
+                  <label class="field-label">{{ 'register.professional_role' | translate }}</label>
                   <div class="select-box">
                     <select [(ngModel)]="userType" name="userType" class="modern-input modern-select" required>
-                      <option [value]="0">General Stakeholder</option>
-                      <option [value]="1">Engineer / Site Manager</option>
-                      <option [value]="2">Contractor / Firm Owner</option>
+                      <option [value]="0">{{ 'register.role_stakeholder' | translate }}</option>
+                      <option [value]="1">{{ 'register.role_engineer' | translate }}</option>
+                      <option [value]="2">{{ 'register.role_owner' | translate }}</option>
                     </select>
                   </div>
                 </div>
@@ -91,7 +98,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
               <div class="form-field">
                 <label class="field-label">{{ 'register.password_label' | translate }}</label>
                 <div class="input-action">
-                  <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" class="modern-input" placeholder="Minimum 8 characters" required (input)="checkPasswordStrength()" (blur)="passwordTouched = true">
+                  <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" class="modern-input" [attr.placeholder]="'register.password_hint' | translate" required (input)="checkPasswordStrength()" (blur)="passwordTouched = true">
                   <button type="button" class="action-toggle" (click)="showPassword = !showPassword">
                     <svg *ngIf="!showPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                     <svg *ngIf="showPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.025 10.025 0 014.132-5.413m1.854-1.423A9.92 9.92 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.413m-1.854 1.423a3 3 0 00-4.243-4.243m4.243 4.243L3 3" /></svg>
@@ -101,11 +108,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                 <div class="strength-indicator" *ngIf="password">
                   <div class="strength-track"><div class="strength-fill" [style.width.%]="passwordStrengthPercent" [class]="passwordStrengthClass"></div></div>
                   <div class="strength-labels">
-                    <span [class.met]="hasLowerCase">Lowercase</span>
-                    <span [class.met]="hasUpperCase">Uppercase</span>
-                    <span [class.met]="hasNumber">Number</span>
-                    <span [class.met]="hasSpecialChar">Symbol</span>
-                    <span [class.met]="hasMinLength">8+ Chars</span>
+                    <span [class.met]="hasLowerCase">{{ 'register.strength_lowercase' | translate }}</span>
+                    <span [class.met]="hasUpperCase">{{ 'register.strength_uppercase' | translate }}</span>
+                    <span [class.met]="hasNumber">{{ 'register.strength_number' | translate }}</span>
+                    <span [class.met]="hasSpecialChar">{{ 'register.strength_symbol' | translate }}</span>
+                    <span [class.met]="hasMinLength">{{ 'register.strength_min_length' | translate }}</span>
                   </div>
                 </div>
               </div>
@@ -113,7 +120,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
               <div class="form-field">
                 <label class="field-label">{{ 'register.confirm_password' | translate }}</label>
                 <div class="input-action">
-                  <input [type]="showConfirmPassword ? 'text' : 'password'" [(ngModel)]="confirmPassword" name="confirmPassword" class="modern-input" placeholder="Repeat your password" required (blur)="confirmPasswordTouched = true">
+                  <input [type]="showConfirmPassword ? 'text' : 'password'" [(ngModel)]="confirmPassword" name="confirmPassword" class="modern-input" [attr.placeholder]="'register.password_repeat' | translate" required (blur)="confirmPasswordTouched = true">
                   <button type="button" class="action-toggle" (click)="showConfirmPassword = !showConfirmPassword">
                     <svg *ngIf="!showConfirmPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                     <svg *ngIf="showConfirmPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.025 10.025 0 014.132-5.413m1.854-1.423A9.92 9.92 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.413m-1.854 1.423a3 3 0 00-4.243-4.243m4.243 4.243L3 3" /></svg>

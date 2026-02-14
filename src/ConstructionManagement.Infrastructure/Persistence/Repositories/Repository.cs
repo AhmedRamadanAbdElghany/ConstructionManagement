@@ -50,6 +50,12 @@ public class Repository<T> : IRepository<T> where T : class
         await _context.SaveChangesAsync();
     }
 
+    public virtual async Task DeleteRangeAsync(IEnumerable<T> entities)
+    {
+        _dbSet.RemoveRange(entities);
+        await _context.SaveChangesAsync();
+    }
+
     public virtual async Task<bool> ExistsAsync(int id)
         => await _dbSet.FindAsync(id) != null;
 

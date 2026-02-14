@@ -37,10 +37,10 @@ import { map } from 'rxjs/operators';
           <div class="flex items-center space-x-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-[2rem] p-2 shadow-2xl shadow-slate-200/50 dark:shadow-none">
             <button 
               (click)="filterStatus = 'all'"
-              [class.bg-slate-950]="filterStatus === 'all'"
-              [class.dark:bg-white]="filterStatus === 'all'"
+              [class.bg-gradient-to-r]="filterStatus === 'all'"
+              [class.from-cyan-600]="filterStatus === 'all'"
+              [class.to-indigo-700]="filterStatus === 'all'"
               [class.text-white]="filterStatus === 'all'"
-              [class.dark:text-slate-950]="filterStatus === 'all'"
               [class.shadow-xl]="filterStatus === 'all'"
               [class.text-slate-400]="filterStatus !== 'all'"
               class="px-6 py-3 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.15em] transition-all hover:bg-slate-100 dark:hover:bg-white/5">
@@ -48,7 +48,9 @@ import { map } from 'rxjs/operators';
             </button>
             <button 
               (click)="filterStatus = 'Active'"
-              [class.bg-cyan-500]="filterStatus === 'Active'"
+              [class.bg-gradient-to-r]="filterStatus === 'Active'"
+              [class.from-cyan-600]="filterStatus === 'Active'"
+              [class.to-indigo-700]="filterStatus === 'Active'"
               [class.text-white]="filterStatus === 'Active'"
               [class.shadow-lg]="filterStatus === 'Active'"
               [class.shadow-cyan-500/30]="filterStatus === 'Active'"
@@ -58,7 +60,9 @@ import { map } from 'rxjs/operators';
             </button>
             <button 
               (click)="filterStatus = 'Completed'"
-              [class.bg-emerald-500]="filterStatus === 'Completed'"
+              [class.bg-gradient-to-r]="filterStatus === 'Completed'"
+              [class.from-cyan-600]="filterStatus === 'Completed'"
+              [class.to-indigo-700]="filterStatus === 'Completed'"
               [class.text-white]="filterStatus === 'Completed'"
               [class.shadow-lg]="filterStatus === 'Completed'"
               [class.shadow-emerald-500/30]="filterStatus === 'Completed'"
@@ -68,11 +72,13 @@ import { map } from 'rxjs/operators';
             </button>
             <button 
               (click)="filterStatus = 'Delayed'"
-              [class.bg-rose-500]="filterStatus === 'Delayed'"
+              [class.bg-gradient-to-r]="filterStatus === 'Delayed'"
+              [class.from-cyan-600]="filterStatus === 'Delayed'"
+              [class.to-indigo-700]="filterStatus === 'Delayed'"
               [class.text-white]="filterStatus === 'Delayed'"
               [class.shadow-lg]="filterStatus === 'Delayed'"
               [class.shadow-rose-500/30]="filterStatus === 'Delayed'"
-              [class.text-slate-400]="filterStatus !== 'Active'"
+              [class.text-slate-400]="filterStatus !== 'Delayed'"
               class="px-6 py-3 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.15em] transition-all hover:bg-rose-50 dark:hover:bg-rose-500/10">
               {{ 'projects.delayed_alerts' | translate }}
             </button>

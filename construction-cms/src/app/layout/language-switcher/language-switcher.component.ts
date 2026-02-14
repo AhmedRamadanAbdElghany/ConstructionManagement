@@ -33,9 +33,7 @@ export class LanguageSwitcherComponent {
   currentLang = 'en';
 
   constructor(private translate: TranslateService) {
-    this.translate.setDefaultLang('en');
-    this.translate.use('en');
-    this.currentLang = 'en';
+    this.currentLang = this.translate.currentLang || this.translate.defaultLang || 'en';
   }
 
   switchLanguage(lang: string) {

@@ -6,12 +6,20 @@ import { AuthService } from '../../../core/services/auth.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 
+import { LanguageSwitcherComponent } from '../../../layout/language-switcher/language-switcher.component';
+
+
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, LanguageSwitcherComponent],
   template: `
     <div class="auth-wrapper">
+      <!-- Language Switcher -->
+      <div class="absolute top-8 right-8 z-50">
+        <app-language-switcher></app-language-switcher>
+      </div>
+
       <div class="auth-box">
         <!-- Visual Side -->
         <div class="visual-side">

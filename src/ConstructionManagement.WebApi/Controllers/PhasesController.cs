@@ -46,6 +46,22 @@ public class PhasesController : ControllerBase
         return NoContent();
     }
 
+    [HttpPost("api/projects/{projectId}/phases/initialize-from-defaults")]
+    public async Task<IActionResult> InitializePhases(int projectId, [FromBody] InitializePhasesRequest request)
+    {
+        if (request?.CompanyId == null) return BadRequest("CompanyId is required");
+        
+        await _phaseService.InitializeProjectPhasesAsync(projectId, request.CompanyId.Value);
+        return Ok();
+    }
+
+    [HttpDelete("api/projects/{projectId}/phases")]
+    public async Task<IActionResult> ClearProjectPhases(int projectId)
+    {
+        await _phaseService.ClearProjectPhasesAsync(projectId);
+        return NoContent();
+    }
+
     // --- Company Default Phases (Templates) ---
 
     [HttpGet("api/companies/{companyId}/default-phases")]

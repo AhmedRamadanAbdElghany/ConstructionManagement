@@ -206,6 +206,29 @@ public class PhaseService : IPhaseService
         }
     }
 
+    public async Task ClearProjectPhasesAsync(int projectId)
+    {
+        var phases = await _phaseRepository.AsQueryable()
+            .Where(p => p.ProjectId == projectId)
+            .ToListAsync();
+
+        if (!phases.Any()) return;
+
+        // Delete associated BOQ Items first to avoid foreign key constraint violation
+        var phaseIds = phases.Select(p => p.Id).ToList();
+        var boqItems = await _boqItemRepository.AsQueryable()
+            .Where(b => b.PhaseId.HasValue && phaseIds.Contains(b.PhaseId.Value))
+            .ToListAsync();
+        
+        if (boqItems.Any())
+        {
+            await _boqItemRepository.DeleteRangeAsync(boqItems);
+        }
+
+        // Safe to delete phases now
+        await _phaseRepository.DeleteRangeAsync(phases);
+    }
+
     private async Task CloneChildren(CompanyDefaultPhase parentDef, int newParentId, int projectId, int companyId, List<CompanyDefaultPhase> allDefaults, Dictionary<int, int> map)
     {
         foreach (var childDef in allDefaults.Where(d => d.ParentId == parentDef.Id).OrderBy(d => d.Order))

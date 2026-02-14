@@ -11,6 +11,7 @@ public interface IPhaseService
     Task UpdatePhaseAsync(int phaseId, UpdatePhaseRequest request);
     Task DeletePhaseAsync(int phaseId);
     Task InitializeProjectPhasesAsync(int projectId, int companyId);
+    Task ClearProjectPhasesAsync(int projectId);
 
     // Company Default Phases
     Task<int> CreateDefaultPhaseAsync(int companyId, CreatePhaseRequest request);

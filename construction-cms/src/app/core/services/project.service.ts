@@ -15,6 +15,7 @@ export class ProjectService {
     private mapDtoToProject(dto: any): Project {
         return {
             id: dto.id || dto.Id || dto.projectID || dto.ProjectID,
+            companyId: dto.companyId || dto.CompanyId || 1, // Defaulting to 1 if missing for now
             name: dto.projectName || dto.ProjectName,
             // Backend currently maps 'Description' to address in CreateProject logic
             location: {

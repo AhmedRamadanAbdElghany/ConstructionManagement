@@ -3,13 +3,20 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LanguageSwitcherComponent } from '../../../layout/language-switcher/language-switcher.component';
 
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, LanguageSwitcherComponent],
   template: `
     <div class="auth-wrapper">
+      <!-- Language Switcher -->
+      <div class="absolute top-8 right-8 z-50">
+        <app-language-switcher></app-language-switcher>
+      </div>
+
       <div class="site-overlay"></div>
       <div class="auth-box fade-in">
         <div class="box-content">
@@ -22,20 +29,20 @@ import { AuthService } from '../../../core/services/auth.service';
               </div>
               <span class="logo-text">Construction<span class="text-amber-500">CMS</span></span>
             </div>
-            <h1 class="title">Reset Account Access</h1>
-            <p class="subtitle">Enter your registered email and we'll send you a recovery link.</p>
+            <h1 class="title">{{ 'forgot_password.title' | translate }}</h1>
+            <p class="subtitle">{{ 'forgot_password.subtitle' | translate }}</p>
           </header>
 
           <form (ngSubmit)="onSubmit()" class="auth-form" *ngIf="!submitted">
             <div class="input-group">
-              <label class="input-label">Corporate Email</label>
+              <label class="input-label">{{ 'forgot_password.email_label' | translate }}</label>
               <div class="input-wrapper">
                 <div class="input-icon">
                   <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                 </div>
-                <input type="email" [(ngModel)]="email" name="email" class="modern-input" placeholder="e.g. hassan@firm.com" required email (blur)="emailTouched = true">
+                <input type="email" [(ngModel)]="email" name="email" class="modern-input" [attr.placeholder]="'forgot_password.email_placeholder' | translate" required email (blur)="emailTouched = true">
               </div>
-              <div *ngIf="emailTouched && !isEmailValid" class="field-error">Please provide a valid work email</div>
+              <div *ngIf="emailTouched && !isEmailValid" class="field-error">{{ 'forgot_password.error_invalid_email' | translate }}</div>
             </div>
 
             <div *ngIf="errorMessage" class="error-toast slide-in">
@@ -45,7 +52,7 @@ import { AuthService } from '../../../core/services/auth.service';
 
             <button type="submit" class="submit-btn" [disabled]="isLoading">
               <div *ngIf="isLoading" class="loader"></div>
-              <span>{{ isLoading ? 'Processing...' : 'Secure Recovery' }}</span>
+              <span>{{ isLoading ? ('forgot_password.processing' | translate) : ('forgot_password.submit' | translate) }}</span>
               <svg *ngIf="!isLoading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </button>
           </form>
@@ -54,14 +61,14 @@ import { AuthService } from '../../../core/services/auth.service';
             <div class="status-icon">
               <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
             </div>
-            <h2 class="status-title">Dispatch Successful</h2>
-            <p class="status-msg">If an account matches <strong>{{ email }}</strong>, recovery instructions will arrive shortly. Please check your inbox and safety folders.</p>
+            <h2 class="status-title">{{ 'forgot_password.success_title' | translate }}</h2>
+            <p class="status-msg">{{ 'forgot_password.success_message' | translate }}</p>
           </div>
 
           <footer class="box-footer">
             <a routerLink="/auth/login" class="back-link">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-              <span>Return to Personnel Login</span>
+              <span>{{ 'forgot_password.back_to_login' | translate }}</span>
             </a>
           </footer>
         </div>

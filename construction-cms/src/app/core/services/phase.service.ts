@@ -111,4 +111,8 @@ export class PhaseService {
     initializeProjectPhasesFromDefaults(projectId: number, companyId: number): Observable<void> {
         return this.http.post<void>(`${this.apiUrl}/projects/${projectId}/phases/initialize-from-defaults`, { companyId });
     }
+
+    clearProjectPhases(projectId: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/projects/${projectId}/phases`);
+    }
 }

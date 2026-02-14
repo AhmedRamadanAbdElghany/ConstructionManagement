@@ -124,7 +124,7 @@ import { map } from 'rxjs/operators';
               <button 
                 (click)="setActiveTab(tab.key)"
                 [ngClass]="{
-                  'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-transparent shadow-lg': activeTab === tab.key,
+                  'bg-gradient-to-r from-cyan-600 to-indigo-700 text-white border-transparent shadow-lg shadow-cyan-500/20': activeTab === tab.key,
                   'bg-white dark:bg-slate-900 text-slate-500 border-slate-200 dark:border-white/5 hover:text-slate-700 dark:hover:text-slate-300 hover:border-slate-300 dark:hover:border-white/10': activeTab !== tab.key
                 }"
                 class="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border shadow-sm">
@@ -172,7 +172,7 @@ import { map } from 'rxjs/operators';
                                  <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/10 flex items-center justify-center text-slate-500 mb-4 group-hover:bg-emerald-500 group-hover:text-white transition-all">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                                  </div>
-                                  <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">Emply Designs</h4>
+                                  <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">Empty Designs</h4>
                                   <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Build project-specific categories</p>
                               </button>
                            </div>
@@ -2343,21 +2343,32 @@ export class ProjectDetailComponent implements OnInit {
          : 'Import company default phase hierarchy?';
 
       if (confirm(message)) {
-         this.phaseService.initializeProjectPhasesFromDefaults(this.project.id, 1).subscribe(() => {
-            if (this.project) {
-               this.loadProjectPhases(this.project.id);
+         const init = () => {
+            this.phaseService.initializeProjectPhasesFromDefaults(this.project!.id, this.project!.companyId).subscribe(() => {
+               this.loadProjectPhases(this.project!.id);
                this.isPhasesInitialized = true;
-            }
-         });
+            });
+         };
+
+         if (this.projectPhases.length > 0) {
+            this.phaseService.clearProjectPhases(this.project.id).subscribe(() => {
+               this.projectPhases = [];
+               init();
+            });
+         } else {
+            init();
+         }
       }
    }
 
    resetHierarchy() {
-      if (confirm('Are you sure you want to clear all phases and start over with an empty hierarchy?')) {
-         // In a real app, delete all phases for this project
-         this.projectPhases = [];
-         this.isPhasesInitialized = true;
-         // If we had a service method to clear, we'd call it here
+      if (!this.project) return;
+      if (confirm('Are you sure you want to clear all phases and start over? This will remove all existing phases and their items.')) {
+         this.phaseService.clearProjectPhases(this.project.id).subscribe(() => {
+            this.projectPhases = [];
+            this.isPhasesInitialized = false;
+            this.loadProjectPhases(this.project!.id); // Should return empty
+         });
       }
    }
 

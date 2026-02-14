@@ -967,6 +967,17 @@
     "terms_link": "الشروط والأحكام",
     "submit": "إنشاء حساب",
     "creating": "جاري إنشاء الحساب...",
+    "professional_role": "التخصص المهني",
+    "role_stakeholder": "صاحب مصلحة عام",
+    "role_engineer": "مهندس / مدير موقع",
+    "role_owner": "مقاول / صاحب شركة",
+    "password_hint": "٨ أحرف كحد أدنى",
+    "password_repeat": "كرر كلمة المرور",
+    "strength_lowercase": "أحرف صغيرة",
+    "strength_uppercase": "أحرف كبيرة",
+    "strength_number": "أرقام",
+    "strength_symbol": "رموز",
+    "strength_min_length": "+٨ أحرف",
     "have_account": "لديك حساب بالفعل؟",
     "login_link": "تسجيل الدخول",
     "success_title": "تم التسجيل بنجاح!",
@@ -1010,5 +1021,17 @@
     "feature_payments_desc": "تتبع المدفوعات والفواتير",
     "feature_comms": "مركز التواصل",
     "feature_comms_desc": "إرسال رسائل لفريق مشروعك"
+  },
+  "forgot_password": {
+    "title": "استعادة الوصول للحساب",
+    "subtitle": "أدخل بريدك الإلكتروني المسجل وسنرسل لك رابط الاسترداد.",
+    "email_label": "البريد الإلكتروني للعمل",
+    "email_placeholder": "مثلاً: hassan@firm.com",
+    "error_invalid_email": "يرجى تقديم بريد إلكتروني صالح للعمل",
+    "submit": "استرداد آمن",
+    "processing": "جاري المعالجة...",
+    "success_title": "تم الإرسال بنجاح",
+    "success_message": "إذا كان هناك حساب يطابق بريدك الإلكتروني، فستصلك تعليمات الاسترداد قريباً. يرجى مراجعة صندوق الوارد والمجلدات غير الهامة.",
+    "back_to_login": "العودة لتسجيل دخول الموظفين"
   }
 }

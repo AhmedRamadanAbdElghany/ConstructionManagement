@@ -966,6 +966,17 @@
     "terms_link": "Terms & Conditions",
     "submit": "Create Account",
     "creating": "Creating Account...",
+    "professional_role": "Professional Role",
+    "role_stakeholder": "General Stakeholder",
+    "role_engineer": "Engineer / Site Manager",
+    "role_owner": "Contractor / Firm Owner",
+    "password_hint": "Minimum 8 characters",
+    "password_repeat": "Repeat your password",
+    "strength_lowercase": "Lowercase",
+    "strength_uppercase": "Uppercase",
+    "strength_number": "Number",
+    "strength_symbol": "Symbol",
+    "strength_min_length": "8+ Chars",
     "have_account": "Already have an account?",
     "login_link": "Sign In",
     "success_title": "Registration Successful!",
@@ -1009,5 +1020,17 @@
     "feature_payments_desc": "Track payments and invoices",
     "feature_comms": "Communication Hub",
     "feature_comms_desc": "Send messages to your project team"
+  },
+  "forgot_password": {
+    "title": "Reset Account Access",
+    "subtitle": "Enter your registered email and we'll send you a recovery link.",
+    "email_label": "Corporate Email",
+    "email_placeholder": "e.g. hassan@firm.com",
+    "error_invalid_email": "Please provide a valid work email",
+    "submit": "Secure Recovery",
+    "processing": "Processing...",
+    "success_title": "Dispatch Successful",
+    "success_message": "If an account matches your email, recovery instructions will arrive shortly. Please check your inbox and safety folders.",
+    "back_to_login": "Return to Personnel Login"
   }
 }
