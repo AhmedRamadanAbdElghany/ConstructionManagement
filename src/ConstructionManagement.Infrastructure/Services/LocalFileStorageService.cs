@@ -28,11 +28,12 @@ public class LocalFileStorageService : IFileStorageService
             throw new ArgumentException("حجم الملف يتجاوز الحد المسموح به (50 ميجابايت)");
 
         // 2. التحقق من الامتدادات المسموحة (White List)
-        var allowedExtensions = new HashSet<string> { ".jpg", ".jpeg", ".png", ".gif", ".mp4", ".mov", ".pdf" };
+        var allowedExtensions = new HashSet<string> { ".jpg", ".jpeg", ".png", ".gif", ".mp4", ".mov", ".pdf", ".dwg", ".dxf" };
         var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
 
-        if (!allowedExtensions.Contains(extension))
+        if (!allowedExtensions.Contains(extension) && extension != ".dwg" && extension != ".dxf") // safety check
             throw new ArgumentException("نوع الملف غير مدعوم");
+
 
         // 3. تأمين اسم المجلد (Sanitization)
         var safeFolder = string.IsNullOrEmpty(folder)
@@ -58,7 +59,7 @@ public class LocalFileStorageService : IFileStorageService
         return $"/uploads/{safeFolder}/{uniqueFileName}";
     }
 
-    public Task<FileStorageResult> SaveFileAsync(IFormFile file, string folder)
+    public async Task<FileStorageResult> SaveFileAsync(IFormFile file, string folder)
     {
         if (file == null || file.Length == 0)
             throw new ArgumentException("No file provided or file is empty");
@@ -66,7 +67,7 @@ public class LocalFileStorageService : IFileStorageService
         if (file.Length > MaxFileSize)
             throw new ArgumentException($"File size exceeds maximum allowed ({MaxFileSize / 1024 / 1024} MB)");
 
-        var allowedExtensions = new HashSet<string> { ".jpg", ".jpeg", ".png", ".gif", ".mp4", ".mov", ".pdf", ".doc", ".docx", ".xls", ".xlsx" };
+        var allowedExtensions = new HashSet<string> { ".jpg", ".jpeg", ".png", ".gif", ".mp4", ".mov", ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".dwg", ".dxf" };
         var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
 
         if (!allowedExtensions.Contains(extension))
@@ -84,14 +85,20 @@ public class LocalFileStorageService : IFileStorageService
         var uniqueFileName = $"{Guid.NewGuid()}_{DateTime.UtcNow:yyyyMMddHHmmss}{extension}";
         var fullPath = Path.Combine(targetDirectory, uniqueFileName);
 
+        using (var stream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, useAsync: true))
+        {
+            await file.CopyToAsync(stream);
+        }
+
         var relativePath = $"/uploads/{safeFolder}/{uniqueFileName}";
 
-        return Task.FromResult(new FileStorageResult
+        return new FileStorageResult
         {
             Path = relativePath,
             FileName = uniqueFileName
-        });
+        };
     }
+
 
     public async Task DeleteFileAsync(string filePath)
     {
