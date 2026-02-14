@@ -22,5 +22,18 @@ namespace ConstructionManagement.Application.Interfaces
 
         // Summary operations
         Task<IEnumerable<VendorInvoiceSummary>> GetVendorInvoiceSummaryAsync();
+
+        // Advanced Discovery & Analytics
+        Task<IEnumerable<PublicVendorDto>> SearchPublicVendorsAsync(VendorSearchRequest request);
+        Task<VendorSpendReportDto> GetVendorSpendReportAsync(int? vendorId, DateTime? from, DateTime? to);
+        
+        // Product Management
+        Task<IEnumerable<VendorProductDto>> GetVendorProductsAsync(int vendorId);
+        Task<VendorProductDto> AddProductAsync(int vendorId, CreateVendorProductRequest request);
+        Task<bool> DeleteProductAsync(int productId);
+
+        // Profile Management
+        Task<VendorDto> UpdateVendorProfileAsync(int userId, UpdateVendorRequest request);
+        Task<VendorDto?> GetVendorByUserIdAsync(int userId);
     }
 }

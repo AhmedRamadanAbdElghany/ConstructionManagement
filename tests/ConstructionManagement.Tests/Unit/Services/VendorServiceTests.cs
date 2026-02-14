@@ -18,21 +18,25 @@ public class VendorServiceTests
 {
     private readonly Mock<IRepository<Vendor>> _vendorRepoMock = new();
     private readonly Mock<IRepository<VendorInvoice>> _invoiceRepoMock = new();
+    private readonly Mock<IRepository<VendorProduct>> _productRepoMock = new();
     private readonly Mock<IRepository<CompanySettings>> _settingsRepoMock = new();
     private readonly Mock<IRepository<User>> _userRepoMock = new();
     private readonly Mock<IFileStorageService> _fileStorageMock = new();
     private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
     private readonly Mock<INotificationService> _notificationMock = new();
+    private readonly Mock<IActivityLogService> _activityLogMock = new();
     private readonly Mock<ICompanyContext> _companyContextMock = new();
 
     private VendorService CreateService()
         => new(
             _vendorRepoMock.Object,
             _invoiceRepoMock.Object,
+            _productRepoMock.Object,
             _settingsRepoMock.Object,
             _userRepoMock.Object,
             _fileStorageMock.Object,
             _unitOfWorkMock.Object,
+            _activityLogMock.Object,
             _notificationMock.Object,
             _companyContextMock.Object
         );

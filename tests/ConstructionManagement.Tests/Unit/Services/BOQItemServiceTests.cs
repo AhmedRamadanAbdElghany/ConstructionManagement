@@ -18,6 +18,7 @@ public class BOQItemServiceTests
     private readonly Mock<IRepository<BOQPackage>> _packageRepo = new();
     private readonly Mock<IRepository<ItemInvoice>> _invoiceRepo = new();
     private readonly Mock<IRepository<Project>> _projectRepo = new();
+    private readonly Mock<IActivityLogService> _activityLogMock = new();
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
 
     private BOQItemService CreateService() => new(
@@ -27,6 +28,7 @@ public class BOQItemServiceTests
         _packageRepo.Object,
         _invoiceRepo.Object,
         _projectRepo.Object,
+        _activityLogMock.Object,
         _unitOfWork.Object);
 
     #region Create BOQ Item Tests

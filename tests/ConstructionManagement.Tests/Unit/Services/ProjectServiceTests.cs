@@ -16,10 +16,11 @@ public class ProjectServiceTests
     private readonly Mock<IRepository<UserRole>> _userRoleRepo = new();
     private readonly Mock<IRepository<User>> _userRepo = new();
     private readonly Mock<IRepository<ProjectSettings>> _settingsRepo = new();
-    private readonly Mock<IUnitOfWork> _uowMock = new(); // تأكد أن الاسم هنا هو المستخدم بالأسفل
+    private readonly Mock<IActivityLogService> _activityLogMock = new();
+    private readonly Mock<IUnitOfWork> _uowMock = new();
 
     private ProjectService CreateService() =>
-        new(_projectRepo.Object, _userRoleRepo.Object, _userRepo.Object, _settingsRepo.Object, new Mock<IPhaseService>().Object, _uowMock.Object);
+        new(_projectRepo.Object, _userRoleRepo.Object, _userRepo.Object, _settingsRepo.Object, new Mock<IPhaseService>().Object, _uowMock.Object, _activityLogMock.Object);
 
     [Fact]
     public async Task CreateProjectAsync_ValidRequest_CommitsTransaction()

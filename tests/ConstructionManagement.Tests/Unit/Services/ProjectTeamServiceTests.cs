@@ -14,10 +14,11 @@ public class ProjectTeamServiceTests
     private readonly Mock<IRepository<ProjectRole>> _roleRepo = new();
     private readonly Mock<IRepository<ProjectTeamRole>> _teamRoleRepo = new();
     private readonly Mock<IRepository<User>> _userRepo = new();
-    private readonly Mock<IUnitOfWork> _unitOfWork = new(); // إضافة الموك
+    private readonly Mock<IActivityLogService> _activityLogMock = new();
+    private readonly Mock<IUnitOfWork> _unitOfWork = new();
 
     private ProjectTeamService CreateService() =>
-        new(_teamRepo.Object, _roleRepo.Object, _teamRoleRepo.Object, _userRepo.Object, _unitOfWork.Object);
+        new(_teamRepo.Object, _roleRepo.Object, _teamRoleRepo.Object, _userRepo.Object, _activityLogMock.Object, _unitOfWork.Object);
 
     [Fact]
     public async Task AddTeamMemberAsync_WhenValid_ShouldSaveAndCallUnitOfWork()

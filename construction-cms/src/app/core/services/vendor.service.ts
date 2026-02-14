@@ -18,6 +18,54 @@ export interface Vendor {
     isActive: boolean;
     invoiceCount: number;
     createdAt: string;
+    latitude?: number;
+    longitude?: number;
+    isPublic: boolean;
+    userId?: number;
+}
+
+export interface VendorProduct {
+    id: number;
+    vendorId: number;
+    name: string;
+    category?: string;
+    price: number;
+    unit?: string;
+    description?: string;
+    isActive: boolean;
+}
+
+export interface VendorSearchRequest {
+    material?: string;
+    name?: string;
+    latitude?: number;
+    longitude?: number;
+    radiusKm?: number;
+    projectId?: number;
+}
+
+export interface PublicVendor extends Vendor {
+    distanceKm?: number;
+    topProducts: VendorProduct[];
+}
+
+export interface VendorSpendReport {
+    topVendors: VendorSpendItem[];
+    spendTrends: SpendByDateItem[];
+    totalSpend: number;
+    totalInvoices: number;
+}
+
+export interface VendorSpendItem {
+    vendorId: number;
+    vendorName: string;
+    totalAmount: number;
+    invoiceCount: number;
+}
+
+export interface SpendByDateItem {
+    date: string;
+    amount: number;
 }
 
 export interface VendorInvoice {
@@ -63,6 +111,14 @@ export interface CreateVendorRequest {
     contactPerson?: string;
     notes?: string;
     vendorType?: string;
+}
+
+export interface CreateVendorProductRequest {
+    name: string;
+    category?: string;
+    price: number;
+    unit?: string;
+    description?: string;
 }
 
 export interface CreateVendorInvoiceRequest {
@@ -150,5 +206,40 @@ export class VendorService {
     // Summary operations
     getVendorSummary(): Observable<VendorInvoiceSummary[]> {
         return this.http.get<VendorInvoiceSummary[]>(`${this.baseUrl}/summary`);
+    }
+
+    // Advanced Discovery & Analytics
+    searchVendors(request: VendorSearchRequest): Observable<PublicVendor[]> {
+        return this.http.get<PublicVendor[]>(`${this.baseUrl}/search`, { params: request as any });
+    }
+
+    getAnalytics(vendorId?: number, from?: string, to?: string): Observable<VendorSpendReport> {
+        let params: any = {};
+        if (vendorId) params.vendorId = vendorId;
+        if (from) params.from = from;
+        if (to) params.to = to;
+        return this.http.get<VendorSpendReport>(`${this.baseUrl}/analytics`, { params });
+    }
+
+    // Product Management
+    getVendorProducts(vendorId: number): Observable<VendorProduct[]> {
+        return this.http.get<VendorProduct[]>(`${this.baseUrl}/${vendorId}/products`);
+    }
+
+    addProduct(vendorId: number, product: any): Observable<VendorProduct> {
+        return this.http.post<VendorProduct>(`${this.baseUrl}/${vendorId}/products`, product);
+    }
+
+    deleteProduct(productId: number): Observable<void> {
+        return this.http.delete<void>(`${this.baseUrl}/products/${productId}`);
+    }
+
+    // Profile Management
+    getMyProfile(): Observable<Vendor> {
+        return this.http.get<Vendor>(`${this.baseUrl}/profile`);
+    }
+
+    updateMyProfile(request: CreateVendorRequest): Observable<Vendor> {
+        return this.http.put<Vendor>(`${this.baseUrl}/profile`, request);
     }
 }

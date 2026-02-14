@@ -73,6 +73,30 @@ import { RouterModule, Router } from '@angular/router';
            [class.opacity-0]="isCollapsed()">{{ (isClient ? 'sidebar.client_portal' : 'sidebar.administration') | translate }}</p>
 
         @if (isAdmin) {
+          <!-- Vendor Discovery -->
+          <a routerLink="/admin/vendors/discovery" 
+             routerLinkActive="nav-active"
+             class="nav-item group">
+            <div class="nav-icon-box">
+              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+            </div>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Vendor Discovery</span>
+          </a>
+
+          <a routerLink="/admin/vendors/analytics" 
+             routerLinkActive="nav-active"
+             class="nav-item group">
+            <div class="nav-icon-box">
+              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+            </div>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Vendor Analytics</span>
+          </a>
+
           <!-- Pending Requests (SuperAdmin & CompanyAdmin) -->
           <a routerLink="/admin/pending-requests" 
              routerLinkActive="nav-active"
@@ -353,6 +377,19 @@ import { RouterModule, Router } from '@angular/router';
             <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.documents' | translate }}</span>
           </a>
         }
+        
+        @if (isVendor) {
+          <a routerLink="/vendor/storefront" 
+             routerLinkActive="nav-active"
+             class="nav-item group">
+            <div class="nav-icon-box">
+              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">My Storefront</span>
+          </a>
+        }
         } <!-- end isPending -->
 
         <div class="my-6 px-4">
@@ -505,6 +542,10 @@ export class SidebarComponent {
 
   get isInventoryOwner(): boolean {
     return this.currentUserType === 3; // InventoryOwner = 3
+  }
+
+  get isVendor(): boolean {
+    return this.currentUserType === 4; // WarehouseOwner = 4
   }
 
   get isPending(): boolean {

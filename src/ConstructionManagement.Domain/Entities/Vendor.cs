@@ -30,7 +30,20 @@ namespace ConstructionManagement.Domain.Entities
         // Status
         public bool IsActive { get; set; } = true;
 
-        // Navigation property
+        // Owner user reference (if linked to a WarehouseOwner)
+        public int? UserId { get; set; }
+        [ForeignKey(nameof(UserId))]
+        public virtual User? User { get; set; }
+
+        // Geolocation
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+
+        // Discovery Visibility
+        public bool IsPublic { get; set; } = false;
+
+        // Navigation properties
         public virtual ICollection<VendorInvoice> Invoices { get; set; } = new List<VendorInvoice>();
+        public virtual ICollection<VendorProduct> Products { get; set; } = new List<VendorProduct>();
     }
 }

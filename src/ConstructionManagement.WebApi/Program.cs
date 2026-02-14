@@ -132,6 +132,7 @@ builder.Services.AddScoped<IJoinRequestService, JoinRequestService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IWarehouseOrderService, WarehouseOrderService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IActivityLogService, ActivityLogService>();
 builder.Services.AddScoped<ISubcontractorService, SubcontractorService>();
 
 

@@ -17,6 +17,8 @@ public class ProjectTransactionService : IProjectTransactionService
     private readonly IRepository<BOQProfitabilityLog> _profitabilityLogRepository;
     private readonly IUnitOfWork _unitOfWork;
 
+    private readonly IActivityLogService _activityLogService;
+
     public ProjectTransactionService(
         IRepository<Transaction> transactionRepository,
         IRepository<BOQItem> boqItemRepository,
@@ -24,7 +26,8 @@ public class ProjectTransactionService : IProjectTransactionService
         IFileStorageService fileStorage,
         IRepository<BOQProfitabilityLog> profitabilityLogRepository,
         INotificationService notificationService,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IActivityLogService activityLogService)
     {
         _transactionRepository = transactionRepository;
         _boqItemRepository = boqItemRepository;
@@ -33,6 +36,7 @@ public class ProjectTransactionService : IProjectTransactionService
         _profitabilityLogRepository = profitabilityLogRepository;
         _notificationService = notificationService;
         _unitOfWork = unitOfWork;
+        _activityLogService = activityLogService;
     }
 
     public async Task<int> CreateTransactionAsync(int projectId, CreateTransactionRequest request, int userId)
@@ -117,6 +121,15 @@ public class ProjectTransactionService : IProjectTransactionService
             }
 
             await _unitOfWork.CommitAsync();
+
+            await _activityLogService.LogActivityAsync(
+                projectId, 
+                "Financial", 
+                "Expense Recorded", 
+                $"New {request.Type} of {request.Amount:N2} added{(boqItem != null ? $" for '{boqItem.ItemName}'" : "")}.", 
+                userId
+            );
+
             return transaction.Id;
         }
         catch
@@ -164,6 +177,15 @@ public class ProjectTransactionService : IProjectTransactionService
         transaction.ReviewNotes = request.ReviewNotes;
 
         await _transactionRepository.UpdateAsync(transaction);
+
+        await _activityLogService.LogActivityAsync(
+            transaction.ProjectId, 
+            "Financial", 
+            $"Transaction {transaction.Status}", 
+            $"Transaction '{transaction.Description}' was {transaction.Status.ToString().ToLower()}.", 
+            reviewerUserId
+        );
+
         await _unitOfWork.SaveChangesAsync();
         return true;
     }

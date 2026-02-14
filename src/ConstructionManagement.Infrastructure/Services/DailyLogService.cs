@@ -12,13 +12,20 @@ public class DailyLogService : IDailyLogService
     private readonly IRepository<BOQExecutedDelta> _deltaRepository;
     private readonly IUnitOfWork _unitOfWork;
 
+    private readonly IRepository<BOQItem> _itemRepository;
+    private readonly IActivityLogService _activityLogService;
+
     public DailyLogService(
         IRepository<ItemDailyLog> logRepository,
         IRepository<BOQExecutedDelta> deltaRepository,
+        IRepository<BOQItem> itemRepository,
+        IActivityLogService activityLogService,
         IUnitOfWork unitOfWork)
     {
         _logRepository = logRepository;
         _deltaRepository = deltaRepository;
+        _itemRepository = itemRepository;
+        _activityLogService = activityLogService;
         _unitOfWork = unitOfWork;
     }
 
@@ -93,7 +100,20 @@ public class DailyLogService : IDailyLogService
 
         await _logRepository.UpdateAsync(log);
 
-        // 5. Commit
+        // 5. Activity Log
+        var item = await _itemRepository.GetByIdAsync(itemId);
+        if (item != null)
+        {
+            await _activityLogService.LogActivityAsync(
+                item.ProjectId, 
+                "Log", 
+                "Daily Log Closed", 
+                $"Progress for '{item.ItemName}' recorded: {request.DailyProgressPercentage:N0}% on {logDate:yyyy-MM-dd}.", 
+                userId
+            );
+        }
+
+        // 6. Commit
         await _unitOfWork.SaveChangesAsync();
 
         return true;
@@ -125,6 +145,19 @@ public class DailyLogService : IDailyLogService
         // logic to use reason and notifyRoleIds could be added here (e.g. Activity Log or Notifications)
 
         await _logRepository.UpdateAsync(log);
+
+        var item = await _itemRepository.GetByIdAsync(itemId);
+        if (item != null)
+        {
+            await _activityLogService.LogActivityAsync(
+                item.ProjectId, 
+                "Log", 
+                "Daily Log Reopened", 
+                $"Daily log for '{item.ItemName}' on {logDate:yyyy-MM-dd} reopened. Reason: {reason}", 
+                userId
+            );
+        }
+
         await _unitOfWork.SaveChangesAsync();
 
         return true;

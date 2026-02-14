@@ -48,8 +48,9 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
             var userRepo = new Repository<User>(Context);
             var settingsRepo = new Repository<ProjectSettings>(Context);
             var phaseService = new Mock<IPhaseService>().Object;
+            var activityLogService = new Mock<IActivityLogService>().Object;
             
-            var service = new ProjectService(projectRepo, userRoleRepo, userRepo, settingsRepo, phaseService, UnitOfWork);
+            var service = new ProjectService(projectRepo, userRoleRepo, userRepo, settingsRepo, phaseService, UnitOfWork, activityLogService);
             await service.CreateProjectAsync(invalidRequest, 1);
         });
 
@@ -88,8 +89,9 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
             var transactionRepo = new Repository<Transaction>(Context);
             var boqItemRepo = new Repository<BOQItem>(Context);
             var profitabilityLogRepo = new Repository<BOQProfitabilityLog>(Context);
+            var activityLogService = new Mock<IActivityLogService>().Object;
             var service = new ProjectTransactionService(
-                transactionRepo, boqItemRepo, settingsRepo, new Mock<IFileStorageService>().Object, profitabilityLogRepo, new Mock<INotificationService>().Object, UnitOfWork);
+                transactionRepo, boqItemRepo, settingsRepo, new Mock<IFileStorageService>().Object, profitabilityLogRepo, new Mock<INotificationService>().Object, UnitOfWork, activityLogService);
             await service.CreateTransactionAsync(project.Id, invalidRequest, user.Id);
         });
 
@@ -120,7 +122,9 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
         // Act & Assert
         var logRepo = new Repository<ItemDailyLog>(Context);
         var deltaRepo = new Repository<BOQExecutedDelta>(Context);
-        var service = new DailyLogService(logRepo, deltaRepo, UnitOfWork);
+        var itemRepo = new Repository<BOQItem>(Context);
+        var activityLogService = new Mock<IActivityLogService>().Object;
+        var service = new DailyLogService(logRepo, deltaRepo, itemRepo, activityLogService, UnitOfWork);
         
         var logId = await service.GetOrCreateDailyLogIdAsync(boqItem.Id, DateTime.UtcNow.Date, user.Id);
         logId.Should().BeGreaterThan(0);
@@ -204,8 +208,9 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
             var packageRepo = new Repository<BOQPackage>(Context);
             var invoiceRepo = new Repository<ItemInvoice>(Context);
             var projectRepo = new Repository<Project>(Context);
+            var activityLogService = new Mock<IActivityLogService>().Object;
             
-            var service = new BOQItemService(itemRepo, measuredRepo, supervisionRepo, packageRepo, invoiceRepo, projectRepo, UnitOfWork);
+            var service = new BOQItemService(itemRepo, measuredRepo, supervisionRepo, packageRepo, invoiceRepo, projectRepo, activityLogService, UnitOfWork);
             await service.CreateBOQItemAsync(project.Id, invalidRequest, user.Id);
         });
 
@@ -237,8 +242,9 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
         var userRepo = new Repository<User>(Context);
         var settingsRepo = new Repository<ProjectSettings>(Context);
         var phaseService = new Mock<IPhaseService>().Object;
+        var activityLogService = new Mock<IActivityLogService>().Object;
         
-        var service = new ProjectService(projectRepo, userRoleRepo, userRepo, settingsRepo, phaseService, UnitOfWork);
+        var service = new ProjectService(projectRepo, userRoleRepo, userRepo, settingsRepo, phaseService, UnitOfWork, activityLogService);
         var result = await service.UpdateProjectAsync(99999, updateRequest, user.Id);
 
         // Assert
@@ -265,7 +271,9 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
         // Act
         var logRepo = new Repository<ItemDailyLog>(Context);
         var deltaRepo = new Repository<BOQExecutedDelta>(Context);
-        var service = new DailyLogService(logRepo, deltaRepo, UnitOfWork);
+        var itemRepo = new Repository<BOQItem>(Context);
+        var activityLogService = new Mock<IActivityLogService>().Object;
+        var service = new DailyLogService(logRepo, deltaRepo, itemRepo, activityLogService, UnitOfWork);
         var result = await service.CloseDailyLogAsync(99999, DateTime.UtcNow.Date, user.Id, closeRequest);
 
         // Assert
@@ -292,8 +300,9 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
         var transactionRepo = new Repository<Transaction>(Context);
         var boqItemRepo = new Repository<BOQItem>(Context);
         var profitabilityLogRepo = new Repository<BOQProfitabilityLog>(Context);
+        var activityLogService = new Mock<IActivityLogService>().Object;
         var service = new ProjectTransactionService(
-            transactionRepo, boqItemRepo, settingsRepo, new Mock<IFileStorageService>().Object, profitabilityLogRepo, new Mock<INotificationService>().Object, UnitOfWork);
+            transactionRepo, boqItemRepo, settingsRepo, new Mock<IFileStorageService>().Object, profitabilityLogRepo, new Mock<INotificationService>().Object, UnitOfWork, activityLogService);
         var result = await service.ReviewTransactionAsync(99999, reviewRequest, user.Id);
 
         // Assert
@@ -336,8 +345,9 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
         var userRepo = new Repository<User>(Context);
         var settingsRepo = new Repository<ProjectSettings>(Context);
         var phaseService = new Mock<IPhaseService>().Object;
+        var activityLogService = new Mock<IActivityLogService>().Object;
         
-        var service = new ProjectService(projectRepo, userRoleRepo, userRepo, settingsRepo, phaseService, UnitOfWork);
+        var service = new ProjectService(projectRepo, userRoleRepo, userRepo, settingsRepo, phaseService, UnitOfWork, activityLogService);
         var result1 = await service.CreateProjectAsync(request1, user.Id);
         var result2 = await service.CreateProjectAsync(request2, user.Id);
 
@@ -376,8 +386,9 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
         var transactionRepo = new Repository<Transaction>(Context);
         var boqItemRepo = new Repository<BOQItem>(Context);
         var profitabilityLogRepo = new Repository<BOQProfitabilityLog>(Context);
+        var activityLogService = new Mock<IActivityLogService>().Object;
         var service = new ProjectTransactionService(
-            transactionRepo, boqItemRepo, settingsRepo, new Mock<IFileStorageService>().Object, profitabilityLogRepo, new Mock<INotificationService>().Object, UnitOfWork);
+            transactionRepo, boqItemRepo, settingsRepo, new Mock<IFileStorageService>().Object, profitabilityLogRepo, new Mock<INotificationService>().Object, UnitOfWork, activityLogService);
         var result = await service.CreateTransactionAsync(project.Id, request, user.Id);
 
         // Assert - Should succeed
@@ -423,8 +434,9 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
             var packageRepo = new Repository<BOQPackage>(Context);
             var invoiceRepo = new Repository<ItemInvoice>(Context);
             var projectRepo = new Repository<Project>(Context);
+            var activityLogMock = new Mock<IActivityLogService>();
             
-            var service = new BOQItemService(itemRepo, measuredRepo, supervisionRepo, packageRepo, invoiceRepo, projectRepo, UnitOfWork);
+            var service = new BOQItemService(itemRepo, measuredRepo, supervisionRepo, packageRepo, invoiceRepo, projectRepo, activityLogMock.Object, UnitOfWork);
             await service.CreateBOQItemAsync(project.Id, invalidRequest, user.Id);
         });
 
@@ -457,7 +469,9 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
         {
             var logRepo = new Repository<ItemDailyLog>(Context);
             var deltaRepo = new Repository<BOQExecutedDelta>(Context);
-            var service = new DailyLogService(logRepo, deltaRepo, UnitOfWork);
+            var itemRepo = new Repository<BOQItem>(Context);
+            var activityLogMock = new Mock<IActivityLogService>();
+            var service = new DailyLogService(logRepo, deltaRepo, itemRepo, activityLogMock.Object, UnitOfWork);
             await service.ReopenClosedDayAsync(boqItem.Id, DateTime.UtcNow.Date, user.Id, "", new List<int> { 1, 2 });
         });
 

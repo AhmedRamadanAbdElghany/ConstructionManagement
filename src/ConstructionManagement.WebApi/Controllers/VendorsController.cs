@@ -126,5 +126,71 @@ namespace ConstructionManagement.WebApi.Controllers
             var invoice = await _vendorService.ReviewInvoiceAsync(id, request, reviewerId);
             return Ok(invoice);
         }
+
+        // --- Advanced Discovery & Analytics ---
+
+        // GET: api/vendors/search
+        [HttpGet("search")]
+        [AllowAnonymous] // Allow public search
+        public async Task<ActionResult<IEnumerable<PublicVendorDto>>> SearchVendors([FromQuery] VendorSearchRequest request)
+        {
+            var vendors = await _vendorService.SearchPublicVendorsAsync(request);
+            return Ok(vendors);
+        }
+
+        // GET: api/vendors/analytics
+        [HttpGet("analytics")]
+        public async Task<ActionResult<VendorSpendReportDto>> GetAnalytics([FromQuery] int? vendorId, [FromQuery] DateTime? from, [FromQuery] DateTime? to)
+        {
+            var report = await _vendorService.GetVendorSpendReportAsync(vendorId, from, to);
+            return Ok(report);
+        }
+
+        // --- Product Management ---
+
+        // GET: api/vendors/{vendorId}/products
+        [HttpGet("{vendorId}/products")]
+        public async Task<ActionResult<IEnumerable<VendorProductDto>>> GetVendorProducts(int vendorId)
+        {
+            var products = await _vendorService.GetVendorProductsAsync(vendorId);
+            return Ok(products);
+        }
+
+        // POST: api/vendors/{vendorId}/products
+        [HttpPost("{vendorId}/products")]
+        public async Task<ActionResult<VendorProductDto>> AddProduct(int vendorId, [FromBody] CreateVendorProductRequest request)
+        {
+            var product = await _vendorService.AddProductAsync(vendorId, request);
+            return Ok(product);
+        }
+
+        // DELETE: api/vendors/products/{productId}
+        [HttpDelete("products/{productId}")]
+        public async Task<IActionResult> DeleteProduct(int productId)
+        {
+            await _vendorService.DeleteProductAsync(productId);
+            return NoContent();
+        }
+
+        // --- Profile Management (for WarehouseOwners) ---
+
+        // GET: api/vendors/profile
+        [HttpGet("profile")]
+        public async Task<ActionResult<VendorDto>> GetMyProfile()
+        {
+            var userId = GetCurrentUserId();
+            var vendor = await _vendorService.GetVendorByUserIdAsync(userId);
+            if (vendor == null) return NotFound("Vendor profile not found");
+            return Ok(vendor);
+        }
+
+        // PUT: api/vendors/profile
+        [HttpPut("profile")]
+        public async Task<ActionResult<VendorDto>> UpdateMyProfile([FromBody] UpdateVendorRequest request)
+        {
+            var userId = GetCurrentUserId();
+            var vendor = await _vendorService.UpdateVendorProfileAsync(userId, request);
+            return Ok(vendor);
+        }
     }
 }

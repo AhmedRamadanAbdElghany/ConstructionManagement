@@ -16,13 +16,16 @@ public class ProjectService : IProjectService
     private readonly IPhaseService _phaseService;
     private readonly IUnitOfWork _unitOfWork;
 
+    private readonly IActivityLogService _activityLogService;
+
     public ProjectService(
         IRepository<Project> projectRepository,
         IRepository<UserRole> userRoleRepository,
         IRepository<User> userRepository,
         IRepository<ProjectSettings> settingsRepository,
         IPhaseService phaseService,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IActivityLogService activityLogService)
     {
         _projectRepository = projectRepository;
         _userRoleRepository = userRoleRepository;
@@ -30,6 +33,7 @@ public class ProjectService : IProjectService
         _settingsRepository = settingsRepository;
         _phaseService = phaseService;
         _unitOfWork = unitOfWork;
+        _activityLogService = activityLogService;
     }
 
     public async Task<int> CreateProjectAsync(CreateProjectRequest request, int ownerUserId)
@@ -106,8 +110,10 @@ public class ProjectService : IProjectService
             // Initialize Phases from Company Defaults
             if (project.CompanyId.HasValue)
             {
-                await _phaseService.InitializeProjectPhasesAsync(project.Id, project.CompanyId.Value);
+            await _phaseService.InitializeProjectPhasesAsync(project.Id, project.CompanyId.Value);
             }
+
+            await _activityLogService.LogActivityAsync(project.Id, "Setting", "Project Created", $"Project '{project.ProjectName}' was initialized.", ownerUserId);
 
             await _unitOfWork.CommitAsync();
             return project.Id;
@@ -150,6 +156,7 @@ public class ProjectService : IProjectService
         if (request.TotalContractValue != null) project.TotalContractValue = request.TotalContractValue;
 
         await _projectRepository.UpdateAsync(project);
+        await _activityLogService.LogActivityAsync(projectId, "Setting", "Project Updated", "Core project parameters modified.", currentUserId);
         await _unitOfWork.SaveChangesAsync();
         return true;
     }
@@ -167,6 +174,9 @@ public class ProjectService : IProjectService
         project.ClosedByUserId = currentUserId;
 
         await _projectRepository.UpdateAsync(project);
+
+        await _activityLogService.LogActivityAsync(projectId, "Setting", "Project Closed", "Project identity marked as closed/archived.", currentUserId);
+
         await _unitOfWork.SaveChangesAsync();
         return true;
     }

@@ -12,19 +12,22 @@ namespace ConstructionManagement.Infrastructure.Services
         private readonly IRepository<ProjectRole> _roleRepository;
         private readonly IRepository<ProjectTeamRole> _teamRoleRepository;
         private readonly IRepository<User> _userRepository;
-        private readonly IUnitOfWork _unitOfWork; // إضافة الـ Unit of Work
+        private readonly IActivityLogService _activityLogService;
+        private readonly IUnitOfWork _unitOfWork;
 
         public ProjectTeamService(
             IRepository<ProjectTeamMember> teamRepository,
             IRepository<ProjectRole> roleRepository,
             IRepository<ProjectTeamRole> teamRoleRepository,
             IRepository<User> userRepository,
+            IActivityLogService activityLogService,
             IUnitOfWork unitOfWork)
         {
             _teamRepository = teamRepository;
             _roleRepository = roleRepository;
             _teamRoleRepository = teamRoleRepository;
             _userRepository = userRepository;
+            _activityLogService = activityLogService;
             _unitOfWork = unitOfWork;
         }
 
@@ -51,6 +54,19 @@ namespace ConstructionManagement.Infrastructure.Services
             };
 
             await _teamRepository.AddAsync(member);
+            
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user != null)
+            {
+                await _activityLogService.LogActivityAsync(
+                    projectId, 
+                    "Team", 
+                    "Member Joined", 
+                    $"{user.FirstName} {user.LastName} was added to the project team.", 
+                    0 // System/Admin action
+                );
+            }
+
             await _unitOfWork.SaveChangesAsync(); // حفظ التغييرات
 
             return member.Id;

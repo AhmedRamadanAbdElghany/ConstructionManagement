@@ -17,13 +17,17 @@ namespace ConstructionManagement.Tests.Unit.Services;
 public class DailyLogServiceTests
 {
     private readonly Mock<IRepository<ItemDailyLog>> _logRepoMock = new();
-    private readonly Mock<IRepository<BOQExecutedDelta>> _deltaRepoMock = new(); // ← New mock
+    private readonly Mock<IRepository<BOQExecutedDelta>> _deltaRepoMock = new();
+    private readonly Mock<IRepository<BOQItem>> _itemRepoMock = new();
+    private readonly Mock<IActivityLogService> _activityLogMock = new();
     private readonly Mock<IUnitOfWork> _uowMock = new();
 
     private DailyLogService CreateService()
         => new DailyLogService(
             _logRepoMock.Object,
-            _deltaRepoMock.Object,           // ← required now
+            _deltaRepoMock.Object,
+            _itemRepoMock.Object,
+            _activityLogMock.Object,
             _uowMock.Object
         );
 

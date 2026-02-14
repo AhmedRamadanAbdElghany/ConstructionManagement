@@ -16,6 +16,7 @@ public class TransactionsReviewIntegrationTests : IntegrationTestBase
 
     public TransactionsReviewIntegrationTests()
     {
+        var activityLogService = new Mock<IActivityLogService>().Object;
         _transService = new ProjectTransactionService(
             new Repository<Transaction>(Context),
             new Repository<BOQItem>(Context),
@@ -23,7 +24,8 @@ public class TransactionsReviewIntegrationTests : IntegrationTestBase
             new Mock<IFileStorageService>().Object,
             new Repository<BOQProfitabilityLog>(Context),
             new Mock<INotificationService>().Object,
-            UnitOfWork);
+            UnitOfWork,
+            activityLogService);
     }
 
     [Fact]

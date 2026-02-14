@@ -33,6 +33,8 @@ public class BOQAndTransactionIntegrationTests : IntegrationTestBase
         // تأكد أن UnitOfWork المعرف في IntegrationTestBase تم إنشاؤه
         // إذا كنت تستخدم Instance جديدة في كل مرة، يفضل تمريرها هكذا:
 
+        var activityLogService = new Mock<IActivityLogService>().Object;
+
         _boqService = new BOQItemService(
             new Repository<BOQItem>(Context),
             new Repository<BOQMeasured>(Context),
@@ -40,7 +42,8 @@ public class BOQAndTransactionIntegrationTests : IntegrationTestBase
             new Repository<BOQPackage>(Context),
             new Repository<ItemInvoice>(Context),
             new Repository<Project>(Context),
-            base.UnitOfWork); // تأكد أن هذا المتغير يحمل قيمة داخل IntegrationTestBase
+            activityLogService,
+            base.UnitOfWork);
 
         _transService = new ProjectTransactionService(
             new Repository<Transaction>(Context),
@@ -49,7 +52,8 @@ public class BOQAndTransactionIntegrationTests : IntegrationTestBase
             new Mock<IFileStorageService>().Object,
             new Repository<BOQProfitabilityLog>(Context),
             new Mock<INotificationService>().Object,
-            base.UnitOfWork);
+            base.UnitOfWork,
+            activityLogService);
     }
     [Fact]
     public async Task Transaction_ShouldAffect_ProjectProfitability()

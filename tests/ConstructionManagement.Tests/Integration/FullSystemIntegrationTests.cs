@@ -52,6 +52,7 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 			new Repository<BOQPackage>(Context),
 			new Repository<ItemInvoice>(Context),
 			new Repository<Project>(Context),
+			new Mock<IActivityLogService>().Object,
 			UnitOfWork);
 	}
 

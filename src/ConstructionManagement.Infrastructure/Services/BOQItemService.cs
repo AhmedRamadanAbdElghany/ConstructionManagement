@@ -14,18 +14,20 @@ public class BOQItemService : IBOQItemService
     private readonly IRepository<BOQItem> _itemRepository;
     private readonly IRepository<BOQMeasured> _measuredRepo;
     private readonly IRepository<BOQSupervision> _supervisionRepo;
-    private readonly IRepository<BOQPackage> _packageRepo; // New Repo
+    private readonly IRepository<BOQPackage> _packageRepo;
     private readonly IRepository<ItemInvoice> _invoiceRepo;
     private readonly IRepository<Project> _projectRepo;
+    private readonly IActivityLogService _activityLogService;
     private readonly IUnitOfWork _unitOfWork;
 
     public BOQItemService(
         IRepository<BOQItem> itemRepository,
         IRepository<BOQMeasured> measuredRepo,
         IRepository<BOQSupervision> supervisionRepo,
-        IRepository<BOQPackage> packageRepo, // Inject
+        IRepository<BOQPackage> packageRepo,
         IRepository<ItemInvoice> invoiceRepo,
         IRepository<Project> projectRepo,
+        IActivityLogService activityLogService,
         IUnitOfWork unitOfWork)
     {
         _itemRepository = itemRepository;
@@ -34,6 +36,7 @@ public class BOQItemService : IBOQItemService
         _packageRepo = packageRepo;
         _invoiceRepo = invoiceRepo;
         _projectRepo = projectRepo;
+        _activityLogService = activityLogService;
         _unitOfWork = unitOfWork;
     }
 
@@ -107,6 +110,14 @@ public class BOQItemService : IBOQItemService
                 await _supervisionRepo.AddAsync(supervision);
             }
             await _unitOfWork.SaveChangesAsync();
+
+            await _activityLogService.LogActivityAsync(
+                projectId, 
+                "Log", 
+                "BOQ Item Added", 
+                $"New item '{boqItem.ItemName}' ({boqItem.ItemCode}) added to the project scope.", 
+                creatorUserId
+            );
 
             await _unitOfWork.CommitAsync();
 

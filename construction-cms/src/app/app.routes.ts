@@ -150,6 +150,18 @@ export const routes: Routes = [
                 data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
             },
             {
+                path: 'vendors/discovery',
+                loadComponent: () => import('./features/admin/vendors/discovery.component').then(m => m.VendorDiscoveryComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'vendors/analytics',
+                loadComponent: () => import('./features/admin/vendors/analytics.component').then(m => m.VendorAnalyticsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
                 path: 'inventory',
                 loadComponent: () => import('./features/admin/inventory/inventory.component').then(m => m.InventoryComponent),
                 canActivate: [roleGuard],
@@ -311,6 +323,24 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/worker/personal-hr/personal-hr.component').then(m => m.PersonalHrComponent),
                 canActivate: [roleGuard],
                 data: { roles: ['SuperAdmin', 'CompanyAdmin', 'CompanyUser'] }
+            }
+        ]
+    },
+
+    // Vendor Storefront Routes
+    {
+        path: 'vendor',
+        children: [
+            {
+                path: 'storefront',
+                loadComponent: () => import('./features/common/vendor-storefront/storefront.component').then(m => m.VendorStorefrontComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin', 'WarehouseOwner'] }
+            },
+            {
+                path: '',
+                redirectTo: 'storefront',
+                pathMatch: 'full'
             }
         ]
     },

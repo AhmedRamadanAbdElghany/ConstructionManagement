@@ -397,9 +397,24 @@ import { AuthService } from '../../../core/services/auth.service';
                                 </svg>
                             </button>
                         </div>
+                        
+                        <!-- Invoice Filters -->
+                        <div class="px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-center">
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">From</span>
+                                <input type="date" [(ngModel)]="invoiceFilters.fromDate" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-xs focus:ring-1 focus:ring-cyan-500" />
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">To</span>
+                                <input type="date" [(ngModel)]="invoiceFilters.toDate" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-xs focus:ring-1 focus:ring-cyan-500" />
+                            </div>
+                            <div class="flex-1"></div>
+                            <button (click)="resetInvoiceFilters()" class="text-[10px] font-bold text-cyan-500 hover:underline">Reset Filters</button>
+                        </div>
+
                         <div class="p-4 overflow-y-auto max-h-[60vh]">
                             <div class="space-y-3">
-                                @for (invoice of vendorInvoices; track invoice.id) {
+                                @for (invoice of filteredInvoices; track invoice.id) {
                                     <div class="flex items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/5">
                                         <div class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center flex-shrink-0">
                                             <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -448,13 +463,29 @@ export class VendorsComponent implements OnInit {
     pendingInvoices: VendorInvoice[] = [];
     vendorSummary: VendorInvoiceSummary[] = [];
     vendorInvoices: VendorInvoice[] = [];
+    selectedVendor: Vendor | null = null;
 
     showCreateModal = false;
     showAddInvoiceModal = false;
     showRejectInvoiceModal = false;
     showVendorInvoicesModal = false;
 
-    selectedVendor: Vendor | null = null;
+    invoiceFilters = {
+        fromDate: '',
+        toDate: ''
+    };
+
+    get filteredInvoices() {
+        return this.vendorInvoices.filter(inv => {
+            if (this.invoiceFilters.fromDate && new Date(inv.invoiceDate) < new Date(this.invoiceFilters.fromDate)) return false;
+            if (this.invoiceFilters.toDate && new Date(inv.invoiceDate) > new Date(this.invoiceFilters.toDate)) return false;
+            return true;
+        });
+    }
+
+    resetInvoiceFilters() {
+        this.invoiceFilters = { fromDate: '', toDate: '' };
+    }
     selectedInvoice: VendorInvoice | null = null;
     rejectionReason = '';
     selectedFile: File | null = null;

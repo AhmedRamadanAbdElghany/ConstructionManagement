@@ -18,6 +18,7 @@ public class ProjectTransactionServiceTests
     private readonly Mock<IRepository<BOQProfitabilityLog>> _profitLogRepo = new();
     private readonly Mock<IFileStorageService> _fileStorage = new();
     private readonly Mock<INotificationService> _notificationService = new();
+    private readonly Mock<IActivityLogService> _activityLogMock = new();
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
 
     private ProjectTransactionService CreateService()
@@ -29,7 +30,8 @@ public class ProjectTransactionServiceTests
             _fileStorage.Object,
             _profitLogRepo.Object,
             _notificationService.Object,
-            _unitOfWork.Object
+            _unitOfWork.Object,
+            _activityLogMock.Object
         );
     }
 
