@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -255,7 +256,22 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+
+// Explicitly serve files from wwwroot/uploads
+var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "wwwroot", "uploads");
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+}
+
+app.UseStaticFiles(); // Serve default wwwroot files
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads"
+});
+
 app.UseRouting();
 app.UseCors("AllowAll");
 
@@ -296,9 +312,8 @@ if (!isTesting && hfConnectionString != null && !hfConnectionString.Contains("Da
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseStaticFiles(); // for uploaded files (photos, invoices, etc.)
-
 app.MapControllers();
+
 
 app.Run();
 
