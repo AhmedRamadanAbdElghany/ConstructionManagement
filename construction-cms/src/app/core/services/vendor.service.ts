@@ -47,6 +47,7 @@ export interface VendorSearchRequest {
 export interface PublicVendor extends Vendor {
     distanceKm?: number;
     topProducts: VendorProduct[];
+    isRegistered: boolean;
 }
 
 export interface VendorSpendReport {
@@ -122,7 +123,8 @@ export interface CreateVendorProductRequest {
 }
 
 export interface CreateVendorInvoiceRequest {
-    vendorId: number;
+    vendorId?: number;
+    newVendorName?: string;
     invoiceNumber: string;
     invoiceDate: string;
     amount: number;
@@ -186,7 +188,11 @@ export class VendorService {
 
     createInvoice(request: CreateVendorInvoiceRequest): Observable<VendorInvoice> {
         const formData = new FormData();
-        formData.append('vendorId', request.vendorId.toString());
+        if (request.vendorId) {
+            formData.append('vendorId', request.vendorId.toString());
+        } else if (request.newVendorName) {
+            formData.append('newVendorName', request.newVendorName);
+        }
         formData.append('invoiceNumber', request.invoiceNumber);
         formData.append('invoiceDate', request.invoiceDate);
         formData.append('amount', request.amount.toString());

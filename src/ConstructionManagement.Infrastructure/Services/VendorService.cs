@@ -70,7 +70,8 @@ public class VendorService : IVendorService
             TotalInvoiced = v.TotalInvoiced,
             IsActive = v.IsActive,
             InvoiceCount = v.Invoices.Count,
-            CreatedAt = v.CreatedAt
+            CreatedAt = v.CreatedAt,
+            IsRegistered = v.UserId.HasValue
         });
     }
 
@@ -100,7 +101,8 @@ public class VendorService : IVendorService
             TotalInvoiced = vendor.TotalInvoiced,
             IsActive = vendor.IsActive,
             InvoiceCount = vendor.Invoices.Count,
-            CreatedAt = vendor.CreatedAt
+            CreatedAt = vendor.CreatedAt,
+            IsRegistered = vendor.UserId.HasValue
         };
     }
 
@@ -276,10 +278,48 @@ public class VendorService : IVendorService
             fileSize = request.File.Length;
         }
 
+        // Create shadow vendor if NewVendorName is provided and VendorId is not set
+        int actualVendorId = 0;
+        if (request.VendorId.HasValue && request.VendorId.Value > 0)
+        {
+            actualVendorId = request.VendorId.Value;
+        }
+        else if (!string.IsNullOrEmpty(request.NewVendorName))
+        {
+            // Check if a vendor with the same name already exists in this company context (or globally)
+            var existingVendor = await _vendorRepository.AsQueryable()
+                .FirstOrDefaultAsync(v => v.Name == request.NewVendorName && (v.CompanyId == companyId || v.IsPublic));
+            
+            if (existingVendor != null)
+            {
+                actualVendorId = existingVendor.Id;
+            }
+            else
+            {
+                // Create shadow vendor
+                var shadowVendor = new Vendor
+                {
+                    CompanyId = companyId,
+                    Name = request.NewVendorName,
+                    IsActive = true,
+                    IsPublic = false, // Shadows are not public on map until they register
+                    UserId = null,
+                    CreatedAt = DateTime.UtcNow
+                };
+                await _vendorRepository.AddAsync(shadowVendor);
+                await _unitOfWork.SaveChangesAsync();
+                actualVendorId = shadowVendor.Id;
+            }
+        }
+        else
+        {
+            throw new InvalidOperationException("يجب اختيار مورد أو إدخال اسم مورد جديد");
+        }
+
         var invoice = new VendorInvoice
         {
             CompanyId = companyId,
-            VendorId = request.VendorId,
+            VendorId = actualVendorId,
             InvoiceNumber = request.InvoiceNumber,
             InvoiceDate = request.InvoiceDate,
             Amount = request.Amount,
@@ -299,7 +339,7 @@ public class VendorService : IVendorService
         await _invoiceRepository.AddAsync(invoice);
         
         // Update vendor totals
-        var vendor = await _vendorRepository.GetByIdAsync(request.VendorId);
+        var vendor = await _vendorRepository.GetByIdAsync(actualVendorId);
         if (vendor != null)
         {
             vendor.TotalInvoiced = (vendor.TotalInvoiced ?? 0) + request.Amount;
@@ -418,14 +458,21 @@ public class VendorService : IVendorService
     public async Task<IEnumerable<PublicVendorDto>> SearchPublicVendorsAsync(VendorSearchRequest request)
     {
         var query = _vendorRepository.AsQueryable()
-            .Where(v => v.IsActive && v.IsPublic)
+            .Where(v => v.IsActive)
             .Include(v => v.Products)
+            .Include(v => v.Invoices) // Include invoices to count orders
             .AsQueryable();
+
+        // If it's a discovery search (Public), we usually only show Public vendors
+        // BUT if it's a shadow vendor, it's not public on map.
+        // The user says: "any one else can see the vendors and how many orders were made"
+        // and "cannot show it on map... until registers".
+        // So we allow seeing them in list but maybe filter map results.
 
         if (!string.IsNullOrEmpty(request.Material))
         {
-            query = query.Where(v => v.VendorType != null && v.VendorType.Contains(request.Material) || 
-                                     v.Products.Any(p => p.Name.Contains(request.Material) || (p.Category != null && p.Category.Contains(request.Material))));
+            query = query.Where(v => (v.VendorType != null && v.VendorType.Contains(request.Material)) || 
+                                      v.Products.Any(p => p.Name.Contains(request.Material) || (p.Category != null && p.Category.Contains(request.Material))));
         }
 
         if (!string.IsNullOrEmpty(request.Name))
@@ -439,22 +486,31 @@ public class VendorService : IVendorService
         double? refLat = request.Latitude;
         double? refLng = request.Longitude;
 
-        // If project ID is provided, use project location as reference
+        // If project ID is provided, try to get project location
         if (request.ProjectId.HasValue)
         {
-            // Placeholder for project location lookup
-            // For now, if project loc is not available, we rely on request coordinates
+            // Note: Currently Project entity in this system doesn't have Lat/Lng.
+            // In a real scenario, we'd fetch it here.
         }
 
         foreach (var v in vendors)
         {
+            // Only show registered vendors on map (discovery) if they are public
+            // Shadow vendors (UserId == null) should NOT be shown on map according to user
+            bool canShowOnMap = v.UserId.HasValue && v.IsPublic;
+            
             double? distance = null;
             if (refLat.HasValue && refLng.HasValue && v.Latitude.HasValue && v.Longitude.HasValue)
             {
                 distance = CalculateDistance(refLat.Value, refLng.Value, v.Latitude.Value, v.Longitude.Value);
             }
 
-            if (distance.HasValue && distance > request.RadiusKm) continue;
+            // If it's a map search (Lat/Lng provided) and vendor distance > radius, or vendor cannot be on map, skip
+            if (refLat.HasValue && refLng.HasValue)
+            {
+                if (!canShowOnMap) continue; 
+                if (distance.HasValue && distance > request.RadiusKm) continue;
+            }
 
             results.Add(new PublicVendorDto
             {
@@ -467,6 +523,8 @@ public class VendorService : IVendorService
                 Latitude = v.Latitude,
                 Longitude = v.Longitude,
                 DistanceKm = distance,
+                IsRegistered = v.UserId.HasValue,
+                InvoiceCount = v.Invoices.Count, // "how many orders were made from this vendor"
                 TopProducts = v.Products.Take(5).Select(p => new VendorProductDto
                 {
                     Id = p.Id,

@@ -1,0 +1,336 @@
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+import { VendorService, PublicVendor, VendorSearchRequest, VendorProduct } from '../../../core/services/vendor.service';
+import { ProjectService } from '../../../core/services/project.service';
+import { Project } from '../../../shared/interfaces';
+import * as L from 'leaflet';
+
+@Component({
+  selector: 'app-vendor-discovery',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule],
+  template: `
+    <div class="flex flex-col h-screen bg-slate-50 dark:bg-slate-950 overflow-hidden">
+      <!-- Search Bar -->
+      <div class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-4 shadow-sm z-10">
+        <div class="max-w-7xl mx-auto flex flex-wrap gap-4 items-center">
+          <div class="flex-1 min-w-[300px] relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </span>
+            <input type="text" [(ngModel)]="searchRequest.material" (keyup.enter)="onSearch()"
+                   placeholder="{{ 'vendors.search_placeholder' | translate }}"
+                   class="block w-full pl-10 pr-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all" />
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <label class="text-sm font-medium text-slate-600 dark:text-slate-400">{{ 'vendors.radius' | translate }}</label>
+            <select [(ngModel)]="searchRequest.radiusKm" (change)="onSearch()"
+                    class="border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800 py-2 px-3 text-sm focus:ring-2 focus:ring-cyan-500">
+              <option [value]="10">10 km</option>
+              <option [value]="50">50 km</option>
+              <option [value]="100">100 km</option>
+              <option [value]="500">500 km</option>
+            </select>
+          </div>
+
+          <button (click)="onSearch()" 
+                  class="px-6 py-2 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-xl shadow-lg shadow-cyan-500/30 transition-all flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            {{ 'common.search' | translate }}
+          </button>
+
+          @if (myProjects.length > 0) {
+            <div class="flex items-center gap-2 ml-auto">
+              <label class="text-sm font-medium text-slate-600 dark:text-slate-400">Search near project</label>
+              <select [(ngModel)]="searchRequest.projectId" (change)="onProjectSelect()"
+                      class="border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800 py-2 px-3 text-sm focus:ring-2 focus:ring-cyan-500">
+                <option [ngValue]="undefined">Near My Location</option>
+                @for (p of myProjects; track p.id) {
+                  <option [value]="p.id">{{ p.name }}</option>
+                }
+              </select>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="flex flex-1 overflow-hidden">
+        <!-- Sidebar Results -->
+        <div class="w-full lg:w-96 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col shadow-xl z-[5]">
+          <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+            <h2 class="font-bold text-slate-800 dark:text-white">{{ results.length }} {{ 'vendors.results_found' | translate }}</h2>
+            <button (click)="locateMe()" class="p-2 text-cyan-500 hover:bg-cyan-50 rounded-lg transition-colors" title="My Location">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+            @if (loading) {
+              <div class="flex flex-col items-center justify-center py-12 space-y-3">
+                <div class="w-10 h-10 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+                <p class="text-slate-400 text-sm animate-pulse">{{ 'common.loading' | translate }}...</p>
+              </div>
+            } @else {
+              @for (vendor of results; track vendor.id) {
+                <div (click)="zoomToVendor(vendor)"
+                     class="group bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 hover:border-cyan-500 dark:hover:border-cyan-500/50 hover:shadow-lg transition-all cursor-pointer relative overflow-hidden">
+                  <div class="absolute top-0 left-0 w-1 h-full bg-cyan-500 transform -translate-x-full group-hover:translate-x-0 transition-transform"></div>
+                  
+                  <div class="flex justify-between items-start mb-2">
+                    <div class="flex flex-col">
+                      <h3 class="font-bold text-slate-900 dark:text-white group-hover:text-cyan-600 transition-colors">{{ vendor.name }}</h3>
+                      <div class="flex items-center gap-2 mt-1">
+                        @if (vendor.isRegistered) {
+                          <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 uppercase tracking-wider">Registered</span>
+                        } @else {
+                          <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400 uppercase tracking-wider">Unregistered</span>
+                        }
+                        <span class="text-[9px] font-bold text-slate-400">{{ vendor.invoiceCount }} Orders</span>
+                      </div>
+                    </div>
+                    @if (vendor.distanceKm) {
+                      <span class="text-[10px] font-bold py-1 px-2 rounded-full bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400 uppercase">
+                        {{ vendor.distanceKm | number:'1.1-1' }} km
+                      </span>
+                    }
+                  </div>
+
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    </svg>
+                    {{ vendor.address || 'No address provided' }}
+                  </p>
+
+                  <div class="space-y-1.5 mb-3">
+                    @for (prod of vendor.topProducts; track prod.id) {
+                      <div class="flex justify-between items-center text-[11px] py-1 px-2 rounded bg-white dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
+                        <span class="text-slate-700 dark:text-slate-300">{{ prod.name }}</span>
+                        <span class="font-bold text-emerald-600 dark:text-emerald-400">{{ prod.price | currency:'EGP' }} / {{ prod.unit }}</span>
+                      </div>
+                    }
+                  </div>
+
+                  <div class="flex gap-2">
+                    <button class="flex-1 py-2 text-xs font-bold text-cyan-600 dark:text-cyan-400 bg-white dark:bg-slate-900 rounded-lg border border-cyan-100 dark:border-cyan-900/50 hover:bg-cyan-500 hover:text-white transition-all">
+                      Details
+                    </button>
+                    <button (click)="viewInvoices(vendor); $event.stopPropagation()" class="flex-1 py-2 text-xs font-bold text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800 hover:bg-slate-100 transition-all">
+                      Invoices
+                    </button>
+                  </div>
+                </div>
+              } @empty {
+                <div class="text-center py-20">
+                  <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p class="text-slate-500 dark:text-slate-400">{{ 'vendors.no_results_found' | translate }}</p>
+                  <button (click)="searchRequest.radiusKm = 500; onSearch()" class="mt-4 text-sm text-cyan-500 font-bold hover:underline">
+                    {{ 'vendors.increase_radius' | translate }}
+                  </button>
+                </div>
+              }
+            }
+          </div>
+        </div>
+
+        <!-- Map Area -->
+        <div id="map" class="flex-1 relative bg-slate-100 dark:bg-slate-900">
+          <!-- Map Overlay Controls -->
+          <div class="absolute top-4 right-4 z-[1000] flex flex-col gap-2">
+            <button (click)="zoomIn()" class="p-3 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 transition-colors text-slate-700 dark:text-slate-200">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            </button>
+            <button (click)="zoomOut()" class="p-3 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 transition-colors text-slate-700 dark:text-slate-200">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `,
+  styles: [`
+    :host { display: block; }
+    #map { height: 100%; border-radius: 0; }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
+  `]
+})
+export class VendorDiscoveryComponent implements OnInit, OnDestroy, AfterViewInit {
+  private map!: L.Map;
+  private markers: L.Marker[] = [];
+  private userMarker?: L.CircleMarker;
+
+  loading = false;
+  searchRequest: VendorSearchRequest = {
+    radiusKm: 50,
+    material: ''
+  };
+  results: PublicVendor[] = [];
+  myProjects: Project[] = [];
+
+  constructor(
+    private vendorService: VendorService,
+    private projectService: ProjectService
+  ) { }
+
+  ngOnInit() {
+    this.initDefaultLocation();
+    this.loadProjects();
+  }
+
+  ngAfterViewInit() {
+    this.initMap();
+  }
+
+  ngOnDestroy() {
+    if (this.map) {
+      this.map.remove();
+    }
+  }
+
+  private initMap() {
+    this.map = L.map('map', {
+      zoomControl: false,
+      attributionControl: false
+    }).setView([30.0444, 31.2357], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(this.map);
+
+    this.map.on('locationfound', (e) => this.onLocationFound(e));
+    this.locateMe();
+  }
+
+  private initDefaultLocation() {
+    this.searchRequest.latitude = 30.0444;
+    this.searchRequest.longitude = 31.2357;
+  }
+
+  locateMe() {
+    this.map.locate({ setView: true, maxZoom: 14 });
+  }
+
+  onLocationFound(e: L.LocationEvent) {
+    this.searchRequest.latitude = e.latlng.lat;
+    this.searchRequest.longitude = e.latlng.lng;
+
+    if (this.userMarker) {
+      this.userMarker.setLatLng(e.latlng);
+    } else {
+      this.userMarker = L.circleMarker(e.latlng, {
+        radius: 8,
+        fillColor: '#06b6d4',
+        color: '#fff',
+        weight: 2,
+        opacity: 1,
+        fillOpacity: 0.8
+      }).addTo(this.map).bindPopup("You are here");
+    }
+
+    this.onSearch();
+  }
+
+  loadProjects() {
+    this.projectService.getMyProjects().subscribe(projects => {
+      this.myProjects = projects;
+    });
+  }
+
+  onProjectSelect() {
+    if (!this.searchRequest.projectId) {
+      this.locateMe();
+    } else {
+      // Find project to get its location (if available)
+      // Or just search based on the provided projectId on the backend
+      this.onSearch();
+    }
+  }
+
+  onSearch() {
+    this.loading = true;
+    this.vendorService.searchVendors(this.searchRequest).subscribe({
+      next: (data) => {
+        this.results = data;
+        this.updateMarkers();
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Search error', err);
+        this.loading = false;
+      }
+    });
+  }
+
+  private updateMarkers() {
+    // Clear existing markers
+    this.markers.forEach(m => m.remove());
+    this.markers = [];
+
+    const icon = L.icon({
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41]
+    });
+
+    this.results.forEach(vendor => {
+      if (vendor.latitude && vendor.longitude) {
+        const m = L.marker([vendor.latitude, vendor.longitude], { icon })
+          .addTo(this.map)
+          .bindPopup(`
+            <div class="p-2">
+              <h4 class="font-bold text-slate-900">${vendor.name}</h4>
+              <p class="text-xs text-slate-500">${vendor.vendorType || ''}</p>
+              <div class="mt-2 text-xs font-bold text-cyan-600">
+                ${vendor.distanceKm?.toFixed(1)} km away
+              </div>
+            </div>
+          `);
+        this.markers.push(m);
+      }
+    });
+
+    if (this.markers.length > 0) {
+      const group = L.featureGroup(this.markers);
+      this.map.fitBounds(group.getBounds().pad(0.1));
+    }
+  }
+
+  zoomToVendor(vendor: PublicVendor) {
+    if (vendor.latitude && vendor.longitude) {
+      this.map.flyTo([vendor.latitude, vendor.longitude], 15);
+      // Find and open marker popup
+      const marker = this.markers.find(m => {
+        const latLng = m.getLatLng();
+        return latLng.lat === vendor.latitude && latLng.lng === vendor.longitude;
+      });
+      if (marker) marker.openPopup();
+    }
+  }
+
+  zoomIn() { this.map.zoomIn(); }
+  zoomOut() { this.map.zoomOut(); }
+
+  viewInvoices(vendor: PublicVendor) {
+    // Handle viewing invoices - maybe redirect or open modal
+    // For now, let's log it. We can add a modal later if needed.
+    console.log('Viewing invoices for', vendor.name);
+  }
+}

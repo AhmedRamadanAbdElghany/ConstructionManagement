@@ -17,6 +17,7 @@ namespace ConstructionManagement.Application.DTOs.Vendor
         public bool IsActive { get; set; }
         public int InvoiceCount { get; set; }
         public DateTime CreatedAt { get; set; }
+        public bool IsRegistered { get; set; }
     }
 
     public class CreateVendorRequest

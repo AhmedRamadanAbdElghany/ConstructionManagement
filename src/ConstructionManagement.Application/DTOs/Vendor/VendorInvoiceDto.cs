@@ -30,7 +30,8 @@ namespace ConstructionManagement.Application.DTOs.Vendor
     public class CreateVendorInvoiceRequest
     {
         public int CreatedByUserId { get; set; }
-        public int VendorId { get; set; }
+        public int? VendorId { get; set; }
+        public string? NewVendorName { get; set; }
         public string InvoiceNumber { get; set; } = string.Empty;
         public DateTime InvoiceDate { get; set; }
         public decimal Amount { get; set; }

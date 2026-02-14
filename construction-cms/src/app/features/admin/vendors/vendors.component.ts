@@ -299,15 +299,33 @@ import { AuthService } from '../../../core/services/auth.service';
             @if (showAddInvoiceModal && selectedVendor) {
                 <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" (click)="showAddInvoiceModal = false">
                     <div class="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md shadow-2xl" (click)="$event.stopPropagation()">
-                        <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ 'vendors.add_invoice' | translate }} - {{ selectedVendor.name }}</h3>
-                            <button (click)="showAddInvoiceModal = false" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                                <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
-                        </div>
                         <div class="p-4 space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Vendor *</label>
+                                @if (selectedVendor && !isChangingVendor) {
+                                    <div class="flex items-center justify-between p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+                                        <span class="text-sm font-medium">{{ selectedVendor.name }}</span>
+                                        <button (click)="isChangingVendor = true" class="text-xs text-cyan-500 hover:underline">Change</button>
+                                    </div>
+                                } @else {
+                                    <div class="space-y-2">
+                                        <select [(ngModel)]="newInvoice.vendorId" (change)="onVendorIdChange()"
+                                                class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-cyan-500">
+                                            <option [value]="0">-- {{ 'vendors.select_vendor' | translate }} --</option>
+                                            @for (v of vendors; track v.id) {
+                                                <option [value]="v.id">{{ v.name }}</option>
+                                            }
+                                            <option [value]="-1">+ New Supplier (Shadow Vendor)</option>
+                                        </select>
+                                        
+                                        @if (newInvoice.vendorId === -1) {
+                                            <input type="text" [(ngModel)]="newInvoice.newVendorName" 
+                                                   placeholder="Enter new supplier name"
+                                                   class="w-full px-4 py-2 rounded-xl border border-cyan-200 dark:border-cyan-900 bg-cyan-50/50 dark:bg-cyan-900/10 text-slate-900 dark:text-white focus:ring-2 focus:ring-cyan-500" />
+                                        }
+                                    </div>
+                                }
+                            </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{{ 'vendors.invoice_number' | translate }} *</label>
@@ -346,7 +364,7 @@ import { AuthService } from '../../../core/services/auth.service';
                             <button (click)="showAddInvoiceModal = false" class="flex-1 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
                                 {{ 'common.cancel' | translate }}
                             </button>
-                            <button (click)="createInvoice()" [disabled]="!newInvoice.invoiceNumber || !newInvoice.amount" class="flex-1 px-4 py-2 rounded-xl bg-cyan-500 text-white font-medium hover:bg-cyan-600 transition-colors disabled:opacity-50">
+                            <button (click)="createInvoice()" [disabled]="(!newInvoice.vendorId && !newInvoice.newVendorName) || !newInvoice.invoiceNumber || !newInvoice.amount" class="flex-1 px-4 py-2 rounded-xl bg-cyan-500 text-white font-medium hover:bg-cyan-600 transition-colors disabled:opacity-50">
                                 {{ 'common.submit' | translate }}
                             </button>
                         </div>
@@ -469,6 +487,7 @@ export class VendorsComponent implements OnInit {
     showAddInvoiceModal = false;
     showRejectInvoiceModal = false;
     showVendorInvoicesModal = false;
+    isChangingVendor = false;
 
     invoiceFilters = {
         fromDate: '',
@@ -580,10 +599,12 @@ export class VendorsComponent implements OnInit {
         });
     }
 
-    showAddInvoice(vendor: Vendor): void {
-        this.selectedVendor = vendor;
+    showAddInvoice(vendor?: Vendor): void {
+        this.selectedVendor = vendor || null;
+        this.isChangingVendor = !vendor;
         this.newInvoice = {
-            vendorId: vendor.id,
+            vendorId: vendor?.id || 0,
+            newVendorName: '',
             invoiceNumber: '',
             invoiceDate: new Date().toISOString().split('T')[0],
             amount: 0,
@@ -592,6 +613,14 @@ export class VendorsComponent implements OnInit {
         };
         this.selectedFile = null;
         this.showAddInvoiceModal = true;
+    }
+
+    onVendorIdChange() {
+        if (this.newInvoice.vendorId === -1) {
+            this.newInvoice.newVendorName = '';
+        } else if (this.newInvoice.vendorId! > 0) {
+            this.newInvoice.newVendorName = undefined;
+        }
     }
 
     showRejectModal(invoice: VendorInvoice): void {
@@ -623,9 +652,14 @@ export class VendorsComponent implements OnInit {
     }
 
     createInvoice(): void {
-        if (!this.newInvoice.vendorId || !this.newInvoice.invoiceNumber || !this.newInvoice.amount) return;
+        const req = { ...this.newInvoice };
+        if (req.vendorId === -1) {
+            req.vendorId = undefined;
+        }
 
-        this.vendorService.createInvoice(this.newInvoice).subscribe({
+        if ((!req.vendorId && !req.newVendorName) || !req.invoiceNumber || !req.amount) return;
+
+        this.vendorService.createInvoice(req).subscribe({
             next: () => {
                 this.showAddInvoiceModal = false;
                 this.loadData();
