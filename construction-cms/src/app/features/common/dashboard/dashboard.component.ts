@@ -386,25 +386,36 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                   <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">
                     {{ 'dashboard.investment_status' | translate }}
                   </h3>
-                  <div class="relative w-64 h-64 mx-auto mb-10">
-                    <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="40" fill="transparent" stroke="currentColor" stroke-width="12" class="text-slate-100 dark:text-slate-800/50" />
-                      <circle cx="50" cy="50" r="40" fill="transparent" stroke="url(#cyanGradient)" stroke-width="12" 
-                              stroke-dasharray="251.2" 
-                              [attr.stroke-dashoffset]="251.2 * (1 - clientStats.totalPaid / (clientStats.totalContract || 1))"
-                              stroke-linecap="round" />
-                    </svg>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center">
-                      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{{ 'daily_log.remaining' | translate }}</p>
-                      <p class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{{ (clientStats.totalPaid / (clientStats.totalContract || 1) * 100) | number:'1.0-0' }}%</p>
+                  
+                  @if (clientStats.totalContract > 0) {
+                    <div class="relative w-64 h-64 mx-auto mb-10">
+                      <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="40" fill="transparent" stroke="currentColor" stroke-width="12" class="text-slate-100 dark:text-slate-800/50" />
+                        <circle cx="50" cy="50" r="40" fill="transparent" stroke="url(#cyanGradient)" stroke-width="12" 
+                                stroke-dasharray="251.2" 
+                                [attr.stroke-dashoffset]="251.2 * (1 - clientStats.totalPaid / (clientStats.totalContract || 1))"
+                                stroke-linecap="round" />
+                      </svg>
+                      <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{{ 'daily_log.remaining' | translate }}</p>
+                        <p class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{{ (clientStats.totalPaid / (clientStats.totalContract || 1) * 100) | number:'1.0-0' }}%</p>
+                      </div>
                     </div>
-                  </div>
-                  <div class="space-y-4">
-                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border">
-                      <span class="text-xs font-black text-slate-500 uppercase tracking-widest">{{ 'dashboard.total_paid' | translate }}</span>
-                      <span class="text-sm font-black text-slate-900 dark:text-white">{{ clientStats.totalPaid | currency }}</span>
+                    <div class="space-y-4">
+                      <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border">
+                        <span class="text-xs font-black text-slate-500 uppercase tracking-widest">{{ 'dashboard.total_paid' | translate }}</span>
+                        <span class="text-sm font-black text-slate-900 dark:text-white">{{ clientStats.totalPaid | currency }}</span>
+                      </div>
                     </div>
-                  </div>
+                  } @else {
+                    <div class="flex flex-col items-center justify-center py-10 text-center">
+                      <div class="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
+                        <span class="text-4xl">📉</span>
+                      </div>
+                      <p class="text-slate-500 dark:text-slate-400 font-medium mb-2">No financial data yet</p>
+                      <p class="text-xs text-slate-400">Investment metrics will appear here once your project begins.</p>
+                    </div>
+                  }
                 </div>
 
                 <!-- Action Cards -->
@@ -430,30 +441,42 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                 <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
                    <div class="px-8 py-6 border-b flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/30">
                       <h2 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'client_portal.your_projects' | translate }}</h2>
-                      <a routerLink="/client-portal/projects" class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">View All</a>
+                      @if ((clientDashboard?.projects?.length ?? 0) > 0) {
+                        <a routerLink="/client-portal/projects" class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">View All</a>
+                      }
                    </div>
                    <div class="p-6 space-y-4">
-                     @for (project of clientDashboard?.projects; track project.projectId) {
-                        <div class="group bg-white dark:bg-slate-800/50 rounded-[2rem] border p-6 hover:shadow-xl transition-all">
-                           <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                             <div class="flex-1">
-                                <h3 class="text-xl font-bold dark:text-white mb-2">{{ project.projectName }}</h3>
-                                <p class="text-[10px] font-black uppercase text-slate-400">{{ project.location || 'No Location set' }}</p>
+                     @if ((clientDashboard?.projects?.length ?? 0) > 0) {
+                       @for (project of clientDashboard?.projects; track project.projectId) {
+                          <div class="group bg-white dark:bg-slate-800/50 rounded-[2rem] border p-6 hover:shadow-xl transition-all">
+                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                               <div class="flex-1">
+                                  <h3 class="text-xl font-bold dark:text-white mb-2">{{ project.projectName }}</h3>
+                                  <p class="text-[10px] font-black uppercase text-slate-400">{{ project.location || 'No Location set' }}</p>
+                               </div>
+                               <div class="w-full md:w-48">
+                                  <div class="flex items-center justify-between mb-2">
+                                     <span class="text-[10px] font-black uppercase text-slate-400">Progress</span>
+                                     <span class="text-xs font-black dark:text-white">{{ project.progressPercentage }}%</span>
+                                  </div>
+                                  <div class="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                                     <div class="h-full bg-indigo-500 rounded-full" [style.width.%]="project.progressPercentage"></div>
+                                  </div>
+                               </div>
+                               <a [routerLink]="['/client-portal/projects', project.projectId]" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400">
+                                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                               </a>
                              </div>
-                             <div class="w-full md:w-48">
-                                <div class="flex items-center justify-between mb-2">
-                                   <span class="text-[10px] font-black uppercase text-slate-400">Progress</span>
-                                   <span class="text-xs font-black dark:text-white">{{ project.progressPercentage }}%</span>
-                                </div>
-                                <div class="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                                   <div class="h-full bg-indigo-500 rounded-full" [style.width.%]="project.progressPercentage"></div>
-                                </div>
-                             </div>
-                             <a [routerLink]="['/client-portal/projects', project.projectId]" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
-                             </a>
-                           </div>
-                        </div>
+                          </div>
+                       }
+                     } @else {
+                       <div class="text-center py-12">
+                         <div class="w-24 h-24 bg-slate-50 dark:bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                           <span class="text-4xl grayscale opacity-50">🏗️</span>
+                         </div>
+                         <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">No Active Projects</h3>
+                         <p class="text-sm text-slate-500 max-w-xs mx-auto">Your dashboard will light up with real-time progress updates once a project is assigned to you.</p>
+                       </div>
                      }
                    </div>
                 </div>
@@ -464,14 +487,20 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                   <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 shadow-xl">
                      <h3 class="text-xs font-black uppercase tracking-widest mb-6 dark:text-white">Recent Messages</h3>
                      <div class="space-y-6">
-                        @for (msg of clientDashboard?.recentMessages; track msg.id) {
-                           <div class="flex gap-4">
-                              <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">✉️</div>
-                              <div class="min-w-0">
-                                 <p class="text-xs font-black dark:text-white truncate">{{ msg.subject }}</p>
-                                 <p class="text-[10px] text-slate-400 truncate">{{ msg.content }}</p>
-                              </div>
-                           </div>
+                        @if ((clientDashboard?.recentMessages?.length ?? 0) > 0) {
+                          @for (msg of clientDashboard?.recentMessages; track msg.id) {
+                             <div class="flex gap-4">
+                                <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">✉️</div>
+                                <div class="min-w-0">
+                                   <p class="text-xs font-black dark:text-white truncate">{{ msg.subject }}</p>
+                                   <p class="text-[10px] text-slate-400 truncate">{{ msg.content }}</p>
+                                </div>
+                             </div>
+                          }
+                        } @else {
+                          <div class="text-center py-8 opacity-50">
+                            <p class="text-sm">No new messages</p>
+                          </div>
                         }
                      </div>
                   </div>
@@ -479,11 +508,17 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                   <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 shadow-xl">
                      <h3 class="text-xs font-black uppercase tracking-widest mb-6 dark:text-white">Activity Log</h3>
                      <div class="space-y-6 relative ml-2">
-                        @for (act of clientDashboard?.recentActivities; track act.id) {
-                           <div class="flex gap-4 relative">
-                              <div class="w-2.5 h-2.5 rounded-full bg-indigo-500 mt-1.5 shrink-0"></div>
-                              <p class="text-[10px] font-bold text-slate-600 dark:text-slate-300">{{ act.description }}</p>
-                           </div>
+                        @if ((clientDashboard?.recentActivities?.length ?? 0) > 0) {
+                          @for (act of clientDashboard?.recentActivities; track act.id) {
+                             <div class="flex gap-4 relative">
+                                <div class="w-2.5 h-2.5 rounded-full bg-indigo-500 mt-1.5 shrink-0"></div>
+                                <p class="text-[10px] font-bold text-slate-600 dark:text-slate-300">{{ act.description }}</p>
+                             </div>
+                          }
+                        } @else {
+                          <div class="text-center py-8 opacity-50">
+                            <p class="text-sm">No recent activity</p>
+                          </div>
                         }
                      </div>
                   </div>
@@ -962,18 +997,19 @@ export class DashboardComponent implements OnInit {
     return this.currentUser?.fullName?.split(' ')[0] || 'Member';
   }
 
-  clientStats = {
-    totalContract: 250000,
-    totalPaid: 185000,
-    projectProgress: 74,
-    currentStatusNote: 'Plumbing rough-in completed. Interior masonry workflow initiating next week.',
-    milestones: [
-      { label: 'Structural Shell', date: 'Oct 2025', desc: 'Main frame and slab casting finalized for all floors.', done: true },
-      { label: 'Exterior Glazing', date: 'Dec 2025', desc: 'Installation of high-efficiency thermal windows and glass facades.', done: true },
-      { label: 'MEP Infrastructure', date: 'Jan 2026', desc: 'Mechanical, electrical and plumbing arterial systems integration.', done: true },
-      { label: 'Finishing Phase', date: 'March 2026', desc: 'Execution of premium tiling, paintwork and fixture installation.', done: false }
-    ]
-  };
+  clientStats: {
+    totalContract: number;
+    totalPaid: number;
+    projectProgress: number;
+    currentStatusNote: string;
+    milestones: { label: string; date: string; desc: string; done: boolean }[];
+  } = {
+      totalContract: 0,
+      totalPaid: 0,
+      projectProgress: 0,
+      currentStatusNote: 'No active projects',
+      milestones: []
+    };
 
   chartData = [
     { label: 'Jan', earned: 45, collected: 35 },
