@@ -325,7 +325,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
         <!-- ──────────────────────────────────────────────────────────────────
              WORKER DASHBOARD (CompanyUser)
              ────────────────────────────────────────────────────────────────── -->
-        @else if (isWorker) {
+        @if (isWorker) {
           <a routerLink="/worker/dashboard" 
              routerLinkActive="nav-active"
              [routerLinkActiveOptions]="{exact: true}"

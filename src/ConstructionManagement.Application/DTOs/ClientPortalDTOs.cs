@@ -5,6 +5,14 @@ namespace ConstructionManagement.Application.DTOs
 {
     #region Client Portal Settings
 
+    public class ClientCompanyDto
+    {
+        public int CompanyId { get; set; }
+        public string CompanyName { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty; // Pending, Approved, Rejected
+        public DateTime JoinedAt { get; set; }
+    }
+
     public class ClientPortalSettingsDto
     {
         public int Id { get; set; }

@@ -133,14 +133,21 @@ public class JoinRequestService : IJoinRequestService
                 };
             }
 
-            // Clear existing roles and add the base User role (RoleId 3)
-            // or if we want to preserve some, we should be more selective.
-            // For now, we ensure they have at least the 'User' role.
-            if (!user.UserRoles.Any(ur => ur.RoleId == 3))
+            // Assign appropriate roles based on UserType
+            int primaryRoleId = user.UserType switch
+            {
+                Domain.Enums.UserType.Worker => 4,         // CompanyUser
+                Domain.Enums.UserType.Engineer => 4,       // CompanyUser
+                Domain.Enums.UserType.InventoryOwner => 4, // CompanyUser
+                Domain.Enums.UserType.NormalUser => 3,     // User (Client)
+                _ => 3
+            };
+
+            if (!user.UserRoles.Any(ur => ur.RoleId == primaryRoleId))
             {
                 user.UserRoles.Add(new UserRole
                 {
-                    RoleId = 3, 
+                    RoleId = primaryRoleId,
                     AssignedAt = DateTime.UtcNow
                 });
             }

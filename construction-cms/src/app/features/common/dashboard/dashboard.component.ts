@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DashboardService, DashboardStats, SuperAdminStats, CompanySubscription, RecentActivity, SuperAdminActivity } from '../../../core/services/dashboard.service';
@@ -879,6 +879,7 @@ export class DashboardComponent implements OnInit {
   workerPerformance: WorkerPerformance[] = [];
   delayedProjectsStats: { managerName: string, count: number }[] = [];
   workerProjectStats: any;
+  hasApprovedCompany = signal<boolean>(false);
 
   // Standard Admin Stats
   stats = {
@@ -916,7 +917,7 @@ export class DashboardComponent implements OnInit {
   }
 
   get isUnassignedClient(): boolean {
-    return this.isClient && this.stats.activeProjects === 0;
+    return this.isClient && this.stats.activeProjects === 0 && !this.hasApprovedCompany();
   }
 
   get firstName(): string {
@@ -967,6 +968,12 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     console.log('Dashboard Initialized', this.currentUser);
     if (this.isPending) return;
+
+    if (this.isClient) {
+      this.clientPortalService.getMyCompanies().subscribe(companies => {
+        this.hasApprovedCompany.set(companies && companies.some((c: any) => c.status === 'Approved'));
+      });
+    }
 
     if (this.isSuperAdmin) {
       this.loadSuperAdminView();

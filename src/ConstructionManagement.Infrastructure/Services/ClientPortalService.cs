@@ -970,6 +970,23 @@ namespace ConstructionManagement.Infrastructure.Services
 
         #endregion
 
+        public async Task<List<ClientCompanyDto>> GetMyCompaniesAsync(int userId)
+        {
+            var requests = await _context.JoinRequests
+                .Include(r => r.Company)
+                .Where(r => r.UserId == userId)
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+
+            return requests.Select(r => new ClientCompanyDto
+            {
+                CompanyId = r.CompanyId,
+                CompanyName = r.Company.Name,
+                Status = r.Status,
+                JoinedAt = r.CreatedAt
+            }).ToList();
+        }
+
         #region Helper Methods
 
         private static string HashPassword(string password)

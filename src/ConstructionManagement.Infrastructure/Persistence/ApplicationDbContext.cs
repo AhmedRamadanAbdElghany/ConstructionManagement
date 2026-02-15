@@ -726,7 +726,8 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<Role>().HasData(
             new Role { Id = 1, Name = "SuperAdmin", Description = "Platform-level system administrator", CreatedAt = fixedDate, CompanyId = null },
             new Role { Id = 2, Name = "CompanyAdmin", Description = "Organization administrator", CreatedAt = fixedDate, CompanyId = null },
-            new Role { Id = 3, Name = "User", Description = "Default authenticated user", CreatedAt = fixedDate, CompanyId = null }
+            new Role { Id = 3, Name = "User", Description = "Default authenticated user", CreatedAt = fixedDate, CompanyId = null },
+            new Role { Id = 4, Name = "CompanyUser", Description = "Standard company staff/worker", CreatedAt = fixedDate, CompanyId = null }
         );
 
         // --- Role-Permission Mapping ---

@@ -22,6 +22,8 @@ public class AuthServiceTests
     private readonly Mock<ICompanyRequestRepository> _companyRequestRepoMock = new();
     private readonly Mock<INotificationService> _notificationServiceMock = new();
     private readonly Mock<IRepository<Vendor>> _vendorRepoMock = new();
+    private readonly Mock<IRepository<Role>> _roleRepoMock = new();
+    private readonly Mock<IRepository<UserRole>> _userRoleRepoMock = new();
 
     public AuthServiceTests()
     {
@@ -40,7 +42,9 @@ public class AuthServiceTests
             _httpContextAccessorMock.Object,
             _companyRequestRepoMock.Object,
             _notificationServiceMock.Object,
-            _vendorRepoMock.Object
+            _vendorRepoMock.Object,
+            _roleRepoMock.Object,
+            _userRoleRepoMock.Object
         );
     }
 
@@ -172,7 +176,9 @@ public class AuthServiceTests
             _httpContextAccessorMock.Object,
             _companyRequestRepoMock.Object,
             _notificationServiceMock.Object,
-            _vendorRepoMock.Object
+            _vendorRepoMock.Object,
+            _roleRepoMock.Object,
+            _userRoleRepoMock.Object
         );
 
         var request = new LoginRequest(user.Email, "Test@123");

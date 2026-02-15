@@ -10,13 +10,16 @@ namespace ConstructionManagement.WebApi.Controllers
     public class ClientPortalController : ControllerBase
     {
         private readonly IClientPortalService _clientPortalService;
+        private readonly IAuthService _authService;
         private readonly ILogger<ClientPortalController> _logger;
 
         public ClientPortalController(
             IClientPortalService clientPortalService,
+            IAuthService authService,
             ILogger<ClientPortalController> logger)
         {
             _clientPortalService = clientPortalService;
+            _authService = authService;
             _logger = logger;
         }
 
@@ -509,6 +512,18 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         #endregion
+
+        /// <summary>
+        /// Get companies associated with the current user
+        /// </summary>
+        [HttpGet("my-companies")]
+        [Authorize]
+        public async Task<ActionResult<List<ClientCompanyDto>>> GetMyCompanies()
+        {
+            var userId = _authService.GetCurrentUserId() ?? 0;
+            var companies = await _clientPortalService.GetMyCompaniesAsync(userId);
+            return Ok(companies);
+        }
 
         #region Helper Methods
 

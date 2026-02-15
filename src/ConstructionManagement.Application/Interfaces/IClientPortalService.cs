@@ -101,6 +101,11 @@ namespace ConstructionManagement.Application.Interfaces
         /// </summary>
         Task<ClientDashboardDto> GetClientDashboardAsync(int clientUserId);
 
+        /// <summary>
+        /// Get companies associated with the current user via join requests
+        /// </summary>
+        Task<List<ClientCompanyDto>> GetMyCompaniesAsync(int userId);
+
         #endregion
 
         #region Client Payments
