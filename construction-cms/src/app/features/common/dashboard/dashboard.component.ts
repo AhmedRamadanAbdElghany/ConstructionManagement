@@ -419,20 +419,7 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                 </div>
 
                 <!-- Action Cards -->
-                <div class="grid grid-cols-2 gap-4">
-                   <a routerLink="/client-portal/documents" class="p-6 rounded-[2rem] bg-indigo-600 text-white shadow-xl hover:scale-105 transition-all text-center">
-                      <div class="w-10 h-10 rounded-xl bg-white/20 mx-auto flex items-center justify-center mb-3">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                      </div>
-                      <p class="text-[10px] font-black uppercase tracking-widest leading-tight">Project Documents</p>
-                   </a>
-                   <a routerLink="/profile" class="p-6 rounded-[2rem] bg-white dark:bg-slate-900 border shadow-xl hover:scale-105 transition-all text-center">
-                      <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 mx-auto flex items-center justify-center mb-3">
-                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
-                      </div>
-                      <p class="text-[10px] font-black dark:text-white uppercase tracking-widest leading-tight">Settings</p>
-                   </a>
-                </div>
+                <!-- Action Cards Removed -->
               </div>
 
               <!-- Projects & Activity -->
@@ -485,7 +472,7 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <!-- Messages -->
                   <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 shadow-xl">
-                     <h3 class="text-xs font-black uppercase tracking-widest mb-6 dark:text-white">Recent Messages</h3>
+                     <h3 class="text-xs font-black uppercase tracking-widest mb-6 text-slate-900 dark:text-white">Recent Messages</h3>
                      <div class="space-y-6">
                         @if ((clientDashboard?.recentMessages?.length ?? 0) > 0) {
                           @for (msg of clientDashboard?.recentMessages; track msg.id) {
@@ -498,15 +485,19 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                              </div>
                           }
                         } @else {
-                          <div class="text-center py-8 opacity-50">
-                            <p class="text-sm">No new messages</p>
+                          <div class="text-center py-12">
+                            <div class="w-16 h-16 bg-slate-50 dark:bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                              <span class="text-2xl grayscale opacity-50">📬</span>
+                            </div>
+                            <p class="text-sm font-bold text-slate-900 dark:text-white mb-1">No new messages</p>
+                            <p class="text-[10px] text-slate-500">Inbox zero! You're all caught up.</p>
                           </div>
                         }
                      </div>
                   </div>
                   <!-- Activity -->
                   <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 shadow-xl">
-                     <h3 class="text-xs font-black uppercase tracking-widest mb-6 dark:text-white">Activity Log</h3>
+                     <h3 class="text-xs font-black uppercase tracking-widest mb-6 text-slate-900 dark:text-white">Activity Log</h3>
                      <div class="space-y-6 relative ml-2">
                         @if ((clientDashboard?.recentActivities?.length ?? 0) > 0) {
                           @for (act of clientDashboard?.recentActivities; track act.id) {
@@ -516,8 +507,12 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                              </div>
                           }
                         } @else {
-                          <div class="text-center py-8 opacity-50">
-                            <p class="text-sm">No recent activity</p>
+                          <div class="text-center py-12">
+                            <div class="w-16 h-16 bg-slate-50 dark:bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                              <span class="text-2xl grayscale opacity-50">⚡</span>
+                            </div>
+                            <p class="text-sm font-bold text-slate-900 dark:text-white mb-1">No recent activity</p>
+                            <p class="text-[10px] text-slate-500">Your latest actions will appear here.</p>
                           </div>
                         }
                      </div>
