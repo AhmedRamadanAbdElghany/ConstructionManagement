@@ -76,6 +76,7 @@ import { ClientPortalService, ClientPayment, ClientPaymentSummary } from '../../
                 <thead class="bg-slate-50 dark:bg-slate-950/50">
                   <tr>
                     <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'client.invoice_number' | translate }}</th>
+                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'client.company' | translate }}</th>
                     <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'client.project' | translate }}</th>
                     <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'client.invoice_date' | translate }}</th>
                     <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'client.due_date' | translate }}</th>
@@ -90,6 +91,11 @@ import { ClientPortalService, ClientPayment, ClientPaymentSummary } from '../../
                     <tr class="border-t border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
                       <td class="px-6 py-4">
                         <span class="text-sm font-black text-slate-900 dark:text-white">{{ payment.invoiceNumber }}</span>
+                      </td>
+                      <td class="px-6 py-4">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
+                          {{ payment.companyName || 'N/A' }}
+                        </span>
                       </td>
                       <td class="px-6 py-4">
                         <span class="text-sm font-medium text-slate-600 dark:text-slate-400">{{ payment.projectName }}</span>
@@ -131,14 +137,16 @@ import { ClientPortalService, ClientPayment, ClientPaymentSummary } from '../../
 
         <!-- Empty State -->
         @if (!isLoading && payments.length === 0) {
-          <div class="text-center py-20">
-            <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-slate-700/50 flex items-center justify-center">
-              <svg class="w-12 h-12 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          <div class="flex flex-col items-center justify-center py-20 text-center">
+            <div class="w-24 h-24 mb-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center shadow-inner">
+              <svg class="w-10 h-10 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
             </div>
-            <h3 class="text-xl font-bold text-white mb-2">{{ 'client.no_payments' | translate }}</h3>
-            <p class="text-slate-400">{{ 'client.no_payments_desc' | translate }}</p>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ 'client.no_payments' | translate }}</h3>
+            <p class="text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed">
+              {{ 'client.no_payments_desc' | translate }}
+            </p>
           </div>
         }
       </div>

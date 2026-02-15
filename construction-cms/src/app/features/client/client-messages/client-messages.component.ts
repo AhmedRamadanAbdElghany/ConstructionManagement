@@ -6,10 +6,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ClientPortalService, ClientMessage } from '../../../core/services/client-portal.service';
 
 @Component({
-    selector: 'app-client-messages',
-    standalone: true,
-    imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
-    template: `
+  selector: 'app-client-messages',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
+  template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
@@ -63,6 +63,13 @@ import { ClientPortalService, ClientMessage } from '../../../core/services/clien
                         {{ getMessageIcon(message.messageType) }}
                       </div>
                       <div>
+                        <div class="flex items-center gap-2 mb-1">
+                          @if (message.companyName) {
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                              {{ message.companyName }}
+                            </span>
+                          }
+                        </div>
                         <h3 class="text-lg font-black text-slate-900 dark:text-white mb-1">{{ message.subject }}</h3>
                         <div class="flex items-center gap-3">
                           @if (message.projectName) {
@@ -135,15 +142,18 @@ import { ClientPortalService, ClientMessage } from '../../../core/services/clien
 
         <!-- Empty State -->
         @if (!isLoading && messages.length === 0) {
-          <div class="text-center py-20">
-            <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-slate-700/50 flex items-center justify-center">
-              <svg class="w-12 h-12 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+          <div class="flex flex-col items-center justify-center py-20 text-center">
+            <div class="w-24 h-24 mb-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center shadow-inner">
+              <svg class="w-10 h-10 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
               </svg>
             </div>
-            <h3 class="text-xl font-bold text-white mb-2">{{ 'client.no_messages' | translate }}</h3>
-            <p class="text-slate-400 mb-6">{{ 'client.no_messages_desc' | translate }}</p>
-            <a routerLink="/client-portal/messages/new" class="inline-block px-6 py-3 rounded-xl bg-indigo-600 text-white text-xs font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:scale-105 transition-transform">
+            <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ 'client.no_messages' | translate }}</h3>
+            <p class="text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed mb-8">
+              {{ 'client.no_messages_desc' | translate }}
+            </p>
+            <a routerLink="/client-portal/messages/new" class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-indigo-600 text-white text-xs font-black uppercase tracking-widest shadow-lg shadow-indigo-500/30 hover:bg-indigo-700 hover:scale-105 transition-all">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
               {{ 'client.send_first_message' | translate }}
             </a>
           </div>
@@ -151,7 +161,7 @@ import { ClientPortalService, ClientMessage } from '../../../core/services/clien
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     .unread {
       border-left: 4px solid #6366f1;
     }
@@ -169,42 +179,42 @@ import { ClientPortalService, ClientMessage } from '../../../core/services/clien
   `]
 })
 export class ClientMessagesComponent implements OnInit {
-    private clientPortalService = inject(ClientPortalService);
-    private route = inject(ActivatedRoute);
+  private clientPortalService = inject(ClientPortalService);
+  private route = inject(ActivatedRoute);
 
-    messages: ClientMessage[] = [];
-    isLoading = false;
-    selectedStatus = '';
+  messages: ClientMessage[] = [];
+  isLoading = false;
+  selectedStatus = '';
 
-    ngOnInit() {
-        this.loadMessages();
+  ngOnInit() {
+    this.loadMessages();
+  }
+
+  loadMessages() {
+    this.isLoading = true;
+    const status = this.selectedStatus || undefined;
+    this.clientPortalService.getClientMessages(status).subscribe({
+      next: (messages) => {
+        this.messages = messages;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading messages:', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  getMessageIcon(messageType: string): string {
+    switch (messageType) {
+      case 'Inquiry': return '❓';
+      case 'Request': return '📋';
+      case 'Complaint': return '⚠️';
+      default: return '💬';
     }
+  }
 
-    loadMessages() {
-        this.isLoading = true;
-        const status = this.selectedStatus || undefined;
-        this.clientPortalService.getClientMessages(status).subscribe({
-            next: (messages) => {
-                this.messages = messages;
-                this.isLoading = false;
-            },
-            error: (error) => {
-                console.error('Error loading messages:', error);
-                this.isLoading = false;
-            }
-        });
-    }
-
-    getMessageIcon(messageType: string): string {
-        switch (messageType) {
-            case 'Inquiry': return '❓';
-            case 'Request': return '📋';
-            case 'Complaint': return '⚠️';
-            default: return '💬';
-        }
-    }
-
-    formatDateTime(dateString: string): string {
-        return this.clientPortalService.formatDateTime(dateString);
-    }
+  formatDateTime(dateString: string): string {
+    return this.clientPortalService.formatDateTime(dateString);
+  }
 }

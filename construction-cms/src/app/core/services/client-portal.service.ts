@@ -2,6 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export interface ClientCompany {
+    companyId: number;
+    companyName: string;
+    status: 'Pending' | 'Approved' | 'Rejected';
+    joinedAt: string;
+}
+
 export interface ClientPortalSettings {
     id: number;
     companyId: number;
@@ -20,7 +27,8 @@ export interface ClientPortalSettings {
 
 export interface ClientUser {
     id: number;
-    companyId: number;
+    companyId: number; // Primary company (if any)
+    companies?: ClientCompany[]; // All associated companies
     email: string;
     firstName: string;
     lastName: string;
@@ -55,6 +63,8 @@ export interface ClientDashboard {
 
 export interface ClientProjectSummary {
     projectId: number;
+    companyId?: number;
+    companyName?: string;
     projectName: string;
     status: string;
     progressPercentage: number;
@@ -78,6 +88,8 @@ export interface ClientPaymentSummary {
 export interface ClientPayment {
     id: number;
     projectId: number;
+    companyId?: number;
+    companyName?: string;
     projectName: string;
     invoiceNumber: string;
     amount: number;
@@ -93,6 +105,8 @@ export interface ClientPayment {
 export interface ClientMessage {
     id: number;
     projectId?: number;
+    companyId?: number;
+    companyName?: string;
     projectName?: string;
     subject: string;
     content: string;
@@ -110,6 +124,8 @@ export interface ClientMessage {
 export interface ClientActivity {
     id: number;
     projectId?: number;
+    companyId?: number;
+    companyName?: string;
     projectName?: string;
     activityType: string;
     description: string;
@@ -119,6 +135,8 @@ export interface ClientActivity {
 export interface ChangeOrderRequest {
     id: number;
     projectId: number;
+    companyId?: number;
+    companyName?: string;
     projectName: string;
     requestNumber: string;
     title: string;
@@ -190,6 +208,32 @@ export class ClientPortalService {
 
     updateClientPortalSettings(settings: Partial<ClientPortalSettings>): Observable<ClientPortalSettings> {
         return this.http.put<ClientPortalSettings>(`${this.apiUrl}/settings`, settings);
+    }
+
+    // Client Companies
+    getMyCompanies(): Observable<ClientCompany[]> {
+        // Mock implementation for demo - in real app this would come from an endpoint
+        // Simulating a user who is approved in one company and pending in another
+        return new Observable(observer => {
+            setTimeout(() => {
+                observer.next([
+                    {
+                        companyId: 1,
+                        companyName: 'Acme Construction',
+                        status: 'Approved',
+                        joinedAt: new Date().toISOString()
+                    },
+                    {
+                        companyId: 2,
+                        companyName: 'BuildRight Inc.',
+                        status: 'Pending',
+                        joinedAt: new Date().toISOString()
+                    }
+                ]);
+                observer.complete();
+            }, 300);
+        });
+        // return this.http.get<ClientCompany[]>(`${this.apiUrl}/my-companies`);
     }
 
     // Client Users (Admin)

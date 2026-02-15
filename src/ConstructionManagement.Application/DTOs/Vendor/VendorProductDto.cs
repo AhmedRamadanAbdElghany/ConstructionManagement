@@ -13,6 +13,7 @@ namespace ConstructionManagement.Application.DTOs.Vendor
         public decimal LowStockThreshold { get; set; }
         public decimal PurchasePrice { get; set; }
         public bool IsActive { get; set; }
+        public int SalesCount { get; set; }
     }
 
     public class CreateVendorProductRequest

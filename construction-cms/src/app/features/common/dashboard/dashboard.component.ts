@@ -225,17 +225,19 @@ import { AuthService } from '../../../core/services/auth.service';
               </div>
               
               <div class="space-y-6">
-                <div *ngFor="let act of saActivities" class="flex gap-4 p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 transition-all border border-transparent hover:border-slate-100/50">
-                  <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" 
-                       [ngClass]="act.status === 'success' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-600'">
-                    <span class="text-xl">{{ act.status === 'success' ? '✓' : '⚡' }}</span>
+                @for (act of saActivities; track act.id) {
+                  <div class="flex gap-4 p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 transition-all border border-transparent hover:border-slate-100/50">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" 
+                         [ngClass]="act.status === 'success' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-600'">
+                      <span class="text-xl">{{ act.status === 'success' ? '✓' : '⚡' }}</span>
+                    </div>
+                    <div>
+                      <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">{{ act.company }}</h4>
+                      <p class="text-xs text-slate-500 mt-0.5 leading-snug">{{ act.action }}</p>
+                      <span class="text-[10px] font-black text-indigo-500 uppercase tracking-tighter mt-2 block">{{ act.time }}</span>
+                    </div>
                   </div>
-                  <div>
-                    <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">{{ act.company }}</h4>
-                    <p class="text-xs text-slate-500 mt-0.5 leading-snug">{{ act.action }}</p>
-                    <span class="text-[10px] font-black text-indigo-500 uppercase tracking-tighter mt-2 block">{{ act.time }}</span>
-                  </div>
-                </div>
+                }
               </div>
             </div>
           </div>
@@ -261,19 +263,21 @@ import { AuthService } from '../../../core/services/auth.service';
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-white/5">
-                  <tr *ngFor="let sub of subscriptions" class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
-                    <td class="px-8 py-6 font-black text-slate-900 dark:text-white">{{ sub.companyName }}</td>
-                    <td class="px-8 py-6">
-                      <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-indigo-50 text-indigo-600 border border-indigo-100">{{ sub.plan }}</span>
-                    </td>
-                    <td class="px-8 py-6">
-                       <span class="text-xs font-bold" [ngClass]="sub.status === 'Active' ? 'text-emerald-500' : 'text-rose-500'">{{ 'projects.' + sub.status.toLowerCase() | translate }}</span>
-                    </td>
-                    <td class="px-8 py-6 text-sm text-slate-500 font-medium">{{ sub.nextPayment }}</td>
-                    <td class="px-8 py-6">
-                      <span class="font-black text-slate-800 dark:text-slate-200">{{ sub.amount | currency }}</span>
-                    </td>
-                  </tr>
+                  @for (sub of subscriptions; track sub.id) {
+                    <tr class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
+                      <td class="px-8 py-6 font-black text-slate-900 dark:text-white">{{ sub.companyName }}</td>
+                      <td class="px-8 py-6">
+                        <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-indigo-50 text-indigo-600 border border-indigo-100">{{ sub.plan }}</span>
+                      </td>
+                      <td class="px-8 py-6">
+                        <span class="text-xs font-bold" [ngClass]="sub.status === 'Active' ? 'text-emerald-500' : 'text-rose-500'">{{ 'projects.' + sub.status.toLowerCase() | translate }}</span>
+                      </td>
+                      <td class="px-8 py-6 text-sm text-slate-500 font-medium">{{ sub.nextPayment }}</td>
+                      <td class="px-8 py-6">
+                        <span class="font-black text-slate-800 dark:text-slate-200">{{ sub.amount | currency }}</span>
+                      </td>
+                    </tr>
+                  }
                 </tbody>
               </table>
             </div>
@@ -284,6 +288,45 @@ import { AuthService } from '../../../core/services/auth.service';
              CLIENT DASHBOARD (NormalUser / Apartment Owner)
              ────────────────────────────────────────────────────────────────── -->
         @else if (isClient) {
+          @if (isUnassignedClient) {
+            <div class="max-w-4xl mx-auto py-12 px-4 animate-in fade-in slide-in-from-bottom-8 duration-700">
+              <div class="text-center mb-16">
+                <div class="w-24 h-24 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-cyan-500/20 rotate-3">
+                  <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                  </svg>
+                </div>
+                <h2 class="text-4xl font-black text-slate-900 dark:text-white mb-6 tracking-tight">Your Construction Journey Starts Here</h2>
+                <p class="text-lg text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed">
+                  Join a professional company to manage your project, or explore our curated list of suppliers and partners nearby.
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <!-- Find a Firm -->
+                <a routerLink="/browse-firms" class="group bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-200 dark:border-white/5 shadow-xl hover:shadow-cyan-500/10 transition-all duration-500 text-left relative overflow-hidden">
+                  <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-3xl"></div>
+                  <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                  </div>
+                  <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-3 tracking-tight uppercase">Browse Verified Firms</h3>
+                  <p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed mb-6">Find the perfect partner for your construction or renovation needs. Compare portfolios and reviews.</p>
+                  <span class="text-cyan-500 font-black text-xs uppercase tracking-widest flex items-center gap-2">Explore Firms <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M9 5l7 7-7 7"/></svg></span>
+                </a>
+
+                <!-- Find Suppliers -->
+                <a routerLink="/admin/vendors/discovery" class="group bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-200 dark:border-white/5 shadow-xl hover:shadow-indigo-500/10 transition-all duration-500 text-left relative overflow-hidden">
+                  <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl"></div>
+                  <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                  </div>
+                  <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-3 tracking-tight uppercase">Nearby Suppliers</h3>
+                  <p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed mb-6">Source materials directly from local vendors. Get the best prices on cement, steel, and more.</p>
+                  <span class="text-indigo-500 font-black text-xs uppercase tracking-widest flex items-center gap-2">Find Suppliers <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M9 5l7 7-7 7"/></svg></span>
+                </a>
+              </div>
+            </div>
+          } @else {
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
             <!-- Left Side: Financial Status & Progress -->
             <div class="lg:col-span-4 space-y-8">
@@ -410,6 +453,7 @@ import { AuthService } from '../../../core/services/auth.service';
               </div>
             </div>
           </div>
+        }
         }
 
         <!-- ──────────────────────────────────────────────────────────────────
@@ -790,12 +834,14 @@ import { AuthService } from '../../../core/services/auth.service';
                   <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">{{ 'dashboard.cash_flow' | translate }}</th>
                 </tr></thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-white/5">
-                  <tr *ngFor="let p of projects" class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
-                    <td class="px-8 py-6 font-black text-slate-900 dark:text-white">{{ p.name }}</td>
-                     <td class="px-8 py-6"><span class="px-3 py-1 bg-cyan-50 text-cyan-600 rounded-lg text-xs font-black tracking-widest">{{ 'projects.' + p.status.toLowerCase() | translate }}</span></td>
-                    <td class="px-8 py-6 font-bold">{{ p.progress }}%</td>
-                    <td class="px-8 py-6 font-black text-emerald-500 tracking-tight">{{ p.cashFlow.earned | currency }}</td>
-                  </tr>
+                  @for (p of projects; track p.id) {
+                    <tr class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+                      <td class="px-8 py-6 font-black text-slate-900 dark:text-white">{{ p.name }}</td>
+                      <td class="px-8 py-6"><span class="px-3 py-1 bg-cyan-50 text-cyan-600 rounded-lg text-xs font-black tracking-widest">{{ 'projects.' + p.status.toLowerCase() | translate }}</span></td>
+                      <td class="px-8 py-6 font-bold">{{ p.progress }}%</td>
+                      <td class="px-8 py-6 font-black text-emerald-500 tracking-tight">{{ p.cashFlow.earned | currency }}</td>
+                    </tr>
+                  }
                 </tbody>
               </table>
             </div>
@@ -865,6 +911,10 @@ export class DashboardComponent implements OnInit {
 
   get isPending(): boolean {
     return this.currentUser?.userType === 2 && !this.currentUser?.companyId;
+  }
+
+  get isUnassignedClient(): boolean {
+    return this.isClient && this.stats.activeProjects === 0;
   }
 
   get firstName(): string {

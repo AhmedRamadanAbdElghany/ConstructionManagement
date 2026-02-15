@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { roleGuard } from './core/auth/role.guard';
+import { companyApprovalGuard } from './core/auth/company-approval.guard';
 
 export const routes: Routes = [
     // Auth Routes (available without authentication)
@@ -376,43 +377,43 @@ export const routes: Routes = [
             },
             {
                 path: 'payments',
-                loadComponent: () => import('./features/client/reports/client-reports.component').then(m => m.ClientReportsComponent),
-                canActivate: [roleGuard]
+                loadComponent: () => import('./features/client/client-payments/client-payments.component').then(m => m.ClientPaymentsComponent),
+                canActivate: [roleGuard, companyApprovalGuard]
             },
             {
                 path: 'messages',
-                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent),
-                canActivate: [roleGuard]
+                loadComponent: () => import('./features/client/client-messages/client-messages.component').then(m => m.ClientMessagesComponent),
+                canActivate: [roleGuard, companyApprovalGuard]
             },
             {
                 path: 'messages/new',
-                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent),
-                canActivate: [roleGuard]
+                loadComponent: () => import('./features/client/client-messages/client-messages.component').then(m => m.ClientMessagesComponent),
+                canActivate: [roleGuard, companyApprovalGuard]
             },
             {
                 path: 'messages/:id',
-                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent),
-                canActivate: [roleGuard]
+                loadComponent: () => import('./features/client/client-messages/client-messages.component').then(m => m.ClientMessagesComponent),
+                canActivate: [roleGuard, companyApprovalGuard]
             },
             {
                 path: 'change-orders',
-                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent),
-                canActivate: [roleGuard]
+                loadComponent: () => import('./features/client/client-change-orders/client-change-orders.component').then(m => m.ClientChangeOrdersComponent),
+                canActivate: [roleGuard, companyApprovalGuard]
             },
             {
                 path: 'change-orders/new',
-                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent),
-                canActivate: [roleGuard]
+                loadComponent: () => import('./features/client/client-change-orders/client-change-orders.component').then(m => m.ClientChangeOrdersComponent),
+                canActivate: [roleGuard, companyApprovalGuard]
             },
             {
                 path: 'change-orders/:id',
-                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent),
-                canActivate: [roleGuard]
+                loadComponent: () => import('./features/client/client-change-orders/client-change-orders.component').then(m => m.ClientChangeOrdersComponent),
+                canActivate: [roleGuard, companyApprovalGuard]
             },
             {
                 path: 'documents',
-                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent),
-                canActivate: [roleGuard]
+                loadComponent: () => import('./features/client/client-documents/client-documents.component').then(m => m.ClientDocumentsComponent),
+                canActivate: [roleGuard, companyApprovalGuard]
             },
             {
                 path: 'activities',

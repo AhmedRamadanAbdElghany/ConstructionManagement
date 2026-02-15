@@ -587,7 +587,29 @@ public class VendorService : IVendorService
             Longitude = v.Longitude,
             DistanceKm = request.Latitude.HasValue && request.Longitude.HasValue && v.Latitude.HasValue && v.Longitude.HasValue
                 ? CalculateDistance(request.Latitude.Value, request.Longitude.Value, v.Latitude.Value, v.Longitude.Value)
-                : null
+                : null,
+            TopProducts = v.Products
+                .Where(p => p.IsActive && (string.IsNullOrEmpty(request.Material) || p.Name.Contains(request.Material) || (p.Description != null && p.Description.Contains(request.Material))))
+                .Select(p => new VendorProductDto
+                {
+                    Id = p.Id,
+                    VendorId = p.VendorId,
+                    Name = p.Name,
+                    Category = p.Category,
+                    Price = p.Price,
+                    Unit = p.Unit,
+                    Description = p.Description,
+                    QuantityInStock = p.QuantityInStock,
+                    LowStockThreshold = p.LowStockThreshold,
+                    PurchasePrice = p.PurchasePrice,
+                    IsActive = p.IsActive,
+                    // Calculate Sales from Transactions
+                    SalesCount = _transactionRepository.AsQueryable() // Determine sales count; strictly should rely on join or relation but for now using fresh context access or if nav prop exists
+                        .Count(t => t.VendorProductId == p.Id && t.TransactionType == "Sale")
+                })
+                .OrderByDescending(p => p.SalesCount)
+                .Take(5)
+                .ToList()
         });
     }
 

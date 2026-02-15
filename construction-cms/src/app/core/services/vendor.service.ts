@@ -36,6 +36,7 @@ export interface VendorProduct {
     quantityInStock: number;
     lowStockThreshold: number;
     purchasePrice: number;
+    salesCount?: number;
 }
 
 export interface VendorTransaction {

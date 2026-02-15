@@ -6,10 +6,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ClientPortalService, ChangeOrderRequest } from '../../../core/services/client-portal.service';
 
 @Component({
-    selector: 'app-client-change-orders',
-    standalone: true,
-    imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
-    template: `
+  selector: 'app-client-change-orders',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
+  template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
@@ -65,6 +65,13 @@ import { ClientPortalService, ChangeOrderRequest } from '../../../core/services/
                         📋
                       </div>
                       <div>
+                        <div class="flex items-center gap-2 mb-1">
+                          @if (changeOrder.companyName) {
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                              {{ changeOrder.companyName }}
+                            </span>
+                          }
+                        </div>
                         <h3 class="text-lg font-black text-slate-900 dark:text-white mb-1">{{ changeOrder.title }}</h3>
                         <div class="flex items-center gap-3">
                           <span class="text-xs font-medium text-slate-500 dark:text-slate-400">
@@ -174,15 +181,18 @@ import { ClientPortalService, ChangeOrderRequest } from '../../../core/services/
 
         <!-- Empty State -->
         @if (!isLoading && changeOrders.length === 0) {
-          <div class="text-center py-20">
-            <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-slate-700/50 flex items-center justify-center">
-              <svg class="w-12 h-12 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          <div class="flex flex-col items-center justify-center py-20 text-center">
+            <div class="w-24 h-24 mb-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center shadow-inner">
+              <svg class="w-10 h-10 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
               </svg>
             </div>
-            <h3 class="text-xl font-bold text-white mb-2">{{ 'client.no_change_orders' | translate }}</h3>
-            <p class="text-slate-400 mb-6">{{ 'client.no_change_orders_desc' | translate }}</p>
-            <a routerLink="/client-portal/change-orders/new" class="inline-block px-6 py-3 rounded-xl bg-indigo-600 text-white text-xs font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:scale-105 transition-transform">
+            <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ 'client.no_change_orders' | translate }}</h3>
+            <p class="text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed mb-8">
+              {{ 'client.no_change_orders_desc' | translate }}
+            </p>
+            <a routerLink="/client-portal/change-orders/new" class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-indigo-600 text-white text-xs font-black uppercase tracking-widest shadow-lg shadow-indigo-500/30 hover:bg-indigo-700 hover:scale-105 transition-all">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
               {{ 'client.submit_first_change_order' | translate }}
             </a>
           </div>
@@ -190,7 +200,7 @@ import { ClientPortalService, ChangeOrderRequest } from '../../../core/services/
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     .line-clamp-2 {
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -205,73 +215,73 @@ import { ClientPortalService, ChangeOrderRequest } from '../../../core/services/
   `]
 })
 export class ClientChangeOrdersComponent implements OnInit {
-    private clientPortalService = inject(ClientPortalService);
-    private router = inject(Router);
-    private route = inject(ActivatedRoute);
+  private clientPortalService = inject(ClientPortalService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
-    changeOrders: ChangeOrderRequest[] = [];
-    projects: any[] = [];
-    isLoading = false;
-    selectedStatus = '';
-    selectedProjectId = '';
+  changeOrders: ChangeOrderRequest[] = [];
+  projects: any[] = [];
+  isLoading = false;
+  selectedStatus = '';
+  selectedProjectId = '';
 
-    ngOnInit() {
-        this.loadChangeOrders();
-        this.loadProjects();
-    }
+  ngOnInit() {
+    this.loadChangeOrders();
+    this.loadProjects();
+  }
 
-    loadChangeOrders() {
-        this.isLoading = true;
-        const projectId = this.selectedProjectId ? parseInt(this.selectedProjectId) : undefined;
-        this.clientPortalService.getChangeOrderRequests(projectId).subscribe({
-            next: (changeOrders) => {
-                this.changeOrders = changeOrders;
-                this.isLoading = false;
-            },
-            error: (error) => {
-                console.error('Error loading change orders:', error);
-                this.isLoading = false;
-            }
-        });
-    }
+  loadChangeOrders() {
+    this.isLoading = true;
+    const projectId = this.selectedProjectId ? parseInt(this.selectedProjectId) : undefined;
+    this.clientPortalService.getChangeOrderRequests(projectId).subscribe({
+      next: (changeOrders) => {
+        this.changeOrders = changeOrders;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading change orders:', error);
+        this.isLoading = false;
+      }
+    });
+  }
 
-    loadProjects() {
-        this.clientPortalService.getClientDashboard().subscribe({
-            next: (dashboard) => {
-                this.projects = dashboard.projects.map(p => ({ id: p.projectId, name: p.projectName }));
-            },
-            error: (error) => {
-                console.error('Error loading projects:', error);
-            }
-        });
-    }
+  loadProjects() {
+    this.clientPortalService.getClientDashboard().subscribe({
+      next: (dashboard) => {
+        this.projects = dashboard.projects.map(p => ({ id: p.projectId, name: p.projectName }));
+      },
+      error: (error) => {
+        console.error('Error loading projects:', error);
+      }
+    });
+  }
 
-    cancelChangeOrder(id: number) {
-        if (confirm('Are you sure you want to cancel this change order request?')) {
-            this.clientPortalService.cancelChangeOrderRequest(id).subscribe({
-                next: () => {
-                    this.loadChangeOrders();
-                },
-                error: (error) => {
-                    console.error('Error cancelling change order:', error);
-                }
-            });
+  cancelChangeOrder(id: number) {
+    if (confirm('Are you sure you want to cancel this change order request?')) {
+      this.clientPortalService.cancelChangeOrderRequest(id).subscribe({
+        next: () => {
+          this.loadChangeOrders();
+        },
+        error: (error) => {
+          console.error('Error cancelling change order:', error);
         }
+      });
     }
+  }
 
-    viewDetails(id: number) {
-        this.router.navigate(['/client-portal/change-orders', id]);
-    }
+  viewDetails(id: number) {
+    this.router.navigate(['/client-portal/change-orders', id]);
+  }
 
-    formatCurrency(value: number): string {
-        return this.clientPortalService.formatCurrency(value);
-    }
+  formatCurrency(value: number): string {
+    return this.clientPortalService.formatCurrency(value);
+  }
 
-    formatDate(dateString: string): string {
-        return this.clientPortalService.formatDate(dateString);
-    }
+  formatDate(dateString: string): string {
+    return this.clientPortalService.formatDate(dateString);
+  }
 
-    formatDateTime(dateString: string): string {
-        return this.clientPortalService.formatDateTime(dateString);
-    }
+  formatDateTime(dateString: string): string {
+    return this.clientPortalService.formatDateTime(dateString);
+  }
 }

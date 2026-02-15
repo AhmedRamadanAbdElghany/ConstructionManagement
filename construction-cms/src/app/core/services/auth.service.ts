@@ -102,6 +102,23 @@ export class AuthService {
                 if (!response.user.role && response.user.roles?.length > 0) {
                     response.user.role = response.user.roles[0];
                 }
+
+                // If it's still missing, try to infer from userType if possible
+                if (!response.user.role) {
+                    if (response.user.userType === 3) {
+                        response.user.role = 'InventoryOwner';
+                        if (!response.user.roles || response.user.roles.length === 0) response.user.roles = ['InventoryOwner'];
+                    }
+                    else if (response.user.userType === 4) {
+                        response.user.role = 'WarehouseOwner';
+                        if (!response.user.roles || response.user.roles.length === 0) response.user.roles = ['WarehouseOwner'];
+                    }
+                    else {
+                        response.user.role = 'NormalUser';
+                        if (!response.user.roles || response.user.roles.length === 0) response.user.roles = ['NormalUser'];
+                    }
+                }
+
                 // Ensure id exists for compatibility
                 if (response.user.userId && !response.user.id) {
                     response.user.id = response.user.userId;
@@ -141,7 +158,7 @@ export class AuthService {
                     fullName = 'Worker User';
                 } else if (request.email.includes('client')) {
                     roles = ['NormalUser'];
-                    userType = 3;
+                    userType = 0; // Client is NormalUser (0)
                     fullName = 'Client User';
                 }
 

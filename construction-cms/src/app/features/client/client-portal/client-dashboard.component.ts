@@ -36,133 +36,165 @@ import { AuthService } from '../../../core/services/auth.service';
         </div>
 
         <!-- Metric Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           <!-- Projects -->
-          <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 group hover:border-indigo-500/30 transition-all">
-            <div class="flex items-center justify-between mb-6">
-              <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 group-hover:scale-110 transition-transform shadow-inner">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+          <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-xl p-6 group hover:-translate-y-1 transition-all duration-300">
+            <div class="absolute -right-6 -top-6 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-all"></div>
+            
+            <div class="flex items-center justify-between mb-4 relative z-10">
+              <div class="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform duration-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
               </div>
-              <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">{{ 'client_portal.active_projects' | translate }}</span>
+              <span class="text-[10px] font-black text-indigo-500 dark:text-indigo-400 uppercase tracking-widest">{{ 'client_portal.active_projects' | translate }}</span>
             </div>
-            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{{ dashboard?.projects?.length || 0 }}</h3>
+            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter relative z-10">{{ dashboard?.projects?.length || 0 }}</h3>
+            <p class="text-xs text-slate-400 font-medium mt-1">In Progress</p>
           </div>
 
           <!-- Payments -->
-          <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 group hover:border-emerald-500/30 transition-all">
-            <div class="flex items-center justify-between mb-6">
-              <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform shadow-inner">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+          <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-xl p-6 group hover:-translate-y-1 transition-all duration-300">
+            <div class="absolute -right-6 -top-6 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
+
+            <div class="flex items-center justify-between mb-4 relative z-10">
+              <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform duration-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
               </div>
-              <span class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{{ 'client_portal.pending_payment' | translate }}</span>
+              <span class="text-[10px] font-black text-emerald-500 dark:text-emerald-400 uppercase tracking-widest">{{ 'client_portal.pending_payment' | translate }}</span>
             </div>
-            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{{ formatCurrency(dashboard?.paymentSummary?.pendingAmount || 0) }}</h3>
+            <h3 class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter relative z-10">{{ formatCurrency(dashboard?.paymentSummary?.pendingAmount || 0) }}</h3>
+            <p class="text-xs text-slate-400 font-medium mt-1">Total Outstanding</p>
           </div>
 
           <!-- Messages -->
-          <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 group hover:border-amber-500/30 transition-all">
-            <div class="flex items-center justify-between mb-6">
-              <div class="w-14 h-14 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform shadow-inner">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+          <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-xl p-6 group hover:-translate-y-1 transition-all duration-300">
+             <div class="absolute -right-6 -top-6 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all"></div>
+
+            <div class="flex items-center justify-between mb-4 relative z-10">
+              <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 group-hover:scale-110 transition-transform duration-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
               </div>
-              <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest">{{ 'client_portal.unread_messages' | translate }}</span>
+              <span class="text-[10px] font-black text-amber-500 dark:text-amber-400 uppercase tracking-widest">{{ 'client_portal.unread_messages' | translate }}</span>
             </div>
-            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{{ dashboard?.unreadMessagesCount || 0 }}</h3>
+            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter relative z-10">{{ dashboard?.unreadMessagesCount || 0 }}</h3>
+            <p class="text-xs text-slate-400 font-medium mt-1">Unread</p>
           </div>
 
           <!-- Change Orders -->
-          <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 group hover:border-purple-500/30 transition-all">
-            <div class="flex items-center justify-between mb-6">
-              <div class="w-14 h-14 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform shadow-inner">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+          <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-xl p-6 group hover:-translate-y-1 transition-all duration-300">
+             <div class="absolute -right-6 -top-6 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all"></div>
+
+            <div class="flex items-center justify-between mb-4 relative z-10">
+              <div class="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform duration-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
               </div>
-              <span class="text-[10px] font-black text-purple-500 uppercase tracking-widest">{{ 'client_portal.pending_change_orders' | translate }}</span>
+              <span class="text-[10px] font-black text-purple-500 dark:text-purple-400 uppercase tracking-widest">{{ 'client_portal.pending_change_orders' | translate }}</span>
             </div>
-            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{{ dashboard?.pendingChangeOrdersCount || 0 }}</h3>
+            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter relative z-10">{{ dashboard?.pendingChangeOrdersCount || 0 }}</h3>
+             <p class="text-xs text-slate-400 font-medium mt-1">Pending Approval</p>
           </div>
         </div>
 
         <!-- Main Content Area -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           <!-- Left Column: Projects & Payments -->
-          <div class="lg:col-span-2 space-y-10">
+          <div class="lg:col-span-2 space-y-8">
             
             <!-- Projects Hub -->
-            <div class="bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-2xl overflow-hidden">
-               <div class="px-10 py-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/20">
-                  <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'client_portal.your_projects' | translate }}</h2>
-                  <a routerLink="/client-portal/projects" class="text-[10px] font-black text-indigo-500 uppercase tracking-widest hover:underline">View All</a>
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
+               <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/30 backdrop-blur-sm">
+                  <div class="flex items-center gap-3">
+                     <div class="w-2 h-8 rounded-full bg-indigo-500"></div>
+                     <h2 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'client_portal.your_projects' | translate }}</h2>
+                  </div>
+                  <a routerLink="/client-portal/projects" class="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-black text-indigo-500 uppercase tracking-widest hover:border-indigo-500 transition-colors shadow-sm">View All</a>
                </div>
                
-               <div class="p-4">
+               <div class="p-6 space-y-4">
                  @for (project of dashboard?.projects; track project.projectId) {
-                    <div class="group mx-2 my-2 p-6 rounded-[2rem] hover:bg-slate-50 dark:hover:bg-slate-800 transition-all border border-transparent hover:border-slate-100 dark:hover:border-white/5">
-                       <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div class="group relative overflow-hidden bg-white dark:bg-slate-800/50 rounded-[2rem] border border-slate-100 dark:border-slate-700 p-6 hover:shadow-xl transition-all duration-300 hover:border-indigo-500/30">
+                       <div class="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                       
+                       <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                          <div class="flex-1">
-                            <h3 class="text-lg font-black text-slate-900 dark:text-white tracking-tight mb-2 group-hover:text-indigo-600 transition-colors">{{ project.projectName }}</h3>
-                            <div class="flex items-center gap-4 text-slate-400">
-                               <span class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest">
-                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
-                                 {{ project.location || 'N/A' }}
-                               </span>
-                               <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest"
+                            <div class="flex items-center gap-3 mb-2">
+                               <h3 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{{ project.projectName }}</h3>
+                               <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border"
                                      [ngClass]="{
-                                       'bg-emerald-500/10 text-emerald-500': project.status === 'Active',
-                                       'bg-amber-500/10 text-amber-500': project.status === 'Pending',
-                                       'bg-rose-500/10 text-rose-500': project.status === 'Delayed'
+                                       'bg-emerald-500/10 text-emerald-600 border-emerald-500/20': project.status === 'Active',
+                                       'bg-amber-500/10 text-amber-600 border-amber-500/20': project.status === 'Pending',
+                                       'bg-rose-500/10 text-rose-600 border-rose-500/20': project.status === 'Delayed'
                                      }">
                                  {{ project.status }}
                                </span>
                             </div>
+                            
+                            <div class="flex items-center gap-4 text-slate-500 dark:text-slate-400">
+                               <span class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider">
+                                 <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                 {{ project.location || 'N/A' }}
+                               </span>
+                            </div>
                          </div>
                          
-                         <div class="w-full md:w-48">
+                         <div class="w-full md:w-56 bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
                             <div class="flex items-center justify-between mb-2">
-                               <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ project.progressPercentage }}% {{ 'common.completed' | translate }}</span>
+                               <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Progress</span>
+                               <span class="text-xs font-black text-slate-900 dark:text-white">{{ project.progressPercentage }}%</span>
                             </div>
-                            <div class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                               <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full transition-all duration-1000" [style.width.%]="project.progressPercentage"></div>
+                            <div class="h-2.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                               <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full transition-all duration-1000 shadow-lg shadow-indigo-500/30" [style.width.%]="project.progressPercentage"></div>
                             </div>
                          </div>
 
                          <a [routerLink]="['/client-portal/projects', project.projectId]" 
-                            class="p-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all active:scale-95">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-900 dark:hover:bg-indigo-600 transition-all active:scale-95 shadow-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
                          </a>
                        </div>
                     </div>
                  } @empty {
-                   <div class="text-center py-20 opacity-40">
-                      <p class="text-[10px] font-black uppercase tracking-[0.2em]">{{ 'client_portal.no_projects' | translate }}</p>
+                   <div class="flex flex-col items-center justify-center py-20 text-center">
+                      <div class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
+                        <svg class="w-10 h-10 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                      </div>
+                      <p class="text-slate-500 dark:text-slate-400 font-bold">{{ 'client_portal.no_projects' | translate }}</p>
                    </div>
                  }
                </div>
             </div>
 
             <!-- Payment Breakdown -->
-            <div class="bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-2xl p-10">
-               <div class="flex items-center justify-between mb-10">
-                  <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'client_portal.payment_summary' | translate }}</h2>
-                  <a routerLink="/client-portal/payments" class="text-[10px] font-black text-indigo-500 uppercase tracking-widest hover:underline">Full Ledger</a>
-               </div>
+            <div class="bg-indigo-900 rounded-[2.5rem] shadow-2xl overflow-hidden relative">
+               <div class="absolute top-0 right-0 -mt-20 -mr-20 w-80 h-80 bg-indigo-800 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+               <div class="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-purple-900 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
 
-               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  <div class="p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5">
-                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ 'client_portal.total_invoiced' | translate }}</p>
-                     <p class="text-2xl font-black text-slate-900 dark:text-white tracking-tighter">{{ formatCurrency(dashboard?.paymentSummary?.totalInvoiced || 0) }}</p>
+               <div class="relative z-10 p-8">
+                  <div class="flex items-center justify-between mb-8">
+                     <div>
+                        <h2 class="text-xl font-black text-white uppercase tracking-tight">{{ 'client_portal.payment_summary' | translate }}</h2>
+                        <p class="text-indigo-200 text-xs font-medium mt-1">Financial Overview</p>
+                     </div>
+                     <a routerLink="/client-portal/payments" class="px-5 py-2.5 rounded-xl bg-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-white/20 transition-colors backdrop-blur-md border border-white/10">Full Ledger</a>
                   </div>
-                  <div class="p-6 rounded-[2rem] bg-emerald-500/5 border border-emerald-500/10">
-                     <p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-2">{{ 'client_portal.total_paid' | translate }}</p>
-                     <p class="text-2xl font-black text-emerald-600 tracking-tighter">{{ formatCurrency(dashboard?.paymentSummary?.totalPaid || 0) }}</p>
-                  </div>
-                  <div class="p-6 rounded-[2rem] bg-amber-500/5 border border-amber-500/10">
-                     <p class="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-2">{{ 'client_portal.pending_payment' | translate }}</p>
-                     <p class="text-2xl font-black text-amber-600 tracking-tighter">{{ formatCurrency(dashboard?.paymentSummary?.pendingAmount || 0) }}</p>
-                  </div>
-                  <div class="p-6 rounded-[2rem] bg-rose-500/5 border border-rose-500/10">
-                     <p class="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-2">{{ 'client_portal.overdue' | translate }}</p>
-                     <p class="text-2xl font-black text-rose-600 tracking-tighter">{{ formatCurrency(dashboard?.paymentSummary?.overdueAmount || 0) }}</p>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                     <div class="p-5 rounded-[1.5rem] bg-indigo-950/50 border border-indigo-500/20 backdrop-blur-sm">
+                        <p class="text-[10px] font-black text-indigo-300 uppercase tracking-widest mb-1">{{ 'client_portal.total_invoiced' | translate }}</p>
+                        <p class="text-2xl font-black text-white tracking-tighter">{{ formatCurrency(dashboard?.paymentSummary?.totalInvoiced || 0) }}</p>
+                     </div>
+                     <div class="p-5 rounded-[1.5rem] bg-indigo-950/50 border border-indigo-500/20 backdrop-blur-sm">
+                        <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">{{ 'client_portal.total_paid' | translate }}</p>
+                        <p class="text-2xl font-black text-emerald-400 tracking-tighter">{{ formatCurrency(dashboard?.paymentSummary?.totalPaid || 0) }}</p>
+                     </div>
+                     <div class="p-5 rounded-[1.5rem] bg-indigo-950/50 border border-indigo-500/20 backdrop-blur-sm">
+                        <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">{{ 'client_portal.pending_payment' | translate }}</p>
+                        <p class="text-2xl font-black text-amber-400 tracking-tighter">{{ formatCurrency(dashboard?.paymentSummary?.pendingAmount || 0) }}</p>
+                     </div>
+                     <div class="p-5 rounded-[1.5rem] bg-indigo-950/50 border border-indigo-500/20 backdrop-blur-sm">
+                        <p class="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-1">{{ 'client_portal.overdue' | translate }}</p>
+                        <p class="text-2xl font-black text-rose-400 tracking-tighter">{{ formatCurrency(dashboard?.paymentSummary?.overdueAmount || 0) }}</p>
+                     </div>
                   </div>
                </div>
             </div>
