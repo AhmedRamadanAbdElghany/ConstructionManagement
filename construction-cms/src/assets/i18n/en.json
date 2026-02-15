@@ -175,7 +175,12 @@
     "global_completion": "Global Completion",
     "est_completion": "Est. Completion",
     "direct_reports_activity": "Direct Reports Activity",
-    "eff": "Eff"
+    "eff": "Eff",
+    "welcome_worker": "Welcome, {{name}}!",
+    "worker_intro": "Ready to start your journey? Join a construction company to access your daily logs, projects, and HR tools.",
+    "join_company_title": "Find Your Construction Team",
+    "join_company_desc": "Browse registered construction firms and send a request to join their workforce. Once approved, your dashboard will unlock.",
+    "find_company": "Browse Companies"
   },
   "hr": {
     "title": "HR & User Management",

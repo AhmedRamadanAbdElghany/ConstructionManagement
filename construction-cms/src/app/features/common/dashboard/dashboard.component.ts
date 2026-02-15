@@ -528,6 +528,43 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
              WORKER DASHBOARD (CompanyUser)
              ────────────────────────────────────────────────────────────────── -->
         @else if (isWorker) {
+          @if (isUnassignedWorker) {
+             <div class="max-w-4xl mx-auto py-12 px-4 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                <div class="mb-12 text-center relative">
+                   <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-pink-500/20 blur-3xl rounded-full opacity-50"></div>
+                   <h1 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 relative z-10">
+                     {{ 'dashboard.welcome_worker' | translate: { name: firstName } }}
+                   </h1>
+                   <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto relative z-10 font-medium">
+                     {{ 'dashboard.worker_intro' | translate }}
+                   </p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 md:p-12 border border-slate-200 dark:border-white/5 shadow-2xl relative overflow-hidden group hover:border-indigo-500/30 transition-all duration-500">
+                   <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl group-hover:bg-indigo-500/15 transition-colors duration-500"></div>
+
+                   <div class="relative z-10 flex flex-col items-center text-center">
+                      <div class="w-24 h-24 rounded-3xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500">
+                         <div class="w-16 h-16 text-indigo-600 dark:text-indigo-400">
+                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                         </div>
+                      </div>
+
+                      <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-4">
+                        {{ 'dashboard.join_company_title' | translate }}
+                      </h2>
+                      <p class="text-slate-500 dark:text-slate-400 mb-8 max-w-md leading-relaxed">
+                        {{ 'dashboard.join_company_desc' | translate }}
+                      </p>
+
+                      <a routerLink="/browse-firms" class="inline-flex items-center gap-3 px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg shadow-indigo-600/20">
+                        <span>{{ 'dashboard.find_company' | translate }}</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                      </a>
+                   </div>
+                </div>
+             </div>
+          } @else {
           <div class="space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
             
             <!-- Worker Top Section: Profile & Metrics -->
@@ -722,6 +759,7 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
               </div>
             </div>
           </div>
+          }
         } 
         
         <!-- ──────────────────────────────────────────────────────────────────
@@ -988,6 +1026,10 @@ export class DashboardComponent implements OnInit {
     return this.isClient && this.stats.activeProjects === 0 && !this.hasApprovedCompany();
   }
 
+  get isUnassignedWorker(): boolean {
+    return this.isWorker && !this.hasApprovedCompany();
+  }
+
   get firstName(): string {
     return this.currentUser?.fullName?.split(' ')[0] || 'Member';
   }
@@ -1038,7 +1080,7 @@ export class DashboardComponent implements OnInit {
     console.log('Dashboard Initialized', this.currentUser);
     if (this.isPending) return;
 
-    if (this.isClient) {
+    if (this.isClient || this.isWorker) {
       this.clientPortalService.getMyCompanies().subscribe(companies => {
         this.hasApprovedCompany.set(companies && companies.some((c: any) => c.status === 'Approved'));
       });

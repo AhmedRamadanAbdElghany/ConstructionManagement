@@ -295,7 +295,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
         }
 
         @if (currentRole !== 'SuperAdmin' && !isInventoryOwner && !isPending) {
-          @if (isWorker || isAdmin) {
+          @if ((isWorker && hasApprovedCompany()) || isAdmin) {
             <a routerLink="/worker/daily-log" 
                routerLinkActive="nav-active"
                class="nav-item group">
@@ -308,7 +308,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
             </a>
           }
 
-            @if (settings?.allowHR) {
+            @if (settings?.allowHR && (!isWorker || hasApprovedCompany())) {
             <a routerLink="/worker/personal-hr" 
                routerLinkActive="nav-active"
                class="nav-item group">
@@ -338,52 +338,53 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
             <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.portal_dashboard' | translate }}</span>
           </a>
 
-          @if (settings?.allowHR) {
-            <a routerLink="/worker/personal-hr" 
+          @if (hasApprovedCompany()) {
+            @if (settings?.allowHR) {
+              <a routerLink="/worker/personal-hr" 
+                 routerLinkActive="nav-active"
+                 class="nav-item group">
+                <div class="nav-icon-box">
+                  <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                  </svg>
+                </div>
+                <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.personal_hr' | translate }}</span>
+              </a>
+            }
+
+            <a routerLink="/worker/daily-log" 
                routerLinkActive="nav-active"
                class="nav-item group">
               <div class="nav-icon-box">
                 <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                 </svg>
               </div>
-              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.personal_hr' | translate }}</span>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.daily_log' | translate }}</span>
             </a>
-          }
 
-          <a routerLink="/worker/daily-log" 
-             routerLinkActive="nav-active"
-             class="nav-item group">
-            <div class="nav-icon-box">
-              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-              </svg>
-            </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.daily_log' | translate }}</span>
-          </a>
+            <a routerLink="/worker/projects" 
+               routerLinkActive="nav-active"
+               class="nav-item group">
+              <div class="nav-icon-box">
+                <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.my_projects' | translate }}</span>
+            </a>
 
-          <a routerLink="/worker/projects" 
-             routerLinkActive="nav-active"
-             class="nav-item group">
-            <div class="nav-icon-box">
-              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-              </svg>
-            </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.my_projects' | translate }}</span>
-          </a>
-
-          <a routerLink="/worker/documents" 
-             routerLinkActive="nav-active"
-             class="nav-item group">
-            <div class="nav-icon-box">
-              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-              </svg>
-            </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.documents' | translate }}</span>
-          </a>
-        }
+            <a routerLink="/worker/documents" 
+               routerLinkActive="nav-active"
+               class="nav-item group">
+              <div class="nav-icon-box">
+                <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+              </div>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.documents' | translate }}</span>
+            </a>
+          }        }
 
         @if (isClient && hasApprovedCompany()) {
           <a routerLink="/client-portal/projects" 
@@ -633,7 +634,7 @@ export class SidebarComponent {
     }
 
     // Check if user has approved companies
-    if (this.isClient) {
+    if (this.isClient || this.isWorker) {
       this.clientPortalService.getMyCompanies().subscribe((companies: any[]) => {
         this.hasApprovedCompany.set(companies && companies.some((c: any) => c.status === 'Approved'));
       });
