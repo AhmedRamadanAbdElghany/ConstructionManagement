@@ -40,7 +40,12 @@
     "role_owner": "Firm Owner",
     "role_inventory_owner": "Inventory Owner",
     "daily_reports": "Daily Reports",
-    "building_material_stores": "Building Material Stores"
+    "building_material_stores": "Building Material Stores",
+    "vendor_analytics": "Vendor Analytics",
+    "products": "My Products",
+    "orders": "Incoming Orders",
+    "sales": "Sales & Log",
+    "store_settings": "Store Settings"
   },
   "pending_requests": {
     "subtitle": "Review and manage pending company registration and user join requests",

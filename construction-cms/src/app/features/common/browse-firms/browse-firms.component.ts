@@ -302,8 +302,8 @@ export class BrowseFirmsComponent implements OnInit {
   openJoinModal(company: PublicCompany) {
     this.selectedCompany = company;
     const user = this.authService.getCurrentUser();
-    // Use the role name from the user object if available, otherwise fallback to NormalUser
-    const role = user?.role || 'NormalUser';
+    // Use the role name from the user object if available, otherwise fallback to User
+    const role = user?.role || 'User';
     this.joinForm = { requestedRole: role, message: '' };
     this.showJoinModal = true;
   }

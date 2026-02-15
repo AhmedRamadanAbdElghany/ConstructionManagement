@@ -8253,7 +8253,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             UserId = 1,
                             RoleId = 1,
-                            AssignedAt = new DateTime(2026, 2, 15, 18, 6, 36, 723, DateTimeKind.Utc).AddTicks(147)
+                            AssignedAt = new DateTime(2026, 2, 15, 20, 27, 46, 124, DateTimeKind.Utc).AddTicks(6403)
                         });
                 });
 

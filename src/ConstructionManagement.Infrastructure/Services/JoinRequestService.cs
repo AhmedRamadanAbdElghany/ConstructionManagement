@@ -133,12 +133,17 @@ public class JoinRequestService : IJoinRequestService
                 };
             }
 
-            user.UserRoles.Clear();
-            user.UserRoles.Add(new UserRole
+            // Clear existing roles and add the base User role (RoleId 3)
+            // or if we want to preserve some, we should be more selective.
+            // For now, we ensure they have at least the 'User' role.
+            if (!user.UserRoles.Any(ur => ur.RoleId == 3))
             {
-                RoleId = 3, // Assuming 3 is CompanyUser role
-                AssignedAt = DateTime.UtcNow
-            });
+                user.UserRoles.Add(new UserRole
+                {
+                    RoleId = 3, 
+                    AssignedAt = DateTime.UtcNow
+                });
+            }
             await _userRepository.UpdateAsync(user);
         }
 

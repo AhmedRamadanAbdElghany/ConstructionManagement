@@ -43,6 +43,15 @@ public class UserRepository : Repository<User>, IUserRepository
             .ToListAsync();
     }
 
+    public override async Task<User?> GetByIdAsync(int id)
+    {
+        return await _dbSet
+            .IgnoreQueryFilters()
+            .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+            .FirstOrDefaultAsync(u => u.Id == id);
+    }
+
     public async Task<IEnumerable<User>> GetUsersByCompanyIdAndRoleAsync(int companyId, string roleName)
     {
         return await _dbSet

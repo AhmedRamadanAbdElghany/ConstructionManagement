@@ -114,8 +114,9 @@ export class AuthService {
                         if (!response.user.roles || response.user.roles.length === 0) response.user.roles = ['WarehouseOwner'];
                     }
                     else {
-                        response.user.role = 'NormalUser';
-                        if (!response.user.roles || response.user.roles.length === 0) response.user.roles = ['NormalUser'];
+                        response.user.role = response.user.userType === 2 ? 'CompanyAdmin' : 'User';
+                        if (!response.user.roles || response.user.roles.length === 0)
+                            response.user.roles = [response.user.role];
                     }
                 }
 
@@ -144,8 +145,8 @@ export class AuthService {
                 }
 
                 // Determine user role based on email for mock authentication
-                let roles: string[] = ['CompanyAdmin'];
-                let userType = 2;
+                let roles: string[] = ['User']; // Default to 'User'
+                let userType = 0; // Default to User (0)
                 let fullName = 'Demo User';
 
                 if (request.email.includes('super') || request.email.includes('admin@super') || request.email === 'admin@construction.com') {
@@ -157,8 +158,8 @@ export class AuthService {
                     userType = 1;
                     fullName = 'Worker User';
                 } else if (request.email.includes('client')) {
-                    roles = ['NormalUser'];
-                    userType = 0; // Client is NormalUser (0)
+                    roles = ['User'];
+                    userType = 0; // Client is User (0)
                     fullName = 'Client User';
                 }
 

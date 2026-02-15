@@ -59,7 +59,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
         </a>
         }
 
-          @if (isClient || isWorker || (currentRole === 'CompanyAdmin' && !isPending)) {
+          @if (isClient || isWorker) {
           <a routerLink="/browse-firms"
              routerLinkActive="nav-active"
              class="nav-item group">
@@ -68,7 +68,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Companies</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.companies' | translate }}</span>
           </a>
           }
 
@@ -91,18 +91,6 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
            [class.opacity-0]="isCollapsed()">{{ (isClient ? 'sidebar.client_portal' : 'sidebar.administration') | translate }}</p>
 
         @if (isAdmin) {
-          @if (currentRole === 'CompanyAdmin') {
-            <a routerLink="/admin/vendors/analytics" 
-               routerLinkActive="nav-active"
-               class="nav-item group">
-              <div class="nav-icon-box">
-                <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                </svg>
-              </div>
-              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Vendor Analytics</span>
-            </a>
-          }
 
           <!-- Pending Requests (SuperAdmin & CompanyAdmin) -->
           <a routerLink="/admin/pending-requests" 
@@ -293,6 +281,17 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
         @if (isInventoryOwner) {
           <p class="px-4 py-6 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
              [class.opacity-0]="isCollapsed()">STOREFRONT</p>
+
+          <a routerLink="/admin/vendors/analytics" 
+             routerLinkActive="nav-active"
+             class="nav-item group">
+            <div class="nav-icon-box">
+              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+            </div>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.vendor_analytics' | translate }}</span>
+          </a>
         }
 
         @if (currentRole !== 'SuperAdmin' && !isInventoryOwner && !isPending) {
@@ -463,7 +462,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">My Storefront</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.products' | translate }}</span>
           </a>
         }
 
@@ -488,7 +487,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">My Products</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.products' | translate }}</span>
           </a>
 
           <a routerLink="/inventory-dashboard/orders" 
@@ -499,7 +498,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Incoming Orders</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.orders' | translate }}</span>
           </a>
 
           <a routerLink="/inventory-dashboard/sales" 
@@ -510,7 +509,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Sales & Log</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.sales' | translate }}</span>
           </a>
 
           <a routerLink="/inventory-dashboard/settings" 
@@ -522,7 +521,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Store Settings</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.store_settings' | translate }}</span>
           </a>
         }
 
@@ -645,9 +644,9 @@ export class SidebarComponent {
     }
 
     // Check if user has approved companies
-    if (this.currentRole === 'NormalUser') {
+    if (this.isClient) {
       this.clientPortalService.getMyCompanies().subscribe((companies: any[]) => {
-        this.hasApprovedCompany.set(companies.some((c: any) => c.status === 'Approved'));
+        this.hasApprovedCompany.set(companies && companies.some((c: any) => c.status === 'Approved'));
       });
     }
 
@@ -685,7 +684,8 @@ export class SidebarComponent {
   }
 
   get isClient(): boolean {
-    return this.currentRole === 'NormalUser';
+    const role = this.currentRole;
+    return role === 'User' || role === 'NormalUser' || role === 'Client';
   }
 
   get isInventoryOwner(): boolean {
