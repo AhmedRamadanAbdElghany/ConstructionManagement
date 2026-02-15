@@ -320,6 +320,11 @@ export const routes: Routes = [
         path: 'worker',
         children: [
             {
+                path: 'dashboard',
+                redirectTo: '/dashboard',
+                pathMatch: 'full'
+            },
+            {
                 path: 'daily-log',
                 loadComponent: () => import('./features/worker/daily-log/daily-log.component').then(m => m.DailyLogComponent),
                 canActivate: [roleGuard],
