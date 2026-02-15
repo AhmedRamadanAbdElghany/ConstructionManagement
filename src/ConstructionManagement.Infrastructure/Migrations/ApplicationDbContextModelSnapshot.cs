@@ -6820,6 +6820,22 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             Description = "Default authenticated user",
                             IsDeleted = false,
                             Name = "User"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Standard company staff/worker",
+                            IsDeleted = false,
+                            Name = "CompanyUser"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Inventory/warehouse owner",
+                            IsDeleted = false,
+                            Name = "InventoryOwner"
                         });
                 });
 
@@ -8253,7 +8269,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             UserId = 1,
                             RoleId = 1,
-                            AssignedAt = new DateTime(2026, 2, 15, 20, 27, 46, 124, DateTimeKind.Utc).AddTicks(6403)
+                            AssignedAt = new DateTime(2026, 2, 15, 23, 7, 48, 933, DateTimeKind.Utc).AddTicks(6106)
                         });
                 });
 

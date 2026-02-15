@@ -3,7 +3,7 @@ import { RouterOutlet, Router } from '@angular/router';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { TopbarComponent } from './layout/topbar/topbar.component';
 import { ThemeService } from './core/theme/theme.service';
-import { TranslateService } from '@ngx-translate/core';
+import { I18nService } from './core/i18n/i18n.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -16,11 +16,10 @@ import { CommonModule } from '@angular/common';
 export class App {
   private themeService = inject(ThemeService);
   private router = inject(Router);
-  private translate = inject(TranslateService);
+  private i18nService = inject(I18nService);
 
   constructor() {
-    this.translate.setDefaultLang('en');
-    this.translate.use('en');
+    this.i18nService.initializeLanguage();
   }
 
   get showLayout(): boolean {

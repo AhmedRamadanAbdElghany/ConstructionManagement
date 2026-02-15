@@ -1215,6 +1215,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     ReviewedByUserId = table.Column<int>(type: "int", nullable: true),
                     ReviewedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RequestedRole = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -1447,6 +1448,50 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Vendors",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TaxNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ContactPerson = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VendorType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CurrentBalance = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    TotalPaid = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    TotalInvoiced = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    Latitude = table.Column<double>(type: "float", nullable: true),
+                    Longitude = table.Column<double>(type: "float", nullable: true),
+                    IsPublic = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Vendors", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Vendors_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Vendors_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Warehouses",
                 columns: table => new
                 {
@@ -1633,6 +1678,45 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         principalTable: "InventoryWarehouses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ActivityLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
+                    ProjectId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ActivityType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Action = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Details = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ActivityLogs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ActivityLogs_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ActivityLogs_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ActivityLogs_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -2831,6 +2915,105 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "VendorInvoices",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
+                    VendorId = table.Column<int>(type: "int", nullable: false),
+                    InvoiceNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    InvoiceDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FileUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OriginalFileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FileType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FileSize = table.Column<long>(type: "bigint", nullable: true),
+                    ApprovalStatus = table.Column<int>(type: "int", nullable: false),
+                    ApprovedByUserId = table.Column<int>(type: "int", nullable: true),
+                    ApprovedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    RejectionReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedByUserId = table.Column<int>(type: "int", nullable: false),
+                    MaterialType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProjectId = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VendorInvoices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_VendorInvoices_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_VendorInvoices_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_VendorInvoices_Users_ApprovedByUserId",
+                        column: x => x.ApprovedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_VendorInvoices_Users_CreatedByUserId",
+                        column: x => x.CreatedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_VendorInvoices_Vendors_VendorId",
+                        column: x => x.VendorId,
+                        principalTable: "Vendors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VendorProducts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
+                    VendorId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Category = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    QuantityInStock = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    LowStockThreshold = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PurchasePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VendorProducts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_VendorProducts_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_VendorProducts_Vendors_VendorId",
+                        column: x => x.VendorId,
+                        principalTable: "Vendors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MaterialStocks",
                 columns: table => new
                 {
@@ -3681,6 +3864,47 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         principalTable: "WarehouseOrderRequests",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VendorTransactions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
+                    VendorId = table.Column<int>(type: "int", nullable: false),
+                    VendorProductId = table.Column<int>(type: "int", nullable: false),
+                    TransactionType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReferenceNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VendorTransactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_VendorTransactions_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_VendorTransactions_VendorProducts_VendorProductId",
+                        column: x => x.VendorProductId,
+                        principalTable: "VendorProducts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_VendorTransactions_Vendors_VendorId",
+                        column: x => x.VendorId,
+                        principalTable: "Vendors",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -4801,7 +5025,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     { 1, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Platform-level system administrator", false, "SuperAdmin", null },
                     { 2, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Organization administrator", false, "CompanyAdmin", null },
-                    { 3, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Default authenticated user", false, "User", null }
+                    { 3, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Default authenticated user", false, "User", null },
+                    { 4, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Standard company staff/worker", false, "CompanyUser", null },
+                    { 5, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Inventory/warehouse owner", false, "InventoryOwner", null }
                 });
 
             migrationBuilder.InsertData(
@@ -4817,7 +5043,22 @@ namespace ConstructionManagement.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "RoleId", "UserId", "AssignedAt", "CompanyId" },
-                values: new object[] { 1, 1, new DateTime(2026, 2, 13, 19, 27, 41, 382, DateTimeKind.Utc).AddTicks(6685), null });
+                values: new object[] { 1, 1, new DateTime(2026, 2, 15, 23, 7, 48, 933, DateTimeKind.Utc).AddTicks(6106), null });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ActivityLogs_CompanyId",
+                table: "ActivityLogs",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ActivityLogs_ProjectId",
+                table: "ActivityLogs",
+                column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ActivityLogs_UserId",
+                table: "ActivityLogs",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnalyticsSnapshots_CompanyId",
@@ -6219,6 +6460,41 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_VendorInvoices_ApprovedByUserId",
+                table: "VendorInvoices",
+                column: "ApprovedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VendorInvoices_CompanyId",
+                table: "VendorInvoices",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VendorInvoices_CreatedByUserId",
+                table: "VendorInvoices",
+                column: "CreatedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VendorInvoices_ProjectId",
+                table: "VendorInvoices",
+                column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VendorInvoices_VendorId",
+                table: "VendorInvoices",
+                column: "VendorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VendorProducts_CompanyId",
+                table: "VendorProducts",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VendorProducts_VendorId",
+                table: "VendorProducts",
+                column: "VendorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_VendorReviews_ProjectId",
                 table: "VendorReviews",
                 column: "ProjectId");
@@ -6237,6 +6513,31 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "IX_VendorReviews_WarehouseId",
                 table: "VendorReviews",
                 column: "WarehouseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vendors_CompanyId",
+                table: "Vendors",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vendors_UserId",
+                table: "Vendors",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VendorTransactions_CompanyId",
+                table: "VendorTransactions",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VendorTransactions_VendorId",
+                table: "VendorTransactions",
+                column: "VendorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VendorTransactions_VendorProductId",
+                table: "VendorTransactions",
+                column: "VendorProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WarehouseOrderItem_OrderId",
@@ -6287,6 +6588,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "ActivityLogs");
+
             migrationBuilder.DropTable(
                 name: "AnalyticsSnapshots");
 
@@ -6480,7 +6784,13 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "UserTypeHistories");
 
             migrationBuilder.DropTable(
+                name: "VendorInvoices");
+
+            migrationBuilder.DropTable(
                 name: "VendorReviews");
+
+            migrationBuilder.DropTable(
+                name: "VendorTransactions");
 
             migrationBuilder.DropTable(
                 name: "WarehouseOrderItem");
@@ -6561,6 +6871,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "Roles");
 
             migrationBuilder.DropTable(
+                name: "VendorProducts");
+
+            migrationBuilder.DropTable(
                 name: "WarehouseOrderRequests");
 
             migrationBuilder.DropTable(
@@ -6589,6 +6902,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Subcontractors");
+
+            migrationBuilder.DropTable(
+                name: "Vendors");
 
             migrationBuilder.DropTable(
                 name: "BOQItems");

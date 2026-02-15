@@ -16,6 +16,7 @@ public class JoinRequestRepository : IJoinRequestRepository
     public async Task<JoinRequest?> GetByIdAsync(int id)
     {
         return await _context.JoinRequests
+            .IgnoreQueryFilters()
             .Include(jr => jr.User)
             .Include(jr => jr.Company)
             .Include(jr => jr.ReviewedBy)
@@ -25,6 +26,7 @@ public class JoinRequestRepository : IJoinRequestRepository
     public async Task<JoinRequest?> GetByUserIdAndCompanyIdAsync(int userId, int companyId)
     {
         return await _context.JoinRequests
+            .IgnoreQueryFilters()
             .Include(jr => jr.User)
             .Include(jr => jr.Company)
             .Where(jr => jr.UserId == userId && jr.CompanyId == companyId)
@@ -35,6 +37,7 @@ public class JoinRequestRepository : IJoinRequestRepository
     public async Task<IEnumerable<JoinRequest>> GetAllAsync()
     {
         return await _context.JoinRequests
+            .IgnoreQueryFilters()
             .Include(jr => jr.User)
             .Include(jr => jr.Company)
             .Include(jr => jr.ReviewedBy)
@@ -45,6 +48,7 @@ public class JoinRequestRepository : IJoinRequestRepository
     public async Task<IEnumerable<JoinRequest>> GetPendingRequestsByCompanyIdAsync(int companyId)
     {
         return await _context.JoinRequests
+            .IgnoreQueryFilters()
             .Include(jr => jr.User)
             .Include(jr => jr.Company)
             .Include(jr => jr.ReviewedBy)
@@ -75,6 +79,7 @@ public class JoinRequestRepository : IJoinRequestRepository
     public async Task<IEnumerable<JoinRequest>> GetByStatusAsync(string status)
     {
         return await _context.JoinRequests
+            .IgnoreQueryFilters()
             .Include(jr => jr.User)
             .Include(jr => jr.Company)
             .Include(jr => jr.ReviewedBy)

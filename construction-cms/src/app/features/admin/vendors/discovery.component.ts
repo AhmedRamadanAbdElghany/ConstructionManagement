@@ -16,9 +16,9 @@ import * as L from 'leaflet';
       <!-- Search Bar -->
       <div class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-6 shadow-sm z-10">
         <div class="max-w-7xl mx-auto mb-4 flex justify-between items-center">
-           <div>
-               <h1 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Suppliers & Material</h1>
-               <p class="text-xs text-slate-500 font-medium">Search for raw materials, check prices, and find best vendors</p>
+            <div>
+               <h1 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{{ 'vendors.suppliers_and_material' | translate }}</h1>
+               <p class="text-xs text-slate-500 font-medium">{{ 'vendors.discovery_subtitle' | translate }}</p>
            </div>
            
            <!-- View Toggle -->
@@ -29,7 +29,7 @@ import * as L from 'leaflet';
                       class="px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2"
                       [ngClass]="viewMode === 'list' ? 'text-slate-900 dark:text-slate-900' : 'text-slate-500 dark:text-slate-400'">
                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                 List
+                 {{ 'vendors.view_list' | translate }}
               </button>
               <button (click)="viewMode = 'map'; map.invalidateSize()"
                       [class.bg-white]="viewMode === 'map'"
@@ -37,7 +37,7 @@ import * as L from 'leaflet';
                       class="px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2"
                       [ngClass]="viewMode === 'map' ? 'text-slate-900 dark:text-slate-900' : 'text-slate-500 dark:text-slate-400'">
                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
-                 Map
+                 {{ 'vendors.view_map' | translate }}
               </button>
            </div>
         </div>
@@ -76,10 +76,10 @@ import * as L from 'leaflet';
 
           @if (myProjects.length > 0) {
             <div class="flex items-center gap-2 ml-auto">
-              <label class="text-sm font-medium text-slate-600 dark:text-slate-400">Search near project</label>
+              <label class="text-sm font-medium text-slate-600 dark:text-slate-400">{{ 'vendors.search_near_project' | translate }}</label>
               <select [(ngModel)]="searchRequest.projectId" (change)="onProjectSelect()"
                       class="border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800 py-2 px-3 text-sm focus:ring-2 focus:ring-cyan-500">
-                <option [ngValue]="undefined">Near My Location</option>
+                <option [ngValue]="undefined">{{ 'vendors.near_my_location' | translate }}</option>
                 @for (p of myProjects; track p.id) {
                   <option [value]="p.id">{{ p.name }}</option>
                 }
@@ -97,20 +97,20 @@ import * as L from 'leaflet';
             <div class="max-w-7xl mx-auto">
                 <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-800">
                     <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50">
-                        <h2 class="text-lg font-black text-slate-800 dark:text-white">{{ allProducts.length }} Products Found</h2>
+                        <h2 class="text-lg font-black text-slate-800 dark:text-white">{{ allProducts.length }} {{ 'vendors.products_found' | translate }}</h2>
                     </div>
                     
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
                             <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-xs">
                                 <tr>
-                                    <th class="px-6 py-4">Product Name</th>
-                                    <th class="px-6 py-4">Category</th>
-                                    <th class="px-6 py-4">Price</th>
-                                    <th class="px-6 py-4">Quantity In Stock</th>
-                                    <th class="px-6 py-4">Vendor</th>
-                                    <th class="px-6 py-4">Sold Orders</th>
-                                    <th class="px-6 py-4 text-right">Actions</th>
+                                    <th class="px-6 py-4">{{ 'vendors.product_name' | translate }}</th>
+                                    <th class="px-6 py-4">{{ 'vendors.category' | translate }}</th>
+                                    <th class="px-6 py-4">{{ 'vendors.price' | translate }}</th>
+                                    <th class="px-6 py-4">{{ 'vendors.quantity_in_stock' | translate }}</th>
+                                    <th class="px-6 py-4">{{ 'vendors.name' | translate }}</th>
+                                    <th class="px-6 py-4">{{ 'vendors.sold_orders' | translate }}</th>
+                                    <th class="px-6 py-4 text-right">{{ 'hr.actions' | translate }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
@@ -144,20 +144,20 @@ import * as L from 'leaflet';
                                               <div class="w-8 h-8 rounded-full bg-cyan-50 dark:bg-cyan-900/20 flex items-center justify-center text-cyan-600 dark:text-cyan-400 font-black text-xs">
                                                   {{ product.salesCount || 0 }}
                                               </div>
-                                              <span class="text-xs text-slate-500 font-bold">Orders</span>
+                                              <span class="text-xs text-slate-500 font-bold">{{ 'vendors.orders_count' | translate }}</span>
                                           </div>
                                       </td>
                                       <td class="px-6 py-4 text-right">
                                           <button (click)="zoomToVendor({latitude: product.latitude, longitude: product.longitude, name: product.vendorName, id: product.vendorId})" 
                                                   class="text-xs font-bold px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors">
-                                              View Vendor
+                                              {{ 'vendors.view_vendor' | translate }}
                                           </button>
                                       </td>
                                   </tr>
                                 } @empty {
                                     <tr>
                                         <td colspan="7" class="px-6 py-12 text-center text-slate-500">
-                                            No products found. Try changing your search filters.
+                                            {{ 'vendors.no_results_found' | translate }}
                                         </td>
                                     </tr>
                                 }
@@ -173,7 +173,7 @@ import * as L from 'leaflet';
             <!-- Sidebar Results -->
             <div class="w-full lg:w-96 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col shadow-xl z-[5]">
               <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
-                <h2 class="font-bold text-slate-800 dark:text-white">{{ results.length }} Vendors Found</h2>
+                <h2 class="font-bold text-slate-800 dark:text-white">{{ results.length }} {{ 'vendors.vendors_list' | translate }}</h2>
                 <button (click)="locateMe()" class="p-2 text-cyan-500 hover:bg-cyan-50 rounded-lg transition-colors" title="My Location">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -199,11 +199,11 @@ import * as L from 'leaflet';
                           <h3 class="font-bold text-slate-900 dark:text-white group-hover:text-cyan-600 transition-colors">{{ vendor.name }}</h3>
                           <div class="flex items-center gap-2 mt-1">
                             @if (vendor.isRegistered) {
-                              <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 uppercase tracking-wider">Registered</span>
+                              <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 uppercase tracking-wider">{{ 'vendors.registered' | translate }}</span>
                             } @else {
-                              <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400 uppercase tracking-wider">Unregistered</span>
+                              <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400 uppercase tracking-wider">{{ 'vendors.unregistered' | translate }}</span>
                             }
-                            <span class="text-[9px] font-bold text-slate-400">{{ vendor.invoiceCount }} Orders</span>
+                            <span class="text-[9px] font-bold text-slate-400">{{ vendor.invoiceCount }} {{ 'vendors.orders_count' | translate }}</span>
                           </div>
                         </div>
                         @if (vendor.distanceKm) {
@@ -226,7 +226,7 @@ import * as L from 'leaflet';
                             <span class="text-slate-700 dark:text-slate-300">{{ prod.name }}</span>
                             <div class="flex gap-2 items-center">
                                 <span class="font-bold text-emerald-600 dark:text-emerald-400">{{ prod.price | currency:'EGP' }} / {{ prod.unit }}</span>
-                                <span class="text-[9px] font-bold text-cyan-500 bg-cyan-50 px-1 rounded">{{ prod.salesCount || 0 }} sold</span>
+                                <span class="text-[9px] font-bold text-cyan-500 bg-cyan-50 px-1 rounded">{{ prod.salesCount || 0 }} {{ 'common.approved' | translate }}</span>
                             </div>
                           </div>
                         }
@@ -234,10 +234,10 @@ import * as L from 'leaflet';
     
                       <div class="flex gap-2">
                         <button class="flex-1 py-2 text-xs font-bold text-cyan-600 dark:text-cyan-400 bg-white dark:bg-slate-900 rounded-lg border border-cyan-100 dark:border-cyan-900/50 hover:bg-cyan-500 hover:text-white transition-all">
-                          Details
+                          {{ 'vendors.details' | translate }}
                         </button>
                         <button (click)="viewInvoices(vendor); $event.stopPropagation()" class="flex-1 py-2 text-xs font-bold text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800 hover:bg-slate-100 transition-all">
-                          Invoices
+                          {{ 'vendors.invoices' | translate }}
                         </button>
                       </div>
                     </div>

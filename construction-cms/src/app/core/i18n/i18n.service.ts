@@ -8,7 +8,7 @@ export type Language = 'en' | 'ar';
     providedIn: 'root'
 })
 export class I18nService {
-    private currentLanguageSubject = new BehaviorSubject<Language>('en');
+    private currentLanguageSubject = new BehaviorSubject<Language>('ar');
     public currentLanguage$ = this.currentLanguageSubject.asObservable();
 
     private readonly STORAGE_KEY = 'app-language';
@@ -27,10 +27,11 @@ export class I18nService {
         } else {
             // Detect browser language
             const browserLang = this.translate.getBrowserLang();
-            if (browserLang === 'ar') {
-                this.setLanguage('ar');
-            } else {
+            if (browserLang === 'en') {
                 this.setLanguage('en');
+            } else {
+                // Default to Arabic for Arabic-first experience
+                this.setLanguage('ar');
             }
         }
     }

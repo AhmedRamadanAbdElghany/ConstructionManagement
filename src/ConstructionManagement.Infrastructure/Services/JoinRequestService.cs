@@ -3,6 +3,7 @@ using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConstructionManagement.Infrastructure.Services;
 
@@ -13,19 +14,22 @@ public class JoinRequestService : IJoinRequestService
     private readonly ICompanyRepository _companyRepository;
     private readonly INotificationService _notificationService;
     private readonly IEmailService _emailService;
+    private readonly IRepository<Role> _roleRepository;
 
     public JoinRequestService(
         IJoinRequestRepository joinRequestRepository,
         IUserRepository userRepository,
         ICompanyRepository companyRepository,
         INotificationService notificationService,
-        IEmailService emailService)
+        IEmailService emailService,
+        IRepository<Role> roleRepository)
     {
         _joinRequestRepository = joinRequestRepository;
         _userRepository = userRepository;
         _companyRepository = companyRepository;
         _notificationService = notificationService;
         _emailService = emailService;
+        _roleRepository = roleRepository;
     }
 
     public async Task<JoinRequestDto> CreateRequestAsync(int? userId, CreateJoinRequestDto dto)
@@ -120,34 +124,29 @@ public class JoinRequestService : IJoinRequestService
         {
             user.CompanyId = request.CompanyId;
 
-            // Map RequestedRole to UserType if provided
-            if (!string.IsNullOrEmpty(request.RequestedRole))
-            {
-                user.UserType = request.RequestedRole switch
-                {
-                    "Worker" => Domain.Enums.UserType.Worker,
-                    "InventoryOwner" => Domain.Enums.UserType.InventoryOwner,
-                    "Engineer" => Domain.Enums.UserType.Engineer,
-                    "NormalUser" => Domain.Enums.UserType.NormalUser,
-                    _ => user.UserType // Keep current if unknown
-                };
-            }
+            // IMPORTANT: Do NOT change user.UserType here.
+            // UserType is set at registration and is immutable.
+            // The join request approval only assigns the user to the company.
 
-            // Assign appropriate roles based on UserType
-            int primaryRoleId = user.UserType switch
+            // Determine the appropriate role name based on the user's existing UserType
+            var roleName = user.UserType switch
             {
-                Domain.Enums.UserType.Worker => 4,         // CompanyUser
-                Domain.Enums.UserType.Engineer => 4,       // CompanyUser
-                Domain.Enums.UserType.InventoryOwner => 4, // CompanyUser
-                Domain.Enums.UserType.NormalUser => 3,     // User (Client)
-                _ => 3
+                Domain.Enums.UserType.Worker => "CompanyUser",
+                Domain.Enums.UserType.Engineer => "CompanyUser",
+                Domain.Enums.UserType.InventoryOwner => "CompanyUser",
+                Domain.Enums.UserType.NormalUser => "User",
+                _ => "User"
             };
 
-            if (!user.UserRoles.Any(ur => ur.RoleId == primaryRoleId))
+            // Look up role by name instead of using hardcoded IDs
+            var role = await _roleRepository.AsQueryable()
+                .FirstOrDefaultAsync(r => r.Name == roleName && r.CompanyId == null);
+
+            if (role != null && !user.UserRoles.Any(ur => ur.RoleId == role.Id))
             {
                 user.UserRoles.Add(new UserRole
                 {
-                    RoleId = primaryRoleId,
+                    RoleId = role.Id,
                     AssignedAt = DateTime.UtcNow
                 });
             }

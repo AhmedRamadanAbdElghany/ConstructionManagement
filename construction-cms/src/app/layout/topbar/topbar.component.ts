@@ -6,6 +6,7 @@ import { LanguageSwitcherComponent } from '../language-switcher/language-switche
 import { TranslateModule } from '@ngx-translate/core';
 import { ThemeService } from '../../core/theme/theme.service';
 import { NotificationsService, NotificationDto } from '../../core/services/notifications.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-topbar',
@@ -242,6 +243,7 @@ export class TopbarComponent implements OnInit {
   public authService = inject(AuthService);
   public themeService = inject(ThemeService);
   public notificationsService = inject(NotificationsService);
+  private translateService = inject(TranslateService);
 
   get isInventoryOwner(): boolean {
     return this.authService.getCurrentUser()?.userType === 3;
@@ -294,11 +296,12 @@ export class TopbarComponent implements OnInit {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (isNaN(then.getTime())) return timestamp; // Fallback for non-ISO dates
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins} minutes ago`;
-    if (diffHours < 24) return `${diffHours} hours ago`;
-    if (diffDays < 7) return `${diffDays} days ago`;
+    if (isNaN(then.getTime())) return timestamp;
+
+    if (diffMins < 1) return this.translateService.instant('common.time.just_now');
+    if (diffMins < 60) return this.translateService.instant('common.time.minutes_ago', { value: diffMins });
+    if (diffHours < 24) return this.translateService.instant('common.time.hours_ago', { value: diffHours });
+    if (diffDays < 7) return this.translateService.instant('common.time.days_ago', { value: diffDays });
     return then.toLocaleDateString();
   }
 

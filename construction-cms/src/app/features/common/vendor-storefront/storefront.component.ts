@@ -6,18 +6,18 @@ import { VendorService, Vendor, VendorProduct, CreateVendorProductRequest } from
 import * as L from 'leaflet';
 
 @Component({
-    selector: 'app-vendor-storefront',
-    standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
-    template: `
+  selector: 'app-vendor-storefront',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule],
+  template: `
     <div class="p-6 max-w-7xl mx-auto space-y-6">
       <!-- Header -->
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800">
         <div>
           <h1 class="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
             {{ 'vendors.storefront_title' | translate }}
-            <span *ngIf="vendor?.isPublic" class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold uppercase tracking-wider">Public</span>
-            <span *ngIf="!vendor?.isPublic" class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-wider">Private</span>
+            <span *ngIf="vendor?.isPublic" class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold uppercase tracking-wider">{{ 'vendors.public' | translate }}</span>
+            <span *ngIf="!vendor?.isPublic" class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-wider">{{ 'vendors.private' | translate }}</span>
           </h1>
           <p class="text-slate-500 dark:text-slate-400">{{ 'vendors.storefront_desc' | translate }}</p>
         </div>
@@ -55,7 +55,7 @@ import * as L from 'leaflet';
                 <input type="checkbox" id="isPublic" [(ngModel)]="vendor.isPublic" class="w-5 h-5 rounded border-slate-300 text-cyan-500 focus:ring-cyan-500">
                 <label for="isPublic" class="text-sm font-medium text-slate-700 dark:text-slate-300">
                   {{ 'vendors.make_profile_public' | translate }}
-                  <span class="block text-xs text-slate-500 font-normal">If checked, you'll appear on the discovery map for companies.</span>
+                  <span class="block text-xs text-slate-500 font-normal">{{ 'vendors.public_hint' | translate }}</span>
                 </label>
               </div>
             </div>
@@ -96,13 +96,13 @@ import * as L from 'leaflet';
                 <div class="flex justify-between items-end">
                   <span class="text-xs font-black text-emerald-600 dark:text-emerald-400">{{ prod.price | currency:'EGP' }}</span>
                   <span class="text-[10px] items-center py-1 px-2 rounded-lg bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-100 dark:border-slate-800">
-                    per {{ prod.unit }}
+                    {{ 'common.per' | translate }} {{ prod.unit }}
                   </span>
                 </div>
               </div>
             } @empty {
               <div class="text-center py-12 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-3xl">
-                <p class="text-sm text-slate-400">No products added yet</p>
+                <p class="text-sm text-slate-400">{{ 'vendors.no_products' | translate }}</p>
               </div>
             }
           </div>
@@ -156,7 +156,7 @@ import * as L from 'leaflet';
       }
     </div>
   `,
-    styles: [`
+  styles: [`
     #store-map { height: 100%; width: 100%; border-radius: 1rem; }
     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -164,130 +164,130 @@ import * as L from 'leaflet';
   `]
 })
 export class VendorStorefrontComponent implements OnInit, AfterViewInit, OnDestroy {
-    private map!: L.Map;
-    private marker?: L.Marker;
+  private map!: L.Map;
+  private marker?: L.Marker;
 
-    vendor: any = {
-        name: '',
-        phone: '',
-        address: '',
-        latitude: 30.0444,
-        longitude: 31.2357,
-        isPublic: false
-    };
-    products: VendorProduct[] = [];
+  vendor: any = {
+    name: '',
+    phone: '',
+    address: '',
+    latitude: 30.0444,
+    longitude: 31.2357,
+    isPublic: false
+  };
+  products: VendorProduct[] = [];
 
-    newProduct: CreateVendorProductRequest = {
-        name: '',
-        category: 'Cement',
-        price: 0,
-        unit: 'Ton',
-        description: ''
-    };
+  newProduct: CreateVendorProductRequest = {
+    name: '',
+    category: 'Cement',
+    price: 0,
+    unit: 'Ton',
+    description: ''
+  };
 
-    saving = false;
-    showAddProductModal = false;
+  saving = false;
+  showAddProductModal = false;
 
-    constructor(private vendorService: VendorService) { }
+  constructor(private vendorService: VendorService) { }
 
-    ngOnInit() {
-        this.loadProfile();
-    }
+  ngOnInit() {
+    this.loadProfile();
+  }
 
-    ngAfterViewInit() {
-        this.initMap();
-    }
+  ngAfterViewInit() {
+    this.initMap();
+  }
 
-    ngOnDestroy() {
-        if (this.map) this.map.remove();
-    }
+  ngOnDestroy() {
+    if (this.map) this.map.remove();
+  }
 
-    private initMap() {
-        this.map = L.map('store-map', {
-            zoomControl: true,
-            attributionControl: false
-        }).setView([this.vendor.latitude || 30.0444, this.vendor.longitude || 31.2357], 13);
+  private initMap() {
+    this.map = L.map('store-map', {
+      zoomControl: true,
+      attributionControl: false
+    }).setView([this.vendor.latitude || 30.0444, this.vendor.longitude || 31.2357], 13);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
 
-        const icon = L.icon({
-            iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 41]
-        });
+    const icon = L.icon({
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41]
+    });
 
-        this.marker = L.marker([this.vendor.latitude || 30.0444, this.vendor.longitude || 31.2357], {
-            icon,
-            draggable: true
-        }).addTo(this.map);
+    this.marker = L.marker([this.vendor.latitude || 30.0444, this.vendor.longitude || 31.2357], {
+      icon,
+      draggable: true
+    }).addTo(this.map);
 
-        this.marker.on('dragend', (e: any) => {
-            const pos = e.target.getLatLng();
-            this.vendor.latitude = pos.lat;
-            this.vendor.longitude = pos.lng;
-        });
+    this.marker.on('dragend', (e: any) => {
+      const pos = e.target.getLatLng();
+      this.vendor.latitude = pos.lat;
+      this.vendor.longitude = pos.lng;
+    });
 
-        this.map.on('click', (e: L.LeafletMouseEvent) => {
-            this.marker?.setLatLng(e.latlng);
-            this.vendor.latitude = e.latlng.lat;
-            this.vendor.longitude = e.latlng.lng;
-        });
-    }
+    this.map.on('click', (e: L.LeafletMouseEvent) => {
+      this.marker?.setLatLng(e.latlng);
+      this.vendor.latitude = e.latlng.lat;
+      this.vendor.longitude = e.latlng.lng;
+    });
+  }
 
-    loadProfile() {
-        this.vendorService.getMyProfile().subscribe({
-            next: (v) => {
-                this.vendor = v;
-                if (this.map && v.latitude && v.longitude) {
-                    this.map.setView([v.latitude, v.longitude], 13);
-                    this.marker?.setLatLng([v.latitude, v.longitude]);
-                }
-                this.loadProducts(v.id);
-            },
-            error: (err) => console.error('Error loading profile', err)
-        });
-    }
+  loadProfile() {
+    this.vendorService.getMyProfile().subscribe({
+      next: (v) => {
+        this.vendor = v;
+        if (this.map && v.latitude && v.longitude) {
+          this.map.setView([v.latitude, v.longitude], 13);
+          this.marker?.setLatLng([v.latitude, v.longitude]);
+        }
+        this.loadProducts(v.id);
+      },
+      error: (err) => console.error('Error loading profile', err)
+    });
+  }
 
-    loadProducts(vendorId: number) {
-        this.vendorService.getVendorProducts(vendorId).subscribe({
-            next: (p) => this.products = p,
-            error: (err) => console.error('Error loading products', err)
-        });
-    }
+  loadProducts(vendorId: number) {
+    this.vendorService.getVendorProducts(vendorId).subscribe({
+      next: (p) => this.products = p,
+      error: (err) => console.error('Error loading products', err)
+    });
+  }
 
-    onSaveProfile() {
-        this.saving = true;
-        this.vendorService.updateMyProfile(this.vendor).subscribe({
-            next: (v) => {
-                this.vendor = v;
-                this.saving = false;
-                alert('Profile saved successfully!');
-            },
-            error: (err) => {
-                console.error('Save error', err);
-                this.saving = false;
-            }
-        });
-    }
+  onSaveProfile() {
+    this.saving = true;
+    this.vendorService.updateMyProfile(this.vendor).subscribe({
+      next: (v) => {
+        this.vendor = v;
+        this.saving = false;
+        alert('Profile saved successfully!');
+      },
+      error: (err) => {
+        console.error('Save error', err);
+        this.saving = false;
+      }
+    });
+  }
 
-    onAddProduct() {
-        if (!this.newProduct.name || !this.vendor.id) return;
-        this.vendorService.addProduct(this.vendor.id, this.newProduct).subscribe({
-            next: (p) => {
-                this.products.push(p);
-                this.showAddProductModal = false;
-                this.newProduct = { name: '', category: 'Cement', price: 0, unit: 'Ton', description: '' };
-            },
-            error: (err) => console.error('Add product error', err)
-        });
-    }
+  onAddProduct() {
+    if (!this.newProduct.name || !this.vendor.id) return;
+    this.vendorService.addProduct(this.vendor.id, this.newProduct).subscribe({
+      next: (p) => {
+        this.products.push(p);
+        this.showAddProductModal = false;
+        this.newProduct = { name: '', category: 'Cement', price: 0, unit: 'Ton', description: '' };
+      },
+      error: (err) => console.error('Add product error', err)
+    });
+  }
 
-    onDeleteProduct(id: number) {
-        if (!confirm('Are you sure you want to delete this product?')) return;
-        this.vendorService.deleteProduct(id).subscribe({
-            next: () => this.products = this.products.filter(p => p.id !== id),
-            error: (err) => console.error('Delete product error', err)
-        });
-    }
+  onDeleteProduct(id: number) {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+    this.vendorService.deleteProduct(id).subscribe({
+      next: () => this.products = this.products.filter(p => p.id !== id),
+      error: (err) => console.error('Delete product error', err)
+    });
+  }
 }

@@ -2,6 +2,7 @@ using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.DTOs.CompanyRequest;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Domain.Enums;
 using ConstructionManagement.Infrastructure.Persistence.Repositories;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -225,12 +226,15 @@ public class CompanyRequestService : ICompanyRequestService
         if (user != null)
         {
             user.CompanyId = company.Id;
-            user.UserRoles.Clear();
-            
+            user.UserType = Domain.Enums.UserType.CompanyOwner;
+
+            // IMPORTANT: Do NOT call user.UserRoles.Clear() — that wipes ALL existing roles
+            // (including SuperAdmin, roles from other companies, etc.).
+            // Instead, only add the new CompanyAdmin role for this company.
             var adminRole = await _roleRepository.AsQueryable()
                 .FirstOrDefaultAsync(r => r.CompanyId == company.Id && r.Name == "CompanyAdmin");
 
-            if (adminRole != null)
+            if (adminRole != null && !user.UserRoles.Any(ur => ur.RoleId == adminRole.Id))
             {
                 user.UserRoles.Add(new UserRole
                 {
