@@ -5,6 +5,7 @@ import { DashboardService, DashboardStats, SuperAdminStats, CompanySubscription,
 import { Project, WorkerPerformance } from '../../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
+import { ClientPortalService } from '../../../core/services/client-portal.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -902,7 +903,8 @@ export class DashboardComponent implements OnInit {
   }
 
   get isClient(): boolean {
-    return this.currentUser?.role === 'NormalUser';
+    const role = this.currentUser?.role;
+    return role === 'NormalUser' || role === 'User' || role === 'Client';
   }
 
   get isWorker(): boolean {
@@ -953,6 +955,8 @@ export class DashboardComponent implements OnInit {
 
   saActivities: SuperAdminActivity[] = [];
 
+  private clientPortalService = inject(ClientPortalService);
+
   constructor(
     private dashboardService: DashboardService,
     public authService: AuthService
@@ -968,6 +972,8 @@ export class DashboardComponent implements OnInit {
       this.loadSuperAdminView();
     } else if (this.isWorker) {
       this.loadWorkerView();
+    } else if (this.isClient) {
+      this.loadClientView();
     } else {
       this.loadStandardView();
     }
@@ -992,6 +998,32 @@ export class DashboardComponent implements OnInit {
     this.dashboardService.getDashboardStats().subscribe(stats => {
       this.stats = stats;
     });
+    this.dashboardService.getRecentActivities().subscribe(activities => {
+      this.recentActivities = activities;
+    });
+  }
+
+  loadClientView() {
+    this.clientPortalService.getClientDashboard().subscribe(data => {
+      if (data) {
+        // Update stats for unassigned check
+        this.stats = {
+          activeProjects: data.projects?.length || 0,
+          completedProjects: data.projects?.filter(p => p.status === 'Completed').length || 0,
+          delayedProjects: data.projects?.filter(p => p.status === 'Delayed').length || 0,
+          totalRevenue: data.paymentSummary?.totalPaid || 0
+        };
+
+        this.clientStats = {
+          totalContract: data.paymentSummary.totalInvoiced,
+          totalPaid: data.paymentSummary.totalPaid,
+          projectProgress: data.projects[0]?.progressPercentage || 0,
+          currentStatusNote: `Current Status: ${data.projects[0]?.status || 'N/A'}`,
+          milestones: []
+        };
+      }
+    });
+
     this.dashboardService.getRecentActivities().subscribe(activities => {
       this.recentActivities = activities;
     });

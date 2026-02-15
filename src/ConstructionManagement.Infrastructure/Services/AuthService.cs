@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -22,6 +23,8 @@ public class AuthService : IAuthService
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ICompanyRequestRepository _companyRequestRepository;
     private readonly INotificationService _notificationService;
+    private readonly IRepository<Role> _roleRepository;
+    private readonly IRepository<UserRole> _userRoleRepository;
 
     public AuthService(
         IUserRepository userRepository,
@@ -30,7 +33,9 @@ public class AuthService : IAuthService
         IHttpContextAccessor httpContextAccessor,
         ICompanyRequestRepository companyRequestRepository,
         INotificationService notificationService,
-        IRepository<Vendor> vendorRepository)
+        IRepository<Vendor> vendorRepository,
+        IRepository<Role> roleRepository,
+        IRepository<UserRole> userRoleRepository)
     {
         _userRepository = userRepository;
         _configuration = configuration;
@@ -39,6 +44,8 @@ public class AuthService : IAuthService
         _companyRequestRepository = companyRequestRepository;
         _notificationService = notificationService;
         _vendorRepository = vendorRepository;
+        _roleRepository = roleRepository;
+        _userRoleRepository = userRoleRepository;
     }
 
     private readonly IRepository<Vendor> _vendorRepository;
@@ -162,9 +169,35 @@ public class AuthService : IAuthService
             // For InventoryOwner and NormalUser, we skip the "Pending" status and company request.
             // They are effectively "Active" (confirmed by email check usually, but for now we proceed).
 
+            // Link Roles in Database
+            var roleName = request.UserType switch
+            {
+                UserType.InventoryOwner => "InventoryOwner",
+                UserType.NormalUser => "User",
+                UserType.CompanyOwner => "CompanyAdmin",
+                _ => "CompanyUser"
+            };
+
+            var role = await _roleRepository.AsQueryable().FirstOrDefaultAsync(r => r.Name == roleName);
+            if (role != null)
+            {
+                var userRole = new UserRole
+                {
+                    UserId = user.Id,
+                    RoleId = role.Id,
+                    AssignedAt = DateTime.UtcNow
+                };
+                await _userRoleRepository.AddAsync(userRole);
+                await _unitOfWork.SaveChangesAsync();
+                
+                // Ensure the user object has the roles for JWT generation
+                user.UserRoles = new List<UserRole> { userRole };
+            }
+
             // TODO: Send verification email with user.EmailVerificationToken
             var token = GenerateJwtToken(user);
-            var roles = new List<string> { "CompanyUser" };
+            var roles = new List<string> { roleName };
+            
             var userDto = new UserDto(
                 user.Id,
                 user.FullName,

@@ -180,23 +180,6 @@ import { AuthService } from '../../../core/services/auth.service';
 
             <!-- Modal Body -->
             <div class="p-8 space-y-6">
-              <!-- Role Selection -->
-              <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Select Role</label>
-                <div class="grid grid-cols-2 gap-3">
-                  @for (role of availableRoles; track role.key) {
-                    <button (click)="joinForm.requestedRole = role.key"
-                      [ngClass]="{
-                        'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-500': joinForm.requestedRole === role.key,
-                        'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600': joinForm.requestedRole !== role.key
-                      }"
-                      class="px-4 py-3 rounded-xl border text-center transition-all text-xs font-bold uppercase tracking-wide">
-                      {{ role.label }}
-                    </button>
-                  }
-                </div>
-              </div>
-
               <!-- Message -->
               <div>
                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Message (Optional)</label>
@@ -234,6 +217,7 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class BrowseFirmsComponent implements OnInit {
   private service = inject(PendingRequestsService);
+  private authService = inject(AuthService);
 
   // Data Sources
   allCompanies: PublicCompany[] = [];
@@ -258,13 +242,6 @@ export class BrowseFirmsComponent implements OnInit {
     message: ''
   };
 
-  availableRoles = [
-    { key: 'NormalUser', label: 'Client / User' },
-    { key: 'Worker', label: 'Worker' },
-    { key: 'Engineer', label: 'Engineer' },
-    { key: 'InventoryOwner', label: 'Inventory Manager' }
-  ];
-
   ngOnInit() {
     this.loadData();
   }
@@ -282,7 +259,7 @@ export class BrowseFirmsComponent implements OnInit {
       error: () => this.loading = false
     });
 
-    this.service.getJoinRequests().subscribe({
+    this.service.getMyJoinRequests().subscribe({
       next: (requests) => {
         this.allRequests = requests;
         this.checkDataLoaded();
@@ -324,7 +301,10 @@ export class BrowseFirmsComponent implements OnInit {
 
   openJoinModal(company: PublicCompany) {
     this.selectedCompany = company;
-    this.joinForm = { requestedRole: 'NormalUser', message: '' };
+    const user = this.authService.getCurrentUser();
+    // Use the role name from the user object if available, otherwise fallback to NormalUser
+    const role = user?.role || 'NormalUser';
+    this.joinForm = { requestedRole: role, message: '' };
     this.showJoinModal = true;
   }
 

@@ -197,7 +197,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get client dashboard
         /// </summary>
         [HttpGet("dashboard")]
-        [Authorize(Roles = "Client")]
+        [Authorize(Roles = "Client,User,NormalUser")]
         public async Task<ActionResult<ClientDashboardDto>> GetClientDashboard()
         {
             var clientUserId = GetCurrentClientUserId();
@@ -213,7 +213,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get client payment history
         /// </summary>
         [HttpGet("payments")]
-        [Authorize(Roles = "Client")]
+        [Authorize(Roles = "Client,User,NormalUser")]
         public async Task<ActionResult<List<ClientPaymentDto>>> GetClientPayments([FromQuery] int? projectId)
         {
             var clientUserId = GetCurrentClientUserId();
@@ -241,7 +241,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get client messages
         /// </summary>
         [HttpGet("messages")]
-        [Authorize(Roles = "Client")]
+        [Authorize(Roles = "Client,User,NormalUser")]
         public async Task<ActionResult<List<ClientMessageDto>>> GetClientMessages([FromQuery] string? status)
         {
             var clientUserId = GetCurrentClientUserId();
@@ -313,7 +313,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get client change order requests
         /// </summary>
         [HttpGet("change-orders")]
-        [Authorize(Roles = "Client")]
+        [Authorize(Roles = "Client,User,NormalUser")]
         public async Task<ActionResult<List<ChangeOrderRequestDto>>> GetChangeOrderRequests([FromQuery] int? projectId)
         {
             var clientUserId = GetCurrentClientUserId();
@@ -388,7 +388,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get client project progress
         /// </summary>
         [HttpGet("projects/{projectId}/progress")]
-        [Authorize(Roles = "Client")]
+        [Authorize(Roles = "Client,User,NormalUser")]
         public async Task<ActionResult<ClientProjectProgressDto>> GetClientProjectProgress(int projectId)
         {
             var clientUserId = GetCurrentClientUserId();
@@ -406,7 +406,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get client recent activities
         /// </summary>
         [HttpGet("activities")]
-        [Authorize(Roles = "Client")]
+        [Authorize(Roles = "Client,User,NormalUser")]
         public async Task<ActionResult<List<ClientActivityDto>>> GetClientActivities([FromQuery] int count = 20)
         {
             var clientUserId = GetCurrentClientUserId();
@@ -533,7 +533,13 @@ namespace ConstructionManagement.WebApi.Controllers
             var clientUserIdClaim = User.FindFirst("ClientUserId")?.Value;
             if (int.TryParse(clientUserIdClaim, out int clientUserId))
                 return clientUserId;
-            throw new UnauthorizedException("Client user ID not found in token");
+            
+            // Fallback to standard Subject/NameIdentifier for self-registered users
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(userIdClaim, out int userId))
+                return userId;
+
+            throw new UnauthorizedException("Client user ID or User ID not found in token");
         }
 
         #endregion

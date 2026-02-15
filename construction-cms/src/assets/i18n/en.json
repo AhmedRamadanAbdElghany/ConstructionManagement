@@ -38,7 +38,9 @@
     "role_worker": "Worker",
     "role_client": "Client",
     "role_owner": "Firm Owner",
-    "role_inventory_owner": "Inventory Owner"
+    "role_inventory_owner": "Inventory Owner",
+    "daily_reports": "Daily Reports",
+    "building_material_stores": "Building Material Stores"
   },
   "pending_requests": {
     "subtitle": "Review and manage pending company registration and user join requests",

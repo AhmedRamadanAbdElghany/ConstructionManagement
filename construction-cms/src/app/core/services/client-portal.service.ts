@@ -210,30 +210,8 @@ export class ClientPortalService {
         return this.http.put<ClientPortalSettings>(`${this.apiUrl}/settings`, settings);
     }
 
-    // Client Companies
     getMyCompanies(): Observable<ClientCompany[]> {
-        // Mock implementation for demo - in real app this would come from an endpoint
-        // Simulating a user who is approved in one company and pending in another
-        return new Observable(observer => {
-            setTimeout(() => {
-                observer.next([
-                    {
-                        companyId: 1,
-                        companyName: 'Acme Construction',
-                        status: 'Approved',
-                        joinedAt: new Date().toISOString()
-                    },
-                    {
-                        companyId: 2,
-                        companyName: 'BuildRight Inc.',
-                        status: 'Pending',
-                        joinedAt: new Date().toISOString()
-                    }
-                ]);
-                observer.complete();
-            }, 300);
-        });
-        // return this.http.get<ClientCompany[]>(`${this.apiUrl}/my-companies`);
+        return this.http.get<ClientCompany[]>(`${this.apiUrl}/my-companies`);
     }
 
     // Client Users (Admin)

@@ -391,12 +391,34 @@ namespace ConstructionManagement.Infrastructure.Services
         public async Task<ClientDashboardDto> GetClientDashboardAsync(int clientUserId)
         {
             var user = await _context.ClientUsers.FindAsync(clientUserId);
+            string firstName = "";
+            string lastName = "";
+            string email = "";
+            string companyName = "";
+            int? companyId = null;
+
             if (user == null)
             {
-                throw new InvalidOperationException("Client user not found");
+                // Fallback to standard User table
+                var standardUser = await _context.Users.FindAsync(clientUserId);
+                if (standardUser == null)
+                {
+                     throw new InvalidOperationException("User not found");
+                }
+                firstName = standardUser.FirstName;
+                lastName = standardUser.LastName;
+                email = standardUser.Email;
+                companyName = "Self Registered"; // Or some default
+                companyId = standardUser.CompanyId;
             }
-
-            var companyId = user.CompanyId ?? 0;
+            else
+            {
+                firstName = user.FirstName;
+                lastName = user.LastName;
+                email = user.Email;
+                companyName = user.CompanyName;
+                companyId = user.CompanyId;
+            }
 
             var accessList = await _context.ClientProjectAccesses
                 .Include(a => a.Project)
@@ -413,8 +435,8 @@ namespace ConstructionManagement.Infrastructure.Services
             {
                 ProjectId = p.Id,
                 ProjectName = p.ProjectName,
-                Status = p.Status.ToString(),
-                ProgressPercentage = 0,
+                Status = p.Status,
+                ProgressPercentage = p.ProgressPercentage,
                 HasUpdates = false
             }).ToList();
 
@@ -425,24 +447,31 @@ namespace ConstructionManagement.Infrastructure.Services
                 .CountAsync(c => c.ClientUserId == clientUserId &&
                     (c.Status == "Submitted" || c.Status == "UnderReview"));
 
+            var allProjectPayments = await _context.ClientPayments
+                .Where(p => projectIds.Contains(p.ProjectId))
+                .ToListAsync();
+
+            var totalInvoiced = projects.Sum(p => p.TotalContractValue ?? 0);
+            var totalPaid = allProjectPayments.Where(p => p.IsConfirmed).Sum(p => p.Amount);
+
             return new ClientDashboardDto
             {
                 ClientUser = new ClientUserDto
                 {
-                    Id = user.Id,
-                    CompanyId = companyId,
-                    Email = user.Email,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    FullName = $"{user.FirstName} {user.LastName}",
-                    CompanyName = user.CompanyName
+                    Id = clientUserId,
+                    CompanyId = companyId ?? 0,
+                    Email = email,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    FullName = $"{firstName} {lastName}",
+                    CompanyName = companyName
                 },
                 Projects = projectSummaries,
                 PaymentSummary = new ClientPaymentSummaryDto
                 {
-                    TotalInvoiced = 0,
-                    TotalPaid = 0,
-                    PendingAmount = 0,
+                    TotalInvoiced = totalInvoiced,
+                    TotalPaid = totalPaid,
+                    PendingAmount = totalInvoiced - totalPaid,
                     OverdueAmount = 0
                 },
                 UnreadMessagesCount = unreadMessagesCount,
@@ -482,13 +511,27 @@ namespace ConstructionManagement.Infrastructure.Services
 
         public async Task<ClientPaymentSummaryDto> GetClientPaymentSummaryAsync(int clientUserId)
         {
-            var payments = await _context.ClientPayments.ToListAsync();
+            var projectIds = await _context.ClientProjectAccesses
+                .Where(a => a.ClientUserId == clientUserId)
+                .Select(a => a.ProjectId ?? 0)
+                .ToListAsync();
+
+            var payments = await _context.ClientPayments
+                .Where(p => projectIds.Contains(p.ProjectId))
+                .ToListAsync();
+
+            var projects = await _context.Projects
+                .Where(p => projectIds.Contains(p.Id))
+                .ToListAsync();
+
+            var totalInvoiced = projects.Sum(p => p.TotalContractValue ?? 0);
+            var totalPaid = payments.Where(p => p.IsConfirmed).Sum(p => p.Amount);
 
             return new ClientPaymentSummaryDto
             {
-                TotalInvoiced = payments.Sum(p => p.Amount),
-                TotalPaid = payments.Where(p => p.IsConfirmed).Sum(p => p.Amount),
-                PendingAmount = payments.Where(p => !p.IsConfirmed).Sum(p => p.Amount),
+                TotalInvoiced = totalInvoiced,
+                TotalPaid = totalPaid,
+                PendingAmount = totalInvoiced - totalPaid,
                 OverdueAmount = 0
             };
         }

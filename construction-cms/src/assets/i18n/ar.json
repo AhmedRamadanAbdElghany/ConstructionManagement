@@ -38,7 +38,9 @@
     "role_worker": "عامل",
     "role_client": "عميل",
     "role_owner": "صاحب شركة",
-    "role_inventory_owner": "صاحب مخزون"
+    "role_inventory_owner": "صاحب مخزون",
+    "daily_reports": "التقارير اليومية",
+    "building_material_stores": "مخازن مواد البناء"
   },
   "pending_requests": {
     "subtitle": "مراجعة وإدارة طلبات تسجيل الشركات وطلبات انضمام المستخدمين المعلقة",

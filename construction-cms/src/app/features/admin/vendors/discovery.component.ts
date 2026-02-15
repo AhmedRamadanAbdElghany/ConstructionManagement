@@ -307,8 +307,10 @@ export class VendorDiscoveryComponent implements OnInit, OnDestroy, AfterViewIni
   ngOnInit() {
     this.initDefaultLocation();
     this.loadProjects();
-    // Default radius to 5000 (Everywhere) if user wants to see all
+    // Default radius to 10000 (Everywhere)
     this.searchRequest.radiusKm = 10000;
+    // Trigger search immediately without waiting for location
+    this.onSearch();
   }
 
   ngAfterViewInit() {
@@ -322,7 +324,6 @@ export class VendorDiscoveryComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   initMap() {
-    // Only init map if container exists (it might not in list view if we use ngIf, but we probably use [hidden] for map to keep state)
     const mapContainer = document.getElementById('map');
     if (!mapContainer) return;
 
@@ -336,7 +337,7 @@ export class VendorDiscoveryComponent implements OnInit, OnDestroy, AfterViewIni
     }).addTo(this.map);
 
     this.map.on('locationfound', (e) => this.onLocationFound(e));
-    this.locateMe();
+    // Removed this.locateMe() to prevent auto-prompt
   }
 
   private initDefaultLocation() {

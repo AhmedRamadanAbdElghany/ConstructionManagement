@@ -551,7 +551,8 @@ public class VendorService : IVendorService
     public async Task<IEnumerable<PublicVendorDto>> SearchPublicVendorsAsync(VendorSearchRequest request)
     {
         var query = _vendorRepository.AsQueryable()
-            .Where(v => v.IsActive && v.IsPublic);
+            .IgnoreQueryFilters()
+            .Where(v => v.IsActive && (v.IsPublic || v.Products.Any(p => p.IsActive)));
 
         if (!string.IsNullOrEmpty(request.Name))
         {
@@ -561,6 +562,7 @@ public class VendorService : IVendorService
         {
             // Search by material type in vendor products
             var vendorIdsWithMaterial = await _productRepository.AsQueryable()
+                .IgnoreQueryFilters()
                 .Where(p => p.Name.Contains(request.Material) || (p.Description != null && p.Description.Contains(request.Material)))
                 .Select(p => p.VendorId)
                 .Distinct()
@@ -568,26 +570,61 @@ public class VendorService : IVendorService
             query = query.Where(v => vendorIdsWithMaterial.Contains(v.Id));
         }
 
-        var vendors = await query.ToListAsync();
+        // Include Products here to ensure they are loaded
+        var vendors = await query.Include(v => v.Products).ToListAsync();
 
-        if (request.Latitude.HasValue && request.Longitude.HasValue)
+        if (request.Latitude.HasValue && request.Longitude.HasValue && request.RadiusKm < 5000)
         {
-            vendors = vendors.Where(v => 
-                v.Latitude.HasValue && v.Longitude.HasValue &&
-                CalculateDistance(request.Latitude.Value, request.Longitude.Value, v.Latitude.Value, v.Longitude.Value) <= request.RadiusKm
-            ).ToList();
+            var vendorsWithDistance = vendors.Select(v => new PublicVendorDto
+            {
+                Id = v.Id,
+                Name = v.Name,
+                Notes = v.Notes,
+                Address = v.Address,
+                VendorType = v.VendorType,
+                Latitude = v.Latitude,
+                Longitude = v.Longitude,
+                DistanceKm = v.Latitude.HasValue && v.Longitude.HasValue 
+                    ? CalculateDistance(request.Latitude.Value, request.Longitude.Value, v.Latitude.Value, v.Longitude.Value) 
+                    : 99999,
+                TopProducts = v.Products
+                    .Where(p => p.IsActive && (string.IsNullOrEmpty(request.Material) || p.Name.Contains(request.Material) || (p.Description != null && p.Description.Contains(request.Material))))
+                    .Select(p => new VendorProductDto
+                    {
+                        Id = p.Id,
+                        VendorId = p.VendorId,
+                        Name = p.Name,
+                        Category = p.Category,
+                        Price = p.Price,
+                        Unit = p.Unit,
+                        Description = p.Description,
+                        QuantityInStock = p.QuantityInStock,
+                        LowStockThreshold = p.LowStockThreshold,
+                        PurchasePrice = p.PurchasePrice,
+                        IsActive = p.IsActive,
+                        SalesCount = 0 // For now simpler
+                    })
+                    .Take(5)
+                    .ToList()
+            })
+            .Where(v => v.DistanceKm <= request.RadiusKm)
+            .OrderBy(v => v.DistanceKm)
+            .ToList();
+
+            return vendorsWithDistance;
         }
 
+        // Return all found vendors if no location specified or radius is huge ("Everywhere")
         return vendors.Select(v => new PublicVendorDto
         {
             Id = v.Id,
             Name = v.Name,
+            Notes = v.Notes,
+            Address = v.Address,
             VendorType = v.VendorType,
             Latitude = v.Latitude,
             Longitude = v.Longitude,
-            DistanceKm = request.Latitude.HasValue && request.Longitude.HasValue && v.Latitude.HasValue && v.Longitude.HasValue
-                ? CalculateDistance(request.Latitude.Value, request.Longitude.Value, v.Latitude.Value, v.Longitude.Value)
-                : null,
+            DistanceKm = 0,
             TopProducts = v.Products
                 .Where(p => p.IsActive && (string.IsNullOrEmpty(request.Material) || p.Name.Contains(request.Material) || (p.Description != null && p.Description.Contains(request.Material))))
                 .Select(p => new VendorProductDto
@@ -603,14 +640,11 @@ public class VendorService : IVendorService
                     LowStockThreshold = p.LowStockThreshold,
                     PurchasePrice = p.PurchasePrice,
                     IsActive = p.IsActive,
-                    // Calculate Sales from Transactions
-                    SalesCount = _transactionRepository.AsQueryable() // Determine sales count; strictly should rely on join or relation but for now using fresh context access or if nav prop exists
-                        .Count(t => t.VendorProductId == p.Id && t.TransactionType == "Sale")
+                    SalesCount = 0 // For now simpler
                 })
-                .OrderByDescending(p => p.SalesCount)
                 .Take(5)
                 .ToList()
-        });
+        }).ToList();
     }
 
     public async Task<VendorSpendReportDto> GetVendorSpendReportAsync(int? vendorId, DateTime? from, DateTime? to)

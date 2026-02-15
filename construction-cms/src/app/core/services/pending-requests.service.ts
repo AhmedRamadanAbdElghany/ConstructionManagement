@@ -99,6 +99,10 @@ export class PendingRequestsService {
         return this.http.get<JoinRequest[]>(`${this.apiUrl}/joinrequests`);
     }
 
+    getMyJoinRequests(): Observable<JoinRequest[]> {
+        return this.http.get<JoinRequest[]>(`${this.apiUrl}/joinrequests/my-requests`);
+    }
+
     getPendingJoinRequestsCount(): Observable<{ pendingCount: number }> {
         return this.http.get<{ pendingCount: number }>(`${this.apiUrl}/joinrequests/count`);
     }

@@ -7,6 +7,7 @@ import { NotificationsService } from '../../core/services/notifications.service'
 import { CompanySettings } from '../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule, Router } from '@angular/router';
+import { ClientPortalService } from '../../core/services/client-portal.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -44,7 +45,7 @@ import { RouterModule, Router } from '@angular/router';
 
       <!-- Navigation -->
       <nav class="flex-1 p-4 space-y-2 overflow-y-auto overflow-x-hidden custom-scrollbar pt-8">
-        @if (!isInventoryOwner && !isClient) {
+        @if (!isInventoryOwner) {
         <a routerLink="/dashboard" 
            routerLinkActive="nav-active"
            [routerLinkActiveOptions]="{exact: true}"
@@ -58,18 +59,20 @@ import { RouterModule, Router } from '@angular/router';
         </a>
         }
 
-        @if (isPending || isClient || isWorker || isAdmin) {
+          @if (isClient || isWorker || (currentRole === 'CompanyAdmin' && !isPending)) {
           <a routerLink="/browse-firms"
              routerLinkActive="nav-active"
              class="nav-item group">
             <div class="nav-icon-box">
               <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011-1v5m-4 0h4"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
               </svg>
             </div>
             <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Companies</span>
           </a>
+          }
 
+          @if (isPending || isClient || isWorker || isAdmin) {
           <a routerLink="/admin/vendors/discovery" 
              routerLinkActive="nav-active"
              class="nav-item group">
@@ -79,26 +82,27 @@ import { RouterModule, Router } from '@angular/router';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Suppliers</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.building_material_stores' | translate }}</span>
           </a>
-        }
+          }
 
         @if (!isPending && !isInventoryOwner) {
         <p class="px-4 py-2 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
            [class.opacity-0]="isCollapsed()">{{ (isClient ? 'sidebar.client_portal' : 'sidebar.administration') | translate }}</p>
 
         @if (isAdmin) {
-
-          <a routerLink="/admin/vendors/analytics" 
-             routerLinkActive="nav-active"
-             class="nav-item group">
-            <div class="nav-icon-box">
-              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-              </svg>
-            </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Vendor Analytics</span>
-          </a>
+          @if (currentRole === 'CompanyAdmin') {
+            <a routerLink="/admin/vendors/analytics" 
+               routerLinkActive="nav-active"
+               class="nav-item group">
+              <div class="nav-icon-box">
+                <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+              </div>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Vendor Analytics</span>
+            </a>
+          }
 
           <!-- Pending Requests (SuperAdmin & CompanyAdmin) -->
           <a routerLink="/admin/pending-requests" 
@@ -382,7 +386,7 @@ import { RouterModule, Router } from '@angular/router';
           </a>
         }
 
-        @if (isClient) {
+        @if (isClient && hasApprovedCompany()) {
           <a routerLink="/client-portal/dashboard" 
              routerLinkActive="nav-active"
              class="nav-item group">
@@ -443,10 +447,10 @@ import { RouterModule, Router } from '@angular/router';
              class="nav-item group">
             <div class="nav-icon-box">
               <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.documents' | translate }}</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.daily_reports' | translate }}</span>
           </a>
         }
         
@@ -526,26 +530,24 @@ import { RouterModule, Router } from '@angular/router';
           <div class="h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent"></div>
         </div>
 
-        @if (currentRole !== 'SuperAdmin' && !isPending) {
-          <a routerLink="/notifications" 
-             routerLinkActive="nav-active"
-             class="nav-item group">
-            <div class="nav-icon-box relative text-slate-400 group-hover:text-cyan-500 dark:group-hover:text-cyan-400">
-              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-              </svg>
+        <a routerLink="/notifications" 
+           routerLinkActive="nav-active"
+           class="nav-item group">
+          <div class="nav-icon-box relative text-slate-400 group-hover:text-cyan-500 dark:group-hover:text-cyan-400">
+            <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+            </svg>
+            @if (notificationsService.unreadCount() > 0) {
+              <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-rose-500 ring-4 ring-white dark:ring-slate-900 shadow-lg"></span>
+            }
+          </div>
+          <span class="nav-label text-slate-900 dark:text-slate-200" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.notifications' | translate }}</span>
+          <div class="ml-auto" [class.hidden]="isCollapsed()">
               @if (notificationsService.unreadCount() > 0) {
-                <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-rose-500 ring-4 ring-white dark:ring-slate-900 shadow-lg"></span>
+                <div class="flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full bg-rose-500 text-white text-[10px] font-black shadow-lg shadow-rose-500/20">{{ notificationsService.unreadCount() > 99 ? '99+' : notificationsService.unreadCount() }}</div>
               }
-            </div>
-            <span class="nav-label text-slate-900 dark:text-slate-200" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.notifications' | translate }}</span>
-            <div class="ml-auto" [class.hidden]="isCollapsed()">
-               @if (notificationsService.unreadCount() > 0) {
-                 <div class="flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full bg-rose-500 text-white text-[10px] font-black shadow-lg shadow-rose-500/20">{{ notificationsService.unreadCount() > 99 ? '99+' : notificationsService.unreadCount() }}</div>
-               }
-            </div>
-          </a>
-        }
+          </div>
+        </a>
       </nav>
 
 
@@ -625,13 +627,15 @@ export class SidebarComponent {
   isCollapsed = signal(false);
   settings?: CompanySettings;
   pendingRequestsCount = signal(0);
+  hasApprovedCompany = signal(false);
   private router = inject(Router);
 
   constructor(
     public authService: AuthService,
     private settingsService: SettingsService,
     public pendingRequestsService: PendingRequestsService,
-    public notificationsService: NotificationsService
+    public notificationsService: NotificationsService,
+    private clientPortalService: ClientPortalService
   ) {
     const user = this.authService.getCurrentUser();
     const isSuperAdmin = user?.roles?.includes('SuperAdmin');
@@ -640,13 +644,21 @@ export class SidebarComponent {
       this.settingsService.getCompanySettings().subscribe(s => this.settings = s);
     }
 
+    // Check if user has approved companies
+    if (this.currentRole === 'NormalUser') {
+      this.clientPortalService.getMyCompanies().subscribe((companies: any[]) => {
+        this.hasApprovedCompany.set(companies.some((c: any) => c.status === 'Approved'));
+      });
+    }
+
     this.loadPendingRequestsCount();
     this.notificationsService.refreshUnreadCount();
   }
 
   loadPendingRequestsCount() {
-    // Initial load
-    this.pendingRequestsService.refreshPendingCount();
+    if (this.isAdmin) {
+      this.pendingRequestsService.refreshPendingCount();
+    }
   }
 
   get currentUserType(): number {
