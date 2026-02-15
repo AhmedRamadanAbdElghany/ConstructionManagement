@@ -86,7 +86,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
           </a>
           }
 
-        @if (!isPending && !isInventoryOwner) {
+        @if (!isPending && !isInventoryOwner && !isWorker) {
         <p class="px-4 py-2 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
            [class.opacity-0]="isCollapsed()">{{ (isClient ? 'sidebar.client_portal' : 'sidebar.administration') | translate }}</p>
 
@@ -273,7 +273,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
         }
       }
 
-        @if (!isClient && !isInventoryOwner && !isPending) {
+        @if (!isClient && !isInventoryOwner && !isPending && (!isWorker || hasApprovedCompany())) {
         <p class="px-4 py-6 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
            [class.opacity-0]="isCollapsed()">{{ 'sidebar.operations' | translate }}</p>
         }
