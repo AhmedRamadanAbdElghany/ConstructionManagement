@@ -5,7 +5,7 @@ import { DashboardService, DashboardStats, SuperAdminStats, CompanySubscription,
 import { Project, WorkerPerformance } from '../../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
-import { ClientPortalService } from '../../../core/services/client-portal.service';
+import { ClientPortalService, ClientDashboard } from '../../../core/services/client-portal.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -328,128 +328,165 @@ import { ClientPortalService } from '../../../core/services/client-portal.servic
               </div>
             </div>
           } @else {
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
-            <!-- Left Side: Financial Status & Progress -->
-            <div class="lg:col-span-4 space-y-8">
-              <!-- Payment Doughnut Card -->
-              <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-200 dark:border-white/5 shadow-2xl relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-3xl"></div>
-                
-                <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-10 flex items-center gap-2">
-                  <span class="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center text-sm">💳</span>
-                  {{ 'dashboard.investment_status' | translate }}
-                </h3>
-
-                <div class="relative w-64 h-64 mx-auto mb-10">
-                  <!-- SVG Doughnut Chart -->
-                  <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                    <!-- Background Circle -->
-                    <circle cx="50" cy="50" r="40" fill="transparent" stroke="currentColor" stroke-width="12" class="text-slate-100 dark:text-slate-800/50" />
-                    <!-- Progress Circle -->
-                    <circle cx="50" cy="50" r="40" fill="transparent" stroke="url(#cyanGradient)" stroke-width="12" 
-                            stroke-dasharray="251.2" 
-                            [attr.stroke-dashoffset]="251.2 * (1 - clientStats.totalPaid / clientStats.totalContract)"
-                            stroke-linecap="round" 
-                            class="transition-all duration-1000 ease-out" />
-                    
-                    <defs>
-                      <linearGradient id="cyanGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="#06b6d4" />
-                        <stop offset="100%" stop-color="#3b82f6" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                  <!-- Center Overlay -->
-                  <div class="absolute inset-0 flex flex-col items-center justify-center">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] leading-none mb-1">{{ 'daily_log.remaining' | translate }}</p>
-                    <p class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{{ (clientStats.totalPaid / clientStats.totalContract * 100) | number:'1.0-0' }}%</p>
+          <!-- Consolidated Client View -->
+          <div class="space-y-10 animate-in fade-in slide-in-from-bottom-5 duration-700">
+            
+            <!-- PORTAL METRICS (Top Row) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <!-- Projects -->
+              <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-xl p-6 group hover:-translate-y-1 transition-all">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                   </div>
+                  <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">{{ 'client_portal.active_projects' | translate }}</span>
                 </div>
-
-                <div class="space-y-4">
-                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                    <div class="flex items-center gap-3">
-                      <div class="w-2 h-2 rounded-full bg-cyan-500"></div>
-                      <span class="text-xs font-black text-slate-500 uppercase tracking-widest">{{ 'dashboard.total_paid' | translate }}</span>
-                    </div>
-                    <span class="text-sm font-black text-slate-900 dark:text-white">{{ clientStats.totalPaid | currency }}</span>
-                  </div>
-                  <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                    <div class="flex items-center gap-3">
-                      <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700"></div>
-                      <span class="text-xs font-black text-slate-500 uppercase tracking-widest">{{ 'daily_log.remaining' | translate }}</span>
-                    </div>
-                    <span class="text-sm font-black text-slate-900 dark:text-white">{{ (clientStats.totalContract - clientStats.totalPaid) | currency }}</span>
-                  </div>
-                </div>
+                <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{{ clientDashboard?.projects?.length || 0 }}</h3>
               </div>
 
-              <!-- Project Health Card -->
-              <div class="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-[3rem] p-10 text-white shadow-2xl shadow-indigo-500/20 relative overflow-hidden group">
-                <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-110 transition-transform"></div>
-                <h3 class="text-lg font-black uppercase tracking-widest mb-8 opacity-80">{{ 'dashboard.unit_progress' | translate }}</h3>
-                <div class="flex items-end gap-4 mb-4">
-                  <span class="text-6xl font-black tracking-tighter">{{ clientStats.projectProgress }}%</span>
-                   <span class="mb-2 text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full">Phase 3: Finishing</span>
+              <!-- Payments -->
+              <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-xl p-6 group hover:-translate-y-1 transition-all">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  </div>
+                  <span class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{{ 'client_portal.pending_payment' | translate }}</span>
                 </div>
-                <div class="h-2 w-full bg-white/20 rounded-full overflow-hidden">
-                   <div class="h-full bg-white transition-all duration-1000" [style.width.%]="clientStats.projectProgress"></div>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{{ formatCurrencyValue(clientDashboard?.paymentSummary?.pendingAmount || 0) }}</h3>
+              </div>
+
+              <!-- Messages -->
+              <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-xl p-6 group hover:-translate-y-1 transition-all">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                  </div>
+                  <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest">{{ 'client_portal.unread_messages' | translate }}</span>
                 </div>
-                <p class="mt-6 text-sm font-medium text-white/70 italic">"{{ clientStats.currentStatusNote }}"</p>
+                <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{{ clientDashboard?.unreadMessagesCount || 0 }}</h3>
+              </div>
+
+              <!-- Change Orders -->
+              <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-xl p-6 group hover:-translate-y-1 transition-all">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                  </div>
+                  <span class="text-[10px] font-black text-purple-500 uppercase tracking-widest">{{ 'client_portal.pending_change_orders' | translate }}</span>
+                </div>
+                <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{{ clientDashboard?.pendingChangeOrdersCount || 0 }}</h3>
               </div>
             </div>
 
-            <!-- Right Side: Project Portfolio & Milestones -->
-            <div class="lg:col-span-8 space-y-8">
-              <!-- Projects Activity Chart -->
-              <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-200 dark:border-white/5 shadow-2xl relative overflow-hidden">
-                <div class="flex items-center justify-between mb-10">
-                  <div>
-                    <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight leading-none">{{ 'dashboard.portfolio_momentum' | translate }}</h3>
-                    <p class="text-xs text-slate-500 font-medium mt-1">{{ 'dashboard.momentum_desc' | translate }}</p>
+            <!-- ANALYTICS ROW -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              <!-- Investment Progress -->
+              <div class="lg:col-span-4 space-y-8">
+                <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-200 dark:border-white/5 shadow-2xl relative overflow-hidden">
+                  <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">
+                    {{ 'dashboard.investment_status' | translate }}
+                  </h3>
+                  <div class="relative w-64 h-64 mx-auto mb-10">
+                    <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                      <circle cx="50" cy="50" r="40" fill="transparent" stroke="currentColor" stroke-width="12" class="text-slate-100 dark:text-slate-800/50" />
+                      <circle cx="50" cy="50" r="40" fill="transparent" stroke="url(#cyanGradient)" stroke-width="12" 
+                              stroke-dasharray="251.2" 
+                              [attr.stroke-dashoffset]="251.2 * (1 - clientStats.totalPaid / (clientStats.totalContract || 1))"
+                              stroke-linecap="round" />
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{{ 'daily_log.remaining' | translate }}</p>
+                      <p class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{{ (clientStats.totalPaid / (clientStats.totalContract || 1) * 100) | number:'1.0-0' }}%</p>
+                    </div>
                   </div>
-                  <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xl">📈</div>
+                  <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border">
+                      <span class="text-xs font-black text-slate-500 uppercase tracking-widest">{{ 'dashboard.total_paid' | translate }}</span>
+                      <span class="text-sm font-black text-slate-900 dark:text-white">{{ clientStats.totalPaid | currency }}</span>
+                    </div>
+                  </div>
                 </div>
 
-                <div class="h-64 flex items-end justify-between gap-6 px-4">
-                  @for (data of chartData.slice(6); track data.label) {
-                    <div class="flex-1 flex flex-col items-center group/bar cursor-pointer h-full relative">
-                      <div class="relative w-full flex items-end justify-center h-full pb-6">
-                        <div class="w-full max-w-[24px] bg-gradient-to-t from-indigo-600 to-cyan-400 rounded-2xl transition-all duration-1000 ease-out shadow-lg shadow-indigo-500/10 group-hover/bar:brightness-110 group-hover/bar:scale-x-110"
-                             [style.height.%]="data.collected + 10">
-                             <div class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap bg-slate-900 text-white text-[10px] px-2 py-1 rounded font-black">{{ data.collected + 10 }}%</div>
-                        </div>
+                <!-- Action Cards -->
+                <div class="grid grid-cols-2 gap-4">
+                   <a routerLink="/client-portal/documents" class="p-6 rounded-[2rem] bg-indigo-600 text-white shadow-xl hover:scale-105 transition-all text-center">
+                      <div class="w-10 h-10 rounded-xl bg-white/20 mx-auto flex items-center justify-center mb-3">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                       </div>
-                      <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">{{ data.label }}</span>
-                    </div>
-                  }
+                      <p class="text-[10px] font-black uppercase tracking-widest leading-tight">Project Documents</p>
+                   </a>
+                   <a routerLink="/profile" class="p-6 rounded-[2rem] bg-white dark:bg-slate-900 border shadow-xl hover:scale-105 transition-all text-center">
+                      <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 mx-auto flex items-center justify-center mb-3">
+                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+                      </div>
+                      <p class="text-[10px] font-black dark:text-white uppercase tracking-widest leading-tight">Settings</p>
+                   </a>
                 </div>
               </div>
 
-              <!-- Real Estate Milestones -->
-              <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-200 dark:border-white/5 shadow-2xl relative">
-                <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'dashboard.milestones' | translate }}</h3>
-                <div class="space-y-6">
-                  @for (m of clientStats.milestones; track m.label) {
-                    <div class="flex gap-6 p-6 rounded-[2rem] hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors border border-transparent hover:border-slate-100">
-                      <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 transition-transform">
-                        <span class="text-2xl">{{ m.done ? '✅' : '🕙' }}</span>
-                      </div>
-                      <div class="flex-1">
-                        <div class="flex items-center justify-between mb-1">
-                          <h4 class="text-lg font-black text-slate-900 dark:text-white tracking-tight">{{ m.label }}</h4>
-                          <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ m.date }}</span>
+              <!-- Projects & Activity -->
+              <div class="lg:col-span-8 space-y-8">
+                <!-- Project Progress Hub -->
+                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
+                   <div class="px-8 py-6 border-b flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/30">
+                      <h2 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'client_portal.your_projects' | translate }}</h2>
+                      <a routerLink="/client-portal/projects" class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">View All</a>
+                   </div>
+                   <div class="p-6 space-y-4">
+                     @for (project of clientDashboard?.projects; track project.projectId) {
+                        <div class="group bg-white dark:bg-slate-800/50 rounded-[2rem] border p-6 hover:shadow-xl transition-all">
+                           <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                             <div class="flex-1">
+                                <h3 class="text-xl font-bold dark:text-white mb-2">{{ project.projectName }}</h3>
+                                <p class="text-[10px] font-black uppercase text-slate-400">{{ project.location || 'No Location set' }}</p>
+                             </div>
+                             <div class="w-full md:w-48">
+                                <div class="flex items-center justify-between mb-2">
+                                   <span class="text-[10px] font-black uppercase text-slate-400">Progress</span>
+                                   <span class="text-xs font-black dark:text-white">{{ project.progressPercentage }}%</span>
+                                </div>
+                                <div class="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                                   <div class="h-full bg-indigo-500 rounded-full" [style.width.%]="project.progressPercentage"></div>
+                                </div>
+                             </div>
+                             <a [routerLink]="['/client-portal/projects', project.projectId]" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                             </a>
+                           </div>
                         </div>
-                        <p class="text-sm text-slate-500 font-medium leading-relaxed">{{ m.desc }}</p>
-                        @if (m.done) {
-                          <div class="mt-4 flex items-center gap-2">
-                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                              <span class="text-[9px] font-black text-emerald-500 uppercase tracking-widest">{{ 'dashboard.verified_audit' | translate }}</span>
-                          </div>
+                     }
+                   </div>
+                </div>
+
+                <!-- Recent Messages & Activity -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <!-- Messages -->
+                  <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 shadow-xl">
+                     <h3 class="text-xs font-black uppercase tracking-widest mb-6 dark:text-white">Recent Messages</h3>
+                     <div class="space-y-6">
+                        @for (msg of clientDashboard?.recentMessages; track msg.id) {
+                           <div class="flex gap-4">
+                              <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">✉️</div>
+                              <div class="min-w-0">
+                                 <p class="text-xs font-black dark:text-white truncate">{{ msg.subject }}</p>
+                                 <p class="text-[10px] text-slate-400 truncate">{{ msg.content }}</p>
+                              </div>
+                           </div>
                         }
-                      </div>
-                    </div>
-                  }
+                     </div>
+                  </div>
+                  <!-- Activity -->
+                  <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 shadow-xl">
+                     <h3 class="text-xs font-black uppercase tracking-widest mb-6 dark:text-white">Activity Log</h3>
+                     <div class="space-y-6 relative ml-2">
+                        @for (act of clientDashboard?.recentActivities; track act.id) {
+                           <div class="flex gap-4 relative">
+                              <div class="w-2.5 h-2.5 rounded-full bg-indigo-500 mt-1.5 shrink-0"></div>
+                              <p class="text-[10px] font-bold text-slate-600 dark:text-slate-300">{{ act.description }}</p>
+                           </div>
+                        }
+                     </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -880,6 +917,7 @@ export class DashboardComponent implements OnInit {
   delayedProjectsStats: { managerName: string, count: number }[] = [];
   workerProjectStats: any;
   hasApprovedCompany = signal<boolean>(false);
+  clientDashboard?: ClientDashboard;
 
   // Standard Admin Stats
   stats = {
@@ -1013,6 +1051,8 @@ export class DashboardComponent implements OnInit {
   loadClientView() {
     this.clientPortalService.getClientDashboard().subscribe(data => {
       if (data) {
+        this.clientDashboard = data;
+
         // Update stats for unassigned check
         this.stats = {
           activeProjects: data.projects?.length || 0,
@@ -1025,8 +1065,13 @@ export class DashboardComponent implements OnInit {
           totalContract: data.paymentSummary.totalInvoiced,
           totalPaid: data.paymentSummary.totalPaid,
           projectProgress: data.projects[0]?.progressPercentage || 0,
-          currentStatusNote: `Current Status: ${data.projects[0]?.status || 'N/A'}`,
-          milestones: []
+          currentStatusNote: data.projects[0]?.status ? `Current Status: ${data.projects[0].status}` : 'No active projects',
+          milestones: data.recentActivities.slice(0, 4).map(act => ({
+            label: act.activityType,
+            date: new Date(act.createdAt).toLocaleDateString(),
+            desc: act.description,
+            done: true
+          }))
         };
       }
     });
@@ -1034,6 +1079,14 @@ export class DashboardComponent implements OnInit {
     this.dashboardService.getRecentActivities().subscribe(activities => {
       this.recentActivities = activities;
     });
+  }
+
+  formatCurrencyValue(amount: number): string {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0
+    }).format(amount);
   }
 
   loadStandardView() {

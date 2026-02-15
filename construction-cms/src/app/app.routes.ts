@@ -362,8 +362,8 @@ export const routes: Routes = [
             },
             {
                 path: 'dashboard',
-                loadComponent: () => import('./features/client/client-portal/client-dashboard.component').then(m => m.ClientDashboardComponent),
-                canActivate: [roleGuard]
+                redirectTo: '/dashboard',
+                pathMatch: 'full'
             },
             {
                 path: 'projects',
