@@ -528,7 +528,6 @@ export class LoginComponent {
 
     this.authService.login({ email: this.email, password: this.password }).subscribe({
       next: (response) => {
-        this.isLoading = false;
         const user = response.user;
 
         if (user.roles.includes('SuperAdmin') || user.companyId || user.userType === 2 || user.userType === 0 || user.userType === 1 || user.userType === 5) {

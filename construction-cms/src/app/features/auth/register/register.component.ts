@@ -596,7 +596,6 @@ export class RegisterComponent {
       userType: this.userType!
     }).subscribe({
       next: (response) => {
-        this.isLoading = false;
         if (response.success) {
           const user = response.user;
           this.successMessage = this.translateService.instant('register.success_message');
@@ -609,6 +608,7 @@ export class RegisterComponent {
             }
           }, 1500);
         } else {
+          this.isLoading = false;
           this.errorMessage = response.message || 'Registration failed. Please try again.';
         }
       },
