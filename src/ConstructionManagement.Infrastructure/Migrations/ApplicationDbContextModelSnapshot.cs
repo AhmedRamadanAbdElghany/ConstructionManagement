@@ -8253,7 +8253,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             UserId = 1,
                             RoleId = 1,
-                            AssignedAt = new DateTime(2026, 2, 14, 23, 5, 40, 463, DateTimeKind.Utc).AddTicks(4886)
+                            AssignedAt = new DateTime(2026, 2, 15, 4, 17, 31, 342, DateTimeKind.Utc).AddTicks(3439)
                         });
                 });
 
@@ -8606,6 +8606,65 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("WarehouseId");
 
                     b.ToTable("VendorReviews");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.VendorTransaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ReferenceNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TransactionType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VendorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VendorProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("VendorId");
+
+                    b.HasIndex("VendorProductId");
+
+                    b.ToTable("VendorTransactions");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Warehouse", b =>
@@ -11143,6 +11202,31 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("ReviewerUser");
 
                     b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.VendorTransaction", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.Vendor", "Vendor")
+                        .WithMany()
+                        .HasForeignKey("VendorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.VendorProduct", "VendorProduct")
+                        .WithMany()
+                        .HasForeignKey("VendorProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Vendor");
+
+                    b.Navigation("VendorProduct");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Warehouse", b =>

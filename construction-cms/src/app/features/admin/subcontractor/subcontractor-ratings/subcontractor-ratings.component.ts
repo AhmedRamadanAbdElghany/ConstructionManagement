@@ -66,7 +66,7 @@ import { SubcontractorService, SubcontractorRating, CreateRatingRequest, RatingS
               </div>
               <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest">Average</span>
             </div>
-            <h3 class="text-4xl font-black text-slate-900 dark:text-white">{{ summary?.averageRating?.toFixed(2) || 'N/A' }}</h3>
+            <h3 class="text-4xl font-black text-slate-900 dark:text-white">{{ summary ? summary.averageRating.toFixed(2) : '0.00' }}</h3>
             <p class="text-[10px] text-slate-500 font-medium uppercase tracking-widest mt-1">Overall Rating</p>
           </div>
 

@@ -122,6 +122,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Vendor> Vendors => Set<Vendor>();
     public DbSet<VendorInvoice> VendorInvoices => Set<VendorInvoice>();
     public DbSet<VendorProduct> VendorProducts => Set<VendorProduct>();
+    public DbSet<VendorTransaction> VendorTransactions => Set<VendorTransaction>();
     public DbSet<ActivityLog> ActivityLogs => Set<ActivityLog>();
 
     // ── Inventory Order System ──────────────────────────────────────────────────
@@ -354,6 +355,8 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<VendorInvoice>().HasOne(i => i.Vendor).WithMany(v => v.Invoices).HasForeignKey(i => i.VendorId).OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<VendorInvoice>().HasOne(i => i.Project).WithMany().HasForeignKey(i => i.ProjectId).OnDelete(DeleteBehavior.NoAction);
         modelBuilder.Entity<VendorProduct>().HasOne(p => p.Vendor).WithMany(v => v.Products).HasForeignKey(p => p.VendorId).OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<VendorTransaction>().HasOne(t => t.Vendor).WithMany().HasForeignKey(t => t.VendorId).OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<VendorTransaction>().HasOne(t => t.VendorProduct).WithMany().HasForeignKey(t => t.VendorProductId).OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<CompanySettings>().HasOne(cs => cs.Company).WithOne(c => c.Settings).HasForeignKey<CompanySettings>(cs => cs.CompanyId).OnDelete(DeleteBehavior.Cascade);
         

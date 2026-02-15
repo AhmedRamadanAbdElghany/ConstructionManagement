@@ -119,6 +119,20 @@ public class JoinRequestService : IJoinRequestService
         if (user != null)
         {
             user.CompanyId = request.CompanyId;
+
+            // Map RequestedRole to UserType if provided
+            if (!string.IsNullOrEmpty(request.RequestedRole))
+            {
+                user.UserType = request.RequestedRole switch
+                {
+                    "Worker" => Domain.Enums.UserType.Worker,
+                    "InventoryOwner" => Domain.Enums.UserType.InventoryOwner,
+                    "Engineer" => Domain.Enums.UserType.Engineer,
+                    "NormalUser" => Domain.Enums.UserType.NormalUser,
+                    _ => user.UserType // Keep current if unknown
+                };
+            }
+
             user.UserRoles.Clear();
             user.UserRoles.Add(new UserRole
             {

@@ -22,6 +22,8 @@ public class VendorService : IVendorService
 
     private readonly IActivityLogService _activityLogService;
 
+    private readonly IRepository<VendorProduct> _productRepository;
+
     public VendorService(
         IRepository<Vendor> vendorRepository,
         IRepository<VendorInvoice> invoiceRepository,
@@ -61,15 +63,14 @@ public class VendorService : IVendorService
             TaxNumber = v.TaxNumber,
             ContactPerson = v.ContactPerson,
             Notes = v.Notes,
-            Rating = v.Rating,
-            IsApproved = v.IsApproved,
             CompanyId = v.CompanyId,
             VendorType = v.VendorType,
             IsActive = v.IsActive,
             Latitude = v.Latitude,
             Longitude = v.Longitude,
             IsPublic = v.IsPublic,
-            UserId = v.UserId
+            UserId = v.UserId,
+            IsRegistered = v.UserId.HasValue
         });
     }
 
@@ -91,8 +92,6 @@ public class VendorService : IVendorService
             TaxNumber = vendor.TaxNumber,
             ContactPerson = vendor.ContactPerson,
             Notes = vendor.Notes,
-            Rating = vendor.Rating,
-            IsApproved = vendor.IsApproved,
             CompanyId = vendor.CompanyId,
             VendorType = vendor.VendorType,
             IsActive = vendor.IsActive,
@@ -116,20 +115,14 @@ public class VendorService : IVendorService
             TaxNumber = request.TaxNumber,
             ContactPerson = request.ContactPerson,
             Notes = request.Notes,
-            CompanyId = request.CompanyId, // Might be null for public vendors
+            CompanyId = null, // Independent vendor for now
             VendorType = request.VendorType ?? "General",
             IsActive = true,
-            IsApproved = true, // Auto-approve for now or based on policy
             Latitude = request.Latitude,
             Longitude = request.Longitude,
             IsPublic = request.IsPublic,
             CreatedAt = DateTime.UtcNow
         };
-
-        if (request.CompanyId.HasValue)
-        {
-             // Verify company exists?
-        }
 
         await _vendorRepository.AddAsync(vendor);
         await _unitOfWork.SaveChangesAsync();
@@ -150,7 +143,7 @@ public class VendorService : IVendorService
         vendor.ContactPerson = request.ContactPerson;
         vendor.Notes = request.Notes;
         if (request.VendorType != null) vendor.VendorType = request.VendorType;
-        if (request.IsActive.HasValue) vendor.IsActive = request.IsActive.Value;
+        vendor.IsActive = request.IsActive;
         
         // Update location if provided (assuming UpdateVendorRequest has these fields, check DTO first?)
         // Assuming UpdateVendorRequest might not have Lat/Long yet, if not, careful.
@@ -191,7 +184,7 @@ public class VendorService : IVendorService
     public async Task<IEnumerable<VendorInvoiceDto>> GetPendingInvoicesAsync()
     {
         var invoices = await _invoiceRepository.AsQueryable()
-            .Where(i => i.ApprovalStatus == ApprovalStatus.Pending)
+            .Where(i => i.ApprovalStatus == InvoiceApprovalStatus.Pending)
             .Include(i => i.Vendor)
             .Include(i => i.Project)
             .Include(i => i.CreatedByUser)
@@ -206,7 +199,8 @@ public class VendorService : IVendorService
         string? fileUrl = null;
         if (request.File != null)
         {
-             fileUrl = await _fileStorageService.SaveFileAsync(request.File, "invoices");
+             var result = await _fileStorageService.SaveFileAsync(request.File, "invoices");
+             fileUrl = result.Path;
         }
 
         var invoice = new VendorInvoice
@@ -220,7 +214,7 @@ public class VendorService : IVendorService
             FileUrl = fileUrl,
             OriginalFileName = request.File?.FileName,
             MaterialType = request.MaterialType,
-            ApprovalStatus = ApprovalStatus.Pending,
+            ApprovalStatus = InvoiceApprovalStatus.Pending,
             CreatedByUserId = request.CreatedByUserId,
             CreatedAt = DateTime.UtcNow
         };
@@ -272,7 +266,7 @@ public class VendorService : IVendorService
         var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
         if (invoice == null) throw new KeyNotFoundException("Invoice not found");
 
-        invoice.ApprovalStatus = request.Approved ? ApprovalStatus.Approved : ApprovalStatus.Rejected;
+        invoice.ApprovalStatus = request.IsApproved ? InvoiceApprovalStatus.Approved : InvoiceApprovalStatus.Rejected;
         invoice.ApprovedByUserId = reviewerId;
         invoice.ApprovedDate = DateTime.UtcNow;
         invoice.RejectionReason = request.RejectionReason;
@@ -398,6 +392,8 @@ public class VendorService : IVendorService
         product.Description = request.Description;
         product.LowStockThreshold = request.LowStockThreshold;
         product.PurchasePrice = request.PurchasePrice;
+        product.QuantityInStock = request.QuantityInStock;
+        product.IsActive = request.IsActive;
         
         await _unitOfWork.SaveChangesAsync();
 
@@ -545,7 +541,7 @@ public class VendorService : IVendorService
                 VendorName = g.Key.Name,
                 TotalInvoices = g.Count(),
                 TotalAmount = g.Sum(i => i.Amount),
-                PendingAmount = g.Where(i => i.ApprovalStatus == ApprovalStatus.Pending).Sum(i => i.Amount)
+                PendingApprovals = g.Count(i => i.ApprovalStatus == InvoiceApprovalStatus.Pending)
             })
             .ToListAsync();
             
@@ -557,18 +553,28 @@ public class VendorService : IVendorService
         var query = _vendorRepository.AsQueryable()
             .Where(v => v.IsActive && v.IsPublic);
 
-        if (!string.IsNullOrEmpty(request.SearchTerm))
+        if (!string.IsNullOrEmpty(request.Name))
         {
-            query = query.Where(v => v.Name.Contains(request.SearchTerm) || v.VendorType.Contains(request.SearchTerm));
+            query = query.Where(v => v.Name.Contains(request.Name));
+        }
+        if (!string.IsNullOrEmpty(request.Material))
+        {
+            // Search by material type in vendor products
+            var vendorIdsWithMaterial = await _productRepository.AsQueryable()
+                .Where(p => p.Name.Contains(request.Material) || (p.Description != null && p.Description.Contains(request.Material)))
+                .Select(p => p.VendorId)
+                .Distinct()
+                .ToListAsync();
+            query = query.Where(v => vendorIdsWithMaterial.Contains(v.Id));
         }
 
         var vendors = await query.ToListAsync();
 
-        if (request.Latitude.HasValue && request.Longitude.HasValue && request.RadiusKm.HasValue)
+        if (request.Latitude.HasValue && request.Longitude.HasValue)
         {
             vendors = vendors.Where(v => 
                 v.Latitude.HasValue && v.Longitude.HasValue &&
-                CalculateDistance(request.Latitude.Value, request.Longitude.Value, v.Latitude.Value, v.Longitude.Value) <= request.RadiusKm.Value
+                CalculateDistance(request.Latitude.Value, request.Longitude.Value, v.Latitude.Value, v.Longitude.Value) <= request.RadiusKm
             ).ToList();
         }
 
@@ -579,8 +585,7 @@ public class VendorService : IVendorService
             VendorType = v.VendorType,
             Latitude = v.Latitude,
             Longitude = v.Longitude,
-            Rating = v.Rating,
-            Distance = request.Latitude.HasValue && request.Longitude.HasValue && v.Latitude.HasValue && v.Longitude.HasValue
+            DistanceKm = request.Latitude.HasValue && request.Longitude.HasValue && v.Latitude.HasValue && v.Longitude.HasValue
                 ? CalculateDistance(request.Latitude.Value, request.Longitude.Value, v.Latitude.Value, v.Longitude.Value)
                 : null
         });
@@ -589,7 +594,7 @@ public class VendorService : IVendorService
     public async Task<VendorSpendReportDto> GetVendorSpendReportAsync(int? vendorId, DateTime? from, DateTime? to)
     {
         var query = _invoiceRepository.AsQueryable()
-            .Where(i => i.ApprovalStatus == ApprovalStatus.Approved);
+            .Where(i => i.ApprovalStatus == InvoiceApprovalStatus.Approved);
 
         if (vendorId.HasValue) query = query.Where(i => i.VendorId == vendorId.Value);
         if (from.HasValue) query = query.Where(i => i.InvoiceDate >= from.Value);
@@ -600,19 +605,20 @@ public class VendorService : IVendorService
         return new VendorSpendReportDto
         {
              TotalSpend = invoices.Sum(i => i.Amount),
-             InboxCount = invoices.Count,
-             TopVendors = invoices.GroupBy(i => i.Vendor?.Name ?? "Unknown")
-                .Select(g => new VendorSpendSummary 
+             TotalInvoices = invoices.Count,
+             TopVendors = invoices.GroupBy(i => i.Vendor)
+                .Select(g => new VendorSpendItem 
                 { 
-                    VendorName = g.Key, 
+                    VendorId = g.Key?.Id ?? 0,
+                    VendorName = g.Key?.Name ?? "Unknown", 
                     TotalAmount = g.Sum(i => i.Amount),
                     InvoiceCount = g.Count()
                 })
                 .OrderByDescending(x => x.TotalAmount)
                 .Take(5)
                 .ToList(),
-             SpendByDate = invoices.GroupBy(i => i.InvoiceDate.Date)
-                .Select(g => new DateSpendSummary
+             SpendTrends = invoices.GroupBy(i => i.InvoiceDate.Date)
+                .Select(g => new SpendByDateItem
                 {
                     Date = g.Key,
                     Amount = g.Sum(x => x.Amount)
@@ -660,5 +666,63 @@ public class VendorService : IVendorService
             ProjectName = invoice.Project?.ProjectName,
             CreatedAt = invoice.CreatedAt
         };
+    }
+
+    public async Task<VendorStatsDto?> GetVendorStatsByUserIdAsync(int userId)
+    {
+        var vendor = await GetVendorByUserIdAsync(userId);
+        if (vendor == null) return null;
+
+        var products = await GetVendorProductsAsync(vendor.Id);
+        var transactions = await GetVendorTransactionsAsync(vendor.Id);
+        var invoices = await GetInvoicesByVendorAsync(vendor.Id);
+
+        // Calculate stats from sales transactions
+        var salesTransactions = transactions.Where(t => t.TransactionType == "Sale").ToList();
+        var totalRevenue = salesTransactions.Sum(t => t.TotalAmount);
+        
+        // Calculate cost for sold items (quantity * purchase price)
+        var productDict = products.ToDictionary(p => p.Id, p => p.PurchasePrice);
+        var totalCost = salesTransactions.Sum(t => 
+            t.Quantity * (productDict.ContainsKey(t.VendorProductId) ? productDict[t.VendorProductId] : 0));
+
+        return new VendorStatsDto
+        {
+            TotalSales = salesTransactions.Count,
+            TotalRevenue = totalRevenue,
+            TotalProfit = totalRevenue - totalCost,
+            TotalProducts = products.Count(),
+            LowStockCount = products.Count(p => p.QuantityInStock <= p.LowStockThreshold),
+            PendingOrders = invoices.Count(i => i.ApprovalStatus == "Pending"),
+            RecentTransactions = transactions.OrderByDescending(t => t.TransactionDate).Take(5).ToList()
+        };
+    }
+
+    public async Task UpdateVendorLocationAsync(int userId, double latitude, double longitude)
+    {
+        var vendor = await _vendorRepository.AsQueryable()
+            .FirstOrDefaultAsync(v => v.UserId == userId);
+
+        if (vendor == null) throw new KeyNotFoundException("Vendor not found for this user");
+
+        vendor.Latitude = latitude;
+        vendor.Longitude = longitude;
+        vendor.UpdatedAt = DateTime.UtcNow;
+
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task<VendorDto> ToggleVendorVisibilityAsync(int userId)
+    {
+        var vendor = await _vendorRepository.AsQueryable()
+            .FirstOrDefaultAsync(v => v.UserId == userId);
+
+        if (vendor == null) throw new KeyNotFoundException("Vendor not found for this user");
+
+        vendor.IsPublic = !vendor.IsPublic;
+        vendor.UpdatedAt = DateTime.UtcNow;
+
+        await _unitOfWork.SaveChangesAsync();
+        return await GetVendorByIdAsync(vendor.Id) ?? throw new Exception("Error reloading vendor");
     }
 }

@@ -40,5 +40,10 @@ namespace ConstructionManagement.Application.Interfaces
         // Profile Management
         Task<VendorDto> UpdateVendorProfileAsync(int userId, UpdateVendorRequest request);
         Task<VendorDto?> GetVendorByUserIdAsync(int userId);
+        
+        // Stats & Location
+        Task<VendorStatsDto?> GetVendorStatsByUserIdAsync(int userId);
+        Task UpdateVendorLocationAsync(int userId, double latitude, double longitude);
+        Task<VendorDto> ToggleVendorVisibilityAsync(int userId);
     }
 }

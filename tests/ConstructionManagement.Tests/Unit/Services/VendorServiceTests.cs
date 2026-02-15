@@ -26,12 +26,14 @@ public class VendorServiceTests
     private readonly Mock<INotificationService> _notificationMock = new();
     private readonly Mock<IActivityLogService> _activityLogMock = new();
     private readonly Mock<ICompanyContext> _companyContextMock = new();
+    private readonly Mock<IRepository<VendorTransaction>> _transactionRepoMock = new();
 
     private VendorService CreateService()
         => new(
             _vendorRepoMock.Object,
             _invoiceRepoMock.Object,
             _productRepoMock.Object,
+            _transactionRepoMock.Object,
             _settingsRepoMock.Object,
             _userRepoMock.Object,
             _fileStorageMock.Object,

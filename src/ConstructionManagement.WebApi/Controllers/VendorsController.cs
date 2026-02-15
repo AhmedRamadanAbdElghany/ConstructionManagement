@@ -251,5 +251,44 @@ namespace ConstructionManagement.WebApi.Controllers
             var transactions = await _vendorService.GetVendorTransactionsAsync(vendor.Id);
             return Ok(transactions);
         }
+
+        // GET: api/vendors/my-orders
+        [HttpGet("my-orders")]
+        public async Task<ActionResult<IEnumerable<VendorInvoiceDto>>> GetMyOrders()
+        {
+            var userId = GetCurrentUserId();
+            var vendor = await _vendorService.GetVendorByUserIdAsync(userId);
+            if (vendor == null) return NotFound("Vendor profile not found");
+
+            var invoices = await _vendorService.GetInvoicesByVendorAsync(vendor.Id);
+            return Ok(invoices);
+        }
+
+        // GET: api/vendors/my-stats
+        [HttpGet("my-stats")]
+        public async Task<ActionResult<VendorStatsDto>> GetMyStats()
+        {
+            var userId = GetCurrentUserId();
+            var stats = await _vendorService.GetVendorStatsByUserIdAsync(userId);
+            if (stats == null) return NotFound("Vendor profile not found");
+            return Ok(stats);
+        }
+        // POST: api/vendors/my-location
+        [HttpPost("my-location")]
+        public async Task<IActionResult> UpdateMyLocation([FromBody] UpdateLocationRequest request)
+        {
+            var userId = GetCurrentUserId();
+            await _vendorService.UpdateVendorLocationAsync(userId, request.Latitude, request.Longitude);
+            return Ok();
+        }
+
+        // PATCH: api/vendors/my-visibility
+        [HttpPatch("my-visibility")]
+        public async Task<ActionResult<VendorDto>> ToggleMyVisibility()
+        {
+            var userId = GetCurrentUserId();
+            var vendor = await _vendorService.ToggleVendorVisibilityAsync(userId);
+            return Ok(vendor);
+        }
     }
 }

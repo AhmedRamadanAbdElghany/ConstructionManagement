@@ -37,7 +37,8 @@
     "role_admin": "مدير",
     "role_worker": "عامل",
     "role_client": "عميل",
-    "role_owner": "صاحب شركة"
+    "role_owner": "صاحب شركة",
+    "role_inventory_owner": "صاحب مخزون"
   },
   "pending_requests": {
     "subtitle": "مراجعة وإدارة طلبات تسجيل الشركات وطلبات انضمام المستخدمين المعلقة",

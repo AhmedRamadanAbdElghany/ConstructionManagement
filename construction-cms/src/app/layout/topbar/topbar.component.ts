@@ -56,9 +56,9 @@ import { NotificationsService, NotificationDto } from '../../core/services/notif
             <svg class="w-6 h-6 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
             </svg>
-            @if (unreadCount > 0) {
+            @if (notificationsService.unreadCount() > 0) {
               <span class="absolute -top-1 ltr:-right-1 rtl:-left-1 w-5 h-5 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 text-white text-[10px] font-black flex items-center justify-center shadow-lg shadow-rose-500/25 ring-2 ring-white dark:ring-slate-950">
-                {{ unreadCount > 9 ? '9+' : unreadCount }}
+                {{ notificationsService.unreadCount() > 9 ? '9+' : notificationsService.unreadCount() }}
               </span>
             }
           </button>
@@ -129,7 +129,7 @@ import { NotificationsService, NotificationDto } from '../../core/services/notif
             <div class="hidden md:block ltr:text-left rtl:text-right min-w-max">
               <p class="text-sm font-black text-slate-900 dark:text-white tracking-tight leading-none mb-1">{{ authService.getCurrentUser()?.fullName || '' }}</p>
               <p class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none">
-                {{ (isPending ? 'sidebar.role_owner' : 'sidebar.role_' + (authService.getCurrentUser()?.role === 'SuperAdmin' ? 'super' :
+                {{ (isPending ? 'sidebar.role_owner' : isInventoryOwner ? 'sidebar.role_inventory_owner' : 'sidebar.role_' + (authService.getCurrentUser()?.role === 'SuperAdmin' ? 'super' :
                    authService.getCurrentUser()?.role === 'CompanyAdmin' ? 'admin' :
                    authService.getCurrentUser()?.role === 'CompanyUser' ? 'worker' : 'client')) | translate }}
               </p>
@@ -241,10 +241,10 @@ export class TopbarComponent implements OnInit {
   private router = inject(Router);
   public authService = inject(AuthService);
   public themeService = inject(ThemeService);
-  private notificationsService = inject(NotificationsService);
+  public notificationsService = inject(NotificationsService);
 
-  get unreadCount(): number {
-    return this.notifications.filter(n => !n.isRead).length;
+  get isInventoryOwner(): boolean {
+    return this.authService.getCurrentUser()?.userType === 3;
   }
 
   get isPending(): boolean {

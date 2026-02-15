@@ -159,7 +159,7 @@ export const routes: Routes = [
                 path: 'vendors/discovery',
                 loadComponent: () => import('./features/admin/vendors/discovery.component').then(m => m.VendorDiscoveryComponent),
                 canActivate: [roleGuard],
-                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+                data: { roles: ['SuperAdmin', 'CompanyAdmin', 'CompanyUser', 'NormalUser'] }
             },
             {
                 path: 'vendors/analytics',

@@ -2,6 +2,7 @@ using ConstructionManagement.Application.DTOs.JoinRequest;
 using ConstructionManagement.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace ConstructionManagement.WebApi.Controllers;
 

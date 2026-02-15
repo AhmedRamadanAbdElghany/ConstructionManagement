@@ -21,6 +21,8 @@ namespace ConstructionManagement.Application.DTOs.Vendor
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
         public bool IsPublic { get; set; }
+        public int? CompanyId { get; set; }
+        public int? UserId { get; set; }
     }
 
     public class CreateVendorRequest
@@ -52,5 +54,35 @@ namespace ConstructionManagement.Application.DTOs.Vendor
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
         public bool IsPublic { get; set; }
+    }
+
+    public class VendorStatsDto
+    {
+        public int TotalSales { get; set; }
+        public decimal TotalRevenue { get; set; }
+        public decimal TotalProfit { get; set; }
+        public int TotalProducts { get; set; }
+        public int LowStockCount { get; set; }
+        public int PendingOrders { get; set; }
+        public List<VendorTransactionDto> RecentTransactions { get; set; } = new();
+    }
+
+    public class UpdateLocationRequest
+    {
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+    }
+
+    public class VendorSpendSummary
+    {
+        public string VendorName { get; set; } = string.Empty;
+        public decimal TotalAmount { get; set; }
+        public int InvoiceCount { get; set; }
+    }
+
+    public class DateSpendSummary
+    {
+        public DateTime Date { get; set; }
+        public decimal Amount { get; set; }
     }
 }

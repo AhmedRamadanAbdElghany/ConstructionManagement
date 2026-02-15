@@ -119,8 +119,8 @@ export class PendingRequestsService {
         return this.http.get<PublicCompany[]>(`${this.apiUrl}/publiccompanies`);
     }
 
-    submitJoinRequest(companyId: number, message?: string): Observable<JoinRequest> {
-        return this.http.post<JoinRequest>(`${this.apiUrl}/joinrequests`, { companyId, message });
+    submitJoinRequest(companyId: number, message?: string, requestedRole?: string): Observable<JoinRequest> {
+        return this.http.post<JoinRequest>(`${this.apiUrl}/joinrequests`, { companyId, message, requestedRole });
     }
 
     // Combined counts for badge

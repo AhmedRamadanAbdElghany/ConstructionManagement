@@ -27,7 +27,17 @@ export const roleGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  // If user doesn't have access, redirect to dashboard
-  router.navigate(['/dashboard']);
+  // Special handling for InventoryOwner - check userType
+  // InventoryOwner is UserType 3, which is a user type not a role
+  if (requiredRoles.includes('InventoryOwner') && currentUser.userType === 3) {
+    return true;
+  }
+
+  // If user doesn't have access, redirect to appropriate dashboard
+  if (currentUser.userType === 3) {
+    router.navigate(['/inventory-dashboard']);
+  } else {
+    router.navigate(['/dashboard']);
+  }
   return false;
 };

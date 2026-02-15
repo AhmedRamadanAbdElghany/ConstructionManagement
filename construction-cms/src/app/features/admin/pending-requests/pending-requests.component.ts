@@ -135,6 +135,7 @@ import { TranslateService } from '@ngx-translate/core';
                                   [ngClass]="{
                                     'bg-blue-500/10 text-blue-600 dark:text-blue-400': request.requestedRole === 'NormalUser',
                                     'bg-amber-500/10 text-amber-600 dark:text-amber-400': request.requestedRole === 'Worker',
+                                    'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400': request.requestedRole === 'Engineer',
                                     'bg-purple-500/10 text-purple-600 dark:text-purple-400': request.requestedRole === 'InventoryOwner'
                                   }">
                               {{ request.requestedRole === 'NormalUser' ? 'User' : request.requestedRole === 'InventoryOwner' ? 'Inventory' : request.requestedRole }}
@@ -159,6 +160,7 @@ import { TranslateService } from '@ngx-translate/core';
                               [ngClass]="{
                                 'bg-blue-500/10 text-blue-600': request.requestedRole === 'NormalUser',
                                 'bg-amber-500/10 text-amber-600': request.requestedRole === 'Worker',
+                                'bg-emerald-500/10 text-emerald-600': request.requestedRole === 'Engineer',
                                 'bg-purple-500/10 text-purple-600': request.requestedRole === 'InventoryOwner'
                               }">
                           {{ request.requestedRole === 'NormalUser' ? 'Normal User' : request.requestedRole === 'InventoryOwner' ? 'Inventory Owner' : request.requestedRole }}
@@ -371,6 +373,14 @@ import { TranslateService } from '@ngx-translate/core';
           </div>
         </div>
       }
+
+      <!-- Success Toast -->
+      @if (showSuccess()) {
+        <div class="fixed bottom-8 right-8 z-[110] bg-emerald-600 text-white px-8 py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-2xl shadow-emerald-500/30 animate-in slide-in-from-bottom-4 duration-500 flex items-center space-x-3">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+          <span>{{ successMessage() }}</span>
+        </div>
+      }
     </div>
   `,
   styles: [`
@@ -395,6 +405,9 @@ export class PendingRequestsComponent implements OnInit {
   companyRequests = signal<CompanyRequest[]>([]);
   joinRequests = signal<JoinRequest[]>([]);
   packages = signal<Package[]>([]);
+
+  showSuccess = signal(false);
+  successMessage = signal('');
 
   showConfigModal = false;
   selectedRequest: CompanyRequest | null = null;
@@ -579,7 +592,12 @@ export class PendingRequestsComponent implements OnInit {
     this.processingId = id;
     this.processingAction = 'approve';
     this.service.approveJoinRequest(id).subscribe({
-      next: () => { this.processingId = null; this.processingAction = ''; this.loadData(); },
+      next: () => {
+        this.processingId = null;
+        this.processingAction = '';
+        this.triggerSuccess('Request approved successfully');
+        this.loadData();
+      },
       error: () => { this.processingId = null; this.processingAction = ''; }
     });
   }
@@ -590,9 +608,20 @@ export class PendingRequestsComponent implements OnInit {
       this.processingId = id;
       this.processingAction = 'reject';
       this.service.rejectJoinRequest(id, reason).subscribe({
-        next: () => { this.processingId = null; this.processingAction = ''; this.loadData(); },
+        next: () => {
+          this.processingId = null;
+          this.processingAction = '';
+          this.triggerSuccess('Request rejected');
+          this.loadData();
+        },
         error: () => { this.processingId = null; this.processingAction = ''; }
       });
     }
+  }
+
+  private triggerSuccess(msg: string) {
+    this.successMessage.set(msg);
+    this.showSuccess.set(true);
+    setTimeout(() => this.showSuccess.set(false), 4000);
   }
 }

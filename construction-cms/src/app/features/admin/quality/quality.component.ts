@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { QualityService, QualityInspection, Defect, PunchListItem, QualityStatistics } from '../../../core/services/quality.service';
 
 @Component({
-    selector: 'app-quality',
-    standalone: true,
-    imports: [CommonModule, FormsModule],
-    template: `
+  selector: 'app-quality',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  template: `
     <div class="quality-page">
       <div class="page-header">
         <h1>Quality Control</h1>
@@ -64,7 +64,7 @@ import { QualityService, QualityInspection, Defect, PunchListItem, QualityStatis
             <i class="icon-chart"></i>
           </div>
           <div class="card-content">
-            <span class="card-value">{{ statistics?.averageInspectionScore?.toFixed(1) || '0' }}%</span>
+            <span class="card-value">{{ statistics ? statistics.averageInspectionScore.toFixed(1) : '0.0' }}%</span>
             <span class="card-label">Avg Score</span>
           </div>
         </div>
@@ -315,7 +315,7 @@ import { QualityService, QualityInspection, Defect, PunchListItem, QualityStatis
       <!-- Modals would go here -->
     </div>
   `,
-    styles: [`
+  styles: [`
     .quality-page {
       padding: 24px;
       background: #f5f7fa;
@@ -722,118 +722,118 @@ import { QualityService, QualityInspection, Defect, PunchListItem, QualityStatis
   `]
 })
 export class QualityComponent implements OnInit {
-    activeTab = 'inspections';
-    statistics: QualityStatistics | null = null;
+  activeTab = 'inspections';
+  statistics: QualityStatistics | null = null;
 
-    inspections: QualityInspection[] = [];
-    defects: Defect[] = [];
-    punchListItems: PunchListItem[] = [];
+  inspections: QualityInspection[] = [];
+  defects: Defect[] = [];
+  punchListItems: PunchListItem[] = [];
 
-    // Filters
-    inspectionSearch = '';
-    inspectionStatusFilter = '';
-    inspectionTypeFilter = '';
+  // Filters
+  inspectionSearch = '';
+  inspectionStatusFilter = '';
+  inspectionTypeFilter = '';
 
-    defectSearch = '';
-    defectStatusFilter = '';
-    defectSeverityFilter = '';
+  defectSearch = '';
+  defectStatusFilter = '';
+  defectSeverityFilter = '';
 
-    punchListSearch = '';
-    punchListStatusFilter = '';
+  punchListSearch = '';
+  punchListStatusFilter = '';
 
-    constructor(private qualityService: QualityService) { }
+  constructor(private qualityService: QualityService) { }
 
-    ngOnInit(): void {
-        this.loadData();
-    }
+  ngOnInit(): void {
+    this.loadData();
+  }
 
-    loadData(): void {
-        this.qualityService.getStatistics().subscribe(stats => this.statistics = stats);
-        this.qualityService.getInspections().subscribe(inspections => this.inspections = inspections);
-        this.qualityService.getDefects().subscribe(defects => this.defects = defects);
-        this.qualityService.getPunchListItems().subscribe(items => this.punchListItems = items);
-    }
+  loadData(): void {
+    this.qualityService.getStatistics().subscribe(stats => this.statistics = stats);
+    this.qualityService.getInspections().subscribe(inspections => this.inspections = inspections);
+    this.qualityService.getDefects().subscribe(defects => this.defects = defects);
+    this.qualityService.getPunchListItems().subscribe(items => this.punchListItems = items);
+  }
 
-    get filteredInspections(): QualityInspection[] {
-        return this.inspections.filter(i => {
-            const matchesSearch = !this.inspectionSearch ||
-                i.title.toLowerCase().includes(this.inspectionSearch.toLowerCase()) ||
-                i.inspectionNumber.toLowerCase().includes(this.inspectionSearch.toLowerCase());
-            const matchesStatus = !this.inspectionStatusFilter || i.status === this.inspectionStatusFilter;
-            const matchesType = !this.inspectionTypeFilter || i.inspectionType === this.inspectionTypeFilter;
-            return matchesSearch && matchesStatus && matchesType;
-        });
-    }
+  get filteredInspections(): QualityInspection[] {
+    return this.inspections.filter(i => {
+      const matchesSearch = !this.inspectionSearch ||
+        i.title.toLowerCase().includes(this.inspectionSearch.toLowerCase()) ||
+        i.inspectionNumber.toLowerCase().includes(this.inspectionSearch.toLowerCase());
+      const matchesStatus = !this.inspectionStatusFilter || i.status === this.inspectionStatusFilter;
+      const matchesType = !this.inspectionTypeFilter || i.inspectionType === this.inspectionTypeFilter;
+      return matchesSearch && matchesStatus && matchesType;
+    });
+  }
 
-    get filteredDefects(): Defect[] {
-        return this.defects.filter(d => {
-            const matchesSearch = !this.defectSearch ||
-                d.title.toLowerCase().includes(this.defectSearch.toLowerCase()) ||
-                d.defectNumber.toLowerCase().includes(this.defectSearch.toLowerCase());
-            const matchesStatus = !this.defectStatusFilter || d.status === this.defectStatusFilter;
-            const matchesSeverity = !this.defectSeverityFilter || d.severity === this.defectSeverityFilter;
-            return matchesSearch && matchesStatus && matchesSeverity;
-        });
-    }
+  get filteredDefects(): Defect[] {
+    return this.defects.filter(d => {
+      const matchesSearch = !this.defectSearch ||
+        d.title.toLowerCase().includes(this.defectSearch.toLowerCase()) ||
+        d.defectNumber.toLowerCase().includes(this.defectSearch.toLowerCase());
+      const matchesStatus = !this.defectStatusFilter || d.status === this.defectStatusFilter;
+      const matchesSeverity = !this.defectSeverityFilter || d.severity === this.defectSeverityFilter;
+      return matchesSearch && matchesStatus && matchesSeverity;
+    });
+  }
 
-    get filteredPunchListItems(): PunchListItem[] {
-        return this.punchListItems.filter(p => {
-            const matchesSearch = !this.punchListSearch ||
-                p.description.toLowerCase().includes(this.punchListSearch.toLowerCase()) ||
-                p.itemNumber.toLowerCase().includes(this.punchListSearch.toLowerCase());
-            const matchesStatus = !this.punchListStatusFilter || p.status === this.punchListStatusFilter;
-            return matchesSearch && matchesStatus;
-        });
-    }
+  get filteredPunchListItems(): PunchListItem[] {
+    return this.punchListItems.filter(p => {
+      const matchesSearch = !this.punchListSearch ||
+        p.description.toLowerCase().includes(this.punchListSearch.toLowerCase()) ||
+        p.itemNumber.toLowerCase().includes(this.punchListSearch.toLowerCase());
+      const matchesStatus = !this.punchListStatusFilter || p.status === this.punchListStatusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }
 
-    getStatusClass(status: string): string {
-        return status.toLowerCase().replace(' ', '-');
-    }
+  getStatusClass(status: string): string {
+    return status.toLowerCase().replace(' ', '-');
+  }
 
-    getDefectStatusClass(status: string): string {
-        return status.toLowerCase();
-    }
+  getDefectStatusClass(status: string): string {
+    return status.toLowerCase();
+  }
 
-    getPunchListStatusClass(status: string): string {
-        return status.toLowerCase();
-    }
+  getPunchListStatusClass(status: string): string {
+    return status.toLowerCase();
+  }
 
-    getScoreClass(score: number): string {
-        if (score >= 90) return 'excellent';
-        if (score >= 75) return 'good';
-        if (score >= 60) return 'fair';
-        return 'poor';
-    }
+  getScoreClass(score: number): string {
+    if (score >= 90) return 'excellent';
+    if (score >= 75) return 'good';
+    if (score >= 60) return 'fair';
+    return 'poor';
+  }
 
-    isOverdue(item: PunchListItem): boolean {
-        return item.dueDate ? new Date(item.dueDate) < new Date() : false;
-    }
+  isOverdue(item: PunchListItem): boolean {
+    return item.dueDate ? new Date(item.dueDate) < new Date() : false;
+  }
 
-    viewInspection(inspection: QualityInspection): void {
-        console.log('View inspection:', inspection);
-    }
+  viewInspection(inspection: QualityInspection): void {
+    console.log('View inspection:', inspection);
+  }
 
-    startInspection(inspection: QualityInspection): void {
-        console.log('Start inspection:', inspection);
-    }
+  startInspection(inspection: QualityInspection): void {
+    console.log('Start inspection:', inspection);
+  }
 
-    viewDefect(defect: Defect): void {
-        console.log('View defect:', defect);
-    }
+  viewDefect(defect: Defect): void {
+    console.log('View defect:', defect);
+  }
 
-    assignDefect(defect: Defect): void {
-        console.log('Assign defect:', defect);
-    }
+  assignDefect(defect: Defect): void {
+    console.log('Assign defect:', defect);
+  }
 
-    startPunchItem(item: PunchListItem): void {
-        console.log('Start punch item:', item);
-    }
+  startPunchItem(item: PunchListItem): void {
+    console.log('Start punch item:', item);
+  }
 
-    completePunchItem(item: PunchListItem): void {
-        console.log('Complete punch item:', item);
-    }
+  completePunchItem(item: PunchListItem): void {
+    console.log('Complete punch item:', item);
+  }
 
-    verifyPunchItem(item: PunchListItem): void {
-        console.log('Verify punch item:', item);
-    }
+  verifyPunchItem(item: PunchListItem): void {
+    console.log('Verify punch item:', item);
+  }
 }

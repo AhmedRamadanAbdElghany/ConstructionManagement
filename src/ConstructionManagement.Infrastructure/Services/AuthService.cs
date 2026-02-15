@@ -29,7 +29,6 @@ public class AuthService : IAuthService
         IUnitOfWork unitOfWork,
         IHttpContextAccessor httpContextAccessor,
         ICompanyRequestRepository companyRequestRepository,
-        ICompanyRequestRepository companyRequestRepository,
         INotificationService notificationService,
         IRepository<Vendor> vendorRepository)
     {

@@ -171,7 +171,7 @@ import { SubcontractorService, Subcontractor, SubcontractorContract, Subcontract
                                   </svg>
                                 }
                              </div>
-                             <span class="text-[10px] font-black text-slate-400 tracking-tighter">{{ sub.averageRating?.toFixed(1) || '0.0' }}</span>
+                             <span class="text-[10px] font-black text-slate-400 tracking-tighter">{{ (sub.averageRating ?? 0).toFixed(1) }}</span>
                           </div>
                         </td>
                         <td class="px-8 py-5">

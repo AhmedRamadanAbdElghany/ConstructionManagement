@@ -138,7 +138,7 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
 
         // Act
         var userRepo = new UserRepository(Context);
-        var service = new AuthService(userRepo, _emptyConfig, UnitOfWork, _httpContextAccessorMock.Object, _companyRequestRepoMock.Object, _notificationServiceMock.Object);
+        var service = new AuthService(userRepo, _emptyConfig, UnitOfWork, _httpContextAccessorMock.Object, _companyRequestRepoMock.Object, _notificationServiceMock.Object, new Repository<Vendor>(Context));
         var result = await service.LoginAsync(loginRequest);
 
         // Assert
@@ -161,7 +161,7 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
 
         // Act
         var userRepo = new UserRepository(Context);
-        var service = new AuthService(userRepo, _emptyConfig, UnitOfWork, _httpContextAccessorMock.Object, _companyRequestRepoMock.Object, _notificationServiceMock.Object);
+        var service = new AuthService(userRepo, _emptyConfig, UnitOfWork, _httpContextAccessorMock.Object, _companyRequestRepoMock.Object, _notificationServiceMock.Object, new Repository<Vendor>(Context));
         var result = await service.LoginAsync(loginRequest);
 
         // Assert

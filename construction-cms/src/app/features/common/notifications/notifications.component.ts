@@ -149,12 +149,14 @@ export class NotificationsComponent implements OnInit {
   ngOnInit() {
     this.notificationsService.getNotifications().subscribe(notifications => {
       this.notifications = notifications;
+      this.notificationsService.refreshUnreadCount();
     });
   }
 
   markAllRead() {
     this.notificationsService.markAllAsRead().subscribe(() => {
       this.notifications.forEach(n => n.isRead = true);
+      this.notificationsService.refreshUnreadCount();
     });
   }
 
@@ -162,6 +164,7 @@ export class NotificationsComponent implements OnInit {
     // Mark as read
     this.notificationsService.markAsRead(notification.id).subscribe(() => {
       notification.isRead = true;
+      this.notificationsService.refreshUnreadCount();
     });
 
     // Navigate if route exists

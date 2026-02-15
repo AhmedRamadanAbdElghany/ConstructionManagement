@@ -14,7 +14,11 @@ import * as L from 'leaflet';
   template: `
     <div class="flex flex-col h-screen bg-slate-50 dark:bg-slate-950 overflow-hidden">
       <!-- Search Bar -->
-      <div class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-4 shadow-sm z-10">
+      <div class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-6 shadow-sm z-10">
+        <div class="max-w-7xl mx-auto mb-4">
+           <h1 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Suppliers</h1>
+           <p class="text-xs text-slate-500 font-medium">Find material suppliers and service providers near your projects</p>
+        </div>
         <div class="max-w-7xl mx-auto flex flex-wrap gap-4 items-center">
           <div class="flex-1 min-w-[300px] relative">
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -175,6 +179,7 @@ export class VendorDiscoveryComponent implements OnInit, OnDestroy, AfterViewIni
   private map!: L.Map;
   private markers: L.Marker[] = [];
   private userMarker?: L.CircleMarker;
+  private projectMarker?: L.Marker;
 
   loading = false;
   searchRequest: VendorSearchRequest = {
@@ -255,10 +260,39 @@ export class VendorDiscoveryComponent implements OnInit, OnDestroy, AfterViewIni
 
   onProjectSelect() {
     if (!this.searchRequest.projectId) {
+      if (this.projectMarker) {
+        this.projectMarker.remove();
+        this.projectMarker = undefined;
+      }
       this.locateMe();
     } else {
-      // Find project to get its location (if available)
-      // Or just search based on the provided projectId on the backend
+      const project = this.myProjects.find(p => p.id === Number(this.searchRequest.projectId));
+      if (project && project.location?.lat && project.location?.lng) {
+        this.searchRequest.latitude = project.location.lat;
+        this.searchRequest.longitude = project.location.lng;
+        this.map.setView([project.location.lat, project.location.lng], 13);
+
+        if (this.projectMarker) {
+          this.projectMarker.setLatLng([project.location.lat, project.location.lng]);
+        } else {
+          const projectIcon = L.divIcon({
+            html: `
+              <div class="w-10 h-10 rounded-full bg-cyan-500 border-4 border-white shadow-xl flex items-center justify-center text-white ring-4 ring-cyan-500/30">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+              </div>
+            `,
+            className: '',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+          });
+          this.projectMarker = L.marker([project.location.lat, project.location.lng], { icon: projectIcon })
+            .addTo(this.map)
+            .bindPopup(`<b>Project: ${project.name}</b>`);
+        }
+        this.projectMarker.openPopup();
+      }
       this.onSearch();
     }
   }
@@ -299,7 +333,7 @@ export class VendorDiscoveryComponent implements OnInit, OnDestroy, AfterViewIni
               <h4 class="font-bold text-slate-900">${vendor.name}</h4>
               <p class="text-xs text-slate-500">${vendor.vendorType || ''}</p>
               <div class="mt-2 text-xs font-bold text-cyan-600">
-                ${vendor.distanceKm?.toFixed(1)} km away
+                ${vendor.distanceKm ? vendor.distanceKm.toFixed(1) : '0.0'} km away
               </div>
             </div>
           `);

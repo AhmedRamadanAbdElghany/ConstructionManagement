@@ -33,6 +33,59 @@ export interface VendorProduct {
     unit?: string;
     description?: string;
     isActive: boolean;
+    quantityInStock: number;
+    lowStockThreshold: number;
+    purchasePrice: number;
+}
+
+export interface VendorTransaction {
+    id: number;
+    vendorId: number;
+    vendorProductId: number;
+    productName: string;
+    transactionType: 'Sale' | 'Purchase' | 'Adjustment' | 'InitialStock' | 'Return' | 'Loss';
+    quantity: number;
+    unitPrice: number;
+    totalAmount: number;
+    transactionDate: string;
+    notes?: string;
+    referenceNumber?: string;
+}
+
+export interface VendorStats {
+    totalSales: number;
+    totalRevenue: number;
+    totalProfit: number;
+    totalProducts: number;
+    lowStockCount: number;
+    pendingOrders: number;
+    recentTransactions: VendorTransaction[];
+}
+
+export interface CreateVendorTransactionRequest {
+    vendorProductId: number;
+    transactionType: string;
+    quantity: number;
+    unitPrice: number;
+    notes?: string;
+    referenceNumber?: string;
+}
+
+export interface UpdateVendorProductRequest {
+    name?: string;
+    category?: string;
+    price?: number;
+    unit?: string;
+    description?: string;
+    quantityInStock?: number;
+    lowStockThreshold?: number;
+    purchasePrice?: number;
+    isActive?: boolean;
+}
+
+export interface UpdateLocationRequest {
+    latitude: number;
+    longitude: number;
 }
 
 export interface VendorSearchRequest {
@@ -120,6 +173,9 @@ export interface CreateVendorProductRequest {
     price: number;
     unit?: string;
     description?: string;
+    quantityInStock?: number;
+    lowStockThreshold?: number;
+    purchasePrice?: number;
 }
 
 export interface CreateVendorInvoiceRequest {
@@ -247,5 +303,42 @@ export class VendorService {
 
     updateMyProfile(request: CreateVendorRequest): Observable<Vendor> {
         return this.http.put<Vendor>(`${this.baseUrl}/profile`, request);
+    }
+
+    // Inventory Owner specific methods
+    getMyProducts(): Observable<VendorProduct[]> {
+        return this.http.get<VendorProduct[]>(`${this.baseUrl}/my-products`);
+    }
+
+    addMyProduct(product: CreateVendorProductRequest): Observable<VendorProduct> {
+        return this.http.post<VendorProduct>(`${this.baseUrl}/my-products`, product);
+    }
+
+    updateMyProduct(id: number, product: UpdateVendorProductRequest): Observable<VendorProduct> {
+        return this.http.put<VendorProduct>(`${this.baseUrl}/my-products/${id}`, product);
+    }
+
+    recordTransaction(request: CreateVendorTransactionRequest): Observable<VendorTransaction> {
+        return this.http.post<VendorTransaction>(`${this.baseUrl}/record-transaction`, request);
+    }
+
+    getMyTransactions(): Observable<VendorTransaction[]> {
+        return this.http.get<VendorTransaction[]>(`${this.baseUrl}/my-transactions`);
+    }
+
+    getMyOrders(): Observable<VendorInvoice[]> {
+        return this.http.get<VendorInvoice[]>(`${this.baseUrl}/my-orders`);
+    }
+
+    getMyStats(): Observable<VendorStats> {
+        return this.http.get<VendorStats>(`${this.baseUrl}/my-stats`);
+    }
+
+    updateLocation(latitude: number, longitude: number): Observable<void> {
+        return this.http.post<void>(`${this.baseUrl}/my-location`, { latitude, longitude });
+    }
+
+    toggleVisibility(): Observable<Vendor> {
+        return this.http.patch<Vendor>(`${this.baseUrl}/my-visibility`, {});
     }
 }

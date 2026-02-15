@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
 import { SettingsService } from '../../core/services/settings.service';
 import { PendingRequestsService } from '../../core/services/pending-requests.service';
+import { NotificationsService } from '../../core/services/notifications.service';
 import { CompanySettings } from '../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule, Router } from '@angular/router';
@@ -13,7 +14,7 @@ import { RouterModule, Router } from '@angular/router';
   imports: [CommonModule, TranslateModule, RouterModule],
   template: `
     <div [class.w-72]="!isCollapsed()" [class.w-24]="isCollapsed()" 
-         class="h-full flex flex-col bg-white dark:bg-slate-900 border-e border-slate-200 dark:border-slate-800/60 shadow-2xl transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] relative group/sidebar overflow-hidden">
+         class="h-full flex flex-col bg-white dark:bg-slate-900 border-e border-slate-200 dark:border-slate-800/60 shadow-2xl transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] relative group/sidebar">
       
       <!-- Collapse Toggle -->
       <button 
@@ -35,7 +36,7 @@ import { RouterModule, Router } from '@angular/router';
           <div class="transition-all duration-500 overflow-hidden" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">
             <h1 class="text-slate-900 dark:text-white font-black text-xl leading-none tracking-tight">STRUC<span class="text-cyan-500 dark:text-cyan-400">T</span></h1>
             <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] font-bold mt-1.5 truncate">
-              {{ (isPending ? 'sidebar.role_owner' : 'sidebar.role_' + (currentRole === 'SuperAdmin' ? 'super' : (currentRole === 'CompanyAdmin' && currentUserType === 2) ? 'owner' : currentRole === 'CompanyAdmin' ? 'admin' : currentRole === 'CompanyUser' ? 'worker' : 'client')) | translate }}
+              {{ (isPending ? 'sidebar.role_owner' : isInventoryOwner ? 'sidebar.role_inventory_owner' : 'sidebar.role_' + (currentRole === 'SuperAdmin' ? 'super' : (currentRole === 'CompanyAdmin' && currentUserType === 2) ? 'owner' : currentRole === 'CompanyAdmin' ? 'admin' : currentRole === 'CompanyUser' ? 'worker' : 'client')) | translate }}
             </p>
           </div>
         </div>
@@ -43,6 +44,7 @@ import { RouterModule, Router } from '@angular/router';
 
       <!-- Navigation -->
       <nav class="flex-1 p-4 space-y-2 overflow-y-auto overflow-x-hidden custom-scrollbar pt-8">
+        @if (!isInventoryOwner) {
         <a routerLink="/dashboard" 
            routerLinkActive="nav-active"
            [routerLinkActiveOptions]="{exact: true}"
@@ -54,26 +56,20 @@ import { RouterModule, Router } from '@angular/router';
           </div>
           <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.dashboard' | translate }}</span>
         </a>
+        }
 
-        @if (isPending || isClient) {
+        @if (isPending || isClient || isWorker || isAdmin) {
           <a routerLink="/browse-firms"
              routerLinkActive="nav-active"
              class="nav-item group">
             <div class="nav-icon-box">
               <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011-1v5m-4 0h4"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Browse Firms</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Companies</span>
           </a>
-        }
 
-        @if (!isPending) {
-        <p class="px-4 py-2 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
-           [class.opacity-0]="isCollapsed()">{{ (isClient ? 'sidebar.client_portal' : 'sidebar.administration') | translate }}</p>
-
-        @if (isAdmin) {
-          <!-- Vendor Discovery -->
           <a routerLink="/admin/vendors/discovery" 
              routerLinkActive="nav-active"
              class="nav-item group">
@@ -83,8 +79,15 @@ import { RouterModule, Router } from '@angular/router';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Vendor Discovery</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Suppliers</span>
           </a>
+        }
+
+        @if (!isPending && !isInventoryOwner) {
+        <p class="px-4 py-2 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
+           [class.opacity-0]="isCollapsed()">{{ (isClient ? 'sidebar.client_portal' : 'sidebar.administration') | translate }}</p>
+
+        @if (isAdmin) {
 
           <a routerLink="/admin/vendors/analytics" 
              routerLinkActive="nav-active"
@@ -278,11 +281,19 @@ import { RouterModule, Router } from '@angular/router';
 
 
         }
+        } <!-- end !isPending && !isInventoryOwner -->
 
+        @if (!isClient && !isInventoryOwner && !isPending) {
         <p class="px-4 py-6 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
-           [class.opacity-0]="isCollapsed()">{{ (isClient ? 'sidebar.insights' : 'sidebar.operations') | translate }}</p>
+           [class.opacity-0]="isCollapsed()">{{ 'sidebar.operations' | translate }}</p>
+        }
 
-        @if (currentRole !== 'SuperAdmin') {
+        @if (isInventoryOwner) {
+          <p class="px-4 py-6 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
+             [class.opacity-0]="isCollapsed()">STOREFRONT</p>
+        }
+
+        @if (currentRole !== 'SuperAdmin' && !isInventoryOwner && !isPending) {
           @if (isWorker || isAdmin) {
             <a routerLink="/worker/daily-log" 
                routerLinkActive="nav-active"
@@ -449,7 +460,6 @@ import { RouterModule, Router } from '@angular/router';
             <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">Store Settings</span>
           </a>
         }
-        } <!-- end isPending -->
 
         <div class="my-6 px-4">
           <div class="h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent"></div>
@@ -463,11 +473,15 @@ import { RouterModule, Router } from '@angular/router';
               <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
               </svg>
-              <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-rose-500 ring-4 ring-white dark:ring-slate-900 shadow-lg"></span>
+              @if (notificationsService.unreadCount() > 0) {
+                <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-rose-500 ring-4 ring-white dark:ring-slate-900 shadow-lg"></span>
+              }
             </div>
             <span class="nav-label text-slate-900 dark:text-slate-200" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.notifications' | translate }}</span>
             <div class="ml-auto" [class.hidden]="isCollapsed()">
-               <div class="flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full bg-rose-500 text-white text-[10px] font-black shadow-lg shadow-rose-500/20">3</div>
+               @if (notificationsService.unreadCount() > 0) {
+                 <div class="flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full bg-rose-500 text-white text-[10px] font-black shadow-lg shadow-rose-500/20">{{ notificationsService.unreadCount() > 99 ? '99+' : notificationsService.unreadCount() }}</div>
+               }
             </div>
           </a>
         }
@@ -555,7 +569,8 @@ export class SidebarComponent {
   constructor(
     public authService: AuthService,
     private settingsService: SettingsService,
-    public pendingRequestsService: PendingRequestsService
+    public pendingRequestsService: PendingRequestsService,
+    public notificationsService: NotificationsService
   ) {
     const user = this.authService.getCurrentUser();
     const isSuperAdmin = user?.roles?.includes('SuperAdmin');
@@ -565,6 +580,7 @@ export class SidebarComponent {
     }
 
     this.loadPendingRequestsCount();
+    this.notificationsService.refreshUnreadCount();
   }
 
   loadPendingRequestsCount() {

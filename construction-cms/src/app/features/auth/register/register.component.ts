@@ -602,15 +602,10 @@ export class RegisterComponent {
           this.successMessage = this.translateService.instant('register.success_message');
 
           setTimeout(() => {
-            if (user.roles.includes('SuperAdmin') || user.companyId) {
-              this.router.navigate(['/dashboard']);
-            } else if (user.userType === 2) { // CompanyOwner
-              this.successMessage = this.translateService.instant('register.success_message');
-              this.router.navigate(['/dashboard']);
-            } else if (user.userType === 3) { // InventoryOwner
+            if (user.userType === 3) { // InventoryOwner
               this.router.navigate(['/inventory-dashboard']);
             } else {
-              this.router.navigate(['/auth/company-selection']);
+              this.router.navigate(['/dashboard']);
             }
           }, 1500);
         } else {

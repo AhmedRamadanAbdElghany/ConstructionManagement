@@ -5,15 +5,15 @@ import { PendingRequestsService, PublicCompany, JoinRequest } from '../../../cor
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
-    selector: 'app-browse-firms',
-    standalone: true,
-    imports: [CommonModule, FormsModule],
-    template: `
+  selector: 'app-browse-firms',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="mb-10">
-          <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight mb-2">Browse Firms</h1>
+          <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight mb-2">Companies</h1>
           <p class="text-slate-500 dark:text-slate-400 font-medium">Find and join a construction firm to start collaborating</p>
         </div>
 
@@ -154,14 +154,17 @@ import { AuthService } from '../../../core/services/auth.service';
                            [ngClass]="{
                              'bg-blue-500/10': role.key === 'NormalUser',
                              'bg-amber-500/10': role.key === 'Worker',
+                             'bg-emerald-500/10': role.key === 'Engineer',
                              'bg-purple-500/10': role.key === 'InventoryOwner'
                            }">
-                        <svg class="w-5 h-5" [ngClass]="{'text-blue-500': role.key === 'NormalUser', 'text-amber-500': role.key === 'Worker', 'text-purple-500': role.key === 'InventoryOwner'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5" [ngClass]="{'text-blue-500': role.key === 'NormalUser', 'text-amber-500': role.key === 'Worker', 'text-emerald-500': role.key === 'Engineer', 'text-purple-500': role.key === 'InventoryOwner'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           @if (role.key === 'NormalUser') {
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                           } @else if (role.key === 'Worker') {
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                          } @else if (role.key === 'Engineer') {
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                           } @else {
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                           }
@@ -211,89 +214,90 @@ import { AuthService } from '../../../core/services/auth.service';
   `
 })
 export class BrowseFirmsComponent implements OnInit {
-    private service = inject(PendingRequestsService);
+  private service = inject(PendingRequestsService);
 
-    companies: PublicCompany[] = [];
-    myPendingRequests: JoinRequest[] = [];
-    searchQuery = '';
-    loading = true;
-    showJoinModal = false;
-    selectedCompany: PublicCompany | null = null;
-    isSubmitting = false;
-    showSuccess = false;
+  companies: PublicCompany[] = [];
+  myPendingRequests: JoinRequest[] = [];
+  searchQuery = '';
+  loading = true;
+  showJoinModal = false;
+  selectedCompany: PublicCompany | null = null;
+  isSubmitting = false;
+  showSuccess = false;
 
-    joinForm = {
-        requestedRole: 'NormalUser',
-        message: ''
-    };
+  joinForm = {
+    requestedRole: 'NormalUser',
+    message: ''
+  };
 
-    availableRoles = [
-        { key: 'NormalUser', label: 'User' },
-        { key: 'Worker', label: 'Worker' },
-        { key: 'InventoryOwner', label: 'Inventory' }
-    ];
+  availableRoles = [
+    { key: 'NormalUser', label: 'User' },
+    { key: 'Worker', label: 'Worker' },
+    { key: 'Engineer', label: 'Engineer' },
+    { key: 'InventoryOwner', label: 'Inventory' }
+  ];
 
-    get filteredCompanies(): PublicCompany[] {
-        if (!this.searchQuery.trim()) return this.companies;
-        const q = this.searchQuery.toLowerCase();
-        return this.companies.filter(c =>
-            c.name.toLowerCase().includes(q) ||
-            (c.address && c.address.toLowerCase().includes(q))
-        );
-    }
+  get filteredCompanies(): PublicCompany[] {
+    if (!this.searchQuery.trim()) return this.companies;
+    const q = this.searchQuery.toLowerCase();
+    return this.companies.filter(c =>
+      c.name.toLowerCase().includes(q) ||
+      (c.address && c.address.toLowerCase().includes(q))
+    );
+  }
 
-    ngOnInit() {
-        this.loadData();
-    }
+  ngOnInit() {
+    this.loadData();
+  }
 
-    loadData() {
-        this.loading = true;
-        this.service.getPublicCompanies().subscribe({
-            next: (companies) => {
-                this.companies = companies;
-                this.loading = false;
-            },
-            error: () => {
-                this.loading = false;
-            }
-        });
+  loadData() {
+    this.loading = true;
+    this.service.getPublicCompanies().subscribe({
+      next: (companies) => {
+        this.companies = companies;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
+    });
 
-        // Load user's own requests
-        this.service.getJoinRequests().subscribe({
-            next: (requests) => {
-                this.myPendingRequests = requests;
-            },
-            error: () => { }
-        });
-    }
+    // Load user's own requests
+    this.service.getJoinRequests().subscribe({
+      next: (requests) => {
+        this.myPendingRequests = requests;
+      },
+      error: () => { }
+    });
+  }
 
-    hasPendingRequest(companyId: number): boolean {
-        return this.myPendingRequests.some(r => r.companyId === companyId && r.status === 'Pending');
-    }
+  hasPendingRequest(companyId: number): boolean {
+    return this.myPendingRequests.some(r => r.companyId === companyId && r.status === 'Pending');
+  }
 
-    openJoinModal(company: PublicCompany) {
-        this.selectedCompany = company;
-        this.joinForm = { requestedRole: 'NormalUser', message: '' };
-        this.showJoinModal = true;
-    }
+  openJoinModal(company: PublicCompany) {
+    this.selectedCompany = company;
+    this.joinForm = { requestedRole: 'NormalUser', message: '' };
+    this.showJoinModal = true;
+  }
 
-    submitJoinRequest() {
-        if (!this.selectedCompany) return;
-        this.isSubmitting = true;
+  submitJoinRequest() {
+    if (!this.selectedCompany) return;
+    this.isSubmitting = true;
 
-        this.service.submitJoinRequest(this.selectedCompany.id, this.joinForm.message).subscribe({
-            next: (result) => {
-                this.isSubmitting = false;
-                this.showJoinModal = false;
-                this.myPendingRequests.push(result);
-                this.showSuccess = true;
-                setTimeout(() => this.showSuccess = false, 4000);
-            },
-            error: (err) => {
-                this.isSubmitting = false;
-                const msg = err?.error?.message || err?.error || 'Failed to send request. Please try again.';
-                alert(msg);
-            }
-        });
-    }
+    this.service.submitJoinRequest(this.selectedCompany.id, this.joinForm.message, this.joinForm.requestedRole).subscribe({
+      next: (result) => {
+        this.isSubmitting = false;
+        this.showJoinModal = false;
+        this.myPendingRequests.push(result);
+        this.showSuccess = true;
+        setTimeout(() => this.showSuccess = false, 4000);
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        const msg = err?.error?.message || err?.error || 'Failed to send request. Please try again.';
+        alert(msg);
+      }
+    });
+  }
 }

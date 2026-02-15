@@ -531,12 +531,12 @@ export class LoginComponent {
         this.isLoading = false;
         const user = response.user;
 
-        if (user.roles.includes('SuperAdmin') || user.companyId || user.userType === 2) {
+        if (user.roles.includes('SuperAdmin') || user.companyId || user.userType === 2 || user.userType === 0 || user.userType === 1 || user.userType === 5) {
           this.router.navigate(['/dashboard']);
         } else if (user.userType === 3) {
           this.router.navigate(['/inventory-dashboard']);
         } else {
-          this.router.navigate(['/auth/company-selection']);
+          this.router.navigate(['/dashboard']);
         }
       },
       error: (error) => {

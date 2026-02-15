@@ -72,7 +72,7 @@ import { SubcontractorService, Subcontractor, SubcontractorContract, Subcontract
                   <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ 'subcontractors.details.average_rating' | translate }}</span>
                </div>
                <div class="flex items-end gap-2">
-                 <p class="text-4xl font-black tracking-tighter">{{ subcontractor.averageRating?.toFixed(1) || 'N/A' }}</p>
+                 <p class="text-4xl font-black tracking-tighter">{{ (subcontractor.averageRating ?? 0).toFixed(1) }}</p>
                  <p class="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-1.5">{{ subcontractor.ratingGrade || '' }}</p>
                </div>
             </div>

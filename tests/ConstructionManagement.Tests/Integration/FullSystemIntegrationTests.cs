@@ -43,7 +43,8 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 			UnitOfWork,
 			_httpContextAccessorMock.Object,
 			_companyRequestRepoMock.Object,
-			_notificationServiceMock.Object);
+			_notificationServiceMock.Object,
+			new Repository<Vendor>(Context));
 
 		_boqService = new BOQItemService(
 			new Repository<BOQItem>(Context),
