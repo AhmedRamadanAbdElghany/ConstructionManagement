@@ -36,7 +36,7 @@ public interface IWarehouseOrderService
     /// <summary>
     /// Update order status
     /// </summary>
-    Task<WarehouseOrderRequest> UpdateOrderStatusAsync(int orderId, UpdateOrderStatusRequest request, int userId);
+    Task<WarehouseOrderRequest> UpdateOrderStatusAsync(int orderId, UpdateWarehouseOrderStatusRequest request, int userId);
 
     /// <summary>
     /// Generate a unique barcode

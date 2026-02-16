@@ -80,7 +80,7 @@ public class WarehouseOrderService : IWarehouseOrderService
         return Task.FromResult(new List<WarehouseOrderRequest>());
     }
 
-    public async Task<WarehouseOrderRequest> UpdateOrderStatusAsync(int orderId, UpdateOrderStatusRequest request, int userId)
+    public async Task<WarehouseOrderRequest> UpdateOrderStatusAsync(int orderId, UpdateWarehouseOrderStatusRequest request, int userId)
     {
         var order = await GetOrderByIdAsync(orderId);
         if (order == null)

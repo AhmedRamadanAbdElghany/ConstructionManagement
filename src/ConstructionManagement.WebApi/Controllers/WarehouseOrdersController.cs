@@ -55,7 +55,7 @@ public class WarehouseOrdersController : ControllerBase
     /// Update order status
     /// </summary>
     [HttpPut("{orderId}/status")]
-    public async Task<IActionResult> UpdateStatus(int orderId, [FromBody] UpdateOrderStatusRequest request)
+    public async Task<IActionResult> UpdateStatus(int orderId, [FromBody] UpdateWarehouseOrderStatusRequest request)
     {
         var userId = GetCurrentUserId();
         var order = await _orderService.UpdateOrderStatusAsync(orderId, request, userId);

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ConstructionManagement.WebApi.Controllers;
 
 [ApiController]
+[Route("")]
 [Authorize]
 public class PhasesController : ControllerBase
 {

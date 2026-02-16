@@ -67,7 +67,7 @@ namespace ConstructionManagement.Application.DTOs.Vendor
         public List<VendorTransactionDto> RecentTransactions { get; set; } = new();
     }
 
-    public class UpdateLocationRequest
+    public class UpdateVendorLocationRequest
     {
         public double Latitude { get; set; }
         public double Longitude { get; set; }

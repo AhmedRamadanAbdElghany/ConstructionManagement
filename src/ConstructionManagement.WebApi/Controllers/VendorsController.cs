@@ -275,7 +275,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
         // POST: api/vendors/my-location
         [HttpPost("my-location")]
-        public async Task<IActionResult> UpdateMyLocation([FromBody] UpdateLocationRequest request)
+        public async Task<IActionResult> UpdateMyLocation([FromBody] UpdateVendorLocationRequest request)
         {
             var userId = GetCurrentUserId();
             await _vendorService.UpdateVendorLocationAsync(userId, request.Latitude, request.Longitude);
