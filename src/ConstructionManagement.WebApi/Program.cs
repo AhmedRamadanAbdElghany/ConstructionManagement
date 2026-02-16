@@ -262,7 +262,10 @@ if (string.IsNullOrEmpty(app.Environment.WebRootPath))
     app.Environment.WebRootPath = Path.Combine(app.Environment.ContentRootPath, "wwwroot");
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 // Explicitly serve files from wwwroot/uploads
 var contentRoot = app.Environment.ContentRootPath;

@@ -10,4 +10,5 @@ public interface IUserRepository : IRepository<User>
     Task<User?> GetByEmailVerificationTokenAsync(string token);
     Task<IEnumerable<User>> GetUsersByRoleAsync(string roleName);
     Task<IEnumerable<User>> GetUsersByCompanyIdAndRoleAsync(int companyId, string roleName);
+    Task<User?> GetByFullNameAsync(string fullName);
 }

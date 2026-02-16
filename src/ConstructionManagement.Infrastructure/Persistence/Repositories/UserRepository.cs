@@ -61,4 +61,14 @@ public class UserRepository : Repository<User>, IUserRepository
                        u.UserRoles.Any(ur => ur.Role.Name.ToLower() == roleName.ToLower()))
             .ToListAsync();
     }
+
+    public async Task<User?> GetByFullNameAsync(string fullName)
+    {
+        // Using strict equality for Full Name check.
+        // EF Core will translate (u.FirstName + " " + u.LastName) to a CONCAT function in SQL.
+        var targetName = fullName.Trim();
+        return await _dbSet
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(u => (u.FirstName + " " + u.LastName) == targetName);
+    }
 }

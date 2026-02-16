@@ -5,7 +5,7 @@ namespace ConstructionManagement.Domain.Entities;
 /// <summary>
 /// Tracks status changes for warehouse orders
 /// </summary>
-public class OrderStatusHistory : BaseEntity
+public class OrderStatusHistory : BaseEntity, ICompanyEntity
 {
     /// <summary>
     /// The order this history belongs to
@@ -50,4 +50,8 @@ public class OrderStatusHistory : BaseEntity
     /// Location when status was changed (for delivery tracking)
     /// </summary>
     public double? Longitude { get; set; }
+
+    public int? CompanyId { get; set; }
+    [ForeignKey(nameof(CompanyId))]
+    public virtual Company? Company { get; set; }
 }

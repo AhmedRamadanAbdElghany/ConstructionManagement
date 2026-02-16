@@ -97,6 +97,12 @@ public class AuthService : IAuthService
             return new AuthResponse(false, "Email is already registered", null, null);
         }
 
+        var existingUserByName = await _userRepository.GetByFullNameAsync(request.FullName);
+        if (existingUserByName != null)
+        {
+            return new AuthResponse(false, "Full Name is already taken. Please use a different name.", null, null);
+        }
+
         var nameParts = request.FullName.Split(' ', 2);
         var user = new User
         {

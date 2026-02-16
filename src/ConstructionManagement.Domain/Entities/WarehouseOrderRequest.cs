@@ -5,7 +5,7 @@ namespace ConstructionManagement.Domain.Entities;
 /// <summary>
 /// Order request from warehouse owner to project
 /// </summary>
-public class WarehouseOrderRequest : BaseEntity
+public class WarehouseOrderRequest : BaseEntity, ICompanyEntity
 {
     /// <summary>
     /// Unique order number
@@ -156,6 +156,10 @@ public class WarehouseOrderRequest : BaseEntity
     /// Status history
     /// </summary>
     public virtual ICollection<OrderStatusHistory> StatusHistory { get; set; } = new List<OrderStatusHistory>();
+
+    public int? CompanyId { get; set; }
+    [ForeignKey(nameof(CompanyId))]
+    public virtual Company? Company { get; set; }
 }
 
 /// <summary>

@@ -5,7 +5,7 @@ namespace ConstructionManagement.Domain.Entities;
 /// <summary>
 /// Items in a recurring/subscription order
 /// </summary>
-public class RecurringOrderItem : BaseEntity
+public class RecurringOrderItem : BaseEntity, ICompanyEntity
 {
     /// <summary>
     /// Parent recurring order
@@ -55,4 +55,8 @@ public class RecurringOrderItem : BaseEntity
     /// Notes for this item
     /// </summary>
     public string? Notes { get; set; }
+
+    public int? CompanyId { get; set; }
+    [ForeignKey(nameof(CompanyId))]
+    public virtual Company? Company { get; set; }
 }

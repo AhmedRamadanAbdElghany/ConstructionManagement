@@ -5,7 +5,7 @@ namespace ConstructionManagement.Domain.Entities;
 /// <summary>
 /// Represents quantity-based discount tiers for stock items
 /// </summary>
-public class StockDiscountTier : BaseEntity
+public class StockDiscountTier : BaseEntity, ICompanyEntity
 {
     /// <summary>
     /// Associated stock item
@@ -57,5 +57,12 @@ public class StockDiscountTier : BaseEntity
     /// <summary>
     /// Priority (higher priority tiers applied first)
     /// </summary>
+    /// <summary>
+    /// Priority (higher priority tiers applied first)
+    /// </summary>
     public int Priority { get; set; } = 0;
+
+    public int? CompanyId { get; set; }
+    [ForeignKey(nameof(CompanyId))]
+    public virtual Company? Company { get; set; }
 }

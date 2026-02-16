@@ -5,7 +5,7 @@ namespace ConstructionManagement.Domain.Entities;
 /// <summary>
 /// Represents an item line in an inventory order
 /// </summary>
-public class InventoryOrderItem : BaseEntity
+public class InventoryOrderItem : BaseEntity, ICompanyEntity
 {
     /// <summary>
     /// Parent order
@@ -71,4 +71,8 @@ public class InventoryOrderItem : BaseEntity
     /// Item notes
     /// </summary>
     public string? Notes { get; set; }
+
+    public int? CompanyId { get; set; }
+    [ForeignKey(nameof(CompanyId))]
+    public virtual Company? Company { get; set; }
 }

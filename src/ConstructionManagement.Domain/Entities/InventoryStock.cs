@@ -5,7 +5,7 @@ namespace ConstructionManagement.Domain.Entities;
 /// <summary>
 /// Represents stock/inventory items available for order
 /// </summary>
-public class InventoryStock : BaseEntity
+public class InventoryStock : BaseEntity, ICompanyEntity
 {
     /// <summary>
     /// Warehouse where stock is located
@@ -102,4 +102,8 @@ public class InventoryStock : BaseEntity
     public virtual ICollection<StockDiscountTier> DiscountTiers { get; set; } = new List<StockDiscountTier>();
     public virtual ICollection<InventoryOrderItem> OrderItems { get; set; } = new List<InventoryOrderItem>();
     public virtual ICollection<RecurringOrderItem> RecurringItems { get; set; } = new List<RecurringOrderItem>();
+
+    public int? CompanyId { get; set; }
+    [ForeignKey(nameof(CompanyId))]
+    public virtual Company? Company { get; set; }
 }

@@ -361,14 +361,14 @@ namespace ConstructionManagement.Infrastructure.Services
             }).ToList();
         }
 
-        private decimal ParseVariance(string? variance)
+        private static decimal ParseVariance(string? variance)
         {
             if (decimal.TryParse(variance, out var result))
                 return result;
             return 0;
         }
 
-        private decimal ParseDecimalSafe(string? value)
+        private static decimal ParseDecimalSafe(string? value)
         {
             if (decimal.TryParse(value, out var result))
                 return result;

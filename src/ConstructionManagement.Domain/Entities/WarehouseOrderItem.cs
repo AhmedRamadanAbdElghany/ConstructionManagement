@@ -5,7 +5,7 @@ namespace ConstructionManagement.Domain.Entities;
 /// <summary>
 /// Represents an item line in a warehouse order
 /// </summary>
-public class WarehouseOrderItem : BaseEntity
+public class WarehouseOrderItem : BaseEntity, ICompanyEntity
 {
     /// <summary>
     /// Parent order
@@ -42,5 +42,12 @@ public class WarehouseOrderItem : BaseEntity
     /// <summary>
     /// Total price for this line
     /// </summary>
+    /// <summary>
+    /// Total price for this line
+    /// </summary>
     public decimal TotalPrice { get; set; }
+
+    public int? CompanyId { get; set; }
+    [ForeignKey(nameof(CompanyId))]
+    public virtual Company? Company { get; set; }
 }
