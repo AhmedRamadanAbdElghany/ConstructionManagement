@@ -285,6 +285,7 @@ namespace ConstructionManagement.Infrastructure.Services
         {
             var workers = await _context.TeamMembers
                 .Where(t => t.CompanyId == companyId && t.Status == Domain.Enums.EmploymentStatus.Active)
+                .OrderByDescending(t => t.HoursWorked)
                 .AsNoTracking()
                 .Take(topN)
                 .ToListAsync();
@@ -305,6 +306,7 @@ namespace ConstructionManagement.Infrastructure.Services
         {
             var equipment = await _context.Equipment
                 .Where(e => e.CompanyId == companyId && e.Status == Domain.Enums.EquipmentStatus.Active)
+                .OrderByDescending(e => e.OperatingHours)
                 .AsNoTracking()
                 .Take(topN)
                 .ToListAsync();
@@ -474,6 +476,7 @@ namespace ConstructionManagement.Infrastructure.Services
         {
             var projects = await _context.Projects
                 .Where(p => p.CompanyId == companyId && !p.IsDeleted && (p.Status == "InProgress" || p.Status == "Active" || p.Status == "????"))
+                .OrderByDescending(p => p.ProgressPercentage)
                 .AsNoTracking()
                 .Take(10)
                 .ToListAsync();
