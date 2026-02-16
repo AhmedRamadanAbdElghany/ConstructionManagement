@@ -35,22 +35,22 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
             </div>
             
             <div class="hero-quote">
-              <h2 class="quote-title">Building Integrity. <br><span class="highlight">Managing Excellence.</span></h2>
-              <p class="quote-desc">Streamline your workforce, inventory, and project life cycles with the industry's most advanced management platform.</p>
+              <h2 class="quote-title">{{ 'auth.hero_title' | translate }} <br><span class="highlight">{{ 'auth.hero_highlight' | translate }}</span></h2>
+              <p class="quote-desc">{{ 'auth.hero_description' | translate }}</p>
             </div>
 
             <div class="stats-grid">
               <div class="stat-item">
                 <span class="stat-num">500+</span>
-                <span class="stat-label">Projects</span>
+                <span class="stat-label">{{ 'auth.stat_projects' | translate }}</span>
               </div>
               <div class="stat-item">
                 <span class="stat-num">12k</span>
-                <span class="stat-label">Users</span>
+                <span class="stat-label">{{ 'auth.stat_users' | translate }}</span>
               </div>
               <div class="stat-item">
                 <span class="stat-num">99%</span>
-                <span class="stat-label">Uptime</span>
+                <span class="stat-label">{{ 'auth.stat_uptime' | translate }}</span>
               </div>
             </div>
           </div>

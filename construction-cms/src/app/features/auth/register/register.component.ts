@@ -33,22 +33,22 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
             </div>
 
             <div class="branding-hero">
-              <h1 class="hero-title">Precision in Every <span class="highlight">Structure.</span></h1>
-              <p class="hero-subtext">Join the next generation of construction management. Data-driven decisions, real-time collaboration, and bulletproof accountability.</p>
+              <h1 class="hero-title">{{ 'auth.register_hero_title' | translate }} <span class="highlight">{{ 'auth.register_hero_highlight' | translate }}</span></h1>
+              <p class="hero-subtext">{{ 'auth.register_hero_desc' | translate }}</p>
             </div>
 
             <div class="feature-pills">
               <div class="pill">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                <span>Hard-Hat Security</span>
+                <span>{{ 'auth.feature_security' | translate }}</span>
               </div>
               <div class="pill">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                <span>Live Site Sync</span>
+                <span>{{ 'auth.feature_sync' | translate }}</span>
               </div>
               <div class="pill">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                <span>Architectural Insights</span>
+                <span>{{ 'auth.feature_insights' | translate }}</span>
               </div>
             </div>
           </div>

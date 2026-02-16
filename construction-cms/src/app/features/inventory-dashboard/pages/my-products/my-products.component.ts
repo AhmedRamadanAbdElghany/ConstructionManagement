@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   VendorService,
   VendorProduct,
@@ -11,7 +12,7 @@ import {
 @Component({
   selector: 'app-my-products',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
@@ -21,16 +22,16 @@ import {
             <div class="flex items-center space-x-2 mb-2">
               <span class="px-3 py-1 rounded-full bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-bold flex items-center border border-blue-500/20">
                 <span class="w-1.5 h-1.5 rounded-full bg-blue-500 mr-2"></span>
-                CATALOG
+                {{ 'inventory_dashboard.catalog' | translate | uppercase }}
               </span>
             </div>
-            <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">My Products</h1>
-            <p class="text-slate-500 dark:text-slate-400 font-medium">Manage your store inventory and pricing</p>
+            <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{{ 'inventory_dashboard.my_products' | translate }}</h1>
+            <p class="text-slate-500 dark:text-slate-400 font-medium">{{ 'inventory_dashboard.manage_inventory' | translate }}</p>
           </div>
           <button (click)="openAddModal()" class="group relative px-6 py-3 bg-blue-600 text-white rounded-2xl font-black text-sm uppercase tracking-widest overflow-hidden transition-all hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/25 active:scale-95">
             <span class="relative z-10 flex items-center gap-2">
               <svg class="w-5 h-5 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
-              Add Product
+              {{ 'inventory_dashboard.add_product' | translate }}
             </span>
           </button>
         </div>
@@ -52,10 +53,10 @@ import {
               <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
             </div>
             <div>
-              <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">Failed to Load</h3>
+              <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">{{ 'inventory_dashboard.failed_load' | translate }}</h3>
               <p class="text-sm text-rose-600 dark:text-rose-400 font-medium">{{ error }}</p>
             </div>
-            <button (click)="loadProducts()" class="ml-auto px-6 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-blue-500 hover:border-blue-500/30 transition-all">Retry</button>
+            <button (click)="loadProducts()" class="ml-auto px-6 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-blue-500 hover:border-blue-500/30 transition-all">{{ 'inventory_dashboard.retry' | translate }}</button>
           </div>
         }
 
@@ -66,12 +67,12 @@ import {
               <table class="w-full">
                 <thead>
                   <tr class="text-left bg-slate-50/50 dark:bg-slate-950/30">
-                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Product Info</th>
-                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Category</th>
-                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Stock Status</th>
-                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Pricing</th>
-                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Status</th>
-                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Actions</th>
+                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">{{ 'inventory_dashboard.product_info' | translate }}</th>
+                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">{{ 'inventory_dashboard.category' | translate }}</th>
+                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">{{ 'inventory_dashboard.stock_status' | translate }}</th>
+                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">{{ 'inventory_dashboard.pricing' | translate }}</th>
+                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">{{ 'inventory_dashboard.status' | translate }}</th>
+                    <th class="px-8 py-5 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">{{ 'inventory_dashboard.actions' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-white/5">

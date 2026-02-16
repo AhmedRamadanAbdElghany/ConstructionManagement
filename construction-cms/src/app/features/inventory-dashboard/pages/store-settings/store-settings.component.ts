@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { VendorService, Vendor, CreateVendorRequest } from '../../../../core/services/vendor.service';
 
 @Component({
   selector: 'app-store-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   template: `
     <div class="p-6">
-      <h1 class="text-2xl font-bold mb-6">Store Settings</h1>
+      <h1 class="text-2xl font-bold mb-6">{{ 'inventory_dashboard.store_settings' | translate }}</h1>
       
       <!-- Loading State -->
       <div *ngIf="loading" class="flex justify-center items-center h-48">
@@ -19,67 +20,67 @@ import { VendorService, Vendor, CreateVendorRequest } from '../../../../core/ser
       <!-- Error State -->
       <div *ngIf="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
         {{ error }}
-        <button (click)="loadProfile()" class="ml-4 text-red-800 underline">Retry</button>
+        <button (click)="loadProfile()" class="ml-4 text-red-800 underline">{{ 'inventory_dashboard.retry' | translate }}</button>
       </div>
       
       <div *ngIf="!loading && !error && profile" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Profile Information -->
         <div class="bg-white rounded-lg shadow p-6">
-          <h2 class="text-lg font-semibold mb-4">Store Profile</h2>
+          <h2 class="text-lg font-semibold mb-4">{{ 'inventory_dashboard.store_profile' | translate }}</h2>
           
           <form (ngSubmit)="saveProfile()" class="space-y-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Store Name *</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'vendors.name' | translate }} *</label>
               <input [(ngModel)]="profileForm.name" name="name" type="text" required
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'vendors.phone' | translate }}</label>
                 <input [(ngModel)]="profileForm.phone" name="phone" type="text"
                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'vendors.email' | translate }}</label>
                 <input [(ngModel)]="profileForm.email" name="email" type="email"
                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
               </div>
             </div>
             
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'vendors.address' | translate }}</label>
               <input [(ngModel)]="profileForm.address" name="address" type="text"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Contact Person</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'vendors.contact_person' | translate }}</label>
                 <input [(ngModel)]="profileForm.contactPerson" name="contactPerson" type="text"
                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Tax Number</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'inventory_dashboard.tax_number' | translate }}</label>
                 <input [(ngModel)]="profileForm.taxNumber" name="taxNumber" type="text"
                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
               </div>
             </div>
             
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Vendor Type</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'vendors.vendor_type' | translate }}</label>
               <select [(ngModel)]="profileForm.vendorType" name="vendorType"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="">Select type</option>
-                <option value="Materials">Materials Supplier</option>
-                <option value="Equipment">Equipment Supplier</option>
-                <option value="Services">Services Provider</option>
-                <option value="General">General</option>
+                <option value="">{{ 'vendors.select_type' | translate }}</option>
+                <option value="Materials">{{ 'vendors.type_cement' | translate }}</option>
+                <option value="Equipment">{{ 'inventory_dashboard.equipment_supplier' | translate }}</option>
+                <option value="Services">{{ 'inventory_dashboard.services_provider' | translate }}</option>
+                <option value="General">{{ 'vendors.type_other' | translate }}</option>
               </select>
             </div>
             
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'vendors.notes' | translate }}</label>
               <textarea [(ngModel)]="profileForm.notes" name="notes" rows="3"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
             </div>
@@ -89,7 +90,7 @@ import { VendorService, Vendor, CreateVendorRequest } from '../../../../core/ser
             
             <div class="flex justify-end">
               <button type="submit" [disabled]="savingProfile" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50">
-                {{ savingProfile ? 'Saving...' : 'Save Profile' }}
+                {{ savingProfile ? ('common.processing' | translate) : ('common.save' | translate) }}
               </button>
             </div>
           </form>
@@ -97,7 +98,7 @@ import { VendorService, Vendor, CreateVendorRequest } from '../../../../core/ser
         
         <!-- Location Settings -->
         <div class="bg-white rounded-lg shadow p-6">
-          <h2 class="text-lg font-semibold mb-4">Store Location</h2>
+          <h2 class="text-lg font-semibold mb-4">{{ 'inventory_dashboard.store_location' | translate }}</h2>
           
           <!-- Warning Banner -->
           <div *ngIf="!hasLocation" class="bg-orange-50 border border-orange-200 text-orange-800 px-4 py-3 rounded mb-4">

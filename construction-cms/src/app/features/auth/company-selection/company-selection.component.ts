@@ -2,13 +2,14 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { PendingRequestsService, PublicCompany } from '../../../core/services/pending-requests.service';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-company-selection',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
   template: `
     <div class="auth-wrapper">
       <div class="site-overlay"></div>
@@ -23,8 +24,8 @@ import { AuthService } from '../../../core/services/auth.service';
             </div>
             <span class="brand-text">Construction<span class="text-amber-500">CMS</span></span>
           </div>
-          <h1 class="box-title">Select Your Firm</h1>
-          <p class="box-subtitle">Identify the organization you are authorized to collaborate with.</p>
+          <h1 class="box-title">{{ 'company_selection.select_firm' | translate }}</h1>
+          <p class="box-subtitle">{{ 'company_selection.select_firm_desc' | translate }}</p>
         </header>
 
         <div class="finder-area">
@@ -35,7 +36,7 @@ import { AuthService } from '../../../core/services/auth.service';
             <input 
               type="text" 
               [(ngModel)]="searchQuery" 
-              placeholder="Search by company name or project site..."
+              [placeholder]="'company_selection.search_placeholder' | translate"
               class="pro-search"
               (input)="filterCompanies()">
           </div>
@@ -54,14 +55,14 @@ import { AuthService } from '../../../core/services/auth.service';
                 <h3 class="firm-name">{{ company.name }}</h3>
                 <p class="firm-loc">
                   <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                  {{ company.address || 'Remote / Unspecified Location' }}
+                  {{ company.address || ('company_selection.remote_location' | translate) }}
                 </p>
               </div>
               <button 
                 class="join-action" 
                 (click)="selectCompany(company)"
                 [disabled]="loadingCompanyId === company.id">
-                <span *ngIf="loadingCompanyId !== company.id">Join Firm</span>
+                <span *ngIf="loadingCompanyId !== company.id">{{ 'company_selection.join_firm' | translate }}</span>
                 <div *ngIf="loadingCompanyId === company.id" class="mini-loader"></div>
               </button>
             </div>
@@ -73,16 +74,16 @@ import { AuthService } from '../../../core/services/auth.service';
             <div class="empty-icon">
               <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </div>
-            <p>No verified companies matching your query.</p>
+            <p>{{ 'company_selection.no_companies' | translate }}</p>
           </div>
         </ng-template>
 
         <footer class="box-footer">
-          <p class="help-text">Authorized owner starting a new firm? <a routerLink="/auth/register" class="owner-link">Register New Entity</a></p>
+          <p class="help-text">{{ 'company_selection.owner_question' | translate }} <a routerLink="/auth/register" class="owner-link">{{ 'company_selection.register_new' | translate }}</a></p>
           <div class="footer-actions">
             <button class="logout-btn" (click)="logout()">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-              Logout
+              {{ 'auth.logout' | translate }}
             </button>
           </div>
         </footer>
@@ -92,21 +93,21 @@ import { AuthService } from '../../../core/services/auth.service';
       <div class="modal-overlay" *ngIf="selectedCompany">
         <div class="modal-content scale-up">
           <div class="modal-header">
-            <h3>Request Membership</h3>
-            <p>Submit your credentials to <strong>{{ selectedCompany.name }}</strong></p>
+            <h3>{{ 'company_selection.request_membership' | translate }}</h3>
+            <p>{{ 'company_selection.submit_credentials' | translate }} <strong>{{ selectedCompany.name }}</strong></p>
           </div>
           <div class="modal-body">
-            <label class="modal-label">Professional Notes (Optional)</label>
+            <label class="modal-label">{{ 'company_selection.professional_notes' | translate }}</label>
             <textarea 
               [(ngModel)]="joinMessage" 
               class="pro-textarea"
-              placeholder="e.g. Site Engineer onboarding for Project East 88..."
+              [placeholder]="'company_selection.notes_placeholder' | translate"
               rows="4"></textarea>
           </div>
           <div class="modal-footer">
-            <button class="modal-btn secondary" (click)="selectedCompany = null">Withdraw</button>
+            <button class="modal-btn secondary" (click)="selectedCompany = null">{{ 'company_selection.withdraw' | translate }}</button>
             <button class="modal-btn primary" (click)="confirmJoin()" [disabled]="isSubmitting">
-              <span *ngIf="!isSubmitting">Request Entry</span>
+              <span *ngIf="!isSubmitting">{{ 'company_selection.request_entry' | translate }}</span>
               <div *ngIf="isSubmitting" class="mini-loader"></div>
             </button>
           </div>

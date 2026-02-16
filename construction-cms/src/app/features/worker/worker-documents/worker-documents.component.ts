@@ -18,13 +18,13 @@ import { DocumentService, Document, DocumentSearchRequest } from '../../../core/
           <div class="flex items-center space-x-2 mb-3">
             <span class="px-3 py-1 rounded-full bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 text-xs font-bold flex items-center border border-cyan-500/20">
               <span class="w-2 h-2 rounded-full bg-cyan-500 mr-2 animate-pulse"></span>
-              DOCUMENTS
+              {{ 'sidebar.documents' | translate | uppercase }}
             </span>
           </div>
           <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">
-            My Documents <span class="text-cyan-500">📄</span>
+            {{ 'worker_documents.my_documents' | translate }} <span class="text-cyan-500">📄</span>
           </h1>
-          <p class="text-slate-500 dark:text-slate-400 font-medium">Access project documents and files</p>
+          <p class="text-slate-500 dark:text-slate-400 font-medium">{{ 'worker.access_documents' | translate }}</p>
         </div>
 
         <!-- Loading State -->
@@ -44,8 +44,8 @@ import { DocumentService, Document, DocumentSearchRequest } from '../../../core/
               <div class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-6">
                 <span class="text-4xl">📭</span>
               </div>
-              <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">No Documents Available</h3>
-              <p class="text-slate-500 dark:text-slate-400 font-medium">No documents have been shared with you yet.</p>
+              <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">{{ 'worker.no_documents' | translate }}</h3>
+              <p class="text-slate-500 dark:text-slate-400 font-medium">{{ 'worker.no_documents_desc' | translate }}</p>
             </div>
           } @else {
             <!-- Filter Tabs -->
@@ -56,7 +56,7 @@ import { DocumentService, Document, DocumentSearchRequest } from '../../../core/
                       [class.bg-white]="filterType !== ''"
                       [class.dark:bg-slate-800]="filterType !== ''"
                       class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap">
-                All
+                {{ 'locations.all' | translate }}
               </button>
               @for (type of documentTypes; track type) {
                 <button (click)="filterType = type"
@@ -91,11 +91,11 @@ import { DocumentService, Document, DocumentSearchRequest } from '../../../core/
                   <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50">
                     <div class="grid grid-cols-2 gap-4 text-center">
                       <div>
-                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Type</p>
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ 'worker.type' | translate }}</p>
                         <p class="text-sm font-bold text-slate-900 dark:text-white">{{ doc.documentType }}</p>
                       </div>
                       <div>
-                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Uploaded</p>
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ 'worker.uploaded' | translate }}</p>
                         <p class="text-sm font-bold text-slate-900 dark:text-white">{{ doc.uploadedDate | date:'MMM d, y' }}</p>
                       </div>
                     </div>
