@@ -45,9 +45,21 @@
     "orders": "Orders",
     "sales": "Sales",
     "store_settings": "Store Settings",
-    "storefront": "Storefront",
-    "no_reports": "No daily reports found",
-    "no_reports_desc": "Start searching by project name or select a date range."
+    "storefront": "Storefront"
+  },
+  "reports": {
+    "title": "Daily Progress Reports",
+    "subtitle": "Track field summaries, progress updates, and site logs across your projects",
+    "date_range": "Date Range",
+    "search_placeholder": "Search by project or keywords...",
+    "filter_project": "Filter by Project",
+    "no_results": "No reports match your criteria",
+    "no_reports_desc": "Start searching by project name or select a date range.",
+    "report_date": "Report Date",
+    "items_worked": "Items Worked On",
+    "progress": "Overall Progress",
+    "view_details": "View Detailed Log",
+    "quick_summary": "Quick Summary"
   },
   "pending_requests": {
     "subtitle": "Review and manage pending company registration and user join requests",
@@ -601,19 +613,6 @@
     "templates": "Company Templates",
     "drag_drop_hint": "Drag and drop files here or click to browse",
     "supported_formats": "Supported formats: PDF, DWG, DXF, PNG, JPG",
-    "reports": {
-      "title": "Daily Progress Reports",
-      "subtitle": "Track field summaries, progress updates, and site logs across your projects",
-      "date_range": "Date Range",
-      "search_placeholder": "Search by project or keywords...",
-      "filter_project": "Filter by Project",
-      "no_results": "No reports match your criteria",
-      "report_date": "Report Date",
-      "items_worked": "Items Worked On",
-      "progress": "Overall Progress",
-      "view_details": "View Detailed Log",
-      "quick_summary": "Quick Summary"
-    },
     "all_categories": "All Categories",
     "uncategorized": "Uncategorized",
     "delete_design": "Delete Design",

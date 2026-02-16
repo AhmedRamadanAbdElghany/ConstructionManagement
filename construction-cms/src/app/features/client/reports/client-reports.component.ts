@@ -73,7 +73,7 @@ import { ClientPortalService, DailyReportList, DailyReportDetail, DailyReportFil
           <div class="flex flex-col items-center justify-center py-32 bg-white dark:bg-slate-900 rounded-[3rem] border border-dashed border-slate-300 dark:border-white/10 text-center">
             <div class="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center text-3xl mb-6">🏜️</div>
             <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-2">{{ 'reports.no_results' | translate }}</h3>
-            <p class="text-slate-500 dark:text-slate-400">{{ 'no_reports_desc' | translate }}</p>
+            <p class="text-slate-500 dark:text-slate-400">{{ 'reports.no_reports_desc' | translate }}</p>
           </div>
         } @else {
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
