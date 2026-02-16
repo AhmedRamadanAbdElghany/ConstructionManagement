@@ -335,6 +335,18 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/worker/personal-hr/personal-hr.component').then(m => m.PersonalHrComponent),
                 canActivate: [roleGuard],
                 data: { roles: ['SuperAdmin', 'CompanyAdmin', 'CompanyUser'] }
+            },
+            {
+                path: 'projects',
+                loadComponent: () => import('./features/worker/worker-projects/worker-projects.component').then(m => m.WorkerProjectsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin', 'CompanyUser'] }
+            },
+            {
+                path: 'documents',
+                loadComponent: () => import('./features/worker/worker-documents/worker-documents.component').then(m => m.WorkerDocumentsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin', 'CompanyUser'] }
             }
         ]
     },

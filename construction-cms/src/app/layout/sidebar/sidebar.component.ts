@@ -319,6 +319,16 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
                 <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.my_projects' | translate }}</span>
               </a>
 
+              <a routerLink="/worker/documents" 
+                 routerLinkActive="nav-active"
+                 class="nav-item group">
+                <div class="nav-icon-box">
+                  <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                </div>
+                <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.documents' | translate }}</span>
+              </a>
             }
           }
 
