@@ -416,8 +416,8 @@ export const routes: Routes = [
                 canActivate: [roleGuard, companyApprovalGuard]
             },
             {
-                path: 'documents',
-                loadComponent: () => import('./features/client/client-documents/client-documents.component').then(m => m.ClientDocumentsComponent),
+                path: 'reports',
+                loadComponent: () => import('./features/client/reports/client-reports.component').then(m => m.ClientReportsComponent),
                 canActivate: [roleGuard, companyApprovalGuard]
             },
             {

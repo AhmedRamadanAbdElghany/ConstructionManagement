@@ -403,6 +403,18 @@ namespace ConstructionManagement.WebApi.Controllers
 
         #endregion
 
+        /// <summary>
+        /// Get client projects
+        /// </summary>
+        [HttpGet("projects")]
+        [Authorize(Roles = "Client,User,NormalUser")]
+        public async Task<ActionResult<List<ClientProjectSummaryDto>>> GetClientProjects()
+        {
+            var clientUserId = GetCurrentClientUserId();
+            var dashboard = await _clientPortalService.GetClientDashboardAsync(clientUserId);
+            return Ok(dashboard.Projects);
+        }
+
         #region Client Activities
 
         /// <summary>
@@ -415,6 +427,37 @@ namespace ConstructionManagement.WebApi.Controllers
             var clientUserId = GetCurrentClientUserId();
             var activities = await _clientPortalService.GetClientActivitiesAsync(clientUserId, count);
             return Ok(activities);
+        }
+
+        #endregion
+
+        #region Daily Reports
+
+        /// <summary>
+        /// Get project daily reports for client
+        /// </summary>
+        [HttpGet("reports")]
+        [Authorize(Roles = "Client,User,NormalUser")]
+        public async Task<ActionResult<List<DailyReportListDto>>> GetDailyReports([FromQuery] DailyReportFilterDto filter)
+        {
+            var clientUserId = GetCurrentClientUserId();
+            var reports = await _clientPortalService.GetDailyReportsAsync(clientUserId, filter);
+            return Ok(reports);
+        }
+
+        /// <summary>
+        /// Get detailed daily report
+        /// </summary>
+        [HttpGet("reports/{projectId}/{reportDate}")]
+        [Authorize(Roles = "Client,User,NormalUser")]
+        public async Task<ActionResult<DailyReportDetailDto>> GetDailyReportDetails(int projectId, DateTime reportDate)
+        {
+            var clientUserId = GetCurrentClientUserId();
+            var details = await _clientPortalService.GetDailyReportDetailsAsync(clientUserId, projectId, reportDate);
+            
+            if (details == null) return NotFound();
+            
+            return Ok(details);
         }
 
         #endregion

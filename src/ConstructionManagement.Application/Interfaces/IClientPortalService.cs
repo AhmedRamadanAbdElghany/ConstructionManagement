@@ -236,5 +236,14 @@ namespace ConstructionManagement.Application.Interfaces
         Task<ChangeOrderRequestDto?> ReviewChangeOrderAsync(int requestId, int reviewedByUserId, string status, string? notes, decimal? budget, int? days);
 
         #endregion
+        /// <summary>
+        /// Get project daily reports for client
+        /// </summary>
+        Task<List<DailyReportListDto>> GetDailyReportsAsync(int clientUserId, DailyReportFilterDto filter);
+
+        /// <summary>
+        /// Get detailed daily report
+        /// </summary>
+        Task<DailyReportDetailDto?> GetDailyReportDetailsAsync(int clientUserId, int projectId, DateTime reportDate);
     }
 }

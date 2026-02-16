@@ -970,6 +970,121 @@ namespace ConstructionManagement.Infrastructure.Services
 
         #endregion
 
+        #region Daily Reports
+
+        public async Task<List<DailyReportListDto>> GetDailyReportsAsync(int clientUserId, DailyReportFilterDto filter)
+        {
+            var projectIds = await _context.ClientProjectAccesses
+                .Where(a => a.ClientUserId == clientUserId && a.CanViewProgress)
+                .Select(a => a.ProjectId)
+                .ToListAsync();
+
+            if (!projectIds.Any()) return new List<DailyReportListDto>();
+
+            var query = _context.ItemDailyLogs
+                .Include(l => l.BOQItem)
+                .ThenInclude(i => i.Project)
+                .ThenInclude(p => p.Company)
+                .Where(l => projectIds.Contains(l.BOQItem.ProjectId));
+
+            if (filter.ProjectId.HasValue)
+            {
+                query = query.Where(l => l.BOQItem.ProjectId == filter.ProjectId.Value);
+            }
+
+            if (filter.FromDate.HasValue)
+            {
+                query = query.Where(l => l.LogDate.Date >= filter.FromDate.Value.Date);
+            }
+
+            if (filter.ToDate.HasValue)
+            {
+                query = query.Where(l => l.LogDate.Date <= filter.ToDate.Value.Date);
+            }
+
+            if (!string.IsNullOrEmpty(filter.SearchTerm))
+            {
+                query = query.Where(l => l.BOQItem.ItemName.Contains(filter.SearchTerm) || 
+                                       (l.ProgressNotes != null && l.ProgressNotes.Contains(filter.SearchTerm)) ||
+                                       (l.DailyWorkDescription != null && l.DailyWorkDescription.Contains(filter.SearchTerm)));
+            }
+
+            var logs = await query.ToListAsync();
+
+            var groupedLogs = logs
+                .GroupBy(l => new { 
+                    l.BOQItem.ProjectId, 
+                    l.BOQItem.Project.ProjectName, 
+                    l.BOQItem.Project.CompanyId,
+                    CompanyName = l.BOQItem.Project.Company?.Name,
+                    LogDate = l.LogDate.Date 
+                })
+                .Select(g => new DailyReportListDto
+                {
+                    ProjectId = g.Key.ProjectId,
+                    ProjectName = g.Key.ProjectName,
+                    CompanyId = g.Key.CompanyId,
+                    CompanyName = g.Key.CompanyName,
+                    ReportDate = g.Key.LogDate,
+                    ItemsCount = g.Count(),
+                    AverageProgress = g.Average(l => l.DailyProgressPercentage ?? 0),
+                    Summary = g.FirstOrDefault(l => !string.IsNullOrEmpty(l.DailyWorkDescription))?.DailyWorkDescription ?? 
+                              g.FirstOrDefault(l => !string.IsNullOrEmpty(l.ProgressNotes))?.ProgressNotes,
+                    HasPhotos = _context.SiteMedias.Any(m => m.ProjectId == g.Key.ProjectId && m.CreatedAt.Date == g.Key.LogDate)
+                })
+                .OrderByDescending(r => r.ReportDate)
+                .ThenBy(r => r.ProjectName)
+                .ToList();
+
+            return groupedLogs;
+        }
+
+        public async Task<DailyReportDetailDto?> GetDailyReportDetailsAsync(int clientUserId, int projectId, DateTime reportDate)
+        {
+            var hasAccess = await _context.ClientProjectAccesses
+                .AnyAsync(a => a.ClientUserId == clientUserId && a.ProjectId == projectId && a.CanViewProgress);
+
+            if (!hasAccess) return null;
+
+            var logs = await _context.ItemDailyLogs
+                .Include(l => l.BOQItem)
+                .Where(l => l.BOQItem.ProjectId == projectId && l.LogDate.Date == reportDate.Date)
+                .ToListAsync();
+
+            if (!logs.Any()) return null;
+
+            var project = await _context.Projects
+                .Include(p => p.Company)
+                .FirstOrDefaultAsync(p => p.Id == projectId);
+
+            var photos = await _context.SiteMedias
+                .Where(m => m.ProjectId == projectId && m.CreatedAt.Date == reportDate.Date)
+                .ToListAsync();
+
+            return new DailyReportDetailDto
+            {
+                ProjectId = projectId,
+                ProjectName = project?.ProjectName ?? "Unknown Project",
+                CompanyId = project?.CompanyId,
+                CompanyName = project?.Company?.Name,
+                ReportDate = reportDate,
+                Logs = logs.Select(l => new DailyLogItemDto
+                {
+                    ItemId = l.BOQItemId,
+                    ItemName = l.BOQItem.ItemName,
+                    ProgressNotes = l.ProgressNotes ?? l.DailyWorkDescription,
+                    Issues = l.ClosingNotes,
+                    ProgressPercentage = l.DailyProgressPercentage ?? 0,
+                    PhotoUrls = photos
+                        .Where(m => m.BOQItemId == l.BOQItemId)
+                        .Select(m => m.FilePath)
+                        .ToList()
+                }).ToList()
+            };
+        }
+
+        #endregion
+
         public async Task<List<ClientCompanyDto>> GetMyCompaniesAsync(int userId)
         {
             var requests = await _context.JoinRequests

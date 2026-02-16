@@ -490,4 +490,49 @@ namespace ConstructionManagement.Application.DTOs
     }
 
     #endregion
+
+    #region Daily Reports
+
+    public class DailyReportFilterDto
+    {
+        public int? ProjectId { get; set; }
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
+        public string? SearchTerm { get; set; }
+    }
+
+    public class DailyReportListDto
+    {
+        public int ProjectId { get; set; }
+        public string ProjectName { get; set; } = string.Empty;
+        public int? CompanyId { get; set; }
+        public string? CompanyName { get; set; }
+        public DateTime ReportDate { get; set; }
+        public int ItemsCount { get; set; }
+        public decimal AverageProgress { get; set; }
+        public string? Summary { get; set; }
+        public bool HasPhotos { get; set; }
+    }
+
+    public class DailyReportDetailDto
+    {
+        public int ProjectId { get; set; }
+        public string ProjectName { get; set; } = string.Empty;
+        public int? CompanyId { get; set; }
+        public string? CompanyName { get; set; }
+        public DateTime ReportDate { get; set; }
+        public List<DailyLogItemDto> Logs { get; set; } = new();
+    }
+
+    public class DailyLogItemDto
+    {
+        public int ItemId { get; set; }
+        public string ItemName { get; set; } = string.Empty;
+        public string? ProgressNotes { get; set; }
+        public string? Issues { get; set; }
+        public decimal ProgressPercentage { get; set; }
+        public List<string> PhotoUrls { get; set; } = new();
+    }
+
+    #endregion
 }

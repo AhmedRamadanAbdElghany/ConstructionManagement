@@ -379,7 +379,12 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.payments' | translate }}</span>
+            <div class="flex items-center justify-between w-full pr-4">
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.payments' | translate }}</span>
+              @if (isClient) {
+                <span class="text-[8px] font-black text-amber-500 uppercase tracking-tighter bg-amber-500/10 px-1.5 py-0.5 rounded ml-2 whitespace-nowrap" [class.hidden]="isCollapsed()">{{ 'profile.coming_soon' | translate }}</span>
+              }
+            </div>
           </a>
 
           <a routerLink="/client-portal/messages" 
@@ -390,7 +395,12 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.messages' | translate }}</span>
+            <div class="flex items-center justify-between w-full pr-4">
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.messages' | translate }}</span>
+              @if (isClient) {
+                <span class="text-[8px] font-black text-amber-500 uppercase tracking-tighter bg-amber-500/10 px-1.5 py-0.5 rounded ml-2 whitespace-nowrap" [class.hidden]="isCollapsed()">{{ 'profile.coming_soon' | translate }}</span>
+              }
+            </div>
           </a>
 
           <a routerLink="/client-portal/change-orders" 
@@ -401,10 +411,15 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.change_orders' | translate }}</span>
+            <div class="flex items-center justify-between w-full pr-4">
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.change_orders' | translate }}</span>
+              @if (isClient) {
+                <span class="text-[8px] font-black text-amber-500 uppercase tracking-tighter bg-amber-500/10 px-1.5 py-0.5 rounded ml-2 whitespace-nowrap" [class.hidden]="isCollapsed()">{{ 'profile.coming_soon' | translate }}</span>
+              }
+            </div>
           </a>
 
-          <a routerLink="/client-portal/documents" 
+          <a routerLink="/client-portal/reports" 
              routerLinkActive="nav-active"
              class="nav-item group">
             <div class="nav-icon-box">

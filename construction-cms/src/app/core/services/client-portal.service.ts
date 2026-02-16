@@ -194,6 +194,43 @@ export interface UpcomingMilestone {
     status: string;
 }
 
+export interface DailyReportFilter {
+    projectId?: number;
+    fromDate?: string;
+    toDate?: string;
+    searchTerm?: string;
+}
+
+export interface DailyReportList {
+    projectId: number;
+    projectName: string;
+    companyId?: number;
+    companyName?: string;
+    reportDate: string;
+    itemsCount: number;
+    averageProgress: number;
+    summary?: string;
+    hasPhotos: boolean;
+}
+
+export interface DailyReportDetail {
+    projectId: number;
+    projectName: string;
+    companyId?: number;
+    companyName?: string;
+    reportDate: string;
+    logs: DailyLogItem[];
+}
+
+export interface DailyLogItem {
+    itemId: number;
+    itemName: string;
+    progressNotes?: string;
+    issues?: string;
+    progressPercentage: number;
+    photoUrls: string[];
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -319,6 +356,10 @@ export class ClientPortalService {
     }
 
     // Project Progress
+    getClientProjects(): Observable<ClientProjectSummary[]> {
+        return this.http.get<ClientProjectSummary[]>(`${this.apiUrl}/projects`);
+    }
+
     getClientProjectProgress(projectId: number): Observable<ClientProjectProgress> {
         return this.http.get<ClientProjectProgress>(`${this.apiUrl}/projects/${projectId}/progress`);
     }
@@ -363,6 +404,21 @@ export class ClientPortalService {
         if (budget) params = params.set('budget', budget.toString());
         if (days) params = params.set('days', days.toString());
         return this.http.put<ChangeOrderRequest>(`${this.apiUrl}/admin/change-orders/${requestId}/review`, {}, { params });
+    }
+
+    // Daily Reports
+    getDailyReports(filter: DailyReportFilter): Observable<DailyReportList[]> {
+        let params = new HttpParams();
+        if (filter.projectId) params = params.set('projectId', filter.projectId.toString());
+        if (filter.fromDate) params = params.set('fromDate', filter.fromDate);
+        if (filter.toDate) params = params.set('toDate', filter.toDate);
+        if (filter.searchTerm) params = params.set('searchTerm', filter.searchTerm);
+
+        return this.http.get<DailyReportList[]>(`${this.apiUrl}/reports`, { params });
+    }
+
+    getDailyReportDetails(projectId: number, reportDate: string): Observable<DailyReportDetail> {
+        return this.http.get<DailyReportDetail>(`${this.apiUrl}/reports/${projectId}/${reportDate}`);
     }
 
     // Utility methods

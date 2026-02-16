@@ -1,4 +1,12 @@
 {
+  "common": {
+    "loading": "جاري التحميل...",
+    "search": "بحث",
+    "filter": "تصفية",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "no_results": "لم يتم العثور على نتائج"
+  },
   "sidebar": {
     "company_name": "نظام إدارة البناء",
     "dashboard": "لوحة التحكم",
@@ -39,9 +47,8 @@
     "role_admin": "مدير",
     "role_worker": "موظف",
     "role_client": "عميل",
-    "role_inventory_owner": "صاحب مخزون",
-    "daily_reports": "التقارير اليومية",
-    "building_material_stores": "مخازن مواد البناء"
+    "no_reports": "لم يتم العثور على تقارير يومية",
+    "no_reports_desc": "ابدأ البحث باسم المشروع أو اختر نطاقاً زمنياً."
   },
   "pending_requests": {
     "subtitle": "مراجعة وإدارة طلبات تسجيل الشركات وطلبات انضمام المستخدمين المعلقة",
@@ -595,6 +602,19 @@
     "templates": "قوالب الشركة",
     "drag_drop_hint": "اسحب وأفلت الملفات هنا أو انقر للاستعراض",
     "supported_formats": "الصيغ المدعومة: PDF, DWG, DXF, PNG, JPG",
+    "reports": {
+      "title": "تقارير التقدم اليومية",
+      "subtitle": "تتبع ملخصات الموقع، تحديثات التقدم، وسجلات الموقع عبر مشاريعك",
+      "date_range": "النطاق الزمني",
+      "search_placeholder": "البحث بالمشروع أو الكلمات الرئيسية...",
+      "filter_project": "تصفية حسب المشروع",
+      "no_results": "لا توجد تقارير تطابق معاييرك",
+      "report_date": "تاريخ التقرير",
+      "items_worked": "البنود التي تم العمل عليها",
+      "progress": "التقدم الإجمالي",
+      "view_details": "عرض السجل التفصيلي",
+      "quick_summary": "ملخص سريع"
+    },
     "all_categories": "جميع الفئات",
     "uncategorized": "غير مصنف",
     "delete_design": "حذف التصميم",

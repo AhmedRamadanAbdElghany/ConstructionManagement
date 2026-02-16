@@ -380,31 +380,65 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
 
             <!-- ANALYTICS ROW -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-              <!-- Investment Progress -->
+              <!-- Financial Health & Distribution -->
               <div class="lg:col-span-4 space-y-8">
                 <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-200 dark:border-white/5 shadow-2xl relative overflow-hidden">
+                  <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/5 rounded-full blur-3xl"></div>
+                  
                   <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">
                     {{ 'dashboard.investment_status' | translate }}
                   </h3>
                   
-                  @if (clientStats.totalContract > 0) {
-                    <div class="relative w-64 h-64 mx-auto mb-10">
-                      <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="40" fill="transparent" stroke="currentColor" stroke-width="12" class="text-slate-100 dark:text-slate-800/50" />
-                        <circle cx="50" cy="50" r="40" fill="transparent" stroke="url(#cyanGradient)" stroke-width="12" 
-                                stroke-dasharray="251.2" 
-                                [attr.stroke-dashoffset]="251.2 * (1 - clientStats.totalPaid / (clientStats.totalContract || 1))"
-                                stroke-linecap="round" />
-                      </svg>
-                      <div class="absolute inset-0 flex flex-col items-center justify-center">
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{{ 'daily_log.remaining' | translate }}</p>
-                        <p class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{{ (clientStats.totalPaid / (clientStats.totalContract || 1) * 100) | number:'1.0-0' }}%</p>
+                  @if (clientDashboard?.paymentSummary?.totalInvoiced && clientDashboard!.paymentSummary!.totalInvoiced > 0) {
+                    <div class="space-y-8">
+                      <!-- Progress Circle Breakdown -->
+                      <div class="relative w-56 h-56 mx-auto">
+                        <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                          <!-- Background Track -->
+                          <circle cx="50" cy="50" r="40" fill="transparent" stroke="currentColor" stroke-width="12" class="text-slate-100 dark:text-slate-800" />
+                          <!-- Paid Progress -->
+                          <circle cx="50" cy="50" r="40" fill="transparent" stroke="url(#emeraldGradient)" stroke-width="12" 
+                                  stroke-dasharray="251.2" 
+                                  [attr.stroke-dashoffset]="251.2 * (1 - clientDashboard!.paymentSummary!.totalPaid / clientDashboard!.paymentSummary!.totalInvoiced)"
+                                  stroke-linecap="round" class="drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]" />
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Paid Ratio</p>
+                          <p class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">
+                            {{ (clientDashboard!.paymentSummary!.totalPaid / clientDashboard!.paymentSummary!.totalInvoiced * 100) | number:'1.0-0' }}%
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                    <div class="space-y-4">
-                      <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border">
-                        <span class="text-xs font-black text-slate-500 uppercase tracking-widest">{{ 'dashboard.total_paid' | translate }}</span>
-                        <span class="text-sm font-black text-slate-900 dark:text-white">{{ clientStats.totalPaid | currency }}</span>
+
+                      <div class="grid grid-cols-1 gap-4">
+                        <div class="flex items-center justify-between p-5 rounded-3xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                          <div class="flex items-center gap-3">
+                            <div class="w-2 h-8 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+                            <div>
+                              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Paid</p>
+                              <p class="text-lg font-black text-slate-900 dark:text-white">{{ formatCurrencyValue(clientDashboard!.paymentSummary!.totalPaid) }}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="flex items-center justify-between p-5 rounded-3xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                          <div class="flex items-center gap-3">
+                            <div class="w-2 h-8 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]"></div>
+                            <div>
+                              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pending</p>
+                              <p class="text-lg font-black text-slate-900 dark:text-white">{{ formatCurrencyValue(clientDashboard!.paymentSummary!.pendingAmount) }}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="pt-6 border-t border-slate-100 dark:border-white/5">
+                        <div class="flex items-center justify-between mb-2">
+                           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Contract Value</p>
+                           <p class="text-sm font-black text-indigo-600">{{ formatCurrencyValue(clientDashboard!.paymentSummary!.totalInvoiced) }}</p>
+                        </div>
+                        <div class="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                           <div class="h-full bg-indigo-500" style="width: 100%"></div>
+                        </div>
                       </div>
                     </div>
                   } @else {
@@ -416,105 +450,212 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                       <p class="text-xs text-slate-400">Investment metrics will appear here once your project begins.</p>
                     </div>
                   }
+
+                  <svg class="hidden">
+                    <defs>
+                      <linearGradient id="emeraldGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#10b981" />
+                        <stop offset="100%" stop-color="#34d399" />
+                      </linearGradient>
+                      <linearGradient id="cyanGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#06b6d4" />
+                        <stop offset="100%" stop-color="#22d3ee" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
                 </div>
 
-                <!-- Action Cards -->
-                <!-- Action Cards Removed -->
+                <!-- Quick Action Access -->
+                <div class="grid grid-cols-2 gap-4">
+                   <a routerLink="/client-portal/documents" class="p-6 rounded-[2.5rem] bg-slate-900 border border-slate-800 text-white hover:scale-105 active:scale-95 transition-all group overflow-hidden relative">
+                      <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-all"></div>
+                      <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center mb-4">📂</div>
+                      <p class="text-[10px] font-black uppercase tracking-widest">Project Files</p>
+                   </a>
+                   <a routerLink="/client-portal/payments" class="p-6 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-slate-900 dark:text-white hover:scale-105 active:scale-95 transition-all group overflow-hidden relative shadow-xl">
+                      <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition-all"></div>
+                      <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4">💳</div>
+                      <p class="text-[10px] font-black uppercase tracking-widest">Invoices</p>
+                   </a>
+                </div>
               </div>
 
-              <!-- Projects & Activity -->
+              <!-- Projects Hub & Vertical Timeline -->
               <div class="lg:col-span-8 space-y-8">
-                <!-- Project Progress Hub -->
-                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
-                   <div class="px-8 py-6 border-b flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/30">
-                      <h2 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'client_portal.your_projects' | translate }}</h2>
+                <!-- Advanced Project Progress -->
+                <div class="bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-2xl overflow-hidden">
+                   <div class="px-10 py-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-slate-50/30 dark:bg-slate-950/30 backdrop-blur-md">
+                      <div>
+                        <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'client_portal.your_projects' | translate }}</h2>
+                        <p class="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest mt-1">Real-time Site Status</p>
+                      </div>
                       @if ((clientDashboard?.projects?.length ?? 0) > 0) {
-                        <a routerLink="/client-portal/projects" class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">View All</a>
+                        <a routerLink="/client-portal/projects" class="px-5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/5 text-[10px] font-black text-indigo-500 uppercase tracking-widest hover:border-indigo-500 transition-all shadow-sm flex items-center gap-2">
+                           View All
+                           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                        </a>
                       }
                    </div>
-                   <div class="p-6 space-y-4">
+                   <div class="p-8 space-y-6">
                      @if ((clientDashboard?.projects?.length ?? 0) > 0) {
                        @for (project of clientDashboard?.projects; track project.projectId) {
-                          <div class="group bg-white dark:bg-slate-800/50 rounded-[2rem] border p-6 hover:shadow-xl transition-all">
-                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                               <div class="flex-1">
-                                  <h3 class="text-xl font-bold dark:text-white mb-2">{{ project.projectName }}</h3>
-                                  <p class="text-[10px] font-black uppercase text-slate-400">{{ project.location || 'No Location set' }}</p>
-                               </div>
-                               <div class="w-full md:w-48">
-                                  <div class="flex items-center justify-between mb-2">
-                                     <span class="text-[10px] font-black uppercase text-slate-400">Progress</span>
-                                     <span class="text-xs font-black dark:text-white">{{ project.progressPercentage }}%</span>
-                                  </div>
-                                  <div class="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                                     <div class="h-full bg-indigo-500 rounded-full" [style.width.%]="project.progressPercentage"></div>
-                                  </div>
-                               </div>
-                               <a [routerLink]="['/client-portal/projects', project.projectId]" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400">
-                                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
-                               </a>
+                          <div class="group bg-white dark:bg-slate-800/50 rounded-[2.5rem] border border-slate-100 dark:border-white/5 p-8 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 relative overflow-hidden">
+                             <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                             
+                             <div class="relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-8">
+                                <div class="flex-1">
+                                   <div class="flex items-center gap-4 mb-4">
+                                      <div class="w-16 h-16 rounded-3xl bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-2xl shadow-inner">{{ project.progressPercentage >= 100 ? '✅' : '🏗️' }}</div>
+                                      <div>
+                                         <h3 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight mb-1">{{ project.projectName }}</h3>
+                                         <div class="flex items-center gap-2">
+                                            <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border"
+                                                  [ngClass]="{
+                                                    'bg-emerald-500/10 text-emerald-600 border-emerald-500/20': project.status === 'Active',
+                                                    'bg-amber-500/10 text-amber-600 border-amber-500/20': project.status === 'Pending',
+                                                    'bg-rose-500/10 text-rose-600 border-rose-500/20': project.status === 'Delayed'
+                                                  }">{{ project.status }}</span>
+                                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
+                                               <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                                               {{ project.location || 'Site Location' }}
+                                            </span>
+                                         </div>
+                                      </div>
+                                   </div>
+                                   
+                                   <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-8 p-6 bg-slate-50 dark:bg-slate-900/50 rounded-3xl border border-slate-100 dark:border-white/5">
+                                      <div>
+                                         <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Company</p>
+                                         <p class="text-xs font-black text-slate-900 dark:text-white truncate">{{ project.companyName || 'N/A' }}</p>
+                                      </div>
+                                      <div>
+                                         <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Last Update</p>
+                                         <p class="text-xs font-black text-slate-900 dark:text-white">{{ (project.lastUpdatedAt || project.startDate) | date:'mediumDate' }}</p>
+                                      </div>
+                                      <div>
+                                         <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Duration</p>
+                                         <p class="text-xs font-black text-slate-900 dark:text-white">Active Ops</p>
+                                      </div>
+                                      <div>
+                                         <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Manager</p>
+                                         <p class="text-xs font-black text-indigo-500 uppercase tracking-widest">Live View</p>
+                                      </div>
+                                   </div>
+                                </div>
+
+                                <div class="w-full md:w-56 flex flex-col items-center justify-center gap-6">
+                                   <div class="relative w-32 h-32 flex items-center justify-center">
+                                      <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                                         <circle cx="50" cy="50" r="45" fill="transparent" stroke="currentColor" stroke-width="8" class="text-slate-100 dark:text-slate-800" />
+                                         <circle cx="50" cy="50" r="45" fill="transparent" stroke="url(#indigoGradient)" stroke-width="10" 
+                                                 stroke-dasharray="282.6" 
+                                                 [attr.stroke-dashoffset]="282.6 * (1 - project.progressPercentage / 100)"
+                                                 stroke-linecap="round" />
+                                      </svg>
+                                      <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                         <p class="text-2xl font-black text-slate-900 dark:text-white tracking-tighter">{{ project.progressPercentage }}%</p>
+                                         <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Progress</p>
+                                      </div>
+                                   </div>
+                                   
+                                   <a [routerLink]="['/client-portal/projects', project.projectId]" 
+                                      class="w-full py-4 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:scale-105 transition-all shadow-xl">
+                                      Enter Project Details
+                                   </a>
+                                </div>
                              </div>
+                             
+                             <svg class="hidden">
+                               <defs>
+                                 <linearGradient id="indigoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                   <stop offset="0%" stop-color="#4f46e5" />
+                                   <stop offset="100%" stop-color="#818cf8" />
+                                 </linearGradient>
+                               </defs>
+                             </svg>
                           </div>
                        }
                      } @else {
-                       <div class="text-center py-12">
-                         <div class="w-24 h-24 bg-slate-50 dark:bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-4">
-                           <span class="text-4xl grayscale opacity-50">🏗️</span>
-                         </div>
-                         <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">No Active Projects</h3>
-                         <p class="text-sm text-slate-500 max-w-xs mx-auto">Your dashboard will light up with real-time progress updates once a project is assigned to you.</p>
+                       <div class="text-center py-20 bg-slate-50 dark:bg-slate-900/50 rounded-3xl border border-dashed border-slate-200 dark:border-white/10">
+                         <div class="w-24 h-24 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl text-4xl grayscale opacity-50">🏗️</div>
+                         <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tight">No Active Projects</h3>
+                         <p class="text-sm text-slate-500 dark:text-slate-400 max-w-xs mx-auto font-medium leading-relaxed">Your dashboard will light up with real-time progress updates once a project is assigned to you.</p>
                        </div>
                      }
                    </div>
                 </div>
 
-                <!-- Recent Messages & Activity -->
+                <!-- Vertical Milestone Timeline & Activity -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <!-- Messages -->
-                  <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 shadow-xl">
-                     <h3 class="text-xs font-black uppercase tracking-widest mb-6 text-slate-900 dark:text-white">Recent Messages</h3>
-                     <div class="space-y-6">
-                        @if ((clientDashboard?.recentMessages?.length ?? 0) > 0) {
-                          @for (msg of clientDashboard?.recentMessages; track msg.id) {
-                             <div class="flex gap-4">
-                                <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">✉️</div>
-                                <div class="min-w-0">
-                                   <p class="text-xs font-black dark:text-white truncate">{{ msg.subject }}</p>
-                                   <p class="text-[10px] text-slate-400 truncate">{{ msg.content }}</p>
+                  <!-- Vertical Milestone Timeline -->
+                  <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-200 dark:border-white/5 shadow-2xl relative overflow-hidden">
+                     <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-purple-500/5 rounded-full blur-3xl"></div>
+                     <h3 class="text-sm font-black uppercase tracking-[0.3em] mb-10 text-slate-900 dark:text-white flex items-center gap-3">
+                        Project Momentum
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                     </h3>
+
+                     <div class="space-y-10 relative">
+                        <div class="absolute left-[7px] top-2 bottom-6 w-0.5 bg-slate-100 dark:bg-slate-800"></div>
+                        
+                        @if ((clientDashboard?.recentActivities?.length ?? 0) > 0) {
+                          @for (act of clientDashboard?.recentActivities; track act.id) {
+                             <div class="relative pl-10 animate-in fade-in slide-in-from-left-4 duration-500">
+                                <div class="absolute left-0 top-1.5 w-4 h-4 rounded-full bg-white dark:bg-slate-900 border-2 border-indigo-500 flex items-center justify-center z-10 shadow-[0_0_10px_rgba(79,70,229,0.3)]">
+                                   <div class="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
+                                </div>
+                                <div>
+                                   <span class="text-[8px] font-black uppercase text-indigo-500 bg-indigo-500/10 px-2 py-0.5 rounded tracking-widest">{{ act.activityType }}</span>
+                                   <p class="text-xs font-bold text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">{{ act.description }}</p>
+                                   <p class="text-[9px] font-black text-slate-400 mt-2 flex items-center gap-1 opacity-60">
+                                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                      {{ act.createdAt | date:'MMM d, h:mm a' }}
+                                   </p>
                                 </div>
                              </div>
                           }
                         } @else {
-                          <div class="text-center py-12">
-                            <div class="w-16 h-16 bg-slate-50 dark:bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-4">
-                              <span class="text-2xl grayscale opacity-50">📬</span>
-                            </div>
-                            <p class="text-sm font-bold text-slate-900 dark:text-white mb-1">No new messages</p>
-                            <p class="text-[10px] text-slate-500">Inbox zero! You're all caught up.</p>
+                          <div class="text-center py-10 opacity-40 grayscale">
+                            <span class="text-4xl block mb-4">⚡</span>
+                            <p class="text-[10px] font-black uppercase tracking-widest">No Recent Milestones</p>
                           </div>
                         }
                      </div>
                   </div>
-                  <!-- Activity -->
-                  <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 shadow-xl">
-                     <h3 class="text-xs font-black uppercase tracking-widest mb-6 text-slate-900 dark:text-white">Activity Log</h3>
-                     <div class="space-y-6 relative ml-2">
-                        @if ((clientDashboard?.recentActivities?.length ?? 0) > 0) {
-                          @for (act of clientDashboard?.recentActivities; track act.id) {
-                             <div class="flex gap-4 relative">
-                                <div class="w-2.5 h-2.5 rounded-full bg-indigo-500 mt-1.5 shrink-0"></div>
-                                <p class="text-[10px] font-bold text-slate-600 dark:text-slate-300">{{ act.description }}</p>
+
+                  <!-- Communication Hub Preview -->
+                  <div class="flex flex-col gap-8">
+                     <!-- Recent Messages -->
+                     <div class="bg-slate-900 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden group">
+                        <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/5 rounded-full blur-3xl group-hover:bg-white/10 transition-all"></div>
+                        <h3 class="text-xs font-black uppercase tracking-[0.3em] mb-8 text-white/60">Communication</h3>
+                        
+                        <div class="space-y-6 max-h-[300px] overflow-y-auto custom-scrollbar">
+                           @if ((clientDashboard?.recentMessages?.length ?? 0) > 0) {
+                             @for (msg of clientDashboard?.recentMessages; track msg.id) {
+                                <div class="p-6 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer">
+                                   <div class="flex items-center gap-3 mb-2">
+                                      <div class="w-2 h-2 rounded-full" [ngClass]="msg.isUnread ? 'bg-indigo-400 shadow-[0_0_8px_rgba(129,140,248,0.8)]' : 'bg-white/20'"></div>
+                                      <p class="text-xs font-black truncate">{{ msg.subject }}</p>
+                                   </div>
+                                   <p class="text-[10px] text-white/40 line-clamp-2 leading-relaxed mb-4 font-medium">{{ msg.content }}</p>
+                                   <div class="flex items-center justify-between">
+                                      <span class="text-[8px] font-black text-indigo-400 uppercase tracking-widest">{{ msg.messageType }}</span>
+                                      <span class="text-[8px] font-black text-white/30 uppercase tracking-widest">{{ msg.createdAt | date:'shortTime' }}</span>
+                                   </div>
+                                </div>
+                             }
+                           } @else {
+                             <div class="text-center py-12 opacity-30">
+                                <span class="text-4xl block mb-4">📬</span>
+                                <p class="text-[10px] font-black uppercase tracking-widest">Inbox Zero</p>
                              </div>
-                          }
-                        } @else {
-                          <div class="text-center py-12">
-                            <div class="w-16 h-16 bg-slate-50 dark:bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-4">
-                              <span class="text-2xl grayscale opacity-50">⚡</span>
-                            </div>
-                            <p class="text-sm font-bold text-slate-900 dark:text-white mb-1">No recent activity</p>
-                            <p class="text-[10px] text-slate-500">Your latest actions will appear here.</p>
-                          </div>
-                        }
+                           }
+                        </div>
+
+                        <a routerLink="/client-portal/messages" class="mt-8 flex items-center justify-center gap-2 py-4 rounded-2xl bg-white text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">
+                           Open Messages
+                        </a>
                      </div>
                   </div>
                 </div>
@@ -966,8 +1107,9 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
     }
-    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.2); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     
     @keyframes pulse-slow {
       0%, 100% { opacity: 1; transform: scale(1); }
@@ -975,6 +1117,18 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
     }
     .animate-pulse-slow {
       animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .dark .glass-effect {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
   `]
 })
