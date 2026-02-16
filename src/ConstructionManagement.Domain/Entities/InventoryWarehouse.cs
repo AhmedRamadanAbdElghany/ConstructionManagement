@@ -5,7 +5,7 @@ namespace ConstructionManagement.Domain.Entities;
 /// <summary>
 /// Represents a warehouse owned by an Inventory Owner
 /// </summary>
-public class InventoryWarehouse : BaseEntity
+public class InventoryWarehouse : BaseEntity, ICompanyEntity
 {
     /// <summary>
     /// Owner user ID (Inventory Owner)

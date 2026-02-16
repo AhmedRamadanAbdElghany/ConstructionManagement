@@ -5,7 +5,7 @@ namespace ConstructionManagement.Domain.Entities;
 /// <summary>
 /// Represents recurring/subscription orders
 /// </summary>
-public class RecurringOrder : BaseEntity
+public class RecurringOrder : BaseEntity, ICompanyEntity
 {
     /// <summary>
     /// Customer/Company Owner
@@ -123,6 +123,13 @@ public class RecurringOrder : BaseEntity
     // Navigation Properties
     public virtual ICollection<RecurringOrderItem> Items { get; set; } = new List<RecurringOrderItem>();
     public virtual ICollection<InventoryOrder> GeneratedOrders { get; set; } = new List<InventoryOrder>();
+
+    /// <summary>
+    /// Company identifier for multi-tenancy
+    /// </summary>
+    public int? CompanyId { get; set; }
+    [ForeignKey(nameof(CompanyId))]
+    public virtual Company? Company { get; set; }
 
     /// <summary>
     /// Recurrence frequency options

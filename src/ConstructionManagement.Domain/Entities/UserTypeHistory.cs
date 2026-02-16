@@ -7,7 +7,7 @@ namespace ConstructionManagement.Domain.Entities;
 /// Tracks user type changes over time
 /// Used for audit trail and notification routing
 /// </summary>
-public class UserTypeHistory : BaseEntity
+public class UserTypeHistory : BaseEntity, ICompanyEntity
 {
     /// <summary>
     /// The user whose type was changed
@@ -41,4 +41,8 @@ public class UserTypeHistory : BaseEntity
     /// Optional reason for the type change
     /// </summary>
     public string? Reason { get; set; }
+    
+    public int? CompanyId { get; set; }
+    [ForeignKey(nameof(CompanyId))]
+    public virtual Company? Company { get; set; }
 }

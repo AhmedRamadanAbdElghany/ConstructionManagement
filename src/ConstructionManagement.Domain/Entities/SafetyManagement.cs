@@ -294,7 +294,7 @@ namespace ConstructionManagement.Domain.Entities
     /// <summary>
     /// Safety compliance record for a project
     /// </summary>
-    public class SafetyCompliance : BaseEntity
+    public class SafetyCompliance : BaseEntity, ICompanyEntity
     {
         [Key]
         // Id is inherited from BaseEntity
@@ -323,5 +323,9 @@ namespace ConstructionManagement.Domain.Entities
         // Navigation properties
         [ForeignKey(nameof(ProjectId))]
         public virtual Project? Project { get; set; }
+        
+        public int? CompanyId { get; set; }
+        [ForeignKey(nameof(CompanyId))]
+        public virtual Company? Company { get; set; }
     }
 }

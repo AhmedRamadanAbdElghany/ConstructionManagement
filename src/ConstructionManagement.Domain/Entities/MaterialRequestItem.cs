@@ -5,7 +5,7 @@ namespace ConstructionManagement.Domain.Entities;
 /// <summary>
 /// Represents an item within a material request
 /// </summary>
-public class MaterialRequestItem : BaseEntity
+public class MaterialRequestItem : BaseEntity, ICompanyEntity
 {
     /// <summary>
     /// Parent request
@@ -55,4 +55,10 @@ public class MaterialRequestItem : BaseEntity
     /// Total cost for this item
     /// </summary>
     public decimal? TotalCost => UnitCost * FulfilledQuantity;
+    /// <summary>
+    /// Company identifier for multi-tenancy
+    /// </summary>
+    public int? CompanyId { get; set; }
+    [ForeignKey(nameof(CompanyId))]
+    public virtual Company? Company { get; set; }
 }

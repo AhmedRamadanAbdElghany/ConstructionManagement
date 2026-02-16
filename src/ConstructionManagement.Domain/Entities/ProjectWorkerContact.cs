@@ -5,7 +5,7 @@ namespace ConstructionManagement.Domain.Entities;
 /// <summary>
 /// Links a worker to a project with contact tracking
 /// </summary>
-public class ProjectWorkerContact : BaseEntity
+public class ProjectWorkerContact : BaseEntity, ICompanyEntity
 {
     /// <summary>
     /// The worker
@@ -72,4 +72,11 @@ public class ProjectWorkerContact : BaseEntity
     /// Last contact date
     /// </summary>
     public DateTime? LastContactDate { get; set; }
+    
+    /// <summary>
+    /// Company identifier for multi-tenancy
+    /// </summary>
+    public int? CompanyId { get; set; }
+    [ForeignKey(nameof(CompanyId))]
+    public virtual Company? Company { get; set; }
 }

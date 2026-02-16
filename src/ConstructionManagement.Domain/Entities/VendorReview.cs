@@ -5,7 +5,7 @@ namespace ConstructionManagement.Domain.Entities;
 /// <summary>
 /// Represents a review/rating given by a vendor/customer for a warehouse or service provider
 /// </summary>
-public class VendorReview : BaseEntity
+public class VendorReview : BaseEntity, ICompanyEntity
 {
     /// <summary>
     /// The warehouse or user being reviewed
@@ -79,4 +79,8 @@ public class VendorReview : BaseEntity
     /// Date of the review
     /// </summary>
     public DateTime ReviewDate { get; set; } = DateTime.UtcNow;
+
+    public int? CompanyId { get; set; }
+    [ForeignKey(nameof(CompanyId))]
+    public virtual Company? Company { get; set; }
 }

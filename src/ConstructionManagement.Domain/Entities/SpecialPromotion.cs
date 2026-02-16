@@ -5,7 +5,7 @@ namespace ConstructionManagement.Domain.Entities;
 /// <summary>
 /// Represents promotional discount codes
 /// </summary>
-public class SpecialPromotion : BaseEntity
+public class SpecialPromotion : BaseEntity, ICompanyEntity
 {
     /// <summary>
     /// Supplier/Inventory Owner who created the promotion
@@ -78,4 +78,11 @@ public class SpecialPromotion : BaseEntity
     /// Is promotion active
     /// </summary>
     public bool IsActive { get; set; } = true;
+    
+    /// <summary>
+    /// Company identifier for multi-tenancy
+    /// </summary>
+    public int? CompanyId { get; set; }
+    [ForeignKey(nameof(CompanyId))]
+    public virtual Company? Company { get; set; }
 }

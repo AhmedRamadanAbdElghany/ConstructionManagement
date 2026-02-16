@@ -6,7 +6,7 @@ namespace ConstructionManagement.Domain.Entities;
 /// <summary>
 /// Represents customer loyalty tier discounts
 /// </summary>
-public class CustomerTierDiscount : BaseEntity
+public class CustomerTierDiscount : BaseEntity, ICompanyEntity
 {
     /// <summary>
     /// Customer/Company Owner user ID
@@ -62,4 +62,8 @@ public class CustomerTierDiscount : BaseEntity
         Gold = 3,
         Platinum = 4
     }
+
+    public int? CompanyId { get; set; }
+    [ForeignKey(nameof(CompanyId))]
+    public virtual Company? Company { get; set; }
 }
