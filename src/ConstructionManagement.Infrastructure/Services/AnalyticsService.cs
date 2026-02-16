@@ -1108,23 +1108,26 @@ namespace ConstructionManagement.Infrastructure.Services
 
         private async Task<List<KPIResultDto>> GetRecentKPIResultsAsync(int companyId)
         {
-            return await _context.KPIResults
+            // Materialize the query first to avoid EF Core projection issues with instance methods
+            var results = await _context.KPIResults
                 .Where(k => k.CompanyId == companyId)
                 .OrderByDescending(k => k.Date)
                 .Take(50)
-                .Select(r => new KPIResultDto
-                {
-                    Id = r.Id,
-                    KPIDefinitionId = r.KPIDefinitionId,
-                    KPIName = "",
-                    Date = r.Date,
-                    Value = r.Value,
-                    TargetValue = r.TargetValue,
-                    Status = r.Status,
-                    Variance = ParseDecimalSafe(r.Variance)
-                })
                 .AsNoTracking()
                 .ToListAsync();
+
+            // Apply the transformation in memory after materialization
+            return results.Select(r => new KPIResultDto
+            {
+                Id = r.Id,
+                KPIDefinitionId = r.KPIDefinitionId,
+                KPIName = "",
+                Date = r.Date,
+                Value = r.Value,
+                TargetValue = r.TargetValue,
+                Status = r.Status,
+                Variance = ParseDecimalSafe(r.Variance)
+            }).ToList();
         }
 
         private async Task<List<KPISummaryByCategory>> GetKPICategorySummaryAsync(int companyId)
