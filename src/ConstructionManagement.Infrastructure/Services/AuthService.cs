@@ -56,7 +56,7 @@ public class AuthService : IAuthService
 
         if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
-            return new AuthResponse(false, "Invalid email or password", null, null);
+            return new AuthResponse(false, "البريد الإلكتروني أو كلمة المرور غير صحيحة", null, null);
         }
 
         var token = GenerateJwtToken(user);
@@ -73,7 +73,7 @@ public class AuthService : IAuthService
             user.CompanyId
         );
 
-        return new AuthResponse(true, "Login successful", token, userDto);
+        return new AuthResponse(true, "تم تسجيل الدخول بنجاح", token, userDto);
     }
 
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
@@ -81,7 +81,7 @@ public class AuthService : IAuthService
         // Validate email format
         if (!IsValidEmail(request.Email))
         {
-            return new AuthResponse(false, "Invalid email format", null, null);
+            return new AuthResponse(false, "صيغة البريد الإلكتروني غير صحيحة", null, null);
         }
 
         // Validate password strength
@@ -94,7 +94,7 @@ public class AuthService : IAuthService
         var existingUser = await _userRepository.GetByEmailAsync(request.Email);
         if (existingUser != null)
         {
-            return new AuthResponse(false, "Email is already registered", null, null);
+            return new AuthResponse(false, "البريد الإلكتروني مسجل بالفعل", null, null);
         }
 
         var existingUserByName = await _userRepository.GetByFullNameAsync(request.FullName);
@@ -166,8 +166,8 @@ public class AuthService : IAuthService
                 // Notify User
                 await _notificationService.CreateAndSendAsync(
                     user.Id,
-                    "Registration Pending",
-                    "Your company registration request has been received and is currently awaiting administrative approval.",
+                    "طلب التسجيل قيد المراجعة",
+                    "تم استلام طلب تسجيل شركتك وهو حالياً في انتظار الموافقة الإدارية.",
                     null,
                     NotificationType.General
                 );

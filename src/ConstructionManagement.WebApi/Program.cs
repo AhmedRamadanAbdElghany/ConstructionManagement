@@ -19,6 +19,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.Extensions.FileProviders;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,61 @@ builder.Services.AddControllers()
 
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateProjectRequestValidator>();
+
+// 1.5 Localization - Arabic as default, English as secondary
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddSingleton<ILocalizationService, LocalizationService>();
+builder.Services.AddHttpContextAccessor();
+
+var supportedCultures = new[]
+{
+    new CultureInfo("ar"),
+    new CultureInfo("en")
+};
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("ar");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+    
+    // Custom provider to check Accept-Language header, X-Language header, and query string
+    options.RequestCultureProviders.Insert(0, new Microsoft.AspNetCore.Localization.CustomRequestCultureProvider(context =>
+    {
+        // Check Accept-Language header
+        var acceptLanguage = context.Request.Headers["Accept-Language"].FirstOrDefault();
+        if (!string.IsNullOrEmpty(acceptLanguage))
+        {
+            if (acceptLanguage.StartsWith("en", StringComparison.OrdinalIgnoreCase))
+                return Task.FromResult(new Microsoft.AspNetCore.Localization.ProviderCultureResult("en"));
+            if (acceptLanguage.StartsWith("ar", StringComparison.OrdinalIgnoreCase))
+                return Task.FromResult(new Microsoft.AspNetCore.Localization.ProviderCultureResult("ar"));
+        }
+        
+        // Check X-Language header
+        var langHeader = context.Request.Headers["X-Language"].FirstOrDefault();
+        if (!string.IsNullOrEmpty(langHeader))
+        {
+            if (langHeader.Equals("en", StringComparison.OrdinalIgnoreCase))
+                return Task.FromResult(new Microsoft.AspNetCore.Localization.ProviderCultureResult("en"));
+            if (langHeader.Equals("ar", StringComparison.OrdinalIgnoreCase))
+                return Task.FromResult(new Microsoft.AspNetCore.Localization.ProviderCultureResult("ar"));
+        }
+        
+        // Check query string
+        var langQuery = context.Request.Query["lang"].FirstOrDefault();
+        if (!string.IsNullOrEmpty(langQuery))
+        {
+            if (langQuery.Equals("en", StringComparison.OrdinalIgnoreCase))
+                return Task.FromResult(new Microsoft.AspNetCore.Localization.ProviderCultureResult("en"));
+            if (langQuery.Equals("ar", StringComparison.OrdinalIgnoreCase))
+                return Task.FromResult(new Microsoft.AspNetCore.Localization.ProviderCultureResult("ar"));
+        }
+        
+        // Default to Arabic
+        return Task.FromResult(new Microsoft.AspNetCore.Localization.ProviderCultureResult("ar"));
+    }));
+});
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 bool isTesting = (connectionString?.Contains("DataSource=", StringComparison.OrdinalIgnoreCase) ?? false)
@@ -303,6 +359,10 @@ app.UseStaticFiles(new StaticFileOptions
 
 app.UseRouting();
 app.UseCors("AllowAll");
+
+// Localization middleware - MUST come before authentication
+var localizationOptions = app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<RequestLocalizationOptions>>().Value;
+app.UseRequestLocalization(localizationOptions);
 
 // Company resolution middleware – MUST come early
 app.UseMiddleware<CompanyResolutionMiddleware>();

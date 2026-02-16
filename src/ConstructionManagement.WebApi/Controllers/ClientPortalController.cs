@@ -1,3 +1,4 @@
+using ConstructionManagement.Application.Constants;
 using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,7 @@ namespace ConstructionManagement.WebApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ClientPortalController : ControllerBase
+    public class ClientPortalController : BaseApiController
     {
         private readonly IClientPortalService _clientPortalService;
         private readonly IAuthService _authService;
@@ -83,17 +84,17 @@ namespace ConstructionManagement.WebApi.Controllers
         /// </summary>
         [HttpPost("clients")]
         [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
-        public async Task<ActionResult<ClientUserDto>> CreateClientUser([FromBody] CreateClientUserRequest request)
+        public async Task<ActionResult<ApiResponse<ClientUserDto>>> CreateClientUser([FromBody] CreateClientUserRequest request)
         {
             var companyId = GetCurrentCompanyId();
             try
             {
                 var client = await _clientPortalService.CreateClientUserAsync(companyId, request);
-                return CreatedAtAction(nameof(GetClientUser), new { clientUserId = client.Id }, client);
+                return Created(nameof(GetClientUser), Success(client, MessageKeys.ClientCreated));
             }
             catch (InvalidOperationException ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequestResult<ClientUserDto>(MessageKeys.ClientCreateFailed);
             }
         }
 
@@ -102,12 +103,12 @@ namespace ConstructionManagement.WebApi.Controllers
         /// </summary>
         [HttpPut("clients/{clientUserId}")]
         [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
-        public async Task<ActionResult<ClientUserDto>> UpdateClientUser(int clientUserId, [FromBody] UpdateClientUserRequest request)
+        public async Task<ActionResult<ApiResponse<ClientUserDto>>> UpdateClientUser(int clientUserId, [FromBody] UpdateClientUserRequest request)
         {
             var client = await _clientPortalService.UpdateClientUserAsync(clientUserId, request);
             if (client == null)
-                return NotFound(new { message = "Client user not found" });
-            return Ok(client);
+                return NotFoundResult<ClientUserDto>(MessageKeys.ClientNotFound);
+            return Success(client, MessageKeys.ClientUpdated);
         }
 
         /// <summary>
@@ -115,12 +116,12 @@ namespace ConstructionManagement.WebApi.Controllers
         /// </summary>
         [HttpDelete("clients/{clientUserId}")]
         [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
-        public async Task<IActionResult> DeleteClientUser(int clientUserId)
+        public async Task<ActionResult<ApiResponse<bool>>> DeleteClientUser(int clientUserId)
         {
             var deleted = await _clientPortalService.DeleteClientUserAsync(clientUserId);
             if (!deleted)
-                return NotFound(new { message = "Client user not found" });
-            return NoContent();
+                return NotFoundResult<bool>(MessageKeys.ClientNotFound);
+            return Success(true, MessageKeys.ClientDeleted);
         }
 
         /// <summary>
@@ -128,12 +129,12 @@ namespace ConstructionManagement.WebApi.Controllers
         /// </summary>
         [HttpPost("clients/{clientUserId}/access")]
         [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
-        public async Task<ActionResult<ClientProjectAccessDto>> GrantProjectAccess(int clientUserId, [FromBody] GrantClientProjectAccessRequest request)
+        public async Task<ActionResult<ApiResponse<ClientProjectAccessDto>>> GrantProjectAccess(int clientUserId, [FromBody] GrantClientProjectAccessRequest request)
         {
             var companyId = GetCurrentCompanyId();
             request.ClientUserId = clientUserId;
             var access = await _clientPortalService.GrantProjectAccessAsync(companyId, request);
-            return Ok(access);
+            return Success(access, MessageKeys.ClientAccessGranted);
         }
 
         #endregion
@@ -145,12 +146,12 @@ namespace ConstructionManagement.WebApi.Controllers
         /// </summary>
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<ActionResult<ClientLoginResponse>> ClientLogin([FromBody] ClientLoginRequest request)
+        public async Task<ActionResult<ApiResponse<ClientLoginResponse>>> ClientLogin([FromBody] ClientLoginRequest request)
         {
             var result = await _clientPortalService.ClientLoginAsync(request);
             if (result == null)
-                return Unauthorized(new { message = "Invalid email or password" });
-            return Ok(result);
+                return UnauthorizedResult<ClientLoginResponse>(MessageKeys.AuthInvalidCredentials);
+            return Success(result, MessageKeys.AuthLoginSuccess);
         }
 
         /// <summary>
@@ -158,13 +159,13 @@ namespace ConstructionManagement.WebApi.Controllers
         /// </summary>
         [HttpPost("change-password")]
         [Authorize(Roles = "Client")]
-        public async Task<IActionResult> ChangeClientPassword([FromBody] ChangeClientPasswordRequest request)
+        public async Task<ActionResult<ApiResponse<bool>>> ChangeClientPassword([FromBody] ChangeClientPasswordRequest request)
         {
             var clientUserId = GetCurrentClientUserId();
             var result = await _clientPortalService.ChangeClientPasswordAsync(clientUserId, request);
             if (!result)
-                return BadRequest(new { message = "Current password is incorrect" });
-            return Ok(new { message = "Password changed successfully" });
+                return BadRequestResult<bool>(MessageKeys.AuthPasswordIncorrect);
+            return Success(true, MessageKeys.AuthPasswordChanged);
         }
 
         /// <summary>
@@ -172,11 +173,11 @@ namespace ConstructionManagement.WebApi.Controllers
         /// </summary>
         [HttpPost("reset-password")]
         [AllowAnonymous]
-        public async Task<IActionResult> ResetClientPassword([FromBody] ResetClientPasswordRequest request)
+        public async Task<ActionResult<ApiResponse<bool>>> ResetClientPassword([FromBody] ResetClientPasswordRequest request)
         {
             var result = await _clientPortalService.ResetClientPasswordAsync(request);
             // Always return success to prevent email enumeration
-            return Ok(new { message = "If the email exists, a reset link has been sent" });
+            return Success(true, MessageKeys.AuthResetLinkSent);
         }
 
         /// <summary>
@@ -184,12 +185,12 @@ namespace ConstructionManagement.WebApi.Controllers
         /// </summary>
         [HttpPost("set-password")]
         [AllowAnonymous]
-        public async Task<IActionResult> SetClientPassword([FromBody] SetClientPasswordRequest request)
+        public async Task<ActionResult<ApiResponse<bool>>> SetClientPassword([FromBody] SetClientPasswordRequest request)
         {
             var result = await _clientPortalService.SetClientPasswordAsync(request);
             if (!result)
-                return BadRequest(new { message = "Invalid or expired reset token" });
-            return Ok(new { message = "Password set successfully" });
+                return BadRequestResult<bool>(MessageKeys.AuthInvalidToken);
+            return Success(true, MessageKeys.AuthPasswordSet);
         }
 
         #endregion
