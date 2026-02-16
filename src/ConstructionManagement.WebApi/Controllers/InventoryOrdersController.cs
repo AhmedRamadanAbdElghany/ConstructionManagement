@@ -395,7 +395,7 @@ public class InventoryOrdersController : ControllerBase
     /// Get my recurring orders (as customer)
     /// </summary>
     [HttpGet("my-recurring-orders")]
-    public async Task<IActionResult> GetMyRecurringOrders()
+    public IActionResult GetMyRecurringOrders()
     {
         var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
         // Would need to add this service
@@ -406,7 +406,7 @@ public class InventoryOrdersController : ControllerBase
     /// Create recurring order
     /// </summary>
     [HttpPost("recurring-orders")]
-    public async Task<IActionResult> CreateRecurringOrder([FromBody] CreateRecurringOrderRequest request)
+    public IActionResult CreateRecurringOrder([FromBody] CreateRecurringOrderRequest request)
     {
         var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
         // Would need to add this service

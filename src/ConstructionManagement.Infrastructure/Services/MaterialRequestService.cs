@@ -151,7 +151,7 @@ public class MaterialRequestService : IMaterialRequestService
         {
             // Reserve stock first
             var stock = await _stockService.AdjustStockAsync(
-                item.MaterialId, 
+                item.MaterialId ?? 0, 
                 request.SourceWarehouse, 
                 item.ApprovedQuantity, 
                 "reservation",
@@ -159,7 +159,7 @@ public class MaterialRequestService : IMaterialRequestService
 
             // Then consume
             await _stockService.AdjustStockAsync(
-                item.MaterialId,
+                item.MaterialId ?? 0,
                 request.SourceWarehouse,
                 item.ApprovedQuantity,
                 "consumption",

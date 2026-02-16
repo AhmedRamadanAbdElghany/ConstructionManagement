@@ -10,9 +10,9 @@ public class JoinRequest : BaseEntity
     /// <summary>
     /// The user who wants to join the company
     /// </summary>
-    public int UserId { get; set; }
+    public int? UserId { get; set; }
     [ForeignKey(nameof(UserId))]
-    public virtual User User { get; set; } = null!;
+    public virtual User? User { get; set; }
 
     /// <summary>
     /// The company the user wants to join

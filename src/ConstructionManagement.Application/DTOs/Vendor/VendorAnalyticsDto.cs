@@ -36,7 +36,5 @@ namespace ConstructionManagement.Application.DTOs.Vendor
     {
         public double? DistanceKm { get; set; }
         public List<VendorProductDto> TopProducts { get; set; } = new();
-        public double? Latitude { get; set; }
-        public double? Longitude { get; set; }
     }
 }

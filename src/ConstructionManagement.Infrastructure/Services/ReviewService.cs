@@ -61,10 +61,10 @@ namespace ConstructionManagement.Infrastructure.Services
             return true;
         }
 
-        public async Task<bool> ApproveReviewAsync(int reviewId)
+        public Task<bool> ApproveReviewAsync(int reviewId)
         {
             // Implementation would use repository
-            return true;
+            return Task.FromResult(true);
         }
 
         private async Task UpdateUserRatingAsync(int userId)

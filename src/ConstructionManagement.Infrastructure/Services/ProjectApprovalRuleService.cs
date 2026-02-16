@@ -41,7 +41,7 @@ public class ProjectApprovalRuleService : IProjectApprovalRuleService
             UploaderRole = request.UploaderRole,
             ApproverRole = request.ApproverRole,
             ResponseTimeoutHours = request.ResponseTimeoutHours,
-            EscalationRole = request.EscalationRole,
+            EscalationRole = request.EscalationRole ?? "",
             CreatedAt = DateTime.UtcNow
         };
 

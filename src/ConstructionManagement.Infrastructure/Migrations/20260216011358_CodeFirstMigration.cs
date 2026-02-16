@@ -1097,7 +1097,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
                     CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BusinessId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ContactEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -1125,8 +1125,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         name: "FK_CompanyRequests_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -1208,7 +1207,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
                     CompanyId = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RejectionReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -1239,8 +1238,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         name: "FK_JoinRequests_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -1299,9 +1297,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     Budget = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     AccountingSystem = table.Column<int>(type: "int", nullable: false),
                     TotalContractValue = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: true),
-                    UserId1 = table.Column<int>(type: "int", nullable: true),
-                    UserId2 = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -1338,21 +1333,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_Projects_Users_OwnerUserId",
                         column: x => x.OwnerUserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Projects_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Projects_Users_UserId1",
-                        column: x => x.UserId1,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Projects_Users_UserId2",
-                        column: x => x.UserId2,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -2150,7 +2130,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EquipmentId = table.Column<int>(type: "int", nullable: false),
+                    EquipmentId = table.Column<int>(type: "int", nullable: true),
                     ProjectId = table.Column<int>(type: "int", nullable: true),
                     AssignedToUserId = table.Column<int>(type: "int", nullable: true),
                     AssignmentType = table.Column<int>(type: "int", nullable: false),
@@ -2280,8 +2260,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RequestNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProjectId = table.Column<int>(type: "int", nullable: false),
-                    RequestedByUserId = table.Column<int>(type: "int", nullable: false),
+                    ProjectId = table.Column<int>(type: "int", nullable: true),
+                    RequestedByUserId = table.Column<int>(type: "int", nullable: true),
                     ApprovedByUserId = table.Column<int>(type: "int", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Priority = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -2318,8 +2298,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         name: "FK_MaterialRequests_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_MaterialRequests_Users_ApprovedByUserId",
                         column: x => x.ApprovedByUserId,
@@ -2329,8 +2308,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         name: "FK_MaterialRequests_Users_RequestedByUserId",
                         column: x => x.RequestedByUserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -2854,8 +2832,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     Barcode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     WarehouseId = table.Column<int>(type: "int", nullable: false),
                     WarehouseOwnerId = table.Column<int>(type: "int", nullable: true),
-                    ProjectId = table.Column<int>(type: "int", nullable: false),
-                    RequestedByUserId = table.Column<int>(type: "int", nullable: false),
+                    ProjectId = table.Column<int>(type: "int", nullable: true),
+                    RequestedByUserId = table.Column<int>(type: "int", nullable: true),
                     ReceivedByUserId = table.Column<int>(type: "int", nullable: true),
                     RequestDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RequestType = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -2894,8 +2872,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         name: "FK_WarehouseOrderRequests_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_WarehouseOrderRequests_Users_ReceivedByUserId",
                         column: x => x.ReceivedByUserId,
@@ -2905,8 +2882,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         name: "FK_WarehouseOrderRequests_Users_RequestedByUserId",
                         column: x => x.RequestedByUserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_WarehouseOrderRequests_Users_WarehouseOwnerId",
                         column: x => x.WarehouseOwnerId,
@@ -3020,7 +2996,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     MaterialId = table.Column<int>(type: "int", nullable: false),
-                    WarehouseId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    WarehouseId = table.Column<int>(type: "int", nullable: true),
+                    WarehouseCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     WarehouseName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CurrentQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ReservedQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -3030,7 +3007,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     LastRestockDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UnitCost = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     CompanyId = table.Column<int>(type: "int", nullable: true),
-                    WarehouseId1 = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -3051,8 +3027,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_MaterialStocks_Warehouses_WarehouseId1",
-                        column: x => x.WarehouseId1,
+                        name: "FK_MaterialStocks_Warehouses_WarehouseId",
+                        column: x => x.WarehouseId,
                         principalTable: "Warehouses",
                         principalColumn: "Id");
                 });
@@ -3341,7 +3317,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     MaterialRequestId = table.Column<int>(type: "int", nullable: false),
-                    MaterialId = table.Column<int>(type: "int", nullable: false),
+                    MaterialId = table.Column<int>(type: "int", nullable: true),
                     RequestedQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ApprovedQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     FulfilledQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -3366,8 +3342,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         name: "FK_MaterialRequestItems_Materials_MaterialId",
                         column: x => x.MaterialId,
                         principalTable: "Materials",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -3545,10 +3520,10 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     LoyaltyDiscountAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     PromoDiscountAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CompanyOwnerUserId = table.Column<int>(type: "int", nullable: false),
-                    InventoryOwnerUserId = table.Column<int>(type: "int", nullable: false),
+                    CompanyOwnerUserId = table.Column<int>(type: "int", nullable: true),
+                    InventoryOwnerUserId = table.Column<int>(type: "int", nullable: true),
                     WarehouseId = table.Column<int>(type: "int", nullable: true),
-                    ProjectId = table.Column<int>(type: "int", nullable: false),
+                    ProjectId = table.Column<int>(type: "int", nullable: true),
                     DeliveryAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DeliveryNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DriverName = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -3571,8 +3546,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         name: "FK_InventoryOrders_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_InventoryOrders_RecurringOrders_RecurringOrderId",
                         column: x => x.RecurringOrderId,
@@ -4155,8 +4129,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     ReopenedByUserId = table.Column<int>(type: "int", nullable: true),
                     ReopenedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ReopenReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: true),
-                    UserId1 = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -4184,16 +4156,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_ItemDailyLogs_Users_ReopenedByUserId",
                         column: x => x.ReopenedByUserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ItemDailyLogs_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ItemDailyLogs_Users_UserId1",
-                        column: x => x.UserId1,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -4225,8 +4187,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     ReviewerUserId = table.Column<int>(type: "int", nullable: true),
                     ReviewDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedByUserId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: true),
-                    UserId1 = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -4254,16 +4214,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_ItemInvoice_Users_ReviewerUserId",
                         column: x => x.ReviewerUserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ItemInvoice_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ItemInvoice_Users_UserId1",
-                        column: x => x.UserId1,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -4322,8 +4272,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Source = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: true),
-                    UserId1 = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -4352,16 +4300,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         column: x => x.UploaderUserId,
                         principalTable: "Users",
                         principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_SiteMedias_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_SiteMedias_Users_UserId1",
-                        column: x => x.UserId1,
-                        principalTable: "Users",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -4385,8 +4323,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     SupplierName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AttachmentPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: true),
-                    UserId1 = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -4414,16 +4350,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_Transactions_Users_ReviewedByUserId",
                         column: x => x.ReviewedByUserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Transactions_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Transactions_Users_UserId1",
-                        column: x => x.UserId1,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -5043,7 +4969,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "RoleId", "UserId", "AssignedAt", "CompanyId" },
-                values: new object[] { 1, 1, new DateTime(2026, 2, 15, 23, 7, 48, 933, DateTimeKind.Utc).AddTicks(6106), null });
+                values: new object[] { 1, 1, new DateTime(2026, 2, 16, 1, 13, 55, 407, DateTimeKind.Utc).AddTicks(9073), null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ActivityLogs_CompanyId",
@@ -5757,16 +5683,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "ReopenedByUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ItemDailyLogs_UserId",
-                table: "ItemDailyLogs",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ItemDailyLogs_UserId1",
-                table: "ItemDailyLogs",
-                column: "UserId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ItemInvoice_BOQItemId",
                 table: "ItemInvoice",
                 column: "BOQItemId");
@@ -5791,16 +5707,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "IX_ItemInvoice_ReviewerUserId",
                 table: "ItemInvoice",
                 column: "ReviewerUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ItemInvoice_UserId",
-                table: "ItemInvoice",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ItemInvoice_UserId1",
-                table: "ItemInvoice",
-                column: "UserId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_JobPostings_CompanyId",
@@ -5943,9 +5849,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "MaterialId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MaterialStocks_WarehouseId1",
+                name: "IX_MaterialStocks_WarehouseId",
                 table: "MaterialStocks",
-                column: "WarehouseId1");
+                column: "WarehouseId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MessageAttachments_CompanyId",
@@ -6086,21 +5992,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "IX_Projects_PackageId",
                 table: "Projects",
                 column: "PackageId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Projects_UserId",
-                table: "Projects",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Projects_UserId1",
-                table: "Projects",
-                column: "UserId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Projects_UserId2",
-                table: "Projects",
-                column: "UserId2");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProjectTeamMember_ProjectId_UserId",
@@ -6319,16 +6210,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "UploaderUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SiteMedias_UserId",
-                table: "SiteMedias",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SiteMedias_UserId1",
-                table: "SiteMedias",
-                column: "UserId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_SpecialPromotions_DiscountCode",
                 table: "SpecialPromotions",
                 column: "DiscountCode",
@@ -6433,16 +6314,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "IX_Transactions_ReviewedByUserId",
                 table: "Transactions",
                 column: "ReviewedByUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Transactions_UserId",
-                table: "Transactions",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Transactions_UserId1",
-                table: "Transactions",
-                column: "UserId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRoles_RoleId",

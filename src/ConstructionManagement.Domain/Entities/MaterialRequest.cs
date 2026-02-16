@@ -12,14 +12,14 @@ public class MaterialRequest : BaseEntity, ICompanyEntity
     /// <summary>
     /// The project requesting materials
     /// </summary>
-    public int ProjectId { get; set; }
+    public int? ProjectId { get; set; }
     [ForeignKey(nameof(ProjectId))]
     public virtual Project? Project { get; set; }
     
     /// <summary>
     /// User who made the request
     /// </summary>
-    public int RequestedByUserId { get; set; }
+    public int? RequestedByUserId { get; set; }
     [ForeignKey(nameof(RequestedByUserId))]
     public virtual User? RequestedByUser { get; set; }
     

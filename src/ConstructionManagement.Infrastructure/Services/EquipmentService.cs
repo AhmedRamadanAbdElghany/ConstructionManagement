@@ -656,7 +656,7 @@ public class EquipmentService : IEquipmentService
         return new EquipmentAssignmentDto
         {
             Id = assignment.Id,
-            EquipmentId = assignment.EquipmentId,
+            EquipmentId = assignment.EquipmentId ?? 0,
             EquipmentName = assignment.Equipment?.Name,
             EquipmentSerialNumber = assignment.Equipment?.SerialNumber,
             ProjectId = assignment.ProjectId,

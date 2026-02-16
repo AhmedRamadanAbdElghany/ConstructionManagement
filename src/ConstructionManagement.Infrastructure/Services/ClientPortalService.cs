@@ -80,7 +80,8 @@ namespace ConstructionManagement.Infrastructure.Services
 
             await _context.SaveChangesAsync();
 
-            return await GetClientPortalSettingsAsync(companyId)!;
+            var result = await GetClientPortalSettingsAsync(companyId);
+            return result ?? new ClientPortalSettingsDto();
         }
 
         #endregion
@@ -172,10 +173,10 @@ namespace ConstructionManagement.Infrastructure.Services
             var user = await _context.ClientUsers.FindAsync(clientUserId);
             if (user == null) return null;
 
-            user.FirstName = request.FirstName;
-            user.LastName = request.LastName;
-            user.Phone = request.Phone;
-            user.CompanyName = request.CompanyName;
+            user.FirstName = request.FirstName ?? "";
+            user.LastName = request.LastName ?? "";
+            user.Phone = request.Phone ?? "";
+            user.CompanyName = request.CompanyName ?? "";
             user.JobTitle = request.JobTitle;
             user.IsActive = request.IsActive ?? true;
             user.UpdatedAt = DateTime.UtcNow;
@@ -751,10 +752,10 @@ namespace ConstructionManagement.Infrastructure.Services
                 return null;
             }
 
-            changeOrder.Title = request.Title;
-            changeOrder.Description = request.Description;
-            changeOrder.Category = request.Category;
-            changeOrder.Priority = request.Priority;
+            changeOrder.Title = request.Title ?? "";
+            changeOrder.Description = request.Description ?? "";
+            changeOrder.Category = request.Category ?? "";
+            changeOrder.Priority = request.Priority ?? "";
             changeOrder.EstimatedCost = request.EstimatedCost ?? 0;
             changeOrder.EstimatedDays = request.EstimatedDays ?? 0;
             changeOrder.UpdatedAt = DateTime.UtcNow;

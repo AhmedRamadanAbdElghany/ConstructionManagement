@@ -17,7 +17,7 @@ public class MaterialRequestItem : BaseEntity
     /// <summary>
     /// Material being requested
     /// </summary>
-    public int MaterialId { get; set; }
+    public int? MaterialId { get; set; }
     [ForeignKey(nameof(MaterialId))]
     public virtual Material? Material { get; set; }
     

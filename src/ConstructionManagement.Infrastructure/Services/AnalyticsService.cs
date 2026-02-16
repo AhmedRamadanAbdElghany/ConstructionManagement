@@ -1033,29 +1033,29 @@ namespace ConstructionManagement.Infrastructure.Services
                 .SumAsync(e => e.Amount);
         }
 
-        private async Task<decimal> GetLaborUtilizationAsync(int companyId, DateTime? startDate, DateTime? endDate)
+        private Task<decimal> GetLaborUtilizationAsync(int companyId, DateTime? startDate, DateTime? endDate)
         {
-            return 75.0m; // Placeholder
+            return Task.FromResult(75.0m); // Placeholder
         }
 
-        private async Task<decimal> GetEquipmentUtilizationAsync(int companyId)
+        private Task<decimal> GetEquipmentUtilizationAsync(int companyId)
         {
-            var equipment = await _context.Equipment
+            var equipment = _context.Equipment
                 .Where(e => e.CompanyId == companyId && e.Status == Domain.Enums.EquipmentStatus.Active)
                 .AsNoTracking()
-                .ToListAsync();
+                .ToList();
 
-            if (!equipment.Any()) return 0;
+            if (!equipment.Any()) return Task.FromResult(0m);
 
             var totalHours = equipment.Sum(e => e.OperatingHours);
             var maxHours = equipment.Count * 24 * 30; // Assume 24/7 for a month
 
-            return maxHours > 0 ? (totalHours / maxHours) * 100 : 0;
+            return Task.FromResult(maxHours > 0 ? (totalHours / maxHours) * 100 : 0);
         }
 
-        private async Task<decimal> GetAverageQualityScoreAsync(int companyId)
+        private Task<decimal> GetAverageQualityScoreAsync(int companyId)
         {
-            return 85.0m; // Placeholder
+            return Task.FromResult(85.0m); // Placeholder
         }
 
         private decimal CalculateSafetyScore(int companyId)
@@ -1148,9 +1148,9 @@ namespace ConstructionManagement.Infrastructure.Services
                 .ToList();
         }
 
-        private async Task<List<KPIAlertDto>> GetKPIAlertsAsync(int companyId)
+        private Task<List<KPIAlertDto>> GetKPIAlertsAsync(int companyId)
         {
-            return new List<KPIAlertDto>(); // Placeholder
+            return Task.FromResult(new List<KPIAlertDto>()); // Placeholder
         }
 
         private decimal GetCurrentKPIValue(int companyId, KPIDefinition kpi)
@@ -1213,12 +1213,12 @@ namespace ConstructionManagement.Infrastructure.Services
             return projects.Select(p => new Dictionary<string, object>
             {
                 { "Id", p.Id },
-                { "Name", p.Name },
-                { "Status", p.Status },
+                { "Name", p.Name ?? "" },
+                { "Status", p.Status ?? "" },
                 { "Progress", p.ProgressPercentage },
-                { "Budget", p.Budget },
-                { "StartDate", p.StartDate },
-                { "EndDate", p.EndDate }
+                { "Budget", p.Budget ?? 0 },
+                { "StartDate", p.StartDate ?? DateTime.MinValue },
+                { "EndDate", p.EndDate ?? DateTime.MinValue }
             }).ToList();
         }
 
@@ -1249,9 +1249,9 @@ namespace ConstructionManagement.Infrastructure.Services
             return inspections.Select(i => new Dictionary<string, object>
             {
                 { "Id", i.Id },
-                { "ProjectId", i.ProjectId },
-                { "Type", i.InspectionType },
-                { "Status", i.Status },
+                { "ProjectId", i.ProjectId ?? 0 },
+                { "Type", i.InspectionType ?? "" },
+                { "Status", i.Status ?? "" },
                 { "Score", i.OverallScore },
                 { "Date", i.InspectionDate }
             }).ToList();

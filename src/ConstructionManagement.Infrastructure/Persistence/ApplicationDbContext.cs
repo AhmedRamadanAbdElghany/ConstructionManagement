@@ -17,7 +17,7 @@ public class ApplicationDbContext : DbContext
         ICompanyContext? companyContext = null)
         : base(options)
     {
-        _companyContext = companyContext;
+        _companyContext = companyContext ?? new Services.CompanyContext();
     }
 
     // ── DbSets ──────────────────────────────────────────────────────────────────
@@ -275,18 +275,22 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<ProjectTeamRole>().HasOne(ptr => ptr.ProjectRole).WithMany(pr => pr.Assignments).HasForeignKey(ptr => ptr.ProjectRoleId).OnDelete(DeleteBehavior.NoAction);
 
         // 5. User-related relationships (NoAction)
-        modelBuilder.Entity<ItemDailyLog>().HasOne(dl => dl.CreatedByUser).WithMany().HasForeignKey(dl => dl.CreatedByUserId).OnDelete(DeleteBehavior.NoAction);
-        modelBuilder.Entity<ItemDailyLog>().HasOne(dl => dl.ClosedByUser).WithMany().HasForeignKey(dl => dl.ClosedByUserId).OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<ItemDailyLog>().HasOne(dl => dl.CreatedByUser).WithMany(u => u.CreatedDailyLogs).HasForeignKey(dl => dl.CreatedByUserId).OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<ItemDailyLog>().HasOne(dl => dl.ClosedByUser).WithMany(u => u.ClosedDailyLogs).HasForeignKey(dl => dl.ClosedByUserId).OnDelete(DeleteBehavior.NoAction);
         modelBuilder.Entity<ItemDailyLog>().HasOne(dl => dl.ReopenedByUser).WithMany(u => u.ReopenedDailyLogs).HasForeignKey(dl => dl.ReopenedByUserId).OnDelete(DeleteBehavior.NoAction);
-        modelBuilder.Entity<ItemInvoice>().HasOne(ii => ii.CreatedBy).WithMany().HasForeignKey(ii => ii.CreatedByUserId).OnDelete(DeleteBehavior.NoAction);
-        modelBuilder.Entity<ItemInvoice>().HasOne(ii => ii.Reviewer).WithMany().HasForeignKey(ii => ii.ReviewerUserId).OnDelete(DeleteBehavior.NoAction);
-        modelBuilder.Entity<Project>().HasOne(p => p.Owner).WithMany().HasForeignKey(p => p.OwnerUserId).OnDelete(DeleteBehavior.NoAction);
-        modelBuilder.Entity<Project>().HasOne(p => p.GeneralManager).WithMany().HasForeignKey(p => p.GeneralManagerUserId).OnDelete(DeleteBehavior.NoAction);
-        modelBuilder.Entity<Project>().HasOne(p => p.ClosedBy).WithMany().HasForeignKey(p => p.ClosedByUserId).OnDelete(DeleteBehavior.NoAction);
-        modelBuilder.Entity<SiteMedia>().HasOne(sm => sm.Uploader).WithMany().HasForeignKey(sm => sm.UploaderUserId).OnDelete(DeleteBehavior.NoAction);
-        modelBuilder.Entity<SiteMedia>().HasOne(sm => sm.Reviewer).WithMany().HasForeignKey(sm => sm.ReviewerUserId).OnDelete(DeleteBehavior.NoAction);
-        modelBuilder.Entity<Transaction>().HasOne(t => t.CreatedBy).WithMany().HasForeignKey(t => t.CreatedByUserId).OnDelete(DeleteBehavior.NoAction);
-        modelBuilder.Entity<Transaction>().HasOne(t => t.ReviewedBy).WithMany().HasForeignKey(t => t.ReviewedByUserId).OnDelete(DeleteBehavior.NoAction);
+        
+        modelBuilder.Entity<ItemInvoice>().HasOne(ii => ii.CreatedBy).WithMany(u => u.CreatedInvoices).HasForeignKey(ii => ii.CreatedByUserId).OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<ItemInvoice>().HasOne(ii => ii.Reviewer).WithMany(u => u.ReviewedInvoices).HasForeignKey(ii => ii.ReviewerUserId).OnDelete(DeleteBehavior.NoAction);
+        
+        modelBuilder.Entity<Project>().HasOne(p => p.Owner).WithMany(u => u.OwnedProjects).HasForeignKey(p => p.OwnerUserId).OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<Project>().HasOne(p => p.GeneralManager).WithMany(u => u.ManagedProjects).HasForeignKey(p => p.GeneralManagerUserId).OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<Project>().HasOne(p => p.ClosedBy).WithMany(u => u.ClosedProjects).HasForeignKey(p => p.ClosedByUserId).OnDelete(DeleteBehavior.NoAction);
+        
+        modelBuilder.Entity<SiteMedia>().HasOne(sm => sm.Uploader).WithMany(u => u.UploadedMedias).HasForeignKey(sm => sm.UploaderUserId).OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<SiteMedia>().HasOne(sm => sm.Reviewer).WithMany(u => u.ReviewedMedias).HasForeignKey(sm => sm.ReviewerUserId).OnDelete(DeleteBehavior.NoAction);
+        
+        modelBuilder.Entity<Transaction>().HasOne(t => t.CreatedBy).WithMany(u => u.CreatedTransactions).HasForeignKey(t => t.CreatedByUserId).OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<Transaction>().HasOne(t => t.ReviewedBy).WithMany(u => u.ReviewedTransactions).HasForeignKey(t => t.ReviewedByUserId).OnDelete(DeleteBehavior.NoAction);
 
         // 6. Reporting Hierarchy
         modelBuilder.Entity<ProjectTeamMember>().HasOne(ptm => ptm.ReportsTo).WithMany(u => u.Subordinates).HasForeignKey(ptm => ptm.ReportsToUserId).OnDelete(DeleteBehavior.NoAction);

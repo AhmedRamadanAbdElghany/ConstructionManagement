@@ -10,9 +10,9 @@ public class CompanyRequest : BaseEntity
     /// <summary>
     /// The user who submitted the company creation request
     /// </summary>
-    public int UserId { get; set; }
+    public int? UserId { get; set; }
     [ForeignKey(nameof(UserId))]
-    public virtual User User { get; set; } = null!;
+    public virtual User? User { get; set; }
 
     /// <summary>
     /// Proposed company name

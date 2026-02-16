@@ -119,7 +119,7 @@ public class JoinRequestService : IJoinRequestService
         }
 
         // Add user to company
-        var user = await _userRepository.GetByIdAsync(request.UserId);
+        var user = await _userRepository.GetByIdAsync(request.UserId ?? 0);
         if (user != null)
         {
             user.CompanyId = request.CompanyId;
@@ -161,7 +161,7 @@ public class JoinRequestService : IJoinRequestService
 
         // Send notifications
         var company = await _companyRepository.GetByIdAsync(request.CompanyId);
-        await _notificationService.NotifyJoinRequestApprovedAsync(request.UserId, company?.Name ?? "the company");
+        await _notificationService.NotifyJoinRequestApprovedAsync(request.UserId ?? 0, company?.Name ?? "the company");
         await _emailService.SendJoinRequestApprovedAsync(user?.Email ?? "", company?.Name ?? "the company");
 
         return MapToDto(request);
@@ -184,8 +184,8 @@ public class JoinRequestService : IJoinRequestService
         await _joinRequestRepository.UpdateAsync(request);
 
         // Send notifications
-        var user = await _userRepository.GetByIdAsync(request.UserId);
-        await _notificationService.NotifyJoinRequestRejectedAsync(request.UserId, dto.RejectionReason);
+        var user = await _userRepository.GetByIdAsync(request.UserId ?? 0);
+        await _notificationService.NotifyJoinRequestRejectedAsync(request.UserId ?? 0, dto.RejectionReason);
         await _emailService.SendJoinRequestRejectedAsync(user?.Email ?? "", dto.RejectionReason);
 
         return MapToDto(request);
@@ -207,7 +207,7 @@ public class JoinRequestService : IJoinRequestService
         return new JoinRequestDto
         {
             Id = request.Id,
-            UserId = request.UserId,
+            UserId = request.UserId ?? 0,
             UserFullName = request.User?.FullName ?? string.Empty,
             UserEmail = request.User?.Email ?? string.Empty,
             CompanyId = request.CompanyId,

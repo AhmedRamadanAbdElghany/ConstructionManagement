@@ -34,14 +34,14 @@ public class WarehouseOrderRequest : BaseEntity
     /// <summary>
     /// The target project
     /// </summary>
-    public int ProjectId { get; set; }
+    public int? ProjectId { get; set; }
     [ForeignKey(nameof(ProjectId))]
     public virtual Project? Project { get; set; }
 
     /// <summary>
     /// User from warehouse who made the request
     /// </summary>
-    public int RequestedByUserId { get; set; }
+    public int? RequestedByUserId { get; set; }
     [ForeignKey(nameof(RequestedByUserId))]
     public virtual User? RequestedByUser { get; set; }
 

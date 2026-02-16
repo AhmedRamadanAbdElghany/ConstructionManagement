@@ -470,7 +470,7 @@ namespace ConstructionManagement.Infrastructure.Services
                 ReportedDate = DateTime.UtcNow,
                 DiscoveryDate = request.DiscoveryDate,
                 TargetResolutionDate = request.TargetResolutionDate,
-                AssignedToId = request.AssignedToId,
+                AssignedToId = request.AssignedToId ?? "",
                 IsSafetyRelated = request.IsSafetyRelated,
                 RequiresRebork = request.RequiresRebork,
                 PhotoBefore = request.PhotoBefore,
@@ -501,7 +501,7 @@ namespace ConstructionManagement.Infrastructure.Services
             defect.Location = request.Location;
             defect.Element = request.Element;
             defect.TargetResolutionDate = request.TargetResolutionDate;
-            defect.AssignedToId = request.AssignedToId;
+            defect.AssignedToId = request.AssignedToId ?? "";
             defect.RootCause = request.RootCause;
             defect.CorrectiveAction = request.CorrectiveAction;
             defect.PreventiveAction = request.PreventiveAction;
@@ -538,7 +538,7 @@ namespace ConstructionManagement.Infrastructure.Services
             if (defect == null)
                 throw new KeyNotFoundException("Defect not found");
 
-            defect.AssignedToId = request.AssignedToId;
+            defect.AssignedToId = request.AssignedToId ?? "";
             defect.TargetResolutionDate = request.TargetResolutionDate ?? defect.TargetResolutionDate;
             if (defect.Status == "Open")
                 defect.Status = "InProgress";
@@ -790,7 +790,7 @@ namespace ConstructionManagement.Infrastructure.Services
                 Category = request.Category,
                 Priority = request.Priority,
                 Status = "Pending",
-                AssignedToId = request.AssignedToId,
+                AssignedToId = request.AssignedToId ?? "",
                 DueDate = request.DueDate,
                 CostEstimate = request.CostEstimate,
                 IsSafetyItem = request.IsSafetyItem,
@@ -820,7 +820,7 @@ namespace ConstructionManagement.Infrastructure.Services
             item.Category = request.Category;
             item.Priority = request.Priority;
             item.Status = request.Status ?? item.Status;
-            item.AssignedToId = request.AssignedToId;
+            item.AssignedToId = request.AssignedToId ?? "";
             item.DueDate = request.DueDate;
             item.CompletedDate = request.CompletedDate;
             item.CompletionNotes = request.CompletionNotes;

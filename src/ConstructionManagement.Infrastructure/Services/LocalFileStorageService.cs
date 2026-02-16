@@ -100,9 +100,9 @@ public class LocalFileStorageService : IFileStorageService
     }
 
 
-    public async Task DeleteFileAsync(string filePath)
+    public Task DeleteFileAsync(string filePath)
     {
-        if (string.IsNullOrEmpty(filePath)) return;
+        if (string.IsNullOrEmpty(filePath)) return Task.CompletedTask;
 
         // تحويل المسار النسبي إلى مسار فيزيائي للحذف
         var physicalPath = Path.Combine(_rootPath, "..", filePath.TrimStart('/'));
@@ -111,5 +111,6 @@ public class LocalFileStorageService : IFileStorageService
         {
             File.Delete(physicalPath);
         }
+        return Task.CompletedTask;
     }
 }

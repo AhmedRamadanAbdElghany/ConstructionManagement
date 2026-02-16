@@ -9,7 +9,7 @@ namespace ConstructionManagement.Domain.Entities;
 /// </summary>
 public class EquipmentAssignment : BaseEntity, IProjectEntity
 {
-    public int EquipmentId { get; set; }
+    public int? EquipmentId { get; set; }
     [ForeignKey(nameof(EquipmentId))]
     public virtual Equipment? Equipment { get; set; }
     

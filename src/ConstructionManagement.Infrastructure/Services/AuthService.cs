@@ -243,7 +243,7 @@ public class AuthService : IAuthService
 
             return new ForgotPasswordResponse(true, "If an account exists with this email, a password reset link has been sent.");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new ForgotPasswordResponse(false, "An error occurred while processing your request.");
         }
@@ -279,7 +279,7 @@ public class AuthService : IAuthService
 
             return new ResetPasswordResponse(true, "Password reset successful.");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new ResetPasswordResponse(false, "An error occurred while resetting your password.");
         }
@@ -353,9 +353,9 @@ public class AuthService : IAuthService
         return null;
     }
 
-    public async Task<int?> GetCurrentUserIdAsync()
+    public Task<int?> GetCurrentUserIdAsync()
     {
-        return GetCurrentUserId();
+        return Task.FromResult(GetCurrentUserId());
     }
 
     public async Task<bool> UpdateProfileAsync(int userId, UpdateProfileRequest request)

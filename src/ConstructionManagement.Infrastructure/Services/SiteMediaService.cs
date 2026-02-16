@@ -138,7 +138,10 @@ public class SiteMediaService : ISiteMediaService
                     await _unitOfWork.SaveChangesAsync();
 
                     // Send notification (optional - null-safe)
-                    await _notificationService?.SendApprovalNeededNotificationAsync(approvalRequest, firstStep);
+                    if (_notificationService != null)
+                    {
+                        await _notificationService.SendApprovalNeededNotificationAsync(approvalRequest, firstStep);
+                    }
                 }
             }
 

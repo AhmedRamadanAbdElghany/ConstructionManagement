@@ -111,14 +111,14 @@ public class InventoryOrder : BaseEntity
     /// <summary>
     /// Company Owner (buyer)
     /// </summary>
-    public int CompanyOwnerUserId { get; set; }
+    public int? CompanyOwnerUserId { get; set; }
     [ForeignKey(nameof(CompanyOwnerUserId))]
     public virtual User? CompanyOwnerUser { get; set; }
 
     /// <summary>
     /// Inventory Owner (seller)
     /// </summary>
-    public int InventoryOwnerUserId { get; set; }
+    public int? InventoryOwnerUserId { get; set; }
     [ForeignKey(nameof(InventoryOwnerUserId))]
     public virtual User? InventoryOwnerUser { get; set; }
 
@@ -132,7 +132,7 @@ public class InventoryOrder : BaseEntity
     /// <summary>
     /// Target project
     /// </summary>
-    public int ProjectId { get; set; }
+    public int? ProjectId { get; set; }
     [ForeignKey(nameof(ProjectId))]
     public virtual Project? Project { get; set; }
 

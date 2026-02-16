@@ -111,19 +111,19 @@ public class WarehouseOrderService : IWarehouseOrderService
         return order;
     }
 
-    public async Task<string> GenerateBarcodeAsync(int orderId)
+    public Task<string> GenerateBarcodeAsync(int orderId)
     {
         // Generate unique barcode: ORD-YYYYMMDD-XXXXXXXX
         var timestamp = DateTime.UtcNow.ToString("yyyyMMdd");
         var uniqueId = Guid.NewGuid().ToString("N")[..8].ToUpper();
-        return $"ORD-{timestamp}-{uniqueId}";
+        return Task.FromResult($"ORD-{timestamp}-{uniqueId}");
     }
 
-    private async Task<string> GenerateOrderNumberAsync()
+    private Task<string> GenerateOrderNumberAsync()
     {
         // Generate order number: ORD-YYYYMMDD-XXXX
         var timestamp = DateTime.UtcNow.ToString("yyyyMMdd");
         var random = new Random().Next(1000, 9999);
-        return $"ORD-{timestamp}-{random}";
+        return Task.FromResult($"ORD-{timestamp}-{random}");
     }
 }

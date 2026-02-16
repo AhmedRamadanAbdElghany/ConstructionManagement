@@ -14,7 +14,7 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.1" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.1" />
 		<PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.29" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.3.0" />
 
 		<PackageReference Include="MockQueryable.Moq" Version="8.0.1" />
 

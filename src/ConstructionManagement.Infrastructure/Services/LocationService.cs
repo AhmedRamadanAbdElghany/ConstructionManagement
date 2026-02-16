@@ -30,9 +30,9 @@ public class LocationService : ILocationService
             .ToList();
     }
 
-    public async Task<double> CalculateDistanceAsync(double lat1, double lon1, double lat2, double lon2)
+    public Task<double> CalculateDistanceAsync(double lat1, double lon1, double lat2, double lon2)
     {
-        return CalculateDistance(lat1, lon1, lat2, lon2);
+        return Task.FromResult(CalculateDistance(lat1, lon1, lat2, lon2));
     }
 
     public async Task<UserDto> UpdateLocationAsync(int userId, double latitude, double longitude)

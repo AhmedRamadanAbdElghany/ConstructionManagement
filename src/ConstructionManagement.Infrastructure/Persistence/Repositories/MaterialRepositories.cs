@@ -7,11 +7,8 @@ namespace ConstructionManagement.Infrastructure.Persistence.Repositories;
 
 public class MaterialRepository : Repository<Material>, IMaterialRepository
 {
-    private readonly ApplicationDbContext _context;
-
     public MaterialRepository(ApplicationDbContext context) : base(context)
     {
-        _context = context;
     }
 
     public async Task<IEnumerable<Material>> GetMaterialsByCategoryAsync(int categoryId)
@@ -96,11 +93,8 @@ public class MaterialRepository : Repository<Material>, IMaterialRepository
 
 public class MaterialCategoryRepository : Repository<MaterialCategory>, IMaterialCategoryRepository
 {
-    private readonly ApplicationDbContext _context;
-
     public MaterialCategoryRepository(ApplicationDbContext context) : base(context)
     {
-        _context = context;
     }
 
     public async Task<IEnumerable<MaterialCategory>> GetRootCategoriesAsync()
@@ -128,11 +122,8 @@ public class MaterialCategoryRepository : Repository<MaterialCategory>, IMateria
 
 public class MaterialStockRepository : Repository<MaterialStock>, IMaterialStockRepository
 {
-    private readonly ApplicationDbContext _context;
-
     public MaterialStockRepository(ApplicationDbContext context) : base(context)
     {
-        _context = context;
     }
     
     public async Task<IEnumerable<MaterialStock>> GetStocksByMaterialAsync(int materialId)
@@ -146,7 +137,7 @@ public class MaterialStockRepository : Repository<MaterialStock>, IMaterialStock
     public async Task<IEnumerable<MaterialStock>> GetStocksByWarehouseAsync(string warehouseId)
     {
         return await _context.MaterialStocks
-            .Where(s => s.WarehouseId == warehouseId)
+            .Where(s => s.WarehouseCode == warehouseId)
             .Include(s => s.Material)
             .ToListAsync();
     }
@@ -154,7 +145,7 @@ public class MaterialStockRepository : Repository<MaterialStock>, IMaterialStock
     public async Task<MaterialStock?> GetStockByMaterialAndWarehouseAsync(int materialId, string warehouseId)
     {
         return await _context.MaterialStocks
-            .FirstOrDefaultAsync(s => s.MaterialId == materialId && s.WarehouseId == warehouseId);
+            .FirstOrDefaultAsync(s => s.MaterialId == materialId && s.WarehouseCode == warehouseId);
     }
     
     public async Task<MaterialStock?> GetStockByIdAsync(int id)
@@ -184,11 +175,8 @@ public class MaterialStockRepository : Repository<MaterialStock>, IMaterialStock
 
 public class MaterialRequestRepository : Repository<MaterialRequest>, IMaterialRequestRepository
 {
-    private readonly ApplicationDbContext _context;
-
     public MaterialRequestRepository(ApplicationDbContext context) : base(context)
     {
-        _context = context;
     }
 
     public async Task<MaterialRequest?> GetRequestByIdAsync(int id)
@@ -277,11 +265,8 @@ public class MaterialRequestRepository : Repository<MaterialRequest>, IMaterialR
 
 public class MaterialRequestItemRepository : Repository<MaterialRequestItem>, IMaterialRequestItemRepository
 {
-    private readonly ApplicationDbContext _context;
-
     public MaterialRequestItemRepository(ApplicationDbContext context) : base(context)
     {
-        _context = context;
     }
 
     public async Task<IEnumerable<MaterialRequestItem>> GetItemsByRequestAsync(int requestId)
@@ -295,11 +280,8 @@ public class MaterialRequestItemRepository : Repository<MaterialRequestItem>, IM
 
 public class MaterialConsumptionRepository : Repository<MaterialConsumption>, IMaterialConsumptionRepository
 {
-    private readonly ApplicationDbContext _context;
-
     public MaterialConsumptionRepository(ApplicationDbContext context) : base(context)
     {
-        _context = context;
     }
 
     public async Task<IEnumerable<MaterialConsumption>> GetConsumptionsByProjectAsync(int projectId)
@@ -357,11 +339,8 @@ public class MaterialConsumptionRepository : Repository<MaterialConsumption>, IM
 
 public class WarehouseRepository : Repository<Warehouse>, IWarehouseRepository
 {
-    private readonly ApplicationDbContext _context;
-
     public WarehouseRepository(ApplicationDbContext context) : base(context)
     {
-        _context = context;
     }
 
     public async Task<Warehouse?> GetWarehouseByCodeAsync(string code)

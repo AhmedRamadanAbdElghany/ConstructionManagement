@@ -12,9 +12,16 @@ public class MaterialStock : BaseEntity, ICompanyEntity
     public virtual Material? Material { get; set; }
     
     /// <summary>
-    /// Warehouse or storage location identifier
+    /// Warehouse or storage location identifier (Link to Warehouse entity)
     /// </summary>
-    public string WarehouseId { get; set; } = "main";
+    public int? WarehouseId { get; set; }
+    [ForeignKey(nameof(WarehouseId))]
+    public virtual Warehouse? Warehouse { get; set; }
+
+    /// <summary>
+    /// Legacy warehouse identifier or code
+    /// </summary>
+    public string WarehouseCode { get; set; } = "main";
     
     /// <summary>
     /// Warehouse/location name

@@ -1,0 +1,21 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  ConstructionManagement.Domain -> c:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Domain\bin\Debug\net9.0\ConstructionManagement.Domain.dll
+  ConstructionManagement.Application -> C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Application\bin\Debug\net9.0\ConstructionManagement.Application.dll
+c:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Services\ClientPortalService.cs(178,26): warning CS8601: Possible null reference assignment. [c:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
+c:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Services\ClientPortalService.cs(179,32): warning CS8601: Possible null reference assignment. [c:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
+c:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Services\AnalyticsService.cs(1255,28): error CS0019: Operator '??' cannot be applied to operands of type 'decimal' and 'int' [c:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
+c:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Services\AnalyticsService.cs(1256,27): error CS0019: Operator '??' cannot be applied to operands of type 'DateTime' and 'DateTime' [c:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
+
+Build FAILED.
+
+c:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Services\ClientPortalService.cs(178,26): warning CS8601: Possible null reference assignment. [c:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
+c:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Services\ClientPortalService.cs(179,32): warning CS8601: Possible null reference assignment. [c:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
+c:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Services\AnalyticsService.cs(1255,28): error CS0019: Operator '??' cannot be applied to operands of type 'decimal' and 'int' [c:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
+c:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Services\AnalyticsService.cs(1256,27): error CS0019: Operator '??' cannot be applied to operands of type 'DateTime' and 'DateTime' [c:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
+    2 Warning(s)
+    2 Error(s)
+
+Time Elapsed 00:00:12.55
+
+Workload updates are available. Run `dotnet workload list` for more information.

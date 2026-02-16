@@ -219,12 +219,13 @@ public class NotificationService : INotificationService
         await _notificationRepository.UpdateRangeAsync(unreadNotifications);
     }
 
-    public async Task SendApprovalNeededNotificationAsync(ApprovalRequest request, ApprovalStep step)
+    public Task SendApprovalNeededNotificationAsync(ApprovalRequest request, ApprovalStep step)
     {
         // This is a placeholder - the original implementation was more complex
         _logger.LogInformation(
             "SendApprovalNeededNotificationAsync called for request {RequestId}",
             request.Id);
+        return Task.CompletedTask;
     }
 
     // New methods for company/join requests

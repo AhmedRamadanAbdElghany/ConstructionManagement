@@ -298,7 +298,7 @@ public class MaterialStockService : IMaterialStockService
             stock = new MaterialStock
             {
                 MaterialId = materialId,
-                WarehouseId = warehouseId,
+                WarehouseCode = warehouseId,
                 CurrentQuantity = quantity > 0 ? quantity : 0,
                 CompanyId = material?.CompanyId
             };

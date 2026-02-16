@@ -138,7 +138,7 @@ public class CompanyRequestService : ICompanyRequestService
         {
             Name = request.CompanyName,
             BusinessId = request.BusinessId,
-            ContactEmail = request.ContactEmail ?? request.User.Email,
+            ContactEmail = request.ContactEmail ?? request.User?.Email ?? "",
             ContactPhone = request.ContactPhone,
             Address = request.Address,
             IsActive = true,
@@ -222,7 +222,7 @@ public class CompanyRequestService : ICompanyRequestService
         await _uow.SaveChangesAsync();
 
         // Update user to be Company Admin of the new company
-        var user = await _userRepository.GetByIdAsync(request.UserId);
+        var user = await _userRepository.GetByIdAsync(request.UserId ?? 0);
         if (user != null)
         {
             user.CompanyId = company.Id;
@@ -254,8 +254,11 @@ public class CompanyRequestService : ICompanyRequestService
         await _companyRequestRepository.UpdateAsync(request);
 
         // Send notifications
-        await _notificationService.NotifyCompanyRequestApprovedAsync(request.UserId, request.CompanyName);
-        await _emailService.SendCompanyRequestApprovedAsync(request.User.Email, request.CompanyName);
+        await _notificationService.NotifyCompanyRequestApprovedAsync(request.UserId ?? 0, request.CompanyName);
+        if (request.User != null)
+        {
+            await _emailService.SendCompanyRequestApprovedAsync(request.User.Email, request.CompanyName);
+        }
 
         return MapToDto(request);
     }
@@ -347,8 +350,11 @@ public class CompanyRequestService : ICompanyRequestService
         await _companyRequestRepository.UpdateAsync(request);
 
         // Send notifications
-        await _notificationService.NotifyCompanyRequestRejectedAsync(request.UserId, dto.RejectionReason);
-        await _emailService.SendCompanyRequestRejectedAsync(request.User.Email, dto.RejectionReason);
+        await _notificationService.NotifyCompanyRequestRejectedAsync(request.UserId ?? 0, dto.RejectionReason);
+        if (request.User != null)
+        {
+            await _emailService.SendCompanyRequestRejectedAsync(request.User.Email, dto.RejectionReason);
+        }
 
         return MapToDto(request);
     }
@@ -369,7 +375,7 @@ public class CompanyRequestService : ICompanyRequestService
         return new CompanyRequestDto
         {
             Id = request.Id,
-            UserId = request.UserId,
+            UserId = request.UserId ?? 0,
             UserFullName = request.User?.FullName ?? string.Empty,
             UserEmail = request.User?.Email ?? string.Empty,
             CompanyName = request.CompanyName,
