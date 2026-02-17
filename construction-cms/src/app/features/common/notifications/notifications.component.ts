@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NotificationsService, NotificationDto } from '../../../core/services/notifications.service';
+import { I18nService, Language } from '../../../core/i18n/i18n.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-notifications',
@@ -129,9 +131,10 @@ import { NotificationsService, NotificationDto } from '../../../core/services/no
     </div>
   `
 })
-export class NotificationsComponent implements OnInit {
+export class NotificationsComponent implements OnInit, OnDestroy {
   notifications: NotificationDto[] = [];
   filter: 'all' | 'unread' = 'all';
+  private destroy$ = new Subject<void>();
 
   get filteredNotifications(): NotificationDto[] {
     if (this.filter === 'unread') {
@@ -146,10 +149,28 @@ export class NotificationsComponent implements OnInit {
 
   constructor(
     private notificationsService: NotificationsService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private i18nService: I18nService
   ) { }
 
   ngOnInit() {
+    // Load notifications initially
+    this.loadNotifications();
+
+    // Re-fetch notifications when language changes to get localized messages from backend
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadNotifications();
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private loadNotifications() {
     this.notificationsService.getNotifications().subscribe(notifications => {
       this.notifications = notifications;
       this.notificationsService.refreshUnreadCount();
