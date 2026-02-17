@@ -10,8 +10,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = localStorage.getItem('authToken');
   const tenantId = 'tenant_123'; // This could also come from localStorage or a service
 
-  // Get the current language from localStorage or default to Arabic (primary language)
-  const currentLanguage = localStorage.getItem('language') || 'ar';
+  // Get the current language from localStorage (using the same key as I18nService) or default to Arabic (primary language)
+  const currentLanguage = localStorage.getItem('app-language') || 'ar';
 
   // Build headers object
   const headers: Record<string, string> = {

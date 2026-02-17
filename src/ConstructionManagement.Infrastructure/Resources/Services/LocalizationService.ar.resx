@@ -307,4 +307,19 @@
   <data name="Dashboard.Activity.OrganizationLive" xml:space="preserve">
     <value>المنظمة الآن مفعلة</value>
   </data>
+  <data name="NotificationMessage.BudgetOverrun.Critical" xml:space="preserve">
+    <value>تصعيد حرج: تجاوز الميزانية - البند {0} تجاوز الميزانية ({1})</value>
+  </data>
+  <data name="NotificationMessage.BudgetWarning.Approaching" xml:space="preserve">
+    <value>تحذير: اقتراب من الميزانية - البند {0} استهلك 90% من ميزانيته</value>
+  </data>
+  <data name="NotificationMessage.ApprovalEscalation" xml:space="preserve">
+    <value>تم تصعيد طلب موافقة {0} (رقم {1}) إلى دور {2} بسبب التأخير في الخطوة السابقة.</value>
+  </data>
+  <data name="NotificationMessage.CashVoucherPending" xml:space="preserve">
+    <value>سند صرف نقدي جديد في انتظار الموافقة: {0}</value>
+  </data>
+  <data name="NotificationMessage.MiscExpensePending" xml:space="preserve">
+    <value>مصروف طارئ جديد في انتظار الموافقة: {0}</value>
+  </data>
 </root>

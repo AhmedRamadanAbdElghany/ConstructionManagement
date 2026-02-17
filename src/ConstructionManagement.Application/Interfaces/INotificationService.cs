@@ -35,7 +35,10 @@ public interface INotificationService
         int? projectId,
         int referenceId,
         string referenceType,
-        string? roleName = null
+        string? roleName = null,
+        string? titleKey = null,
+        string? messageKey = null,
+        object[]? messageArgs = null
     );
 
     Task SendApprovalNeededNotificationAsync(ApprovalRequest request, ApprovalStep step);

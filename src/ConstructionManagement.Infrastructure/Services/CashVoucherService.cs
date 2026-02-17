@@ -108,7 +108,10 @@ public class CashVoucherService : ICashVoucherService
                 null,
                 voucher.Id,
                 "CashVoucher",
-                approverRole
+                approverRole,
+                titleKey: "NotificationTitle.Escalation",
+                messageKey: "NotificationMessage.CashVoucherPending",
+                messageArgs: new object[] { voucherNumber }
             );
         }
 

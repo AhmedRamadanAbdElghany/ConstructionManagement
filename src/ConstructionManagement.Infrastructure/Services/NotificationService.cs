@@ -75,7 +75,10 @@ public class NotificationService : INotificationService
         int? projectId,
         int referenceId,
         string referenceType,
-        string? roleName = null)
+        string? roleName = null,
+        string? titleKey = null,
+        string? messageKey = null,
+        object[]? messageArgs = null)
     {
         _logger.LogInformation(
             "CreateNotificationAsync called with type: {Type}, message: {Message}, company: {CompanyId}, project: {ProjectId}",
@@ -103,7 +106,10 @@ public class NotificationService : INotificationService
                 title: notificationType,
                 message: message,
                 link: $"/{referenceType}s/{referenceId}",
-                type: NotificationType.General
+                type: NotificationType.General,
+                titleKey: titleKey,
+                messageKey: messageKey,
+                messageArgs: messageArgs
             );
         }
     }

@@ -15,9 +15,6 @@ public class LocalizationService : ILocalizationService
     private readonly IStringLocalizer<LocalizationService> _localizer;
     private readonly ILogger<LocalizationService> _logger;
     private readonly IHttpContextAccessor? _httpContextAccessor;
-    
-    // Default to Arabic
-    private string _currentLanguage = "ar";
 
     public LocalizationService(
         IStringLocalizer<LocalizationService> localizer,
@@ -27,20 +24,21 @@ public class LocalizationService : ILocalizationService
         _localizer = localizer;
         _logger = logger;
         _httpContextAccessor = httpContextAccessor;
-        
-        DetermineLanguage();
     }
 
-    private void DetermineLanguage()
+    /// <summary>
+    /// Gets the current language from the request culture (evaluated on each access)
+    /// </summary>
+    private string GetCurrentLanguage()
     {
         try
         {
-            _currentLanguage = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+            return CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
         }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Error determining language, defaulting to Arabic");
-            _currentLanguage = "ar";
+            return "ar";
         }
     }
 
@@ -77,7 +75,7 @@ public class LocalizationService : ILocalizationService
         return GetString(key, args);
     }
 
-    public string CurrentLanguage => _currentLanguage;
+    public string CurrentLanguage => GetCurrentLanguage();
     
-    public bool IsRTL => _currentLanguage == "ar";
+    public bool IsRTL => GetCurrentLanguage() == "ar";
 }

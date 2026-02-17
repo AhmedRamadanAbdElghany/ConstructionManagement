@@ -104,6 +104,21 @@ public class NotificationMessage
     /// Maximum number of retry attempts before marking as failed.
     /// </summary>
     public int MaxRetries { get; set; } = 3;
+
+    /// <summary>
+    /// Localization key for the title (used for dynamic translation at display time).
+    /// </summary>
+    public string? TitleKey { get; set; }
+
+    /// <summary>
+    /// Localization key for the message (used for dynamic translation at display time).
+    /// </summary>
+    public string? MessageKey { get; set; }
+
+    /// <summary>
+    /// JSON-serialized arguments for message formatting.
+    /// </summary>
+    public object[]? MessageArgs { get; set; }
 }
 
 /// <summary>

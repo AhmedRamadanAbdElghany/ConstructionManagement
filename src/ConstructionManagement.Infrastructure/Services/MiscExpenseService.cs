@@ -119,7 +119,10 @@ public class MiscExpenseService : IMiscExpenseService
                 null,
                 expense.Id,
                 "MiscExpense",
-                approverRole
+                approverRole,
+                titleKey: "NotificationTitle.Escalation",
+                messageKey: "NotificationMessage.MiscExpensePending",
+                messageArgs: new object[] { expenseNumber }
             );
         }
 

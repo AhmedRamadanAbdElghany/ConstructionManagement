@@ -193,7 +193,10 @@ public class NotificationQueueProcessor : BackgroundService
                 title: message.Title,
                 message: message.Message,
                 link: message.Link,
-                type: parsedType);
+                type: parsedType,
+                titleKey: message.TitleKey,
+                messageKey: message.MessageKey,
+                messageArgs: message.MessageArgs);
 
             _logger.LogInformation(
                 "Notification {NotificationId} processed successfully",

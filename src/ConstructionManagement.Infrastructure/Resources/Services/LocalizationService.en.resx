@@ -307,4 +307,19 @@
   <data name="Dashboard.Activity.OrganizationLive" xml:space="preserve">
     <value>Organization is now live</value>
   </data>
+  <data name="NotificationMessage.BudgetOverrun.Critical" xml:space="preserve">
+    <value>Critical Escalation: Budget Overrun - Item {0} exceeded budget ({1})</value>
+  </data>
+  <data name="NotificationMessage.BudgetWarning.Approaching" xml:space="preserve">
+    <value>Warning: Budget Approach - Item {0} has consumed 90% of its budget</value>
+  </data>
+  <data name="NotificationMessage.ApprovalEscalation" xml:space="preserve">
+    <value>Approval request for {0} (ID: {1}) has been escalated to {2} role due to delay in previous step.</value>
+  </data>
+  <data name="NotificationMessage.CashVoucherPending" xml:space="preserve">
+    <value>New cash voucher pending approval: {0}</value>
+  </data>
+  <data name="NotificationMessage.MiscExpensePending" xml:space="preserve">
+    <value>New misc expense pending approval: {0}</value>
+  </data>
 </root>

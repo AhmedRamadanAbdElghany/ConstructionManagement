@@ -16,6 +16,7 @@ public class ProjectTransactionService : IProjectTransactionService
     private readonly INotificationService _notificationService;
     private readonly IRepository<BOQProfitabilityLog> _profitabilityLogRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILocalizationService? _localizationService;
 
     private readonly IActivityLogService _activityLogService;
 
@@ -27,7 +28,8 @@ public class ProjectTransactionService : IProjectTransactionService
         IRepository<BOQProfitabilityLog> profitabilityLogRepository,
         INotificationService notificationService,
         IUnitOfWork unitOfWork,
-        IActivityLogService activityLogService)
+        IActivityLogService activityLogService,
+        ILocalizationService? localizationService = null)
     {
         _transactionRepository = transactionRepository;
         _boqItemRepository = boqItemRepository;
@@ -37,6 +39,7 @@ public class ProjectTransactionService : IProjectTransactionService
         _notificationService = notificationService;
         _unitOfWork = unitOfWork;
         _activityLogService = activityLogService;
+        _localizationService = localizationService;
     }
 
     public async Task<int> CreateTransactionAsync(int projectId, CreateTransactionRequest request, int userId)
@@ -228,13 +231,37 @@ public class ProjectTransactionService : IProjectTransactionService
 
         if (totalSpent >= criticalThreshold)
         {
-            await _notificationService.CreateAndSendAsync(boqItem.Project.OwnerUserId, "تصعيد حرج: تجاوز الميزانية",
-                $"البند {boqItem.ItemName} تجاوز الميزانية ({totalSpent:P1})", $"/projects/{projectId}", NotificationType.BudgetOverrun);
+            var title = _localizationService?["NotificationTitle.BudgetOverrun"] ?? "Budget Overrun";
+            var message = _localizationService?.GetString("NotificationMessage.BudgetOverrun.Critical", boqItem.ItemName, totalSpent.ToString("P1"))
+                ?? $"Item {boqItem.ItemName} exceeded budget ({totalSpent:P1})";
+            
+            await _notificationService.CreateAndSendAsync(
+                userId: boqItem.Project.OwnerUserId,
+                title: title,
+                message: message,
+                link: $"/projects/{projectId}",
+                type: NotificationType.BudgetOverrun,
+                titleKey: "NotificationTitle.BudgetOverrun",
+                messageKey: "NotificationMessage.BudgetOverrun.Critical",
+                messageArgs: new object[] { boqItem.ItemName, totalSpent.ToString("P1") }
+            );
         }
         else if (totalSpent >= warningThreshold)
         {
-            await _notificationService.CreateAndSendAsync(userId, "تحذير: اقتراب من الميزانية",
-                $"البند {boqItem.ItemName} استهلك 90% من ميزانيته", $"/projects/{projectId}", NotificationType.BudgetWarning);
+            var title = _localizationService?["NotificationTitle.BudgetWarning"] ?? "Budget Warning";
+            var message = _localizationService?.GetString("NotificationMessage.BudgetWarning.Approaching", boqItem.ItemName)
+                ?? $"Item {boqItem.ItemName} has consumed 90% of its budget";
+            
+            await _notificationService.CreateAndSendAsync(
+                userId: userId,
+                title: title,
+                message: message,
+                link: $"/projects/{projectId}",
+                type: NotificationType.BudgetWarning,
+                titleKey: "NotificationTitle.BudgetWarning",
+                messageKey: "NotificationMessage.BudgetWarning.Approaching",
+                messageArgs: new object[] { boqItem.ItemName }
+            );
         }
     }
 

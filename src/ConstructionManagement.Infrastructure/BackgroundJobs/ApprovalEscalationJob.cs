@@ -20,6 +20,7 @@ public class ApprovalEscalationJob
     private readonly IRepository<EscalationLog> _escalationLogRepo;
     private readonly INotificationService _notificationService;
     private readonly IUnitOfWork _unitOfWork; // ← Added
+    private readonly ILocalizationService? _localizationService;
     private readonly ILogger<ApprovalEscalationJob> _logger;
 
     public ApprovalEscalationJob(
@@ -30,6 +31,7 @@ public class ApprovalEscalationJob
         IRepository<EscalationLog> escalationLogRepo,
         INotificationService notificationService,
         IUnitOfWork unitOfWork, // ← Added
+        ILocalizationService? localizationService,
         ILogger<ApprovalEscalationJob> logger)
     {
         _stepRepo = stepRepo;
@@ -39,6 +41,7 @@ public class ApprovalEscalationJob
         _escalationLogRepo = escalationLogRepo;
         _notificationService = notificationService;
         _unitOfWork = unitOfWork; // ← Added
+        _localizationService = localizationService;
         _logger = logger;
     }
 
@@ -136,9 +139,9 @@ public class ApprovalEscalationJob
 
         if (!recipients.Any()) return;
 
-        string title = "تصعيد طلب موافقة";
-        string message = $"تم تصعيد طلب موافقة {request.Source} (رقم {request.Id}) إلى دور {escalationRole} " +
-                         $"بسبب التأخير في الخطوة السابقة.";
+        var title = _localizationService?["Project.Escalation.Title"] ?? "Escalation";
+        var message = _localizationService?.GetString("NotificationMessage.ApprovalEscalation", request.Source, request.Id.ToString(), escalationRole)
+            ?? $"Approval request for {request.Source} (ID: {request.Id}) has been escalated to {escalationRole} role due to delay in previous step.";
 
         string? link = $"/projects/{projectId}/approvals/{request.Id}";
 
@@ -149,7 +152,10 @@ public class ApprovalEscalationJob
                 title: title,
                 message: message,
                 link: link,
-                type: NotificationType.Escalation
+                type: NotificationType.Escalation,
+                titleKey: "Project.Escalation.Title",
+                messageKey: "NotificationMessage.ApprovalEscalation",
+                messageArgs: new object[] { request.Source, request.Id.ToString(), escalationRole }
             );
         }
 
