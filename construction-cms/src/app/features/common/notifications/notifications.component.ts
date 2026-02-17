@@ -25,7 +25,7 @@ import { NotificationsService, NotificationDto } from '../../../core/services/no
         </div>
 
         <!-- Filter Tabs -->
-        <div class="flex items-center space-x-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-1.5 shadow-xl shadow-slate-200/50 dark:shadow-none mb-10 w-fit">
+        <div class="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-1.5 shadow-xl shadow-slate-200/50 dark:shadow-none mb-10 w-fit">
           <button 
             (click)="filter = 'all'"
             [class.bg-slate-900]="filter === 'all'"
@@ -35,7 +35,7 @@ import { NotificationsService, NotificationDto } from '../../../core/services/no
             [class.text-slate-500]="filter !== 'all'"
             class="px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center">
             {{ 'notifications.all' | translate }}
-            <span class="ml-2 px-2 py-0.5 rounded-lg bg-slate-500/10 text-[9px]">{{ notifications.length }}</span>
+            <span class="ms-2 px-2 py-0.5 rounded-lg bg-slate-500/10 text-[9px]">{{ notifications.length }}</span>
           </button>
           <button 
             (click)="filter = 'unread'"
@@ -45,7 +45,7 @@ import { NotificationsService, NotificationDto } from '../../../core/services/no
             class="px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center">
             {{ 'notifications.unread' | translate }}
             @if (unreadCount > 0) {
-              <span class="ml-2 px-2 py-0.5 rounded-lg bg-rose-500 text-white text-[9px] animate-pulse">{{ unreadCount }}</span>
+              <span class="ms-2 px-2 py-0.5 rounded-lg bg-rose-500 text-white text-[9px] animate-pulse">{{ unreadCount }}</span>
             }
           </button>
         </div>
@@ -59,9 +59,9 @@ import { NotificationsService, NotificationDto } from '../../../core/services/no
               [class.bg-slate-50]="notification.isRead"
               [class.dark:bg-slate-950/30]="notification.isRead">
               
-              <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/15 transition-colors"></div>
+              <div class="absolute top-0 right-0 rtl:left-0 rtl:right-auto w-32 h-32 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/15 transition-colors"></div>
 
-              <div class="relative flex items-start space-x-6">
+              <div class="relative flex items-start gap-6">
                 <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform"
                      [ngClass]="{
                        'bg-amber-500/10 text-amber-600 dark:text-amber-500': notification.type === 'warning',
@@ -96,14 +96,14 @@ import { NotificationsService, NotificationDto } from '../../../core/services/no
                   <div class="flex items-start justify-between mb-2">
                     <p class="text-base text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors" [class.font-black]="!notification.isRead" [class.font-bold]="notification.isRead">{{ notification.message }}</p>
                     @if (!notification.isRead) {
-                      <span class="w-2.5 h-2.5 rounded-full bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.5)] flex-shrink-0 ml-4 mt-1.5 animate-pulse"></span>
+                      <span class="w-2.5 h-2.5 rounded-full bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.5)] flex-shrink-0 ms-4 mt-1.5 animate-pulse"></span>
                     }
                   </div>
                   <p class="text-xs font-black text-slate-500 dark:text-slate-500 uppercase tracking-widest">{{ getTimeAgo(notification.createdAt) }}</p>
                   @if (notification.actionUrl) {
-                    <div class="mt-6 inline-flex items-center text-xs font-black text-cyan-600 dark:text-cyan-400 uppercase tracking-widest hover:translate-x-1 transition-transform">
+                    <div class="mt-6 inline-flex items-center text-xs font-black text-cyan-600 dark:text-cyan-400 uppercase tracking-widest hover:translate-x-1 transition-transform rtl:hover:-translate-x-1">
                       <span>{{ 'notifications.view_details' | translate }}</span>
-                      <svg class="w-3.5 h-3.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path>
                       </svg>
                     </div>
