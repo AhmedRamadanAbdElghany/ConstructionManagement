@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NotificationsService, NotificationDto } from '../../../core/services/notifications.service';
 
 @Component({
@@ -144,7 +144,10 @@ export class NotificationsComponent implements OnInit {
     return this.notifications.filter(n => !n.isRead).length;
   }
 
-  constructor(private notificationsService: NotificationsService) { }
+  constructor(
+    private notificationsService: NotificationsService,
+    private translate: TranslateService
+  ) { }
 
   ngOnInit() {
     this.notificationsService.getNotifications().subscribe(notifications => {
@@ -181,10 +184,11 @@ export class NotificationsComponent implements OnInit {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins} minutes ago`;
-    if (diffHours < 24) return `${diffHours} hours ago`;
-    if (diffDays < 7) return `${diffDays} days ago`;
-    return then.toLocaleDateString();
+    if (diffMins < 1) return this.translate.instant('common.just_now');
+    if (diffMins < 60) return this.translate.instant('common.minutes_ago', { count: diffMins });
+    if (diffHours < 24) return this.translate.instant('common.hours_ago', { count: diffHours });
+    if (diffDays < 7) return this.translate.instant('common.days_ago', { count: diffDays });
+
+    return then.toLocaleDateString(this.translate.currentLang === 'ar' ? 'ar-EG' : 'en-US');
   }
 }

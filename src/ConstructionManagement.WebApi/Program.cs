@@ -42,7 +42,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<CreateProjectRequestValidat
 
 // 1.5 Localization - Arabic as default, English as secondary
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-builder.Services.AddSingleton<ILocalizationService, LocalizationService>();
+builder.Services.AddScoped<ILocalizationService, LocalizationService>();
 builder.Services.AddHttpContextAccessor();
 
 var supportedCultures = new[]
