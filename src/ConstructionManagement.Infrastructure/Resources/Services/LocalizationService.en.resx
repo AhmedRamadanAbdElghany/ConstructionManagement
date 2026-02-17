@@ -277,19 +277,19 @@
   <data name="Project.RolesRequired" xml:space="preserve">
     <value>Roles are required</value>
   </data>
-  <data name="Project.StartDelay" xml:space="preserve">
+  <data name="NotificationMessage.Project.StartDelay" xml:space="preserve">
     <value>Project start delay: {0} (Expected: {1})</value>
   </data>
-  <data name="Project.ItemStartDelay" xml:space="preserve">
+  <data name="NotificationMessage.Project.ItemStartDelay" xml:space="preserve">
     <value>Item start delay: {0} in project: {1}</value>
   </data>
-  <data name="Project.ItemEndDelay" xml:space="preserve">
+  <data name="NotificationMessage.Project.ItemEndDelay" xml:space="preserve">
     <value>Item delivery delay: {0} (Deadline: {1})</value>
   </data>
   <data name="Project.BudgetWarning.Title" xml:space="preserve">
     <value>Budget Warning</value>
   </data>
-  <data name="Project.BudgetWarning.Message" xml:space="preserve">
+  <data name="NotificationMessage.Project.BudgetWarning.Message" xml:space="preserve">
     <value>Item {0} has consumed {1}% of the budget</value>
   </data>
   <data name="Project.Escalation.Title" xml:space="preserve">

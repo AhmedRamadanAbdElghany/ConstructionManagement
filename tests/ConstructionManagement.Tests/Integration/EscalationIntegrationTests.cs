@@ -98,7 +98,10 @@ public class EscalationIntegrationTests : IntegrationTestBase
             It.IsAny<string>(),
             It.IsAny<string>(),
             It.IsAny<string>(),
-            NotificationType.ProjectDelay),
+            NotificationType.ProjectDelay,
+            It.IsAny<string?>(),
+            It.IsAny<string?>(),
+            It.IsAny<object[]?>()),
             Times.Once());
     }
 

@@ -19,7 +19,10 @@ public interface INotificationService
         string title,
         string message,
         string? link = null,
-        NotificationType type = NotificationType.General
+        NotificationType type = NotificationType.General,
+        string? titleKey = null,
+        string? messageKey = null,
+        object[]? messageArgs = null
     );
 
     /// <summary>

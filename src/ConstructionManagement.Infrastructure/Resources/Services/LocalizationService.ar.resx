@@ -277,19 +277,19 @@
   <data name="Project.RolesRequired" xml:space="preserve">
     <value>الرولات مطلوبة</value>
   </data>
-  <data name="Project.StartDelay" xml:space="preserve">
+  <data name="NotificationMessage.Project.StartDelay" xml:space="preserve">
     <value>تأخير بداية المشروع: {0} (الموعد المتوقع: {1})</value>
   </data>
-  <data name="Project.ItemStartDelay" xml:space="preserve">
+  <data name="NotificationMessage.Project.ItemStartDelay" xml:space="preserve">
     <value>تأخير بداية البند: {0} في المشروع: {1}</value>
   </data>
-  <data name="Project.ItemEndDelay" xml:space="preserve">
+  <data name="NotificationMessage.Project.ItemEndDelay" xml:space="preserve">
     <value>تأخير تسليم البند: {0} (الموعد النهائي: {1})</value>
   </data>
   <data name="Project.BudgetWarning.Title" xml:space="preserve">
     <value>تحذير الميزانية</value>
   </data>
-  <data name="Project.BudgetWarning.Message" xml:space="preserve">
+  <data name="NotificationMessage.Project.BudgetWarning.Message" xml:space="preserve">
     <value>البند {0} استهلك {1}% من الميزانية</value>
   </data>
   <data name="Project.Escalation.Title" xml:space="preserve">

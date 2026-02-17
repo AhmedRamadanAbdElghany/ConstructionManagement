@@ -81,7 +81,10 @@ public class ProjectTransactionServiceTests
             It.Is<string>(s => s.Contains("تصعيد حرج")),
             It.IsAny<string>(),
             It.IsAny<string>(),
-            NotificationType.BudgetOverrun),
+            NotificationType.BudgetOverrun,
+            It.IsAny<string?>(),
+            It.IsAny<string?>(),
+            It.IsAny<object[]?>()),
             Times.Once);
     }
 

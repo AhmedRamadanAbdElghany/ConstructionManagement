@@ -172,7 +172,9 @@ public class AuthService : IAuthService
                     _localizationService["NotificationTitle.RegistrationPending"],
                     _localizationService["NotificationMessage.RegistrationPending"],
                     null,
-                    NotificationType.General
+                    NotificationType.General,
+                    titleKey: "NotificationTitle.RegistrationPending",
+                    messageKey: "RegistrationPending"
                 );
             }
             // For InventoryOwner and NormalUser, we skip the "Pending" status and company request.

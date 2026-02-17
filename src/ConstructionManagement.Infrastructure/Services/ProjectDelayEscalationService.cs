@@ -74,8 +74,11 @@ public class ProjectDelayEscalationService : IProjectDelayEscalationService
                 today > project.StartDate.Value.AddDays(settings.DelayGracePeriodDays ?? 0) &&
                 project.Status == "جديد")
             {
+                var startDateStr = project.StartDate.Value.ToString("yyyy-MM-dd");
                 await SendEscalationAsync(project, null, "StartDelay", project.OwnerUserId,
-                    _localizationService.GetString("Project.StartDelay", project.ProjectName, project.StartDate.Value.ToString("yyyy-MM-dd")));
+                    _localizationService.GetString("NotificationMessage.Project.StartDelay", project.ProjectName, startDateStr),
+                    messageKey: "Project.StartDelay",
+                    messageArgs: new object[] { project.ProjectName, startDateStr });
             }
 
             foreach (var item in project.BOQItems)
@@ -87,7 +90,9 @@ public class ProjectDelayEscalationService : IProjectDelayEscalationService
                     if (engineerId > 0)
                     {
                         await SendEscalationAsync(project, item.Id, "ItemStartDelay", engineerId,
-                            _localizationService.GetString("Project.ItemStartDelay", item.ItemName, project.ProjectName));
+                            _localizationService.GetString("NotificationMessage.Project.ItemStartDelay", item.ItemName, project.ProjectName),
+                            messageKey: "Project.ItemStartDelay",
+                            messageArgs: new object[] { item.ItemName, project.ProjectName });
                     }
                 }
 
@@ -97,8 +102,11 @@ public class ProjectDelayEscalationService : IProjectDelayEscalationService
                     var managerId = await GetResponsibleUserIdForItemAsync(project.Id, "ProjectManager");
                     if (managerId > 0)
                     {
+                        var endDateStr = item.EndDate.Value.ToString("yyyy-MM-dd");
                         await SendEscalationAsync(project, item.Id, "ItemEndDelay", managerId,
-                            _localizationService.GetString("Project.ItemEndDelay", item.ItemName, item.EndDate.Value.ToString("yyyy-MM-dd")));
+                            _localizationService.GetString("NotificationMessage.Project.ItemEndDelay", item.ItemName, endDateStr),
+                            messageKey: "Project.ItemEndDelay",
+                            messageArgs: new object[] { item.ItemName, endDateStr });
                     }
                 }
 
@@ -133,18 +141,22 @@ public class ProjectDelayEscalationService : IProjectDelayEscalationService
 
             if (!recentAlert)
             {
+                var percentage = (totalSpent / estimatedBudget * 100).ToString("F1");
                 await _notificationService.CreateAndSendAsync(
                     project.OwnerUserId,
                     _localizationService["Project.BudgetWarning.Title"],
-                    _localizationService.GetString("Project.BudgetWarning.Message", item.ItemName, (totalSpent / estimatedBudget * 100).ToString("F1")),
+                    _localizationService.GetString("NotificationMessage.Project.BudgetWarning.Message", item.ItemName, percentage),
                     $"/projects/{project.Id}/items/{item.Id}",
-                    NotificationType.BudgetWarning
+                    NotificationType.BudgetWarning,
+                    titleKey: "Project.BudgetWarning.Title",
+                    messageKey: "Project.BudgetWarning.Message",
+                    messageArgs: new object[] { item.ItemName, percentage }
                 );
             }
         }
     }
 
-    private async Task SendEscalationAsync(Project project, int? itemId, string type, int recipientUserId, string message)
+    private async Task SendEscalationAsync(Project project, int? itemId, string type, int recipientUserId, string message, string? messageKey = null, object[]? messageArgs = null)
     {
         var settings = project.Settings;
         if (settings == null) return;
@@ -162,7 +174,10 @@ public class ProjectDelayEscalationService : IProjectDelayEscalationService
             _localizationService["Project.Escalation.Title"],
             message,
             $"/projects/{project.Id}/items/{itemId ?? 0}",
-            NotificationType.ProjectDelay
+            NotificationType.ProjectDelay,
+            titleKey: "Project.Escalation.Title",
+            messageKey: messageKey,
+            messageArgs: messageArgs
         );
 
         if (settings.DelayNotificationSendEmail ?? false)

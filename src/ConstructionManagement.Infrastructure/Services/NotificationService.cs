@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace ConstructionManagement.Infrastructure.Services;
@@ -43,7 +44,10 @@ public class NotificationService : INotificationService
         string title,
         string message,
         string? link = null,
-        NotificationType type = NotificationType.General)
+        NotificationType type = NotificationType.General,
+        string? titleKey = null,
+        string? messageKey = null,
+        object[]? messageArgs = null)
     {
         _logger.LogDebug("Creating notification for user {UserId}. Title: {Title}", userId, title);
 
@@ -55,7 +59,10 @@ public class NotificationService : INotificationService
             Link = link,
             Type = type,
             IsRead = false,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            TitleKey = titleKey,
+            MessageKey = messageKey,
+            MessageArgs = messageArgs != null ? JsonSerializer.Serialize(messageArgs) : null
         };
 
         await _notificationRepository.AddAsync(notification);
@@ -119,15 +126,57 @@ public class NotificationService : INotificationService
 
         _logger.LogDebug("Found {Count} notifications for user {UserId}", notificationList.Count, userId);
 
-        return notificationList.Select(n => new NotificationDto(
+        return notificationList.Select(n => LocalizeNotification(n)).ToList();
+    }
+
+    /// <summary>
+    /// Localizes a notification message at display time based on the current culture
+    /// </summary>
+    private NotificationDto LocalizeNotification(Notification n)
+    {
+        // If we have localization keys, re-localize at display time
+        string title = n.Title;
+        string message = n.Message;
+
+        if (_localizationService != null)
+        {
+            // Re-localize title if we have a key
+            if (!string.IsNullOrEmpty(n.TitleKey))
+            {
+                title = _localizationService[n.TitleKey];
+            }
+
+            // Re-localize message if we have a key
+            if (!string.IsNullOrEmpty(n.MessageKey))
+            {
+                object[]? args = null;
+                if (!string.IsNullOrEmpty(n.MessageArgs))
+                {
+                    try
+                    {
+                        args = JsonSerializer.Deserialize<object[]>(n.MessageArgs);
+                    }
+                    catch (JsonException ex)
+                    {
+                        _logger.LogWarning(ex, "Failed to deserialize message args for notification {NotificationId}", n.Id);
+                    }
+                }
+
+                message = args != null && args.Length > 0
+                    ? _localizationService.GetNotificationMessage(n.MessageKey, args)
+                    : _localizationService.GetNotificationMessage(n.MessageKey);
+            }
+        }
+
+        return new NotificationDto(
             n.Id,
-            n.Title,
-            n.Message,
+            title,
+            message,
             n.Link,
             n.Type.ToString(),
             n.IsRead,
             n.CreatedAt,
-            n.ReadAt)).ToList();
+            n.ReadAt);
     }
 
     /// <summary>
@@ -163,15 +212,7 @@ public class NotificationService : INotificationService
 
         _logger.LogDebug("Found {Count} notifications from previous types for user {UserId}", notifications.Count, userId);
 
-        return notifications.Select(n => new NotificationDto(
-            n.Id,
-            n.Title,
-            n.Message,
-            n.Link,
-            n.Type.ToString(),
-            n.IsRead,
-            n.CreatedAt,
-            n.ReadAt)).ToList();
+        return notifications.Select(n => LocalizeNotification(n)).ToList();
     }
 
     public async Task MarkAsReadAsync(int notificationId, int userId)
@@ -232,7 +273,7 @@ public class NotificationService : INotificationService
         return Task.CompletedTask;
     }
 
-    // New methods for company/join requests - All messages in Arabic
+    // New methods for company/join requests - Store localization keys for dynamic translation
     public async Task NotifyCompanyRequestApprovedAsync(int userId, string companyName)
     {
         var title = _localizationService?.GetNotificationTitle(NotificationType.ApprovalGranted) ?? "Approval Granted";
@@ -244,7 +285,10 @@ public class NotificationService : INotificationService
             title: title,
             message: message,
             link: "/dashboard",
-            type: NotificationType.ApprovalGranted
+            type: NotificationType.ApprovalGranted,
+            titleKey: $"NotificationTitle.{NotificationType.ApprovalGranted}",
+            messageKey: "CompanyApproved",
+            messageArgs: new object[] { companyName }
         );
     }
 
@@ -258,7 +302,10 @@ public class NotificationService : INotificationService
             userId: userId,
             title: title,
             message: message,
-            type: NotificationType.ApprovalRejected
+            type: NotificationType.ApprovalRejected,
+            titleKey: $"NotificationTitle.{NotificationType.ApprovalRejected}",
+            messageKey: "CompanyRejected",
+            messageArgs: new object[] { reason }
         );
     }
 
@@ -273,7 +320,10 @@ public class NotificationService : INotificationService
             title: title,
             message: message,
             link: "/dashboard",
-            type: NotificationType.ApprovalGranted
+            type: NotificationType.ApprovalGranted,
+            titleKey: $"NotificationTitle.{NotificationType.ApprovalGranted}",
+            messageKey: "JoinApproved",
+            messageArgs: new object[] { companyName }
         );
     }
 
@@ -287,7 +337,10 @@ public class NotificationService : INotificationService
             userId: userId,
             title: title,
             message: message,
-            type: NotificationType.ApprovalRejected
+            type: NotificationType.ApprovalRejected,
+            titleKey: $"NotificationTitle.{NotificationType.ApprovalRejected}",
+            messageKey: "JoinRejected",
+            messageArgs: new object[] { reason }
         );
     }
 
@@ -302,7 +355,10 @@ public class NotificationService : INotificationService
             title: title,
             message: message,
             link: $"/admin/company-requests/{requestId}",
-            type: NotificationType.Escalation
+            type: NotificationType.Escalation,
+            titleKey: $"NotificationTitle.{NotificationType.Escalation}",
+            messageKey: "NewCompanyRequest",
+            messageArgs: new object[] { companyName }
         );
     }
 
@@ -317,7 +373,10 @@ public class NotificationService : INotificationService
             title: title,
             message: message,
             link: $"/admin/join-requests/{requestId}",
-            type: NotificationType.Escalation
+            type: NotificationType.Escalation,
+            titleKey: $"NotificationTitle.{NotificationType.Escalation}",
+            messageKey: "NewJoinRequest",
+            messageArgs: new object[] { userName }
         );
     }
 }

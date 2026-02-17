@@ -27,6 +27,21 @@ public class Notification : BaseEntity, ICompanyEntity
     public string Title { get; set; } = string.Empty;
     public string Message { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Localization key for the message (used for dynamic translation at display time)
+    /// </summary>
+    public string? MessageKey { get; set; }
+
+    /// <summary>
+    /// JSON-serialized arguments for message formatting
+    /// </summary>
+    public string? MessageArgs { get; set; }
+
+    /// <summary>
+    /// Localization key for the title (used for dynamic translation at display time)
+    /// </summary>
+    public string? TitleKey { get; set; }
+
     // Optional deep link (frontend route or external URL)
     public string? Link { get; set; }     // examples: "/projects/123", "/boq-items/456/delay", "/invoices/789/review"
 
