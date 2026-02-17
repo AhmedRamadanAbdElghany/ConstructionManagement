@@ -30,7 +30,12 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
         options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+        
+        // Ensure UTC DateTime serialization with 'Z' suffix
+        options.JsonSerializerOptions.Converters.Add(new UtcDateTimeConverter());
     });
+
+// Custom UTC DateTime Converter moved to end of file
 
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateProjectRequestValidator>();
@@ -60,9 +65,9 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
         if (!string.IsNullOrEmpty(acceptLanguage))
         {
             if (acceptLanguage.StartsWith("en", StringComparison.OrdinalIgnoreCase))
-                return Task.FromResult(new Microsoft.AspNetCore.Localization.ProviderCultureResult("en"));
+                return Task.FromResult<Microsoft.AspNetCore.Localization.ProviderCultureResult?>(new Microsoft.AspNetCore.Localization.ProviderCultureResult("en"));
             if (acceptLanguage.StartsWith("ar", StringComparison.OrdinalIgnoreCase))
-                return Task.FromResult(new Microsoft.AspNetCore.Localization.ProviderCultureResult("ar"));
+                return Task.FromResult<Microsoft.AspNetCore.Localization.ProviderCultureResult?>(new Microsoft.AspNetCore.Localization.ProviderCultureResult("ar"));
         }
         
         // Check X-Language header
@@ -70,9 +75,9 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
         if (!string.IsNullOrEmpty(langHeader))
         {
             if (langHeader.Equals("en", StringComparison.OrdinalIgnoreCase))
-                return Task.FromResult(new Microsoft.AspNetCore.Localization.ProviderCultureResult("en"));
+                return Task.FromResult<Microsoft.AspNetCore.Localization.ProviderCultureResult?>(new Microsoft.AspNetCore.Localization.ProviderCultureResult("en"));
             if (langHeader.Equals("ar", StringComparison.OrdinalIgnoreCase))
-                return Task.FromResult(new Microsoft.AspNetCore.Localization.ProviderCultureResult("ar"));
+                return Task.FromResult<Microsoft.AspNetCore.Localization.ProviderCultureResult?>(new Microsoft.AspNetCore.Localization.ProviderCultureResult("ar"));
         }
         
         // Check query string
@@ -80,13 +85,13 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
         if (!string.IsNullOrEmpty(langQuery))
         {
             if (langQuery.Equals("en", StringComparison.OrdinalIgnoreCase))
-                return Task.FromResult(new Microsoft.AspNetCore.Localization.ProviderCultureResult("en"));
+                return Task.FromResult<Microsoft.AspNetCore.Localization.ProviderCultureResult?>(new Microsoft.AspNetCore.Localization.ProviderCultureResult("en"));
             if (langQuery.Equals("ar", StringComparison.OrdinalIgnoreCase))
-                return Task.FromResult(new Microsoft.AspNetCore.Localization.ProviderCultureResult("ar"));
+                return Task.FromResult<Microsoft.AspNetCore.Localization.ProviderCultureResult?>(new Microsoft.AspNetCore.Localization.ProviderCultureResult("ar"));
         }
         
         // Default to Arabic
-        return Task.FromResult(new Microsoft.AspNetCore.Localization.ProviderCultureResult("ar"));
+        return Task.FromResult<Microsoft.AspNetCore.Localization.ProviderCultureResult?>(new Microsoft.AspNetCore.Localization.ProviderCultureResult("ar"));
     }));
 });
 
@@ -418,3 +423,17 @@ public class HangfireCustomAuthorizationFilter : IDashboardAuthorizationFilter
 }
   
 public partial class Program {} 
+
+// Custom UTC DateTime Converter
+public class UtcDateTimeConverter : System.Text.Json.Serialization.JsonConverter<DateTime>
+{
+    public override DateTime Read(ref System.Text.Json.Utf8JsonReader reader, Type typeToConvert, System.Text.Json.JsonSerializerOptions options)
+    {
+        return reader.GetDateTime().ToUniversalTime();
+    }
+
+    public override void Write(System.Text.Json.Utf8JsonWriter writer, DateTime value, System.Text.Json.JsonSerializerOptions options)
+    {
+        writer.WriteStringValue(value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+    }
+}

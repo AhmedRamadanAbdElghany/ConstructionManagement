@@ -290,7 +290,10 @@ export class TopbarComponent implements OnInit {
 
   getTimeAgo(timestamp: string): string {
     const now = new Date();
-    const then = new Date(timestamp);
+    // Ensure UTC interpretation if no timezone info is present
+    const isIsoNoTz = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?$/.test(timestamp);
+    const then = new Date(isIsoNoTz ? timestamp + 'Z' : timestamp);
+
     const diffMs = now.getTime() - then.getTime();
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMs / 3600000);

@@ -105,8 +105,8 @@ public class DashboardStatisticsService : IDashboardStatisticsService
                 Id = cp.Id,
                 CompanyName = cp.Company != null ? cp.Company.Name : string.Empty,
                 PackageName = cp.Name,
-                StartDate = DateTime.Now.AddYears(-1),
-                EndDate = DateTime.Now.AddYears(1),
+                StartDate = DateTime.UtcNow.AddYears(-1),
+                EndDate = DateTime.UtcNow.AddYears(1),
                 Status = "Active",
                 Amount = cp.Price
             })

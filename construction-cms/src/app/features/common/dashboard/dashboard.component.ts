@@ -1316,9 +1316,18 @@ export class DashboardComponent implements OnInit {
 
   getTimeAgo(timestamp: string | Date): string {
     if (!timestamp) return '';
-    const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
     const now = new Date();
-    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    let then: Date;
+
+    if (typeof timestamp === 'string') {
+      // Ensure UTC interpretation if no timezone info is present
+      const isIsoNoTz = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?$/.test(timestamp);
+      then = new Date(isIsoNoTz ? timestamp + 'Z' : timestamp);
+    } else {
+      then = timestamp;
+    }
+
+    const seconds = Math.floor((now.getTime() - then.getTime()) / 1000);
 
     if (seconds < 60) return this.translate.instant('common.just_now');
     const minutes = Math.floor(seconds / 60);
@@ -1328,7 +1337,7 @@ export class DashboardComponent implements OnInit {
     const days = Math.floor(hours / 24);
     if (days < 7) return this.translate.instant('common.days_ago', { count: days });
 
-    return date.toLocaleDateString();
+    return then.toLocaleDateString();
   }
 
   formatShortNumber(value: number): string {
