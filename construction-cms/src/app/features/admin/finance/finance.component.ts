@@ -1,30 +1,32 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { CashVouchersService, CashVoucherDto, CashVoucherSummary } from '../../../core/services/cash-vouchers.service';
 import { MiscExpensesService, MiscExpenseDto, MiscExpenseSummary } from '../../../core/services/misc-expenses.service';
 import { TransactionsService, TransactionDto } from '../../../core/services/transactions.service';
 import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-finance',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   template: `
     <div class="finance-container">
       <!-- Header -->
       <div class="page-header">
         <div class="header-content">
-          <h1>Financial Management</h1>
-          <p class="subtitle">Monitor cash flow, expenses, transactions and invoices</p>
+          <h1>{{ 'finance.title' | translate }}</h1>
+          <p class="subtitle">{{ 'finance.subtitle' | translate }}</p>
         </div>
         <div class="header-actions">
           <button class="btn btn-primary" (click)="refreshData()">
-            <span class="icon">&#8635;</span> Refresh
+            <span class="icon">&#8635;</span> {{ 'common.refresh' | translate }}
           </button>
           <button class="btn btn-secondary" (click)="exportReport()">
-            <span class="icon">&#8595;</span> Export
+            <span class="icon">&#8595;</span> {{ 'common.export' | translate }}
           </button>
         </div>
       </div>
@@ -33,7 +35,7 @@ import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.ser
       @if (isLoading()) {
         <div class="loading-overlay">
           <div class="spinner"></div>
-          <p>Loading financial data...</p>
+          <p>{{ 'common.loading' | translate }}</p>
         </div>
       }
 
@@ -44,10 +46,10 @@ import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.ser
           <div class="metric-card cash-vouchers">
             <div class="metric-icon">&#128176;</div>
             <div class="metric-content">
-              <span class="metric-title">Cash Vouchers</span>
+              <span class="metric-title">{{ 'finance.stats.cash_vouchers' | translate }}</span>
               <span class="metric-value">{{ cashVoucherSummary()?.totalVouchers || 0 }}</span>
               <span class="metric-subtitle">
-                {{ cashVoucherSummary()?.pendingVouchers || 0 }} Pending
+                {{ cashVoucherSummary()?.pendingVouchers || 0 }} {{ 'common.pending' | translate }}
               </span>
             </div>
             <div class="metric-amount">
@@ -58,10 +60,10 @@ import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.ser
           <div class="metric-card misc-expenses">
             <div class="metric-icon">&#128179;</div>
             <div class="metric-content">
-              <span class="metric-title">Misc Expenses</span>
+              <span class="metric-title">{{ 'finance.stats.misc_expenses' | translate }}</span>
               <span class="metric-value">{{ miscExpenseSummary()?.totalExpenses || 0 }}</span>
               <span class="metric-subtitle">
-                {{ miscExpenseSummary()?.pendingExpenses || 0 }} Pending
+                {{ miscExpenseSummary()?.pendingExpenses || 0 }} {{ 'common.pending' | translate }}
               </span>
             </div>
             <div class="metric-amount">
@@ -72,10 +74,10 @@ import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.ser
           <div class="metric-card transactions">
             <div class="metric-icon">&#128181;</div>
             <div class="metric-content">
-              <span class="metric-title">Transactions</span>
+              <span class="metric-title">{{ 'finance.stats.transactions' | translate }}</span>
               <span class="metric-value">{{ transactions().length }}</span>
               <span class="metric-subtitle">
-                {{ pendingTransactions() }} Pending
+                {{ pendingTransactions() }} {{ 'common.pending' | translate }}
               </span>
             </div>
             <div class="metric-amount">
@@ -86,10 +88,10 @@ import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.ser
           <div class="metric-card invoices">
             <div class="metric-icon">&#128190;</div>
             <div class="metric-content">
-              <span class="metric-title">Invoices</span>
+              <span class="metric-title">{{ 'finance.stats.invoices' | translate }}</span>
               <span class="metric-value">{{ invoices().length }}</span>
               <span class="metric-subtitle">
-                {{ pendingInvoices() }} Pending
+                {{ pendingInvoices() }} {{ 'common.pending' | translate }}
               </span>
             </div>
             <div class="metric-amount">
@@ -101,16 +103,16 @@ import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.ser
         <!-- Tabs -->
         <div class="tabs-container">
           <button class="tab-btn" [class.active]="activeTab === 'vouchers'" (click)="activeTab = 'vouchers'">
-            <span class="icon">&#128176;</span> Cash Vouchers
+            <span class="icon">&#128176;</span> {{ 'finance.tabs.vouchers' | translate }}
           </button>
           <button class="tab-btn" [class.active]="activeTab === 'expenses'" (click)="activeTab = 'expenses'">
-            <span class="icon">&#128179;</span> Misc Expenses
+            <span class="icon">&#128179;</span> {{ 'finance.tabs.expenses' | translate }}
           </button>
           <button class="tab-btn" [class.active]="activeTab === 'transactions'" (click)="activeTab = 'transactions'">
-            <span class="icon">&#128181;</span> Transactions
+            <span class="icon">&#128181;</span> {{ 'finance.tabs.transactions' | translate }}
           </button>
           <button class="tab-btn" [class.active]="activeTab === 'invoices'" (click)="activeTab = 'invoices'">
-            <span class="icon">&#128190;</span> Invoices
+            <span class="icon">&#128190;</span> {{ 'finance.tabs.invoices' | translate }}
           </button>
         </div>
 
@@ -120,21 +122,21 @@ import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.ser
             @case ('vouchers') {
               <div class="vouchers-section">
                 <div class="section-header">
-                  <h2>Cash Vouchers</h2>
+                  <h2>{{ 'finance.tabs.vouchers' | translate }}</h2>
                   <button class="btn btn-primary" (click)="createVoucher()">
-                    <span class="icon">&#43;</span> New Voucher
+                    <span class="icon">&#43;</span> {{ 'finance.voucher.new' | translate }}
                   </button>
                 </div>
                 <div class="data-table">
                   <table>
                     <thead>
                       <tr>
-                        <th>Voucher #</th>
-                        <th>Project</th>
-                        <th>Amount</th>
-                        <th>Date</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th>{{ 'finance.voucher.number' | translate }}</th>
+                        <th>{{ 'finance.voucher.project' | translate }}</th>
+                        <th>{{ 'finance.voucher.amount' | translate }}</th>
+                        <th>{{ 'finance.voucher.date' | translate }}</th>
+                        <th>{{ 'common.status' | translate }}</th>
+                        <th>{{ 'common.actions' | translate }}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -150,14 +152,14 @@ import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.ser
                             </span>
                           </td>
                           <td>
-                            <button class="btn-icon" (click)="viewVoucher(voucher)" title="View">
+                            <button class="btn-icon" (click)="viewVoucher(voucher)" title="{{ 'common.view' | translate }}">
                               <span>&#128065;</span>
                             </button>
                             @if (voucher.status === 'Pending') {
-                              <button class="btn-icon" (click)="approveVoucher(voucher)" title="Approve">
+                              <button class="btn-icon" (click)="approveVoucher(voucher)" title="{{ 'common.approve' | translate }}">
                                 <span>&#10004;</span>
                               </button>
-                              <button class="btn-icon" (click)="rejectVoucher(voucher)" title="Reject">
+                              <button class="btn-icon" (click)="rejectVoucher(voucher)" title="{{ 'common.reject' | translate }}">
                                 <span>&#10006;</span>
                               </button>
                             }
@@ -165,7 +167,7 @@ import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.ser
                         </tr>
                       } @empty {
                         <tr>
-                          <td colspan="6" class="no-data">No cash vouchers found</td>
+                          <td colspan="6" class="no-data">{{ 'finance.no_vouchers' | translate }}</td>
                         </tr>
                       }
                     </tbody>
@@ -176,22 +178,22 @@ import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.ser
             @case ('expenses') {
               <div class="expenses-section">
                 <div class="section-header">
-                  <h2>Miscellaneous Expenses</h2>
+                  <h2>{{ 'finance.tabs.expenses' | translate }}</h2>
                   <button class="btn btn-primary" (click)="createExpense()">
-                    <span class="icon">&#43;</span> New Expense
+                    <span class="icon">&#43;</span> {{ 'finance.expense.new' | translate }}
                   </button>
                 </div>
                 <div class="data-table">
                   <table>
                     <thead>
                       <tr>
-                        <th>Expense #</th>
-                        <th>Category</th>
-                        <th>Project</th>
-                        <th>Amount</th>
-                        <th>Date</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th>{{ 'finance.expense.number' | translate }}</th>
+                        <th>{{ 'finance.expense.category' | translate }}</th>
+                        <th>{{ 'finance.expense.project' | translate }}</th>
+                        <th>{{ 'finance.expense.amount' | translate }}</th>
+                        <th>{{ 'finance.expense.date' | translate }}</th>
+                        <th>{{ 'common.status' | translate }}</th>
+                        <th>{{ 'common.actions' | translate }}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -208,14 +210,14 @@ import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.ser
                             </span>
                           </td>
                           <td>
-                            <button class="btn-icon" (click)="viewExpense(expense)" title="View">
+                            <button class="btn-icon" (click)="viewExpense(expense)" title="{{ 'common.view' | translate }}">
                               <span>&#128065;</span>
                             </button>
                             @if (expense.status === 'Pending') {
-                              <button class="btn-icon" (click)="approveExpense(expense)" title="Approve">
+                              <button class="btn-icon" (click)="approveExpense(expense)" title="{{ 'common.approve' | translate }}">
                                 <span>&#10004;</span>
                               </button>
-                              <button class="btn-icon" (click)="rejectExpense(expense)" title="Reject">
+                              <button class="btn-icon" (click)="rejectExpense(expense)" title="{{ 'common.reject' | translate }}">
                                 <span>&#10006;</span>
                               </button>
                             }
@@ -223,7 +225,7 @@ import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.ser
                         </tr>
                       } @empty {
                         <tr>
-                          <td colspan="7" class="no-data">No miscellaneous expenses found</td>
+                          <td colspan="7" class="no-data">{{ 'finance.no_expenses' | translate }}</td>
                         </tr>
                       }
                     </tbody>
@@ -234,10 +236,10 @@ import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.ser
             @case ('transactions') {
               <div class="transactions-section">
                 <div class="section-header">
-                  <h2>Transactions</h2>
+                  <h2>{{ 'finance.tabs.transactions' | translate }}</h2>
                   <div class="filters">
                     <select [(ngModel)]="selectedProjectId" class="filter-select">
-                      <option value="">All Projects</option>
+                      <option value="">{{ 'finance.transaction.all_projects' | translate }}</option>
                     </select>
                   </div>
                 </div>
@@ -245,12 +247,12 @@ import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.ser
                   <table>
                     <thead>
                       <tr>
-                        <th>Type</th>
-                        <th>BOQ Item</th>
-                        <th>Amount</th>
-                        <th>Date</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th>{{ 'finance.transaction.type' | translate }}</th>
+                        <th>{{ 'finance.transaction.boq_item' | translate }}</th>
+                        <th>{{ 'finance.transaction.amount' | translate }}</th>
+                        <th>{{ 'finance.transaction.date' | translate }}</th>
+                        <th>{{ 'common.status' | translate }}</th>
+                        <th>{{ 'common.actions' | translate }}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -266,14 +268,14 @@ import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.ser
                             </span>
                           </td>
                           <td>
-                            <button class="btn-icon" (click)="viewTransaction(transaction)" title="View">
+                            <button class="btn-icon" (click)="viewTransaction(transaction)" title="{{ 'common.view' | translate }}">
                               <span>&#128065;</span>
                             </button>
                             @if (transaction.status === 'Pending') {
-                              <button class="btn-icon" (click)="approveTransaction(transaction)" title="Approve">
+                              <button class="btn-icon" (click)="approveTransaction(transaction)" title="{{ 'common.approve' | translate }}">
                                 <span>&#10004;</span>
                               </button>
-                              <button class="btn-icon" (click)="rejectTransaction(transaction)" title="Reject">
+                              <button class="btn-icon" (click)="rejectTransaction(transaction)" title="{{ 'common.reject' | translate }}">
                                 <span>&#10006;</span>
                               </button>
                             }
@@ -281,7 +283,7 @@ import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.ser
                         </tr>
                       } @empty {
                         <tr>
-                          <td colspan="6" class="no-data">No transactions found</td>
+                          <td colspan="6" class="no-data">{{ 'finance.no_transactions' | translate }}</td>
                         </tr>
                       }
                     </tbody>
@@ -292,21 +294,21 @@ import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.ser
             @case ('invoices') {
               <div class="invoices-section">
                 <div class="section-header">
-                  <h2>Invoices</h2>
+                  <h2>{{ 'finance.tabs.invoices' | translate }}</h2>
                   <button class="btn btn-primary" (click)="createInvoice()">
-                    <span class="icon">&#43;</span> New Invoice
+                    <span class="icon">&#43;</span> {{ 'finance.invoice.new' | translate }}
                   </button>
                 </div>
                 <div class="data-table">
                   <table>
                     <thead>
                       <tr>
-                        <th>Invoice #</th>
-                        <th>Item</th>
-                        <th>Amount</th>
-                        <th>Date</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th>{{ 'finance.invoice.number' | translate }}</th>
+                        <th>{{ 'finance.invoice.item' | translate }}</th>
+                        <th>{{ 'finance.invoice.amount' | translate }}</th>
+                        <th>{{ 'finance.invoice.date' | translate }}</th>
+                        <th>{{ 'common.status' | translate }}</th>
+                        <th>{{ 'common.actions' | translate }}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -322,14 +324,14 @@ import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.ser
                             </span>
                           </td>
                           <td>
-                            <button class="btn-icon" (click)="viewInvoice(invoice)" title="View">
+                            <button class="btn-icon" (click)="viewInvoice(invoice)" title="{{ 'common.view' | translate }}">
                               <span>&#128065;</span>
                             </button>
                             @if (invoice.status === 'Pending') {
-                              <button class="btn-icon" (click)="approveInvoice(invoice)" title="Approve">
+                              <button class="btn-icon" (click)="approveInvoice(invoice)" title="{{ 'common.approve' | translate }}">
                                 <span>&#10004;</span>
                               </button>
-                              <button class="btn-icon" (click)="rejectInvoice(invoice)" title="Reject">
+                              <button class="btn-icon" (click)="rejectInvoice(invoice)" title="{{ 'common.reject' | translate }}">
                                 <span>&#10006;</span>
                               </button>
                             }
@@ -337,7 +339,7 @@ import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.ser
                         </tr>
                       } @empty {
                         <tr>
-                          <td colspan="6" class="no-data">No invoices found</td>
+                          <td colspan="6" class="no-data">{{ 'finance.no_invoices' | translate }}</td>
                         </tr>
                       }
                     </tbody>

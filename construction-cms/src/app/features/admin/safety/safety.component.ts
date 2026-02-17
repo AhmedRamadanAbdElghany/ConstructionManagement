@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SafetyService, SafetyIncident, SafetyTraining, SafetyDashboard } from '../../../core/services/safety.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-safety',
@@ -14,7 +16,7 @@ import { SafetyService, SafetyIncident, SafetyTraining, SafetyDashboard } from '
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
-            <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">Safety Management</h1>
+            <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">{{ 'safety.title' | translate }}</h1>
             <div class="flex p-1 bg-slate-200 dark:bg-slate-800 rounded-xl w-fit">
               <button (click)="activeTab = 'dashboard'" 
                       [class.bg-white]="activeTab === 'dashboard'" 
@@ -23,7 +25,7 @@ import { SafetyService, SafetyIncident, SafetyTraining, SafetyDashboard } from '
                       [class.dark:bg-slate-700]="activeTab === 'dashboard'"
                       [class.dark:text-white]="activeTab === 'dashboard'"
                       class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
-                  Dashboard
+                  {{ 'safety.tabs.overview' | translate }}
               </button>
               <button (click)="activeTab = 'incidents'" 
                       [class.bg-white]="activeTab === 'incidents'" 
@@ -32,7 +34,7 @@ import { SafetyService, SafetyIncident, SafetyTraining, SafetyDashboard } from '
                       [class.dark:bg-slate-700]="activeTab === 'incidents'"
                       [class.dark:text-white]="activeTab === 'incidents'"
                       class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
-                  Incidents
+                  {{ 'safety.tabs.incidents' | translate }}
               </button>
               <button (click)="activeTab = 'inspections'" 
                       [class.bg-white]="activeTab === 'inspections'" 
@@ -41,7 +43,7 @@ import { SafetyService, SafetyIncident, SafetyTraining, SafetyDashboard } from '
                       [class.dark:bg-slate-700]="activeTab === 'inspections'"
                       [class.dark:text-white]="activeTab === 'inspections'"
                       class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
-                  Inspections
+                  {{ 'safety.tabs.inspections' | translate }}
               </button>
               <button (click)="activeTab = 'trainings'" 
                       [class.bg-white]="activeTab === 'trainings'" 
@@ -50,7 +52,7 @@ import { SafetyService, SafetyIncident, SafetyTraining, SafetyDashboard } from '
                       [class.dark:bg-slate-700]="activeTab === 'trainings'"
                       [class.dark:text-white]="activeTab === 'trainings'"
                       class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
-                  Training
+                  {{ 'safety.tabs.trainings' | translate }}
               </button>
             </div>
           </div>
@@ -60,7 +62,7 @@ import { SafetyService, SafetyIncident, SafetyTraining, SafetyDashboard } from '
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
             </svg>
-            Report Incident
+            {{ 'safety.incident.report_new' | translate }}
           </button>
         </div>
 
@@ -76,10 +78,10 @@ import { SafetyService, SafetyIncident, SafetyTraining, SafetyDashboard } from '
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                   </svg>
                 </div>
-                <span class="text-[10px] font-black text-rose-500 uppercase tracking-widest">This Month</span>
+                <span class="text-[10px] font-black text-rose-500 uppercase tracking-widest">{{ 'common.this_month' | translate }}</span>
               </div>
               <h3 class="text-4xl font-black text-slate-900 dark:text-white">{{ dashboard?.incidentsThisMonth || 0 }}</h3>
-              <p class="text-[10px] text-slate-500 font-medium uppercase tracking-widest mt-1">Total Incidents</p>
+              <p class="text-[10px] text-slate-500 font-medium uppercase tracking-widest mt-1">{{ 'safety.stats.incidents_this_month' | translate }}</p>
             </div>
 
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
@@ -89,10 +91,10 @@ import { SafetyService, SafetyIncident, SafetyTraining, SafetyDashboard } from '
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                   </svg>
                 </div>
-                <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest">Pass Rate</span>
+                <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest">{{ 'safety.stats.pass_rate' | translate }}</span>
               </div>
               <h3 class="text-4xl font-black text-slate-900 dark:text-white">{{ dashboard?.averagePassRate || 0 }}%</h3>
-              <p class="text-[10px] text-slate-500 font-medium uppercase tracking-widest mt-1">Inspection Compliance</p>
+              <p class="text-[10px] text-slate-500 font-medium uppercase tracking-widest mt-1">{{ 'safety.safety_inspections' | translate }}</p>
             </div>
 
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
@@ -102,10 +104,10 @@ import { SafetyService, SafetyIncident, SafetyTraining, SafetyDashboard } from '
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
                 </div>
-                <span class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Completed</span>
+                <span class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{{ 'common.completed' | translate }}</span>
               </div>
               <h3 class="text-4xl font-black text-slate-900 dark:text-white">{{ dashboard?.trainingsCompleted || 0 }}</h3>
-              <p class="text-[10px] text-slate-500 font-medium uppercase tracking-widest mt-1">Safety Trainings</p>
+              <p class="text-[10px] text-slate-500 font-medium uppercase tracking-widest mt-1">{{ 'safety.stats.trainings_completed' | translate }}</p>
             </div>
 
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
@@ -115,10 +117,10 @@ import { SafetyService, SafetyIncident, SafetyTraining, SafetyDashboard } from '
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
                 </div>
-                <span class="text-[10px] font-black text-violet-500 uppercase tracking-widest">Upcoming</span>
+                <span class="text-[10px] font-black text-violet-500 uppercase tracking-widest">{{ 'common.upcoming' | translate }}</span>
               </div>
               <h3 class="text-4xl font-black text-slate-900 dark:text-white">{{ dashboard?.upcomingTrainings || 0 }}</h3>
-              <p class="text-[10px] text-slate-500 font-medium uppercase tracking-widest mt-1">Scheduled Sessions</p>
+              <p class="text-[10px] text-slate-500 font-medium uppercase tracking-widest mt-1">{{ 'safety.stats.upcoming_trainings' | translate }}</p>
             </div>
           </div>
 
@@ -127,8 +129,8 @@ import { SafetyService, SafetyIncident, SafetyTraining, SafetyDashboard } from '
             <!-- Recent Incidents -->
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
               <div class="flex items-center justify-between mb-8">
-                <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Recent Incidents</h3>
-                <button (click)="activeTab = 'incidents'" class="text-xs font-black text-rose-500 uppercase tracking-widest hover:text-rose-600">View All →</button>
+                <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'safety.recent_incidents' | translate }}</h3>
+                <button (click)="activeTab = 'incidents'" class="text-xs font-black text-rose-500 uppercase tracking-widest hover:text-rose-600">{{ 'common.view_all' | translate }} →</button>
               </div>
               <div class="space-y-4">
                 @for (incident of dashboard?.recentIncidents; track incident.id) {
@@ -148,7 +150,7 @@ import { SafetyService, SafetyIncident, SafetyTraining, SafetyDashboard } from '
                         <span class="text-[10px] text-slate-400">{{ incident.incidentDate | date:'shortDate' }}</span>
                       </div>
                       <h4 class="font-bold text-slate-900 dark:text-white">{{ incident.title }}</h4>
-                      <p class="text-[10px] text-slate-500 mt-1">{{ incident.location || 'No location specified' }}</p>
+                      <p class="text-[10px] text-slate-500 mt-1">{{ incident.location || ('safety.incident.location' | translate) }}</p>
                     </div>
                     <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[8px] font-black text-slate-500 uppercase">
                       {{ incident.investigationStatusName }}
@@ -157,7 +159,7 @@ import { SafetyService, SafetyIncident, SafetyTraining, SafetyDashboard } from '
                 </div>
                 }
                 @if (!dashboard?.recentIncidents?.length) {
-                <p class="text-[10px] text-slate-400 italic text-center py-8">No recent incidents</p>
+                <p class="text-[10px] text-slate-400 italic text-center py-8">{{ 'safety.no_incidents' | translate }}</p>
                 }
               </div>
             </div>
@@ -165,8 +167,8 @@ import { SafetyService, SafetyIncident, SafetyTraining, SafetyDashboard } from '
             <!-- Upcoming Trainings -->
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
               <div class="flex items-center justify-between mb-8">
-                <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Upcoming Trainings</h3>
-                <button (click)="activeTab = 'trainings'" class="text-xs font-black text-rose-500 uppercase tracking-widest hover:text-rose-600">View All →</button>
+                <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'safety.upcoming_trainings' | translate }}</h3>
+                <button (click)="activeTab = 'trainings'" class="text-xs font-black text-rose-500 uppercase tracking-widest hover:text-rose-600">{{ 'common.view_all' | translate }} →</button>
               </div>
               <div class="space-y-4">
                 @for (training of dashboard?.upcomingTrainingsList; track training.id) {
@@ -178,13 +180,13 @@ import { SafetyService, SafetyIncident, SafetyTraining, SafetyDashboard } from '
                       <p class="text-[10px] text-rose-500 mt-1 font-medium">{{ training.scheduledDate | date:'mediumDate' }}</p>
                     </div>
                     <span class="px-2 py-0.5 rounded-md bg-violet-500/10 text-[8px] font-black text-violet-500 uppercase">
-                      {{ training.requiresCertification ? 'Certification' : 'Training' }}
+                      {{ training.requiresCertification ? ('common.certification' | translate) : ('common.training' | translate) }}
                     </span>
                   </div>
                 </div>
                 }
                 @if (!dashboard?.upcomingTrainingsList?.length) {
-                <p class="text-[10px] text-slate-400 italic text-center py-8">No upcoming trainings</p>
+                <p class="text-[10px] text-slate-400 italic text-center py-8">{{ 'safety.no_trainings' | translate }}</p>
                 }
               </div>
             </div>

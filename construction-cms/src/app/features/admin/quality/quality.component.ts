@@ -1,22 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { QualityService, QualityInspection, Defect, PunchListItem, QualityStatistics } from '../../../core/services/quality.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-quality',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   template: `
     <div class="quality-page">
       <div class="page-header">
-        <h1>Quality Control</h1>
+        <h1>{{ 'quality.title' | translate }}</h1>
         <div class="header-actions">
           <button class="btn btn-outline" (click)="activeTab = 'inspections'">
-            <i class="icon-clipboard"></i> New Inspection
+            <i class="icon-clipboard"></i> {{ 'quality.inspection.title' | translate }}
           </button>
           <button class="btn btn-primary" (click)="activeTab = 'defects'">
-            <i class="icon-alert"></i> Report Defect
+            <i class="icon-alert"></i> {{ 'quality.defect.title' | translate }}
           </button>
         </div>
       </div>
@@ -29,7 +32,7 @@ import { QualityService, QualityInspection, Defect, PunchListItem, QualityStatis
           </div>
           <div class="card-content">
             <span class="card-value">{{ statistics?.totalInspections || 0 }}</span>
-            <span class="card-label">Total Inspections</span>
+            <span class="card-label">{{ 'quality.stats.total_inspections' | translate }}</span>
           </div>
         </div>
         <div class="summary-card" (click)="activeTab = 'defects'">
@@ -38,7 +41,7 @@ import { QualityService, QualityInspection, Defect, PunchListItem, QualityStatis
           </div>
           <div class="card-content">
             <span class="card-value">{{ statistics?.openDefects || 0 }}</span>
-            <span class="card-label">Open Defects</span>
+            <span class="card-label">{{ 'quality.stats.open_defects' | translate }}</span>
           </div>
         </div>
         <div class="summary-card" (click)="activeTab = 'defects'">
@@ -47,7 +50,7 @@ import { QualityService, QualityInspection, Defect, PunchListItem, QualityStatis
           </div>
           <div class="card-content">
             <span class="card-value">{{ statistics?.criticalDefects || 0 }}</span>
-            <span class="card-label">Critical</span>
+            <span class="card-label">{{ 'quality.stats.critical' | translate }}</span>
           </div>
         </div>
         <div class="summary-card" (click)="activeTab = 'punchlist'">
@@ -56,7 +59,7 @@ import { QualityService, QualityInspection, Defect, PunchListItem, QualityStatis
           </div>
           <div class="card-content">
             <span class="card-value">{{ statistics?.pendingPunchListItems || 0 }}</span>
-            <span class="card-label">Punch List</span>
+            <span class="card-label">{{ 'quality.stats.punch_list' | translate }}</span>
           </div>
         </div>
         <div class="summary-card">
@@ -65,7 +68,7 @@ import { QualityService, QualityInspection, Defect, PunchListItem, QualityStatis
           </div>
           <div class="card-content">
             <span class="card-value">{{ statistics ? statistics.averageInspectionScore.toFixed(1) : '0.0' }}%</span>
-            <span class="card-label">Avg Score</span>
+            <span class="card-label">{{ 'quality.stats.avg_score' | translate }}</span>
           </div>
         </div>
       </div>
@@ -73,16 +76,16 @@ import { QualityService, QualityInspection, Defect, PunchListItem, QualityStatis
       <!-- Tabs -->
       <div class="tabs">
         <button [class.active]="activeTab === 'inspections'" (click)="activeTab = 'inspections'">
-          Inspections
+          {{ 'quality.tabs.inspections' | translate }}
         </button>
         <button [class.active]="activeTab === 'defects'" (click)="activeTab = 'defects'">
-          Defects
+          {{ 'quality.tabs.defects' | translate }}
         </button>
         <button [class.active]="activeTab === 'punchlist'" (click)="activeTab = 'punchlist'">
-          Punch List
+          {{ 'quality.tabs.punchlist' | translate }}
         </button>
         <button [class.active]="activeTab === 'standards'" (click)="activeTab = 'standards'">
-          Standards
+          {{ 'quality.tabs.standards' | translate }}
         </button>
       </div>
 
@@ -91,13 +94,13 @@ import { QualityService, QualityInspection, Defect, PunchListItem, QualityStatis
         <div class="filter-section">
           <div class="search-box">
             <i class="icon-search"></i>
-            <input type="text" [(ngModel)]="inspectionSearch" placeholder="Search inspections...">
+            <input type="text" [(ngModel)]="inspectionSearch" [placeholder]="'common.search' | translate">
           </div>
           <select [(ngModel)]="inspectionStatusFilter">
-            <option value="">All Status</option>
-            <option value="Scheduled">Scheduled</option>
-            <option value="InProgress">In Progress</option>
-            <option value="Completed">Completed</option>
+            <option value="">{{ 'common.all' | translate }}</option>
+            <option value="Scheduled">{{ 'quality.inspection.scheduled' | translate }}</option>
+            <option value="InProgress">{{ 'quality.inspection.in_progress' | translate }}</option>
+            <option value="Completed">{{ 'common.completed' | translate }}</option>
           </select>
           <select [(ngModel)]="inspectionTypeFilter">
             <option value="">All Types</option>
