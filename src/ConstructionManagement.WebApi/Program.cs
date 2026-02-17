@@ -429,11 +429,16 @@ public class UtcDateTimeConverter : System.Text.Json.Serialization.JsonConverter
 {
     public override DateTime Read(ref System.Text.Json.Utf8JsonReader reader, Type typeToConvert, System.Text.Json.JsonSerializerOptions options)
     {
-        return reader.GetDateTime().ToUniversalTime();
+        var date = reader.GetDateTime();
+        return date.Kind == DateTimeKind.Unspecified ? DateTime.SpecifyKind(date, DateTimeKind.Utc) : date.ToUniversalTime();
     }
 
     public override void Write(System.Text.Json.Utf8JsonWriter writer, DateTime value, System.Text.Json.JsonSerializerOptions options)
     {
-        writer.WriteStringValue(value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+        var utcValue = value.Kind == DateTimeKind.Unspecified 
+            ? DateTime.SpecifyKind(value, DateTimeKind.Utc) 
+            : value.ToUniversalTime();
+            
+        writer.WriteStringValue(utcValue.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
     }
 }
