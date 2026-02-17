@@ -1,5 +1,7 @@
 using ConstructionManagement.Application.DTOs;
+using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Infrastructure.Persistence;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
@@ -20,13 +22,19 @@ public class InvoiceServiceTests
     private readonly Mock<IRepository<ItemDailyLog>> _dailyLogRepoMock = new();
     private readonly Mock<IRepository<BOQItem>> _boqItemRepoMock = new();
     private readonly Mock<ILogger<InvoiceService>> _loggerMock = new();
+    private readonly Mock<IUnitOfWork> _uowMock = new();
+    private readonly Mock<ILocalizationService> _localizationServiceMock = new();
+    private readonly Mock<ApplicationDbContext> _contextMock = new(); // This might be tricky if it's not and interface or virtual
 
     private InvoiceService CreateService()
         => new InvoiceService(
             _invoiceRepoMock.Object,
             _dailyLogRepoMock.Object,
             _boqItemRepoMock.Object,
-            _loggerMock.Object
+            _contextMock.Object,
+            _uowMock.Object,
+            _loggerMock.Object,
+            _localizationServiceMock.Object
         );
 
     [Fact]

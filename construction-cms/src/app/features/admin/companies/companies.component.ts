@@ -18,13 +18,13 @@ import { TranslateModule } from '@ngx-translate/core';
       <!-- Header Area -->
       <div class="header-section mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] shadow-xl border border-slate-100 dark:border-slate-800">
         <div>
-          <h1 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">Enterprise Companies</h1>
-          <p class="text-slate-500 dark:text-slate-400 mt-2 font-medium">Manage and onboard organizations within the STRUC platform</p>
+          <h1 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">{{ 'companies.title' | translate }}</h1>
+          <p class="text-slate-500 dark:text-slate-400 mt-2 font-medium">{{ 'companies.subtitle' | translate }}</p>
         </div>
         <button (click)="openCreateModal()" 
                 class="group bg-gradient-to-br from-indigo-600 to-blue-700 hover:from-indigo-700 hover:to-blue-800 text-white px-10 py-4 rounded-2xl transition-all duration-300 flex items-center gap-3 shadow-2xl shadow-indigo-500/30 hover:shadow-indigo-500/50 transform hover:-translate-y-1 active:scale-95">
           <span class="text-2xl font-light group-hover:rotate-90 transition-transform duration-500">+</span>
-          <span class="font-bold tracking-wide">Register Company</span>
+          <span class="font-bold tracking-wide">{{ 'companies.register' | translate }}</span>
         </button>
       </div>
 
@@ -34,7 +34,7 @@ import { TranslateModule } from '@ngx-translate/core';
             <div class="absolute top-0 left-0 w-full h-full border-4 border-indigo-100 rounded-full"></div>
             <div class="absolute top-0 left-0 w-full h-full border-4 border-indigo-500 rounded-full border-t-transparent animate-spin"></div>
          </div>
-         <p class="mt-8 text-slate-400 font-bold text-xs uppercase tracking-widest animate-pulse">Synchronizing Enterprise Directory...</p>
+         <p class="mt-8 text-slate-400 font-bold text-xs uppercase tracking-widest animate-pulse">{{ 'common.loading' | translate }}</p>
       </div>
 
       <!-- Companies Grid -->
@@ -63,33 +63,33 @@ import { TranslateModule } from '@ngx-translate/core';
             <div class="flex items-center gap-3 mb-6">
               <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest"
                     [ngClass]="company.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'">
-                {{ company.isActive ? 'Operational' : 'Suspended' }}
+                {{ (company.isActive ? 'companies.operational' : 'companies.suspended') | translate }}
               </span>
-              <span class="text-slate-400 text-xs font-bold uppercase tracking-tighter">Package: {{ getPackageName(company.packageId) }}</span>
+              <span class="text-slate-400 text-xs font-bold uppercase tracking-tighter">{{ 'companies.package_label' | translate }}: {{ getPackageName(company.packageId) }}</span>
             </div>
 
             <div class="space-y-4 pt-6 border-t border-slate-50 dark:border-slate-800">
                <div class="flex justify-between text-sm">
-                <span class="text-slate-500 font-medium">Allowed Methods</span>
+                <span class="text-slate-500 font-medium">{{ 'companies.allowed_methods' | translate }}</span>
                 <div class="flex gap-1.5">
-                  <span *ngIf="company.settings?.allowMeasured" class="w-2 h-2 rounded-full bg-blue-500" title="Measured"></span>
-                  <span *ngIf="company.settings?.allowSupervision" class="w-2 h-2 rounded-full bg-purple-500" title="Supervision"></span>
-                  <span *ngIf="company.settings?.allowPackages" class="w-2 h-2 rounded-full bg-orange-500" title="Packages"></span>
+                  <span *ngIf="company.settings?.allowMeasured" class="w-2 h-2 rounded-full bg-blue-500" [title]="'projects.measured' | translate"></span>
+                  <span *ngIf="company.settings?.allowSupervision" class="w-2 h-2 rounded-full bg-purple-500" [title]="'projects.supervision' | translate"></span>
+                  <span *ngIf="company.settings?.allowPackages" class="w-2 h-2 rounded-full bg-orange-500" [title]="'projects.packages' | translate"></span>
                 </div>
               </div>
               <div class="flex justify-between text-sm">
-                <span class="text-slate-500 font-medium">Delay Notifications</span>
-                <span class="font-bold" [ngClass]="company.settings?.enableDelayNotification ? 'text-emerald-500' : 'text-slate-300'">{{ company.settings?.enableDelayNotification ? 'Active' : 'Disabled' }}</span>
+                <span class="text-slate-500 font-medium">{{ 'companies.delay_notifications' | translate }}</span>
+                <span class="font-bold" [ngClass]="company.settings?.enableDelayNotification ? 'text-emerald-500' : 'text-slate-300'">{{ (company.settings?.enableDelayNotification ? 'companies.active' : 'companies.disabled') | translate }}</span>
               </div>
               <div class="flex justify-between text-sm">
-                <span class="text-slate-500 font-medium">Photo Review Flow</span>
-                <span class="font-bold text-slate-700 dark:text-slate-300">{{ company.settings?.requirePhotoReview ? 'Enabled' : 'Disabled' }}</span>
+                <span class="text-slate-500 font-medium">{{ 'companies.photo_review' | translate }}</span>
+                <span class="font-bold text-slate-700 dark:text-slate-300">{{ (company.settings?.requirePhotoReview ? 'companies.active' : 'companies.disabled') | translate }}</span>
               </div>
             </div>
           </div>
           
           <div class="px-8 py-5 bg-slate-50 dark:bg-slate-800/50 flex justify-end items-center border-t border-slate-50 dark:border-slate-800">
-            <a [routerLink]="['/admin/companies', company.id]" class="text-indigo-600 dark:text-indigo-400 text-xs font-black hover:underline tracking-widest uppercase">View Company Details &rarr;</a>
+            <a [routerLink]="['/admin/companies', company.id]" class="text-indigo-600 dark:text-indigo-400 text-xs font-black hover:underline tracking-widest uppercase">{{ 'companies.view_details' | translate }} &rarr;</a>
           </div>
         </div>
       </div>
@@ -101,8 +101,8 @@ import { TranslateModule } from '@ngx-translate/core';
           <!-- Modal Header -->
           <div class="px-10 py-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/20 shrink-0">
             <div>
-              <h2 class="text-3xl font-black text-slate-900 dark:text-white leading-tight uppercase tracking-tight">{{ isEdit ? 'Quick Config' : 'New Onboarding' }}</h2>
-              <p class="text-slate-500 dark:text-slate-400 font-medium mt-1">Manage organization identity and core feature-set</p>
+              <h2 class="text-3xl font-black text-slate-900 dark:text-white leading-tight uppercase tracking-tight">{{ (isEdit ? 'companies.quick_config' : 'companies.new_onboarding') | translate }}</h2>
+              <p class="text-slate-500 dark:text-slate-400 font-medium mt-1">{{ 'companies.manage_identity' | translate }}</p>
             </div>
             <button (click)="closeModal()" class="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 text-slate-400 hover:text-slate-600 transition-all flex items-center justify-center shadow-lg border border-slate-100">
               <span class="text-3xl">&times;</span>
@@ -116,12 +116,12 @@ import { TranslateModule } from '@ngx-translate/core';
               <section>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div class="space-y-2">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Company Trade Name</label>
-                    <input formControlName="name" placeholder="e.g., Al-Massa Construction" 
+                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">{{ 'companies.trade_name' | translate }}</label>
+                    <input formControlName="name" [placeholder]="'companies.trade_name_placeholder' | translate" 
                            class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-slate-900 dark:text-white">
                   </div>
                   <div class="space-y-2">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Subscription Package</label>
+                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">{{ 'companies.subscription_package' | translate }}</label>
                     <select formControlName="packageId" 
                             class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-slate-900 dark:text-white appearance-none cursor-pointer">
                       <option *ngFor="let pkg of packages" [ngValue]="pkg.id" class="text-slate-900 dark:text-white dark:bg-slate-900">{{ pkg.name }}</option>
@@ -134,19 +134,19 @@ import { TranslateModule } from '@ngx-translate/core';
               <section *ngIf="!isEdit" class="pt-6">
                 <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                   Primary Administrator Architecture
+                   {{ 'companies.admin_architecture' | translate }}
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div class="space-y-2">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Admin Full Name</label>
-                    <input formControlName="adminName" placeholder="e.g., Omar Mokhtar" 
+                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">{{ 'companies.admin_name' | translate }}</label>
+                    <input formControlName="adminName" [placeholder]="'companies.admin_name_placeholder' | translate" 
                            class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-slate-900 dark:text-white">
                   </div>
                   <div class="space-y-2">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Admin Corporate Email</label>
+                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">{{ 'companies.admin_email' | translate }}</label>
                     <input formControlName="adminEmail" type="email" placeholder="admin@organization.com" 
                            class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all font-bold text-slate-900 dark:text-white">
-                    <p class="text-[9px] text-slate-400 font-bold uppercase mt-2 italic px-1">Note: A temporary password 'Construction@2026' will be assigned automatically.</p>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase mt-2 italic px-1">{{ 'companies.temp_pw_note' | translate }}</p>
                   </div>
                 </div>
               </section>
@@ -313,26 +313,26 @@ import { TranslateModule } from '@ngx-translate/core';
                 <section class="pt-6" *ngIf="companyForm.get('enableInventoryManagement')?.value">
                   <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
                     <span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span>
-                    Inventory Configuration
+                    {{ 'companies.inventory_config' | translate }}
                   </h3>
                   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                      <!-- Material Request Approval -->
                      <div class="p-6 border-2 rounded-3xl" [ngClass]="companyForm.get('requireMaterialRequestApproval')?.value ? 'border-violet-500 bg-violet-50/40 text-violet-900 dark:text-violet-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
                         <div class="flex items-center justify-between mb-4">
-                           <span class="font-black text-[10px] uppercase tracking-widest">Material Request Approval</span>
+                           <span class="font-black text-[10px] uppercase tracking-widest">{{ 'companies.inventory_config' | translate }}</span>
                            <label class="relative inline-flex items-center cursor-pointer">
                              <input type="checkbox" formControlName="requireMaterialRequestApproval" class="sr-only peer">
                              <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-violet-500"></div>
                            </label>
                         </div>
-                        <input formControlName="materialRequestApproverRole" placeholder="Approver Role"
+                        <input formControlName="materialRequestApproverRole" [placeholder]="'projects.approver_role' | translate"
                                class="w-full p-3 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-violet-500 rounded-xl outline-none text-xs font-bold text-slate-900 dark:text-white placeholder:text-slate-400">
                      </div>
                      <!-- Multi Warehouse -->
                      <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableMultiWarehouse')?.value ? 'border-violet-500 bg-violet-50/40 text-violet-900 dark:text-violet-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
                         <div>
-                           <span class="font-black text-[10px] uppercase tracking-widest block">Multi Warehouse</span>
-                           <p class="text-[8px] font-bold uppercase opacity-60">Enable multiple warehouses</p>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">{{ 'companies.multi_warehouse' | translate }}</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">{{ 'companies.multi_warehouse_desc' | translate }}</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                           <input type="checkbox" formControlName="enableMultiWarehouse" class="sr-only peer">
@@ -342,8 +342,8 @@ import { TranslateModule } from '@ngx-translate/core';
                      <!-- Stock Alerts -->
                      <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableStockAlerts')?.value ? 'border-violet-500 bg-violet-50/40 text-violet-900 dark:text-violet-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
                         <div>
-                           <span class="font-black text-[10px] uppercase tracking-widest block">Stock Alerts</span>
-                           <p class="text-[8px] font-bold uppercase opacity-60">Enable low stock notifications</p>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">{{ 'companies.stock_alerts' | translate }}</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">{{ 'companies.stock_alerts_desc' | translate }}</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                           <input type="checkbox" formControlName="enableStockAlerts" class="sr-only peer">
@@ -352,7 +352,7 @@ import { TranslateModule } from '@ngx-translate/core';
                      </div>
                      <!-- Low Stock Threshold -->
                      <div class="p-6 border-2 rounded-3xl" [ngClass]="companyForm.get('defaultLowStockThreshold')?.value ? 'border-violet-500 bg-violet-50/40 text-violet-900 dark:text-violet-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
-                        <span class="font-black text-[10px] uppercase tracking-widest block mb-4">Low Stock Threshold</span>
+                        <span class="font-black text-[10px] uppercase tracking-widest block mb-4">{{ 'companies.low_stock_threshold' | translate }}</span>
                         <input type="number" formControlName="defaultLowStockThreshold" 
                                class="w-full p-3 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-violet-500 rounded-xl outline-none text-xs font-bold text-slate-900 dark:text-white">
                      </div>
@@ -363,14 +363,14 @@ import { TranslateModule } from '@ngx-translate/core';
                 <section class="pt-6" *ngIf="companyForm.get('enableEquipmentManagement')?.value">
                   <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                    Equipment Configuration
+                    {{ 'companies.equipment_config' | translate }}
                   </h3>
                   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                      <!-- Maintenance Scheduling -->
                      <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentMaintenanceScheduling')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
                         <div>
-                           <span class="font-black text-[10px] uppercase tracking-widest block">Maintenance Scheduling</span>
-                           <p class="text-[8px] font-bold uppercase opacity-60">Enable scheduled maintenance</p>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">{{ 'companies.maint_scheduling' | translate }}</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">{{ 'companies.maint_scheduling_desc' | translate }}</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                           <input type="checkbox" formControlName="enableEquipmentMaintenanceScheduling" class="sr-only peer">
@@ -380,8 +380,8 @@ import { TranslateModule } from '@ngx-translate/core';
                      <!-- Utilization Tracking -->
                      <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentUtilizationTracking')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
                         <div>
-                           <span class="font-black text-[10px] uppercase tracking-widest block">Utilization Tracking</span>
-                           <p class="text-[8px] font-bold uppercase opacity-60">Track equipment usage hours</p>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">{{ 'companies.util_tracking' | translate }}</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">{{ 'companies.util_tracking_desc' | translate }}</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                           <input type="checkbox" formControlName="enableEquipmentUtilizationTracking" class="sr-only peer">
@@ -391,8 +391,8 @@ import { TranslateModule } from '@ngx-translate/core';
                      <!-- GPS Tracking -->
                      <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentGPSTracking')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
                         <div>
-                           <span class="font-black text-[10px] uppercase tracking-widest block">GPS Tracking</span>
-                           <p class="text-[8px] font-bold uppercase opacity-60">Track equipment location</p>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">{{ 'companies.gps_tracking' | translate }}</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">{{ 'companies.gps_tracking_desc' | translate }}</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                           <input type="checkbox" formControlName="enableEquipmentGPSTracking" class="sr-only peer">
@@ -402,8 +402,8 @@ import { TranslateModule } from '@ngx-translate/core';
                      <!-- Billing Integration -->
                      <div class="p-6 border-2 rounded-3xl flex items-center justify-between" [ngClass]="companyForm.get('enableEquipmentBilling')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
                         <div>
-                           <span class="font-black text-[10px] uppercase tracking-widest block">Billing Integration</span>
-                           <p class="text-[8px] font-bold uppercase opacity-60">Equipment rental billing</p>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">{{ 'companyFeatures.equipmentManagement' | translate }}</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">{{ 'companies.equipment_config' | translate }}</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                           <input type="checkbox" formControlName="enableEquipmentBilling" class="sr-only peer">
@@ -412,7 +412,7 @@ import { TranslateModule } from '@ngx-translate/core';
                      </div>
                      <!-- Maintenance Alert Threshold -->
                      <div class="p-6 border-2 rounded-3xl" [ngClass]="companyForm.get('equipmentMaintenanceAlertThreshold')?.value ? 'border-emerald-600 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'">
-                        <span class="font-black text-[10px] uppercase tracking-widest block mb-4">Maintenance Alert (Hours)</span>
+                        <span class="font-black text-[10px] uppercase tracking-widest block mb-4">{{ 'companies.maint_scheduling' | translate }} ({{ 'projects.hours' | translate }})</span>
                         <input type="number" formControlName="equipmentMaintenanceAlertThreshold" 
                                class="w-full p-3 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-emerald-600 rounded-xl outline-none text-xs font-bold text-slate-900 dark:text-white">
                      </div>
@@ -425,7 +425,7 @@ import { TranslateModule } from '@ngx-translate/core';
                <section class="pt-6">
                  <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                   Daily Log Policy
+                   {{ 'companies.log_policy' | translate }}
                  </h3>
                  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div (click)="toggleFormControl('allowAddProgressEntry')" 
@@ -433,8 +433,8 @@ import { TranslateModule } from '@ngx-translate/core';
                          class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center space-x-4">
                         <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm">📝</div>
                         <div>
-                           <span class="font-black text-[10px] uppercase tracking-widest block">Log Progress</span>
-                           <p class="text-[8px] font-bold uppercase opacity-60">Allow Workers to Log</p>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">{{ 'companies.log_progress' | translate }}</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">{{ 'companies.log_progress_desc' | translate }}</p>
                         </div>
                     </div>
                     <div (click)="toggleFormControl('allowReopenClosedDay')" 
@@ -442,8 +442,8 @@ import { TranslateModule } from '@ngx-translate/core';
                          class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center space-x-4">
                         <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm">🔓</div>
                         <div>
-                           <span class="font-black text-[10px] uppercase tracking-widest block">Reopen Day</span>
-                           <p class="text-[8px] font-bold uppercase opacity-60">Unlock Closed Logs</p>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">{{ 'companies.reopen_day' | translate }}</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">{{ 'companies.reopen_day_desc' | translate }}</p>
                         </div>
                     </div>
                     <div (click)="toggleFormControl('autoCloseDay')" 
@@ -451,8 +451,8 @@ import { TranslateModule } from '@ngx-translate/core';
                          class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center space-x-4">
                         <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm">⏰</div>
                         <div>
-                           <span class="font-black text-[10px] uppercase tracking-widest block">Auto Close</span>
-                           <p class="text-[8px] font-bold uppercase opacity-60">Schedule-based Locking</p>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">{{ 'companies.auto_lock' | translate }}</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">{{ 'companies.auto_lock_desc' | translate }}</p>
                         </div>
                     </div>
                  </div>
@@ -462,7 +462,7 @@ import { TranslateModule } from '@ngx-translate/core';
                <section class="pt-6">
                  <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
                    <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
-                   Project Financial Logic
+                   {{ 'companies.financial_logic' | translate }}
                  </h3>
                  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div (click)="toggleFormControl('allowMeasured')"
@@ -470,8 +470,8 @@ import { TranslateModule } from '@ngx-translate/core';
                          class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center space-x-4 hover:scale-[1.02]">
                         <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm">📏</div>
                         <div>
-                           <span class="font-black text-[10px] uppercase tracking-widest block">Measured</span>
-                           <p class="text-[8px] font-bold uppercase opacity-60">Bill of Quantities</p>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">{{ 'companies.measured' | translate }}</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">{{ 'companies.measured_desc' | translate }}</p>
                         </div>
                     </div>
                     <div (click)="toggleFormControl('allowSupervision')"
@@ -479,8 +479,8 @@ import { TranslateModule } from '@ngx-translate/core';
                          class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center space-x-4 hover:scale-[1.02]">
                         <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm">👁️</div>
                         <div>
-                           <span class="font-black text-[10px] uppercase tracking-widest block">Supervision</span>
-                           <p class="text-[8px] font-bold uppercase opacity-60">Cost Plus / Percentage</p>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">{{ 'companies.supervision' | translate }}</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">{{ 'companies.supervision_desc' | translate }}</p>
                         </div>
                     </div>
                     <div (click)="toggleFormControl('allowPackages')"
@@ -488,8 +488,8 @@ import { TranslateModule } from '@ngx-translate/core';
                          class="p-6 border-2 rounded-3xl cursor-pointer transition-all flex items-center space-x-4 hover:scale-[1.02]">
                         <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm">📦</div>
                         <div>
-                           <span class="font-black text-[10px] uppercase tracking-widest block">Packages</span>
-                           <p class="text-[8px] font-bold uppercase opacity-60">Fixed Price Services</p>
+                           <span class="font-black text-[10px] uppercase tracking-widest block">{{ 'companies.packages' | translate }}</span>
+                           <p class="text-[8px] font-bold uppercase opacity-60">{{ 'companies.packages_desc' | translate }}</p>
                         </div>
                     </div>
                  </div>
@@ -502,18 +502,18 @@ import { TranslateModule } from '@ngx-translate/core';
                     <div>
                        <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
                          <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-                         Governance & Reviews
+                         {{ 'companies.platform_governance' | translate }}
                        </h3>
                        <div class="space-y-4">
                           <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
-                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Require Photo Approval</span>
+                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">{{ 'companies.photo_approval_req' | translate }}</span>
                              <label class="relative inline-flex items-center cursor-pointer">
                                <input type="checkbox" formControlName="requirePhotoReview" class="sr-only peer">
                                <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
                              </label>
                           </div>
                           <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
-                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Require Invoice Approval</span>
+                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">{{ 'companies.invoice_approval_req' | translate }}</span>
                              <label class="relative inline-flex items-center cursor-pointer">
                                <input type="checkbox" formControlName="enableInvoiceReview" class="sr-only peer">
                                <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
@@ -525,25 +525,25 @@ import { TranslateModule } from '@ngx-translate/core';
                     <div>
                        <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
                          <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                         Client Visibility
+                         {{ 'companies.client_visibility' | translate }}
                        </h3>
                        <div class="space-y-4">
                           <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
-                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Share Financial Status</span>
+                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">{{ 'companies.share_financials' | translate }}</span>
                              <label class="relative inline-flex items-center cursor-pointer">
                                <input type="checkbox" formControlName="clientCanSeeFinancials" class="sr-only peer">
                                <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500"></div>
                              </label>
                           </div>
                           <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
-                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Share Site Media</span>
+                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">{{ 'companies.share_media' | translate }}</span>
                              <label class="relative inline-flex items-center cursor-pointer">
                                <input type="checkbox" formControlName="clientCanSeeMedia" class="sr-only peer">
                                <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500"></div>
                              </label>
                           </div>
                           <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
-                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Share BOQ Details</span>
+                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">{{ 'companies.share_boq' | translate }}</span>
                              <label class="relative inline-flex items-center cursor-pointer">
                                <input type="checkbox" formControlName="clientCanSeeBOQ" class="sr-only peer">
                                <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500"></div>
@@ -555,16 +555,16 @@ import { TranslateModule } from '@ngx-translate/core';
                </section>
 
               <div class="pt-10 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
-                  <div class="flex items-center gap-4">
+                   <div class="flex items-center gap-4">
                     <label class="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" formControlName="isActive" class="sr-only peer">
                       <div class="w-14 h-7 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                     </label>
-                    <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest italic">Organizational Operation Status</span>
+                    <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest italic">{{ 'companies.ops_status_label' | translate }}</span>
                   </div>
                   <div *ngIf="isEdit" class="text-[10px] font-black text-indigo-500 uppercase flex items-center gap-2">
                     <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
-                    Live Configuration Sync
+                    {{ 'companies.live_sync' | translate }}
                   </div>
               </div>
             </form>
@@ -572,14 +572,14 @@ import { TranslateModule } from '@ngx-translate/core';
 
           <!-- Modal Footer -->
           <div class="px-10 py-8 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20 flex gap-4 shrink-0">
-            <button (click)="closeModal()" class="flex-1 py-4 text-slate-500 font-black hover:bg-white dark:hover:bg-slate-700/50 rounded-2xl transition-all border border-slate-200 dark:border-white/5 uppercase tracking-widest text-[10px]">Abandon Changes</button>
+            <button (click)="closeModal()" class="flex-1 py-4 text-slate-500 font-black hover:bg-white dark:hover:bg-slate-700/50 rounded-2xl transition-all border border-slate-200 dark:border-white/5 uppercase tracking-widest text-[10px]">{{ 'companies.abandon' | translate }}</button>
             <button (click)="saveCompany()" [disabled]="companyForm.invalid || isSaving"
                     class="flex-[2] bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-black shadow-lg shadow-indigo-500/20 transition-all uppercase tracking-widest text-[10px] disabled:opacity-40 flex items-center justify-center gap-3">
               <svg *ngIf="isSaving" class="animate-spin -ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              {{ isSaving ? 'Processing...' : (isEdit ? 'Commit Configuration' : 'Authorize & Onboard') }}
+              {{ (isSaving ? 'common.processing' : (isEdit ? 'companies.commit' : 'companies.authorize_onboard')) | translate }}
             </button>
           </div>
         </div>

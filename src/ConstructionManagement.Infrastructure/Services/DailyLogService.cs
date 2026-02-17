@@ -14,19 +14,22 @@ public class DailyLogService : IDailyLogService
 
     private readonly IRepository<BOQItem> _itemRepository;
     private readonly IActivityLogService _activityLogService;
+    private readonly ILocalizationService _localizationService;
 
     public DailyLogService(
         IRepository<ItemDailyLog> logRepository,
         IRepository<BOQExecutedDelta> deltaRepository,
         IRepository<BOQItem> itemRepository,
         IActivityLogService activityLogService,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        ILocalizationService localizationService)
     {
         _logRepository = logRepository;
         _deltaRepository = deltaRepository;
         _itemRepository = itemRepository;
         _activityLogService = activityLogService;
         _unitOfWork = unitOfWork;
+        _localizationService = localizationService;
     }
 
     public async Task<bool> IsDayClosedForItemAsync(int itemId, DateTime date)
@@ -122,7 +125,7 @@ public class DailyLogService : IDailyLogService
     public async Task<bool> ReopenClosedDayAsync(int itemId, DateTime logDate, int userId, string reason, List<int>? notifyRoleIds)
     {
         if (string.IsNullOrWhiteSpace(reason))
-            throw new InvalidOperationException("سبب إعادة الفتح مطلوب");
+            throw new InvalidOperationException(_localizationService["DailyLog.ReopenReasonRequired"]);
 
         var log = await _logRepository.AsQueryable()
             .FirstOrDefaultAsync(l => l.BOQItemId == itemId && l.LogDate.Date == logDate.Date);

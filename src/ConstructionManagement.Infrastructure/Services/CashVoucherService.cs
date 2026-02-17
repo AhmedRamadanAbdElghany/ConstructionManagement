@@ -14,12 +14,14 @@ public class CashVoucherService : ICashVoucherService
     private readonly IUnitOfWork _unitOfWork;
     private readonly INotificationService? _notificationService;
     private readonly ICompanyContext _companyContext;
+    private readonly ILocalizationService _localizationService;
 
     public CashVoucherService(
         IRepository<CashVoucher> voucherRepository,
         IRepository<CompanySettings> settingsRepository,
         IRepository<User> userRepository,
         IUnitOfWork unitOfWork,
+        ILocalizationService localizationService,
         INotificationService? notificationService = null,
         ICompanyContext companyContext = null!)
     {
@@ -27,6 +29,7 @@ public class CashVoucherService : ICashVoucherService
         _settingsRepository = settingsRepository;
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
+        _localizationService = localizationService;
         _notificationService = notificationService;
         _companyContext = companyContext;
     }
@@ -100,7 +103,7 @@ public class CashVoucherService : ICashVoucherService
         {
             await _notificationService.CreateNotificationAsync(
                 "CashVoucherPendingApproval",
-                $"صرف نقدي جديد معلقة للموافقة: {voucherNumber}",
+                _localizationService.GetString("CashVoucher.PendingApproval", voucherNumber),
                 companyId,
                 null,
                 voucher.Id,
@@ -122,10 +125,10 @@ public class CashVoucherService : ICashVoucherService
             .FirstOrDefaultAsync();
 
         if (voucher == null)
-            throw new InvalidOperationException("سند الصرف غير موجود");
+            throw new InvalidOperationException(_localizationService["CashVoucher.NotFound"]);
 
         if (voucher.ApprovalStatus != VoucherApprovalStatus.Pending)
-            throw new InvalidOperationException("تم مراجعة سند الصرف بالفعل");
+            throw new InvalidOperationException(_localizationService["CashVoucher.AlreadyReviewed"]);
 
         voucher.ApprovalStatus = request.IsApproved ? VoucherApprovalStatus.Approved : VoucherApprovalStatus.Rejected;
         voucher.ApprovedByUserId = reviewerUserId;

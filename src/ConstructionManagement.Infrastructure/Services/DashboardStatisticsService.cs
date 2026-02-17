@@ -15,6 +15,7 @@ public class DashboardStatisticsService : IDashboardStatisticsService
     private readonly IRepository<ActivityLog> _activityLogRepository;
     private readonly INotificationRepository _notificationRepository;
     private readonly IRepository<CompanyRequest> _companyRequestRepository;
+    private readonly ILocalizationService _localizationService;
     private readonly ILogger<DashboardStatisticsService> _logger;
 
     public DashboardStatisticsService(
@@ -24,6 +25,7 @@ public class DashboardStatisticsService : IDashboardStatisticsService
         IRepository<ActivityLog> activityLogRepository,
         INotificationRepository notificationRepository,
         IRepository<CompanyRequest> companyRequestRepository,
+        ILocalizationService localizationService,
         ILogger<DashboardStatisticsService> logger)
     {
         _projectRepository = projectRepository ?? throw new ArgumentNullException(nameof(projectRepository));
@@ -32,6 +34,7 @@ public class DashboardStatisticsService : IDashboardStatisticsService
         _activityLogRepository = activityLogRepository ?? throw new ArgumentNullException(nameof(activityLogRepository));
         _notificationRepository = notificationRepository ?? throw new ArgumentNullException(nameof(notificationRepository));
         _companyRequestRepository = companyRequestRepository ?? throw new ArgumentNullException(nameof(companyRequestRepository));
+        _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -77,12 +80,17 @@ public class DashboardStatisticsService : IDashboardStatisticsService
         var pendingOnboardings = await _companyRequestRepository.AsQueryable()
             .CountAsync(cr => cr.Status == "Pending");
 
+        var thirtyDaysAgo = DateTime.UtcNow.AddDays(-30);
+        var newCompaniesCount = await _companyRepository.AsQueryable()
+            .CountAsync(c => c.CreatedAt >= thirtyDaysAgo);
+
         return new SuperAdminStats
         {
             TotalCompanies = totalCompanies,
             ActiveSubscriptions = activeSubscriptions,
             MonthlyRecurringRevenue = mrr,
-            PendingOnboardings = pendingOnboardings
+            PendingOnboardings = pendingOnboardings,
+            NewCompaniesCount = newCompaniesCount
         };
     }
 
@@ -224,12 +232,15 @@ public class DashboardStatisticsService : IDashboardStatisticsService
             {
                 Id = r.Id,
                 Company = r.CompanyName,
-                Action = r.Status == "Pending" ? "New boarding request submitted" : $"Request {r.Status.ToLower()}",
+                Action = r.Status == "Pending" 
+                    ? _localizationService.GetString("Dashboard.Activity.NewBoardingRequest")
+                    : _localizationService.GetString("Dashboard.Activity.RequestStatus", r.Status.ToLower()),
                 Time = GetTimeAgo(r.CreatedAt),
+                Timestamp = r.CreatedAt,
                 Status = r.Status == "Pending" ? "info" : (r.Status == "Approved" ? "success" : "danger")
             })
             .ToList();
-
+ 
         // If we have very few requests, add new companies as activities
         if (requests.Count < (limit ?? 5))
         {
@@ -237,13 +248,14 @@ public class DashboardStatisticsService : IDashboardStatisticsService
                 .OrderByDescending(c => c.CreatedAt)
                 .Take((limit ?? 5) - requests.Count)
                 .ToListAsync();
-
+ 
             var companies = companiesData.Select(c => new SuperAdminActivity
                 {
                     Id = c.Id + 1000, // Offset for unique ID in this list
                     Company = c.Name,
-                    Action = "Organization is now live",
+                    Action = _localizationService.GetString("Dashboard.Activity.OrganizationLive"),
                     Time = GetTimeAgo(c.CreatedAt),
+                    Timestamp = c.CreatedAt,
                     Status = "success"
                 })
                 .ToList();

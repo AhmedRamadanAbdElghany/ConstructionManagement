@@ -6,6 +6,7 @@ using ConstructionManagement.Domain.Enums;
 using ConstructionManagement.Infrastructure.Persistence.Repositories;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Hangfire;
 
 namespace ConstructionManagement.Infrastructure.Services;
 
@@ -168,47 +169,44 @@ public class CompanyRequestService : ICompanyRequestService
             company.EnableVendorManagement = config.EnableVendorManagement;
         }
 
-        await _companyRepository.AddAsync(company);
-        await _uow.SaveChangesAsync();
-
-        // Create CompanySettings
-        var settings = new CompanySettings { CompanyId = company.Id };
+        // Create CompanySettings and link via navigation property for atomic save
+        company.Settings = new CompanySettings();
         
         if (config != null)
         {
-            settings.EnableDelayNotification = config.EnableDelayNotification;
-            settings.EnablePhotoUpload = config.EnablePhotoUpload;
-            settings.RequirePhotoReview = config.RequirePhotoReview;
-            settings.ClientCanSeeFinancials = config.ClientCanSeeFinancials;
-            settings.AllowMeasured = config.AllowMeasured;
-            settings.AllowSupervision = config.AllowSupervision;
-            settings.AllowPackages = config.AllowPackages;
-            settings.AllowLocations = config.AllowLocations;
-            settings.AllowHR = config.AllowHR;
+            company.Settings.EnableDelayNotification = config.EnableDelayNotification;
+            company.Settings.EnablePhotoUpload = config.EnablePhotoUpload;
+            company.Settings.RequirePhotoReview = config.RequirePhotoReview;
+            company.Settings.ClientCanSeeFinancials = config.ClientCanSeeFinancials;
+            company.Settings.AllowMeasured = config.AllowMeasured;
+            company.Settings.AllowSupervision = config.AllowSupervision;
+            company.Settings.AllowPackages = config.AllowPackages;
+            company.Settings.AllowLocations = config.AllowLocations;
+            company.Settings.AllowHR = config.AllowHR;
 
-            settings.RequireMaterialRequestApproval = config.RequireMaterialRequestApproval;
-            settings.MaterialRequestApproverRole = config.MaterialRequestApproverRole;
-            settings.EnableMultiWarehouse = config.EnableMultiWarehouse;
-            settings.EnableStockAlerts = config.EnableStockAlerts;
-            settings.DefaultLowStockThreshold = config.DefaultLowStockThreshold;
+            company.Settings.RequireMaterialRequestApproval = config.RequireMaterialRequestApproval;
+            company.Settings.MaterialRequestApproverRole = config.MaterialRequestApproverRole;
+            company.Settings.EnableMultiWarehouse = config.EnableMultiWarehouse;
+            company.Settings.EnableStockAlerts = config.EnableStockAlerts;
+            company.Settings.DefaultLowStockThreshold = config.DefaultLowStockThreshold;
 
-            settings.EnableEquipmentMaintenanceScheduling = config.EnableEquipmentMaintenanceScheduling;
-            settings.EnableEquipmentUtilizationTracking = config.EnableEquipmentUtilizationTracking;
-            settings.EnableEquipmentGpsTracking = config.EnableEquipmentGpsTracking;
-            settings.EnableEquipmentRentalBilling = config.EnableEquipmentRentalBilling;
-            settings.EquipmentMaintenanceAlertThreshold = config.EquipmentMaintenanceAlertThreshold;
+            company.Settings.EnableEquipmentMaintenanceScheduling = config.EnableEquipmentMaintenanceScheduling;
+            company.Settings.EnableEquipmentUtilizationTracking = config.EnableEquipmentUtilizationTracking;
+            company.Settings.EnableEquipmentGpsTracking = config.EnableEquipmentGpsTracking;
+            company.Settings.EnableEquipmentRentalBilling = config.EnableEquipmentRentalBilling;
+            company.Settings.EquipmentMaintenanceAlertThreshold = config.EquipmentMaintenanceAlertThreshold;
 
-            settings.AllowAddProgressEntry = config.AllowAddProgressEntry;
-            settings.AllowReopenClosedDay = config.AllowReopenClosedDay;
-            settings.AutoCloseDay = config.AutoCloseDay;
+            company.Settings.AllowAddProgressEntry = config.AllowAddProgressEntry;
+            company.Settings.AllowReopenClosedDay = config.AllowReopenClosedDay;
+            company.Settings.AutoCloseDay = config.AutoCloseDay;
 
-            settings.EnableInvoiceReview = config.EnableInvoiceReview;
-            settings.ClientCanSeeMedia = config.ClientCanSeeMedia;
-            settings.ClientCanSeeBOQ = config.ClientCanSeeBOQ;
+            company.Settings.EnableInvoiceReview = config.EnableInvoiceReview;
+            company.Settings.ClientCanSeeMedia = config.ClientCanSeeMedia;
+            company.Settings.ClientCanSeeBOQ = config.ClientCanSeeBOQ;
         }
 
-        await _companySettingsRepository.AddAsync(settings);
-        await _uow.SaveChangesAsync();
+        await _companyRepository.AddAsync(company);
+        await _uow.SaveChangesAsync(); // Saves both Company and Settings in one operation
 
         // Seed Permissions and Admin Role
         await SyncCompanyPermissions(company.Id, config ?? new UpdateCompanyRequest
@@ -257,7 +255,9 @@ public class CompanyRequestService : ICompanyRequestService
         await _notificationService.NotifyCompanyRequestApprovedAsync(request.UserId ?? 0, request.CompanyName);
         if (request.User != null)
         {
-            await _emailService.SendCompanyRequestApprovedAsync(request.User.Email, request.CompanyName);
+            // Background email sending via Hangfire
+            Hangfire.BackgroundJob.Enqueue<IEmailService>(x => 
+                x.SendCompanyRequestApprovedAsync(request.User.Email, request.CompanyName));
         }
 
         return MapToDto(request);
@@ -353,7 +353,9 @@ public class CompanyRequestService : ICompanyRequestService
         await _notificationService.NotifyCompanyRequestRejectedAsync(request.UserId ?? 0, dto.RejectionReason);
         if (request.User != null)
         {
-            await _emailService.SendCompanyRequestRejectedAsync(request.User.Email, dto.RejectionReason);
+            // Background email sending via Hangfire
+            Hangfire.BackgroundJob.Enqueue<IEmailService>(x => 
+                x.SendCompanyRequestRejectedAsync(request.User.Email, dto.RejectionReason));
         }
 
         return MapToDto(request);

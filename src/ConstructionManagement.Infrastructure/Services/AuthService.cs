@@ -25,6 +25,8 @@ public class AuthService : IAuthService
     private readonly INotificationService _notificationService;
     private readonly IRepository<Role> _roleRepository;
     private readonly IRepository<UserRole> _userRoleRepository;
+    private readonly ILocalizationService _localizationService;
+    private readonly IRepository<Vendor> _vendorRepository;
 
     public AuthService(
         IUserRepository userRepository,
@@ -35,7 +37,8 @@ public class AuthService : IAuthService
         INotificationService notificationService,
         IRepository<Vendor> vendorRepository,
         IRepository<Role> roleRepository,
-        IRepository<UserRole> userRoleRepository)
+        IRepository<UserRole> userRoleRepository,
+        ILocalizationService localizationService)
     {
         _userRepository = userRepository;
         _configuration = configuration;
@@ -46,9 +49,9 @@ public class AuthService : IAuthService
         _vendorRepository = vendorRepository;
         _roleRepository = roleRepository;
         _userRoleRepository = userRoleRepository;
+        _localizationService = localizationService;
     }
 
-    private readonly IRepository<Vendor> _vendorRepository;
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
     {
@@ -56,7 +59,7 @@ public class AuthService : IAuthService
 
         if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
-            return new AuthResponse(false, "البريد الإلكتروني أو كلمة المرور غير صحيحة", null, null);
+            return new AuthResponse(false, _localizationService["Auth.InvalidCredentials"], null, null);
         }
 
         var token = GenerateJwtToken(user);
@@ -73,7 +76,7 @@ public class AuthService : IAuthService
             user.CompanyId
         );
 
-        return new AuthResponse(true, "تم تسجيل الدخول بنجاح", token, userDto);
+        return new AuthResponse(true, _localizationService["Auth.LoginSuccess"], token, userDto);
     }
 
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
@@ -81,26 +84,26 @@ public class AuthService : IAuthService
         // Validate email format
         if (!IsValidEmail(request.Email))
         {
-            return new AuthResponse(false, "صيغة البريد الإلكتروني غير صحيحة", null, null);
+            return new AuthResponse(false, _localizationService["Auth.InvalidEmail"], null, null);
         }
 
         // Validate password strength
         var passwordValidation = ValidatePasswordStrength(request.Password);
         if (!passwordValidation.IsValid)
         {
-            return new AuthResponse(false, passwordValidation.Message, null, null);
+            return new AuthResponse(false, _localizationService[passwordValidation.Message], null, null);
         }
 
         var existingUser = await _userRepository.GetByEmailAsync(request.Email);
         if (existingUser != null)
         {
-            return new AuthResponse(false, "البريد الإلكتروني مسجل بالفعل", null, null);
+            return new AuthResponse(false, _localizationService["Auth.EmailExists"], null, null);
         }
 
         var existingUserByName = await _userRepository.GetByFullNameAsync(request.FullName);
         if (existingUserByName != null)
         {
-            return new AuthResponse(false, "Full Name is already taken. Please use a different name.", null, null);
+            return new AuthResponse(false, _localizationService["Auth.FullNameExists"], null, null);
         }
 
         var nameParts = request.FullName.Split(' ', 2);
@@ -166,8 +169,8 @@ public class AuthService : IAuthService
                 // Notify User
                 await _notificationService.CreateAndSendAsync(
                     user.Id,
-                    "طلب التسجيل قيد المراجعة",
-                    "تم استلام طلب تسجيل شركتك وهو حالياً في انتظار الموافقة الإدارية.",
+                    _localizationService["NotificationTitle.RegistrationPending"],
+                    _localizationService["NotificationMessage.RegistrationPending"],
                     null,
                     NotificationType.General
                 );
@@ -214,7 +217,7 @@ public class AuthService : IAuthService
                 user.CompanyId
             );
 
-            return new AuthResponse(true, "Registration successful. Welcome!", token, userDto);
+            return new AuthResponse(true, _localizationService["Auth.RegistrationSuccess"], token, userDto);
         }
         catch (Exception ex)
         {
@@ -501,22 +504,22 @@ public class AuthService : IAuthService
     private static (bool IsValid, string Message) ValidatePasswordStrength(string password)
     {
         if (string.IsNullOrWhiteSpace(password))
-            return (false, "Password is required");
+            return (false, "Auth.Password.Required");
 
         if (password.Length < 8)
-            return (false, "Password must be at least 8 characters long");
+            return (false, "Auth.Password.MinLength");
 
         if (!Regex.IsMatch(password, @"[A-Z]"))
-            return (false, "Password must contain at least one uppercase letter");
+            return (false, "Auth.Password.Uppercase");
 
         if (!Regex.IsMatch(password, @"[a-z]"))
-            return (false, "Password must contain at least one lowercase letter");
+            return (false, "Auth.Password.Lowercase");
 
         if (!Regex.IsMatch(password, @"[0-9]"))
-            return (false, "Password must contain at least one number");
+            return (false, "Auth.Password.Digit");
 
         if (!Regex.IsMatch(password, @"[!@#$%^&*(),.?""':{}|<>]"))
-            return (false, "Password must contain at least one special character");
+            return (false, "Auth.Password.SpecialChar");
 
         return (true, "Password is strong");
     }

@@ -24,6 +24,7 @@ public class AuthServiceTests
     private readonly Mock<IRepository<Vendor>> _vendorRepoMock = new();
     private readonly Mock<IRepository<Role>> _roleRepoMock = new();
     private readonly Mock<IRepository<UserRole>> _userRoleRepoMock = new();
+    private readonly Mock<ILocalizationService> _localizationServiceMock = new();
 
     public AuthServiceTests()
     {
@@ -31,6 +32,8 @@ public class AuthServiceTests
         _configMock.Setup(c => c["JwtSettings:Key"]).Returns("ThisIsAStrongSecretKeyForTesting123456!");
         _configMock.Setup(c => c["JwtSettings:Issuer"]).Returns("TestIssuer");
         _configMock.Setup(c => c["JwtSettings:Audience"]).Returns("TestAudience");
+        _localizationServiceMock.Setup(l => l.GetString(It.IsAny<string>(), It.IsAny<object[]>()))
+            .Returns((string key, object[] args) => key);
     }
 
     private AuthService CreateService()
@@ -44,7 +47,8 @@ public class AuthServiceTests
             _notificationServiceMock.Object,
             _vendorRepoMock.Object,
             _roleRepoMock.Object,
-            _userRoleRepoMock.Object
+            _userRoleRepoMock.Object,
+            _localizationServiceMock.Object
         );
     }
 
@@ -178,7 +182,8 @@ public class AuthServiceTests
             _notificationServiceMock.Object,
             _vendorRepoMock.Object,
             _roleRepoMock.Object,
-            _userRoleRepoMock.Object
+            _userRoleRepoMock.Object,
+            _localizationServiceMock.Object
         );
 
         var request = new LoginRequest(user.Email, "Test@123");

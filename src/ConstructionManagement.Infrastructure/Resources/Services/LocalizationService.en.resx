@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Success" xml:space="preserve">
+    <value>Operation completed successfully</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>An error occurred</value>
+  </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>Not found</value>
+  </data>
+  <data name="Unauthorized" xml:space="preserve">
+    <value>Unauthorized</value>
+  </data>
+  <data name="Forbidden" xml:space="preserve">
+    <value>Forbidden</value>
+  </data>
+  <data name="ValidationError" xml:space="preserve">
+    <value>Validation error</value>
+  </data>
+  <data name="Validation.Required" xml:space="preserve">
+    <value>This field is required</value>
+  </data>
+  <data name="Validation.Email" xml:space="preserve">
+    <value>Invalid email address</value>
+  </data>
+  <data name="Validation.MinLength" xml:space="preserve">
+    <value>Minimum length is {0} characters</value>
+  </data>
+  <data name="Validation.MaxLength" xml:space="preserve">
+    <value>Maximum length is {0} characters</value>
+  </data>
+  <data name="Validation.Range" xml:space="preserve">
+    <value>Value must be between {0} and {1}</value>
+  </data>
+  <data name="Validation.Numeric" xml:space="preserve">
+    <value>Must be a number</value>
+  </data>
+  <data name="Validation.MinInterval" xml:space="preserve">
+    <value>Notice days must be at least 1</value>
+  </data>
+  <data name="NotificationTitle.General" xml:space="preserve">
+    <value>New Notification</value>
+  </data>
+  <data name="NotificationTitle.ApprovalGranted" xml:space="preserve">
+    <value>Approval Granted</value>
+  </data>
+  <data name="NotificationTitle.ApprovalRejected" xml:space="preserve">
+    <value>Approval Rejected</value>
+  </data>
+  <data name="NotificationTitle.PaymentReceived" xml:space="preserve">
+    <value>Payment Received</value>
+  </data>
+  <data name="NotificationTitle.MilestoneAchieved" xml:space="preserve">
+    <value>Milestone Achieved</value>
+  </data>
+  <data name="NotificationTitle.ProjectDelay" xml:space="preserve">
+    <value>Project Delay</value>
+  </data>
+  <data name="NotificationTitle.ItemDelay" xml:space="preserve">
+    <value>Item Delay</value>
+  </data>
+  <data name="NotificationTitle.BudgetWarning" xml:space="preserve">
+    <value>Budget Warning</value>
+  </data>
+  <data name="NotificationTitle.BudgetOverrun" xml:space="preserve">
+    <value>Budget Overrun</value>
+  </data>
+  <data name="NotificationTitle.Escalation" xml:space="preserve">
+    <value>Escalation</value>
+  </data>
+  <data name="NotificationMessage.BudgetOverrun" xml:space="preserve">
+    <value>Critical Escalation: Budget Overrun - Item {0} exceeded budget ({1})</value>
+  </data>
+  <data name="NotificationMessage.BudgetWarning" xml:space="preserve">
+    <value>Warning: Budget Approach - Item {0} has consumed 90% of its budget</value>
+  </data>
+  <data name="NotificationMessage.ProjectDelay" xml:space="preserve">
+    <value>Project Delay: {0}</value>
+  </data>
+  <data name="NotificationMessage.ItemDelay" xml:space="preserve">
+    <value>Item Delay: {0}</value>
+  </data>
+  <data name="NotificationMessage.ApprovalNeeded" xml:space="preserve">
+    <value>Approval required for: {0}</value>
+  </data>
+  <data name="NotificationMessage.ApprovalGranted" xml:space="preserve">
+    <value>Approved: {0}</value>
+  </data>
+  <data name="NotificationMessage.ApprovalRejected" xml:space="preserve">
+    <value>Rejected: {0}. Reason: {1}</value>
+  </data>
+  <data name="NotificationMessage.CompanyApproved" xml:space="preserve">
+    <value>Your company registration request was approved: {0}</value>
+  </data>
+  <data name="NotificationMessage.CompanyRejected" xml:space="preserve">
+    <value>Your company registration request was rejected. Reason: {0}</value>
+  </data>
+  <data name="NotificationMessage.JoinApproved" xml:space="preserve">
+    <value>Your join request was approved for: {0}</value>
+  </data>
+  <data name="NotificationMessage.JoinRejected" xml:space="preserve">
+    <value>Your join request was rejected. Reason: {0}</value>
+  </data>
+  <data name="NotificationMessage.PaymentReceived" xml:space="preserve">
+    <value>Payment of {0} received for project: {1}</value>
+  </data>
+  <data name="NotificationMessage.MilestoneAchieved" xml:space="preserve">
+    <value>Milestone achieved: {0} in project: {1}</value>
+  </data>
+  <data name="NotificationMessage.CashVoucherPendingApproval" xml:space="preserve">
+    <value>Cash voucher pending approval - Amount: {0}</value>
+  </data>
+  <data name="NotificationMessage.MiscExpensePendingApproval" xml:space="preserve">
+    <value>Misc expense pending approval - Amount: {0}</value>
+  </data>
+  <data name="Api.Success" xml:space="preserve">
+    <value>Operation successful</value>
+  </data>
+  <data name="Api.Error" xml:space="preserve">
+    <value>An error occurred</value>
+  </data>
+  <data name="Api.NotFound" xml:space="preserve">
+    <value>Not found</value>
+  </data>
+  <data name="Api.Unauthorized" xml:space="preserve">
+    <value>Unauthorized</value>
+  </data>
+  <data name="Api.Forbidden" xml:space="preserve">
+    <value>Forbidden</value>
+  </data>
+  <data name="Api.ValidationError" xml:space="preserve">
+    <value>Validation error</value>
+  </data>
+  <data name="Auth.InvalidCredentials" xml:space="preserve">
+    <value>Invalid email or password</value>
+  </data>
+  <data name="Auth.LoginSuccess" xml:space="preserve">
+    <value>Logged in successfully</value>
+  </data>
+  <data name="Auth.InvalidEmail" xml:space="preserve">
+    <value>Invalid email format</value>
+  </data>
+  <data name="Auth.EmailExists" xml:space="preserve">
+    <value>Email is already registered</value>
+  </data>
+  <data name="Auth.FullNameExists" xml:space="preserve">
+    <value>Full Name is already taken. Please use a different name.</value>
+  </data>
+  <data name="Auth.RegistrationSuccess" xml:space="preserve">
+    <value>Registration successful. Welcome!</value>
+  </data>
+  <data name="Auth.Password.Required" xml:space="preserve">
+    <value>Password is required</value>
+  </data>
+  <data name="Auth.Password.MinLength" xml:space="preserve">
+    <value>Password must be at least 8 characters long</value>
+  </data>
+  <data name="Auth.Password.Uppercase" xml:space="preserve">
+    <value>Password must contain at least one uppercase letter</value>
+  </data>
+  <data name="Auth.Password.Lowercase" xml:space="preserve">
+    <value>Password must contain at least one lowercase letter</value>
+  </data>
+  <data name="Auth.Password.Digit" xml:space="preserve">
+    <value>Password must contain at least one number</value>
+  </data>
+  <data name="Auth.Password.SpecialChar" xml:space="preserve">
+    <value>Password must contain at least one special character</value>
+  </data>
+  <data name="NotificationTitle.RegistrationPending" xml:space="preserve">
+    <value>Registration Request Pending</value>
+  </data>
+  <data name="NotificationMessage.RegistrationPending" xml:space="preserve">
+    <value>Your company registration request has been received and is currently awaiting administrative approval.</value>
+  </data>
+  <data name="Notification.New" xml:space="preserve">
+    <value>New Notification</value>
+  </data>
+  <data name="NotificationMessage.NewCompanyRequest" xml:space="preserve">
+    <value>New company registration request: {0}</value>
+  </data>
+  <data name="NotificationMessage.NewJoinRequest" xml:space="preserve">
+    <value>{0} wants to join your company</value>
+  </data>
+  <data name="DailyLog.ReopenReasonRequired" xml:space="preserve">
+    <value>Reopen reason is required</value>
+  </data>
+  <data name="CashVoucher.PendingApproval" xml:space="preserve">
+    <value>New cash voucher pending approval: {0}</value>
+  </data>
+  <data name="CashVoucher.NotFound" xml:space="preserve">
+    <value>Cash voucher not found</value>
+  </data>
+  <data name="CashVoucher.AlreadyReviewed" xml:space="preserve">
+    <value>Cash voucher has already been reviewed</value>
+  </data>
+  <data name="MiscExpense.PendingApproval" xml:space="preserve">
+    <value>New misc expense pending approval: {0}</value>
+  </data>
+  <data name="MiscExpense.NotFound" xml:space="preserve">
+    <value>Misc expense proof not found</value>
+  </data>
+  <data name="MiscExpense.AlreadyReviewed" xml:space="preserve">
+    <value>Misc expense has already been reviewed</value>
+  </data>
+  <data name="Invoice.DayClosed" xml:space="preserve">
+    <value>The day is closed for this item, no new invoices can be added</value>
+  </data>
+  <data name="Invoice.ItemNotFound" xml:space="preserve">
+    <value>Item not found</value>
+  </data>
+  <data name="Invoice.NumberGenerationFailed" xml:space="preserve">
+    <value>Failed to generate invoice number</value>
+  </data>
+  <data name="Project.NotFound" xml:space="preserve">
+    <value>Project not found</value>
+  </data>
+  <data name="Project.RolesRequired" xml:space="preserve">
+    <value>Roles are required</value>
+  </data>
+  <data name="Project.StartDelay" xml:space="preserve">
+    <value>Project start delay: {0} (Expected: {1})</value>
+  </data>
+  <data name="Project.ItemStartDelay" xml:space="preserve">
+    <value>Item start delay: {0} in project: {1}</value>
+  </data>
+  <data name="Project.ItemEndDelay" xml:space="preserve">
+    <value>Item delivery delay: {0} (Deadline: {1})</value>
+  </data>
+  <data name="Project.BudgetWarning.Title" xml:space="preserve">
+    <value>Budget Warning</value>
+  </data>
+  <data name="Project.BudgetWarning.Message" xml:space="preserve">
+    <value>Item {0} has consumed {1}% of the budget</value>
+  </data>
+  <data name="Project.Escalation.Title" xml:space="preserve">
+    <value>Escalation Notice – Delay</value>
+  </data>
+  <data name="Project.Email.Subject" xml:space="preserve">
+    <value>Struc Alert – Escalation</value>
+  </data>
+  <data name="Dashboard.Activity.NewBoardingRequest" xml:space="preserve">
+    <value>New boarding request submitted</value>
+  </data>
+  <data name="Dashboard.Activity.RequestStatus" xml:space="preserve">
+    <value>Request reviewed: {0}</value>
+  </data>
+  <data name="Dashboard.Activity.OrganizationLive" xml:space="preserve">
+    <value>Organization is now live</value>
+  </data>
+</root>

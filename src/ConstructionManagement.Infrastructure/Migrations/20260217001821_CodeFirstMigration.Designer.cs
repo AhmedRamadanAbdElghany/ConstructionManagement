@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ConstructionManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260216011358_CodeFirstMigration")]
+    [Migration("20260217001821_CodeFirstMigration")]
     partial class CodeFirstMigration
     {
         /// <inheritdoc />
@@ -2031,6 +2031,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -2068,6 +2071,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("SupplierUserId");
 
@@ -3689,6 +3694,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<decimal?>("AppliedDiscountPercent")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -3739,6 +3747,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
                     b.HasIndex("OrderId");
 
                     b.HasIndex("StockId");
@@ -3762,6 +3772,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
                     b.Property<string>("BinLocation")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -3818,6 +3831,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("MaterialType");
 
@@ -4733,6 +4748,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<decimal>("ApprovedQuantity")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -4768,6 +4786,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("MaterialId");
 
@@ -5095,6 +5115,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<int?>("ChangedByUserId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -5128,6 +5151,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ChangedByUserId");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("OrderId");
 
@@ -5905,6 +5930,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<decimal?>("AgreedRate")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("ContactDate")
                         .HasColumnType("datetime2");
 
@@ -5953,6 +5981,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("ContactedByUserId");
 
@@ -6364,6 +6394,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<DateTime?>("CancelledDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -6436,6 +6469,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
                     b.HasIndex("CustomerUserId");
 
                     b.HasIndex("IsActive");
@@ -6461,6 +6496,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
                     b.Property<bool>("ApplyBulkDiscount")
                         .HasColumnType("bit");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -6502,6 +6540,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("RecurringOrderId");
 
@@ -6925,6 +6965,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("ComplianceDate")
                         .HasColumnType("datetime2");
 
@@ -6967,6 +7010,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("ProjectId");
+
+                    b.HasIndex("CompanyId");
 
                     b.ToTable("SafetyCompliances");
                 });
@@ -7351,6 +7396,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<bool>("ApplyToAllItems")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -7403,6 +7451,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
                     b.HasIndex("DiscountCode")
                         .IsUnique();
 
@@ -7420,6 +7470,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -7465,6 +7518,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("IsActive");
 
@@ -8217,7 +8272,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             UserId = 1,
                             RoleId = 1,
-                            AssignedAt = new DateTime(2026, 2, 16, 1, 13, 55, 407, DateTimeKind.Utc).AddTicks(9073)
+                            AssignedAt = new DateTime(2026, 2, 17, 0, 18, 17, 128, DateTimeKind.Utc).AddTicks(7372)
                         });
                 });
 
@@ -8234,6 +8289,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
                     b.Property<string>("ChangedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -8260,6 +8318,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("UserId");
 
@@ -8511,6 +8571,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -8560,6 +8623,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("ProjectId");
 
@@ -8709,6 +8774,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -8745,6 +8813,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
                     b.HasIndex("OrderId");
 
                     b.ToTable("WarehouseOrderItem");
@@ -8764,6 +8834,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<string>("Barcode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -8854,6 +8927,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("ProjectId");
 
@@ -9520,6 +9595,10 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CustomerTierDiscount", b =>
                 {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("ConstructionManagement.Domain.Entities.User", "CustomerUser")
                         .WithMany()
                         .HasForeignKey("CustomerUserId")
@@ -9531,6 +9610,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasForeignKey("SupplierUserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("Company");
 
                     b.Navigation("CustomerUser");
 
@@ -9897,6 +9978,10 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.InventoryOrderItem", b =>
                 {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("ConstructionManagement.Domain.Entities.InventoryOrder", "Order")
                         .WithMany("Items")
                         .HasForeignKey("OrderId")
@@ -9909,6 +9994,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.Navigation("Company");
+
                     b.Navigation("Order");
 
                     b.Navigation("Stock");
@@ -9916,11 +10003,17 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.InventoryStock", b =>
                 {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("ConstructionManagement.Domain.Entities.InventoryWarehouse", "Warehouse")
                         .WithMany("Stocks")
                         .HasForeignKey("WarehouseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Company");
 
                     b.Navigation("Warehouse");
                 });
@@ -10189,6 +10282,10 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.MaterialRequestItem", b =>
                 {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("ConstructionManagement.Domain.Entities.Material", "Material")
                         .WithMany()
                         .HasForeignKey("MaterialId");
@@ -10198,6 +10295,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasForeignKey("MaterialRequestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Company");
 
                     b.Navigation("Material");
 
@@ -10319,6 +10418,10 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("ChangedByUserId");
 
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("ConstructionManagement.Domain.Entities.WarehouseOrderRequest", "Order")
                         .WithMany("StatusHistory")
                         .HasForeignKey("OrderId")
@@ -10326,6 +10429,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("ChangedByUser");
+
+                    b.Navigation("Company");
 
                     b.Navigation("Order");
                 });
@@ -10513,6 +10618,10 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectWorkerContact", b =>
                 {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("ConstructionManagement.Domain.Entities.User", "ContactedByUser")
                         .WithMany()
                         .HasForeignKey("ContactedByUserId")
@@ -10530,6 +10639,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasForeignKey("WorkerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Company");
 
                     b.Navigation("ContactedByUser");
 
@@ -10622,6 +10733,10 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.RecurringOrder", b =>
                 {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("ConstructionManagement.Domain.Entities.User", "CustomerUser")
                         .WithMany()
                         .HasForeignKey("CustomerUserId")
@@ -10642,6 +10757,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("WarehouseId");
 
+                    b.Navigation("Company");
+
                     b.Navigation("CustomerUser");
 
                     b.Navigation("Project");
@@ -10653,6 +10770,10 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.RecurringOrderItem", b =>
                 {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("ConstructionManagement.Domain.Entities.RecurringOrder", "RecurringOrder")
                         .WithMany("Items")
                         .HasForeignKey("RecurringOrderId")
@@ -10664,6 +10785,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasForeignKey("StockId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("Company");
 
                     b.Navigation("RecurringOrder");
 
@@ -10743,11 +10866,17 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.SafetyCompliance", b =>
                 {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("ConstructionManagement.Domain.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Company");
 
                     b.Navigation("Project");
                 });
@@ -10830,22 +10959,34 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.SpecialPromotion", b =>
                 {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("ConstructionManagement.Domain.Entities.User", "SupplierUser")
                         .WithMany()
                         .HasForeignKey("SupplierUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Company");
+
                     b.Navigation("SupplierUser");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.StockDiscountTier", b =>
                 {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("ConstructionManagement.Domain.Entities.InventoryStock", "Stock")
                         .WithMany("DiscountTiers")
                         .HasForeignKey("StockId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Company");
 
                     b.Navigation("Stock");
                 });
@@ -11002,11 +11143,17 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.UserTypeHistory", b =>
                 {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("ConstructionManagement.Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Company");
 
                     b.Navigation("User");
                 });
@@ -11084,6 +11231,10 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.VendorReview", b =>
                 {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("ConstructionManagement.Domain.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId");
@@ -11101,6 +11252,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasOne("ConstructionManagement.Domain.Entities.InventoryWarehouse", "Warehouse")
                         .WithMany("ReceivedReviews")
                         .HasForeignKey("WarehouseId");
+
+                    b.Navigation("Company");
 
                     b.Navigation("Project");
 
@@ -11153,17 +11306,27 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.WarehouseOrderItem", b =>
                 {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("ConstructionManagement.Domain.Entities.WarehouseOrderRequest", "Order")
                         .WithMany("Items")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Company");
+
                     b.Navigation("Order");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.WarehouseOrderRequest", b =>
                 {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("ConstructionManagement.Domain.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId");
@@ -11185,6 +11348,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasOne("ConstructionManagement.Domain.Entities.User", "WarehouseOwner")
                         .WithMany()
                         .HasForeignKey("WarehouseOwnerId");
+
+                    b.Navigation("Company");
 
                     b.Navigation("Project");
 

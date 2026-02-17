@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Success" xml:space="preserve">
+    <value>تمت العملية بنجاح</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>حدث خطأ</value>
+  </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>غير موجود</value>
+  </data>
+  <data name="Unauthorized" xml:space="preserve">
+    <value>غير مصرح</value>
+  </data>
+  <data name="Forbidden" xml:space="preserve">
+    <value>محظور</value>
+  </data>
+  <data name="ValidationError" xml:space="preserve">
+    <value>خطأ في البيانات</value>
+  </data>
+  <data name="Validation.Required" xml:space="preserve">
+    <value>هذا الحقل مطلوب</value>
+  </data>
+  <data name="Validation.Email" xml:space="preserve">
+    <value>البريد الإلكتروني غير صالح</value>
+  </data>
+  <data name="Validation.MinLength" xml:space="preserve">
+    <value>يجب أن يكون الحد الأدنى {0} أحرف</value>
+  </data>
+  <data name="Validation.MaxLength" xml:space="preserve">
+    <value>يجب ألا يتجاوز {0} حرف</value>
+  </data>
+  <data name="Validation.Range" xml:space="preserve">
+    <value>يجب أن تكون القيمة بين {0} و {1}</value>
+  </data>
+  <data name="Validation.Numeric" xml:space="preserve">
+    <value>يجب أن يكون رقماً</value>
+  </data>
+  <data name="Validation.MinInterval" xml:space="preserve">
+    <value>يجب أن يكون عدد أيام الإشعار أكبر من أو يساوي 1</value>
+  </data>
+  <data name="NotificationTitle.General" xml:space="preserve">
+    <value>إشعار جديد</value>
+  </data>
+  <data name="NotificationTitle.ApprovalGranted" xml:space="preserve">
+    <value>تمت الموافقة</value>
+  </data>
+  <data name="NotificationTitle.ApprovalRejected" xml:space="preserve">
+    <value>تم الرفض</value>
+  </data>
+  <data name="NotificationTitle.PaymentReceived" xml:space="preserve">
+    <value>تم استلام الدفعة</value>
+  </data>
+  <data name="NotificationTitle.MilestoneAchieved" xml:space="preserve">
+    <value>تحقيق مرحلة مهمة</value>
+  </data>
+  <data name="NotificationTitle.ProjectDelay" xml:space="preserve">
+    <value>تأخر المشروع</value>
+  </data>
+  <data name="NotificationTitle.ItemDelay" xml:space="preserve">
+    <value>تأخر البند</value>
+  </data>
+  <data name="NotificationTitle.BudgetWarning" xml:space="preserve">
+    <value>تحذير: اقتراب من الميزانية</value>
+  </data>
+  <data name="NotificationTitle.BudgetOverrun" xml:space="preserve">
+    <value>تجاوز الميزانية</value>
+  </data>
+  <data name="NotificationTitle.Escalation" xml:space="preserve">
+    <value>تصعيد</value>
+  </data>
+  <data name="NotificationMessage.BudgetOverrun" xml:space="preserve">
+    <value>تصعيد حرج: تجاوز الميزانية - البند {0} تجاوز الميزانية ({1})</value>
+  </data>
+  <data name="NotificationMessage.BudgetWarning" xml:space="preserve">
+    <value>تحذير: اقتراب من الميزانية - البند {0} استهلك 90% من ميزانيته</value>
+  </data>
+  <data name="NotificationMessage.ProjectDelay" xml:space="preserve">
+    <value>تأخر المشروع: {0}</value>
+  </data>
+  <data name="NotificationMessage.ItemDelay" xml:space="preserve">
+    <value>تأخر البند: {0}</value>
+  </data>
+  <data name="NotificationMessage.ApprovalNeeded" xml:space="preserve">
+    <value>موافقة مطلوبة على: {0}</value>
+  </data>
+  <data name="NotificationMessage.ApprovalGranted" xml:space="preserve">
+    <value>تمت الموافقة على: {0}</value>
+  </data>
+  <data name="NotificationMessage.ApprovalRejected" xml:space="preserve">
+    <value>تم رفض: {0}. السبب: {1}</value>
+  </data>
+  <data name="NotificationMessage.CompanyApproved" xml:space="preserve">
+    <value>تمت الموافقة على طلب تسجيل شركتك: {0}</value>
+  </data>
+  <data name="NotificationMessage.CompanyRejected" xml:space="preserve">
+    <value>تم رفض طلب تسجيل شركتك. السبب: {0}</value>
+  </data>
+  <data name="NotificationMessage.JoinApproved" xml:space="preserve">
+    <value>تمت الموافقة على طلب انضمامك إلى: {0}</value>
+  </data>
+  <data name="NotificationMessage.JoinRejected" xml:space="preserve">
+    <value>تم رفض طلب انضمامك. السبب: {0}</value>
+  </data>
+  <data name="NotificationMessage.PaymentReceived" xml:space="preserve">
+    <value>تم استلام دفعة بقيمة {0} للمشروع: {1}</value>
+  </data>
+  <data name="NotificationMessage.MilestoneAchieved" xml:space="preserve">
+    <value>تم تحقيق مرحلة مهمة: {0} في المشروع: {1}</value>
+  </data>
+  <data name="NotificationMessage.CashVoucherPendingApproval" xml:space="preserve">
+    <value>سند صرف قيد الانتظار للموافقة - القيمة: {0}</value>
+  </data>
+  <data name="NotificationMessage.MiscExpensePendingApproval" xml:space="preserve">
+    <value>مصروف طارئ قيد الانتظار للموافقة - القيمة: {0}</value>
+  </data>
+  <data name="Api.Success" xml:space="preserve">
+    <value>تمت العملية بنجاح</value>
+  </data>
+  <data name="Api.Error" xml:space="preserve">
+    <value>حدث خطأ</value>
+  </data>
+  <data name="Api.NotFound" xml:space="preserve">
+    <value>غير موجود</value>
+  </data>
+  <data name="Api.Unauthorized" xml:space="preserve">
+    <value>غير مصرح</value>
+  </data>
+  <data name="Api.Forbidden" xml:space="preserve">
+    <value>محظور</value>
+  </data>
+  <data name="Api.ValidationError" xml:space="preserve">
+    <value>خطأ في البيانات</value>
+  </data>
+  <data name="Auth.InvalidCredentials" xml:space="preserve">
+    <value>البريد الإلكتروني أو كلمة المرور غير صحيحة</value>
+  </data>
+  <data name="Auth.LoginSuccess" xml:space="preserve">
+    <value>تم تسجيل الدخول بنجاح</value>
+  </data>
+  <data name="Auth.InvalidEmail" xml:space="preserve">
+    <value>صيغة البريد الإلكتروني غير صحيحة</value>
+  </data>
+  <data name="Auth.EmailExists" xml:space="preserve">
+    <value>البريد الإلكتروني مسجل بالفعل</value>
+  </data>
+  <data name="Auth.FullNameExists" xml:space="preserve">
+    <value>الاسم الكامل مسجل بالفعل. يرجى استخدام اسم مختلف.</value>
+  </data>
+  <data name="Auth.RegistrationSuccess" xml:space="preserve">
+    <value>تم التسجيل بنجاح. أهلاً بك!</value>
+  </data>
+  <data name="Auth.Password.Required" xml:space="preserve">
+    <value>كلمة المرور مطلوبة</value>
+  </data>
+  <data name="Auth.Password.MinLength" xml:space="preserve">
+    <value>يجب أن تتكون كلمة المرور من 8 أحرف على الأقل</value>
+  </data>
+  <data name="Auth.Password.Uppercase" xml:space="preserve">
+    <value>يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل</value>
+  </data>
+  <data name="Auth.Password.Lowercase" xml:space="preserve">
+    <value>يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل</value>
+  </data>
+  <data name="Auth.Password.Digit" xml:space="preserve">
+    <value>يجب أن تحتوي كلمة المرور على رقم واحد على الأقل</value>
+  </data>
+  <data name="Auth.Password.SpecialChar" xml:space="preserve">
+    <value>يجب أن تحتوي كلمة المرور على رمز خاص واحد على الأقل</value>
+  </data>
+  <data name="NotificationTitle.RegistrationPending" xml:space="preserve">
+    <value>طلب التسجيل قيد المراجعة</value>
+  </data>
+  <data name="NotificationMessage.RegistrationPending" xml:space="preserve">
+    <value>تم استلام طلب تسجيل شركتك وهو حالياً في انتظار الموافقة الإدارية.</value>
+  </data>
+  <data name="Notification.New" xml:space="preserve">
+    <value>إشعار جديد</value>
+  </data>
+  <data name="NotificationMessage.NewCompanyRequest" xml:space="preserve">
+    <value>طلب تسجيل شركة جديدة: {0}</value>
+  </data>
+  <data name="NotificationMessage.NewJoinRequest" xml:space="preserve">
+    <value>{0} يريد الانضمام إلى شركتك</value>
+  </data>
+  <data name="DailyLog.ReopenReasonRequired" xml:space="preserve">
+    <value>سبب إعادة الفتح مطلوب</value>
+  </data>
+  <data name="CashVoucher.PendingApproval" xml:space="preserve">
+    <value>سند صرف نقدي جديد في انتظار الموافقة: {0}</value>
+  </data>
+  <data name="CashVoucher.NotFound" xml:space="preserve">
+    <value>سند الصرف غير موجود</value>
+  </data>
+  <data name="CashVoucher.AlreadyReviewed" xml:space="preserve">
+    <value>تم مراجعة سند الصرف بالفعل</value>
+  </data>
+  <data name="MiscExpense.PendingApproval" xml:space="preserve">
+    <value>نثريات جديدة في انتظار الموافقة: {0}</value>
+  </data>
+  <data name="MiscExpense.NotFound" xml:space="preserve">
+    <value>إثبات المصروفات غير موجود</value>
+  </data>
+  <data name="MiscExpense.AlreadyReviewed" xml:space="preserve">
+    <value>تم مراجعة إثبات المصروفات بالفعل</value>
+  </data>
+  <data name="Invoice.DayClosed" xml:space="preserve">
+    <value>اليوم مقفول لهذا البند، لا يمكن إضافة فواتير جديدة</value>
+  </data>
+  <data name="Invoice.ItemNotFound" xml:space="preserve">
+    <value>البند غير موجود</value>
+  </data>
+  <data name="Invoice.NumberGenerationFailed" xml:space="preserve">
+    <value>فشل توليد رقم الفاتورة</value>
+  </data>
+  <data name="Project.NotFound" xml:space="preserve">
+    <value>المشروع غير موجود</value>
+  </data>
+  <data name="Project.RolesRequired" xml:space="preserve">
+    <value>الرولات مطلوبة</value>
+  </data>
+  <data name="Project.StartDelay" xml:space="preserve">
+    <value>تأخير بداية المشروع: {0} (الموعد المتوقع: {1})</value>
+  </data>
+  <data name="Project.ItemStartDelay" xml:space="preserve">
+    <value>تأخير بداية البند: {0} في المشروع: {1}</value>
+  </data>
+  <data name="Project.ItemEndDelay" xml:space="preserve">
+    <value>تأخير تسليم البند: {0} (الموعد النهائي: {1})</value>
+  </data>
+  <data name="Project.BudgetWarning.Title" xml:space="preserve">
+    <value>تحذير الميزانية</value>
+  </data>
+  <data name="Project.BudgetWarning.Message" xml:space="preserve">
+    <value>البند {0} استهلك {1}% من الميزانية</value>
+  </data>
+  <data name="Project.Escalation.Title" xml:space="preserve">
+    <value>إشعار تصعيد – تأخير</value>
+  </data>
+  <data name="Project.Email.Subject" xml:space="preserve">
+    <value>تنبيه ستركت – تصعيد</value>
+  </data>
+  <data name="Dashboard.Activity.NewBoardingRequest" xml:space="preserve">
+    <value>تم تقديم طلب انضمام جديد</value>
+  </data>
+  <data name="Dashboard.Activity.RequestStatus" xml:space="preserve">
+    <value>تمت مراجعة الطلب: {0}</value>
+  </data>
+  <data name="Dashboard.Activity.OrganizationLive" xml:space="preserve">
+    <value>المنظمة الآن مفعلة</value>
+  </data>
+</root>

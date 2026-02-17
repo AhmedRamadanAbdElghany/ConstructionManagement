@@ -21,7 +21,7 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
       <div class="auth-box">
         <!-- Visual Side -->
         <div class="visual-side">
-          <div class="site-overlay"></div>
+          <div class="site-overlay" [style.backgroundImage]="'url(' + ('auth.bg_image' | translate) + ')'"></div>
           <div class="visual-inner">
             <div class="brand-header">
               <div class="logo-box">
@@ -198,7 +198,9 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
     .site-overlay {
       position: absolute;
       inset: 0;
-      background: url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=2070') center/cover no-repeat;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
       opacity: 0.25;
       filter: grayscale(0.5) contrast(1.2);
     }

@@ -38,7 +38,7 @@ public class ProjectSettingsService : IProjectSettingsService
 
         // Get global company settings (must exist – singleton row Id=1)
         var companySettings = await _companySettingsRepository.GetByIdAsync(1)
-            ?? throw new InvalidOperationException("إعدادات الشركة العامة غير موجودة");
+            ?? new CompanySettings(); // Fallback to default global settings if not found
 
         // Merge: project overrides take precedence, else fall back to global
         var effectiveSettings = new ProjectSettingsDto

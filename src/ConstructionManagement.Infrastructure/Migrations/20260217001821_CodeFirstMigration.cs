@@ -1142,6 +1142,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     TotalSpent = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ValidFrom = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ValidUntil = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -1150,6 +1151,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CustomerTierDiscounts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CustomerTierDiscounts_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_CustomerTierDiscounts_Users_CustomerUserId",
                         column: x => x.CustomerUserId,
@@ -1357,6 +1363,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     ApplyToAllItems = table.Column<bool>(type: "bit", nullable: false),
                     ApplicableMaterialTypes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -1365,6 +1372,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SpecialPromotions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SpecialPromotions_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_SpecialPromotions_Users_SupplierUserId",
                         column: x => x.SupplierUserId,
@@ -1411,6 +1423,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     ChangedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ChangedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Reason = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -1419,6 +1432,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserTypeHistories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserTypeHistories_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_UserTypeHistories_Users_UserId",
                         column: x => x.UserId,
@@ -1644,6 +1662,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     BinLocation = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BatchNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -1652,6 +1671,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_InventoryStocks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_InventoryStocks_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_InventoryStocks_InventoryWarehouses_WarehouseId",
                         column: x => x.WarehouseId,
@@ -2530,6 +2554,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     EstimatedOrderTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     CancellationReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CancelledDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -2538,6 +2563,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RecurringOrders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RecurringOrders_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_RecurringOrders_InventoryWarehouses_WarehouseId",
                         column: x => x.WarehouseId,
@@ -2610,6 +2640,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     NonComplianceNotes = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
                     NextReviewDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     SupportingDocuments = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
                     Id = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -2619,6 +2650,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SafetyCompliances", x => x.ProjectId);
+                    table.ForeignKey(
+                        name: "FK_SafetyCompliances_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_SafetyCompliances_Projects_ProjectId",
                         column: x => x.ProjectId,
@@ -2791,6 +2827,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     IsPublic = table.Column<bool>(type: "bit", nullable: false),
                     IsApproved = table.Column<bool>(type: "bit", nullable: false),
                     ReviewDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -2799,6 +2836,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_VendorReviews", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_VendorReviews_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_VendorReviews_InventoryWarehouses_WarehouseId",
                         column: x => x.WarehouseId,
@@ -2854,6 +2896,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     DeliveryLatitude = table.Column<double>(type: "float", nullable: true),
                     DeliveryLongitude = table.Column<double>(type: "float", nullable: true),
                     DeliveredAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -2862,6 +2905,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_WarehouseOrderRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WarehouseOrderRequests_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_WarehouseOrderRequests_InventoryWarehouses_WarehouseId",
                         column: x => x.WarehouseId,
@@ -3051,6 +3099,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastContactDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -3059,6 +3108,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ProjectWorkerContacts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProjectWorkerContacts_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ProjectWorkerContacts_Projects_ProjectId",
                         column: x => x.ProjectId,
@@ -3095,6 +3149,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     Priority = table.Column<int>(type: "int", nullable: false),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -3103,6 +3158,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_StockDiscountTiers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StockDiscountTiers_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_StockDiscountTiers_InventoryStocks_StockId",
                         column: x => x.StockId,
@@ -3324,6 +3384,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     Unit = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UnitCost = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -3332,6 +3393,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MaterialRequestItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MaterialRequestItems_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_MaterialRequestItems_MaterialRequests_MaterialRequestId",
                         column: x => x.MaterialRequestId,
@@ -3579,6 +3645,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     PricePerUnit = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ApplyBulkDiscount = table.Column<bool>(type: "bit", nullable: false),
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -3587,6 +3654,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RecurringOrderItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RecurringOrderItems_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_RecurringOrderItems_InventoryStocks_StockId",
                         column: x => x.StockId,
@@ -3790,6 +3862,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     ChangedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Latitude = table.Column<double>(type: "float", nullable: true),
                     Longitude = table.Column<double>(type: "float", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -3798,6 +3871,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OrderStatusHistory", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrderStatusHistory_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_OrderStatusHistory_Users_ChangedByUserId",
                         column: x => x.ChangedByUserId,
@@ -3824,6 +3902,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     Unit = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -3832,6 +3911,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_WarehouseOrderItem", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WarehouseOrderItem_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_WarehouseOrderItem_WarehouseOrderRequests_OrderId",
                         column: x => x.OrderId,
@@ -4521,6 +4605,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     AppliedDiscountPercent = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -4529,6 +4614,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_InventoryOrderItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_InventoryOrderItems_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_InventoryOrderItems_InventoryOrders_OrderId",
                         column: x => x.OrderId,
@@ -4969,7 +5059,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "RoleId", "UserId", "AssignedAt", "CompanyId" },
-                values: new object[] { 1, 1, new DateTime(2026, 2, 16, 1, 13, 55, 407, DateTimeKind.Utc).AddTicks(9073), null });
+                values: new object[] { 1, 1, new DateTime(2026, 2, 17, 0, 18, 17, 128, DateTimeKind.Utc).AddTicks(7372), null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ActivityLogs_CompanyId",
@@ -5252,6 +5342,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "CompanyId",
                 unique: true,
                 filter: "[CompanyId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CustomerTierDiscounts_CompanyId",
+                table: "CustomerTierDiscounts",
+                column: "CompanyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CustomerTierDiscounts_CustomerUserId_SupplierUserId",
@@ -5571,6 +5666,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "TriggeredByUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_InventoryOrderItems_CompanyId",
+                table: "InventoryOrderItems",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_InventoryOrderItems_OrderId",
                 table: "InventoryOrderItems",
                 column: "OrderId");
@@ -5625,6 +5725,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "IX_InventoryOrders_WarehouseId",
                 table: "InventoryOrders",
                 column: "WarehouseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryStocks_CompanyId",
+                table: "InventoryStocks",
+                column: "CompanyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_InventoryStocks_MaterialType",
@@ -5794,6 +5899,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "VerifiedByUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MaterialRequestItems_CompanyId",
+                table: "MaterialRequestItems",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MaterialRequestItems_MaterialId",
                 table: "MaterialRequestItems",
                 column: "MaterialId");
@@ -5914,6 +6024,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "ChangedByUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderStatusHistory_CompanyId",
+                table: "OrderStatusHistory",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderStatusHistory_OrderId",
                 table: "OrderStatusHistory",
                 column: "OrderId");
@@ -6020,6 +6135,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "ProjectTeamMemberId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProjectWorkerContacts_CompanyId",
+                table: "ProjectWorkerContacts",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProjectWorkerContacts_ContactedByUserId",
                 table: "ProjectWorkerContacts",
                 column: "ContactedByUserId");
@@ -6090,6 +6210,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "CompanyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RecurringOrderItems_CompanyId",
+                table: "RecurringOrderItems",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RecurringOrderItems_RecurringOrderId",
                 table: "RecurringOrderItems",
                 column: "RecurringOrderId");
@@ -6098,6 +6223,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "IX_RecurringOrderItems_StockId",
                 table: "RecurringOrderItems",
                 column: "StockId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RecurringOrders_CompanyId",
+                table: "RecurringOrders",
+                column: "CompanyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RecurringOrders_CustomerUserId",
@@ -6165,6 +6295,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "SafetyChecklistId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SafetyCompliances_CompanyId",
+                table: "SafetyCompliances",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SafetyIncidents_ProjectId",
                 table: "SafetyIncidents",
                 column: "ProjectId");
@@ -6210,6 +6345,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "UploaderUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SpecialPromotions_CompanyId",
+                table: "SpecialPromotions",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SpecialPromotions_DiscountCode",
                 table: "SpecialPromotions",
                 column: "DiscountCode",
@@ -6224,6 +6364,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "IX_SpecialPromotions_SupplierUserId",
                 table: "SpecialPromotions",
                 column: "SupplierUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockDiscountTiers_CompanyId",
+                table: "StockDiscountTiers",
+                column: "CompanyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StockDiscountTiers_IsActive",
@@ -6326,6 +6471,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "CompanyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserTypeHistories_CompanyId",
+                table: "UserTypeHistories",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserTypeHistories_UserId",
                 table: "UserTypeHistories",
                 column: "UserId");
@@ -6364,6 +6514,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "IX_VendorProducts_VendorId",
                 table: "VendorProducts",
                 column: "VendorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VendorReviews_CompanyId",
+                table: "VendorReviews",
+                column: "CompanyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_VendorReviews_ProjectId",
@@ -6411,9 +6566,19 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "VendorProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_WarehouseOrderItem_CompanyId",
+                table: "WarehouseOrderItem",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_WarehouseOrderItem_OrderId",
                 table: "WarehouseOrderItem",
                 column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WarehouseOrderRequests_CompanyId",
+                table: "WarehouseOrderRequests",
+                column: "CompanyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WarehouseOrderRequests_ProjectId",

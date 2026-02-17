@@ -298,10 +298,10 @@ export class TopbarComponent implements OnInit {
 
     if (isNaN(then.getTime())) return timestamp;
 
-    if (diffMins < 1) return this.translateService.instant('common.time.just_now');
-    if (diffMins < 60) return this.translateService.instant('common.time.minutes_ago', { value: diffMins });
-    if (diffHours < 24) return this.translateService.instant('common.time.hours_ago', { value: diffHours });
-    if (diffDays < 7) return this.translateService.instant('common.time.days_ago', { value: diffDays });
+    if (diffMins < 1) return this.translateService.instant('common.just_now');
+    if (diffMins < 60) return this.translateService.instant('common.minutes_ago', { count: diffMins });
+    if (diffHours < 24) return this.translateService.instant('common.hours_ago', { count: diffHours });
+    if (diffDays < 7) return this.translateService.instant('common.days_ago', { count: diffDays });
     return then.toLocaleDateString();
   }
 

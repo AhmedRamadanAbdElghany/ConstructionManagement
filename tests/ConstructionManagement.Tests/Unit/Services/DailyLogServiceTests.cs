@@ -21,6 +21,7 @@ public class DailyLogServiceTests
     private readonly Mock<IRepository<BOQItem>> _itemRepoMock = new();
     private readonly Mock<IActivityLogService> _activityLogMock = new();
     private readonly Mock<IUnitOfWork> _uowMock = new();
+    private readonly Mock<ILocalizationService> _localizationServiceMock = new();
 
     private DailyLogService CreateService()
         => new DailyLogService(
@@ -28,7 +29,8 @@ public class DailyLogServiceTests
             _deltaRepoMock.Object,
             _itemRepoMock.Object,
             _activityLogMock.Object,
-            _uowMock.Object
+            _uowMock.Object,
+            _localizationServiceMock.Object
         );
 
     [Fact]

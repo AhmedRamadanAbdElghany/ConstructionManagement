@@ -22,6 +22,7 @@ public class ProjectDelayEscalationService : IProjectDelayEscalationService
     private readonly IRepository<Notification> _notificationRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<ProjectDelayEscalationService> _logger;
+    private readonly ILocalizationService _localizationService;
 
     public ProjectDelayEscalationService(
         IRepository<Project> projectRepository,
@@ -33,7 +34,8 @@ public class ProjectDelayEscalationService : IProjectDelayEscalationService
         IRepository<Transaction> transactionRepository,
         IRepository<Notification> notificationRepository,
         IUnitOfWork unitOfWork,
-        ILogger<ProjectDelayEscalationService> logger)
+        ILogger<ProjectDelayEscalationService> logger,
+        ILocalizationService localizationService)
     {
         _projectRepository = projectRepository;
         _escalationLogRepository = escalationLogRepository;
@@ -45,6 +47,7 @@ public class ProjectDelayEscalationService : IProjectDelayEscalationService
         _notificationRepository = notificationRepository;
         _unitOfWork = unitOfWork;
         _logger = logger;
+        _localizationService = localizationService;
     }
 
     public async Task CheckProjectAndItemDelaysAsync()
@@ -67,13 +70,12 @@ public class ProjectDelayEscalationService : IProjectDelayEscalationService
             if (settings == null || !(settings.EnableDelayNotification ?? false))
                 continue;
 
-            // تأخير بداية المشروع ككل
             if (project.StartDate.HasValue &&
                 today > project.StartDate.Value.AddDays(settings.DelayGracePeriodDays ?? 0) &&
                 project.Status == "جديد")
             {
                 await SendEscalationAsync(project, null, "StartDelay", project.OwnerUserId,
-                    $"تأخير بداية المشروع {project.ProjectName} (الموعد المتوقع: {project.StartDate.Value:yyyy-MM-dd})");
+                    _localizationService.GetString("Project.StartDelay", project.ProjectName, project.StartDate.Value.ToString("yyyy-MM-dd")));
             }
 
             foreach (var item in project.BOQItems)
@@ -85,7 +87,7 @@ public class ProjectDelayEscalationService : IProjectDelayEscalationService
                     if (engineerId > 0)
                     {
                         await SendEscalationAsync(project, item.Id, "ItemStartDelay", engineerId,
-                            $"تأخير بداية البند {item.ItemName} في مشروع {project.ProjectName}");
+                            _localizationService.GetString("Project.ItemStartDelay", item.ItemName, project.ProjectName));
                     }
                 }
 
@@ -96,7 +98,7 @@ public class ProjectDelayEscalationService : IProjectDelayEscalationService
                     if (managerId > 0)
                     {
                         await SendEscalationAsync(project, item.Id, "ItemEndDelay", managerId,
-                            $"تأخير تسليم البند {item.ItemName} (الموعد: {item.EndDate.Value:yyyy-MM-dd})");
+                            _localizationService.GetString("Project.ItemEndDelay", item.ItemName, item.EndDate.Value.ToString("yyyy-MM-dd")));
                     }
                 }
 
@@ -133,8 +135,8 @@ public class ProjectDelayEscalationService : IProjectDelayEscalationService
             {
                 await _notificationService.CreateAndSendAsync(
                     project.OwnerUserId,
-                    "تحذير ميزانية",
-                    $"البند {item.ItemName} استهلك {(totalSpent / estimatedBudget * 100):F1}% من الميزانية",
+                    _localizationService["Project.BudgetWarning.Title"],
+                    _localizationService.GetString("Project.BudgetWarning.Message", item.ItemName, (totalSpent / estimatedBudget * 100).ToString("F1")),
                     $"/projects/{project.Id}/items/{item.Id}",
                     NotificationType.BudgetWarning
                 );
@@ -157,7 +159,7 @@ public class ProjectDelayEscalationService : IProjectDelayEscalationService
 
         await _notificationService.CreateAndSendAsync(
             recipientUserId,
-            "إشعار تصعيد – تأخير",
+            _localizationService["Project.Escalation.Title"],
             message,
             $"/projects/{project.Id}/items/{itemId ?? 0}",
             NotificationType.ProjectDelay
@@ -168,7 +170,7 @@ public class ProjectDelayEscalationService : IProjectDelayEscalationService
             var user = await _userRepository.GetByIdAsync(recipientUserId);
             if (user != null && !string.IsNullOrEmpty(user.Email))
             {
-                await _emailService.SendAsync(user.Email, "تنبيه نظام إدارة الإنشاءات – تصعيد", message);
+                await _emailService.SendAsync(user.Email, _localizationService["Project.Email.Subject"], message);
             }
         }
 

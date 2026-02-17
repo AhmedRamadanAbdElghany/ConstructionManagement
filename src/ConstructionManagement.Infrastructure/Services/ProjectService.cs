@@ -70,11 +70,11 @@ public class ProjectService : IProjectService
                 Status = "Active"
             };
 
-            await _projectRepository.AddAsync(project);
-            await _unitOfWork.SaveChangesAsync(); // Get project.Id
-
-            // Create project settings
-            var settings = new ProjectSettings { Id = project.Id };
+            // Initialize ProjectSettings
+            var settings = new ProjectSettings 
+            { 
+                CompanyId = project.CompanyId 
+            };
             
             if (request.Settings != null)
             {
@@ -104,13 +104,16 @@ public class ProjectService : IProjectService
                 }
             }
 
-            await _settingsRepository.AddAsync(settings);
-            await _unitOfWork.SaveChangesAsync();
+            // Link settings to project via navigation property
+            project.Settings = settings;
+
+            await _projectRepository.AddAsync(project);
+            await _unitOfWork.SaveChangesAsync(); // Saves both project and settings in one go
 
             // Initialize Phases from Company Defaults
             if (project.CompanyId.HasValue)
             {
-            await _phaseService.InitializeProjectPhasesAsync(project.Id, project.CompanyId.Value);
+                await _phaseService.InitializeProjectPhasesAsync(project.Id, project.CompanyId.Value);
             }
 
             await _activityLogService.LogActivityAsync(project.Id, "Setting", "Project Created", $"Project '{project.ProjectName}' was initialized.", ownerUserId);

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DashboardService, DashboardStats, SuperAdminStats, CompanySubscription, RecentActivity, SuperAdminActivity } from '../../../core/services/dashboard.service';
 import { Project, WorkerPerformance } from '../../../shared/interfaces';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { ClientPortalService, ClientDashboard } from '../../../core/services/client-portal.service';
 
@@ -38,10 +38,10 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
             <!-- Welcome Header -->
             <div class="text-center mb-16 animate-in fade-in slide-in-from-bottom-8 duration-700">
               <h2 class="text-5xl font-black text-slate-900 dark:text-white mb-6 tracking-tight leading-tight">
-                Welcome to <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600">STRUCT</span>, {{ firstName }}! 🚀
+                {{ 'dashboard.welcome_to_struct' | translate }}, {{ firstName }}! 
               </h2>
               <p class="text-xl text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed">
-                We're excited to have you on board. Your professional workspace is being prepared to deliver a premium management experience.
+                {{ 'dashboard.onboard_message' | translate }}
               </p>
             </div>
 
@@ -51,9 +51,9 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
               
               <div class="relative z-10">
                 <div class="flex items-center justify-between mb-16 px-4">
-                   <h3 class="text-xs font-black text-cyan-500 uppercase tracking-[0.3em]">Activation Progress</h3>
+                   <h3 class="text-xs font-black text-cyan-500 uppercase tracking-[0.3em]">{{ 'dashboard.activation_progress' | translate }}</h3>
                    <div class="px-4 py-2 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-[10px] font-black uppercase tracking-widest animate-pulse">
-                     Live Status: Auditing
+                     {{ 'dashboard.live_status_auditing' | translate }}
                    </div>
                 </div>
 
@@ -69,8 +69,8 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                     <div class="w-16 h-16 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 transition-transform group-hover:scale-110">
                       <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                     </div>
-                    <p class="mt-4 text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Created</p>
-                    <p class="text-[10px] text-slate-400 font-bold uppercase mt-1 italic tracking-widest">Completed</p>
+                    <p class="mt-4 text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">{{ 'dashboard.step_created' | translate }}</p>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase mt-1 italic tracking-widest">{{ 'dashboard.step_completed' | translate }}</p>
                   </div>
 
                   <!-- Step 2: Verification -->
@@ -78,8 +78,8 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                     <div class="w-16 h-16 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 transition-transform group-hover:scale-110">
                       <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                     </div>
-                    <p class="mt-4 text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Verification</p>
-                    <p class="text-[10px] text-slate-400 font-bold uppercase mt-1 italic tracking-widest">Verified</p>
+                    <p class="mt-4 text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">{{ 'dashboard.step_verification' | translate }}</p>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase mt-1 italic tracking-widest">{{ 'dashboard.step_verified' | translate }}</p>
                   </div>
 
                   <!-- Step 3: Admin Audit -->
@@ -89,8 +89,8 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                         <svg class="w-10 h-10 animate-spin-slow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                       </div>
                     </div>
-                    <p class="mt-4 text-sm font-black text-cyan-500 uppercase tracking-widest">Audit</p>
-                    <p class="text-[10px] text-cyan-500/60 font-black uppercase mt-1 tracking-widest">In Progress</p>
+                    <p class="mt-4 text-sm font-black text-cyan-500 uppercase tracking-widest">{{ 'dashboard.step_audit' | translate }}</p>
+                    <p class="text-[10px] text-cyan-500/60 font-black uppercase mt-1 tracking-widest">{{ 'dashboard.in_progress' | translate }}</p>
                   </div>
 
                   <!-- Step 4: Activation -->
@@ -98,7 +98,7 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                     <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center border border-slate-200 dark:border-white/5 transition-transform group-hover:scale-105">
                       <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                     </div>
-                    <p class="mt-4 text-sm font-black text-slate-400 dark:text-slate-600 uppercase tracking-wider">Activation</p>
+                    <p class="mt-4 text-sm font-black text-slate-400 dark:text-slate-600 uppercase tracking-wider">{{ 'dashboard.step_activation' | translate }}</p>
                   </div>
                 </div>
 
@@ -107,9 +107,9 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                   </div>
                   <div>
-                    <h4 class="text-base font-black text-slate-900 dark:text-white mb-2 leading-none uppercase tracking-wide">What happens next?</h4>
+                    <h4 class="text-base font-black text-slate-900 dark:text-white mb-2 leading-none uppercase tracking-wide">{{ 'dashboard.what_happens_next' | translate }}</h4>
                     <p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed">
-                      Our compliance team is reviewing your company documents and registration details. This typically takes <span class="text-cyan-500 font-bold">1-2 business days</span>. You will receive an email and a system notification as soon as your professional dashboard is unlocked.
+                      {{ 'dashboard.review_message' | translate:{ days: ('dashboard.business_days' | translate) } }}
                     </p>
                   </div>
                 </div>
@@ -136,7 +136,7 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                     </svg>
                   </div>
-                   <span class="text-emerald-500 text-sm font-black">+4 {{ 'common.new' | translate }}</span>
+                   <span *ngIf="saStats.newCompaniesCount > 0" class="text-emerald-500 text-sm font-black">+{{ saStats.newCompaniesCount }} {{ 'common.new' | translate }}</span>
                 </div>
                 <p class="text-4xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ saStats.totalCompanies }}</p>
                 <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{{ 'dashboard.global_companies' | translate }}</p>
@@ -153,7 +153,7 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                     </svg>
                   </div>
-                   <span class="text-emerald-500 text-sm font-black">93% {{ 'project_detail.health_score' | translate }}</span>
+                   <span class="text-emerald-500 text-sm font-black">{{ 'dashboard.subscription_health' | translate }}</span>
                 </div>
                 <p class="text-4xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ saStats.activeSubscriptions }}</p>
                 <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{{ 'dashboard.active_licenses' | translate }}</p>
@@ -170,9 +170,8 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                   </div>
-                  <span class="text-emerald-500 text-sm font-black">+18% MoM</span>
                 </div>
-                <p class="text-4xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ saStats.monthlyRecurringRevenue / 1000 | number:'1.0-0' }}K</p>
+                <p class="text-4xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ formatShortNumber(saStats.monthlyRecurringRevenue) }}</p>
                 <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{{ 'dashboard.mrr' | translate }}</p>
               </div>
             </div>
@@ -235,7 +234,7 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                     <div>
                       <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">{{ act.company }}</h4>
                       <p class="text-xs text-slate-500 mt-0.5 leading-snug">{{ act.action }}</p>
-                      <span class="text-[10px] font-black text-indigo-500 uppercase tracking-tighter mt-2 block">{{ act.time }}</span>
+                      <span class="text-[10px] font-black text-indigo-500 uppercase tracking-tighter mt-2 block">{{ getTimeAgo(act.timestamp) }}</span>
                     </div>
                   </div>
                 }
@@ -297,9 +296,9 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                   </svg>
                 </div>
-                <h2 class="text-4xl font-black text-slate-900 dark:text-white mb-6 tracking-tight">Your Construction Journey Starts Here</h2>
+                <h2 class="text-4xl font-black text-slate-900 dark:text-white mb-6 tracking-tight">{{ 'client_portal.journey_starts' | translate }}</h2>
                 <p class="text-lg text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed">
-                  Join a professional company to manage your project, or explore our curated list of suppliers and partners nearby.
+                  {{ 'client_portal.join_company_desc' | translate }}
                 </p>
               </div>
 
@@ -310,9 +309,9 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                   <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                   </div>
-                  <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-3 tracking-tight uppercase">Browse Verified Firms</h3>
-                  <p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed mb-6">Find the perfect partner for your construction or renovation needs. Compare portfolios and reviews.</p>
-                  <span class="text-cyan-500 font-black text-xs uppercase tracking-widest flex items-center gap-2">Explore Firms <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M9 5l7 7-7 7"/></svg></span>
+                  <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-3 tracking-tight uppercase">{{ 'client_portal.browse_firms' | translate }}</h3>
+                  <p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed mb-6">{{ 'client_portal.browse_firms_desc' | translate }}</p>
+                  <span class="text-cyan-500 font-black text-xs uppercase tracking-widest flex items-center gap-2">{{ 'client_portal.explore_firms' | translate }} <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M9 5l7 7-7 7"/></svg></span>
                 </a>
 
                 <!-- Find Suppliers -->
@@ -321,9 +320,9 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                   <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
                   </div>
-                  <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-3 tracking-tight uppercase">Nearby Suppliers</h3>
-                  <p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed mb-6">Source materials directly from local vendors. Get the best prices on cement, steel, and more.</p>
-                  <span class="text-indigo-500 font-black text-xs uppercase tracking-widest flex items-center gap-2">Find Suppliers <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M9 5l7 7-7 7"/></svg></span>
+                  <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-3 tracking-tight uppercase">{{ 'client_portal.nearby_suppliers' | translate }}</h3>
+                  <p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed mb-6">{{ 'client_portal.suppliers_desc' | translate }}</p>
+                  <span class="text-indigo-500 font-black text-xs uppercase tracking-widest flex items-center gap-2">{{ 'client_portal.find_suppliers' | translate }} <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="3" d="M9 5l7 7-7 7"/></svg></span>
                 </a>
               </div>
             </div>
@@ -403,7 +402,7 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                                   stroke-linecap="round" class="drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]" />
                         </svg>
                         <div class="absolute inset-0 flex flex-col items-center justify-center">
-                          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Paid Ratio</p>
+                          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{{ 'client_portal.paid_ratio' | translate }}</p>
                           <p class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">
                             {{ (clientDashboard!.paymentSummary!.totalPaid / clientDashboard!.paymentSummary!.totalInvoiced * 100) | number:'1.0-0' }}%
                           </p>
@@ -415,7 +414,7 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                           <div class="flex items-center gap-3">
                             <div class="w-2 h-8 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
                             <div>
-                              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Paid</p>
+                              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'client_portal.total_paid' | translate }}</p>
                               <p class="text-lg font-black text-slate-900 dark:text-white">{{ formatCurrencyValue(clientDashboard!.paymentSummary!.totalPaid) }}</p>
                             </div>
                           </div>
@@ -424,7 +423,7 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                           <div class="flex items-center gap-3">
                             <div class="w-2 h-8 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]"></div>
                             <div>
-                              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pending</p>
+                              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'client_portal.pending_amount' | translate }}</p>
                               <p class="text-lg font-black text-slate-900 dark:text-white">{{ formatCurrencyValue(clientDashboard!.paymentSummary!.pendingAmount) }}</p>
                             </div>
                           </div>
@@ -432,24 +431,24 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                       </div>
 
                       <div class="pt-6 border-t border-slate-100 dark:border-white/5">
-                        <div class="flex items-center justify-between mb-2">
-                           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Contract Value</p>
+                         <div class="flex items-center justify-between mb-2">
+                           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'client_portal.total_contract_value' | translate }}</p>
                            <p class="text-sm font-black text-indigo-600">{{ formatCurrencyValue(clientDashboard!.paymentSummary!.totalInvoiced) }}</p>
-                        </div>
-                        <div class="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                         </div>
+                         <div class="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                            <div class="h-full bg-indigo-500" style="width: 100%"></div>
-                        </div>
-                      </div>
-                    </div>
-                  } @else {
-                    <div class="flex flex-col items-center justify-center py-10 text-center">
-                      <div class="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
-                        <span class="text-4xl">📉</span>
-                      </div>
-                      <p class="text-slate-500 dark:text-slate-400 font-medium mb-2">No financial data yet</p>
-                      <p class="text-xs text-slate-400">Investment metrics will appear here once your project begins.</p>
-                    </div>
-                  }
+                         </div>
+                       </div>
+                     </div>
+                   } @else {
+                     <div class="flex flex-col items-center justify-center py-10 text-center">
+                       <div class="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
+                         <span class="text-4xl">📉</span>
+                       </div>
+                       <p class="text-slate-500 dark:text-slate-400 font-medium mb-2">{{ 'client_portal.no_financial_data' | translate }}</p>
+                       <p class="text-xs text-slate-400">{{ 'client_portal.no_financial_data_desc' | translate }}</p>
+                     </div>
+                   }
 
                   <svg class="hidden">
                     <defs>
@@ -470,12 +469,12 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                    <a routerLink="/client-portal/documents" class="p-6 rounded-[2.5rem] bg-slate-900 border border-slate-800 text-white hover:scale-105 active:scale-95 transition-all group overflow-hidden relative">
                       <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-all"></div>
                       <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center mb-4">📂</div>
-                      <p class="text-[10px] font-black uppercase tracking-widest">Project Files</p>
-                   </a>
-                   <a routerLink="/client-portal/payments" class="p-6 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-slate-900 dark:text-white hover:scale-105 active:scale-95 transition-all group overflow-hidden relative shadow-xl">
-                      <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition-all"></div>
-                      <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4">💳</div>
-                      <p class="text-[10px] font-black uppercase tracking-widest">Invoices</p>
+                       <p class="text-[10px] font-black uppercase tracking-widest">{{ 'client_portal.project_files' | translate }}</p>
+                    </a>
+                    <a routerLink="/client-portal/payments" class="p-6 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-slate-900 dark:text-white hover:scale-105 active:scale-95 transition-all group overflow-hidden relative shadow-xl">
+                       <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition-all"></div>
+                       <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4">💳</div>
+                       <p class="text-[10px] font-black uppercase tracking-widest">{{ 'client_portal.invoices' | translate }}</p>
                    </a>
                 </div>
               </div>
@@ -485,16 +484,16 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                 <!-- Advanced Project Progress -->
                 <div class="bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-2xl overflow-hidden">
                    <div class="px-10 py-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-slate-50/30 dark:bg-slate-950/30 backdrop-blur-md">
-                      <div>
-                        <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'client_portal.your_projects' | translate }}</h2>
-                        <p class="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest mt-1">Real-time Site Status</p>
-                      </div>
-                      @if ((clientDashboard?.projects?.length ?? 0) > 0) {
-                        <a routerLink="/client-portal/projects" class="px-5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/5 text-[10px] font-black text-indigo-500 uppercase tracking-widest hover:border-indigo-500 transition-all shadow-sm flex items-center gap-2">
-                           View All
-                           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
-                        </a>
-                      }
+                       <div>
+                         <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'client_portal.your_projects' | translate }}</h2>
+                         <p class="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest mt-1">{{ 'client_portal.realtime_status' | translate }}</p>
+                       </div>
+                       @if ((clientDashboard?.projects?.length ?? 0) > 0) {
+                         <a routerLink="/client-portal/projects" class="px-5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/5 text-[10px] font-black text-indigo-500 uppercase tracking-widest hover:border-indigo-500 transition-all shadow-sm flex items-center gap-2">
+                            {{ 'client_portal.view_all' | translate }}
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                         </a>
+                       }
                    </div>
                    <div class="p-8 space-y-6">
                      @if ((clientDashboard?.projects?.length ?? 0) > 0) {
@@ -515,32 +514,32 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                                                     'bg-amber-500/10 text-amber-600 border-amber-500/20': project.status === 'Pending',
                                                     'bg-rose-500/10 text-rose-600 border-rose-500/20': project.status === 'Delayed'
                                                   }">{{ project.status }}</span>
-                                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
-                                               <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
-                                               {{ project.location || 'Site Location' }}
-                                            </span>
+                                             <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                                                {{ project.location || ('client_portal.site_location' | translate) }}
+                                             </span>
                                          </div>
                                       </div>
                                    </div>
                                    
-                                   <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-8 p-6 bg-slate-50 dark:bg-slate-900/50 rounded-3xl border border-slate-100 dark:border-white/5">
-                                      <div>
-                                         <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Company</p>
-                                         <p class="text-xs font-black text-slate-900 dark:text-white truncate">{{ project.companyName || 'N/A' }}</p>
-                                      </div>
-                                      <div>
-                                         <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Last Update</p>
-                                         <p class="text-xs font-black text-slate-900 dark:text-white">{{ (project.lastUpdatedAt || project.startDate) | date:'mediumDate' }}</p>
-                                      </div>
-                                      <div>
-                                         <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Duration</p>
-                                         <p class="text-xs font-black text-slate-900 dark:text-white">Active Ops</p>
-                                      </div>
-                                      <div>
-                                         <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Manager</p>
-                                         <p class="text-xs font-black text-indigo-500 uppercase tracking-widest">Live View</p>
-                                      </div>
-                                   </div>
+                                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-8 p-6 bg-slate-50 dark:bg-slate-900/50 rounded-3xl border border-slate-100 dark:border-white/5">
+                                       <div>
+                                          <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{{ 'client_portal.company' | translate }}</p>
+                                          <p class="text-xs font-black text-slate-900 dark:text-white truncate">{{ project.companyName || 'N/A' }}</p>
+                                       </div>
+                                       <div>
+                                          <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{{ 'client_portal.last_update' | translate }}</p>
+                                          <p class="text-xs font-black text-slate-900 dark:text-white">{{ (project.lastUpdatedAt || project.startDate) | date:'mediumDate' }}</p>
+                                       </div>
+                                       <div>
+                                          <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{{ 'client_portal.duration' | translate }}</p>
+                                          <p class="text-xs font-black text-slate-900 dark:text-white">{{ 'client_portal.active_ops' | translate }}</p>
+                                       </div>
+                                       <div>
+                                          <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{{ 'client_portal.manager' | translate }}</p>
+                                          <p class="text-xs font-black text-indigo-500 uppercase tracking-widest">{{ 'client_portal.live_view' | translate }}</p>
+                                       </div>
+                                    </div>
                                 </div>
 
                                 <div class="w-full md:w-56 flex flex-col items-center justify-center gap-6">
@@ -552,16 +551,16 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                                                  [attr.stroke-dashoffset]="282.6 * (1 - project.progressPercentage / 100)"
                                                  stroke-linecap="round" />
                                       </svg>
-                                      <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                         <p class="text-2xl font-black text-slate-900 dark:text-white tracking-tighter">{{ project.progressPercentage }}%</p>
-                                         <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Progress</p>
-                                      </div>
-                                   </div>
-                                   
-                                   <a [routerLink]="['/client-portal/projects', project.projectId]" 
-                                      class="w-full py-4 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:scale-105 transition-all shadow-xl">
-                                      Enter Project Details
-                                   </a>
+                                       <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                          <p class="text-2xl font-black text-slate-900 dark:text-white tracking-tighter">{{ project.progressPercentage }}%</p>
+                                          <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">{{ 'client_portal.progress' | translate }}</p>
+                                       </div>
+                                    </div>
+                                    
+                                    <a [routerLink]="['/client-portal/projects', project.projectId]" 
+                                       class="w-full py-4 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:scale-105 transition-all shadow-xl">
+                                       {{ 'client_portal.enter_project' | translate }}
+                                    </a>
                                 </div>
                              </div>
                              
@@ -575,13 +574,13 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                              </svg>
                           </div>
                        }
-                     } @else {
-                       <div class="text-center py-20 bg-slate-50 dark:bg-slate-900/50 rounded-3xl border border-dashed border-slate-200 dark:border-white/10">
-                         <div class="w-24 h-24 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl text-4xl grayscale opacity-50">🏗️</div>
-                         <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tight">No Active Projects</h3>
-                         <p class="text-sm text-slate-500 dark:text-slate-400 max-w-xs mx-auto font-medium leading-relaxed">Your dashboard will light up with real-time progress updates once a project is assigned to you.</p>
-                       </div>
-                     }
+                      } @else {
+                        <div class="text-center py-20 bg-slate-50 dark:bg-slate-900/50 rounded-3xl border border-dashed border-slate-200 dark:border-white/10">
+                          <div class="w-24 h-24 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl text-4xl grayscale opacity-50">🏗️</div>
+                          <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tight">{{ 'client_portal.no_active_projects' | translate }}</h3>
+                          <p class="text-sm text-slate-500 dark:text-slate-400 max-w-xs mx-auto font-medium leading-relaxed">{{ 'client_portal.no_projects_desc' | translate }}</p>
+                        </div>
+                      }
                    </div>
                 </div>
 
@@ -590,10 +589,10 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                   <!-- Vertical Milestone Timeline -->
                   <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-200 dark:border-white/5 shadow-2xl relative overflow-hidden">
                      <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-purple-500/5 rounded-full blur-3xl"></div>
-                     <h3 class="text-sm font-black uppercase tracking-[0.3em] mb-10 text-slate-900 dark:text-white flex items-center gap-3">
-                        Project Momentum
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                     </h3>
+                      <h3 class="text-sm font-black uppercase tracking-[0.3em] mb-10 text-slate-900 dark:text-white flex items-center gap-3">
+                         {{ 'client_portal.project_momentum' | translate }}
+                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      </h3>
 
                      <div class="space-y-10 relative">
                         <div class="absolute left-[7px] top-2 bottom-6 w-0.5 bg-slate-100 dark:bg-slate-800"></div>
@@ -617,7 +616,7 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                         } @else {
                           <div class="text-center py-10 opacity-40 grayscale">
                             <span class="text-4xl block mb-4">⚡</span>
-                            <p class="text-[10px] font-black uppercase tracking-widest">No Recent Milestones</p>
+                            <p class="text-[10px] font-black uppercase tracking-widest">{{ 'client_portal.no_milestones' | translate }}</p>
                           </div>
                         }
                      </div>
@@ -628,7 +627,7 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                      <!-- Recent Messages -->
                      <div class="bg-slate-900 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden group">
                         <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/5 rounded-full blur-3xl group-hover:bg-white/10 transition-all"></div>
-                        <h3 class="text-xs font-black uppercase tracking-[0.3em] mb-8 text-white/60">Communication</h3>
+                         <h3 class="text-xs font-black uppercase tracking-[0.3em] mb-8 text-white/60">{{ 'client_portal.communication' | translate }}</h3>
                         
                         <div class="space-y-6 max-h-[300px] overflow-y-auto custom-scrollbar">
                            @if ((clientDashboard?.recentMessages?.length ?? 0) > 0) {
@@ -646,16 +645,16 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                                 </div>
                              }
                            } @else {
-                             <div class="text-center py-12 opacity-30">
-                                <span class="text-4xl block mb-4">📬</span>
-                                <p class="text-[10px] font-black uppercase tracking-widest">Inbox Zero</p>
-                             </div>
-                           }
-                        </div>
+                              <div class="text-center py-12 opacity-30">
+                                 <span class="text-4xl block mb-4">📬</span>
+                                 <p class="text-[10px] font-black uppercase tracking-widest">{{ 'client_portal.inbox_zero' | translate }}</p>
+                              </div>
+                            }
+                         </div>
 
-                        <a routerLink="/client-portal/messages" class="mt-8 flex items-center justify-center gap-2 py-4 rounded-2xl bg-white text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">
-                           Open Messages
-                        </a>
+                         <a routerLink="/client-portal/messages" class="mt-8 flex items-center justify-center gap-2 py-4 rounded-2xl bg-white text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">
+                            {{ 'client_portal.open_messages' | translate }}
+                         </a>
                      </div>
                   </div>
                 </div>
@@ -919,7 +918,6 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                     </svg>
                   </div>
-                  <span class="text-emerald-500 dark:text-emerald-400 text-sm font-black flex items-center">+12%</span>
                 </div>
                 <p class="text-4xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ stats.activeProjects }}</p>
                 <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{{ 'dashboard.active_projects' | translate }}</p>
@@ -971,7 +969,6 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                   </div>
-                  <span class="text-emerald-500 dark:text-emerald-400 text-sm font-black flex items-center">+23%</span>
                 </div>
                 <p class="text-4xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ stats.totalRevenue / 1000000 | number:'1.1-1' }}M</p>
                 <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{{ 'dashboard.total_revenue' | translate }}</p>
@@ -1021,7 +1018,7 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
                     </div>
                     <div class="flex-1 min-w-0">
                       <p class="text-sm font-bold text-slate-800 dark:text-white leading-snug">{{ activity.message }}</p>
-                      <p class="text-[11px] text-slate-500 font-black uppercase mt-1">{{ activity.time }}</p>
+                      <p class="text-[11px] text-slate-500 font-black uppercase mt-1">{{ getTimeAgo(activity.timestamp) }}</p>
                     </div>
                   </div>
                 }
@@ -1150,11 +1147,12 @@ export class DashboardComponent implements OnInit {
   };
 
   // Super Admin Stats
-  saStats = {
+  saStats: SuperAdminStats = {
     totalCompanies: 0,
     activeSubscriptions: 0,
     monthlyRecurringRevenue: 0,
-    pendingOnboardings: 0
+    pendingOnboardings: 0,
+    newCompaniesCount: 0
   };
 
   subscriptions: any[] = [];
@@ -1222,6 +1220,7 @@ export class DashboardComponent implements OnInit {
   saActivities: SuperAdminActivity[] = [];
 
   private clientPortalService = inject(ClientPortalService);
+  private translate = inject(TranslateService);
 
   constructor(
     private dashboardService: DashboardService,
@@ -1312,8 +1311,31 @@ export class DashboardComponent implements OnInit {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
-      maximumFractionDigits: 0
     }).format(amount);
+  }
+
+  getTimeAgo(timestamp: string | Date): string {
+    if (!timestamp) return '';
+    const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
+    const now = new Date();
+    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (seconds < 60) return this.translate.instant('common.just_now');
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return this.translate.instant('common.minutes_ago', { count: minutes });
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return this.translate.instant('common.hours_ago', { count: hours });
+    const days = Math.floor(hours / 24);
+    if (days < 7) return this.translate.instant('common.days_ago', { count: days });
+
+    return date.toLocaleDateString();
+  }
+
+  formatShortNumber(value: number): string {
+    if (!value || value === 0) return '0';
+    if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+    if (value >= 1000) return (value / 1000).toFixed(0) + 'K';
+    return value.toString();
   }
 
   loadStandardView() {

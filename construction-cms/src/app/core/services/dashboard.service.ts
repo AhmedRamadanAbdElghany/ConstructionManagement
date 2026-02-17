@@ -14,6 +14,7 @@ export interface SuperAdminStats {
     activeSubscriptions: number;
     monthlyRecurringRevenue: number;
     pendingOnboardings: number;
+    newCompaniesCount: number;
 }
 
 export interface CompanySubscription {
@@ -31,6 +32,7 @@ export interface RecentActivity {
     type: string;
     message: string;
     time: string;
+    timestamp: string;
 }
 
 export interface SuperAdminActivity {
@@ -38,6 +40,7 @@ export interface SuperAdminActivity {
     company: string;
     action: string;
     time: string;
+    timestamp: string;
     status: string;
 }
 

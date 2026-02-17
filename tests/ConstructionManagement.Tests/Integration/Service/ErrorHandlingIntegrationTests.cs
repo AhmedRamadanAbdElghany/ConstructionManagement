@@ -19,6 +19,7 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
     private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock = new();
     private readonly Mock<ICompanyRequestRepository> _companyRequestRepoMock = new();
     private readonly Mock<INotificationService> _notificationServiceMock = new();
+    private readonly Mock<ILocalizationService> _localizationServiceMock = new();
 
     [Fact]
     public async Task CreateProject_WithInvalidData_ThrowsValidationException()
@@ -124,7 +125,7 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
         var deltaRepo = new Repository<BOQExecutedDelta>(Context);
         var itemRepo = new Repository<BOQItem>(Context);
         var activityLogService = new Mock<IActivityLogService>().Object;
-        var service = new DailyLogService(logRepo, deltaRepo, itemRepo, activityLogService, UnitOfWork);
+        var service = new DailyLogService(logRepo, deltaRepo, itemRepo, activityLogService, UnitOfWork, _localizationServiceMock.Object);
         
         var logId = await service.GetOrCreateDailyLogIdAsync(boqItem.Id, DateTime.UtcNow.Date, user.Id);
         logId.Should().BeGreaterThan(0);
@@ -138,7 +139,7 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
 
         // Act
         var userRepo = new UserRepository(Context);
-        var service = new AuthService(userRepo, _emptyConfig, UnitOfWork, _httpContextAccessorMock.Object, _companyRequestRepoMock.Object, _notificationServiceMock.Object, new Repository<Vendor>(Context), new Repository<Role>(Context), new Repository<UserRole>(Context));
+        var service = new AuthService(userRepo, _emptyConfig, UnitOfWork, _httpContextAccessorMock.Object, _companyRequestRepoMock.Object, _notificationServiceMock.Object, new Repository<Vendor>(Context), new Repository<Role>(Context), new Repository<UserRole>(Context), _localizationServiceMock.Object);
         var result = await service.LoginAsync(loginRequest);
 
         // Assert
@@ -161,7 +162,7 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
 
         // Act
         var userRepo = new UserRepository(Context);
-        var service = new AuthService(userRepo, _emptyConfig, UnitOfWork, _httpContextAccessorMock.Object, _companyRequestRepoMock.Object, _notificationServiceMock.Object, new Repository<Vendor>(Context), new Repository<Role>(Context), new Repository<UserRole>(Context));
+        var service = new AuthService(userRepo, _emptyConfig, UnitOfWork, _httpContextAccessorMock.Object, _companyRequestRepoMock.Object, _notificationServiceMock.Object, new Repository<Vendor>(Context), new Repository<Role>(Context), new Repository<UserRole>(Context), _localizationServiceMock.Object);
         var result = await service.LoginAsync(loginRequest);
 
         // Assert
@@ -273,7 +274,7 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
         var deltaRepo = new Repository<BOQExecutedDelta>(Context);
         var itemRepo = new Repository<BOQItem>(Context);
         var activityLogService = new Mock<IActivityLogService>().Object;
-        var service = new DailyLogService(logRepo, deltaRepo, itemRepo, activityLogService, UnitOfWork);
+        var service = new DailyLogService(logRepo, deltaRepo, itemRepo, activityLogService, UnitOfWork, _localizationServiceMock.Object);
         var result = await service.CloseDailyLogAsync(99999, DateTime.UtcNow.Date, user.Id, closeRequest);
 
         // Assert
@@ -471,7 +472,7 @@ public class ErrorHandlingIntegrationTests : IntegrationTestBase
             var deltaRepo = new Repository<BOQExecutedDelta>(Context);
             var itemRepo = new Repository<BOQItem>(Context);
             var activityLogMock = new Mock<IActivityLogService>();
-            var service = new DailyLogService(logRepo, deltaRepo, itemRepo, activityLogMock.Object, UnitOfWork);
+            var service = new DailyLogService(logRepo, deltaRepo, itemRepo, activityLogMock.Object, UnitOfWork, _localizationServiceMock.Object);
             await service.ReopenClosedDayAsync(boqItem.Id, DateTime.UtcNow.Date, user.Id, "", new List<int> { 1, 2 });
         });
 

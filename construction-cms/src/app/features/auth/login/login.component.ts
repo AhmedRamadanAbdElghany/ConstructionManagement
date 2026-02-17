@@ -23,7 +23,7 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
       <div class="auth-box">
         <!-- Visual Side -->
         <div class="visual-side">
-          <div class="visual-overlay"></div>
+          <div class="site-overlay" [style.backgroundImage]="'url(' + ('auth.bg_image' | translate) + ')'"></div>
           <div class="visual-content">
             <div class="branding">
               <div class="logo-circle">
@@ -31,7 +31,7 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-7h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               </div>
-              <h1 class="logo-text">Construction<span class="text-amber-500">CMS</span></h1>
+              <h1 class="logo-text">Str<span class="text-amber-500">uct</span></h1>
             </div>
             
             <div class="hero-quote">
@@ -65,7 +65,7 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-7h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               </div>
-              <span class="logo-name">ConstructionCMS</span>
+              <span class="logo-name">Struct</span>
             </div>
 
             <header class="form-header">
@@ -170,12 +170,14 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
 
     @media (max-width: 1024px) { .visual-side { display: none; } }
 
-    .visual-overlay {
+    .site-overlay {
       position: absolute;
       inset: 0;
-      background: url('https://images.unsplash.com/photo-1541888946425-d81bb19480c5?auto=format&fit=crop&q=80&w=2070') center/cover no-repeat;
-      opacity: 0.2;
-      filter: grayscale(1);
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      opacity: 0.25;
+      filter: grayscale(0.5) contrast(1.2);
     }
 
     .visual-content {

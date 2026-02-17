@@ -15,6 +15,7 @@ public class MiscExpenseService : IMiscExpenseService
     private readonly IUnitOfWork _unitOfWork;
     private readonly INotificationService? _notificationService;
     private readonly ICompanyContext _companyContext;
+    private readonly ILocalizationService _localizationService;
 
     public MiscExpenseService(
         IRepository<MiscExpense> expenseRepository,
@@ -22,6 +23,7 @@ public class MiscExpenseService : IMiscExpenseService
         IRepository<User> userRepository,
         IFileStorageService fileStorageService,
         IUnitOfWork unitOfWork,
+        ILocalizationService localizationService,
         INotificationService? notificationService = null,
         ICompanyContext companyContext = null!)
     {
@@ -30,6 +32,7 @@ public class MiscExpenseService : IMiscExpenseService
         _userRepository = userRepository;
         _fileStorageService = fileStorageService;
         _unitOfWork = unitOfWork;
+        _localizationService = localizationService;
         _notificationService = notificationService;
         _companyContext = companyContext;
     }
@@ -111,7 +114,7 @@ public class MiscExpenseService : IMiscExpenseService
         {
             await _notificationService.CreateNotificationAsync(
                 "MiscExpensePendingApproval",
-                $"نثريات جديدة معلقة للموافقة: {expenseNumber}",
+                _localizationService.GetString("MiscExpense.PendingApproval", expenseNumber),
                 companyId,
                 null,
                 expense.Id,
@@ -132,10 +135,10 @@ public class MiscExpenseService : IMiscExpenseService
             .FirstOrDefaultAsync();
 
         if (expense == null)
-            throw new InvalidOperationException("إثبات المصروفات غير موجود");
+            throw new InvalidOperationException(_localizationService["MiscExpense.NotFound"]);
 
         if (expense.ApprovalStatus != ExpenseApprovalStatus.Pending)
-            throw new InvalidOperationException("تم مراجعة إثبات المصروفات بالفعل");
+            throw new InvalidOperationException(_localizationService["MiscExpense.AlreadyReviewed"]);
 
         expense.ApprovalStatus = request.IsApproved ? ExpenseApprovalStatus.Approved : ExpenseApprovalStatus.Rejected;
         expense.ApprovedByUserId = reviewerUserId;

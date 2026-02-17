@@ -34,7 +34,7 @@ public class NotificationService : INotificationService
 
     public async Task SendAsync(int userId, string message)
     {
-        var title = _localizationService?["Notification.New"] ?? "إشعار جديد";
+        var title = _localizationService?["Notification.New"] ?? "New Notification";
         await CreateAndSendAsync(userId, title, message);
     }
 
@@ -235,9 +235,9 @@ public class NotificationService : INotificationService
     // New methods for company/join requests - All messages in Arabic
     public async Task NotifyCompanyRequestApprovedAsync(int userId, string companyName)
     {
-        var title = _localizationService?.GetNotificationTitle(NotificationType.ApprovalGranted) ?? "تمت الموافقة";
+        var title = _localizationService?.GetNotificationTitle(NotificationType.ApprovalGranted) ?? "Approval Granted";
         var message = _localizationService?.GetNotificationMessage("CompanyApproved", companyName) 
-            ?? $"تمت الموافقة على طلب تسجيل شركتك: {companyName}. يمكنك الآن البدء في العمل وإدارة مشاريعك.";
+            ?? $"Your company registration request was approved: {companyName}";
         
         await CreateAndSendAsync(
             userId: userId,
@@ -250,9 +250,9 @@ public class NotificationService : INotificationService
 
     public async Task NotifyCompanyRequestRejectedAsync(int userId, string reason)
     {
-        var title = _localizationService?.GetNotificationTitle(NotificationType.ApprovalRejected) ?? "تم الرفض";
+        var title = _localizationService?.GetNotificationTitle(NotificationType.ApprovalRejected) ?? "Approval Rejected";
         var message = _localizationService?.GetNotificationMessage("CompanyRejected", reason)
-            ?? $"تم رفض طلب تسجيل شركتك. السبب: {reason}";
+            ?? $"Your company registration request was rejected. Reason: {reason}";
         
         await CreateAndSendAsync(
             userId: userId,
@@ -264,9 +264,9 @@ public class NotificationService : INotificationService
 
     public async Task NotifyJoinRequestApprovedAsync(int userId, string companyName)
     {
-        var title = _localizationService?.GetNotificationTitle(NotificationType.ApprovalGranted) ?? "تمت الموافقة";
+        var title = _localizationService?.GetNotificationTitle(NotificationType.ApprovalGranted) ?? "Approval Granted";
         var message = _localizationService?.GetNotificationMessage("JoinApproved", companyName)
-            ?? $"تمت الموافقة على طلب انضمامك إلى: {companyName}";
+            ?? $"Your join request was approved for: {companyName}";
         
         await CreateAndSendAsync(
             userId: userId,
@@ -279,9 +279,9 @@ public class NotificationService : INotificationService
 
     public async Task NotifyJoinRequestRejectedAsync(int userId, string reason)
     {
-        var title = _localizationService?.GetNotificationTitle(NotificationType.ApprovalRejected) ?? "تم الرفض";
+        var title = _localizationService?.GetNotificationTitle(NotificationType.ApprovalRejected) ?? "Approval Rejected";
         var message = _localizationService?.GetNotificationMessage("JoinRejected", reason)
-            ?? $"تم رفض طلب انضمامك. السبب: {reason}";
+            ?? $"Your join request was rejected. Reason: {reason}";
         
         await CreateAndSendAsync(
             userId: userId,
@@ -293,8 +293,9 @@ public class NotificationService : INotificationService
 
     public async Task NotifyNewCompanyRequestAsync(int superAdminUserId, string companyName, int requestId)
     {
-        var title = _localizationService?.GetNotificationTitle(NotificationType.Escalation) ?? "تصعيد";
-        var message = $"طلب تسجيل شركة جديدة: {companyName}";
+        var title = _localizationService?.GetNotificationTitle(NotificationType.Escalation) ?? "Escalation";
+        var message = _localizationService?.GetNotificationMessage("NewCompanyRequest", companyName) 
+            ?? $"New company registration request: {companyName}";
         
         await CreateAndSendAsync(
             userId: superAdminUserId,
@@ -307,8 +308,9 @@ public class NotificationService : INotificationService
 
     public async Task NotifyNewJoinRequestAsync(int companyAdminUserId, string userName, int requestId)
     {
-        var title = _localizationService?.GetNotificationTitle(NotificationType.Escalation) ?? "تصعيد";
-        var message = $"{userName} يريد الانضمام إلى شركتك";
+        var title = _localizationService?.GetNotificationTitle(NotificationType.Escalation) ?? "Escalation";
+        var message = _localizationService?.GetNotificationMessage("NewJoinRequest", userName)
+            ?? $"{userName} wants to join your company";
         
         await CreateAndSendAsync(
             userId: companyAdminUserId,

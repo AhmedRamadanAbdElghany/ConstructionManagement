@@ -21,6 +21,7 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
     private readonly Mock<ICompanyRequestRepository> _companyRequestRepoMock = new();
     private readonly Mock<INotificationService> _notificationServiceMock = new();
     private readonly Mock<IRepository<Vendor>> _vendorRepoMock = new();
+    private readonly Mock<ILocalizationService> _localizationServiceMock = new();
 
     public AuthServiceIntegrationTests() : base()
     {
@@ -47,7 +48,8 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
             _notificationServiceMock.Object,
             _vendorRepoMock.Object,
             new Mock<IRepository<Role>>().Object,
-            new Mock<IRepository<UserRole>>().Object
+            new Mock<IRepository<UserRole>>().Object,
+            _localizationServiceMock.Object
         );
     }
 
@@ -124,7 +126,7 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
         Context.Users.Add(user);
         await Context.SaveChangesAsync();
 
-        var service = new AuthService(new UserRepository(Context), config, UnitOfWork, _httpContextAccessorMock.Object, _companyRequestRepoMock.Object, _notificationServiceMock.Object, new Repository<Vendor>(Context), new Repository<Role>(Context), new Repository<UserRole>(Context));
+        var service = new AuthService(new UserRepository(Context), config, UnitOfWork, _httpContextAccessorMock.Object, _companyRequestRepoMock.Object, _notificationServiceMock.Object, new Repository<Vendor>(Context), new Repository<Role>(Context), new Repository<UserRole>(Context), _localizationServiceMock.Object);
 
         // Act
         var result = await service.LoginAsync(new LoginRequest("auth@test.com", password));

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { VendorService, PublicVendor, VendorSearchRequest, VendorProduct } from '../../../core/services/vendor.service';
 import { ProjectService } from '../../../core/services/project.service';
 import { Project } from '../../../shared/interfaces';
@@ -58,11 +58,11 @@ import * as L from 'leaflet';
             <label class="text-sm font-medium text-slate-600 dark:text-slate-400">{{ 'vendors.radius' | translate }}</label>
             <select [(ngModel)]="searchRequest.radiusKm" (change)="onSearch()"
                     class="border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800 py-2 px-3 text-sm focus:ring-2 focus:ring-cyan-500">
-              <option [value]="10">10 km</option>
-              <option [value]="50">50 km</option>
-              <option [value]="100">100 km</option>
-              <option [value]="500">500 km</option>
-              <option [value]="10000">Everywhere</option>
+              <option [value]="10">{{ 'vendors.distance_km' | translate:{ km: 10 } }}</option>
+              <option [value]="50">{{ 'vendors.distance_km' | translate:{ km: 50 } }}</option>
+              <option [value]="100">{{ 'vendors.distance_km' | translate:{ km: 100 } }}</option>
+              <option [value]="500">{{ 'vendors.distance_km' | translate:{ km: 500 } }}</option>
+              <option [value]="10000">{{ 'vendors.everywhere' | translate }}</option>
             </select>
           </div>
 
@@ -121,7 +121,7 @@ import * as L from 'leaflet';
                                           <div class="text-[10px] text-slate-400 font-normal mt-0.5" *ngIf="product.description">{{ product.description }}</div>
                                       </td>
                                       <td class="px-6 py-4 text-slate-600 dark:text-slate-400">
-                                          <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-xs font-bold">{{ product.category || 'N/A' }}</span>
+                                          <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-xs font-bold">{{ product.category || ('vendors.na' | translate) }}</span>
                                       </td>
                                       <td class="px-6 py-4">
                                           <span class="font-black text-emerald-600 dark:text-emerald-400 text-base">{{ product.price | currency:'EGP' }}</span>
@@ -135,7 +135,7 @@ import * as L from 'leaflet';
                                               <span class="font-bold text-slate-800 dark:text-slate-200">{{ product.vendorName }}</span>
                                               <span class="text-[10px] text-slate-500 flex items-center gap-1">
                                                   <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
-                                                  {{ product.vendorDistance ? product.vendorDistance.toFixed(1) + ' km' : 'N/A' }}
+                                                  {{ product.vendorDistance ? ('vendors.distance_km' | translate:{ km: product.vendorDistance.toFixed(1) }) : ('vendors.na' | translate) }}
                                               </span>
                                           </div>
                                       </td>
@@ -208,7 +208,7 @@ import * as L from 'leaflet';
                         </div>
                         @if (vendor.distanceKm) {
                           <span class="text-[10px] font-bold py-1 px-2 rounded-full bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400 uppercase">
-                            {{ vendor.distanceKm | number:'1.1-1' }} km
+                            {{ 'vendors.distance_km' | translate:{ km: (vendor.distanceKm | number:'1.1-1') } }}
                           </span>
                         }
                       </div>
@@ -217,7 +217,7 @@ import * as L from 'leaflet';
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         </svg>
-                        {{ vendor.address || 'No address provided' }}
+                        {{ vendor.address || ('vendors.not_provided' | translate) }}
                       </p>
     
                       <div class="space-y-1.5 mb-3">
@@ -250,7 +250,7 @@ import * as L from 'leaflet';
                       </div>
                       <p class="text-slate-500 dark:text-slate-400">{{ 'vendors.no_results_found' | translate }}</p>
                       <button (click)="searchRequest.radiusKm = 10000; onSearch()" class="mt-4 text-sm text-cyan-500 font-bold hover:underline">
-                        Search Everywhere
+                        {{ 'vendors.search_everywhere' | translate }}
                       </button>
                     </div>
                   }
@@ -301,7 +301,8 @@ export class VendorDiscoveryComponent implements OnInit, OnDestroy, AfterViewIni
 
   constructor(
     private vendorService: VendorService,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private translate: TranslateService
   ) { }
 
   ngOnInit() {
@@ -367,7 +368,7 @@ export class VendorDiscoveryComponent implements OnInit, OnDestroy, AfterViewIni
             weight: 2,
             opacity: 1,
             fillOpacity: 0.8
-          }).addTo(this.map).bindPopup("You are here");
+          }).addTo(this.map).bindPopup(this.translate.instant('vendors.you_are_here'));
         } catch (error) {
           console.warn("Map not ready for marker");
         }

@@ -5,6 +5,9 @@ using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Hangfire;
+using System;
 
 namespace ConstructionManagement.WebApi.Controllers;
 
@@ -20,7 +23,9 @@ public class CompaniesController : ControllerBase
     private readonly IRepository<RolePermission> _rolePermissionRepo;
     private readonly IRepository<User> _userRepo;
     private readonly IRepository<UserRole> _userRoleRepo;
+    private readonly IEmailService _emailService;
     private readonly IUnitOfWork _uow;
+    private readonly ILogger<CompaniesController> _logger;
 
     public CompaniesController(
         IRepository<Company> companyRepo, 
@@ -30,7 +35,9 @@ public class CompaniesController : ControllerBase
         IRepository<RolePermission> rolePermissionRepo,
         IRepository<User> userRepo,
         IRepository<UserRole> userRoleRepo,
-        IUnitOfWork uow)
+        IEmailService emailService,
+        IUnitOfWork uow,
+        ILogger<CompaniesController> logger)
     {
         _companyRepo = companyRepo;
         _settingsRepo = settingsRepo;
@@ -39,114 +46,128 @@ public class CompaniesController : ControllerBase
         _rolePermissionRepo = rolePermissionRepo;
         _userRepo = userRepo;
         _userRoleRepo = userRoleRepo;
+        _emailService = emailService;
         _uow = uow;
+        _logger = logger;
     }
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateCompanyRequest request)
     {
-        var company = new Company
+        await _uow.BeginTransactionAsync();
+        try
         {
-            Name = request.Name,
-            PackageId = request.PackageId,
-            IsActive = true,
-
-            EnableUserManagement = request.EnableUserManagement,
-            EnableProjectManagement = request.EnableProjectManagement,
-            EnableBOQManagement = request.EnableBOQManagement,
-            EnableDailyLogs = request.EnableDailyLogs,
-            EnableSiteMedia = request.EnableSiteMedia,
-            EnableEquipmentManagement = request.EnableEquipmentManagement,
-            EnableInventoryManagement = request.EnableInventoryManagement,
-            EnableQualityControl = request.EnableQualityControl,
-            EnableSafetyManagement = request.EnableSafetyManagement,
-            EnableSubcontractorManagement = request.EnableSubcontractorManagement,
-            EnableFinancialManagement = request.EnableFinancialManagement,
-            EnableAnalytics = request.EnableAnalytics,
-            EnableNotifications = request.EnableNotifications,
-            EnableDocumentManagement = request.EnableDocumentManagement,
-            EnableDesignManagement = request.EnableDesignManagement,
-            EnableClientPortal = request.EnableClientPortal,
-            EnableAccessControl = request.EnableAccessControl,
-            EnableHRManagement = request.EnableHRManagement,
-            EnableVendorManagement = request.EnableVendorManagement
-        };
-        
-        await _companyRepo.AddAsync(company);
-        await _uow.SaveChangesAsync();
-        
-        // Initial settings for the company
-        var settings = new CompanySettings
-        {
-            CompanyId = company.Id,
-            EnableDelayNotification = request.EnableDelayNotification,
-            EnablePhotoUpload = request.EnablePhotoUpload,
-            RequirePhotoReview = request.RequirePhotoReview,
-            ClientCanSeeFinancials = request.ClientCanSeeFinancials,
-            AllowMeasured = request.AllowMeasured,
-            AllowSupervision = request.AllowSupervision,
-            AllowPackages = request.AllowPackages,
-            AllowLocations = request.AllowLocations,
-            AllowHR = request.AllowHR,
-            
-            // Fixed Defaults as per requirements
-            RequireInvoiceApproval = request.EnableInvoiceReview,
-            InvoiceApproverRole = request.InvoiceApproverRole,
-            EnableVendorInvoiceUpload = request.EnableVendorInvoiceUpload,
-            EnableCashVoucher = request.EnableCashVoucher,
-            RequireCashVoucherApproval = request.RequireCashVoucherApproval,
-            CashVoucherApproverRole = request.CashVoucherApproverRole,
-            CashVoucherSubmitterRole = request.CashVoucherSubmitterRole,
-            RecordCashVoucherToWorker = request.RecordCashVoucherToWorker,
-            
-            // Fixed Defaults as per requirements
-            DelayNotificationIntervalDays = 7,
-            DelayGracePeriodDays = 3,
-            PhotoApproverRole = "MediaReviewer",
-            DefaultMoneyCalculationMethod = request.AllowMeasured ? 
-                ConstructionManagement.Domain.Enums.CalculationMethod.Measured : 
-                (request.AllowSupervision ? ConstructionManagement.Domain.Enums.CalculationMethod.Supervision : ConstructionManagement.Domain.Enums.CalculationMethod.Packages)
-        };
-        await _settingsRepo.AddAsync(settings);
-        await _uow.SaveChangesAsync();
-
-        // Seed Company-Specific Permissions & Admin Role
-        await SyncCompanyPermissions(company.Id, request);
-        await _uow.SaveChangesAsync();
-
-        // Create Company Admin User
-        var nameParts = request.AdminName.Split(' ', 2);
-        var adminUser = new User
-        {
-            FirstName = nameParts[0],
-            LastName = nameParts.Length > 1 ? nameParts[1] : string.Empty,
-            Email = request.AdminEmail,
-            Username = request.AdminEmail, // Using email as username for simplicity
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Construction@2026"), // Standard default password
-            CompanyId = company.Id,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        await _userRepo.AddAsync(adminUser);
-        await _uow.SaveChangesAsync();
-
-        // Assign CompanyAdmin Role to the new User
-        var adminRole = await _roleRepo.AsQueryable()
-            .FirstOrDefaultAsync(r => r.CompanyId == company.Id && r.Name == "CompanyAdmin");
-
-        if (adminRole != null)
-        {
-            await _userRoleRepo.AddAsync(new UserRole
+            var company = new Company
             {
-                UserId = adminUser.Id,
-                RoleId = adminRole.Id,
+                Name = request.Name,
+                PackageId = request.PackageId,
+                IsActive = true,
+
+                EnableUserManagement = request.EnableUserManagement,
+                EnableProjectManagement = request.EnableProjectManagement,
+                EnableBOQManagement = request.EnableBOQManagement,
+                EnableDailyLogs = request.EnableDailyLogs,
+                EnableSiteMedia = request.EnableSiteMedia,
+                EnableEquipmentManagement = request.EnableEquipmentManagement,
+                EnableInventoryManagement = request.EnableInventoryManagement,
+                EnableQualityControl = request.EnableQualityControl,
+                EnableSafetyManagement = request.EnableSafetyManagement,
+                EnableSubcontractorManagement = request.EnableSubcontractorManagement,
+                EnableFinancialManagement = request.EnableFinancialManagement,
+                EnableAnalytics = request.EnableAnalytics,
+                EnableNotifications = request.EnableNotifications,
+                EnableDocumentManagement = request.EnableDocumentManagement,
+                EnableDesignManagement = request.EnableDesignManagement,
+                EnableClientPortal = request.EnableClientPortal,
+                EnableAccessControl = request.EnableAccessControl,
+                EnableHRManagement = request.EnableHRManagement,
+                EnableVendorManagement = request.EnableVendorManagement
+            };
+
+            // Link Settings via navigation property for atomic save
+            company.Settings = new CompanySettings
+            {
+                EnableDelayNotification = request.EnableDelayNotification,
+                EnablePhotoUpload = request.EnablePhotoUpload,
+                RequirePhotoReview = request.RequirePhotoReview,
+                ClientCanSeeFinancials = request.ClientCanSeeFinancials,
+                AllowMeasured = request.AllowMeasured,
+                AllowSupervision = request.AllowSupervision,
+                AllowPackages = request.AllowPackages,
+                AllowLocations = request.AllowLocations,
+                AllowHR = request.AllowHR,
+                
+                RequireInvoiceApproval = request.EnableInvoiceReview,
+                InvoiceApproverRole = request.InvoiceApproverRole,
+                EnableVendorInvoiceUpload = request.EnableVendorInvoiceUpload,
+                EnableCashVoucher = request.EnableCashVoucher,
+                RequireCashVoucherApproval = request.RequireCashVoucherApproval,
+                CashVoucherApproverRole = request.CashVoucherApproverRole,
+                CashVoucherSubmitterRole = request.CashVoucherSubmitterRole,
+                RecordCashVoucherToWorker = request.RecordCashVoucherToWorker,
+                
+                DelayNotificationIntervalDays = 7,
+                DelayGracePeriodDays = 3,
+                PhotoApproverRole = "MediaReviewer",
+                DefaultMoneyCalculationMethod = request.AllowMeasured ? 
+                    ConstructionManagement.Domain.Enums.CalculationMethod.Measured : 
+                    (request.AllowSupervision ? ConstructionManagement.Domain.Enums.CalculationMethod.Supervision : ConstructionManagement.Domain.Enums.CalculationMethod.Packages)
+            };
+            
+            await _companyRepo.AddAsync(company);
+            await _uow.SaveChangesAsync(); // Saves both Company and Settings
+
+            // Seed Company-Specific Permissions & Admin Role
+            await SyncCompanyPermissions(company.Id, request);
+
+            // Create Company Admin User
+            var nameParts = request.AdminName.Split(' ', 2);
+            var adminUser = new User
+            {
+                FirstName = nameParts[0],
+                LastName = nameParts.Length > 1 ? nameParts[1] : string.Empty,
+                Email = request.AdminEmail,
+                Username = request.AdminEmail,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Construction@2026"),
                 CompanyId = company.Id,
-                AssignedAt = DateTime.UtcNow
-            });
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _userRepo.AddAsync(adminUser);
             await _uow.SaveChangesAsync();
+
+            // Assign CompanyAdmin Role
+            var adminRole = await _roleRepo.AsQueryable()
+                .FirstOrDefaultAsync(r => r.CompanyId == company.Id && r.Name == "CompanyAdmin");
+
+            if (adminRole != null)
+            {
+                await _userRoleRepo.AddAsync(new UserRole
+                {
+                    UserId = adminUser.Id,
+                    RoleId = adminRole.Id,
+                    CompanyId = company.Id,
+                    AssignedAt = DateTime.UtcNow
+                });
+                await _uow.SaveChangesAsync();
+            }
+
+            await _uow.CommitAsync();
+
+            // Send welcome email in background using Hangfire
+            Hangfire.BackgroundJob.Enqueue<IEmailService>(x => 
+                x.SendAsync(request.AdminEmail, 
+                    "Welcome to Construction Management System", 
+                    $"<h2>Welcome {request.AdminName}!</h2><p>Your company <b>{request.Name}</b> has been created successfully.</p><p>You can log in using your email and the default password: <b>Construction@2026</b></p>"));
+
+            return Ok(company);
         }
-        
-        return Ok(company);
+        catch (Exception ex)
+        {
+            await _uow.RollbackAsync();
+            _logger.LogError(ex, "Error creating company {CompanyName}", request.Name);
+            return StatusCode(500, "حدث خطأ أثناء إنشاء الشركة");
+        }
     }
 
     [HttpGet]

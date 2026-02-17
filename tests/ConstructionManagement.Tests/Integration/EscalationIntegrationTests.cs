@@ -1,6 +1,7 @@
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories;
+using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,9 @@ public class EscalationIntegrationTests : IntegrationTestBase
 {
     private readonly ProjectDelayEscalationService _service;
     private readonly Mock<INotificationService> _notifMock = new();
-    private readonly Mock<ILogger<ProjectDelayEscalationService>> _loggerMock = new(); // ← required now
+    private readonly Mock<ILogger<ProjectDelayEscalationService>> _loggerMock = new();
+    private readonly Mock<ILocalizationService> _localizationServiceMock = new();
+    private readonly Mock<IRepository<Notification>> _notificationRepoMock = new();
 
     public EscalationIntegrationTests() : base()
     {
@@ -26,9 +29,10 @@ public class EscalationIntegrationTests : IntegrationTestBase
             _notifMock.Object,                              // 5
             new Repository<ProjectTeamRole>(Context),       // 6
             new Repository<Transaction>(Context),           // 7
-            new Repository<Notification>(Context),          // 8
+            _notificationRepoMock.Object,      // 8
             UnitOfWork,                                     // 9
-            _loggerMock.Object                              // 10 – logger was missing
+            _loggerMock.Object,                             // 10
+            _localizationServiceMock.Object                 // 11
         );
     }
 

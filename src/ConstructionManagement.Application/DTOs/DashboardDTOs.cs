@@ -14,6 +14,7 @@ public class SuperAdminStats
     public int ActiveSubscriptions { get; set; }
     public decimal MonthlyRecurringRevenue { get; set; }
     public int PendingOnboardings { get; set; }
+    public int NewCompaniesCount { get; set; }
 }
 
 public class CompanySubscription
@@ -43,4 +44,5 @@ public class SuperAdminActivity
     public string Action { get; set; } = string.Empty;
     public string Time { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty; // 'success', 'danger'
+    public DateTime Timestamp { get; set; }
 }

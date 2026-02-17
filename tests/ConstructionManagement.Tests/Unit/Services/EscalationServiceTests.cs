@@ -23,6 +23,7 @@ public class EscalationServiceTests
     private readonly Mock<IRepository<Notification>> _notificationRepo = new();
     private readonly Mock<IUnitOfWork> _uowMock = new();
     private readonly Mock<ILogger<ProjectDelayEscalationService>> _loggerMock = new(); // ← added logger
+    private readonly Mock<ILocalizationService> _localizationServiceMock = new();
 
     private ProjectDelayEscalationService CreateService()
     {
@@ -36,7 +37,8 @@ public class EscalationServiceTests
             _transactionRepo.Object,    // 7
             _notificationRepo.Object,   // 8
             _uowMock.Object,            // 9
-            _loggerMock.Object          // 10 ← added
+            _loggerMock.Object,         // 10
+            _localizationServiceMock.Object // 11
         );
     }
 

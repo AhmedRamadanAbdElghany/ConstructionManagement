@@ -22,10 +22,11 @@ public class CashVoucherServiceTests
     private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
     private readonly Mock<INotificationService> _notificationMock = new();
     private readonly Mock<ICompanyContext> _companyContextMock = new();
+    private readonly Mock<ILocalizationService> _localizationServiceMock = new();
 
     private CashVoucherService CreateService()
         => new(_voucherRepoMock.Object, _settingsRepoMock.Object, _userRepoMock.Object,
-               _unitOfWorkMock.Object, _notificationMock.Object, _companyContextMock.Object);
+               _unitOfWorkMock.Object, _localizationServiceMock.Object, _notificationMock.Object, _companyContextMock.Object);
 
     public CashVoucherServiceTests()
     {

@@ -25,6 +25,7 @@ public class InvoiceService : IInvoiceService
     private readonly ApplicationDbContext? _context;
     private readonly IUnitOfWork? _unitOfWork;
     private readonly ILogger<InvoiceService> _logger;
+    private readonly ILocalizationService _localizationService;
 
     // Full constructor - used by DI container with null validation
     public InvoiceService(
@@ -33,7 +34,8 @@ public class InvoiceService : IInvoiceService
         IRepository<BOQItem> boqItemRepository,
         ApplicationDbContext context,
         IUnitOfWork unitOfWork,
-        ILogger<InvoiceService> logger)
+        ILogger<InvoiceService> logger,
+        ILocalizationService localizationService)
     {
         _invoiceRepository = invoiceRepository ?? throw new ArgumentNullException(nameof(invoiceRepository));
         _dailyLogRepository = dailyLogRepository ?? throw new ArgumentNullException(nameof(dailyLogRepository));
@@ -41,6 +43,7 @@ public class InvoiceService : IInvoiceService
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
     }
 
     // Test-friendly constructor - only repositories (no DbContext or UnitOfWork)
@@ -49,7 +52,8 @@ public class InvoiceService : IInvoiceService
         IRepository<ItemInvoice> invoiceRepository,
         IRepository<ItemDailyLog> dailyLogRepository,
         IRepository<BOQItem> boqItemRepository,
-        ILogger<InvoiceService> logger)
+        ILogger<InvoiceService> logger,
+        ILocalizationService localizationService)
     {
         _invoiceRepository = invoiceRepository ?? throw new ArgumentNullException(nameof(invoiceRepository));
         _dailyLogRepository = dailyLogRepository ?? throw new ArgumentNullException(nameof(dailyLogRepository));
@@ -57,6 +61,7 @@ public class InvoiceService : IInvoiceService
         _context = null;
         _unitOfWork = null;
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
     }
 
     public async Task<int> CreateInvoiceAsync(int itemId, CreateInvoiceRequest request, int createdByUserId)
@@ -83,7 +88,7 @@ public class InvoiceService : IInvoiceService
             {
                 _logger.LogWarning("Attempted to create invoice for closed day. ItemId: {ItemId}, Date: {Date}", 
                     itemId, invoiceDate);
-                throw new InvalidOperationException("اليوم مقفول لهذا البند، لا يمكن إضافة فواتير جديدة");
+                throw new InvalidOperationException(_localizationService["Invoice.DayClosed"]);
             }
 
             // 2. Get item and project
@@ -91,7 +96,7 @@ public class InvoiceService : IInvoiceService
             if (item == null)
             {
                 _logger.LogWarning("BOQItem not found. ItemId: {ItemId}", itemId);
-                throw new ArgumentException("البند غير موجود");
+                throw new ArgumentException(_localizationService["Invoice.ItemNotFound"]);
             }
 
             _logger.LogDebug("Found BOQItem {ItemId} for project {ProjectId}", itemId, item.ProjectId);
@@ -113,7 +118,7 @@ public class InvoiceService : IInvoiceService
                 parameters);
 
             invoiceNumber = parameters[1].Value?.ToString()
-                ?? throw new InvalidOperationException("فشل توليد رقم الفاتورة");
+                ?? throw new InvalidOperationException(_localizationService["Invoice.NumberGenerationFailed"]);
 
             _logger.LogDebug("Generated invoice number: {InvoiceNumber}", invoiceNumber);
 

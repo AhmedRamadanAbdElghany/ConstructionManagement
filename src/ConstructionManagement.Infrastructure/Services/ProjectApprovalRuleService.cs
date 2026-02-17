@@ -11,15 +11,18 @@ public class ProjectApprovalRuleService : IProjectApprovalRuleService
     private readonly IRepository<ProjectApprovalRule> _ruleRepository;
     private readonly IRepository<Project> _projectRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILocalizationService _localizationService;
 
     public ProjectApprovalRuleService(
         IRepository<ProjectApprovalRule> ruleRepository,
         IRepository<Project> projectRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        ILocalizationService localizationService)
     {
         _ruleRepository = ruleRepository;
         _projectRepository = projectRepository;
         _unitOfWork = unitOfWork;
+        _localizationService = localizationService;
     }
 
     public async Task<int> CreateRuleAsync(int projectId, CreateApprovalRuleRequest request)
@@ -28,10 +31,10 @@ public class ProjectApprovalRuleService : IProjectApprovalRuleService
             .AnyAsync(p => p.Id == projectId);
 
         if (!projectExists)
-            throw new InvalidOperationException("المشروع غير موجود");
+            throw new InvalidOperationException(_localizationService["Project.NotFound"]);
 
         if (string.IsNullOrWhiteSpace(request.UploaderRole) || string.IsNullOrWhiteSpace(request.ApproverRole))
-            throw new ArgumentException("الرولات مطلوبة");
+            throw new ArgumentException(_localizationService["Project.RolesRequired"]);
 
         var rule = new ProjectApprovalRule
         {

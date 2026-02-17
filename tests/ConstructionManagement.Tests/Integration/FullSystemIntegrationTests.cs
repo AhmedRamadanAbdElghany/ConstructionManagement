@@ -21,6 +21,7 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 	private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock = new();
 	private readonly Mock<ICompanyRequestRepository> _companyRequestRepoMock = new();
 	private readonly Mock<INotificationService> _notificationServiceMock = new();
+	private readonly Mock<ILocalizationService> _localizationServiceMock = new();
 
 	public FullSystemIntegrationTests()
 	{
@@ -46,7 +47,8 @@ public class FullSystemIntegrationTests : IntegrationTestBase
 			_notificationServiceMock.Object,
 			new Repository<Vendor>(Context),
 			new Repository<Role>(Context),
-			new Repository<UserRole>(Context));
+			new Repository<UserRole>(Context),
+			_localizationServiceMock.Object);
 
 		_boqService = new BOQItemService(
 			new Repository<BOQItem>(Context),
