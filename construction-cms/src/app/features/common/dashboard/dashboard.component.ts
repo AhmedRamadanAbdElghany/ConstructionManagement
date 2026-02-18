@@ -6,6 +6,8 @@ import { Project, WorkerPerformance } from '../../../shared/interfaces';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { ClientPortalService, ClientDashboard } from '../../../core/services/client-portal.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-dashboard',
@@ -1200,19 +1202,22 @@ export class DashboardComponent implements OnInit {
       milestones: []
     };
 
-  chartData = [
-    { label: 'Jan', earned: 45, collected: 35 },
-    { label: 'Feb', earned: 55, collected: 45 },
-    { label: 'Mar', earned: 65, collected: 50 },
-    { label: 'Apr', earned: 70, collected: 60 },
-    { label: 'May', earned: 80, collected: 70 },
-    { label: 'Jun', earned: 75, collected: 65 },
-    { label: 'Jul', earned: 85, collected: 80 },
-    { label: 'Aug', earned: 90, collected: 75 },
-    { label: 'Sep', earned: 95, collected: 85 },
-    { label: 'Oct', earned: 100, collected: 90 },
-    { label: 'Nov', earned: 88, collected: 82 },
-    { label: 'Dec', earned: 92, collected: 88 }
+  chartData: { label: string; earned: number; collected: number }[] = [];
+
+  // Raw month data (values only)
+  private monthData = [
+    { earned: 45, collected: 35 },
+    { earned: 55, collected: 45 },
+    { earned: 65, collected: 50 },
+    { earned: 70, collected: 60 },
+    { earned: 80, collected: 70 },
+    { earned: 75, collected: 65 },
+    { earned: 85, collected: 80 },
+    { earned: 90, collected: 75 },
+    { earned: 95, collected: 85 },
+    { earned: 100, collected: 90 },
+    { earned: 88, collected: 82 },
+    { earned: 92, collected: 88 }
   ];
 
   recentActivities: RecentActivity[] = [];
@@ -1221,16 +1226,41 @@ export class DashboardComponent implements OnInit {
 
   private clientPortalService = inject(ClientPortalService);
   private translate = inject(TranslateService);
+  private i18nService = inject(I18nService);
 
   constructor(
     private dashboardService: DashboardService,
     public authService: AuthService
   ) {
     this.currentUser = this.authService.getCurrentUser();
+
+    // Subscribe to language changes to update chart labels and refresh data
+    // takeUntilDestroyed() must be called in constructor for injection context
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.updateChartData();
+        // Refresh dashboard data to get localized messages from backend
+        if (!this.isPending) {
+          if (this.isSuperAdmin) {
+            this.dashboardService.getSuperAdminActivities().subscribe(activities => {
+              this.saActivities = activities;
+            });
+          } else {
+            this.dashboardService.getRecentActivities().subscribe(activities => {
+              this.recentActivities = activities;
+            });
+          }
+        }
+      });
   }
 
   ngOnInit() {
     console.log('Dashboard Initialized', this.currentUser);
+
+    // Initialize chart data with translated month names
+    this.updateChartData();
+
     if (this.isPending) return;
 
     if (this.isClient || this.isWorker) {
@@ -1248,6 +1278,18 @@ export class DashboardComponent implements OnInit {
     } else {
       this.loadStandardView();
     }
+  }
+
+  /**
+   * Update chart data with translated month names
+   */
+  private updateChartData(): void {
+    const monthKeys = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+    this.chartData = this.monthData.map((data, index) => ({
+      label: this.translate.instant(`common.months.${monthKeys[index]}`),
+      earned: data.earned,
+      collected: data.collected
+    }));
   }
 
   loadSuperAdminView() {
