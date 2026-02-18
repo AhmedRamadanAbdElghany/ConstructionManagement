@@ -1,6 +1,6 @@
 export type UserRole = 'SuperAdmin' | 'CompanyAdmin' | 'CompanyUser' | 'NormalUser';
 
-export type UserType = 0 | 1 | 2 | 3; // NormalUser=0, Worker=1, CompanyOwner=2, InventoryOwner=3
+export type UserType = 0 | 1 | 2 | 3; // ConstructionClient=0, ConstructionWorker=1, ContractorOwner=2, MaterialsSupplier=3
 
 export interface Company {
   id: number;
@@ -37,7 +37,7 @@ export interface User {
   email: string;
   role: UserRole;
   roles?: string[]; // For backward compatibility
-  userType?: UserType; // 0=NormalUser, 1=Worker, 2=CompanyOwner, 3=InventoryOwner
+  userType?: UserType; // 0=ConstructionClient, 1=ConstructionWorker, 2=ContractorOwner, 3=MaterialsSupplier
   status: 'Working' | 'Absent' | 'Client';
   salary: number;
   notes?: string; // Admin private notes

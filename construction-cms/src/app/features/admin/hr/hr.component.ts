@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { User, UserRole } from '../../../shared/interfaces';
+import { User, UserRole, Role, Permission } from '../../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
 import { RolesService } from '../../../core/services/roles.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-hr',
@@ -183,84 +185,51 @@ import { RolesService } from '../../../core/services/roles.service';
         <div class="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none transition-all">
           <h2 class="text-xl font-black text-slate-900 dark:text-white mb-8 uppercase tracking-tight">{{ 'hr.role_matrix' | translate }}</h2>
           <div class="overflow-x-auto">
-            <table class="w-full">
-              <thead>
-                <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                  <th class="text-left px-6 py-4">{{ 'hr.permission' | translate }}</th>
-                   <th class="text-center px-6 py-4">{{ 'sidebar.role_super' | translate }}</th>
-                   <th class="text-center px-6 py-4">{{ 'sidebar.role_admin' | translate }}</th>
-                   <th class="text-center px-6 py-4">{{ 'sidebar.role_worker' | translate }}</th>
-                   <th class="text-center px-6 py-4">{{ 'sidebar.role_client' | translate }}</th>
-                </tr>
-              </thead>
-              <tbody class="text-slate-700 dark:text-slate-200">
-                @for (permission of permissions; track permission.name) {
-                  <tr class="border-t border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/[0.01] transition-colors">
-                    <td class="px-6 py-4 text-sm font-bold tracking-tight">{{ 'hr.permission_' + permission.name.toLowerCase().replace(' ', '_') | translate }}</td>
-                    <td class="px-4 py-3 text-center">
-                      @if (permission.superAdmin) {
-                        <span class="inline-flex w-6 h-6 rounded-full bg-emerald-500/20 items-center justify-center">
-                          <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                          </svg>
-                        </span>
-                      } @else {
-                        <span class="inline-flex w-6 h-6 rounded-full bg-red-500/20 items-center justify-center">
-                          <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                          </svg>
-                        </span>
-                      }
-                    </td>
-                    <td class="px-4 py-3 text-center">
-                      @if (permission.companyAdmin) {
-                        <span class="inline-flex w-6 h-6 rounded-full bg-emerald-500/20 items-center justify-center">
-                          <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                          </svg>
-                        </span>
-                      } @else {
-                        <span class="inline-flex w-6 h-6 rounded-full bg-red-500/20 items-center justify-center">
-                          <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                          </svg>
-                        </span>
-                      }
-                    </td>
-                    <td class="px-4 py-3 text-center">
-                      @if (permission.companyUser) {
-                        <span class="inline-flex w-6 h-6 rounded-full bg-emerald-500/20 items-center justify-center">
-                          <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                          </svg>
-                        </span>
-                      } @else {
-                        <span class="inline-flex w-6 h-6 rounded-full bg-red-500/20 items-center justify-center">
-                          <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                          </svg>
-                        </span>
-                      }
-                    </td>
-                    <td class="px-4 py-3 text-center">
-                      @if (permission.normalUser) {
-                        <span class="inline-flex w-6 h-6 rounded-full bg-emerald-500/20 items-center justify-center">
-                          <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                          </svg>
-                        </span>
-                      } @else {
-                        <span class="inline-flex w-6 h-6 rounded-full bg-red-500/20 items-center justify-center">
-                          <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                          </svg>
-                        </span>
-                      }
-                    </td>
+            @if (isLoadingMatrix) {
+              <div class="flex items-center justify-center py-12">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500"></div>
+                <span class="ml-3 text-slate-500">{{ 'common.loading' | translate }}</span>
+              </div>
+            } @else if (companyRoles.length === 0) {
+              <div class="text-center py-12">
+                <p class="text-slate-500">{{ 'hr.no_roles_created' | translate }}</p>
+              </div>
+            } @else {
+              <table class="w-full">
+                <thead>
+                  <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    <th class="text-left px-6 py-4">{{ 'hr.permission' | translate }}</th>
+                    @for (role of companyRoles; track role.id) {
+                      <th class="text-center px-6 py-4">{{ role.name }}</th>
+                    }
                   </tr>
-                }
-              </tbody>
-            </table>
+                </thead>
+                <tbody class="text-slate-700 dark:text-slate-200">
+                  @for (permission of allPermissions; track permission.id) {
+                    <tr class="border-t border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/[0.01] transition-colors">
+                      <td class="px-6 py-4 text-sm font-bold tracking-tight">{{ getPermissionTranslationKey(permission.name) | translate }}</td>
+                      @for (role of companyRoles; track role.id) {
+                        <td class="px-4 py-3 text-center">
+                          @if (hasPermission(role, permission.id)) {
+                            <span class="inline-flex w-6 h-6 rounded-full bg-emerald-500/20 items-center justify-center">
+                              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                              </svg>
+                            </span>
+                          } @else {
+                            <span class="inline-flex w-6 h-6 rounded-full bg-red-500/20 items-center justify-center">
+                              <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                              </svg>
+                            </span>
+                          }
+                        </td>
+                      }
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
           </div>
         </div>
       </div>
@@ -349,6 +318,14 @@ export class HrComponent implements OnInit {
   addUserForm: FormGroup;
   selectedUserForNotes: User | null = null;
 
+  // Dynamic role-permission matrix
+  companyRoles: Role[] = [];
+  allPermissions: Permission[] = [];
+  isLoadingMatrix = true;
+
+  private destroyRef = inject(DestroyRef);
+
+  // Legacy hardcoded permissions (kept for fallback)
   permissions = [
     { name: 'Manage Users', superAdmin: true, companyAdmin: true, companyUser: false, normalUser: false },
     { name: 'View All Projects', superAdmin: true, companyAdmin: true, companyUser: true, normalUser: false },
@@ -372,7 +349,11 @@ export class HrComponent implements OnInit {
     return this.users.reduce((sum, u) => sum + u.salary, 0);
   }
 
-  constructor(private rolesService: RolesService, private fb: FormBuilder) {
+  constructor(
+    private rolesService: RolesService,
+    private fb: FormBuilder,
+    private authService: AuthService
+  ) {
     this.addUserForm = this.fb.group({
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -382,11 +363,66 @@ export class HrComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.loadRolesAndPermissions();
     // TODO: Implement users API
     // this.rolesService.getUsers().subscribe(users => {
     //   this.users = users;
     // });
     this.users = [];
+  }
+
+  /**
+   * Load roles and permissions from backend for the dynamic permission matrix
+   */
+  private loadRolesAndPermissions(): void {
+    this.isLoadingMatrix = true;
+
+    // Get current user's company ID
+    const currentUser = this.authService.getCurrentUser() as any;
+    const companyId = currentUser?.companyId;
+
+    // Load roles for the company
+    this.rolesService.getRoles(companyId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (roles) => {
+          this.companyRoles = roles || [];
+          this.isLoadingMatrix = false;
+        },
+        error: (error) => {
+          console.error('Failed to load roles:', error);
+          this.isLoadingMatrix = false;
+        }
+      });
+
+    // Load all permissions
+    this.rolesService.getPermissions()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (permissions) => {
+          this.allPermissions = permissions || [];
+        },
+        error: (error) => {
+          console.error('Failed to load permissions:', error);
+        }
+      });
+  }
+
+  /**
+   * Generate translation key for permission name
+   * Replaces all spaces with underscores for proper key matching
+   */
+  getPermissionTranslationKey(permissionName: string): string {
+    const key = permissionName.toLowerCase().replace(/ /g, '_');
+    return `hr.permission_${key}`;
+  }
+
+  /**
+   * Check if a role has a specific permission
+   */
+  hasPermission(role: Role, permissionId: number): boolean {
+    if (!role.permissions) return false;
+    return role.permissions.some(p => p.id === permissionId);
   }
 
   openAddUserModal() {
