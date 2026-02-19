@@ -1,10 +1,12 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { VendorService, PublicVendor, VendorSearchRequest, VendorProduct } from '../../../core/services/vendor.service';
 import { ProjectService } from '../../../core/services/project.service';
 import { Project } from '../../../shared/interfaces';
+import { I18nService } from '../../../core/i18n/i18n.service';
 import * as L from 'leaflet';
 
 @Component({
@@ -283,6 +285,9 @@ import * as L from 'leaflet';
   `]
 })
 export class VendorDiscoveryComponent implements OnInit, OnDestroy, AfterViewInit {
+  private destroy$ = new Subject<void>();
+  private i18nService = inject(I18nService);
+
   map!: L.Map;
   private markers: L.Marker[] = [];
   private userMarker?: L.CircleMarker;
@@ -303,7 +308,14 @@ export class VendorDiscoveryComponent implements OnInit, OnDestroy, AfterViewIni
     private vendorService: VendorService,
     private projectService: ProjectService,
     private translate: TranslateService
-  ) { }
+  ) {
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.onSearch();
+      });
+  }
 
   ngOnInit() {
     this.initDefaultLocation();
@@ -319,6 +331,8 @@ export class VendorDiscoveryComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
     if (this.map) {
       this.map.remove();
     }

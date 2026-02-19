@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Project, CatalogItem, User, CompanyPackage, CompanySettings, CreateProjectRequest, UpdateProjectRequest } from '../../../shared/interfaces';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { SettingsService } from '../../../core/services/settings.service';
 import { ProjectService } from '../../../core/services/project.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -533,20 +535,20 @@ import { map } from 'rxjs/operators';
                     <button (click)="createProject()"
                             [disabled]="!isFormValid || isCreatingProject"
                             class="flex items-center space-x-4 px-16 py-6 rounded-[2rem] bg-gradient-to-r from-emerald-600 to-teal-700 text-white font-black text-xs uppercase tracking-[0.3em] shadow-2xl shadow-emerald-500/40 hover:scale-[1.05] active:scale-95 transition-all disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed group">
-                       @if (isCreatingProject) {
-                          <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          <span>Establishing Ecosystem...</span>
-                       } @else {
-                          <span>Establish New Project</span>
-                          <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
-                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                             </svg>
-                          </div>
-                       }
+                        @if (isCreatingProject) {
+                           <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                           </svg>
+                           <span>{{ 'projects.establishing' | translate }}</span>
+                        } @else {
+                           <span>{{ 'projects.establish_new' | translate }}</span>
+                           <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
+                              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                              </svg>
+                           </div>
+                        }
                     </button>
                 </div>
              </div>
@@ -569,7 +571,7 @@ import { map } from 'rxjs/operators';
                   </svg>
                 </div>
                 <div>
-                  <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Edit Project</h2>
+                  <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{{ 'projects.edit_project' | translate }}</h2>
                   <p class="text-sm text-slate-400 font-bold">{{ editingProject.name }}</p>
                 </div>
               </div>
@@ -582,24 +584,24 @@ import { map } from 'rxjs/operators';
             <div class="p-8 overflow-y-auto flex-1 space-y-6">
               <!-- Project Name -->
               <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Project Name</label>
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">{{ 'projects.project_title' | translate }}</label>
                 <input [(ngModel)]="editForm.name" type="text" class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white font-bold placeholder-slate-300 dark:placeholder-slate-600 focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500/50 transition-all" />
               </div>
 
               <!-- Address -->
               <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Address</label>
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">{{ 'projects.site_address' | translate }}</label>
                 <input [(ngModel)]="editForm.address" type="text" class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white font-bold placeholder-slate-300 dark:placeholder-slate-600 focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500/50 transition-all" />
               </div>
 
               <!-- Dates -->
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Start Date</label>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">{{ 'projects.kickoff_date' | translate }}</label>
                   <input [(ngModel)]="editForm.startDate" type="date" class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500/50 transition-all" />
                 </div>
                 <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">End Date</label>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">{{ 'projects.handover_target' | translate }}</label>
                   <input [(ngModel)]="editForm.endDate" type="date" class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500/50 transition-all" />
                 </div>
               </div>
@@ -607,7 +609,7 @@ import { map } from 'rxjs/operators';
               <!-- Total Contract Value -->
               @if (editForm.calculationMethod === 'Measured') {
                 <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Total Contract Value</label>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">{{ 'projects.contract_cost' | translate }}</label>
                   <input [(ngModel)]="editForm.totalContractValue" type="number" class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white font-bold focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500/50 transition-all" />
                 </div>
               }
@@ -616,14 +618,14 @@ import { map } from 'rxjs/operators';
             <!-- Modal Footer -->
             <div class="p-8 pt-4 flex justify-end space-x-4 shrink-0 border-t border-slate-100 dark:border-white/5 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl">
               <button (click)="showEditModal = false" class="px-8 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-black text-xs uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
-                Cancel
+                {{ 'common.cancel' | translate }}
               </button>
               <button (click)="updateProject()" [disabled]="isUpdatingProject || !editForm.name || !editForm.startDate" class="px-10 py-4 rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-700 text-white font-black text-xs uppercase tracking-widest shadow-2xl shadow-cyan-500/30 hover:scale-[1.03] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center space-x-3">
                 @if (isUpdatingProject) {
                   <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                  <span>Saving...</span>
+                  <span>{{ 'common.saving' | translate }}</span>
                 } @else {
-                  <span>Save Changes</span>
+                  <span>{{ 'common.save_changes' | translate }}</span>
                 }
               </button>
             </div>
@@ -707,42 +709,66 @@ export class ProjectsComponent implements OnInit {
     const f = this.createForm;
     const errors: string[] = [];
 
-    if (!f.name) errors.push('Project Name');
+    if (!f.name) errors.push(this.translate.instant('projects.project_name'));
 
-    if (!f.startDate) errors.push('Start Date');
-    if (!f.endDate) errors.push('Target End Date');
+    if (!f.startDate) errors.push(this.translate.instant('common.start_date'));
+    if (!f.endDate) errors.push(this.translate.instant('projects.target_end_date'));
 
 
 
     if (f.calculationMethod === 'Measured' && (!f.totalContractValue || f.totalContractValue <= 0)) {
-      errors.push('Total Project Cost');
+      errors.push(this.translate.instant('projects.total_project_cost'));
     }
 
     if (f.calculationMethod === 'Packages' && !f.packageId) {
-      errors.push('Contract Package selection');
+      errors.push(this.translate.instant('projects.contract_package_selection'));
     }
 
-    if (f.extraFees > 0 && !f.extraFeesDescription) errors.push('Extra Fees Description');
-    if (f.deductedAmount > 0 && !f.deductedAmountDescription) errors.push('Deduction Reason (وصف الخصم)');
+    if (f.extraFees > 0 && !f.extraFeesDescription) errors.push(this.translate.instant('projects.extra_fees_description'));
+    if (f.deductedAmount > 0 && !f.deductedAmountDescription) errors.push(this.translate.instant('projects.deduction_reason'));
 
     return errors;
   }
 
 
 
+  private i18nService = inject(I18nService);
+  private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
+
   constructor(
     private projectService: ProjectService,
     private catalogService: CatalogService,
     private settingsService: SettingsService
-  ) { }
+  ) {
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.loadProjects();
+      });
+  }
 
   ngOnInit() {
+    this.loadProjects();
+    this.loadCatalogItems();
+    this.loadCompanySettings();
+    this.loadCompanyPackages();
+  }
+
+  private loadProjects(): void {
     this.projectService.getMyProjects().subscribe(projects => {
       this.projects = projects;
     });
+  }
+
+  private loadCatalogItems(): void {
     this.catalogService.getCatalogItems().subscribe(items => {
       this.catalogItems = items;
     });
+  }
+
+  private loadCompanySettings(): void {
     this.settingsService.getCompanySettings().subscribe(settings => {
       this.companySettings = settings;
 
@@ -754,6 +780,9 @@ export class ProjectsComponent implements OnInit {
       // Fallback if nothing enabled (shouldn't happen in valid config)
       if (this.calculationMethods.length === 0) this.calculationMethods = ['Measured'];
     });
+  }
+
+  private loadCompanyPackages(): void {
     this.settingsService.getCompanyPackages().subscribe(packages => {
       this.availablePackages = packages;
     });

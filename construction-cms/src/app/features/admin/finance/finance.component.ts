@@ -674,6 +674,17 @@ export class FinanceComponent implements OnInit {
   totalTransactionAmount = computed(() => this.transactions().reduce((sum, t) => sum + t.amount, 0));
   totalInvoiceAmount = computed(() => this.invoices().reduce((sum, i) => sum + i.amount, 0));
 
+  private i18nService = inject(I18nService);
+
+  constructor() {
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadAllData();
+      });
+  }
+
   ngOnInit(): void {
     this.loadAllData();
   }

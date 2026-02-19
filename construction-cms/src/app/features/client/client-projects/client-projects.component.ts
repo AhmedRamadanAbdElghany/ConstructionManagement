@@ -1,10 +1,12 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { Project } from '../../../shared/interfaces';
 import { ProjectService } from '../../../core/services/project.service';
 import { SiteMediaService, SiteMediaDto } from '../../../core/services/site-media.service';
 import { ClientPortalService } from '../../../core/services/client-portal.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-client-projects',
@@ -145,7 +147,10 @@ import { ClientPortalService } from '../../../core/services/client-portal.servic
     </div>
   `
 })
-export class ClientProjectsComponent implements OnInit {
+export class ClientProjectsComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  private i18nService = inject(I18nService);
+
   projects: Project[] = [];
   siteMedia: SiteMediaDto[] = [];
 
@@ -155,9 +160,25 @@ export class ClientProjectsComponent implements OnInit {
     { message: 'Site inspection passed successfully', date: '1 week ago' },
   ];
 
-  constructor(private projectService: ProjectService, private siteMediaService: SiteMediaService) { }
+  constructor(private projectService: ProjectService, private siteMediaService: SiteMediaService) {
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadProjects();
+      });
+  }
 
   ngOnInit() {
+    this.loadProjects();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadProjects() {
     this.projectService.getMyProjects().subscribe(projects => {
       this.projects = projects;
     });

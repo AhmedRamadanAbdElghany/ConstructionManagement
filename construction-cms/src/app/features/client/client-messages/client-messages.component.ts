@@ -1,9 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { ClientPortalService, ClientMessage } from '../../../core/services/client-portal.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-client-messages',
@@ -178,9 +180,11 @@ import { ClientPortalService, ClientMessage } from '../../../core/services/clien
     }
   `]
 })
-export class ClientMessagesComponent implements OnInit {
+export class ClientMessagesComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   private clientPortalService = inject(ClientPortalService);
   private route = inject(ActivatedRoute);
+  private i18nService = inject(I18nService);
 
   messages: ClientMessage[] = [];
   isLoading = false;
@@ -188,6 +192,18 @@ export class ClientMessagesComponent implements OnInit {
 
   ngOnInit() {
     this.loadMessages();
+
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadMessages();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadMessages() {

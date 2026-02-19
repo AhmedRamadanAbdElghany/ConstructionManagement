@@ -24,7 +24,7 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
         <!-- Page Title & Tabs -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
-            <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">Configurations</h1>
+            <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">{{ 'companySettings.title' | translate }}</h1>
             <div class="flex p-1 bg-slate-200 dark:bg-slate-800 rounded-xl w-fit">
               <button (click)="activeTab = 'settings'" 
                       [class.bg-white]="activeTab === 'settings'" 
@@ -33,7 +33,7 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                       [class.dark:bg-slate-700]="activeTab === 'settings'"
                       [class.dark:text-white]="activeTab === 'settings'"
                       class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
-                  Settings
+                  {{ 'companySettings.settings' | translate }}
               </button>
               <button (click)="activeTab = 'roles'" 
                       [class.bg-white]="activeTab === 'roles'" 
@@ -42,7 +42,7 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                       [class.dark:bg-slate-700]="activeTab === 'roles'"
                       [class.dark:text-white]="activeTab === 'roles'"
                       class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
-                  Roles & Permissions
+                  {{ 'companySettings.rolesPermissions' | translate }}
               </button>
               <button (click)="activeTab = 'hierarchy'" 
                       [class.bg-white]="activeTab === 'hierarchy'" 
@@ -51,7 +51,7 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                       [class.dark:bg-slate-700]="activeTab === 'hierarchy'"
                       [class.dark:text-white]="activeTab === 'hierarchy'"
                       class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
-                  Phases
+                  {{ 'companySettings.phases' | translate }}
               </button>
               <button (click)="activeTab = 'designs'" 
                       [class.bg-white]="activeTab === 'designs'" 
@@ -60,7 +60,7 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                       [class.dark:bg-slate-700]="activeTab === 'designs'"
                       [class.dark:text-white]="activeTab === 'designs'"
                       class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
-                  Designs
+                  {{ 'companySettings.designs' | translate }}
               </button>
             </div>
           </div>
@@ -99,7 +99,7 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                    </div>
                    <div>
                      <h2 class="text-sm font-black text-slate-400 uppercase tracking-[0.2em]">{{ 'modules' | translate }}</h2>
-                     <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">Platform Control</p>
+                      <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">{{ 'companySettings.platformControl' | translate }}</p>
                    </div>
                  </div>
 
@@ -150,52 +150,52 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                           </label>
                        </div>
 
-                       <!-- Allow Add Progress Entry -->
-                       <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                          <div>
-                             <span class="text-xs font-black text-slate-700 dark:text-slate-300 block">Progress Entry</span>
-                             <span class="text-[8px] text-slate-400">Workers can log progress</span>
-                          </div>
-                          <label class="relative inline-flex items-center cursor-pointer">
-                             <input type="checkbox" [(ngModel)]="settings.allowAddProgressEntry" class="sr-only peer">
-                             <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
-                          </label>
-                       </div>
+                        <!-- Allow Add Progress Entry -->
+                        <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                           <div>
+                              <span class="text-xs font-black text-slate-700 dark:text-slate-300 block">{{ 'companySettings.progressEntry' | translate }}</span>
+                              <span class="text-[8px] text-slate-400">{{ 'companySettings.workersCanLogProgress' | translate }}</span>
+                           </div>
+                           <label class="relative inline-flex items-center cursor-pointer">
+                              <input type="checkbox" [(ngModel)]="settings.allowAddProgressEntry" class="sr-only peer">
+                              <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
+                           </label>
+                        </div>
 
-                       <!-- Allow Reopen Closed Day -->
-                       <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                          <div>
-                             <span class="text-xs font-black text-slate-700 dark:text-slate-300 block">Reopen Closed Day</span>
-                             <span class="text-[8px] text-slate-400">Admins can unlock days</span>
-                          </div>
-                          <label class="relative inline-flex items-center cursor-pointer">
-                             <input type="checkbox" [(ngModel)]="settings.allowReopenClosedDay" class="sr-only peer">
-                             <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
-                          </label>
-                       </div>
+                        <!-- Allow Reopen Closed Day -->
+                        <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                           <div>
+                              <span class="text-xs font-black text-slate-700 dark:text-slate-300 block">{{ 'companySettings.reopenClosedDay' | translate }}</span>
+                              <span class="text-[8px] text-slate-400">{{ 'companySettings.adminsCanUnlockDays' | translate }}</span>
+                           </div>
+                           <label class="relative inline-flex items-center cursor-pointer">
+                              <input type="checkbox" [(ngModel)]="settings.allowReopenClosedDay" class="sr-only peer">
+                              <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
+                           </label>
+                        </div>
 
-                       <!-- Auto Close Day -->
-                       <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                          <div>
-                             <span class="text-xs font-black text-slate-700 dark:text-slate-300 block">Auto Close Day</span>
-                             <span class="text-[8px] text-slate-400">Auto-lock at scheduled time</span>
-                          </div>
-                          <label class="relative inline-flex items-center cursor-pointer">
-                             <input type="checkbox" [(ngModel)]="settings.autoCloseDay" class="sr-only peer">
-                             <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
-                          </label>
-                       </div>
+                        <!-- Auto Close Day -->
+                        <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
+                           <div>
+                              <span class="text-xs font-black text-slate-700 dark:text-slate-300 block">{{ 'companySettings.autoCloseDay' | translate }}</span>
+                              <span class="text-[8px] text-slate-400">{{ 'companySettings.autoLockScheduledTime' | translate }}</span>
+                           </div>
+                           <label class="relative inline-flex items-center cursor-pointer">
+                              <input type="checkbox" [(ngModel)]="settings.autoCloseDay" class="sr-only peer">
+                              <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
+                           </label>
+                        </div>
                     </div>
 
-                    <!-- Auto Close Time (only shown if Auto Close is enabled) -->
-                    @if (settings.autoCloseDay) {
-                    <div class="mt-6 p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20">
-                       <label class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest block mb-2">Default Auto Close Time</label>
-                       <input type="time" [(ngModel)]="settings.autoCloseDayTime" 
-                              class="w-full max-w-xs px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-500/30 text-slate-900 dark:text-white font-bold text-sm outline-none focus:ring-4 focus:ring-indigo-500/10">
-                       <p class="text-[9px] text-slate-500 mt-2">Company Admin can override this per project</p>
-                    </div>
-                    }
+                     <!-- Auto Close Time (only shown if Auto Close is enabled) -->
+                     @if (settings.autoCloseDay) {
+                     <div class="mt-6 p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20">
+                        <label class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest block mb-2">{{ 'companySettings.defaultAutoCloseTime' | translate }}</label>
+                        <input type="time" [(ngModel)]="settings.autoCloseDayTime" 
+                               class="w-full max-w-xs px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-500/30 text-slate-900 dark:text-white font-bold text-sm outline-none focus:ring-4 focus:ring-indigo-500/10">
+                        <p class="text-[9px] text-slate-500 mt-2">{{ 'companySettings.companyAdminOverride' | translate }}</p>
+                     </div>
+                     }
                  </div>
               </div>
 
@@ -228,12 +228,12 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                               [disabled]="!settings.enableDelayNotification"
                               class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border-none outline-none font-bold disabled:cursor-not-allowed">
                     </div>
-                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 transition-opacity" [class.opacity-40]="!settings.enableDelayNotification">
-                       <span class="text-xs font-black text-slate-700 dark:text-slate-300">Send Email</span>
-                       <input type="checkbox" [(ngModel)]="settings.delayNotificationSendEmail" 
-                              [disabled]="!settings.enableDelayNotification"
-                              class="w-12 h-6 rounded-full accent-indigo-500 transition-all disabled:cursor-not-allowed">
-                    </div>
+                     <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 transition-opacity" [class.opacity-40]="!settings.enableDelayNotification">
+                        <span class="text-xs font-black text-slate-700 dark:text-slate-300">{{ 'companySettings.sendEmail' | translate }}</span>
+                        <input type="checkbox" [(ngModel)]="settings.delayNotificationSendEmail" 
+                               [disabled]="!settings.enableDelayNotification"
+                               class="w-12 h-6 rounded-full accent-indigo-500 transition-all disabled:cursor-not-allowed">
+                     </div>
                      <div class="space-y-1 transition-opacity" [class.opacity-40]="!settings.enableDelayNotification">
                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'gracePeriod' | translate }}</label>
                        <input type="number" [(ngModel)]="settings.delayGracePeriodDays" 
@@ -243,138 +243,138 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                  </div>
               </div>
 
-              <!-- Media & Invoices -->
-              <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
-                 <h2 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">Media & Invoices</h2>
-                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
-                       <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase">Photo Upload</span>
-                       <input type="checkbox" [(ngModel)]="settings.enablePhotoUpload" class="w-5 h-5 accent-indigo-500">
-                    </div>
-                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
-                       <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase">Photo Review</span>
-                       <input type="checkbox" [(ngModel)]="settings.requirePhotoReview" class="w-5 h-5 accent-indigo-500">
-                    </div>
-                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
-                       <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase">Inv. Review</span>
-                       <input type="checkbox" [(ngModel)]="settings.enableInvoiceReview" class="w-5 h-5 accent-indigo-500">
-                    </div>
-                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
-                       <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase">Inv. Aggregation</span>
-                       <input type="checkbox" [(ngModel)]="settings.enableInvoiceAggregation" class="w-5 h-5 accent-indigo-500">
-                    </div>
-                 </div>
-              </div>
-
-              <!-- Daily Log Settings (Super Admin) -->
-              <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
-                 <h2 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">Daily Log Settings</h2>
-                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
-                       <div>
-                          <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block">Progress Entry</span>
-                          <span class="text-[8px] text-slate-400">Allow workers to add progress</span>
-                       </div>
-                       <input type="checkbox" [(ngModel)]="settings.allowAddProgressEntry" class="w-5 h-5 accent-indigo-500">
-                    </div>
-                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
-                       <div>
-                          <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block">Reopen Closed</span>
-                          <span class="text-[8px] text-slate-400">Allow reopening days</span>
-                       </div>
-                       <input type="checkbox" [(ngModel)]="settings.allowReopenClosedDay" class="w-5 h-5 accent-indigo-500">
-                    </div>
-                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
-                       <div>
-                          <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block">Auto Close</span>
-                          <span class="text-[8px] text-slate-400">Close day automatically</span>
-                       </div>
-                       <input type="checkbox" [(ngModel)]="settings.autoCloseDay" class="w-5 h-5 accent-indigo-500">
-                    </div>
-                    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 transition-opacity" [class.opacity-40]="!settings.autoCloseDay">
-                       <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block mb-2">Close Time</span>
-                       <input type="time" [(ngModel)]="settings.autoCloseDayTime" 
-                              [disabled]="!settings.autoCloseDay"
-                              class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold text-xs outline-none disabled:cursor-not-allowed">
-                    </div>
-                 </div>
-              </div>
-
-               <!-- SECTION: Master Setup (Super Admin ONLY) -->
-               <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
-                  <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
-                   <div class="flex items-center justify-between mb-8 relative z-10">
-                      <div class="flex items-center space-x-4">
-                         <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A10.003 10.003 0 0022 10V3l-7 3-7-3v7c0 1.259.231 2.464.653 3.571"></path>
-                            </svg>
-                         </div>
-                         <div>
-                            <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Master Structure Setup</h3>
-                            <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">Global Definition</p>
-                         </div>
-                      </div>
-                      <div class="flex space-x-2">
-                        <button (click)="openPermissionModal()" class="px-5 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-black text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all">
-                           + {{ 'addPermission' | translate }}
-                        </button>
-                        <button (click)="openRoleModal()" class="px-5 py-3 rounded-xl bg-indigo-500 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all">
-                           + {{ 'addRole' | translate }}
-                        </button>
-                      </div>
-                   </div>
-
-                   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <!-- Roles List (Master) -->
-                      <div class="space-y-4">
-                         <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Master Roles</h4>
-                         <div class="space-y-3">
-                            @for (role of companyRoles; track role.id) {
-                            <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 flex items-center justify-between group/role hover:border-indigo-500/30 transition-all">
-                               <div>
-                                  <h5 class="font-bold text-slate-900 dark:text-white text-sm">{{ role.name }}</h5>
-                                  <p class="text-[10px] text-slate-500 font-medium">{{ role.description || 'Global System Role' }}</p>
-                               </div>
-                               <div class="flex space-x-1 opacity-0 group-hover/role:opacity-100 transition-opacity">
-                                 <button (click)="openRoleModal(role)" [disabled]="isDeletingRoleId === role.id" class="p-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-500 transition-all">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                 </button>
-                                 <button (click)="deleteRole(role.id)" [disabled]="isDeletingRoleId === role.id" class="p-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-400 hover:text-red-500 transition-all flex items-center justify-center">
-                                    @if (isDeletingRoleId === role.id) {
-                                       <svg class="animate-spin w-3.5 h-3.5 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                       </svg>
-                                    } @else {
-                                       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                    }
-                                 </button>
-                              </div>
-                            </div>
-                            }
-                         </div>
-                      </div>
-
-                      <!-- Permissions List (Master) -->
-                      <div class="space-y-4">
-                         <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Master Permissions</h4>
-                         <div class="flex flex-wrap gap-2">
-                            @for (perm of companyPermissions; track perm.id) {
-                            <div class="px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 flex items-center space-x-3 group/perm hover:border-indigo-500/50 transition-all shadow-sm">
-                               <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300">{{ perm.name }}</span>
-                               <button (click)="deletePermission(perm.id)" class="p-1 rounded-md text-slate-300 hover:text-red-500 transition-colors">
-                                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-                               </button>
-                            </div>
-                            }
-
-                         </div>
-                      </div>
-                   </div>
+               <!-- Media & Invoices -->
+               <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
+                  <h2 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'companySettings.mediaInvoices' | translate }}</h2>
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                     <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
+                        <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.photoUpload' | translate }}</span>
+                        <input type="checkbox" [(ngModel)]="settings.enablePhotoUpload" class="w-5 h-5 accent-indigo-500">
+                     </div>
+                     <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
+                        <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.photoReview' | translate }}</span>
+                        <input type="checkbox" [(ngModel)]="settings.requirePhotoReview" class="w-5 h-5 accent-indigo-500">
+                     </div>
+                     <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
+                        <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.invoiceReview' | translate }}</span>
+                        <input type="checkbox" [(ngModel)]="settings.enableInvoiceReview" class="w-5 h-5 accent-indigo-500">
+                     </div>
+                     <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
+                        <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.invoiceAggregation' | translate }}</span>
+                        <input type="checkbox" [(ngModel)]="settings.enableInvoiceAggregation" class="w-5 h-5 accent-indigo-500">
+                     </div>
+                  </div>
                </div>
-            </section>
-            }
+
+               <!-- Daily Log Settings (Super Admin) -->
+               <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
+                  <h2 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'companySettings.dailyLogSettings' | translate }}</h2>
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                     <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
+                        <div>
+                           <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.progressEntry' | translate }}</span>
+                           <span class="text-[8px] text-slate-400">{{ 'companySettings.allowWorkersAddProgress' | translate }}</span>
+                        </div>
+                        <input type="checkbox" [(ngModel)]="settings.allowAddProgressEntry" class="w-5 h-5 accent-indigo-500">
+                     </div>
+                     <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
+                        <div>
+                           <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.reopenClosedDay' | translate }}</span>
+                           <span class="text-[8px] text-slate-400">{{ 'companySettings.allowReopeningDays' | translate }}</span>
+                        </div>
+                        <input type="checkbox" [(ngModel)]="settings.allowReopenClosedDay" class="w-5 h-5 accent-indigo-500">
+                     </div>
+                     <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
+                        <div>
+                           <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.autoCloseDay' | translate }}</span>
+                           <span class="text-[8px] text-slate-400">{{ 'companySettings.closeDayAutomatically' | translate }}</span>
+                        </div>
+                        <input type="checkbox" [(ngModel)]="settings.autoCloseDay" class="w-5 h-5 accent-indigo-500">
+                     </div>
+                     <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 transition-opacity" [class.opacity-40]="!settings.autoCloseDay">
+                        <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block mb-2">{{ 'companySettings.closeTime' | translate }}</span>
+                        <input type="time" [(ngModel)]="settings.autoCloseDayTime" 
+                               [disabled]="!settings.autoCloseDay"
+                               class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold text-xs outline-none disabled:cursor-not-allowed">
+                     </div>
+                  </div>
+              </div>
+
+                <!-- SECTION: Master Setup (Super Admin ONLY) -->
+                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
+                   <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="flex items-center justify-between mb-8 relative z-10">
+                       <div class="flex items-center space-x-4">
+                          <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
+                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A10.003 10.003 0 0022 10V3l-7 3-7-3v7c0 1.259.231 2.464.653 3.571"></path>
+                             </svg>
+                          </div>
+                          <div>
+                             <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.masterStructureSetup' | translate }}</h3>
+                             <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">{{ 'companySettings.globalDefinition' | translate }}</p>
+                          </div>
+                       </div>
+                       <div class="flex space-x-2">
+                         <button (click)="openPermissionModal()" class="px-5 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-black text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all">
+                            + {{ 'addPermission' | translate }}
+                         </button>
+                         <button (click)="openRoleModal()" class="px-5 py-3 rounded-xl bg-indigo-500 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all">
+                            + {{ 'companySettings.addRole' | translate }}
+                         </button>
+                       </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                       <!-- Roles List (Master) -->
+                       <div class="space-y-4">
+                          <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">{{ 'companySettings.masterRoles' | translate }}</h4>
+                          <div class="space-y-3">
+                             @for (role of companyRoles; track role.id) {
+                             <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 flex items-center justify-between group/role hover:border-indigo-500/30 transition-all">
+                                <div>
+                                   <h5 class="font-bold text-slate-900 dark:text-white text-sm">{{ role.name }}</h5>
+                                   <p class="text-[10px] text-slate-500 font-medium">{{ role.description || ('companySettings.globalSystemRole' | translate) }}</p>
+                                </div>
+                                <div class="flex space-x-1 opacity-0 group-hover/role:opacity-100 transition-opacity">
+                                  <button (click)="openRoleModal(role)" [disabled]="isDeletingRoleId === role.id" class="p-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-500 transition-all">
+                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                  </button>
+                                  <button (click)="deleteRole(role.id)" [disabled]="isDeletingRoleId === role.id" class="p-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-400 hover:text-red-500 transition-all flex items-center justify-center">
+                                     @if (isDeletingRoleId === role.id) {
+                                        <svg class="animate-spin w-3.5 h-3.5 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                     } @else {
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                     }
+                                  </button>
+                               </div>
+                             </div>
+                             }
+                          </div>
+                       </div>
+
+                       <!-- Permissions List (Master) -->
+                       <div class="space-y-4">
+                          <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">{{ 'companySettings.masterPermissions' | translate }}</h4>
+                          <div class="flex flex-wrap gap-2">
+                             @for (perm of companyPermissions; track perm.id) {
+                             <div class="px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 flex items-center space-x-3 group/perm hover:border-indigo-500/50 transition-all shadow-sm">
+                                <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300">{{ perm.name }}</span>
+                                <button (click)="deletePermission(perm.id)" class="p-1 rounded-md text-slate-300 hover:text-red-500 transition-colors">
+                                   <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                             </div>
+                             }
+
+                          </div>
+                       </div>
+                    </div>
+                </div>
+             </section>
+             }
 
             <!-- Inventory Settings Section -->
              @if (isSuperAdmin || settings.enableInventoryManagement) {
@@ -387,22 +387,22 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                       </div>
                       <div>
-                         <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Inventory Management</h3>
-                         <p class="text-[10px] text-violet-500 font-bold uppercase tracking-widest">Module Settings</p>
+                         <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.inventoryManagement' | translate }}</h3>
+                         <p class="text-[10px] text-violet-500 font-bold uppercase tracking-widest">{{ 'companySettings.moduleSettings' | translate }}</p>
                       </div>
                    </div>
                    @if (!settings.enableInventoryManagement) {
-                      <span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 text-[10px] font-black uppercase tracking-widest">Disabled</span>
+                      <span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 text-[10px] font-black uppercase tracking-widest">{{ 'companySettings.disabled' | translate }}</span>
                    } @else {
-                      <span class="px-3 py-1 rounded-full bg-violet-500/10 text-violet-600 text-[10px] font-black uppercase tracking-widest">Active</span>
+                      <span class="px-3 py-1 rounded-full bg-violet-500/10 text-violet-600 text-[10px] font-black uppercase tracking-widest">{{ 'companySettings.active' | translate }}</span>
                    }
                 </div>
 
                 @if (isSuperAdmin) {
                 <div class="flex items-center justify-between p-4 rounded-2xl bg-violet-50 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/20 mb-6">
                    <div>
-                      <span class="text-xs font-black text-violet-700 dark:text-violet-300 uppercase block">Enable Inventory Module</span>
-                      <span class="text-[8px] text-violet-500">Control whether inventory management is active</span>
+                      <span class="text-xs font-black text-violet-700 dark:text-violet-300 uppercase block">{{ 'companySettings.enableInventoryModule' | translate }}</span>
+                      <span class="text-[8px] text-violet-500">{{ 'companySettings.controlInventoryActive' | translate }}</span>
                    </div>
                    <label class="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" [(ngModel)]="settings.enableInventoryManagement" class="sr-only peer">
@@ -416,8 +416,8 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                    <!-- Require Approval -->
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
                       <div>
-                         <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">Require Material Approval</span>
-                         <span class="text-[9px] text-slate-400 font-medium">Requests need manager sign-off</span>
+                         <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.requireMaterialApproval' | translate }}</span>
+                         <span class="text-[9px] text-slate-400 font-medium">{{ 'companySettings.requestsNeedManagerSignOff' | translate }}</span>
                       </div>
                       <label class="relative inline-flex items-center cursor-pointer">
                          <input type="checkbox" [(ngModel)]="settings.requireMaterialRequestApproval" class="sr-only peer">
@@ -427,8 +427,8 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                    <!-- Stock Alerts -->
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
                       <div>
-                         <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">Enable Stock Alerts</span>
-                         <span class="text-[9px] text-slate-400 font-medium">Notify on low inventory levels</span>
+                         <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.enableStockAlerts' | translate }}</span>
+                         <span class="text-[9px] text-slate-400 font-medium">{{ 'companySettings.notifyLowInventory' | translate }}</span>
                       </div>
                       <label class="relative inline-flex items-center cursor-pointer">
                          <input type="checkbox" [(ngModel)]="settings.enableStockAlerts" class="sr-only peer">
@@ -450,22 +450,22 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path></svg>
                       </div>
                       <div>
-                         <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Equipment Management</h3>
-                         <p class="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">Asset tracking & Maintenance</p>
+                         <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.equipmentManagement' | translate }}</h3>
+                         <p class="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">{{ 'companySettings.assetTrackingMaintenance' | translate }}</p>
                       </div>
                    </div>
                       @if (!settings.enableEquipmentManagement) {
-                      <span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 text-[10px] font-black uppercase tracking-widest">Disabled</span>
+                      <span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 text-[10px] font-black uppercase tracking-widest">{{ 'companySettings.disabled' | translate }}</span>
                    } @else {
-                      <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 text-[10px] font-black uppercase tracking-widest">Active</span>
+                      <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 text-[10px] font-black uppercase tracking-widest">{{ 'companySettings.active' | translate }}</span>
                    }
                 </div>
 
                 @if (isSuperAdmin) {
                 <div class="flex items-center justify-between p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 mb-6">
                    <div>
-                      <span class="text-xs font-black text-emerald-700 dark:text-emerald-300 uppercase block">Enable Equipment Module</span>
-                      <span class="text-[8px] text-emerald-500">Control asset tracking and billing</span>
+                      <span class="text-xs font-black text-emerald-700 dark:text-emerald-300 uppercase block">{{ 'companySettings.enableEquipmentModule' | translate }}</span>
+                      <span class="text-[8px] text-emerald-500">{{ 'companySettings.controlAssetTrackingBilling' | translate }}</span>
                    </div>
                    <label class="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" [(ngModel)]="settings.enableEquipmentManagement" class="sr-only peer">
@@ -478,8 +478,8 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in slide-in-from-top-2 duration-300">
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
                       <div>
-                        <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">GPS Tracking</span>
-                        <span class="text-[9px] text-slate-400 font-medium">Real-time location updates</span>
+                        <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.gpsTracking' | translate }}</span>
+                        <span class="text-[9px] text-slate-400 font-medium">{{ 'companySettings.realtimeLocationUpdates' | translate }}</span>
                       </div>
                       <label class="relative inline-flex items-center cursor-pointer">
                          <input type="checkbox" [(ngModel)]="settings.enableEquipmentGpsTracking" class="sr-only peer">
@@ -488,8 +488,8 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
                       <div>
-                        <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">Rental Billing</span>
-                        <span class="text-[9px] text-slate-400 font-medium">Track costs for rented gear</span>
+                        <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.rentalBilling' | translate }}</span>
+                        <span class="text-[9px] text-slate-400 font-medium">{{ 'companySettings.trackCostsRentedGear' | translate }}</span>
                       </div>
                       <label class="relative inline-flex items-center cursor-pointer">
                          <input type="checkbox" [(ngModel)]="settings.enableEquipmentRentalBilling" class="sr-only peer">
@@ -498,8 +498,8 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
                       <div>
-                        <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">Utilization</span>
-                        <span class="text-[9px] text-slate-400 font-medium">Track usage hours</span>
+                        <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.utilization' | translate }}</span>
+                        <span class="text-[9px] text-slate-400 font-medium">{{ 'companySettings.trackUsageHours' | translate }}</span>
                       </div>
                       <label class="relative inline-flex items-center cursor-pointer">
                          <input type="checkbox" [(ngModel)]="settings.enableEquipmentUtilizationTracking" class="sr-only peer">
@@ -508,8 +508,8 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
                       <div>
-                         <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">Maintenance Alert</span>
-                         <span class="text-[9px] text-slate-400 font-medium">Days before service due</span>
+                         <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.maintenanceAlert' | translate }}</span>
+                         <span class="text-[9px] text-slate-400 font-medium">{{ 'companySettings.daysBeforeServiceDue' | translate }}</span>
                       </div>
                       <input type="number" [(ngModel)]="settings.maintenanceReminderDays" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs text-center">
                    </div>
@@ -530,8 +530,8 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                         </svg>
                      </div>
                      <div>
-                        <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Safety Management</h3>
-                        <p class="text-[10px] text-amber-500 font-bold uppercase tracking-widest">Compliance & Incident Control</p>
+                        <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.safetyManagement' | translate }}</h3>
+                        <p class="text-[10px] text-amber-500 font-bold uppercase tracking-widest">{{ 'companySettings.complianceIncidentControl' | translate }}</p>
                      </div>
                   </div>
                </div>
@@ -539,8 +539,8 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                @if (isSuperAdmin) {
                <div class="flex items-center justify-between p-4 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 mb-4">
                   <div>
-                     <span class="text-xs font-black text-amber-700 dark:text-amber-300 uppercase block">Enable Safety Module</span>
-                     <span class="text-[8px] text-amber-500">Control safety protocols and reporting</span>
+                     <span class="text-xs font-black text-amber-700 dark:text-amber-300 uppercase block">{{ 'companySettings.enableSafetyModule' | translate }}</span>
+                     <span class="text-[8px] text-amber-500">{{ 'companySettings.controlSafetyProtocolsReporting' | translate }}</span>
                   </div>
                   <label class="relative inline-flex items-center cursor-pointer">
                      <input type="checkbox" [(ngModel)]="settings.enableSafetyManagement" class="sr-only peer">
@@ -552,19 +552,19 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                @if (settings.enableSafetyManagement) {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Require Training</span>
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.requireTraining' | translate }}</span>
                       <input type="checkbox" [(ngModel)]="settings.requireSafetyTraining" class="w-5 h-5 accent-amber-500">
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Incident Escalation</span>
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.incidentEscalation' | translate }}</span>
                       <input type="checkbox" [(ngModel)]="settings.enableIncidentEscalation" class="w-5 h-5 accent-amber-500">
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Inspection Frequency (Days)</span>
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.inspectionFrequencyDays' | translate }}</span>
                       <input type="number" [(ngModel)]="settings.safetyInspectionFrequencyDays" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Reporting Window (Hours)</span>
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.reportingWindowHours' | translate }}</span>
                       <input type="number" [(ngModel)]="settings.incidentReportingHours" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
                    </div>
                 </div>
@@ -584,8 +584,8 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                         </svg>
                      </div>
                      <div>
-                        <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Subcontractor Management</h3>
-                        <p class="text-[10px] text-rose-500 font-bold uppercase tracking-widest">Partner Performance & Compliance</p>
+                        <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.subcontractorManagement' | translate }}</h3>
+                        <p class="text-[10px] text-rose-500 font-bold uppercase tracking-widest">{{ 'companySettings.partnerPerformanceCompliance' | translate }}</p>
                      </div>
                   </div>
                </div>
@@ -593,8 +593,8 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                @if (isSuperAdmin) {
                <div class="flex items-center justify-between p-4 rounded-2xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 mb-4">
                   <div>
-                     <span class="text-xs font-black text-rose-700 dark:text-rose-300 uppercase block">Enable Subcontractor Module</span>
-                     <span class="text-[8px] text-rose-500">Manage external labor and contracts</span>
+                     <span class="text-xs font-black text-rose-700 dark:text-rose-300 uppercase block">{{ 'companySettings.enableSubcontractorModule' | translate }}</span>
+                     <span class="text-[8px] text-rose-500">{{ 'companySettings.manageExternalLaborContracts' | translate }}</span>
                   </div>
                   <label class="relative inline-flex items-center cursor-pointer">
                      <input type="checkbox" [(ngModel)]="settings.enableSubcontractorManagement" class="sr-only peer">
@@ -606,19 +606,19 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                @if (settings.enableSubcontractorManagement) {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Require Contract Mapping</span>
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.requireContractMapping' | translate }}</span>
                       <input type="checkbox" [(ngModel)]="settings.requireSubcontractorContract" class="w-5 h-5 accent-rose-500">
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Enable Partner Ratings</span>
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.enablePartnerRatings' | translate }}</span>
                       <input type="checkbox" [(ngModel)]="settings.enableSubcontractorRatings" class="w-5 h-5 accent-rose-500">
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Min Rating Threshold</span>
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.minRatingThreshold' | translate }}</span>
                       <input type="number" [(ngModel)]="settings.minimumRatingThreshold" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Insurance Warning (Days)</span>
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.insuranceWarningDays' | translate }}</span>
                       <input type="number" [(ngModel)]="settings.subcontractorInsuranceWarningDays" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
                    </div>
                 </div>
@@ -638,8 +638,8 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                         </svg>
                      </div>
                      <div>
-                        <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Quality Control</h3>
-                        <p class="text-[10px] text-blue-500 font-bold uppercase tracking-widest">Inspection & Defect Mitigation</p>
+                        <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.qualityControl' | translate }}</h3>
+                        <p class="text-[10px] text-blue-500 font-bold uppercase tracking-widest">{{ 'companySettings.inspectionDefectMitigation' | translate }}</p>
                      </div>
                   </div>
                </div>
@@ -647,8 +647,8 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                @if (isSuperAdmin) {
                <div class="flex items-center justify-between p-4 rounded-2xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 mb-4">
                   <div>
-                     <span class="text-xs font-black text-blue-700 dark:text-blue-300 uppercase block">Enable Quality Module</span>
-                     <span class="text-[8px] text-blue-500">Control quality standards and punch lists</span>
+                     <span class="text-xs font-black text-blue-700 dark:text-blue-300 uppercase block">{{ 'companySettings.enableQualityModule' | translate }}</span>
+                     <span class="text-[8px] text-blue-500">{{ 'companySettings.controlQualityStandardsPunchLists' | translate }}</span>
                   </div>
                   <label class="relative inline-flex items-center cursor-pointer">
                      <input type="checkbox" [(ngModel)]="settings.enableQualityControl" class="sr-only peer">
@@ -660,19 +660,19 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                @if (settings.enableQualityControl) {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Defect Tracking</span>
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.defectTracking' | translate }}</span>
                       <input type="checkbox" [(ngModel)]="settings.defectTrackingEnabled" class="w-5 h-5 accent-blue-500">
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Auto Escalate Critical</span>
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.autoEscalateCritical' | translate }}</span>
                       <input type="checkbox" [(ngModel)]="settings.autoEscalateCriticalDefects" class="w-5 h-5 accent-blue-500">
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Pass Score (%)</span>
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.passScore' | translate }}</span>
                       <input type="number" [(ngModel)]="settings.qualityScoreThreshold" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Fix Window (Hours)</span>
+                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.fixWindowHours' | translate }}</span>
                       <input type="number" [(ngModel)]="settings.defectResponseHours" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
                    </div>
                 </div>
@@ -695,10 +695,10 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                         </svg>
                         <div>
                            <p class="text-[11px] font-bold text-indigo-700 dark:text-indigo-300">
-                              Note: The configurations below are saved collectively when you click the primary "Save Settings" button in the header.
+                              {{ 'companySettings.configSaveNote' | translate }}
                            </p>
                            <p class="text-[9px] text-indigo-500 mt-1 uppercase font-black tracking-widest">
-                              Catalog items, Packages, and Roles are managed independently through their respective modals.
+                              {{ 'companySettings.catalogPackagesRolesNote' | translate }}
                            </p>
                         </div>
                      </div>
@@ -713,8 +713,8 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                            </svg>
                         </div>
                         <div>
-                           <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Configuration Settings</h3>
-                           <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">Global Operational Variables</p>
+                           <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.configurationSettings' | translate }}</h3>
+                           <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">{{ 'companySettings.globalOperationalVariables' | translate }}</p>
                         </div>
                      </div>
                   </div>
@@ -728,8 +728,8 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                             </div>
                             <div>
-                               <span class="text-xs font-black text-indigo-700 dark:text-indigo-300 uppercase block">Analytics Master Switch</span>
-                               <span class="text-[9px] text-indigo-400 font-medium">Enable AI Insights for Company</span>
+                               <span class="text-xs font-black text-indigo-700 dark:text-indigo-300 uppercase block">{{ 'companySettings.analyticsMasterSwitch' | translate }}</span>
+                               <span class="text-[9px] text-indigo-400 font-medium">{{ 'companySettings.enableAiInsightsCompany' | translate }}</span>
                             </div>
                          </div>
                          <label class="relative inline-flex items-center cursor-pointer">
@@ -754,7 +754,7 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                                    class="w-full px-5 py-4 pl-5 pr-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-black text-sm outline-none transition-all focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 shadow-inner">
                             <span class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">%</span>
                          </div>
-                         <p class="text-[9px] text-slate-500 italic">This percentage is applied by default to projects using the Supervision calculation method.</p>
+                         <p class="text-[9px] text-slate-500 italic">{{ 'companySettings.supervisionPercentageNote' | translate }}</p>
                       </div>
                       }
 
@@ -766,8 +766,8 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                             </div>
                             <div>
-                               <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">Enable Scheduled Reports</span>
-                               <span class="text-[9px] text-slate-400 font-medium">Auto-generate weekly insights</span>
+                               <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.enableScheduledReports' | translate }}</span>
+                               <span class="text-[9px] text-slate-400 font-medium">{{ 'companySettings.autoGenerateWeeklyInsights' | translate }}</span>
                             </div>
                          </div>
                          <label class="relative inline-flex items-center cursor-pointer">
@@ -789,8 +789,8 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                             </svg>
                          </div>
                           <div>
-                             <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Catalog</h3>
-                             <p class="text-[10px] text-cyan-500 font-bold uppercase tracking-widest">Master Items for Projects</p>
+                             <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.catalog' | translate }}</h3>
+                             <p class="text-[10px] text-cyan-500 font-bold uppercase tracking-widest">{{ 'companySettings.masterItemsForProjects' | translate }}</p>
                           </div>
                       </div>
                       <button (click)="openCatalogModal()" class="px-6 py-3 rounded-2xl bg-cyan-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-cyan-500/20 hover:scale-105 active:scale-95 transition-all">
@@ -904,12 +904,12 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                            </svg>
                         </div>
                         <div>
-                           <h2 class="text-sm font-black text-slate-400 uppercase tracking-[0.2em]">Roles & Permissions</h2>
-                           <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">Access Control Management</p>
+                           <h2 class="text-sm font-black text-slate-400 uppercase tracking-[0.2em]">{{ 'companySettings.rolesPermissions' | translate }}</h2>
+                           <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">{{ 'companySettings.accessControlManagement' | translate }}</p>
                         </div>
                      </div>
                      <button (click)="openRoleModal()" class="px-5 py-2.5 rounded-xl bg-indigo-500 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-500/20">
-                        + Add Role
+                        + {{ 'companySettings.addRole' | translate }}
                      </button>
                   </div>
 
@@ -919,16 +919,16 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                         <div class="flex justify-between items-start mb-4">
                            <div>
                               <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ role.name }}</h4>
-                              <p class="text-[10px] text-slate-500 font-medium">{{ role.description || 'No description' }}</p>
+                              <p class="text-[10px] text-slate-500 font-medium">{{ role.description || ('companySettings.noDescription' | translate) }}</p>
                            </div>
                             <div class="flex space-x-1">
-                               <button (click)="openLinkModal(role)" [disabled]="isDeletingRoleId === role.id" title="Manage Permissions" class="p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 hover:text-fuchsia-500 transition-all">
+                               <button (click)="openLinkModal(role)" [disabled]="isDeletingRoleId === role.id" title="{{ 'companySettings.managePermissions' | translate }}" class="p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 hover:text-fuchsia-500 transition-all">
                                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                                </button>
-                               <button (click)="openRoleModal(role)" [disabled]="isDeletingRoleId === role.id" title="Edit Role" class="p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-500 transition-all">
+                               <button (click)="openRoleModal(role)" [disabled]="isDeletingRoleId === role.id" title="{{ 'companySettings.editRole' | translate }}" class="p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-500 transition-all">
                                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                </button>
-                               <button (click)="deleteRole(role.id)" [disabled]="isDeletingRoleId === role.id" title="Delete Role" class="p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 hover:text-red-500 transition-all flex items-center justify-center">
+                               <button (click)="deleteRole(role.id)" [disabled]="isDeletingRoleId === role.id" title="{{ 'companySettings.deleteRole' | translate }}" class="p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 hover:text-red-500 transition-all flex items-center justify-center">
                                   @if (isDeletingRoleId === role.id) {
                                      <svg class="animate-spin w-3.5 h-3.5 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -942,12 +942,12 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                         </div>
                         
                         <div class="mt-4 pt-4 border-t border-slate-100 dark:border-white/5">
-                           <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Permissions</p>
+                           <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ 'companySettings.permissions' | translate }}</p>
                            <div class="flex flex-wrap gap-1">
                               @for (perm of role.permissions; track perm.id) {
                                  <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[8px] font-bold">{{ perm.name }}</span>
                               } @empty {
-                                 <span class="text-[8px] text-slate-400 italic">No permissions assigned</span>
+                                 <span class="text-[8px] text-slate-400 italic">{{ 'companySettings.noPermissionsAssigned' | translate }}</span>
                               }
                            </div>
                         </div>
@@ -1140,34 +1140,34 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
       }
 
       <!-- Catalog Modal -->
-      @if (showCatalogModal) {
-      <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xl animate-in fade-in duration-300">
-         <div class="bg-white dark:bg-slate-900 w-full max-w-xl rounded-[4rem] shadow-2xl p-12 relative overflow-hidden animate-in scale-in-95 duration-500 border border-white/10">
-            <div class="flex items-center justify-between mb-10">
-               <div>
-                  <h2 class="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
-                     {{ (selectedCatalogItem ? 'EDIT ITEM' : 'CREATE NEW ITEM') }}
-                  </h2>
-                  <p class="text-[10px] text-cyan-500 font-black uppercase tracking-widest mt-2">Company Global Catalog</p>
-               </div>
-               <button (click)="showCatalogModal = false" class="p-4 rounded-3xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all shadow-sm group">
-                  <svg class="w-6 h-6 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
-               </button>
-            </div>
+       @if (showCatalogModal) {
+       <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xl animate-in fade-in duration-300">
+          <div class="bg-white dark:bg-slate-900 w-full max-w-xl rounded-[4rem] shadow-2xl p-12 relative overflow-hidden animate-in scale-in-95 duration-500 border border-white/10">
+             <div class="flex items-center justify-between mb-10">
+                <div>
+                   <h2 class="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                      {{ (selectedCatalogItem ? 'companySettings.editItem' : 'companySettings.createNewItem') | translate }}
+                   </h2>
+                  <p class="text-[10px] text-cyan-500 font-black uppercase tracking-widest mt-2">{{ 'companySettings.companyGlobalCatalog' | translate }}</p>
+                </div>
+                <button (click)="showCatalogModal = false" class="p-4 rounded-3xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all shadow-sm group">
+                   <svg class="w-6 h-6 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+             </div>
 
-            <div class="space-y-6">
-               <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2 block">Item Name</label>
-                  <input type="text" [(ngModel)]="catalogForm.name" placeholder="Enter item name..."
-                         class="w-full p-6 rounded-[2.5rem] bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 outline-none font-bold text-slate-900 dark:text-white focus:ring-4 focus:ring-cyan-500/10 transition-all">
-               </div>
+             <div class="space-y-6">
+                <div>
+                   <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2 block">{{ 'companySettings.itemName' | translate }}</label>
+                   <input type="text" [(ngModel)]="catalogForm.name" placeholder="{{ 'companySettings.enterItemName' | translate }}"
+                          class="w-full p-6 rounded-[2.5rem] bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 outline-none font-bold text-slate-900 dark:text-white focus:ring-4 focus:ring-cyan-500/10 transition-all">
+                </div>
 
-               <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2 block">Description</label>
-                  <textarea [(ngModel)]="catalogForm.description" rows="3" placeholder="Optional details..."
-                            class="w-full p-6 rounded-[2.5rem] bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 outline-none font-medium text-slate-900 dark:text-white focus:ring-4 focus:ring-cyan-500/10 transition-all"></textarea>
-               </div>
-            </div>
+                <div>
+                   <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2 block">{{ 'companySettings.description' | translate }}</label>
+                   <textarea [(ngModel)]="catalogForm.description" rows="3" placeholder="{{ 'companySettings.optionalDetails' | translate }}"
+                             class="w-full p-6 rounded-[2.5rem] bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 outline-none font-medium text-slate-900 dark:text-white focus:ring-4 focus:ring-cyan-500/10 transition-all"></textarea>
+                </div>
+             </div>
 
             <div class="flex space-x-4 mt-12 bg-slate-50/50 dark:bg-white/5 -mx-12 -mb-12 p-12 pt-8">
                <button (click)="showCatalogModal = false" 

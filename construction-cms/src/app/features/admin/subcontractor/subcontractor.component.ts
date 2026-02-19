@@ -1,9 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, takeUntil, forkJoin } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { SubcontractorService, Subcontractor, SubcontractorContract, SubcontractorPayment, SubcontractorRating, SubcontractorSummary } from '../../../core/services/subcontractor.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-subcontractor',
@@ -358,6 +359,7 @@ import { SubcontractorService, Subcontractor, SubcontractorContract, Subcontract
 })
 export class SubcontractorComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+  private i18nService = inject(I18nService);
   activeTab = 'list';
   searchTerm = '';
   filterTrade = '';
@@ -376,7 +378,14 @@ export class SubcontractorComponent implements OnInit, OnDestroy {
     tradeSpecialty: ''
   };
 
-  constructor(private subcontractorService: SubcontractorService) { }
+  constructor(private subcontractorService: SubcontractorService) {
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadData();
+      });
+  }
 
   ngOnInit(): void {
     this.loadData();

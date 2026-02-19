@@ -1,9 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { ClientPortalService, ChangeOrderRequest } from '../../../core/services/client-portal.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-client-change-orders',
@@ -214,10 +216,12 @@ import { ClientPortalService, ChangeOrderRequest } from '../../../core/services/
     }
   `]
 })
-export class ClientChangeOrdersComponent implements OnInit {
+export class ClientChangeOrdersComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   private clientPortalService = inject(ClientPortalService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private i18nService = inject(I18nService);
 
   changeOrders: ChangeOrderRequest[] = [];
   projects: any[] = [];
@@ -228,6 +232,19 @@ export class ClientChangeOrdersComponent implements OnInit {
   ngOnInit() {
     this.loadChangeOrders();
     this.loadProjects();
+
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadChangeOrders();
+        this.loadProjects();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadChangeOrders() {

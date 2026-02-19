@@ -1,8 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { ClientPortalService, DailyReportList, DailyReportDetail, DailyReportFilter, ClientProjectSummary } from '../../../core/services/client-portal.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-client-reports',
@@ -213,8 +215,10 @@ import { ClientPortalService, DailyReportList, DailyReportDetail, DailyReportFil
     }
   `]
 })
-export class ClientReportsComponent implements OnInit {
+export class ClientReportsComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   private clientPortalService = inject(ClientPortalService);
+  private i18nService = inject(I18nService);
   window = window;
 
   reports: DailyReportList[] = [];
@@ -234,6 +238,19 @@ export class ClientReportsComponent implements OnInit {
   ngOnInit() {
     this.loadProjects();
     this.loadReports();
+
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadProjects();
+        this.loadReports();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadProjects() {

@@ -27,8 +27,11 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
       </button>
 
       <!-- Logo Section -->
-      <div class="h-24 flex items-center px-6 border-b border-slate-200 dark:border-slate-800/60 shrink-0">
-        <div class="flex items-center gap-4 min-w-max">
+      <div class="h-24 flex items-center border-b border-slate-200 dark:border-slate-800/60 shrink-0" 
+           [class.justify-center]="isCollapsed()" 
+           [class.px-6]="!isCollapsed()" 
+           [class.px-0]="isCollapsed()">
+        <div class="flex items-center transition-all duration-300 min-w-max" [class.gap-4]="!isCollapsed()" [class.gap-0]="isCollapsed()">
           <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-700 flex items-center justify-center shadow-lg shadow-cyan-500/20 ring-1 ring-white/10 shrink-0">
             <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
@@ -503,8 +506,16 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
 
 
       <!-- User Profile -->
-      <div class="p-6 bg-slate-100/30 dark:bg-slate-950/40 border-t border-slate-200 dark:border-slate-800/60 mt-auto shrink-0 group/profile cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-950/60 transition-colors">
-        <div class="flex items-center gap-4">
+      <div (click)="isCollapsed() ? logout() : null" 
+           class="bg-slate-100/30 dark:bg-slate-950/40 border-t border-slate-200 dark:border-slate-800/60 mt-auto shrink-0 group/profile cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-950/60 transition-colors"
+           [class.p-6]="!isCollapsed()" 
+           [class.p-0]="isCollapsed()"
+           [class.flex]="isCollapsed()" 
+           [class.items-center]="isCollapsed()" 
+           [class.justify-center]="isCollapsed()"
+           [class.h-24]="isCollapsed()"
+           [title]="isCollapsed() ? ('sidebar.logout' | translate) : ''">
+        <div class="flex items-center transition-all duration-300" [class.gap-4]="!isCollapsed()" [class.justify-center]="isCollapsed()">
           <div class="relative flex-shrink-0">
             <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white font-black text-lg ring-2 ring-white dark:ring-slate-800 shadow-2xl transition-transform group-hover/profile:scale-110 group-hover/profile:rotate-3">
               {{ authService.getCurrentUser()?.fullName?.charAt(0) || '' }}
@@ -515,8 +526,8 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
             <p class="text-[15px] font-black text-slate-900 dark:text-white truncate leading-none mb-1.5">{{ authService.getCurrentUser()?.fullName || '' }}</p>
             <p class="text-[10px] text-slate-400 dark:text-slate-600 truncate font-black uppercase tracking-widest">{{ authService.getCurrentUser()?.email || '' }}</p>
           </div>
-      <button (click)="logout()" class="p-3 rounded-2xl text-slate-400 dark:text-slate-600 hover:bg-rose-500/10 hover:text-rose-500 transition-all active:scale-90 group/logout" [class.hidden]="isCollapsed()">
-            <svg class="w-6 h-6 transition-transform group-hover/logout:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button (click)="$event.stopPropagation(); logout()" class="p-3 rounded-2xl text-slate-400 dark:text-slate-600 hover:bg-rose-500/10 hover:text-rose-500 transition-all active:scale-90 group/logout" [class.hidden]="isCollapsed()">
+            <svg class="w-6 h-6 transition-transform group-hover/logout:-translate-x-1 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
             </svg>
           </button>
@@ -535,7 +546,14 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
     }
 
     .nav-item {
-      @apply flex items-center gap-4 px-4 py-3 rounded-2xl text-slate-500 dark:text-slate-400 transition-all duration-300 hover:bg-slate-100 dark:hover:bg-white/[0.03] hover:text-slate-900 dark:hover:text-white outline-none;
+      @apply flex items-center px-4 py-3 rounded-2xl text-slate-500 dark:text-slate-400 transition-all duration-300 hover:bg-slate-100 dark:hover:bg-white/[0.03] hover:text-slate-900 dark:hover:text-white outline-none;
+      gap: 1rem;
+    }
+
+    .w-24 .nav-item {
+       justify-content: center;
+       gap: 0;
+       padding-inline: 0;
     }
 
     .nav-icon-box {

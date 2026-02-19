@@ -1,14 +1,16 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { EquipmentService, CreateEquipmentAssignmentRequest, ReturnEquipmentRequest } from '../../../core/services/equipment.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
-    selector: 'app-equipment-assignments',
-    standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
-    template: `
+  selector: 'app-equipment-assignments',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule],
+  template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
@@ -405,7 +407,7 @@ import { EquipmentService, CreateEquipmentAssignmentRequest, ReturnEquipmentRequ
       </div>
     }
   `,
-    styles: [`
+  styles: [`
     :host ::ng-deep select {
       -webkit-appearance: none;
       -moz-appearance: none;
@@ -413,152 +415,167 @@ import { EquipmentService, CreateEquipmentAssignmentRequest, ReturnEquipmentRequ
     }
   `]
 })
-export class EquipmentAssignmentsComponent implements OnInit {
-    private equipmentService = inject(EquipmentService);
+export class EquipmentAssignmentsComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  private equipmentService = inject(EquipmentService);
+  private i18nService = inject(I18nService);
 
-    assignments: any[] = [];
-    filteredAssignments: any[] = [];
-    availableEquipment: any[] = [];
-    availableProjects: any[] = [];
-    availableUsers: any[] = [];
+  assignments: any[] = [];
+  filteredAssignments: any[] = [];
+  availableEquipment: any[] = [];
+  availableProjects: any[] = [];
+  availableUsers: any[] = [];
 
-    searchTerm = '';
-    statusFilter = '';
+  searchTerm = '';
+  statusFilter = '';
 
-    showCreateModal = false;
-    showReturnModal = false;
-    selectedAssignment: any = null;
+  showCreateModal = false;
+  showReturnModal = false;
+  selectedAssignment: any = null;
 
-    newAssignment: Partial<CreateEquipmentAssignmentRequest> = {};
-    returnRequest: Partial<ReturnEquipmentRequest> = {};
+  newAssignment: Partial<CreateEquipmentAssignmentRequest> = {};
+  returnRequest: Partial<ReturnEquipmentRequest> = {};
 
-    isLoading = false;
-    isSubmitting = false;
+  isLoading = false;
+  isSubmitting = false;
 
-    ngOnInit() {
+  ngOnInit() {
+    this.loadAssignments();
+    this.loadAvailableEquipment();
+    this.loadAvailableProjects();
+    this.loadAvailableUsers();
+
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
         this.loadAssignments();
         this.loadAvailableEquipment();
-        this.loadAvailableProjects();
-        this.loadAvailableUsers();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadAssignments() {
+    this.isLoading = true;
+    this.equipmentService.getAssignments().subscribe({
+      next: (data: any) => {
+        this.assignments = data;
+        this.filteredAssignments = data;
+        this.isLoading = false;
+      },
+      error: (error: any) => {
+        console.error('Error loading assignments:', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  loadAvailableEquipment() {
+    this.equipmentService.getAvailableEquipment().subscribe({
+      next: (data: any) => {
+        this.availableEquipment = data;
+      },
+      error: (error: any) => {
+        console.error('Error loading equipment:', error);
+      }
+    });
+  }
+
+  loadAvailableProjects() {
+    // Mock data - replace with actual API call
+    this.availableProjects = [
+      { id: 1, name: 'Project Alpha' },
+      { id: 2, name: 'Project Beta' },
+      { id: 3, name: 'Project Gamma' }
+    ];
+  }
+
+  loadAvailableUsers() {
+    // Mock data - replace with actual API call
+    this.availableUsers = [
+      { id: 1, name: 'John Doe' },
+      { id: 2, name: 'Jane Smith' },
+      { id: 3, name: 'Bob Johnson' }
+    ];
+  }
+
+  filterAssignments() {
+    this.filteredAssignments = this.assignments.filter(assignment => {
+      const matchesSearch = !this.searchTerm ||
+        assignment.equipmentName?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        assignment.projectName?.toLowerCase().includes(this.searchTerm.toLowerCase());
+      const matchesStatus = !this.statusFilter || assignment.status === this.statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }
+
+  openCreateModal() {
+    this.showCreateModal = true;
+    this.newAssignment = {};
+  }
+
+  closeCreateModal() {
+    this.showCreateModal = false;
+    this.newAssignment = {};
+  }
+
+  createAssignment() {
+    if (!this.newAssignment.equipmentId || !this.newAssignment.assignmentType || !this.newAssignment.startDate) {
+      return;
     }
 
-    loadAssignments() {
-        this.isLoading = true;
-        this.equipmentService.getAssignments().subscribe({
-            next: (data: any) => {
-                this.assignments = data;
-                this.filteredAssignments = data;
-                this.isLoading = false;
-            },
-            error: (error: any) => {
-                console.error('Error loading assignments:', error);
-                this.isLoading = false;
-            }
-        });
-    }
+    this.isSubmitting = true;
+    this.equipmentService.createAssignment(this.newAssignment as CreateEquipmentAssignmentRequest).subscribe({
+      next: () => {
+        this.isSubmitting = false;
+        this.closeCreateModal();
+        this.loadAssignments();
+      },
+      error: (error: any) => {
+        console.error('Error creating assignment:', error);
+        this.isSubmitting = false;
+      }
+    });
+  }
 
-    loadAvailableEquipment() {
-        this.equipmentService.getAvailableEquipment().subscribe({
-            next: (data: any) => {
-                this.availableEquipment = data;
-            },
-            error: (error: any) => {
-                console.error('Error loading equipment:', error);
-            }
-        });
-    }
+  openReturnModal(assignment: any) {
+    this.selectedAssignment = assignment;
+    this.returnRequest = {};
+    this.showReturnModal = true;
+  }
 
-    loadAvailableProjects() {
-        // Mock data - replace with actual API call
-        this.availableProjects = [
-            { id: 1, name: 'Project Alpha' },
-            { id: 2, name: 'Project Beta' },
-            { id: 3, name: 'Project Gamma' }
-        ];
-    }
+  closeReturnModal() {
+    this.showReturnModal = false;
+    this.selectedAssignment = null;
+    this.returnRequest = {};
+  }
 
-    loadAvailableUsers() {
-        // Mock data - replace with actual API call
-        this.availableUsers = [
-            { id: 1, name: 'John Doe' },
-            { id: 2, name: 'Jane Smith' },
-            { id: 3, name: 'Bob Johnson' }
-        ];
-    }
+  returnEquipment() {
+    if (!this.selectedAssignment) return;
 
-    filterAssignments() {
-        this.filteredAssignments = this.assignments.filter(assignment => {
-            const matchesSearch = !this.searchTerm ||
-                assignment.equipmentName?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                assignment.projectName?.toLowerCase().includes(this.searchTerm.toLowerCase());
-            const matchesStatus = !this.statusFilter || assignment.status === this.statusFilter;
-            return matchesSearch && matchesStatus;
-        });
-    }
+    this.isSubmitting = true;
+    this.equipmentService.returnEquipment(this.selectedAssignment.id, this.returnRequest as ReturnEquipmentRequest).subscribe({
+      next: () => {
+        this.isSubmitting = false;
+        this.closeReturnModal();
+        this.loadAssignments();
+      },
+      error: (error: any) => {
+        console.error('Error returning equipment:', error);
+        this.isSubmitting = false;
+      }
+    });
+  }
 
-    openCreateModal() {
-        this.showCreateModal = true;
-        this.newAssignment = {};
-    }
+  viewDetails(assignment: any) {
+    console.log('View details:', assignment);
+  }
 
-    closeCreateModal() {
-        this.showCreateModal = false;
-        this.newAssignment = {};
-    }
-
-    createAssignment() {
-        if (!this.newAssignment.equipmentId || !this.newAssignment.assignmentType || !this.newAssignment.startDate) {
-            return;
-        }
-
-        this.isSubmitting = true;
-        this.equipmentService.createAssignment(this.newAssignment as CreateEquipmentAssignmentRequest).subscribe({
-            next: () => {
-                this.isSubmitting = false;
-                this.closeCreateModal();
-                this.loadAssignments();
-            },
-            error: (error: any) => {
-                console.error('Error creating assignment:', error);
-                this.isSubmitting = false;
-            }
-        });
-    }
-
-    openReturnModal(assignment: any) {
-        this.selectedAssignment = assignment;
-        this.returnRequest = {};
-        this.showReturnModal = true;
-    }
-
-    closeReturnModal() {
-        this.showReturnModal = false;
-        this.selectedAssignment = null;
-        this.returnRequest = {};
-    }
-
-    returnEquipment() {
-        if (!this.selectedAssignment) return;
-
-        this.isSubmitting = true;
-        this.equipmentService.returnEquipment(this.selectedAssignment.id, this.returnRequest as ReturnEquipmentRequest).subscribe({
-            next: () => {
-                this.isSubmitting = false;
-                this.closeReturnModal();
-                this.loadAssignments();
-            },
-            error: (error: any) => {
-                console.error('Error returning equipment:', error);
-                this.isSubmitting = false;
-            }
-        });
-    }
-
-    viewDetails(assignment: any) {
-        console.log('View details:', assignment);
-    }
-
-    formatDate(date: string): string {
-        return new Date(date).toLocaleDateString();
-    }
+  formatDate(date: string): string {
+    return new Date(date).toLocaleDateString();
+  }
 }

@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { VendorService, Vendor, VendorInvoice, VendorInvoiceSummary, CreateVendorRequest, CreateVendorInvoiceRequest } from '../../../core/services/vendor.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
     selector: 'app-vendors',
@@ -419,11 +421,11 @@ import { AuthService } from '../../../core/services/auth.service';
                         <!-- Invoice Filters -->
                         <div class="px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-center">
                             <div class="flex items-center gap-2">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">From</span>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ 'common.from' | translate }}</span>
                                 <input type="date" [(ngModel)]="invoiceFilters.fromDate" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-xs focus:ring-1 focus:ring-cyan-500" />
                             </div>
                             <div class="flex items-center gap-2">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">To</span>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ 'common.to' | translate }}</span>
                                 <input type="date" [(ngModel)]="invoiceFilters.toDate" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-xs focus:ring-1 focus:ring-cyan-500" />
                             </div>
                             <div class="flex-1"></div>
@@ -473,7 +475,10 @@ import { AuthService } from '../../../core/services/auth.service';
         </div>
     `
 })
-export class VendorsComponent implements OnInit {
+export class VendorsComponent implements OnInit, OnDestroy {
+    private destroy$ = new Subject<void>();
+    private i18nService = inject(I18nService);
+
     loading = false;
     activeTab: 'vendors' | 'pending' | 'summary' = 'vendors';
 
@@ -540,10 +545,22 @@ export class VendorsComponent implements OnInit {
     constructor(
         private vendorService: VendorService,
         private authService: AuthService
-    ) { }
+    ) {
+        // Subscribe to language changes to refresh data
+        this.i18nService.onLanguageChange()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => {
+                this.loadData();
+            });
+    }
 
     ngOnInit(): void {
         this.loadData();
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     loadData(): void {

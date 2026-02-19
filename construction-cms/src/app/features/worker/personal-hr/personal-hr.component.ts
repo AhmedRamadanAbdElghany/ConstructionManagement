@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { VacationRequest } from '../../../shared/interfaces';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-personal-hr',
@@ -264,7 +266,10 @@ import { VacationRequest } from '../../../shared/interfaces';
     .premium-card:hover:after { @apply translate-y-0; }
   `]
 })
-export class PersonalHrComponent implements OnInit {
+export class PersonalHrComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  private i18nService = inject(I18nService);
+
   activeTab: 'salary' | 'vacation' = 'salary';
   vacationForm: FormGroup;
   vacationRequests: VacationRequest[] = [];
@@ -302,6 +307,20 @@ export class PersonalHrComponent implements OnInit {
     // TODO: Implement vacation request API
     // this.vacationRequests = [];
     // this.pendingRequests = this.vacationRequests.filter(r => r.status === 'Pending').length;
+
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        // Refresh user data when language changes
+        const user = this.authService.getCurrentUser();
+        this.monthlySalary = user?.salary || 0;
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   submitVacationRequest() {

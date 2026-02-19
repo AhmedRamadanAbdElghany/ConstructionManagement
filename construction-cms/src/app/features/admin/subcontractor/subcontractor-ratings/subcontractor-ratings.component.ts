@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { SubcontractorService, SubcontractorRating, CreateRatingRequest, RatingSummaryDto } from '../../../../core/services/subcontractor.service';
+import { I18nService } from '../../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-subcontractor-ratings',
@@ -355,7 +357,10 @@ import { SubcontractorService, SubcontractorRating, CreateRatingRequest, RatingS
     </div>
   `
 })
-export class SubcontractorRatingsComponent implements OnInit {
+export class SubcontractorRatingsComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  private i18nService = inject(I18nService);
+
   activeTab: 'all' | 'pending' | 'finalized' = 'all';
   searchTerm = '';
   filterSubcontractor = '';
@@ -370,10 +375,22 @@ export class SubcontractorRatingsComponent implements OnInit {
   showCreateModal = false;
   ratingForm: Partial<CreateRatingRequest> = {};
 
-  constructor(private subcontractorService: SubcontractorService) { }
+  constructor(private subcontractorService: SubcontractorService) {
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadData();
+      });
+  }
 
   ngOnInit(): void {
     this.loadData();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadData(): void {

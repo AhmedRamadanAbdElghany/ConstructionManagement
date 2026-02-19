@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { BOQItem, DailyLog, SiteMedia } from '../../../shared/interfaces';
 import { AuthService } from '../../../core/services/auth.service';
 import { DailyLogsService } from '../../../core/services/daily-logs.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 interface WorkTask {
   id: number;
@@ -322,7 +324,10 @@ interface WorkTask {
     </div>
   `
 })
-export class DailyLogComponent implements OnInit {
+export class DailyLogComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  private i18nService = inject(I18nService);
+
   dailyLogForm: FormGroup;
   boqItems: BOQItem[] = [];
   assignedTasks: WorkTask[] = [];
@@ -370,6 +375,19 @@ export class DailyLogComponent implements OnInit {
     this.loadData();
     this.loadRecentDays();
     this.checkPermissions();
+
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadData();
+        this.loadRecentDays();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadData() {

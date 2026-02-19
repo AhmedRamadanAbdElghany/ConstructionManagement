@@ -1,9 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, takeUntil, forkJoin } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { DocumentService, Document, DocumentCategory, DocumentSummary } from '../../../core/services/document.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-documents',
@@ -86,7 +87,7 @@ import { DocumentService, Document, DocumentCategory, DocumentSummary } from '..
            <!-- Side Categories -->
            <div class="lg:col-span-1 space-y-6">
               <div class="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-white/5 shadow-xl p-6">
-                 <h3 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest mb-6 px-2">Folders</h3>
+                 <h3 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest mb-6 px-2">{{ 'documents.folders' | translate }}</h3>
                  <div class="space-y-1">
                     <button (click)="selectCategory('')"
                             [class.bg-indigo-500/10]="!selectedCategory"
@@ -94,7 +95,7 @@ import { DocumentService, Document, DocumentCategory, DocumentSummary } from '..
                             class="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-sm font-bold text-slate-600 dark:text-slate-400">
                        <div class="flex items-center">
                           <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-                          All Documents
+                          {{ 'documents.all_documents' | translate }}
                        </div>
                     </button>
                     @for (cat of categories; track cat.id) {
@@ -128,16 +129,16 @@ import { DocumentService, Document, DocumentCategory, DocumentSummary } from '..
                  <div class="flex gap-4">
                     <select [(ngModel)]="selectedType" (change)="applyFilters()"
                             class="px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-xs font-black uppercase tracking-widest outline-none appearance-none cursor-pointer">
-                       <option value="">All Types</option>
-                       <option value="Contract">Contract</option>
-                       <option value="Permit">Permit</option>
-                       <option value="Blueprint">Blueprint</option>
+                       <option value="">{{ 'documents.all_types' | translate }}</option>
+                       <option value="Contract">{{ 'documents.type.contract' | translate }}</option>
+                       <option value="Permit">{{ 'documents.type.permit' | translate }}</option>
+                       <option value="Blueprint">{{ 'documents.type.blueprint' | translate }}</option>
                     </select>
                     <select [(ngModel)]="selectedStatus" (change)="applyFilters()"
                             class="px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-xs font-black uppercase tracking-widest outline-none appearance-none cursor-pointer">
-                       <option value="">Status</option>
-                       <option value="Approved">Approved</option>
-                       <option value="Pending">Pending</option>
+                       <option value="">{{ 'common.status' | translate }}</option>
+                       <option value="Approved">{{ 'documents.status.approved' | translate }}</option>
+                       <option value="Pending">{{ 'common.pending' | translate }}</option>
                     </select>
                  </div>
               </div>
@@ -262,7 +263,16 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   newDocument: Partial<Document> = {};
   selectedFile: File | null = null;
 
-  constructor(private documentService: DocumentService, private fb: FormBuilder) { }
+  private i18nService = inject(I18nService);
+
+  constructor(private documentService: DocumentService, private fb: FormBuilder) {
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadData();
+      });
+  }
 
   ngOnInit(): void {
     this.loadData();

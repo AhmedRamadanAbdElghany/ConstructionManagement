@@ -1,16 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { SiteMediaService, SiteMediaDto, UploadMediaRequest } from '../../../../core/services/site-media.service';
 import { BOQService } from '../../../../core/services/boq.service';
 import { BOQItem } from '../../../../shared/interfaces';
+import { I18nService } from '../../../../core/i18n/i18n.service';
 
 @Component({
-    selector: 'app-site-media-upload',
-    standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
-    template: `
+  selector: 'app-site-media-upload',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule],
+  template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-5xl mx-auto">
         <!-- Header -->
@@ -166,99 +168,115 @@ import { BOQItem } from '../../../../shared/interfaces';
       </div>
     </div>
   `,
-    styles: []
+  styles: []
 })
-export class SiteMediaUploadComponent implements OnInit {
-    boqItems: BOQItem[] = [];
-    recentUploads: SiteMediaDto[] = [];
-    selectedFile: File | null = null;
-    isUploading: boolean = false;
-    projectId: number = 1; // TODO: Get from route or service
+export class SiteMediaUploadComponent implements OnInit, OnDestroy {
+  boqItems: BOQItem[] = [];
+  recentUploads: SiteMediaDto[] = [];
+  selectedFile: File | null = null;
+  isUploading: boolean = false;
+  projectId: number = 1; // TODO: Get from route or service
 
-    uploadForm: Omit<UploadMediaRequest, 'file'> = {
-        itemId: undefined,
-        mediaType: '',
-        description: '',
-        sourceType: ''
-    };
+  uploadForm: Omit<UploadMediaRequest, 'file'> = {
+    itemId: undefined,
+    mediaType: '',
+    description: '',
+    sourceType: ''
+  };
 
-    constructor(
-        private siteMediaService: SiteMediaService,
-        private boqService: BOQService
-    ) { }
+  private destroy$ = new Subject<void>();
+  private i18nService = inject(I18nService);
 
-    ngOnInit(): void {
+  constructor(
+    private siteMediaService: SiteMediaService,
+    private boqService: BOQService
+  ) { }
+
+  ngOnInit(): void {
+    this.loadBOQItems();
+    this.loadRecentUploads();
+
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
         this.loadBOQItems();
         this.loadRecentUploads();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadBOQItems(): void {
+    this.boqService.getItems(this.projectId).subscribe({
+      next: (items) => {
+        this.boqItems = items;
+      },
+      error: (error) => {
+        console.error('Error loading BOQ items:', error);
+      }
+    });
+  }
+
+  loadRecentUploads(): void {
+    this.siteMediaService.getMediaForProject(this.projectId, undefined, 'Pending').subscribe({
+      next: (media) => {
+        this.recentUploads = media.slice(0, 8); // Show last 8 uploads
+      },
+      error: (error) => {
+        console.error('Error loading recent uploads:', error);
+      }
+    });
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+    }
+  }
+
+  uploadMedia(): void {
+    if (!this.selectedFile || !this.uploadForm.mediaType) {
+      alert('Please select a file and media type');
+      return;
     }
 
-    loadBOQItems(): void {
-        this.boqService.getItems(this.projectId).subscribe({
-            next: (items) => {
-                this.boqItems = items;
-            },
-            error: (error) => {
-                console.error('Error loading BOQ items:', error);
-            }
-        });
-    }
+    this.isUploading = true;
+    const request: UploadMediaRequest = {
+      ...this.uploadForm,
+      file: this.selectedFile
+    };
 
-    loadRecentUploads(): void {
-        this.siteMediaService.getMediaForProject(this.projectId, undefined, 'Pending').subscribe({
-            next: (media) => {
-                this.recentUploads = media.slice(0, 8); // Show last 8 uploads
-            },
-            error: (error) => {
-                console.error('Error loading recent uploads:', error);
-            }
-        });
-    }
+    this.siteMediaService.uploadMedia(this.projectId, request).subscribe({
+      next: () => {
+        this.isUploading = false;
+        this.selectedFile = null;
+        this.uploadForm = {
+          itemId: undefined,
+          mediaType: '',
+          description: '',
+          sourceType: ''
+        } as Omit<UploadMediaRequest, 'file'>;
+        this.loadRecentUploads();
+        alert('Media uploaded successfully!');
+      },
+      error: (error) => {
+        console.error('Error uploading media:', error);
+        this.isUploading = false;
+        alert('Failed to upload media');
+      }
+    });
+  }
 
-    onFileSelected(event: Event): void {
-        const input = event.target as HTMLInputElement;
-        if (input.files && input.files.length > 0) {
-            this.selectedFile = input.files[0];
-        }
-    }
-
-    uploadMedia(): void {
-        if (!this.selectedFile || !this.uploadForm.mediaType) {
-            alert('Please select a file and media type');
-            return;
-        }
-
-        this.isUploading = true;
-        const request: UploadMediaRequest = {
-            ...this.uploadForm,
-            file: this.selectedFile
-        };
-
-        this.siteMediaService.uploadMedia(this.projectId, request).subscribe({
-            next: () => {
-                this.isUploading = false;
-                this.selectedFile = null;
-                this.uploadForm = {
-                    itemId: undefined,
-                    mediaType: '',
-                    description: '',
-                    sourceType: ''
-                } as Omit<UploadMediaRequest, 'file'>;
-                this.loadRecentUploads();
-                alert('Media uploaded successfully!');
-            },
-            error: (error) => {
-                console.error('Error uploading media:', error);
-                this.isUploading = false;
-                alert('Failed to upload media');
-            }
-        });
-    }
-
-    formatFileSize(bytes: number): string {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-    }
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  }
 }

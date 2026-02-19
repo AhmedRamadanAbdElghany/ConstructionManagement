@@ -1,14 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { SubcontractorService, SubcontractorContract, CreateContractRequest, UpdateContractRequest, ContractStatusUpdateRequest } from '../../../../core/services/subcontractor.service';
+import { I18nService } from '../../../../core/i18n/i18n.service';
 
 @Component({
-    selector: 'app-subcontractor-contracts',
-    standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
-    template: `
+  selector: 'app-subcontractor-contracts',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule],
+  template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
@@ -245,14 +247,14 @@ import { SubcontractorService, SubcontractorContract, CreateContractRequest, Upd
                            class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-violet-500/10">
                   </div>
                   <div>
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Start Date *</label>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">{{ 'subcontractors.start_date_required' | translate }}</label>
                     <input type="date" [(ngModel)]="contractForm.startDate"
                            class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-violet-500/10">
                   </div>
                 </div>
 
                 <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Planned End Date</label>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">{{ 'subcontractors.planned_end_date' | translate }}</label>
                   <input type="date" [(ngModel)]="contractForm.plannedEndDate"
                          class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-violet-500/10">
                 </div>
@@ -273,154 +275,169 @@ import { SubcontractorService, SubcontractorContract, CreateContractRequest, Upd
     </div>
   `
 })
-export class SubcontractorContractsComponent implements OnInit {
-    activeTab: 'active' | 'all' = 'active';
-    searchTerm = '';
-    filterSubcontractor = '';
-    filterStatus = '';
-    filterType = '';
+export class SubcontractorContractsComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  private i18nService = inject(I18nService);
 
-    contracts: SubcontractorContract[] = [];
-    subcontractors: any[] = [];
-    isLoading = false;
+  activeTab: 'active' | 'all' = 'active';
+  searchTerm = '';
+  filterSubcontractor = '';
+  filterStatus = '';
+  filterType = '';
 
-    showModal = false;
-    editingContract: SubcontractorContract | null = null;
-    contractForm: Partial<CreateContractRequest> = {};
+  contracts: SubcontractorContract[] = [];
+  subcontractors: any[] = [];
+  isLoading = false;
 
-    constructor(private subcontractorService: SubcontractorService) { }
+  showModal = false;
+  editingContract: SubcontractorContract | null = null;
+  contractForm: Partial<CreateContractRequest> = {};
 
-    ngOnInit(): void {
+  constructor(private subcontractorService: SubcontractorService) {
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
         this.loadData();
-    }
+      });
+  }
 
-    loadData(): void {
-        this.isLoading = true;
-        this.subcontractorService.getSubcontractors().subscribe({
-            next: (data) => {
-                this.subcontractors = data;
-            },
-            error: (error) => {
-                console.error('Error loading subcontractors:', error);
-            }
-        });
+  ngOnInit(): void {
+    this.loadData();
+  }
 
-        this.loadContracts();
-    }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
-    loadContracts(): void {
-        this.isLoading = true;
-        const observable = this.activeTab === 'active'
-            ? this.subcontractorService.getActiveContracts()
-            : this.subcontractorService.getAllContracts();
+  loadData(): void {
+    this.isLoading = true;
+    this.subcontractorService.getSubcontractors().subscribe({
+      next: (data) => {
+        this.subcontractors = data;
+      },
+      error: (error) => {
+        console.error('Error loading subcontractors:', error);
+      }
+    });
 
-        observable.subscribe({
-            next: (data) => {
-                this.contracts = data;
-                this.isLoading = false;
-            },
-            error: (error) => {
-                console.error('Error loading contracts:', error);
-                this.isLoading = false;
-            }
-        });
-    }
+    this.loadContracts();
+  }
 
-    get filteredContracts(): SubcontractorContract[] {
-        return this.contracts.filter(contract => {
-            const matchesSearch = !this.searchTerm ||
-                contract.contractNumber.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                contract.title.toLowerCase().includes(this.searchTerm.toLowerCase());
-            const matchesSubcontractor = !this.filterSubcontractor || contract.subcontractorId === Number(this.filterSubcontractor);
-            const matchesStatus = !this.filterStatus || contract.status === this.filterStatus;
-            const matchesType = !this.filterType || contract.contractType === this.filterType;
-            return matchesSearch && matchesSubcontractor && matchesStatus && matchesType;
-        });
-    }
+  loadContracts(): void {
+    this.isLoading = true;
+    const observable = this.activeTab === 'active'
+      ? this.subcontractorService.getActiveContracts()
+      : this.subcontractorService.getAllContracts();
 
-    openCreateModal(): void {
-        this.editingContract = null;
-        this.contractForm = {
-            contractNumber: '',
-            title: '',
-            subcontractorId: undefined,
-            contractType: '',
-            description: '',
-            scopeOfWork: '',
-            contractAmount: 0,
-            retentionAmount: 0,
-            startDate: new Date(),
-            plannedEndDate: undefined
-        };
-        this.showModal = true;
-    }
+    observable.subscribe({
+      next: (data) => {
+        this.contracts = data;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading contracts:', error);
+        this.isLoading = false;
+      }
+    });
+  }
 
-    editContract(contract: SubcontractorContract): void {
-        this.editingContract = contract;
-        this.contractForm = {
-            contractNumber: contract.contractNumber,
-            title: contract.title,
-            subcontractorId: contract.subcontractorId,
-            contractType: contract.contractType,
-            description: contract.description,
-            scopeOfWork: contract.scopeOfWork,
-            contractAmount: contract.contractAmount,
-            retentionAmount: contract.retentionAmount,
-            startDate: contract.startDate,
-            plannedEndDate: contract.plannedEndDate
-        };
-        this.showModal = true;
-    }
+  get filteredContracts(): SubcontractorContract[] {
+    return this.contracts.filter(contract => {
+      const matchesSearch = !this.searchTerm ||
+        contract.contractNumber.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        contract.title.toLowerCase().includes(this.searchTerm.toLowerCase());
+      const matchesSubcontractor = !this.filterSubcontractor || contract.subcontractorId === Number(this.filterSubcontractor);
+      const matchesStatus = !this.filterStatus || contract.status === this.filterStatus;
+      const matchesType = !this.filterType || contract.contractType === this.filterType;
+      return matchesSearch && matchesSubcontractor && matchesStatus && matchesType;
+    });
+  }
 
-    viewContract(contract: SubcontractorContract): void {
-        console.log('View contract:', contract);
-    }
+  openCreateModal(): void {
+    this.editingContract = null;
+    this.contractForm = {
+      contractNumber: '',
+      title: '',
+      subcontractorId: undefined,
+      contractType: '',
+      description: '',
+      scopeOfWork: '',
+      contractAmount: 0,
+      retentionAmount: 0,
+      startDate: new Date(),
+      plannedEndDate: undefined
+    };
+    this.showModal = true;
+  }
 
-    closeModal(): void {
-        this.showModal = false;
-        this.editingContract = null;
-        this.contractForm = {};
-    }
+  editContract(contract: SubcontractorContract): void {
+    this.editingContract = contract;
+    this.contractForm = {
+      contractNumber: contract.contractNumber,
+      title: contract.title,
+      subcontractorId: contract.subcontractorId,
+      contractType: contract.contractType,
+      description: contract.description,
+      scopeOfWork: contract.scopeOfWork,
+      contractAmount: contract.contractAmount,
+      retentionAmount: contract.retentionAmount,
+      startDate: contract.startDate,
+      plannedEndDate: contract.plannedEndDate
+    };
+    this.showModal = true;
+  }
 
-    saveContract(): void {
-        if (this.editingContract) {
-            const updateRequest: UpdateContractRequest = {
-                title: this.contractForm.title,
-                description: this.contractForm.description,
-                scopeOfWork: this.contractForm.scopeOfWork,
-                contractAmount: this.contractForm.contractAmount,
-                retentionAmount: this.contractForm.retentionAmount,
-                plannedEndDate: this.contractForm.plannedEndDate
-            };
-            this.subcontractorService.updateContract(this.editingContract.id, updateRequest).subscribe({
-                next: (updated) => {
-                    const index = this.contracts.findIndex(c => c.id === updated.id);
-                    if (index !== -1) {
-                        this.contracts[index] = updated;
-                    }
-                    this.closeModal();
-                },
-                error: (error) => {
-                    console.error('Error updating contract:', error);
-                }
-            });
-        } else {
-            this.subcontractorService.createContract(this.contractForm as CreateContractRequest).subscribe({
-                next: (created) => {
-                    this.contracts.unshift(created);
-                    this.closeModal();
-                },
-                error: (error) => {
-                    console.error('Error creating contract:', error);
-                }
-            });
+  viewContract(contract: SubcontractorContract): void {
+    console.log('View contract:', contract);
+  }
+
+  closeModal(): void {
+    this.showModal = false;
+    this.editingContract = null;
+    this.contractForm = {};
+  }
+
+  saveContract(): void {
+    if (this.editingContract) {
+      const updateRequest: UpdateContractRequest = {
+        title: this.contractForm.title,
+        description: this.contractForm.description,
+        scopeOfWork: this.contractForm.scopeOfWork,
+        contractAmount: this.contractForm.contractAmount,
+        retentionAmount: this.contractForm.retentionAmount,
+        plannedEndDate: this.contractForm.plannedEndDate
+      };
+      this.subcontractorService.updateContract(this.editingContract.id, updateRequest).subscribe({
+        next: (updated) => {
+          const index = this.contracts.findIndex(c => c.id === updated.id);
+          if (index !== -1) {
+            this.contracts[index] = updated;
+          }
+          this.closeModal();
+        },
+        error: (error) => {
+          console.error('Error updating contract:', error);
         }
+      });
+    } else {
+      this.subcontractorService.createContract(this.contractForm as CreateContractRequest).subscribe({
+        next: (created) => {
+          this.contracts.unshift(created);
+          this.closeModal();
+        },
+        error: (error) => {
+          console.error('Error creating contract:', error);
+        }
+      });
     }
+  }
 
-    formatCurrency(amount: number): string {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD'
-        }).format(amount);
-    }
+  formatCurrency(amount: number): string {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(amount);
+  }
 }

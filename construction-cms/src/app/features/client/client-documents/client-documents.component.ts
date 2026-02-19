@@ -1,14 +1,16 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { ClientPortalService } from '../../../core/services/client-portal.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
-    selector: 'app-client-documents',
-    standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
-    template: `
+  selector: 'app-client-documents',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule],
+  template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
@@ -70,7 +72,7 @@ import { ClientPortalService } from '../../../core/services/client-portal.servic
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     :host ::ng-deep select {
       -webkit-appearance: none;
       -moz-appearance: none;
@@ -78,38 +80,53 @@ import { ClientPortalService } from '../../../core/services/client-portal.servic
     }
   `]
 })
-export class ClientDocumentsComponent implements OnInit {
-    private clientPortalService = inject(ClientPortalService);
+export class ClientDocumentsComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  private clientPortalService = inject(ClientPortalService);
+  private i18nService = inject(I18nService);
 
-    documents: any[] = [];
-    projects: any[] = [];
-    isLoading = false;
-    selectedType = '';
-    selectedProjectId = '';
+  documents: any[] = [];
+  projects: any[] = [];
+  isLoading = false;
+  selectedType = '';
+  selectedProjectId = '';
 
-    ngOnInit() {
+  ngOnInit() {
+    this.loadDocuments();
+    this.loadProjects();
+
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
         this.loadDocuments();
         this.loadProjects();
-    }
+      });
+  }
 
-    loadDocuments() {
-        this.isLoading = true;
-        // Simulate loading with no results for now as we want to show empty state
-        // In real implementation, this would call a service method
-        setTimeout(() => {
-            this.documents = [];
-            this.isLoading = false;
-        }, 500);
-    }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
-    loadProjects() {
-        this.clientPortalService.getClientDashboard().subscribe({
-            next: (dashboard) => {
-                this.projects = dashboard.projects.map(p => ({ id: p.projectId, name: p.projectName }));
-            },
-            error: (error) => {
-                console.error('Error loading projects:', error);
-            }
-        });
-    }
+  loadDocuments() {
+    this.isLoading = true;
+    // Simulate loading with no results for now as we want to show empty state
+    // In real implementation, this would call a service method
+    setTimeout(() => {
+      this.documents = [];
+      this.isLoading = false;
+    }, 500);
+  }
+
+  loadProjects() {
+    this.clientPortalService.getClientDashboard().subscribe({
+      next: (dashboard) => {
+        this.projects = dashboard.projects.map(p => ({ id: p.projectId, name: p.projectName }));
+      },
+      error: (error) => {
+        console.error('Error loading projects:', error);
+      }
+    });
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -198,21 +198,21 @@ import { Subject, takeUntil } from 'rxjs';
         @if (activeTab === 'incidents') {
         <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
           <div class="flex items-center justify-between mb-8">
-            <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Incident Reports</h3>
+            <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'safety.incident_reports' | translate }}</h3>
             <button (click)="openIncidentModal()" class="px-6 py-3 rounded-2xl bg-rose-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-rose-500/20 hover:scale-105 transition-all">
-              + New Incident
+              + {{ 'safety.incident.new' | translate }}
             </button>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full">
               <thead>
                 <tr class="border-b border-slate-100 dark:border-white/5">
-                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">Date</th>
-                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">Title</th>
-                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">Severity</th>
-                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">Location</th>
-                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">Status</th>
-                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">Actions</th>
+                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">{{ 'common.date' | translate }}</th>
+                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">{{ 'common.title' | translate }}</th>
+                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">{{ 'safety.incident.severity' | translate }}</th>
+                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">{{ 'safety.incident.location' | translate }}</th>
+                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">{{ 'common.status' | translate }}</th>
+                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">{{ 'common.actions' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -238,14 +238,14 @@ import { Subject, takeUntil } from 'rxjs';
                     </span>
                   </td>
                   <td class="px-6 py-4">
-                    <button (click)="viewIncident(incident)" class="text-xs font-black text-rose-500 uppercase tracking-widest hover:text-rose-600">View</button>
+                    <button (click)="viewIncident(incident)" class="text-xs font-black text-rose-500 uppercase tracking-widest hover:text-rose-600">{{ 'common.view' | translate }}</button>
                   </td>
                 </tr>
                 }
                 @if (!incidents.length) {
                 <tr>
                   <td colspan="6" class="px-6 py-12 text-center">
-                    <p class="text-[10px] text-slate-400 italic">No incidents reported yet</p>
+                    <p class="text-[10px] text-slate-400 italic">{{ 'safety.no_incidents_reported' | translate }}</p>
                   </td>
                 </tr>
                 }
@@ -259,9 +259,9 @@ import { Subject, takeUntil } from 'rxjs';
         @if (activeTab === 'trainings') {
         <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
           <div class="flex items-center justify-between mb-8">
-            <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Safety Training Records</h3>
+            <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'safety.training_records' | translate }}</h3>
             <button class="px-6 py-3 rounded-2xl bg-violet-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-violet-500/20 hover:scale-105 transition-all">
-              + Schedule Training
+              + {{ 'safety.training.schedule' | translate }}
             </button>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -285,18 +285,18 @@ import { Subject, takeUntil } from 'rxjs';
                 <div class="text-[10px] text-slate-400">
                   <p>{{ training.scheduledDate | date:'mediumDate' }}</p>
                   @if (training.certificationExpiryDate) {
-                  <p class="text-amber-500">Expires: {{ training.certificationExpiryDate | date:'mediumDate' }}</p>
+                  <p class="text-amber-500">{{ 'safety.training.expires' | translate }}: {{ training.certificationExpiryDate | date:'mediumDate' }}</p>
                   }
                 </div>
                 <span class="px-2 py-0.5 rounded-md bg-violet-500/10 text-[8px] font-black text-violet-500 uppercase">
-                  {{ training.requiresCertification ? 'Certified' : 'Training' }}
+                  {{ training.requiresCertification ? ('safety.training.certified' | translate) : ('common.training' | translate) }}
                 </span>
               </div>
             </div>
             }
             @if (!trainings.length) {
             <div class="col-span-3 py-12 text-center">
-              <p class="text-[10px] text-slate-400 italic">No training records found</p>
+              <p class="text-[10px] text-slate-400 italic">{{ 'safety.no_training_records' | translate }}</p>
             </div>
             }
           </div>
@@ -307,15 +307,15 @@ import { Subject, takeUntil } from 'rxjs';
         @if (activeTab === 'inspections') {
         <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
           <div class="flex items-center justify-between mb-8">
-            <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Safety Inspections</h3>
+            <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'safety.inspections' | translate }}</h3>
             <button class="px-6 py-3 rounded-2xl bg-amber-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-amber-500/20 hover:scale-105 transition-all">
-              + New Inspection
+              + {{ 'safety.inspection.new' | translate }}
             </button>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Placeholder for inspections -->
             <div class="col-span-3 py-12 text-center">
-              <p class="text-[10px] text-slate-400 italic">No inspections recorded yet</p>
+              <p class="text-[10px] text-slate-400 italic">{{ 'safety.no_inspections' | translate }}</p>
             </div>
           </div>
         </div>
@@ -327,58 +327,58 @@ import { Subject, takeUntil } from 'rxjs';
           <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-[2.5rem] shadow-2xl p-8 relative overflow-hidden">
             <button (click)="showIncidentModal = false" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600 text-2xl">&times;</button>
             
-            <h2 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">Report New Incident</h2>
+            <h2 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'safety.incident.report_new' | translate }}</h2>
             
             <div class="space-y-6">
               <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Incident Title</label>
-                <input type="text" [(ngModel)]="incidentForm.title" placeholder="Brief description of incident"
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">{{ 'safety.incident.title' | translate }}</label>
+                <input type="text" [(ngModel)]="incidentForm.title" placeholder="{{ 'safety.incident.title_placeholder' | translate }}"
                        class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-rose-500/10">
               </div>
               
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Severity</label>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">{{ 'safety.incident.severity' | translate }}</label>
                   <select [(ngModel)]="incidentForm.severity" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none">
-                    <option [value]="1">Low</option>
-                    <option [value]="2">Medium</option>
-                    <option [value]="3">High</option>
-                    <option [value]="4">Critical</option>
+                    <option [value]="1">{{ 'safety.severity.low' | translate }}</option>
+                    <option [value]="2">{{ 'safety.severity.medium' | translate }}</option>
+                    <option [value]="3">{{ 'safety.severity.high' | translate }}</option>
+                    <option [value]="4">{{ 'safety.severity.critical' | translate }}</option>
                   </select>
                 </div>
                 <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Incident Date</label>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">{{ 'safety.incident.date' | translate }}</label>
                   <input type="date" [(ngModel)]="incidentForm.incidentDate"
                          class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none">
                 </div>
               </div>
               
               <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Location</label>
-                <input type="text" [(ngModel)]="incidentForm.location" placeholder="Where did it happen?"
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">{{ 'safety.incident.location' | translate }}</label>
+                <input type="text" [(ngModel)]="incidentForm.location" placeholder="{{ 'safety.incident.location_placeholder' | translate }}"
                        class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none">
               </div>
               
               <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Description</label>
-                <textarea [(ngModel)]="incidentForm.description" rows="3" placeholder="Provide detailed description..."
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">{{ 'common.description' | translate }}</label>
+                <textarea [(ngModel)]="incidentForm.description" rows="3" placeholder="{{ 'safety.incident.description_placeholder' | translate }}"
                           class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none resize-none"></textarea>
               </div>
               
               <div class="flex items-center gap-4">
                 <label class="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" [(ngModel)]="incidentForm.requiredMedicalAttention" class="w-5 h-5 rounded accent-rose-500">
-                  <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">Required Medical Attention</span>
+                  <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'safety.incident.medical_attention' | translate }}</span>
                 </label>
               </div>
             </div>
             
             <div class="flex gap-4 mt-8">
               <button (click)="showIncidentModal = false" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest">
-                Cancel
+                {{ 'common.cancel' | translate }}
               </button>
               <button (click)="submitIncident()" class="flex-1 py-4 rounded-2xl bg-rose-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-rose-500/20">
-                Submit Report
+                {{ 'safety.incident.submit' | translate }}
               </button>
             </div>
           </div>
@@ -388,7 +388,7 @@ import { Subject, takeUntil } from 'rxjs';
     </div>
   `
 })
-export class SafetyComponent implements OnInit {
+export class SafetyComponent implements OnInit, OnDestroy {
   activeTab: 'dashboard' | 'incidents' | 'inspections' | 'trainings' = 'dashboard';
   dashboard?: SafetyDashboard;
   incidents: SafetyIncident[] = [];
@@ -406,7 +406,19 @@ export class SafetyComponent implements OnInit {
     witnesses: []
   };
 
-  constructor(private safetyService: SafetyService) { }
+  private destroy$ = new Subject<void>();
+  private i18nService = inject(I18nService);
+
+  constructor(private safetyService: SafetyService) {
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadDashboard();
+        this.loadIncidents();
+        this.loadTrainings();
+      });
+  }
 
   ngOnInit() {
     this.loadDashboard();
@@ -452,5 +464,10 @@ export class SafetyComponent implements OnInit {
         this.loadDashboard();
       });
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

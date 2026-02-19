@@ -7,10 +7,10 @@ import { BOQService } from '../../../../core/services/boq.service';
 import { BOQItem } from '../../../../shared/interfaces';
 
 @Component({
-    selector: 'app-daily-logs',
-    standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
-    template: `
+  selector: 'app-daily-logs',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule],
+  template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
@@ -207,7 +207,7 @@ import { BOQItem } from '../../../../shared/interfaces';
               </select>
             </div>
             <div>
-              <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Log Date *</label>
+              <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ 'daily_log.log_date_required' | translate }}</label>
               <input type="date" 
                      [(ngModel)]="createFormData.logDate" 
                      class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500/50">
@@ -295,213 +295,213 @@ import { BOQItem } from '../../../../shared/interfaces';
       </div>
     }
   `,
-    styles: []
+  styles: []
 })
 export class DailyLogsComponent implements OnInit {
-    dailyLogs: DailyLogDto[] = [];
-    filteredLogs: DailyLogDto[] = [];
-    boqItems: BOQItem[] = [];
-    selectedItemId: number | null = null;
-    projectId: number = 1; // TODO: Get from route or service
+  dailyLogs: DailyLogDto[] = [];
+  filteredLogs: DailyLogDto[] = [];
+  boqItems: BOQItem[] = [];
+  selectedItemId: number | null = null;
+  projectId: number = 1; // TODO: Get from route or service
 
-    // Create Modal
-    showCreateModal: boolean = false;
-    selectedCreateItemId: number | null = null;
-    createFormData: CreateDailyLogRequest = {
-        logDate: new Date().toISOString().split('T')[0]
+  // Create Modal
+  showCreateModal: boolean = false;
+  selectedCreateItemId: number | null = null;
+  createFormData: CreateDailyLogRequest = {
+    logDate: new Date().toISOString().split('T')[0]
+  };
+
+  // Close Modal
+  showCloseModal: boolean = false;
+  closingLog: DailyLogDto | null = null;
+  closeFormData: CloseDailyLogRequest = {
+    completionPercentage: 0,
+    notes: ''
+  };
+
+  // Reopen Modal
+  showReopenModal: boolean = false;
+  reopeningLog: DailyLogDto | null = null;
+  reopenFormData: ReopenDailyLogRequest = {
+    reason: ''
+  };
+
+  constructor(
+    private dailyLogsService: DailyLogsService,
+    private boqService: BOQService
+  ) { }
+
+  ngOnInit(): void {
+    this.loadBOQItems();
+    this.loadDailyLogs();
+  }
+
+  loadBOQItems(): void {
+    this.boqService.getItems(this.projectId).subscribe({
+      next: (items) => {
+        this.boqItems = items;
+      },
+      error: (error) => {
+        console.error('Error loading BOQ items:', error);
+      }
+    });
+  }
+
+  loadDailyLogs(): void {
+    if (this.selectedItemId) {
+      this.dailyLogsService.getDailyLogHistory(this.selectedItemId).subscribe({
+        next: (logs) => {
+          this.dailyLogs = logs;
+          this.filterLogs();
+        },
+        error: (error) => {
+          console.error('Error loading daily logs:', error);
+        }
+      });
+    } else {
+      // Load logs for all items
+      this.filteredLogs = [];
+      this.boqItems.forEach(item => {
+        this.dailyLogsService.getDailyLogHistory(item.id).subscribe({
+          next: (logs) => {
+            this.dailyLogs = [...this.dailyLogs, ...logs];
+            this.filterLogs();
+          },
+          error: (error) => {
+            console.error('Error loading daily logs for item:', error);
+          }
+        });
+      });
+    }
+  }
+
+  filterLogs(): void {
+    if (!this.selectedItemId) {
+      this.filteredLogs = this.dailyLogs;
+    } else {
+      this.filteredLogs = this.dailyLogs.filter(log => log.itemId === this.selectedItemId);
+    }
+  }
+
+  get openLogsCount(): number {
+    return this.dailyLogs.filter(log => !log.isClosed).length;
+  }
+
+  get closedLogsCount(): number {
+    return this.dailyLogs.filter(log => log.isClosed).length;
+  }
+
+  get averageCompletion(): number {
+    const closedLogs = this.dailyLogs.filter(log => log.isClosed && log.completionPercentage);
+    if (closedLogs.length === 0) return 0;
+    const sum = closedLogs.reduce((acc, log) => acc + (log.completionPercentage || 0), 0);
+    return sum / closedLogs.length;
+  }
+
+  getStatusClass(log: DailyLogDto): string {
+    if (log.isClosed) {
+      return 'bg-emerald-500/10 text-emerald-600';
+    }
+    return 'bg-amber-500/10 text-amber-600';
+  }
+
+  // Create Modal Methods
+  openCreateModal(): void {
+    this.createFormData = {
+      logDate: new Date().toISOString().split('T')[0]
     };
+    this.showCreateModal = true;
+  }
 
-    // Close Modal
-    showCloseModal: boolean = false;
-    closingLog: DailyLogDto | null = null;
-    closeFormData: CloseDailyLogRequest = {
-        completionPercentage: 0,
-        notes: ''
-    };
+  closeCreateModal(): void {
+    this.showCreateModal = false;
+  }
 
-    // Reopen Modal
-    showReopenModal: boolean = false;
-    reopeningLog: DailyLogDto | null = null;
-    reopenFormData: ReopenDailyLogRequest = {
-        reason: ''
-    };
+  createDailyLog(): void {
+    if (!this.selectedCreateItemId || !this.createFormData.logDate) {
+      alert('Please fill in all required fields');
+      return;
+    }
 
-    constructor(
-        private dailyLogsService: DailyLogsService,
-        private boqService: BOQService
-    ) { }
-
-    ngOnInit(): void {
-        this.loadBOQItems();
+    this.dailyLogsService.createOrGetDailyLog(this.selectedCreateItemId, this.createFormData).subscribe({
+      next: () => {
         this.loadDailyLogs();
+        this.closeCreateModal();
+      },
+      error: (error) => {
+        console.error('Error creating daily log:', error);
+        alert('Failed to create daily log');
+      }
+    });
+  }
+
+  // Close Modal Methods
+  openCloseModal(log: DailyLogDto): void {
+    this.closingLog = log;
+    this.closeFormData = {
+      completionPercentage: 0,
+      notes: ''
+    };
+    this.showCloseModal = true;
+  }
+
+  closeCloseModal(): void {
+    this.showCloseModal = false;
+    this.closingLog = null;
+  }
+
+  closeDailyLog(): void {
+    if (!this.closingLog) return;
+
+    this.dailyLogsService.closeDailyLog(
+      this.closingLog.itemId,
+      this.closingLog.logDate,
+      this.closeFormData
+    ).subscribe({
+      next: () => {
+        this.loadDailyLogs();
+        this.closeCloseModal();
+      },
+      error: (error) => {
+        console.error('Error closing daily log:', error);
+        alert('Failed to close daily log');
+      }
+    });
+  }
+
+  // Reopen Modal Methods
+  openReopenModal(log: DailyLogDto): void {
+    this.reopeningLog = log;
+    this.reopenFormData = {
+      reason: ''
+    };
+    this.showReopenModal = true;
+  }
+
+  closeReopenModal(): void {
+    this.showReopenModal = false;
+    this.reopeningLog = null;
+  }
+
+  reopenDailyLog(): void {
+    if (!this.reopeningLog || !this.reopenFormData.reason) {
+      alert('Please provide a reason for reopening');
+      return;
     }
 
-    loadBOQItems(): void {
-        this.boqService.getItems(this.projectId).subscribe({
-            next: (items) => {
-                this.boqItems = items;
-            },
-            error: (error) => {
-                console.error('Error loading BOQ items:', error);
-            }
-        });
-    }
-
-    loadDailyLogs(): void {
-        if (this.selectedItemId) {
-            this.dailyLogsService.getDailyLogHistory(this.selectedItemId).subscribe({
-                next: (logs) => {
-                    this.dailyLogs = logs;
-                    this.filterLogs();
-                },
-                error: (error) => {
-                    console.error('Error loading daily logs:', error);
-                }
-            });
-        } else {
-            // Load logs for all items
-            this.filteredLogs = [];
-            this.boqItems.forEach(item => {
-                this.dailyLogsService.getDailyLogHistory(item.id).subscribe({
-                    next: (logs) => {
-                        this.dailyLogs = [...this.dailyLogs, ...logs];
-                        this.filterLogs();
-                    },
-                    error: (error) => {
-                        console.error('Error loading daily logs for item:', error);
-                    }
-                });
-            });
-        }
-    }
-
-    filterLogs(): void {
-        if (!this.selectedItemId) {
-            this.filteredLogs = this.dailyLogs;
-        } else {
-            this.filteredLogs = this.dailyLogs.filter(log => log.itemId === this.selectedItemId);
-        }
-    }
-
-    get openLogsCount(): number {
-        return this.dailyLogs.filter(log => !log.isClosed).length;
-    }
-
-    get closedLogsCount(): number {
-        return this.dailyLogs.filter(log => log.isClosed).length;
-    }
-
-    get averageCompletion(): number {
-        const closedLogs = this.dailyLogs.filter(log => log.isClosed && log.completionPercentage);
-        if (closedLogs.length === 0) return 0;
-        const sum = closedLogs.reduce((acc, log) => acc + (log.completionPercentage || 0), 0);
-        return sum / closedLogs.length;
-    }
-
-    getStatusClass(log: DailyLogDto): string {
-        if (log.isClosed) {
-            return 'bg-emerald-500/10 text-emerald-600';
-        }
-        return 'bg-amber-500/10 text-amber-600';
-    }
-
-    // Create Modal Methods
-    openCreateModal(): void {
-        this.createFormData = {
-            logDate: new Date().toISOString().split('T')[0]
-        };
-        this.showCreateModal = true;
-    }
-
-    closeCreateModal(): void {
-        this.showCreateModal = false;
-    }
-
-    createDailyLog(): void {
-        if (!this.selectedCreateItemId || !this.createFormData.logDate) {
-            alert('Please fill in all required fields');
-            return;
-        }
-
-        this.dailyLogsService.createOrGetDailyLog(this.selectedCreateItemId, this.createFormData).subscribe({
-            next: () => {
-                this.loadDailyLogs();
-                this.closeCreateModal();
-            },
-            error: (error) => {
-                console.error('Error creating daily log:', error);
-                alert('Failed to create daily log');
-            }
-        });
-    }
-
-    // Close Modal Methods
-    openCloseModal(log: DailyLogDto): void {
-        this.closingLog = log;
-        this.closeFormData = {
-            completionPercentage: 0,
-            notes: ''
-        };
-        this.showCloseModal = true;
-    }
-
-    closeCloseModal(): void {
-        this.showCloseModal = false;
-        this.closingLog = null;
-    }
-
-    closeDailyLog(): void {
-        if (!this.closingLog) return;
-
-        this.dailyLogsService.closeDailyLog(
-            this.closingLog.itemId,
-            this.closingLog.logDate,
-            this.closeFormData
-        ).subscribe({
-            next: () => {
-                this.loadDailyLogs();
-                this.closeCloseModal();
-            },
-            error: (error) => {
-                console.error('Error closing daily log:', error);
-                alert('Failed to close daily log');
-            }
-        });
-    }
-
-    // Reopen Modal Methods
-    openReopenModal(log: DailyLogDto): void {
-        this.reopeningLog = log;
-        this.reopenFormData = {
-            reason: ''
-        };
-        this.showReopenModal = true;
-    }
-
-    closeReopenModal(): void {
-        this.showReopenModal = false;
-        this.reopeningLog = null;
-    }
-
-    reopenDailyLog(): void {
-        if (!this.reopeningLog || !this.reopenFormData.reason) {
-            alert('Please provide a reason for reopening');
-            return;
-        }
-
-        this.dailyLogsService.reopenClosedDay(
-            this.reopeningLog.itemId,
-            this.reopeningLog.logDate,
-            this.reopenFormData
-        ).subscribe({
-            next: () => {
-                this.loadDailyLogs();
-                this.closeReopenModal();
-            },
-            error: (error) => {
-                console.error('Error reopening daily log:', error);
-                alert('Failed to reopen daily log');
-            }
-        });
-    }
+    this.dailyLogsService.reopenClosedDay(
+      this.reopeningLog.itemId,
+      this.reopeningLog.logDate,
+      this.reopenFormData
+    ).subscribe({
+      next: () => {
+        this.loadDailyLogs();
+        this.closeReopenModal();
+      },
+      error: (error) => {
+        console.error('Error reopening daily log:', error);
+        alert('Failed to reopen daily log');
+      }
+    });
+  }
 }

@@ -1,14 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { SubcontractorService, SubcontractorPayment, CreatePaymentRequest, UpdatePaymentStatusRequest } from '../../../../core/services/subcontractor.service';
+import { I18nService } from '../../../../core/i18n/i18n.service';
 
 @Component({
-    selector: 'app-subcontractor-payments',
-    standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
-    template: `
+  selector: 'app-subcontractor-payments',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule],
+  template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
@@ -316,12 +318,12 @@ import { SubcontractorService, SubcontractorPayment, CreatePaymentRequest, Updat
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Invoice Date *</label>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">{{ 'subcontractors.invoice_date_required' | translate }}</label>
                     <input type="date" [(ngModel)]="paymentForm.invoiceDate"
                            class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-emerald-500/10">
                   </div>
                   <div>
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Due Date</label>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">{{ 'subcontractors.due_date' | translate }}</label>
                     <input type="date" [(ngModel)]="paymentForm.dueDate"
                            class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-emerald-500/10">
                   </div>
@@ -343,178 +345,193 @@ import { SubcontractorService, SubcontractorPayment, CreatePaymentRequest, Updat
     </div>
   `
 })
-export class SubcontractorPaymentsComponent implements OnInit {
-    activeTab: 'pending' | 'approved' | 'paid' | 'all' = 'pending';
-    searchTerm = '';
-    filterSubcontractor = '';
-    filterType = '';
-    filterDateRange = '';
+export class SubcontractorPaymentsComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  private i18nService = inject(I18nService);
 
-    payments: SubcontractorPayment[] = [];
-    subcontractors: any[] = [];
-    contracts: any[] = [];
-    isLoading = false;
+  activeTab: 'pending' | 'approved' | 'paid' | 'all' = 'pending';
+  searchTerm = '';
+  filterSubcontractor = '';
+  filterType = '';
+  filterDateRange = '';
 
-    showCreateModal = false;
-    paymentForm: Partial<CreatePaymentRequest> = {};
+  payments: SubcontractorPayment[] = [];
+  subcontractors: any[] = [];
+  contracts: any[] = [];
+  isLoading = false;
 
-    summary = {
-        pendingAmount: 0,
-        approvedAmount: 0,
-        paidAmount: 0,
-        totalAmount: 0
-    };
+  showCreateModal = false;
+  paymentForm: Partial<CreatePaymentRequest> = {};
 
-    constructor(private subcontractorService: SubcontractorService) { }
+  summary = {
+    pendingAmount: 0,
+    approvedAmount: 0,
+    paidAmount: 0,
+    totalAmount: 0
+  };
 
-    ngOnInit(): void {
+  constructor(private subcontractorService: SubcontractorService) {
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
         this.loadData();
-    }
+      });
+  }
 
-    loadData(): void {
-        this.isLoading = true;
-        this.subcontractorService.getSubcontractors().subscribe({
-            next: (data) => {
-                this.subcontractors = data;
-            },
-            error: (error) => {
-                console.error('Error loading subcontractors:', error);
-            }
-        });
+  ngOnInit(): void {
+    this.loadData();
+  }
 
-        this.subcontractorService.getAllContracts().subscribe({
-            next: (data) => {
-                this.contracts = data;
-            },
-            error: (error) => {
-                console.error('Error loading contracts:', error);
-            }
-        });
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
-        this.loadPayments();
-    }
+  loadData(): void {
+    this.isLoading = true;
+    this.subcontractorService.getSubcontractors().subscribe({
+      next: (data) => {
+        this.subcontractors = data;
+      },
+      error: (error) => {
+        console.error('Error loading subcontractors:', error);
+      }
+    });
 
-    loadPayments(): void {
-        this.isLoading = true;
-        const observable = this.activeTab === 'pending'
-            ? this.subcontractorService.getPendingPayments()
-            : this.subcontractorService.getAllPayments();
+    this.subcontractorService.getAllContracts().subscribe({
+      next: (data) => {
+        this.contracts = data;
+      },
+      error: (error) => {
+        console.error('Error loading contracts:', error);
+      }
+    });
 
-        observable.subscribe({
-            next: (data) => {
-                this.payments = data;
-                this.calculateSummary();
-                this.isLoading = false;
-            },
-            error: (error) => {
-                console.error('Error loading payments:', error);
-                this.isLoading = false;
-            }
-        });
-    }
+    this.loadPayments();
+  }
 
-    calculateSummary(): void {
-        this.summary = {
-            pendingAmount: this.payments.filter(p => p.status === 'Pending').reduce((sum, p) => sum + (p.amount || 0), 0),
-            approvedAmount: this.payments.filter(p => p.status === 'Approved').reduce((sum, p) => sum + (p.amount || 0), 0),
-            paidAmount: this.payments.filter(p => p.status === 'Paid').reduce((sum, p) => sum + (p.amount || 0), 0),
-            totalAmount: this.payments.reduce((sum, p) => sum + (p.amount || 0), 0)
-        };
-    }
+  loadPayments(): void {
+    this.isLoading = true;
+    const observable = this.activeTab === 'pending'
+      ? this.subcontractorService.getPendingPayments()
+      : this.subcontractorService.getAllPayments();
 
-    get filteredPayments(): SubcontractorPayment[] {
-        return this.payments.filter(payment => {
-            const matchesSearch = !this.searchTerm ||
-                payment.paymentNumber.toLowerCase().includes(this.searchTerm.toLowerCase());
-            const matchesSubcontractor = !this.filterSubcontractor || payment.subcontractorId === Number(this.filterSubcontractor);
-            const matchesType = !this.filterType || payment.paymentType === this.filterType;
-            const matchesTab = this.activeTab === 'all' || payment.status === this.activeTab.charAt(0).toUpperCase() + this.activeTab.slice(1);
-            return matchesSearch && matchesSubcontractor && matchesType && matchesTab;
-        });
-    }
+    observable.subscribe({
+      next: (data) => {
+        this.payments = data;
+        this.calculateSummary();
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading payments:', error);
+        this.isLoading = false;
+      }
+    });
+  }
 
-    openCreateModal(): void {
-        this.paymentForm = {
-            paymentNumber: '',
-            paymentType: '',
-            subcontractorId: undefined,
-            contractId: undefined,
-            amount: 0,
-            retentionDeducted: 0,
-            invoiceDate: new Date(),
-            dueDate: undefined
-        };
-        this.showCreateModal = true;
-    }
+  calculateSummary(): void {
+    this.summary = {
+      pendingAmount: this.payments.filter(p => p.status === 'Pending').reduce((sum, p) => sum + (p.amount || 0), 0),
+      approvedAmount: this.payments.filter(p => p.status === 'Approved').reduce((sum, p) => sum + (p.amount || 0), 0),
+      paidAmount: this.payments.filter(p => p.status === 'Paid').reduce((sum, p) => sum + (p.amount || 0), 0),
+      totalAmount: this.payments.reduce((sum, p) => sum + (p.amount || 0), 0)
+    };
+  }
 
-    closeCreateModal(): void {
-        this.showCreateModal = false;
-        this.paymentForm = {};
-    }
+  get filteredPayments(): SubcontractorPayment[] {
+    return this.payments.filter(payment => {
+      const matchesSearch = !this.searchTerm ||
+        payment.paymentNumber.toLowerCase().includes(this.searchTerm.toLowerCase());
+      const matchesSubcontractor = !this.filterSubcontractor || payment.subcontractorId === Number(this.filterSubcontractor);
+      const matchesType = !this.filterType || payment.paymentType === this.filterType;
+      const matchesTab = this.activeTab === 'all' || payment.status === this.activeTab.charAt(0).toUpperCase() + this.activeTab.slice(1);
+      return matchesSearch && matchesSubcontractor && matchesType && matchesTab;
+    });
+  }
 
-    createPayment(): void {
-        this.subcontractorService.createPayment(this.paymentForm as CreatePaymentRequest).subscribe({
-            next: (created) => {
-                this.payments.unshift(created);
-                this.calculateSummary();
-                this.closeCreateModal();
-            },
-            error: (error) => {
-                console.error('Error creating payment:', error);
-            }
-        });
-    }
+  openCreateModal(): void {
+    this.paymentForm = {
+      paymentNumber: '',
+      paymentType: '',
+      subcontractorId: undefined,
+      contractId: undefined,
+      amount: 0,
+      retentionDeducted: 0,
+      invoiceDate: new Date(),
+      dueDate: undefined
+    };
+    this.showCreateModal = true;
+  }
 
-    viewPayment(payment: SubcontractorPayment): void {
-        console.log('View payment:', payment);
-    }
+  closeCreateModal(): void {
+    this.showCreateModal = false;
+    this.paymentForm = {};
+  }
 
-    approvePayment(payment: SubcontractorPayment): void {
-        const request: UpdatePaymentStatusRequest = {
-            status: 'Approved'
-        };
-        this.subcontractorService.updatePaymentStatus(payment.id, request).subscribe({
-            next: (updated) => {
-                const index = this.payments.findIndex(p => p.id === updated.id);
-                if (index !== -1) {
-                    this.payments[index] = updated;
-                    this.calculateSummary();
-                }
-            },
-            error: (error) => {
-                console.error('Error approving payment:', error);
-            }
-        });
-    }
+  createPayment(): void {
+    this.subcontractorService.createPayment(this.paymentForm as CreatePaymentRequest).subscribe({
+      next: (created) => {
+        this.payments.unshift(created);
+        this.calculateSummary();
+        this.closeCreateModal();
+      },
+      error: (error) => {
+        console.error('Error creating payment:', error);
+      }
+    });
+  }
 
-    markAsPaid(payment: SubcontractorPayment): void {
-        const request: UpdatePaymentStatusRequest = {
-            status: 'Paid',
-            paymentDate: new Date()
-        };
-        this.subcontractorService.updatePaymentStatus(payment.id, request).subscribe({
-            next: (updated) => {
-                const index = this.payments.findIndex(p => p.id === updated.id);
-                if (index !== -1) {
-                    this.payments[index] = updated;
-                    this.calculateSummary();
-                }
-            },
-            error: (error) => {
-                console.error('Error marking payment as paid:', error);
-            }
-        });
-    }
+  viewPayment(payment: SubcontractorPayment): void {
+    console.log('View payment:', payment);
+  }
 
-    formatDate(date: string | Date | null | undefined): string {
-        if (!date) return '-';
-        return new Date(date).toLocaleDateString();
-    }
+  approvePayment(payment: SubcontractorPayment): void {
+    const request: UpdatePaymentStatusRequest = {
+      status: 'Approved'
+    };
+    this.subcontractorService.updatePaymentStatus(payment.id, request).subscribe({
+      next: (updated) => {
+        const index = this.payments.findIndex(p => p.id === updated.id);
+        if (index !== -1) {
+          this.payments[index] = updated;
+          this.calculateSummary();
+        }
+      },
+      error: (error) => {
+        console.error('Error approving payment:', error);
+      }
+    });
+  }
 
-    formatCurrency(amount: number): string {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD'
-        }).format(amount);
-    }
+  markAsPaid(payment: SubcontractorPayment): void {
+    const request: UpdatePaymentStatusRequest = {
+      status: 'Paid',
+      paymentDate: new Date()
+    };
+    this.subcontractorService.updatePaymentStatus(payment.id, request).subscribe({
+      next: (updated) => {
+        const index = this.payments.findIndex(p => p.id === updated.id);
+        if (index !== -1) {
+          this.payments[index] = updated;
+          this.calculateSummary();
+        }
+      },
+      error: (error) => {
+        console.error('Error marking payment as paid:', error);
+      }
+    });
+  }
+
+  formatDate(date: string | Date | null | undefined): string {
+    if (!date) return '-';
+    return new Date(date).toLocaleDateString();
+  }
+
+  formatCurrency(amount: number): string {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(amount);
+  }
 }

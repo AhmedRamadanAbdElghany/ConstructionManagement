@@ -1,14 +1,16 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { AnalyticsService, ChartData, KPIDashboard } from '../../../core/services/analytics.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
-    selector: 'app-advanced-analytics',
-    standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
-    template: `
+  selector: 'app-advanced-analytics',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule],
+  template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
@@ -311,7 +313,7 @@ import { AnalyticsService, ChartData, KPIDashboard } from '../../../core/service
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     :host ::ng-deep select {
       -webkit-appearance: none;
       -moz-appearance: none;
@@ -319,79 +321,93 @@ import { AnalyticsService, ChartData, KPIDashboard } from '../../../core/service
     }
   `]
 })
-export class AdvancedAnalyticsComponent implements OnInit {
-    private analyticsService = inject(AnalyticsService);
+export class AdvancedAnalyticsComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  private analyticsService = inject(AnalyticsService);
+  private i18nService = inject(I18nService);
 
-    kpiDashboard: KPIDashboard | null = null;
-    chartData: ChartData | null = null;
+  kpiDashboard: KPIDashboard | null = null;
+  chartData: ChartData | null = null;
 
-    queryConfig = {
-        dataSource: 'revenue',
-        chartType: 'line',
-        startDate: '',
-        endDate: ''
-    };
+  queryConfig = {
+    dataSource: 'revenue',
+    chartType: 'line',
+    startDate: '',
+    endDate: ''
+  };
 
-    chartTypes = [
-        { value: 'line', label: 'Line', icon: '📈' },
-        { value: 'bar', label: 'Bar', icon: '📊' },
-        { value: 'pie', label: 'Pie', icon: '🥧' },
-        { value: 'area', label: 'Area', icon: '📉' }
-    ];
+  chartTypes = [
+    { value: 'line', label: 'Line', icon: 'exponentially' },
+    { value: 'bar', label: 'Bar', icon: 'exponentially' },
+    { value: 'pie', label: 'Pie', icon: 'exponentially' },
+    { value: 'area', label: 'Area', icon: 'exponentially' }
+  ];
 
-    isLoading = false;
+  isLoading = false;
 
-    ngOnInit() {
-        this.loadKPIDashboard();
-        this.setDefaultDateRange();
-        this.loadChartData();
-    }
+  ngOnInit() {
+    this.loadKPIDashboard();
+    this.setDefaultDateRange();
+    this.loadChartData();
 
-    loadKPIDashboard() {
-        this.isLoading = true;
-        this.analyticsService.getKPIDashboard().subscribe({
-            next: (data) => {
-                this.kpiDashboard = data;
-                this.isLoading = false;
-            },
-            error: (error) => {
-                console.error('Error loading KPI dashboard:', error);
-                this.isLoading = false;
-            }
-        });
-    }
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.refreshAll();
+      });
+  }
 
-    loadChartData() {
-        this.analyticsService.getChartData(
-            this.queryConfig.chartType,
-            this.queryConfig.dataSource,
-            this.queryConfig.startDate,
-            this.queryConfig.endDate
-        ).subscribe({
-            next: (data) => {
-                this.chartData = data;
-            },
-            error: (error) => {
-                console.error('Error loading chart data:', error);
-            }
-        });
-    }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
-    setDefaultDateRange() {
-        const endDate = new Date();
-        const startDate = new Date();
-        startDate.setMonth(startDate.getMonth() - 6);
+  loadKPIDashboard() {
+    this.isLoading = true;
+    this.analyticsService.getKPIDashboard().subscribe({
+      next: (data) => {
+        this.kpiDashboard = data;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading KPI dashboard:', error);
+        this.isLoading = false;
+      }
+    });
+  }
 
-        this.queryConfig.startDate = startDate.toISOString().split('T')[0];
-        this.queryConfig.endDate = endDate.toISOString().split('T')[0];
-    }
+  loadChartData() {
+    this.analyticsService.getChartData(
+      this.queryConfig.chartType,
+      this.queryConfig.dataSource,
+      this.queryConfig.startDate,
+      this.queryConfig.endDate
+    ).subscribe({
+      next: (data) => {
+        this.chartData = data;
+      },
+      error: (error) => {
+        console.error('Error loading chart data:', error);
+      }
+    });
+  }
 
-    refreshAll() {
-        this.loadKPIDashboard();
-        this.loadChartData();
-    }
+  setDefaultDateRange() {
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - 6);
 
-    formatDate(date: string): string {
-        return new Date(date).toLocaleDateString();
-    }
+    this.queryConfig.startDate = startDate.toISOString().split('T')[0];
+    this.queryConfig.endDate = endDate.toISOString().split('T')[0];
+  }
+
+  refreshAll() {
+    this.loadKPIDashboard();
+    this.loadChartData();
+  }
+
+  formatDate(date: string): string {
+    return new Date(date).toLocaleDateString();
+  }
 }

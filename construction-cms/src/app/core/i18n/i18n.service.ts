@@ -43,9 +43,11 @@ export class I18nService {
         // IMPORTANT: Save to localStorage FIRST before emitting
         // This ensures HTTP interceptors read the correct language
         this.saveLanguage(lang);
-        this.translate.use(lang);
-        this.currentLanguageSubject.next(lang);
-        this.updateDocumentDirection(lang);
+        // Wait for translations to load before emitting language change
+        this.translate.use(lang).subscribe(() => {
+            this.currentLanguageSubject.next(lang);
+            this.updateDocumentDirection(lang);
+        });
     }
 
     /**

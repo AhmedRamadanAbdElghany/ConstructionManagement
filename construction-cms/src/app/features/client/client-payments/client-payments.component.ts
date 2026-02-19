@@ -1,8 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { ClientPortalService, ClientPayment, ClientPaymentSummary } from '../../../core/services/client-portal.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-client-payments',
@@ -163,8 +165,10 @@ import { ClientPortalService, ClientPayment, ClientPaymentSummary } from '../../
     }
   `]
 })
-export class ClientPaymentsComponent implements OnInit {
+export class ClientPaymentsComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   private clientPortalService = inject(ClientPortalService);
+  private i18nService = inject(I18nService);
 
   payments: ClientPayment[] = [];
   paymentSummary: ClientPaymentSummary | null = null;
@@ -177,6 +181,19 @@ export class ClientPaymentsComponent implements OnInit {
     this.loadPayments();
     this.loadPaymentSummary();
     this.loadProjects();
+
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadPayments();
+        this.loadPaymentSummary();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadPayments() {

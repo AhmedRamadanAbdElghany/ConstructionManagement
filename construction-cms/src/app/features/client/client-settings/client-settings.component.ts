@@ -1,14 +1,16 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { ClientPortalService, ClientUser } from '../../../core/services/client-portal.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
-    selector: 'app-client-settings',
-    standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
-    template: `
+  selector: 'app-client-settings',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule],
+  template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-4xl mx-auto">
         <!-- Header -->
@@ -221,7 +223,7 @@ import { ClientPortalService, ClientUser } from '../../../core/services/client-p
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     :host ::ng-deep input[type="checkbox"] {
       -webkit-appearance: none;
       -moz-appearance: none;
@@ -229,139 +231,153 @@ import { ClientPortalService, ClientUser } from '../../../core/services/client-p
     }
   `]
 })
-export class ClientSettingsComponent implements OnInit {
-    private clientPortalService = inject(ClientPortalService);
+export class ClientSettingsComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  private clientPortalService = inject(ClientPortalService);
+  private i18nService = inject(I18nService);
 
-    clientUser: ClientUser | null = null;
-    isLoading = false;
-    isSaving = false;
-    isChangingPassword = false;
-    isSavingNotifications = false;
+  clientUser: ClientUser | null = null;
+  isLoading = false;
+  isSaving = false;
+  isChangingPassword = false;
+  isSavingNotifications = false;
 
-    profileForm = {
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        jobTitle: ''
-    };
+  profileForm = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    jobTitle: ''
+  };
 
-    passwordForm = {
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: ''
-    };
+  passwordForm = {
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  };
 
-    notificationSettings = {
-        emailNotifications: true,
-        paymentReminders: true,
-        projectUpdates: true
-    };
+  notificationSettings = {
+    emailNotifications: true,
+    paymentReminders: true,
+    projectUpdates: true
+  };
 
-    ngOnInit() {
+  ngOnInit() {
+    this.loadClientUser();
+
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
         this.loadClientUser();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadClientUser() {
+    this.isLoading = true;
+    // Get current user info from dashboard
+    this.clientPortalService.getClientDashboard().subscribe({
+      next: (dashboard) => {
+        // For now, we'll use a mock user object
+        // In real implementation, this would come from auth service
+        this.clientUser = {
+          id: 1,
+          companyId: 1,
+          email: 'client@example.com',
+          firstName: 'John',
+          lastName: 'Doe',
+          fullName: 'John Doe',
+          phone: '+1 234 567 8900',
+          companyName: 'Construction Co.',
+          jobTitle: 'Project Manager',
+          isActive: true,
+          lastLoginAt: new Date().toISOString(),
+          createdAt: '2024-01-15T00:00:00Z'
+        };
+        this.profileForm = {
+          firstName: this.clientUser.firstName,
+          lastName: this.clientUser.lastName,
+          email: this.clientUser.email,
+          phone: this.clientUser.phone || '',
+          jobTitle: this.clientUser.jobTitle || ''
+        };
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading client user:', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  updateProfile() {
+    this.isSaving = true;
+    this.clientPortalService.updateClientUser(this.clientUser!.id, this.profileForm).subscribe({
+      next: (updatedUser) => {
+        this.clientUser = updatedUser;
+        this.isSaving = false;
+        alert('Profile updated successfully!');
+      },
+      error: (error) => {
+        console.error('Error updating profile:', error);
+        this.isSaving = false;
+        alert('Error updating profile. Please try again.');
+      }
+    });
+  }
+
+  changePassword() {
+    if (this.passwordForm.newPassword !== this.passwordForm.confirmPassword) {
+      alert('Passwords do not match!');
+      return;
     }
 
-    loadClientUser() {
-        this.isLoading = true;
-        // Get current user info from dashboard
-        this.clientPortalService.getClientDashboard().subscribe({
-            next: (dashboard) => {
-                // For now, we'll use a mock user object
-                // In real implementation, this would come from auth service
-                this.clientUser = {
-                    id: 1,
-                    companyId: 1,
-                    email: 'client@example.com',
-                    firstName: 'John',
-                    lastName: 'Doe',
-                    fullName: 'John Doe',
-                    phone: '+1 234 567 8900',
-                    companyName: 'Construction Co.',
-                    jobTitle: 'Project Manager',
-                    isActive: true,
-                    lastLoginAt: new Date().toISOString(),
-                    createdAt: '2024-01-15T00:00:00Z'
-                };
-                this.profileForm = {
-                    firstName: this.clientUser.firstName,
-                    lastName: this.clientUser.lastName,
-                    email: this.clientUser.email,
-                    phone: this.clientUser.phone || '',
-                    jobTitle: this.clientUser.jobTitle || ''
-                };
-                this.isLoading = false;
-            },
-            error: (error) => {
-                console.error('Error loading client user:', error);
-                this.isLoading = false;
-            }
-        });
+    if (this.passwordForm.newPassword.length < 8) {
+      alert('Password must be at least 8 characters long!');
+      return;
     }
 
-    updateProfile() {
-        this.isSaving = true;
-        this.clientPortalService.updateClientUser(this.clientUser!.id, this.profileForm).subscribe({
-            next: (updatedUser) => {
-                this.clientUser = updatedUser;
-                this.isSaving = false;
-                alert('Profile updated successfully!');
-            },
-            error: (error) => {
-                console.error('Error updating profile:', error);
-                this.isSaving = false;
-                alert('Error updating profile. Please try again.');
-            }
-        });
-    }
+    this.isChangingPassword = true;
+    this.clientPortalService.changeClientPassword(
+      this.passwordForm.currentPassword,
+      this.passwordForm.newPassword
+    ).subscribe({
+      next: () => {
+        this.isChangingPassword = false;
+        this.passwordForm = {
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        };
+        alert('Password changed successfully!');
+      },
+      error: (error) => {
+        console.error('Error changing password:', error);
+        this.isChangingPassword = false;
+        alert('Error changing password. Please check your current password and try again.');
+      }
+    });
+  }
 
-    changePassword() {
-        if (this.passwordForm.newPassword !== this.passwordForm.confirmPassword) {
-            alert('Passwords do not match!');
-            return;
-        }
+  saveNotificationSettings() {
+    this.isSavingNotifications = true;
+    // TODO: Implement notification settings API call
+    setTimeout(() => {
+      this.isSavingNotifications = false;
+      alert('Notification preferences saved!');
+    }, 1000);
+  }
 
-        if (this.passwordForm.newPassword.length < 8) {
-            alert('Password must be at least 8 characters long!');
-            return;
-        }
+  formatDate(dateString: string): string {
+    return this.clientPortalService.formatDate(dateString);
+  }
 
-        this.isChangingPassword = true;
-        this.clientPortalService.changeClientPassword(
-            this.passwordForm.currentPassword,
-            this.passwordForm.newPassword
-        ).subscribe({
-            next: () => {
-                this.isChangingPassword = false;
-                this.passwordForm = {
-                    currentPassword: '',
-                    newPassword: '',
-                    confirmPassword: ''
-                };
-                alert('Password changed successfully!');
-            },
-            error: (error) => {
-                console.error('Error changing password:', error);
-                this.isChangingPassword = false;
-                alert('Error changing password. Please check your current password and try again.');
-            }
-        });
-    }
-
-    saveNotificationSettings() {
-        this.isSavingNotifications = true;
-        // TODO: Implement notification settings API call
-        setTimeout(() => {
-            this.isSavingNotifications = false;
-            alert('Notification preferences saved!');
-        }, 1000);
-    }
-
-    formatDate(dateString: string): string {
-        return this.clientPortalService.formatDate(dateString);
-    }
-
-    formatDateTime(dateString: string): string {
-        return this.clientPortalService.formatDateTime(dateString);
-    }
+  formatDateTime(dateString: string): string {
+    return this.clientPortalService.formatDateTime(dateString);
+  }
 }

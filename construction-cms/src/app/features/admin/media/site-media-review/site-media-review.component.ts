@@ -1,14 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { SiteMediaService, SiteMediaDto, ReviewMediaRequest } from '../../../../core/services/site-media.service';
+import { I18nService } from '../../../../core/i18n/i18n.service';
 
 @Component({
-    selector: 'app-site-media-review',
-    standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
-    template: `
+  selector: 'app-site-media-review',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule],
+  template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
@@ -277,173 +279,188 @@ import { SiteMediaService, SiteMediaDto, ReviewMediaRequest } from '../../../../
       </div>
     }
   `,
-    styles: []
+  styles: []
 })
-export class SiteMediaReviewComponent implements OnInit {
-    pendingMedia: SiteMediaDto[] = [];
-    filteredMedia: SiteMediaDto[] = [];
-    filterStatus: string = '';
-    filterMediaType: string = '';
-    projectId: number = 1; // TODO: Get from route or service
+export class SiteMediaReviewComponent implements OnInit, OnDestroy {
+  pendingMedia: SiteMediaDto[] = [];
+  filteredMedia: SiteMediaDto[] = [];
+  filterStatus: string = '';
+  filterMediaType: string = '';
+  projectId: number = 1; // TODO: Get from route or service
 
-    // Approve Modal
-    showApproveModal: boolean = false;
-    selectedMedia: SiteMediaDto | null = null;
-    approveNotes: string = '';
+  // Approve Modal
+  showApproveModal: boolean = false;
+  selectedMedia: SiteMediaDto | null = null;
+  approveNotes: string = '';
 
-    // Reject Modal
-    showRejectModal: boolean = false;
-    rejectForm: ReviewMediaRequest = {
-        status: 'Rejected',
-        rejectionType: '',
-        rejectionReason: ''
+  // Reject Modal
+  showRejectModal: boolean = false;
+  rejectForm: ReviewMediaRequest = {
+    status: 'Rejected',
+    rejectionType: '',
+    rejectionReason: ''
+  };
+
+  private destroy$ = new Subject<void>();
+  private i18nService = inject(I18nService);
+
+  constructor(private siteMediaService: SiteMediaService) { }
+
+  ngOnInit(): void {
+    this.loadPendingMedia();
+
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadPendingMedia();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadPendingMedia(): void {
+    this.siteMediaService.getMediaForProject(this.projectId, undefined, this.filterStatus || undefined).subscribe({
+      next: (media) => {
+        this.pendingMedia = media;
+        this.filterMedia();
+      },
+      error: (error) => {
+        console.error('Error loading pending media:', error);
+      }
+    });
+  }
+
+  filterMedia(): void {
+    this.filteredMedia = this.pendingMedia.filter(media => {
+      const statusMatch = !this.filterStatus || media.status === this.filterStatus;
+      const typeMatch = !this.filterMediaType || media.mediaType === this.filterMediaType;
+      return statusMatch && typeMatch;
+    });
+  }
+
+  get pendingCount(): number {
+    return this.pendingMedia.filter(m => m.status === 'Pending').length;
+  }
+
+  get approvedTodayCount(): number {
+    const today = new Date().toDateString();
+    return this.pendingMedia.filter(m =>
+      m.status === 'Approved' &&
+      new Date(m.approvedDate || '').toDateString() === today
+    ).length;
+  }
+
+  get rejectedTodayCount(): number {
+    const today = new Date().toDateString();
+    return this.pendingMedia.filter(m =>
+      m.status === 'Rejected' &&
+      new Date(m.approvedDate || '').toDateString() === today
+    ).length;
+  }
+
+  get totalReviewedCount(): number {
+    return this.pendingMedia.filter(m => m.status !== 'Pending').length;
+  }
+
+  getStatusClass(media: SiteMediaDto): string {
+    if (media.status === 'Pending') {
+      return 'bg-amber-500/10 text-amber-600';
+    }
+    if (media.status === 'Approved') {
+      return 'bg-emerald-500/10 text-emerald-600';
+    }
+    return 'bg-red-500/10 text-red-600';
+  }
+
+  // Approve Modal Methods
+  openApproveModal(media: SiteMediaDto): void {
+    this.selectedMedia = media;
+    this.approveNotes = '';
+    this.showApproveModal = true;
+  }
+
+  closeApproveModal(): void {
+    this.showApproveModal = false;
+    this.selectedMedia = null;
+    this.approveNotes = '';
+  }
+
+  approveMedia(): void {
+    if (!this.selectedMedia) return;
+
+    const request: ReviewMediaRequest = {
+      status: 'Approved',
+      rejectionReason: this.approveNotes
     };
 
-    constructor(private siteMediaService: SiteMediaService) { }
-
-    ngOnInit(): void {
+    this.siteMediaService.reviewMedia(this.selectedMedia.id, request).subscribe({
+      next: () => {
         this.loadPendingMedia();
+        this.closeApproveModal();
+        alert('Media approved successfully!');
+      },
+      error: (error) => {
+        console.error('Error approving media:', error);
+        alert('Failed to approve media');
+      }
+    });
+  }
+
+  // Reject Modal Methods
+  openRejectModal(media: SiteMediaDto): void {
+    this.selectedMedia = media;
+    this.rejectForm = {
+      status: 'Rejected',
+      rejectionType: '',
+      rejectionReason: ''
+    };
+    this.showRejectModal = true;
+  }
+
+  closeRejectModal(): void {
+    this.showRejectModal = false;
+    this.selectedMedia = null;
+    this.rejectForm = {
+      status: 'Rejected',
+      rejectionType: '',
+      rejectionReason: ''
+    };
+  }
+
+  rejectMedia(): void {
+    if (!this.selectedMedia || !this.rejectForm.rejectionType) {
+      alert('Please select a rejection reason');
+      return;
     }
 
-    loadPendingMedia(): void {
-        this.siteMediaService.getMediaForProject(this.projectId, undefined, this.filterStatus || undefined).subscribe({
-            next: (media) => {
-                this.pendingMedia = media;
-                this.filterMedia();
-            },
-            error: (error) => {
-                console.error('Error loading pending media:', error);
-            }
-        });
+    this.siteMediaService.reviewMedia(this.selectedMedia.id, this.rejectForm).subscribe({
+      next: () => {
+        this.loadPendingMedia();
+        this.closeRejectModal();
+        alert('Media rejected successfully!');
+      },
+      error: (error) => {
+        console.error('Error rejecting media:', error);
+        alert('Failed to reject media');
+      }
+    });
+  }
+
+  viewMedia(media: SiteMediaDto): void {
+    if (media.fileUrl) {
+      window.open(media.fileUrl, '_blank');
     }
+  }
 
-    filterMedia(): void {
-        this.filteredMedia = this.pendingMedia.filter(media => {
-            const statusMatch = !this.filterStatus || media.status === this.filterStatus;
-            const typeMatch = !this.filterMediaType || media.mediaType === this.filterMediaType;
-            return statusMatch && typeMatch;
-        });
-    }
-
-    get pendingCount(): number {
-        return this.pendingMedia.filter(m => m.status === 'Pending').length;
-    }
-
-    get approvedTodayCount(): number {
-        const today = new Date().toDateString();
-        return this.pendingMedia.filter(m =>
-            m.status === 'Approved' &&
-            new Date(m.approvedDate || '').toDateString() === today
-        ).length;
-    }
-
-    get rejectedTodayCount(): number {
-        const today = new Date().toDateString();
-        return this.pendingMedia.filter(m =>
-            m.status === 'Rejected' &&
-            new Date(m.approvedDate || '').toDateString() === today
-        ).length;
-    }
-
-    get totalReviewedCount(): number {
-        return this.pendingMedia.filter(m => m.status !== 'Pending').length;
-    }
-
-    getStatusClass(media: SiteMediaDto): string {
-        if (media.status === 'Pending') {
-            return 'bg-amber-500/10 text-amber-600';
-        }
-        if (media.status === 'Approved') {
-            return 'bg-emerald-500/10 text-emerald-600';
-        }
-        return 'bg-red-500/10 text-red-600';
-    }
-
-    // Approve Modal Methods
-    openApproveModal(media: SiteMediaDto): void {
-        this.selectedMedia = media;
-        this.approveNotes = '';
-        this.showApproveModal = true;
-    }
-
-    closeApproveModal(): void {
-        this.showApproveModal = false;
-        this.selectedMedia = null;
-        this.approveNotes = '';
-    }
-
-    approveMedia(): void {
-        if (!this.selectedMedia) return;
-
-        const request: ReviewMediaRequest = {
-            status: 'Approved',
-            rejectionReason: this.approveNotes
-        };
-
-        this.siteMediaService.reviewMedia(this.selectedMedia.id, request).subscribe({
-            next: () => {
-                this.loadPendingMedia();
-                this.closeApproveModal();
-                alert('Media approved successfully!');
-            },
-            error: (error) => {
-                console.error('Error approving media:', error);
-                alert('Failed to approve media');
-            }
-        });
-    }
-
-    // Reject Modal Methods
-    openRejectModal(media: SiteMediaDto): void {
-        this.selectedMedia = media;
-        this.rejectForm = {
-            status: 'Rejected',
-            rejectionType: '',
-            rejectionReason: ''
-        };
-        this.showRejectModal = true;
-    }
-
-    closeRejectModal(): void {
-        this.showRejectModal = false;
-        this.selectedMedia = null;
-        this.rejectForm = {
-            status: 'Rejected',
-            rejectionType: '',
-            rejectionReason: ''
-        };
-    }
-
-    rejectMedia(): void {
-        if (!this.selectedMedia || !this.rejectForm.rejectionType) {
-            alert('Please select a rejection reason');
-            return;
-        }
-
-        this.siteMediaService.reviewMedia(this.selectedMedia.id, this.rejectForm).subscribe({
-            next: () => {
-                this.loadPendingMedia();
-                this.closeRejectModal();
-                alert('Media rejected successfully!');
-            },
-            error: (error) => {
-                console.error('Error rejecting media:', error);
-                alert('Failed to reject media');
-            }
-        });
-    }
-
-    viewMedia(media: SiteMediaDto): void {
-        if (media.fileUrl) {
-            window.open(media.fileUrl, '_blank');
-        }
-    }
-
-    formatFileSize(bytes: number): string {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-    }
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  }
 }

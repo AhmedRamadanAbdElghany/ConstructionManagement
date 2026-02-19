@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { VendorService, VendorSpendReport, VendorSpendItem, SpendByDateItem } from '../../../core/services/vendor.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 import { format } from 'date-fns';
 
 @Component({
@@ -143,7 +145,10 @@ import { format } from 'date-fns';
     :host { display: block; }
   `]
 })
-export class VendorAnalyticsComponent implements OnInit {
+export class VendorAnalyticsComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  private i18nService = inject(I18nService);
+
   loading = false;
   report?: VendorSpendReport;
   maxSpend = 1;
@@ -153,10 +158,22 @@ export class VendorAnalyticsComponent implements OnInit {
     toDate: format(new Date(), 'yyyy-MM-dd')
   };
 
-  constructor(private vendorService: VendorService) { }
+  constructor(private vendorService: VendorService) {
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadReport();
+      });
+  }
 
   ngOnInit() {
     this.loadReport();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadReport() {

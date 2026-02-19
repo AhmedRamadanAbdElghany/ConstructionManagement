@@ -972,7 +972,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                     </svg>
                   </div>
                 </div>
-                <p class="text-4xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ stats.totalRevenue / 1000000 | number:'1.1-1' }}M</p>
+                <p class="text-4xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ stats.totalRevenue / 1000000 | number:'1.1-1' }}{{ 'dashboard.million' | translate }}</p>
                 <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{{ 'dashboard.total_revenue' | translate }}</p>
               </div>
             </div>

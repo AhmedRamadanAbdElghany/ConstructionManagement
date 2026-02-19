@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -103,11 +103,11 @@ import { Subject, takeUntil } from 'rxjs';
             <option value="Completed">{{ 'common.completed' | translate }}</option>
           </select>
           <select [(ngModel)]="inspectionTypeFilter">
-            <option value="">All Types</option>
-            <option value="Daily">Daily</option>
-            <option value="Weekly">Weekly</option>
-            <option value="Monthly">Monthly</option>
-            <option value="Final">Final</option>
+            <option value="">{{ 'quality.inspection.all_types' | translate }}</option>
+            <option value="Daily">{{ 'quality.inspection.daily' | translate }}</option>
+            <option value="Weekly">{{ 'quality.inspection.weekly' | translate }}</option>
+            <option value="Monthly">{{ 'quality.inspection.monthly' | translate }}</option>
+            <option value="Final">{{ 'quality.inspection.final' | translate }}</option>
           </select>
         </div>
 
@@ -115,14 +115,14 @@ import { Subject, takeUntil } from 'rxjs';
           <table>
             <thead>
               <tr>
-                <th>Inspection #</th>
-                <th>Title</th>
-                <th>Project</th>
-                <th>Type</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th>Score</th>
-                <th>Actions</th>
+                <th>{{ 'quality.inspection.number' | translate }}</th>
+                <th>{{ 'common.title' | translate }}</th>
+                <th>{{ 'common.project' | translate }}</th>
+                <th>{{ 'common.type' | translate }}</th>
+                <th>{{ 'common.status' | translate }}</th>
+                <th>{{ 'common.date' | translate }}</th>
+                <th>{{ 'quality.inspection.score' | translate }}</th>
+                <th>{{ 'common.actions' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -145,10 +145,10 @@ import { Subject, takeUntil } from 'rxjs';
                   <span *ngIf="inspection.score === 0">-</span>
                 </td>
                 <td>
-                  <button class="btn-icon" title="View" (click)="viewInspection(inspection)">
+                  <button class="btn-icon" [title]="'common.view' | translate" (click)="viewInspection(inspection)">
                     <i class="icon-eye"></i>
                   </button>
-                  <button class="btn-icon" *ngIf="inspection.status === 'Scheduled'" title="Start" (click)="startInspection(inspection)">
+                  <button class="btn-icon" *ngIf="inspection.status === 'Scheduled'" [title]="'common.start' | translate" (click)="startInspection(inspection)">
                     <i class="icon-play"></i>
                   </button>
                 </td>
@@ -163,20 +163,20 @@ import { Subject, takeUntil } from 'rxjs';
         <div class="filter-section">
           <div class="search-box">
             <i class="icon-search"></i>
-            <input type="text" [(ngModel)]="defectSearch" placeholder="Search defects...">
+            <input type="text" [(ngModel)]="defectSearch" [placeholder]="'quality.defect.search_placeholder' | translate">
           </div>
           <select [(ngModel)]="defectStatusFilter">
-            <option value="">All Status</option>
-            <option value="Open">Open</option>
-            <option value="InProgress">In Progress</option>
-            <option value="Resolved">Resolved</option>
-            <option value="Closed">Closed</option>
+            <option value="">{{ 'quality.defect.all_status' | translate }}</option>
+            <option value="Open">{{ 'quality.defect.open' | translate }}</option>
+            <option value="InProgress">{{ 'quality.defect.in_progress' | translate }}</option>
+            <option value="Resolved">{{ 'quality.defect.resolved' | translate }}</option>
+            <option value="Closed">{{ 'quality.defect.closed' | translate }}</option>
           </select>
           <select [(ngModel)]="defectSeverityFilter">
-            <option value="">All Severity</option>
-            <option value="Critical">Critical</option>
-            <option value="Major">Major</option>
-            <option value="Minor">Minor</option>
+            <option value="">{{ 'quality.defect.all_severity' | translate }}</option>
+            <option value="Critical">{{ 'quality.defect.critical' | translate }}</option>
+            <option value="Major">{{ 'quality.defect.major' | translate }}</option>
+            <option value="Minor">{{ 'quality.defect.minor' | translate }}</option>
           </select>
         </div>
 
@@ -184,14 +184,14 @@ import { Subject, takeUntil } from 'rxjs';
           <table>
             <thead>
               <tr>
-                <th>Defect #</th>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Severity</th>
-                <th>Status</th>
-                <th>Priority</th>
-                <th>Reported</th>
-                <th>Actions</th>
+                <th>{{ 'quality.defect.number' | translate }}</th>
+                <th>{{ 'common.title' | translate }}</th>
+                <th>{{ 'common.category' | translate }}</th>
+                <th>{{ 'quality.defect.severity' | translate }}</th>
+                <th>{{ 'common.status' | translate }}</th>
+                <th>{{ 'quality.defect.priority' | translate }}</th>
+                <th>{{ 'quality.defect.reported' | translate }}</th>
+                <th>{{ 'common.actions' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -216,13 +216,13 @@ import { Subject, takeUntil } from 'rxjs';
                 </td>
                 <td>{{ defect.reportedDate | date:'mediumDate' }}</td>
                 <td>
-                  <button class="btn-icon" title="View" (click)="viewDefect(defect)">
+                  <button class="btn-icon" [title]="'common.view' | translate" (click)="viewDefect(defect)">
                     <i class="icon-eye"></i>
                   </button>
-                  <button class="btn-icon" title="Assign" *ngIf="defect.status === 'Open'" (click)="assignDefect(defect)">
+                  <button class="btn-icon" [title]="'common.assign' | translate" *ngIf="defect.status === 'Open'" (click)="assignDefect(defect)">
                     <i class="icon-user"></i>
                   </button>
-                  <i class="icon-alert safety-icon" *ngIf="defect.isSafetyRelated" title="Safety Related"></i>
+                  <i class="icon-alert safety-icon" *ngIf="defect.isSafetyRelated" [title]="'quality.defect.safety_related' | translate"></i>
                 </td>
               </tr>
             </tbody>
@@ -235,15 +235,15 @@ import { Subject, takeUntil } from 'rxjs';
         <div class="filter-section">
           <div class="search-box">
             <i class="icon-search"></i>
-            <input type="text" [(ngModel)]="punchListSearch" placeholder="Search punch list...">
+            <input type="text" [(ngModel)]="punchListSearch" [placeholder]="'quality.punchlist.search_placeholder' | translate">
           </div>
           <select [(ngModel)]="punchListStatusFilter">
-            <option value="">All Status</option>
-            <option value="Pending">Pending</option>
-            <option value="InProgress">In Progress</option>
-            <option value="Completed">Completed</option>
-            <option value="Verified">Verified</option>
-            <option value="Accepted">Accepted</option>
+            <option value="">{{ 'common.all_status' | translate }}</option>
+            <option value="Pending">{{ 'common.pending' | translate }}</option>
+            <option value="InProgress">{{ 'common.in_progress' | translate }}</option>
+            <option value="Completed">{{ 'common.completed' | translate }}</option>
+            <option value="Verified">{{ 'quality.punchlist.verified' | translate }}</option>
+            <option value="Accepted">{{ 'quality.punchlist.accepted' | translate }}</option>
           </select>
         </div>
 
@@ -744,7 +744,17 @@ export class QualityComponent implements OnInit {
   punchListSearch = '';
   punchListStatusFilter = '';
 
-  constructor(private qualityService: QualityService) { }
+  private destroy$ = new Subject<void>();
+  private i18nService = inject(I18nService);
+
+  constructor(private qualityService: QualityService) {
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadData();
+      });
+  }
 
   ngOnInit(): void {
     this.loadData();
@@ -838,5 +848,10 @@ export class QualityComponent implements OnInit {
 
   verifyPunchItem(item: PunchListItem): void {
     console.log('Verify punch item:', item);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

@@ -1,9 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { ClientPortalService, ClientDashboard, ClientProjectSummary, ClientPaymentSummary, ClientMessage, ClientActivity } from '../../../core/services/client-portal.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-client-dashboard',
@@ -275,9 +277,11 @@ import { AuthService } from '../../../core/services/auth.service';
   `,
   styles: []
 })
-export class ClientDashboardComponent implements OnInit {
+export class ClientDashboardComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   private clientPortalService = inject(ClientPortalService);
   private authService = inject(AuthService);
+  private i18nService = inject(I18nService);
 
   dashboard?: ClientDashboard;
   clientUser: any;
@@ -285,6 +289,18 @@ export class ClientDashboardComponent implements OnInit {
   ngOnInit() {
     this.clientUser = this.authService.getCurrentUser();
     this.loadDashboard();
+
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadDashboard();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadDashboard() {

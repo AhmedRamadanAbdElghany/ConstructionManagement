@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { AnalyticsService, DashboardSummary, FinancialAnalytics, ResourceAnalytics, KPIDashboard, ChartData } from '../../../core/services/analytics.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-analytics',
@@ -1031,6 +1032,7 @@ import { AnalyticsService, DashboardSummary, FinancialAnalytics, ResourceAnalyti
 })
 export class AnalyticsComponent implements OnInit, OnDestroy {
   private analyticsService = inject(AnalyticsService);
+  private i18nService = inject(I18nService);
   private destroy$ = new Subject<void>();
 
   // Signals
@@ -1045,30 +1047,26 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
   revenueChartType: 'bar' | 'line' = 'bar';
   showAllKPIs = false;
 
-  // Mock data for charts
-  revenueData = [180000, 220000, 195000, 250000, 280000, 310000, 275000, 290000, 320000, 350000, 380000, 420000];
-  revenueMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  maxRevenue = 420000;
+  // Chart data derived from backend data
+  revenueData: number[] = [];
+  revenueMonths: string[] = [];
+  maxRevenue = 0;
 
-  projectProgress = [
-    { name: 'Downtown Tower', progress: 85 },
-    { name: 'Riverside Complex', progress: 72 },
-    { name: 'Industrial Park', progress: 68 },
-    { name: 'Metro Station', progress: 45 },
-    { name: 'Shopping Center', progress: 90 }
-  ];
+  // Project progress derived from dashboard summary
+  projectProgress: { name: string; progress: number }[] = [];
 
-  kpiList = [
-    { id: 1, name: 'Project Completion Rate', displayValue: '85%', target: '90%', statusClass: 'warning', trendClass: 'up', trendIcon: '&#8593;', progress: 94 },
-    { id: 2, name: 'Budget Variance', displayValue: '3.2%', target: '<5%', statusClass: 'ontarget', trendClass: 'stable', trendIcon: '&#8594;', progress: 64 },
-    { id: 3, name: 'Safety Incident Rate', displayValue: '0.5%', target: '<1%', statusClass: 'ontarget', trendClass: 'down', trendIcon: '&#8595;', progress: 50 },
-    { id: 4, name: 'Quality Score', displayValue: '92%', target: '>85%', statusClass: 'ontarget', trendClass: 'up', trendIcon: '&#8593;', progress: 100 },
-    { id: 5, name: 'Labor Utilization', displayValue: '82%', target: '80%', statusClass: 'ontarget', trendClass: 'up', trendIcon: '&#8593;', progress: 100 },
-    { id: 6, name: 'Client Satisfaction', displayValue: '4.5/5', target: '>4.0', statusClass: 'ontarget', trendClass: 'stable', trendIcon: '&#8594;', progress: 90 }
-  ];
+  // KPIs derived from backend KPI dashboard
+  kpiList: { id: number; name: string; displayValue: string; target: string; statusClass: string; trendClass: string; trendIcon: string; progress: number }[] = [];
 
   ngOnInit(): void {
     this.loadData();
+
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadData();
+      });
   }
 
   ngOnDestroy(): void {
@@ -1088,100 +1086,98 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
         next: (data) => {
           this.dashboardSummary.set(data);
           this.isLoading.set(false);
+          this.updateChartData(data);
         },
         error: () => {
           this.isLoading.set(false);
-          this.loadMockData();
+          // Show empty state when backend unavailable
+          this.dashboardSummary.set(null);
         }
       });
 
     this.analyticsService.getFinancialAnalytics(startDate, endDate)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (data) => this.financialAnalytics.set(data),
-        error: () => this.loadMockFinancialData()
+        next: (data) => {
+          this.financialAnalytics.set(data);
+          this.updateRevenueChartData(data);
+        },
+        error: () => {
+          // Show empty state when backend unavailable
+          this.financialAnalytics.set(null);
+        }
       });
 
     this.analyticsService.getResourceAnalytics(startDate, endDate)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => this.resourceAnalytics.set(data),
-        error: () => this.loadMockResourceData()
+        error: () => {
+          // Show empty state when backend unavailable
+          this.resourceAnalytics.set(null);
+        }
       });
 
     this.analyticsService.getKPIDashboard()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (data) => this.kpiDashboard.set(data)
+        next: (data) => {
+          this.kpiDashboard.set(data);
+          this.updateKPIList(data);
+        }
       });
   }
 
-  loadMockData(): void {
-    this.dashboardSummary.set({
-      totalProjects: 12,
-      activeProjects: 8,
-      completedProjects: 3,
-      onHoldProjects: 1,
-      delayedProjects: 2,
-      averageProgress: 65,
-      projectHealthScore: 78,
-      totalRevenue: 2450000,
-      totalCosts: 1850000,
-      grossProfit: 600000,
-      profitMargin: 24.5,
-      pendingInvoices: 450000,
-      overduePayments: 125000,
-      laborUtilization: 82,
-      equipmentUtilization: 68,
-      activeWorkers: 45,
-      openPositions: 8,
-      qualityScore: 89,
-      openDefects: 12,
-      safetyIncidents: 2,
-      safetyScore: 94
-    });
+  updateChartData(data: DashboardSummary): void {
+    // Update project progress from revenue trend if available
+    if (data.revenueTrend && data.revenueTrend.length > 0) {
+      this.revenueData = data.revenueTrend.map(t => t.value);
+      this.revenueMonths = data.revenueTrend.map(t => t.label || t.period);
+      this.maxRevenue = Math.max(...this.revenueData);
+    }
   }
 
-  loadMockFinancialData(): void {
-    this.financialAnalytics.set({
-      totalRevenue: 2450000,
-      totalCosts: 1850000,
-      grossProfit: 600000,
-      netProfit: 450000,
-      profitMargin: 24.5,
-      operatingMargin: 18.4,
-      invoicedAmount: 2900000,
-      collectedAmount: 2450000,
-      pendingAmount: 450000,
-      overdueAmount: 125000,
-      collectionRate: 84.5,
-      laborCosts: 750000,
-      materialCosts: 520000,
-      equipmentCosts: 280000,
-      subcontractorCosts: 300000,
-      overheadCosts: 100000,
-      currentRatio: 1.8,
-      debtToEquity: 0.45,
-      returnOnInvestment: 32.4
-    });
+  updateRevenueChartData(data: FinancialAnalytics): void {
+    if (data.monthlyRevenue && data.monthlyRevenue.length > 0) {
+      this.revenueData = data.monthlyRevenue.map(t => t.amount);
+      this.revenueMonths = data.monthlyRevenue.map(t => t.monthName);
+      this.maxRevenue = Math.max(...this.revenueData);
+    }
   }
 
-  loadMockResourceData(): void {
-    this.resourceAnalytics.set({
-      totalWorkers: 45,
-      activeWorkers: 42,
-      totalLaborHours: 8920,
-      averageUtilization: 82,
-      productivityIndex: 1.15,
-      laborCostPerHour: 45,
-      totalLaborCost: 401400,
-      totalEquipment: 28,
-      activeEquipment: 24,
-      equipmentUtilization: 68,
-      equipmentCost: 280000,
-      maintenanceCost: 35000
-    });
+  updateKPIList(data: KPIDashboard): void {
+    if (data.kpis && data.kpis.length > 0) {
+      this.kpiList = data.kpis.map(kpi => ({
+        id: kpi.id,
+        name: kpi.name,
+        displayValue: this.formatKPIValue(kpi.currentValue, kpi.displayFormat, kpi.displayPrecision),
+        target: kpi.targetValue || '',
+        statusClass: kpi.status.toLowerCase() === 'ontarget' ? 'ontarget' :
+          kpi.status.toLowerCase() === 'warning' ? 'warning' : 'critical',
+        trendClass: kpi.trend.toLowerCase() === 'up' ? 'up' :
+          kpi.trend.toLowerCase() === 'down' ? 'down' : 'stable',
+        trendIcon: kpi.trend.toLowerCase() === 'up' ? '&#8593;' :
+          kpi.trend.toLowerCase() === 'down' ? '&#8595;' : '&#8594;',
+        progress: kpi.targetValue ? Math.min(100, (kpi.currentValue / parseFloat(kpi.targetValue)) * 100) : 50
+      }));
+    }
   }
+
+  formatKPIValue(value: number, format: string, precision: number): string {
+    switch (format) {
+      case 'Percentage':
+        return `${value.toFixed(precision)}%`;
+      case 'Currency':
+        return `$${value.toFixed(precision)}`;
+      case 'Ratio':
+        return value.toFixed(precision);
+      default:
+        return value.toFixed(precision);
+    }
+  }
+
+  // Mock data methods removed - data now comes from backend only
+  // If backend is unavailable, empty state is shown
 
   loadRevenueChart(): void {
     this.analyticsService.getRevenueChartData(12)

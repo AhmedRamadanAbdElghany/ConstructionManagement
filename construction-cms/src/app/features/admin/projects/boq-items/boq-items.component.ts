@@ -6,10 +6,10 @@ import { BOQService } from '../../../../core/services/boq.service';
 import { BOQItem, CreateBOQItemRequest, UpdateBOQItemRequest } from '../../../../shared/interfaces';
 
 @Component({
-    selector: 'app-boq-items',
-    standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
-    template: `
+  selector: 'app-boq-items',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule],
+  template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
@@ -230,13 +230,13 @@ import { BOQItem, CreateBOQItemRequest, UpdateBOQItemRequest } from '../../../..
             </div>
             <div class="grid grid-cols-2 gap-6">
               <div>
-                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Start Date</label>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ 'common.start_date' | translate }}</label>
                 <input type="date" 
                        [(ngModel)]="formData.startDate" 
                        class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/50">
               </div>
               <div>
-                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">End Date</label>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ 'common.end_date' | translate }}</label>
                 <input type="date" 
                        [(ngModel)]="formData.endDate" 
                        class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/50">
@@ -257,149 +257,149 @@ import { BOQItem, CreateBOQItemRequest, UpdateBOQItemRequest } from '../../../..
       </div>
     }
   `,
-    styles: []
+  styles: []
 })
 export class BoqItemsComponent implements OnInit {
-    boqItems: BOQItem[] = [];
-    filteredItems: BOQItem[] = [];
-    searchTerm: string = '';
-    showModal: boolean = false;
-    isEditMode: boolean = false;
-    editingItemId: number | null = null;
-    projectId: number = 1; // TODO: Get from route or service
+  boqItems: BOQItem[] = [];
+  filteredItems: BOQItem[] = [];
+  searchTerm: string = '';
+  showModal: boolean = false;
+  isEditMode: boolean = false;
+  editingItemId: number | null = null;
+  projectId: number = 1; // TODO: Get from route or service
 
-    formData: Partial<BOQItem> = {
-        description: '',
-        unit: '',
-        totalQuantity: 0,
-        executedQuantity: 0,
-        rate: 0,
-        startDate: '',
-        endDate: ''
+  formData: Partial<BOQItem> = {
+    description: '',
+    unit: '',
+    totalQuantity: 0,
+    executedQuantity: 0,
+    rate: 0,
+    startDate: '',
+    endDate: ''
+  };
+
+  constructor(private boqService: BOQService) { }
+
+  ngOnInit(): void {
+    this.loadBOQItems();
+  }
+
+  loadBOQItems(): void {
+    this.boqService.getItems(this.projectId).subscribe({
+      next: (items) => {
+        this.boqItems = items;
+        this.filterItems();
+      },
+      error: (error) => {
+        console.error('Error loading BOQ items:', error);
+      }
+    });
+  }
+
+  filterItems(): void {
+    if (!this.searchTerm) {
+      this.filteredItems = this.boqItems;
+    } else {
+      const term = this.searchTerm.toLowerCase();
+      this.filteredItems = this.boqItems.filter(item =>
+        item.description.toLowerCase().includes(term) ||
+        item.unit.toLowerCase().includes(term)
+      );
+    }
+  }
+
+  get totalValue(): number {
+    return this.boqItems.reduce((sum, item) => sum + (item.totalQuantity * item.rate), 0);
+  }
+
+  get executedValue(): number {
+    return this.boqItems.reduce((sum, item) => sum + (item.executedQuantity * item.rate), 0);
+  }
+
+  get overallProgress(): number {
+    if (this.totalValue === 0) return 0;
+    return (this.executedValue / this.totalValue) * 100;
+  }
+
+  openAddModal(): void {
+    this.isEditMode = false;
+    this.editingItemId = null;
+    this.formData = {
+      description: '',
+      unit: '',
+      totalQuantity: 0,
+      executedQuantity: 0,
+      rate: 0,
+      startDate: '',
+      endDate: ''
     };
+    this.showModal = true;
+  }
 
-    constructor(private boqService: BOQService) { }
+  openEditModal(item: BOQItem): void {
+    this.isEditMode = true;
+    this.editingItemId = item.id;
+    this.formData = { ...item };
+    this.showModal = true;
+  }
 
-    ngOnInit(): void {
-        this.loadBOQItems();
+  closeModal(): void {
+    this.showModal = false;
+    this.isEditMode = false;
+    this.editingItemId = null;
+  }
+
+  saveItem(): void {
+    if (!this.formData.description || !this.formData.unit || !this.formData.totalQuantity || !this.formData.rate) {
+      alert('Please fill in all required fields');
+      return;
     }
 
-    loadBOQItems(): void {
-        this.boqService.getItems(this.projectId).subscribe({
-            next: (items) => {
-                this.boqItems = items;
-                this.filterItems();
-            },
-            error: (error) => {
-                console.error('Error loading BOQ items:', error);
-            }
-        });
-    }
-
-    filterItems(): void {
-        if (!this.searchTerm) {
-            this.filteredItems = this.boqItems;
-        } else {
-            const term = this.searchTerm.toLowerCase();
-            this.filteredItems = this.boqItems.filter(item =>
-                item.description.toLowerCase().includes(term) ||
-                item.unit.toLowerCase().includes(term)
-            );
+    if (this.isEditMode && this.editingItemId) {
+      const updateRequest: UpdateBOQItemRequest = {
+        itemName: this.formData.description,
+        description: this.formData.description,
+        startDate: this.formData.startDate,
+        endDate: this.formData.endDate
+      };
+      this.boqService.updateItem(this.projectId, this.editingItemId, updateRequest).subscribe({
+        next: () => {
+          this.loadBOQItems();
+          this.closeModal();
+        },
+        error: (error) => {
+          console.error('Error updating BOQ item:', error);
+          alert('Failed to update item');
         }
-    }
-
-    get totalValue(): number {
-        return this.boqItems.reduce((sum, item) => sum + (item.totalQuantity * item.rate), 0);
-    }
-
-    get executedValue(): number {
-        return this.boqItems.reduce((sum, item) => sum + (item.executedQuantity * item.rate), 0);
-    }
-
-    get overallProgress(): number {
-        if (this.totalValue === 0) return 0;
-        return (this.executedValue / this.totalValue) * 100;
-    }
-
-    openAddModal(): void {
-        this.isEditMode = false;
-        this.editingItemId = null;
-        this.formData = {
-            description: '',
-            unit: '',
-            totalQuantity: 0,
-            executedQuantity: 0,
-            rate: 0,
-            startDate: '',
-            endDate: ''
-        };
-        this.showModal = true;
-    }
-
-    openEditModal(item: BOQItem): void {
-        this.isEditMode = true;
-        this.editingItemId = item.id;
-        this.formData = { ...item };
-        this.showModal = true;
-    }
-
-    closeModal(): void {
-        this.showModal = false;
-        this.isEditMode = false;
-        this.editingItemId = null;
-    }
-
-    saveItem(): void {
-        if (!this.formData.description || !this.formData.unit || !this.formData.totalQuantity || !this.formData.rate) {
-            alert('Please fill in all required fields');
-            return;
+      });
+    } else {
+      const createRequest: CreateBOQItemRequest = {
+        itemName: this.formData.description,
+        description: this.formData.description,
+        unit: this.formData.unit,
+        agreedQuantity: this.formData.totalQuantity,
+        unitPrice: this.formData.rate,
+        startDate: this.formData.startDate,
+        endDate: this.formData.endDate,
+        accountingType: 'Measured'
+      };
+      this.boqService.createItem(this.projectId, createRequest).subscribe({
+        next: () => {
+          this.loadBOQItems();
+          this.closeModal();
+        },
+        error: (error) => {
+          console.error('Error creating BOQ item:', error);
+          alert('Failed to create item');
         }
-
-        if (this.isEditMode && this.editingItemId) {
-            const updateRequest: UpdateBOQItemRequest = {
-                itemName: this.formData.description,
-                description: this.formData.description,
-                startDate: this.formData.startDate,
-                endDate: this.formData.endDate
-            };
-            this.boqService.updateItem(this.projectId, this.editingItemId, updateRequest).subscribe({
-                next: () => {
-                    this.loadBOQItems();
-                    this.closeModal();
-                },
-                error: (error) => {
-                    console.error('Error updating BOQ item:', error);
-                    alert('Failed to update item');
-                }
-            });
-        } else {
-            const createRequest: CreateBOQItemRequest = {
-                itemName: this.formData.description,
-                description: this.formData.description,
-                unit: this.formData.unit,
-                agreedQuantity: this.formData.totalQuantity,
-                unitPrice: this.formData.rate,
-                startDate: this.formData.startDate,
-                endDate: this.formData.endDate,
-                accountingType: 'Measured'
-            };
-            this.boqService.createItem(this.projectId, createRequest).subscribe({
-                next: () => {
-                    this.loadBOQItems();
-                    this.closeModal();
-                },
-                error: (error) => {
-                    console.error('Error creating BOQ item:', error);
-                    alert('Failed to create item');
-                }
-            });
-        }
+      });
     }
+  }
 
-    deleteItem(itemId: number): void {
-        if (confirm('Are you sure you want to delete this item?')) {
-            // Note: Delete method not implemented in BOQService yet
-            alert('Delete functionality not yet implemented');
-        }
+  deleteItem(itemId: number): void {
+    if (confirm('Are you sure you want to delete this item?')) {
+      // Note: Delete method not implemented in BOQService yet
+      alert('Delete functionality not yet implemented');
     }
+  }
 }

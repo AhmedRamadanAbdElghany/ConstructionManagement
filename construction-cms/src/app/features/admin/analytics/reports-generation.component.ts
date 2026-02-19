@@ -1,9 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { AnalyticsService, ReportDefinition, ExecuteReportRequest } from '../../../core/services/analytics.service';
 import { ReportFilter, ReportGenerationRequest, GeneratedReport } from '../../../shared/interfaces';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-reports-generation',
@@ -228,8 +230,10 @@ import { ReportFilter, ReportGenerationRequest, GeneratedReport } from '../../..
     }
   `]
 })
-export class ReportsGenerationComponent implements OnInit {
+export class ReportsGenerationComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   private analyticsService = inject(AnalyticsService);
+  private i18nService = inject(I18nService);
 
   reportDefinitions: ReportDefinition[] = [];
   selectedReport: ReportDefinition | null = null;
@@ -252,6 +256,19 @@ export class ReportsGenerationComponent implements OnInit {
     this.loadAvailableProjects();
     this.loadGeneratedReports();
     this.setDefaultDateRange();
+
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadReportDefinitions();
+        this.loadAvailableProjects();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadReportDefinitions() {

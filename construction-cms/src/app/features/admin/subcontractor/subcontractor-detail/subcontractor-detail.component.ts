@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { SubcontractorService, Subcontractor, SubcontractorContract, SubcontractorPayment, SubcontractorRating } from '../../../../core/services/subcontractor.service';
+import { I18nService } from '../../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-subcontractor-detail',
@@ -339,7 +341,10 @@ import { SubcontractorService, Subcontractor, SubcontractorContract, Subcontract
     }
   `]
 })
-export class SubcontractorDetailComponent implements OnInit {
+export class SubcontractorDetailComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  private i18nService = inject(I18nService);
+
   subcontractorId: number | null = null;
   subcontractor: Subcontractor | null = null;
   contracts: SubcontractorContract[] = [];
@@ -351,13 +356,27 @@ export class SubcontractorDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private subcontractorService: SubcontractorService
-  ) { }
+  ) {
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        if (this.subcontractorId) {
+          this.loadData();
+        }
+      });
+  }
 
   ngOnInit(): void {
     this.subcontractorId = Number(this.route.snapshot.paramMap.get('id'));
     if (this.subcontractorId) {
       this.loadData();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadData(): void {

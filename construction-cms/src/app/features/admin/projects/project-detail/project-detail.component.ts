@@ -1137,12 +1137,12 @@ import { map } from 'rxjs/operators';
                         
                         <div class="grid grid-cols-2 gap-5">
                            <div class="relative group">
-                              <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Mobilization Date</label>
+                              <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'projects.mobilization_date' | translate }}</label>
                               <input type="date" [(ngModel)]="editForm.startDate" 
                                      class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-xs outline-none focus:border-cyan-500">
                            </div>
                            <div class="relative group">
-                              <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Anticipated Handover</label>
+                              <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'projects.anticipated_handover' | translate }}</label>
                               <input type="date" [(ngModel)]="editForm.endDate" 
                                      class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-xs outline-none focus:border-cyan-500">
                            </div>
@@ -1352,18 +1352,18 @@ import { map } from 'rxjs/operators';
                         <input type="number" [(ngModel)]="boqForm.rate" 
                                class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none">
                      </div>
-                     <div class="grid grid-cols-2 gap-4">
-                        <div class="relative group">
-                           <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Start Date</label>
-                           <input type="date" [(ngModel)]="boqForm.startDate" 
-                                  class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none">
-                        </div>
-                        <div class="relative group">
-                           <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">End Date</label>
-                           <input type="date" [(ngModel)]="boqForm.endDate" 
-                                  class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none">
-                        </div>
-                     </div>
+                      <div class="grid grid-cols-2 gap-4">
+                         <div class="relative group">
+                            <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'common.start_date' | translate }}</label>
+                            <input type="date" [(ngModel)]="boqForm.startDate" 
+                                   class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none">
+                         </div>
+                         <div class="relative group">
+                            <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'common.end_date' | translate }}</label>
+                            <input type="date" [(ngModel)]="boqForm.endDate" 
+                                   class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none">
+                         </div>
+                      </div>
                      @if (boqForm.totalQuantity > 0 && boqForm.rate > 0) {
                         <div class="p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
                            <p class="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-1">Estimated Total Value</p>
@@ -1415,11 +1415,11 @@ import { map } from 'rxjs/operators';
                         <input type="number" [(ngModel)]="billForm.amount" 
                                class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 outline-none transition-all">
                      </div>
-                     <div class="relative group">
-                        <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Date</label>
-                        <input type="date" [(ngModel)]="billForm.date" 
-                               class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none focus:border-cyan-500">
-                     </div>
+                      <div class="relative group">
+                         <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'common.date' | translate }}</label>
+                         <input type="date" [(ngModel)]="billForm.date" 
+                                class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none focus:border-cyan-500">
+                      </div>
                      <div class="relative group">
                         <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Notes</label>
                         <textarea [(ngModel)]="billForm.notes" 
@@ -1491,11 +1491,11 @@ import { map } from 'rxjs/operators';
                          </div>
                       </div>
 
-                      <div class="relative group">
-                         <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Date Received</label>
-                         <input type="date" [(ngModel)]="paymentForm.date" 
-                                class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none">
-                      </div>
+                       <div class="relative group">
+                          <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'common.date_received' | translate }}</label>
+                          <input type="date" [(ngModel)]="paymentForm.date" 
+                                 class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none">
+                       </div>
 
                       <div class="relative group">
                          <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Accepted By</label>

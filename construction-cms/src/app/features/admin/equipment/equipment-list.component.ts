@@ -1,16 +1,17 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, takeUntil, forkJoin } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { EquipmentService, Equipment, EquipmentType, EquipmentDashboard } from '../../../core/services/equipment.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
-    selector: 'app-equipment-list',
-    standalone: true,
-    imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, TranslateModule],
-    template: `
+  selector: 'app-equipment-list',
+  standalone: true,
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, TranslateModule],
+  template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
@@ -323,108 +324,116 @@ import { EquipmentService, Equipment, EquipmentType, EquipmentDashboard } from '
       </div>
     }
   `,
-    styles: []
+  styles: []
 })
 export class EquipmentListComponent implements OnInit, OnDestroy {
-    private destroy$ = new Subject<void>();
+  private destroy$ = new Subject<void>();
+  private i18nService = inject(I18nService);
 
-    activeTab: 'dashboard' | 'listing' = 'dashboard';
-    equipment: Equipment[] = [];
-    filteredEquipment: Equipment[] = [];
-    equipmentTypes: EquipmentType[] = [];
-    dashboard: EquipmentDashboard | null = null;
+  activeTab: 'dashboard' | 'listing' = 'dashboard';
+  equipment: Equipment[] = [];
+  filteredEquipment: Equipment[] = [];
+  equipmentTypes: EquipmentType[] = [];
+  dashboard: EquipmentDashboard | null = null;
 
-    searchTerm = '';
-    statusFilter = '';
-    typeFilter = '';
+  searchTerm = '';
+  statusFilter = '';
+  typeFilter = '';
 
-    showModal = false;
-    isEditing = false;
-    selectedEquipmentId: number | null = null;
-    equipmentForm: FormGroup;
+  showModal = false;
+  isEditing = false;
+  selectedEquipmentId: number | null = null;
+  equipmentForm: FormGroup;
 
-    constructor(private equipmentService: EquipmentService, private fb: FormBuilder) {
-        this.equipmentForm = this.fb.group({
-            name: ['', Validators.required],
-            serialNumber: ['', Validators.required],
-            equipmentTypeId: [null, Validators.required],
-            status: ['Available', Validators.required]
-        });
-    }
+  constructor(private equipmentService: EquipmentService, private fb: FormBuilder) {
+    this.equipmentForm = this.fb.group({
+      name: ['', Validators.required],
+      serialNumber: ['', Validators.required],
+      equipmentTypeId: [null, Validators.required],
+      status: ['Available', Validators.required]
+    });
 
-    ngOnInit(): void {
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
         this.loadData();
+      });
+  }
+
+  ngOnInit(): void {
+    this.loadData();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadData(): void {
+    forkJoin({
+      equipment: this.equipmentService.getEquipment(),
+      types: this.equipmentService.getEquipmentTypes(),
+      dashboard: this.equipmentService.getDashboard()
+    }).pipe(takeUntil(this.destroy$)).subscribe(({ equipment, types, dashboard }) => {
+      this.equipment = equipment;
+      this.filteredEquipment = equipment;
+      this.equipmentTypes = types;
+      this.dashboard = dashboard;
+    });
+  }
+
+  filterEquipment(): void {
+    this.filteredEquipment = this.equipment.filter(eq => {
+      const matchesSearch = !this.searchTerm ||
+        eq.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        eq.serialNumber.toLowerCase().includes(this.searchTerm.toLowerCase());
+
+      const matchesStatus = !this.statusFilter || eq.status === this.statusFilter;
+      const matchesType = !this.typeFilter || eq.equipmentTypeId === parseInt(this.typeFilter);
+
+      return matchesSearch && matchesStatus && matchesType;
+    });
+  }
+
+  openAddModal() {
+    this.isEditing = false;
+    this.selectedEquipmentId = null;
+    this.equipmentForm.reset({ status: 'Available' });
+    this.showModal = true;
+  }
+
+  openEditModal(eq: Equipment) {
+    this.isEditing = true;
+    this.selectedEquipmentId = eq.id;
+    this.equipmentForm.patchValue({
+      name: eq.name,
+      serialNumber: eq.serialNumber,
+      equipmentTypeId: eq.equipmentTypeId,
+      status: eq.status
+    });
+    this.showModal = true;
+  }
+
+  saveEquipment() {
+    if (this.equipmentForm.invalid) return;
+
+    const request = this.equipmentForm.value;
+    const obs = this.isEditing && this.selectedEquipmentId
+      ? this.equipmentService.updateEquipment(this.selectedEquipmentId, request)
+      : this.equipmentService.createEquipment(request);
+
+    obs.subscribe(() => {
+      this.showModal = false;
+      this.loadData();
+    });
+  }
+
+  deleteEquipment(equipment: Equipment): void {
+    if (confirm(`Are you sure you want to delete "${equipment.name}"?`)) {
+      this.equipmentService.deleteEquipment(equipment.id).subscribe(() => {
+        this.loadData();
+      });
     }
-
-    ngOnDestroy(): void {
-        this.destroy$.next();
-        this.destroy$.complete();
-    }
-
-    loadData(): void {
-        forkJoin({
-            equipment: this.equipmentService.getEquipment(),
-            types: this.equipmentService.getEquipmentTypes(),
-            dashboard: this.equipmentService.getDashboard()
-        }).pipe(takeUntil(this.destroy$)).subscribe(({ equipment, types, dashboard }) => {
-            this.equipment = equipment;
-            this.filteredEquipment = equipment;
-            this.equipmentTypes = types;
-            this.dashboard = dashboard;
-        });
-    }
-
-    filterEquipment(): void {
-        this.filteredEquipment = this.equipment.filter(eq => {
-            const matchesSearch = !this.searchTerm ||
-                eq.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                eq.serialNumber.toLowerCase().includes(this.searchTerm.toLowerCase());
-
-            const matchesStatus = !this.statusFilter || eq.status === this.statusFilter;
-            const matchesType = !this.typeFilter || eq.equipmentTypeId === parseInt(this.typeFilter);
-
-            return matchesSearch && matchesStatus && matchesType;
-        });
-    }
-
-    openAddModal() {
-        this.isEditing = false;
-        this.selectedEquipmentId = null;
-        this.equipmentForm.reset({ status: 'Available' });
-        this.showModal = true;
-    }
-
-    openEditModal(eq: Equipment) {
-        this.isEditing = true;
-        this.selectedEquipmentId = eq.id;
-        this.equipmentForm.patchValue({
-            name: eq.name,
-            serialNumber: eq.serialNumber,
-            equipmentTypeId: eq.equipmentTypeId,
-            status: eq.status
-        });
-        this.showModal = true;
-    }
-
-    saveEquipment() {
-        if (this.equipmentForm.invalid) return;
-
-        const request = this.equipmentForm.value;
-        const obs = this.isEditing && this.selectedEquipmentId
-            ? this.equipmentService.updateEquipment(this.selectedEquipmentId, request)
-            : this.equipmentService.createEquipment(request);
-
-        obs.subscribe(() => {
-            this.showModal = false;
-            this.loadData();
-        });
-    }
-
-    deleteEquipment(equipment: Equipment): void {
-        if (confirm(`Are you sure you want to delete "${equipment.name}"?`)) {
-            this.equipmentService.deleteEquipment(equipment.id).subscribe(() => {
-                this.loadData();
-            });
-        }
-    }
+  }
 }

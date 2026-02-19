@@ -1,16 +1,18 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { EquipmentService } from '../../../core/services/equipment.service';
 import { EquipmentAssignment, EquipmentMaintenance } from '../../../shared/interfaces';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
-    selector: 'app-equipment-detail',
-    standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
-    template: `
+  selector: 'app-equipment-detail',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule],
+  template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
@@ -314,7 +316,7 @@ import { EquipmentAssignment, EquipmentMaintenance } from '../../../shared/inter
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     :host ::ng-deep select {
       -webkit-appearance: none;
       -moz-appearance: none;
@@ -322,92 +324,110 @@ import { EquipmentAssignment, EquipmentMaintenance } from '../../../shared/inter
     }
   `]
 })
-export class EquipmentDetailComponent implements OnInit {
-    private equipmentService = inject(EquipmentService);
-    private route = inject(ActivatedRoute);
-    private router = inject(Router);
+export class EquipmentDetailComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  private equipmentService = inject(EquipmentService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private i18nService = inject(I18nService);
 
-    equipment: any = null;
-    maintenanceHistory: EquipmentMaintenance[] = [];
-    currentAssignment: EquipmentAssignment | null = null;
-    isLoading = false;
+  equipment: any = null;
+  maintenanceHistory: EquipmentMaintenance[] = [];
+  currentAssignment: EquipmentAssignment | null = null;
+  isLoading = false;
+  private equipmentId: number | null = null;
 
-    ngOnInit() {
-        const id = this.route.snapshot.paramMap.get('id');
-        if (id) {
-            this.loadEquipment(parseInt(id));
+  ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.equipmentId = parseInt(id);
+      this.loadEquipment(this.equipmentId);
+    }
+
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        if (this.equipmentId) {
+          this.loadEquipment(this.equipmentId);
         }
-    }
+      });
+  }
 
-    loadEquipment(id: number) {
-        this.isLoading = true;
-        this.equipmentService.getEquipment(id).subscribe({
-            next: (data) => {
-                this.equipment = data;
-                this.loadMaintenanceHistory(id);
-                this.loadCurrentAssignment(id);
-                this.isLoading = false;
-            },
-            error: (error) => {
-                console.error('Error loading equipment:', error);
-                this.isLoading = false;
-            }
-        });
-    }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
-    loadMaintenanceHistory(equipmentId: number) {
-        this.equipmentService.getMaintenancesByEquipment(equipmentId).subscribe({
-            next: (data: any) => {
-                this.maintenanceHistory = data;
-            },
-            error: (error: any) => {
-                console.error('Error loading maintenance history:', error);
-            }
-        });
-    }
+  loadEquipment(id: number) {
+    this.isLoading = true;
+    this.equipmentService.getEquipment(id).subscribe({
+      next: (data) => {
+        this.equipment = data;
+        this.loadMaintenanceHistory(id);
+        this.loadCurrentAssignment(id);
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading equipment:', error);
+        this.isLoading = false;
+      }
+    });
+  }
 
-    loadCurrentAssignment(equipmentId: number) {
-        this.equipmentService.getAssignmentsByEquipment(equipmentId).subscribe({
-            next: (data: any) => {
-                this.currentAssignment = data.find((a: any) => a.status === 'Active') || null;
-            },
-            error: (error: any) => {
-                console.error('Error loading assignments:', error);
-            }
-        });
-    }
+  loadMaintenanceHistory(equipmentId: number) {
+    this.equipmentService.getMaintenancesByEquipment(equipmentId).subscribe({
+      next: (data: any) => {
+        this.maintenanceHistory = data;
+      },
+      error: (error: any) => {
+        console.error('Error loading maintenance history:', error);
+      }
+    });
+  }
 
-    editEquipment() {
-        this.router.navigate(['/admin/equipment', this.equipment.id, 'edit']);
-    }
+  loadCurrentAssignment(equipmentId: number) {
+    this.equipmentService.getAssignmentsByEquipment(equipmentId).subscribe({
+      next: (data: any) => {
+        this.currentAssignment = data.find((a: any) => a.status === 'Active') || null;
+      },
+      error: (error: any) => {
+        console.error('Error loading assignments:', error);
+      }
+    });
+  }
 
-    deleteEquipment() {
-        if (confirm('Are you sure you want to delete this equipment?')) {
-            this.equipmentService.deleteEquipment(this.equipment.id).subscribe({
-                next: () => {
-                    this.router.navigate(['/admin/equipment']);
-                },
-                error: (error) => {
-                    console.error('Error deleting equipment:', error);
-                }
-            });
+  editEquipment() {
+    this.router.navigate(['/admin/equipment', this.equipment.id, 'edit']);
+  }
+
+  deleteEquipment() {
+    if (confirm('Are you sure you want to delete this equipment?')) {
+      this.equipmentService.deleteEquipment(this.equipment.id).subscribe({
+        next: () => {
+          this.router.navigate(['/admin/equipment']);
+        },
+        error: (error) => {
+          console.error('Error deleting equipment:', error);
         }
+      });
     }
+  }
 
-    goBack() {
-        this.router.navigate(['/admin/equipment']);
-    }
+  goBack() {
+    this.router.navigate(['/admin/equipment']);
+  }
 
-    formatDate(date: string): string {
-        return new Date(date).toLocaleDateString();
-    }
+  formatDate(date: string): string {
+    return new Date(date).toLocaleDateString();
+  }
 
-    formatCurrency(value: number): string {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        }).format(value);
-    }
+  formatCurrency(value: number): string {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(value);
+  }
 }

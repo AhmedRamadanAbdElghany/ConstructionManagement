@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { DocumentService, Document, DocumentSearchRequest } from '../../../core/services/document.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-worker-documents',
@@ -120,7 +122,10 @@ import { DocumentService, Document, DocumentSearchRequest } from '../../../core/
     </div>
   `
 })
-export class WorkerDocumentsComponent implements OnInit {
+export class WorkerDocumentsComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  private i18nService = inject(I18nService);
+
   documents: Document[] = [];
   documentTypes: string[] = [];
   filterType = '';
@@ -133,6 +138,18 @@ export class WorkerDocumentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDocuments();
+
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadDocuments();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadDocuments(): void {

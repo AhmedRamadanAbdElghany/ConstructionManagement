@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { SiteMediaService, SiteMediaDto } from '../../../../core/services/site-media.service';
+import { I18nService } from '../../../../core/i18n/i18n.service';
 
 @Component({
   selector: 'app-media-gallery',
@@ -215,7 +217,7 @@ import { SiteMediaService, SiteMediaDto } from '../../../../core/services/site-m
   `,
   styles: []
 })
-export class MediaGalleryComponent implements OnInit {
+export class MediaGalleryComponent implements OnInit, OnDestroy {
   allMedia: SiteMediaDto[] = [];
   filteredMedia: SiteMediaDto[] = [];
   filterMediaType: string = '';
@@ -227,10 +229,25 @@ export class MediaGalleryComponent implements OnInit {
   showMediaViewer: boolean = false;
   selectedMedia: SiteMediaDto | null = null;
 
+  private destroy$ = new Subject<void>();
+  private i18nService = inject(I18nService);
+
   constructor(private siteMediaService: SiteMediaService) { }
 
   ngOnInit(): void {
     this.loadMedia();
+
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadMedia();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadMedia(): void {

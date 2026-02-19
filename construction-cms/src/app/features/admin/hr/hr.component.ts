@@ -1,16 +1,17 @@
 import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { User, UserRole, Role, Permission } from '../../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
 import { RolesService } from '../../../core/services/roles.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-hr',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, TranslateModule],
   template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
@@ -20,14 +21,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
             <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ 'hr.title' | translate }}</h1>
             <p class="text-slate-500 dark:text-slate-400 font-medium">{{ 'hr.manage_team_subtitle' | translate }}</p>
           </div>
-          <button 
-            (click)="openAddUserModal()" 
-            class="px-6 py-3 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-all flex items-center group">
-            <svg class="w-5 h-5 mr-2 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-            </svg>
-            {{ 'hr.add_user' | translate }}
-          </button>
         </div>
 
         <!-- Stats Cards -->
@@ -156,7 +149,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                       @if (user.salary > 0) {
                         <p class="text-base font-black text-slate-900 dark:text-white tracking-tight">{{ user.salary | currency:'USD':'symbol':'1.0-0' }}</p>
                       } @else {
-                        <span class="text-slate-400 font-black text-xs uppercase tracking-widest leading-none">N/A</span>
+                        <span class="text-slate-400 font-black text-xs uppercase tracking-widest leading-none">{{ 'common.not_available' | translate }}</span>
                       }
                     </td>
                     <td class="px-8 py-5">
@@ -235,57 +228,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
       </div>
     </div>
 
-    <!-- Add User Modal -->
-    @if (showAddUserModal) {
-      <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md border border-slate-700/50 overflow-hidden">
-          <div class="p-6 border-b border-slate-700/50">
-            <h2 class="text-xl font-bold text-white">{{ 'hr.add_user' | translate }}</h2>
-          </div>
-          <form [formGroup]="addUserForm" (ngSubmit)="submitAddUser()" class="p-6 space-y-5">
-            <div>
-              <label class="block text-sm font-medium text-slate-400 mb-2">{{ 'hr.full_name' | translate }}</label>
-              <input formControlName="fullName" type="text" 
-                     class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600/50 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors"
-                     [placeholder]="'hr.enter_full_name' | translate">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-slate-400 mb-2">{{ 'hr.email' | translate }}</label>
-              <input formControlName="email" type="email" 
-                     class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600/50 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors"
-                     [placeholder]="'hr.enter_email_address' | translate">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-slate-400 mb-2">{{ 'hr.role' | translate }}</label>
-              <select formControlName="role" 
-                      class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600/50 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors">
-                <option value="CompanyAdmin">{{ 'sidebar.role_admin' | translate }}</option>
-                <option value="CompanyUser">{{ 'sidebar.role_worker' | translate }}</option>
-                <option value="NormalUser">{{ 'sidebar.role_client' | translate }}</option>
-              </select>
-            </div>
-            <div>
-               <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1 italic">{{ 'hr.directly_reports_to' | translate }}</label>
-              <select formControlName="reportsToId" 
-                      class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600/50 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors font-bold text-xs uppercase tracking-widest appearance-none cursor-pointer">
-                 <option [ngValue]="null">{{ 'hr.no_reports_none' | translate }}</option>
-                <option *ngFor="let u of users" [value]="u.id">{{ u.fullName }}</option>
-              </select>
-            </div>
-            <div class="flex justify-end space-x-3 pt-4">
-              <button type="button" (click)="showAddUserModal = false" 
-                      class="px-6 py-3 rounded-xl bg-slate-700/50 text-slate-400 font-medium hover:bg-slate-700 hover:text-white transition-colors">
-                {{ 'common.cancel' | translate }}
-              </button>
-              <button type="submit" 
-                      class="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-medium hover:from-cyan-400 hover:to-blue-500 transition-all">
-                {{ 'common.save' | translate }}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    }
+
 
     <!-- Notes Drawer -->
     @if (selectedUserForNotes) {
@@ -314,8 +257,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class HrComponent implements OnInit {
   users: User[] = [];
-  showAddUserModal = false;
-  addUserForm: FormGroup;
   selectedUserForNotes: User | null = null;
 
   // Dynamic role-permission matrix
@@ -349,17 +290,18 @@ export class HrComponent implements OnInit {
     return this.users.reduce((sum, u) => sum + u.salary, 0);
   }
 
+  private i18nService = inject(I18nService);
+
   constructor(
     private rolesService: RolesService,
-    private fb: FormBuilder,
     private authService: AuthService
   ) {
-    this.addUserForm = this.fb.group({
-      fullName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      role: ['CompanyUser', Validators.required],
-      reportsToId: [null]
-    });
+    // Subscribe to language changes to refresh data
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.loadRolesAndPermissions();
+      });
   }
 
   ngOnInit() {
@@ -425,26 +367,7 @@ export class HrComponent implements OnInit {
     return role.permissions.some(p => p.id === permissionId);
   }
 
-  openAddUserModal() {
-    this.showAddUserModal = true;
-  }
 
-  submitAddUser() {
-    if (this.addUserForm.valid) {
-      const newUser: User = {
-        id: Date.now(),
-        fullName: this.addUserForm.value.fullName,
-        email: this.addUserForm.value.email,
-        role: this.addUserForm.value.role,
-        status: 'Working',
-        salary: 3000,
-        reportsToId: this.addUserForm.value.reportsToId
-      };
-      this.users.unshift(newUser);
-      this.showAddUserModal = false;
-      this.addUserForm.reset({ role: 'CompanyUser', reportsToId: null });
-    }
-  }
 
   getUserName(id: number): string {
     const u = this.users.find(x => x.id === id);
