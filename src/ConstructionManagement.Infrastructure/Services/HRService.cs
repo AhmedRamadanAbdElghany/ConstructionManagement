@@ -30,6 +30,66 @@ public class HRService : IHRService
         _notificationService = notificationService;
     }
 
+    // Team Members
+    public async Task<IEnumerable<TeamMemberDto>> GetTeamMembersAsync()
+    {
+        var companyId = _companyContext.CompanyId;
+        var today = DateTime.UtcNow.Date;
+
+        // Get all users in the company with their roles
+        var users = await _db.Users
+            .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+            .Include(u => u.ReportsTo)
+            .Where(u => u.CompanyId == companyId)
+            .ToListAsync();
+
+        // Get today's attendance for all users
+        var todayAttendances = await _db.Attendances
+            .Where(a => a.Date.Date == today)
+            .ToListAsync();
+
+        var result = users.Select(u =>
+        {
+            var attendance = todayAttendances.FirstOrDefault(a => a.UserId == u.Id);
+            var primaryRole = u.UserRoles.FirstOrDefault()?.Role.Name ?? "NormalUser";
+            
+            // Determine status
+            string status;
+            if (primaryRole == "Client")
+            {
+                status = "Client";
+            }
+            else if (attendance != null && attendance.Status == AttendanceStatus.Present)
+            {
+                status = "Working";
+            }
+            else if (attendance != null && attendance.Status == AttendanceStatus.OnLeave)
+            {
+                status = "OnLeave";
+            }
+            else
+            {
+                status = "Absent";
+            }
+
+            return new TeamMemberDto
+            {
+                Id = u.Id,
+                FullName = (u.FirstName + " " + u.LastName).Trim(),
+                Email = u.Email ?? string.Empty,
+                Role = primaryRole,
+                Status = status,
+                Salary = u.Salary,
+                ReportsToId = u.ReportsToId,
+                ReportsToName = u.ReportsTo != null ? (u.ReportsTo.FirstName + " " + u.ReportsTo.LastName).Trim() : null,
+                Notes = null // Notes field not available on User entity
+            };
+        }).ToList();
+
+        return result;
+    }
+
     // Attendance
     public async Task<IEnumerable<AttendanceDto>> GetAttendancesAsync(DateTime? date = null, int? userId = null)
     {
@@ -416,6 +476,70 @@ public class HRService : IHRService
         
         await _unitOfWork.SaveChangesAsync();
         return true;
+    }
+
+    public async Task<IEnumerable<PayrollDto>> GetUserPayrollHistoryAsync(int userId)
+    {
+        return await _db.Payrolls
+            .Include(p => p.User)
+            .Where(p => p.UserId == userId)
+            .OrderByDescending(p => p.Year)
+            .ThenByDescending(p => p.Month)
+            .Select(p => new PayrollDto
+            {
+                Id = p.Id,
+                UserId = p.UserId,
+                UserFullName = p.User.FirstName + " " + p.User.LastName,
+                Month = p.Month,
+                Year = p.Year,
+                BaseSalary = p.BaseSalary,
+                Bonuses = p.Bonuses,
+                Deductions = p.Deductions,
+                NetSalary = p.NetSalary,
+                IsPaid = p.IsPaid,
+                PaymentDate = p.PaymentDate,
+                Note = p.Note
+            })
+            .ToListAsync();
+    }
+
+    public async Task<UserHRStatsDto> GetUserHRStatsAsync(int userId)
+    {
+        var user = await _db.Users.FindAsync(userId);
+        if (user == null) throw new InvalidOperationException("User not found");
+
+        var today = DateTime.UtcNow.Date;
+        var startOfMonth = new DateTime(today.Year, today.Month, 1);
+
+        // Get work days this month
+        var workDaysThisMonth = await _db.Attendances
+            .Where(a => a.UserId == userId && a.Date >= startOfMonth && a.Date <= today)
+            .CountAsync();
+
+        // Get pending leave requests
+        var pendingRequests = await _db.LeaveRequests
+            .Where(lr => lr.UserId == userId && lr.Status == LeaveRequestStatus.Pending)
+            .CountAsync();
+
+        // Get used leave days this year
+        var usedLeaveDays = await _db.LeaveRequests
+            .Where(lr => lr.UserId == userId && 
+                         lr.Status == LeaveRequestStatus.Approved && 
+                         lr.StartDate.Year == today.Year)
+            .SumAsync(lr => lr.TotalDays);
+
+        // Default annual leave (could be stored in company settings)
+        const int defaultAnnualLeave = 21;
+
+        return new UserHRStatsDto
+        {
+            MonthlySalary = user.Salary,
+            AnnualLeaveDays = defaultAnnualLeave,
+            UsedLeaveDays = usedLeaveDays,
+            RemainingLeaveDays = defaultAnnualLeave - usedLeaveDays,
+            PendingRequests = pendingRequests,
+            WorkDaysThisMonth = workDaysThisMonth
+        };
     }
 
     private async Task<PayrollDto> GetPayrollDto(int id)

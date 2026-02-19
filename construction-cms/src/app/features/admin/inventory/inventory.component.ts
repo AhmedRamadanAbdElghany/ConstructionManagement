@@ -5,70 +5,70 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
 interface Material {
-    id: number;
-    name: string;
-    category: string;
-    unit: string;
-    quantity: number;
-    unitPrice: number;
-    reorderPoint: number;
-    warehouseId: number;
+  id: number;
+  name: string;
+  category: string;
+  unit: string;
+  quantity: number;
+  unitPrice: number;
+  reorderPoint: number;
+  warehouseId: number;
 }
 
 interface Warehouse {
-    id: number;
-    name: string;
-    location: string;
-    isMain: boolean;
+  id: number;
+  name: string;
+  location: string;
+  isMain: boolean;
 }
 
 interface MaterialRequest {
-    id: number;
-    materialName: string;
-    requestedBy: string;
-    quantity: number;
-    requestDate: string;
-    status: 'Pending' | 'Approved' | 'Rejected';
+  id: number;
+  materialName: string;
+  requestedBy: string;
+  quantity: number;
+  requestDate: string;
+  status: 'Pending' | 'Approved' | 'Rejected';
 }
 
 @Component({
-    selector: 'app-inventory',
-    standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
-    template: `
-    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
+  selector: 'app-inventory',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule],
+  template: `
+    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500 font-['Outfit']">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="flex items-center justify-between mb-10">
           <div>
-            <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">Inventory</h1>
-            <div class="flex p-1 bg-slate-200 dark:bg-slate-800 rounded-xl w-fit">
+            <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-4 tracking-tight">{{ 'inventory.title' | translate }}</h1>
+            <div class="flex p-1.5 bg-slate-100 dark:bg-slate-900 rounded-2xl w-fit border border-slate-200 dark:border-white/5">
               <button (click)="activeTab = 'materials'" 
                       [class.bg-white]="activeTab === 'materials'" 
-                      [class.shadow-sm]="activeTab === 'materials'"
+                      [class.dark:bg-slate-800]="activeTab === 'materials'"
                       [class.text-slate-900]="activeTab === 'materials'"
-                      [class.dark:bg-slate-700]="activeTab === 'materials'"
                       [class.dark:text-white]="activeTab === 'materials'"
-                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
-                  Materials
+                      [class.shadow-xl]="activeTab === 'materials'"
+                      class="px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-500 transition-all duration-300 hover:text-slate-700 dark:hover:text-slate-300">
+                  {{ 'inventory.tabs.materials' | translate }}
               </button>
               <button (click)="activeTab = 'warehouses'" 
                       [class.bg-white]="activeTab === 'warehouses'" 
-                      [class.shadow-sm]="activeTab === 'warehouses'"
+                      [class.dark:bg-slate-800]="activeTab === 'warehouses'"
                       [class.text-slate-900]="activeTab === 'warehouses'"
-                      [class.dark:bg-slate-700]="activeTab === 'warehouses'"
                       [class.dark:text-white]="activeTab === 'warehouses'"
-                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
-                  Warehouses
+                      [class.shadow-xl]="activeTab === 'warehouses'"
+                      class="px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-500 transition-all duration-300 hover:text-slate-700 dark:hover:text-slate-300">
+                  {{ 'inventory.tabs.warehouses' | translate }}
               </button>
               <button (click)="activeTab = 'requests'" 
                       [class.bg-white]="activeTab === 'requests'" 
-                      [class.shadow-sm]="activeTab === 'requests'"
+                      [class.dark:bg-slate-800]="activeTab === 'requests'"
                       [class.text-slate-900]="activeTab === 'requests'"
-                      [class.dark:bg-slate-700]="activeTab === 'requests'"
                       [class.dark:text-white]="activeTab === 'requests'"
-                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
-                  Requests
+                      [class.shadow-xl]="activeTab === 'requests'"
+                      class="px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-500 transition-all duration-300 hover:text-slate-700 dark:hover:text-slate-300">
+                  {{ 'inventory.tabs.requests' | translate }}
               </button>
             </div>
           </div>
@@ -246,47 +246,47 @@ interface MaterialRequest {
   `
 })
 export class InventoryComponent implements OnInit {
-    activeTab: 'materials' | 'warehouses' | 'requests' = 'materials';
+  activeTab: 'materials' | 'warehouses' | 'requests' = 'materials';
 
-    materials: Material[] = [
-        { id: 1, name: 'Cement Portland', category: 'Construction', unit: 'bags', quantity: 250, unitPrice: 12.50, reorderPoint: 50, warehouseId: 1 },
-        { id: 2, name: 'Steel Rebar 12mm', category: 'Steel', unit: 'pieces', quantity: 500, unitPrice: 8.75, reorderPoint: 100, warehouseId: 1 },
-        { id: 3, name: 'Sand', category: 'Aggregates', unit: 'm3', quantity: 45, unitPrice: 35.00, reorderPoint: 20, warehouseId: 2 },
-        { id: 4, name: 'Gravel', category: 'Aggregates', unit: 'm3', quantity: 30, unitPrice: 28.00, reorderPoint: 15, warehouseId: 2 },
-        { id: 5, name: 'Concrete Blocks', category: 'Masonry', unit: 'pieces', quantity: 1200, unitPrice: 2.50, reorderPoint: 200, warehouseId: 1 },
-        { id: 6, name: 'Electrical Wire', category: 'Electrical', unit: 'meters', quantity: 800, unitPrice: 1.25, reorderPoint: 100, warehouseId: 3 },
-    ];
+  materials: Material[] = [
+    { id: 1, name: 'Cement Portland', category: 'Construction', unit: 'bags', quantity: 250, unitPrice: 12.50, reorderPoint: 50, warehouseId: 1 },
+    { id: 2, name: 'Steel Rebar 12mm', category: 'Steel', unit: 'pieces', quantity: 500, unitPrice: 8.75, reorderPoint: 100, warehouseId: 1 },
+    { id: 3, name: 'Sand', category: 'Aggregates', unit: 'm3', quantity: 45, unitPrice: 35.00, reorderPoint: 20, warehouseId: 2 },
+    { id: 4, name: 'Gravel', category: 'Aggregates', unit: 'm3', quantity: 30, unitPrice: 28.00, reorderPoint: 15, warehouseId: 2 },
+    { id: 5, name: 'Concrete Blocks', category: 'Masonry', unit: 'pieces', quantity: 1200, unitPrice: 2.50, reorderPoint: 200, warehouseId: 1 },
+    { id: 6, name: 'Electrical Wire', category: 'Electrical', unit: 'meters', quantity: 800, unitPrice: 1.25, reorderPoint: 100, warehouseId: 3 },
+  ];
 
-    warehouses: Warehouse[] = [
-        { id: 1, name: 'Main Warehouse', location: 'Cairo Industrial Zone', isMain: true },
-        { id: 2, name: 'Secondary Storage', location: 'Giza Compound', isMain: false },
-        { id: 3, name: 'Electrical Depot', location: 'New Cairo', isMain: false },
-    ];
+  warehouses: Warehouse[] = [
+    { id: 1, name: 'Main Warehouse', location: 'Cairo Industrial Zone', isMain: true },
+    { id: 2, name: 'Secondary Storage', location: 'Giza Compound', isMain: false },
+    { id: 3, name: 'Electrical Depot', location: 'New Cairo', isMain: false },
+  ];
 
-    materialRequests: MaterialRequest[] = [
-        { id: 1, materialName: 'Cement Portland', requestedBy: 'Ahmed Hassan', quantity: 50, requestDate: '2024-01-15', status: 'Pending' },
-        { id: 2, materialName: 'Steel Rebar 12mm', requestedBy: 'Mohamed Ali', quantity: 200, requestDate: '2024-01-14', status: 'Approved' },
-        { id: 3, materialName: 'Sand', requestedBy: 'Ibrahim', quantity: 15, requestDate: '2024-01-13', status: 'Pending' },
-        { id: 4, materialName: 'Electrical Wire', requestedBy: 'Hassan', quantity: 300, requestDate: '2024-01-12', status: 'Rejected' },
-    ];
+  materialRequests: MaterialRequest[] = [
+    { id: 1, materialName: 'Cement Portland', requestedBy: 'Ahmed Hassan', quantity: 50, requestDate: '2024-01-15', status: 'Pending' },
+    { id: 2, materialName: 'Steel Rebar 12mm', requestedBy: 'Mohamed Ali', quantity: 200, requestDate: '2024-01-14', status: 'Approved' },
+    { id: 3, materialName: 'Sand', requestedBy: 'Ibrahim', quantity: 15, requestDate: '2024-01-13', status: 'Pending' },
+    { id: 4, materialName: 'Electrical Wire', requestedBy: 'Hassan', quantity: 300, requestDate: '2024-01-12', status: 'Rejected' },
+  ];
 
-    ngOnInit() { }
+  ngOnInit() { }
 
-    getWarehouseStock(warehouseId: number): number {
-        return this.materials
-            .filter(m => m.warehouseId === warehouseId)
-            .reduce((sum, m) => sum + m.quantity, 0);
-    }
+  getWarehouseStock(warehouseId: number): number {
+    return this.materials
+      .filter(m => m.warehouseId === warehouseId)
+      .reduce((sum, m) => sum + m.quantity, 0);
+  }
 
-    openAddModal() {
-        console.log('Open add modal for:', this.activeTab);
-    }
+  openAddModal() {
+    console.log('Open add modal for:', this.activeTab);
+  }
 
-    approveRequest(request: MaterialRequest) {
-        request.status = 'Approved';
-    }
+  approveRequest(request: MaterialRequest) {
+    request.status = 'Approved';
+  }
 
-    rejectRequest(request: MaterialRequest) {
-        request.status = 'Rejected';
-    }
+  rejectRequest(request: MaterialRequest) {
+    request.status = 'Rejected';
+  }
 }

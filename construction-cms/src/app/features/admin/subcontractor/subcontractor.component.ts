@@ -11,45 +11,45 @@ import { I18nService } from '../../../core/i18n/i18n.service';
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule],
   template: `
-    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
+    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500 font-['Outfit']">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
-            <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">{{ 'subcontractors.title' | translate }}</h1>
-            <div class="flex p-1 bg-slate-200 dark:bg-slate-800 rounded-xl w-fit">
+            <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-4 tracking-tight">{{ 'subcontractors.title' | translate }}</h1>
+            <div class="flex p-1.5 bg-slate-100 dark:bg-slate-900 rounded-2xl w-fit border border-slate-200 dark:border-white/5">
               <button (click)="activeTab = 'list'" 
                       [class.bg-white]="activeTab === 'list'" 
-                      [class.shadow-sm]="activeTab === 'list'"
+                      [class.dark:bg-slate-800]="activeTab === 'list'"
                       [class.text-slate-900]="activeTab === 'list'"
-                      [class.dark:bg-slate-700]="activeTab === 'list'"
                       [class.dark:text-white]="activeTab === 'list'"
-                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
+                      [class.shadow-xl]="activeTab === 'list'"
+                      class="px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-500 transition-all duration-300 hover:text-slate-700 dark:hover:text-slate-300">
                   {{ 'subcontractors.list' | translate }}
               </button>
               <button (click)="activeTab = 'contracts'" 
                       [class.bg-white]="activeTab === 'contracts'" 
-                      [class.shadow-sm]="activeTab === 'contracts'"
+                      [class.dark:bg-slate-800]="activeTab === 'contracts'"
                       [class.text-slate-900]="activeTab === 'contracts'"
-                      [class.dark:bg-slate-700]="activeTab === 'contracts'"
                       [class.dark:text-white]="activeTab === 'contracts'"
-                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
+                      [class.shadow-xl]="activeTab === 'contracts'"
+                      class="px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-500 transition-all duration-300 hover:text-slate-700 dark:hover:text-slate-300">
                   {{ 'subcontractors.contracts' | translate }}
               </button>
               <button (click)="activeTab = 'payments'" 
                       [class.bg-white]="activeTab === 'payments'" 
-                      [class.shadow-sm]="activeTab === 'payments'"
+                      [class.dark:bg-slate-800]="activeTab === 'payments'"
                       [class.text-slate-900]="activeTab === 'payments'"
-                      [class.dark:bg-slate-700]="activeTab === 'payments'"
                       [class.dark:text-white]="activeTab === 'payments'"
-                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
+                      [class.shadow-xl]="activeTab === 'payments'"
+                      class="px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-500 transition-all duration-300 hover:text-slate-700 dark:hover:text-slate-300">
                   {{ 'subcontractors.payments' | translate }}
               </button>
             </div>
           </div>
 
           <button (click)="openAddModal()" 
-                  class="px-8 py-4 rounded-[2rem] bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center">
+                  class="px-8 py-4 rounded-[2rem] bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold text-xs uppercase tracking-[0.2em] shadow-2xl shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex items-center">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
             </svg>
@@ -64,9 +64,9 @@ import { I18nService } from '../../../core/i18n/i18n.service';
               <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 group-hover:scale-110 transition-transform">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
               </div>
-              <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">{{ 'subcontractors.total' | translate }}</span>
+              <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">{{ 'subcontractors.total' | translate }}</span>
             </div>
-            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{{ summary?.totalSubcontractors || 0 }}</h3>
+            <h3 class="text-4xl font-bold text-slate-900 dark:text-white tracking-tighter">{{ summary?.totalSubcontractors || 0 }}</h3>
           </div>
 
           <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 group hover:border-emerald-500/30 transition-all">
@@ -74,9 +74,9 @@ import { I18nService } from '../../../core/i18n/i18n.service';
               <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
               </div>
-              <span class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{{ 'subcontractors.active' | translate }}</span>
+              <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">{{ 'subcontractors.active' | translate }}</span>
             </div>
-            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{{ summary?.activeSubcontractors || 0 }}</h3>
+            <h3 class="text-4xl font-bold text-slate-900 dark:text-white tracking-tighter">{{ summary?.activeSubcontractors || 0 }}</h3>
           </div>
 
           <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 group hover:border-amber-500/30 transition-all">
@@ -84,9 +84,9 @@ import { I18nService } from '../../../core/i18n/i18n.service';
               <div class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
               </div>
-              <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest">{{ 'subcontractors.pending' | translate }}</span>
+              <span class="text-[10px] font-bold text-amber-500 uppercase tracking-widest">{{ 'subcontractors.pending' | translate }}</span>
             </div>
-            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{{ summary?.pendingApproval || 0 }}</h3>
+            <h3 class="text-4xl font-bold text-slate-900 dark:text-white tracking-tighter">{{ summary?.pendingApproval || 0 }}</h3>
           </div>
 
           <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 group hover:border-rose-500/30 transition-all">
@@ -94,9 +94,9 @@ import { I18nService } from '../../../core/i18n/i18n.service';
               <div class="w-12 h-12 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500 group-hover:scale-110 transition-transform">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
               </div>
-              <span class="text-[10px] font-black text-rose-500 uppercase tracking-widest">{{ 'subcontractors.expiring' | translate }}</span>
+              <span class="text-[10px] font-bold text-rose-500 uppercase tracking-widest">{{ 'subcontractors.expiring' | translate }}</span>
             </div>
-            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{{ summary?.expiringInsurance || 0 }}</h3>
+            <h3 class="text-4xl font-bold text-slate-900 dark:text-white tracking-tighter">{{ summary?.expiringInsurance || 0 }}</h3>
           </div>
         </div>
 
@@ -138,12 +138,12 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                 <table class="w-full">
                   <thead class="bg-slate-50 dark:bg-slate-950/50">
                     <tr>
-                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.name' | translate }}</th>
-                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.trade' | translate }}</th>
-                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.rating' | translate }}</th>
-                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.projects' | translate }}</th>
-                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.status' | translate }}</th>
-                      <th class="px-8 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.actions' | translate }}</th>
+                      <th class="px-8 py-5 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'subcontractors.name' | translate }}</th>
+                      <th class="px-8 py-5 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'subcontractors.trade' | translate }}</th>
+                      <th class="px-8 py-5 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'subcontractors.rating' | translate }}</th>
+                      <th class="px-8 py-5 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'subcontractors.projects' | translate }}</th>
+                      <th class="px-8 py-5 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'subcontractors.status' | translate }}</th>
+                      <th class="px-8 py-5 text-right text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'subcontractors.actions' | translate }}</th>
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-slate-100 dark:divide-white/5">
@@ -151,17 +151,17 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                       <tr class="hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors group">
                         <td class="px-8 py-5">
                           <div class="flex items-center space-x-4">
-                             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 flex items-center justify-center text-indigo-500 font-black group-hover:scale-110 transition-transform">
+                             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 flex items-center justify-center text-indigo-500 font-bold group-hover:scale-110 transition-transform">
                                {{ sub.name.substring(0, 1) }}
                              </div>
                              <div>
-                               <p class="text-sm font-black text-slate-900 dark:text-white">{{ sub.name }}</p>
+                               <p class="text-sm font-bold text-slate-900 dark:text-white">{{ sub.name }}</p>
                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ sub.licenseNumber || 'No License' }}</p>
                              </div>
                           </div>
                         </td>
                         <td class="px-8 py-5">
-                          <span class="px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest">{{ sub.tradeSpecialty }}</span>
+                          <span class="px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">{{ sub.tradeSpecialty }}</span>
                         </td>
                         <td class="px-8 py-5">
                           <div class="flex items-center space-x-2">
@@ -172,17 +172,17 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                                   </svg>
                                 }
                              </div>
-                             <span class="text-[10px] font-black text-slate-400 tracking-tighter">{{ (sub.averageRating ?? 0).toFixed(1) }}</span>
+                             <span class="text-[10px] font-bold text-slate-400 tracking-tighter">{{ (sub.averageRating ?? 0).toFixed(1) }}</span>
                           </div>
                         </td>
                         <td class="px-8 py-5">
                           <div class="flex flex-col">
-                             <span class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{{ sub.totalProjectsCompleted || 0 }} {{ 'projects.completed' | translate }}</span>
+                             <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">{{ sub.totalProjectsCompleted || 0 }} {{ 'projects.completed' | translate }}</span>
                              <span class="text-[10px] font-bold text-slate-400 italic">{{ sub.totalProjectsOngoing || 0 }} {{ 'projects.active' | translate }}</span>
                           </div>
                         </td>
                         <td class="px-8 py-5">
-                          <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm"
+                          <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm"
                                 [ngClass]="sub.isApproved ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-amber-500/10 text-amber-600 dark:text-amber-400'">
                             {{ sub.isApproved ? ('common.approved' | translate) : ('common.pending' | translate) }}
                           </span>
@@ -206,7 +206,7 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                     } @empty {
                       <tr>
                         <td colspan="6" class="px-8 py-20 text-center">
-                          <p class="text-xs font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.no_subcontractors' | translate }}</p>
+                          <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">{{ 'subcontractors.no_subcontractors' | translate }}</p>
                         </td>
                       </tr>
                     }
@@ -222,8 +222,8 @@ import { I18nService } from '../../../core/i18n/i18n.service';
             @for (contract of contracts; track contract.id) {
               <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all group">
                  <div class="flex justify-between items-start mb-6">
-                    <div class="px-3 py-1 rounded-lg bg-indigo-500/10 text-indigo-500 text-[10px] font-black uppercase tracking-widest">{{ contract.contractType }}</div>
-                    <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest"
+                    <div class="px-3 py-1 rounded-lg bg-indigo-500/10 text-indigo-500 text-[10px] font-bold uppercase tracking-widest">{{ contract.contractType }}</div>
+                    <span class="px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest"
                           [ngClass]="{
                             'bg-emerald-500/10 text-emerald-500': contract.status === 'Active',
                             'bg-blue-500/10 text-blue-500': contract.status === 'Completed',
@@ -232,16 +232,16 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                       {{ contract.status }}
                     </span>
                  </div>
-                 <h4 class="text-xl font-black text-slate-900 dark:text-white mb-2 leading-tight">{{ contract.title }}</h4>
-                 <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">{{ contract.projectName }}</p>
+                 <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-2 leading-tight">{{ contract.title }}</h4>
+                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">{{ contract.projectName }}</p>
                  
                  <div class="space-y-4 mb-8">
                     <div class="flex justify-between items-center text-xs">
                        <span class="font-bold text-slate-500 uppercase tracking-widest">{{ 'subcontractors.amount' | translate }}</span>
-                       <span class="font-black text-slate-900 dark:text-white">{{ contract.contractAmount | currency }}</span>
+                       <span class="font-bold text-slate-900 dark:text-white">{{ contract.contractAmount | currency }}</span>
                     </div>
                     <div class="space-y-2">
-                       <div class="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                       <div class="flex justify-between text-[10px] font-bold uppercase tracking-widest">
                           <span class="text-slate-500">{{ 'subcontractors.completion' | translate }}</span>
                           <span class="text-indigo-500">{{ contract.completionPercentage }}%</span>
                        </div>
@@ -252,8 +252,8 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                  </div>
 
                  <div class="flex gap-2">
-                    <button class="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-black text-[10px] uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">Details</button>
-                    <button class="flex-1 py-3 rounded-xl bg-indigo-500 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:scale-105 transition-all">Add Payment</button>
+                    <button class="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold text-[10px] uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">Details</button>
+                    <button class="flex-1 py-3 rounded-xl bg-indigo-500 text-white font-bold text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:scale-105 transition-all">Add Payment</button>
                  </div>
               </div>
             }
@@ -267,31 +267,31 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                 <table class="w-full">
                   <thead class="bg-slate-50 dark:bg-slate-950/50">
                     <tr>
-                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.payment_no' | translate }}</th>
-                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.name' | translate }}</th>
-                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.amount' | translate }}</th>
-                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.net_amount' | translate }}</th>
-                      <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.status' | translate }}</th>
-                      <th class="px-8 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'subcontractors.actions' | translate }}</th>
+                      <th class="px-8 py-5 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'subcontractors.payment_no' | translate }}</th>
+                      <th class="px-8 py-5 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'subcontractors.name' | translate }}</th>
+                      <th class="px-8 py-5 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'subcontractors.amount' | translate }}</th>
+                      <th class="px-8 py-5 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'subcontractors.net_amount' | translate }}</th>
+                      <th class="px-8 py-5 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'subcontractors.status' | translate }}</th>
+                      <th class="px-8 py-5 text-right text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'subcontractors.actions' | translate }}</th>
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-slate-100 dark:divide-white/5">
                     @for (payment of filteredPayments; track payment.id) {
                       <tr>
                         <td class="px-8 py-5">
-                          <span class="text-sm font-black text-slate-900 dark:text-white">{{ payment.paymentNumber }}</span>
+                          <span class="text-sm font-bold text-slate-900 dark:text-white">{{ payment.paymentNumber }}</span>
                         </td>
                         <td class="px-8 py-5">
                           <span class="text-xs font-bold text-slate-600 dark:text-slate-400">{{ payment.subcontractorName }}</span>
                         </td>
                         <td class="px-8 py-5">
-                          <span class="text-sm font-black text-slate-900 dark:text-white">{{ payment.amount | currency }}</span>
+                          <span class="text-sm font-bold text-slate-900 dark:text-white">{{ payment.amount | currency }}</span>
                         </td>
                         <td class="px-8 py-5">
-                          <span class="text-sm font-black text-indigo-500">{{ payment.netPayment | currency }}</span>
+                          <span class="text-sm font-bold text-indigo-500">{{ payment.netPayment | currency }}</span>
                         </td>
                         <td class="px-8 py-5">
-                          <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest"
+                          <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest"
                                 [ngClass]="{
                                   'bg-emerald-500/10 text-emerald-500': payment.status === 'Paid',
                                   'bg-blue-500/10 text-blue-500': payment.status === 'Approved',
@@ -302,10 +302,10 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                         </td>
                         <td class="px-8 py-5 text-right">
                            @if (payment.status === 'Pending') {
-                             <button (click)="approvePayment(payment)" class="px-4 py-2 rounded-xl bg-emerald-500 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-500/20 hover:scale-105 transition-all mr-2">Approve</button>
+                             <button (click)="approvePayment(payment)" class="px-4 py-2 rounded-xl bg-emerald-500 text-white font-bold text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-500/20 hover:scale-105 transition-all mr-2">Approve</button>
                            }
                            @if (payment.status === 'Approved') {
-                             <button (click)="markAsPaid(payment)" class="px-4 py-2 rounded-xl bg-blue-500 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-500/20 hover:scale-105 transition-all">Mark Paid</button>
+                             <button (click)="markAsPaid(payment)" class="px-4 py-2 rounded-xl bg-blue-500 text-white font-bold text-[10px] uppercase tracking-widest shadow-lg shadow-blue-500/20 hover:scale-105 transition-all">Mark Paid</button>
                            }
                         </td>
                       </tr>
@@ -323,7 +323,7 @@ import { I18nService } from '../../../core/i18n/i18n.service';
       <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
         <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-[2.5rem] shadow-2xl relative border border-slate-200 dark:border-white/5">
           <div class="p-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between">
-            <h2 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'subcontractors.add_subcontractor' | translate }}</h2>
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ 'subcontractors.add_subcontractor' | translate }}</h2>
             <button (click)="showAddModal = false" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-white transition-all">
                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
@@ -331,12 +331,12 @@ import { I18nService } from '../../../core/i18n/i18n.service';
           <div class="p-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                <div class="space-y-2">
-                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{{ 'subcontractors.name' | translate }}</label>
+                 <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">{{ 'subcontractors.name' | translate }}</label>
                  <input type="text" [(ngModel)]="newSubcontractor.name" 
                         class="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all">
                </div>
                <div class="space-y-2">
-                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">{{ 'subcontractors.trade' | translate }}</label>
+                 <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">{{ 'subcontractors.trade' | translate }}</label>
                  <select [(ngModel)]="newSubcontractor.tradeSpecialty" 
                          class="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none appearance-none">
                     <option value="">Select Trade</option>
@@ -347,7 +347,7 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                </div>
             </div>
             <button (click)="saveSubcontractor()" 
-                    class="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all">
+                    class="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold text-xs uppercase tracking-widest shadow-xl shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all">
               {{ 'subcontractors.save' | translate }}
             </button>
           </div>

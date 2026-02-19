@@ -4,6 +4,9 @@ namespace ConstructionManagement.Application.Interfaces;
 
 public interface IHRService
 {
+    // Team Members
+    Task<IEnumerable<TeamMemberDto>> GetTeamMembersAsync();
+    
     // Attendance
     Task<IEnumerable<AttendanceDto>> GetAttendancesAsync(DateTime? date = null, int? userId = null);
     Task<AttendanceDto> CheckInAsync(CheckInRequest request);
@@ -26,4 +29,6 @@ public interface IHRService
     Task<PayrollDto> GeneratePayrollForUserAsync(int userId, int month, int year);
     Task ProcessMonthlyPayrollAsync(int month, int year);
     Task<bool> MarkAsPaidAsync(int payrollId);
+    Task<IEnumerable<PayrollDto>> GetUserPayrollHistoryAsync(int userId);
+    Task<UserHRStatsDto> GetUserHRStatsAsync(int userId);
 }

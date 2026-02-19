@@ -18,6 +18,16 @@ public class PayrollDto
     public string? Note { get; set; }
 }
 
+public class UserHRStatsDto
+{
+    public decimal MonthlySalary { get; set; }
+    public int AnnualLeaveDays { get; set; }
+    public int UsedLeaveDays { get; set; }
+    public int RemainingLeaveDays { get; set; }
+    public int PendingRequests { get; set; }
+    public int WorkDaysThisMonth { get; set; }
+}
+
 public class GeneratePayrollRequest
 {
     [Required(ErrorMessage = "Month is required")]

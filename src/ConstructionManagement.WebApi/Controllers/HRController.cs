@@ -19,6 +19,14 @@ public class HRController : ControllerBase
         _companyContext = companyContext;
     }
 
+    // Team Members
+    [HttpGet("team-members")]
+    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    public async Task<ActionResult<IEnumerable<TeamMemberDto>>> GetTeamMembers()
+    {
+        return Ok(await _hrService.GetTeamMembersAsync());
+    }
+
     // Attendance
     [HttpGet("attendance")]
     [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
@@ -131,6 +139,20 @@ public class HRController : ControllerBase
     public async Task<ActionResult<IEnumerable<PayrollDto>>> GetPayrolls([FromQuery] int month, [FromQuery] int year)
     {
         return Ok(await _hrService.GetPayrollsAsync(month, year));
+    }
+
+    [HttpGet("my-payroll")]
+    public async Task<ActionResult<IEnumerable<PayrollDto>>> GetMyPayrollHistory()
+    {
+        var userId = _companyContext.CurrentUserId ?? throw new UnauthorizedAccessException("User not authenticated");
+        return Ok(await _hrService.GetUserPayrollHistoryAsync(userId));
+    }
+
+    [HttpGet("my-stats")]
+    public async Task<ActionResult<UserHRStatsDto>> GetMyHRStats()
+    {
+        var userId = _companyContext.CurrentUserId ?? throw new UnauthorizedAccessException("User not authenticated");
+        return Ok(await _hrService.GetUserHRStatsAsync(userId));
     }
 
     [HttpPost("payroll/process")]

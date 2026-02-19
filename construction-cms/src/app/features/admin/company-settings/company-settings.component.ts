@@ -21,86 +21,94 @@ import { AnnouncementService } from '../../../core/services/announcement.service
    standalone: true,
    imports: [CommonModule, FormsModule, TranslateModule, ProjectHierarchyComponent, CompanyDesignSettingsComponent, CompanyPortfolioComponent, CompanyAnnouncementsManagerComponent],
    template: `
-    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
+    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 pb-32 transition-colors duration-500 font-['Outfit']">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
-        <!-- Page Title & Tabs -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-          <div>
-            <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">{{ 'companySettings.title' | translate }}</h1>
-            <div class="flex p-1 bg-slate-200 dark:bg-slate-800 rounded-xl w-fit">
-              <button (click)="activeTab = 'settings'" 
-                      [class.bg-white]="activeTab === 'settings'" 
-                      [class.shadow-sm]="activeTab === 'settings'"
-                      [class.text-slate-900]="activeTab === 'settings'"
-                      [class.dark:bg-slate-700]="activeTab === 'settings'"
-                      [class.dark:text-white]="activeTab === 'settings'"
-                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
-                  {{ 'companySettings.settings' | translate }}
-              </button>
-              <button (click)="activeTab = 'roles'" 
-                      [class.bg-white]="activeTab === 'roles'" 
-                      [class.shadow-sm]="activeTab === 'roles'"
-                      [class.text-slate-900]="activeTab === 'roles'"
-                      [class.dark:bg-slate-700]="activeTab === 'roles'"
-                      [class.dark:text-white]="activeTab === 'roles'"
-                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
-                  {{ 'companySettings.rolesPermissions' | translate }}
-              </button>
-              <button (click)="activeTab = 'hierarchy'" 
-                      [class.bg-white]="activeTab === 'hierarchy'" 
-                      [class.shadow-sm]="activeTab === 'hierarchy'"
-                      [class.text-slate-900]="activeTab === 'hierarchy'"
-                      [class.dark:bg-slate-700]="activeTab === 'hierarchy'"
-                      [class.dark:text-white]="activeTab === 'hierarchy'"
-                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
-                  {{ 'companySettings.phases' | translate }}
-              </button>
-              <button (click)="activeTab = 'designs'" 
-                      [class.bg-white]="activeTab === 'designs'" 
-                      [class.shadow-sm]="activeTab === 'designs'"
-                      [class.text-slate-900]="activeTab === 'designs'"
-                      [class.dark:bg-slate-700]="activeTab === 'designs'"
-                      [class.dark:text-white]="activeTab === 'designs'"
-                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
-                  {{ 'companySettings.designs' | translate }}
-              </button>
-              <button (click)="activeTab = 'portfolio'" 
-                      [class.bg-white]="activeTab === 'portfolio'" 
-                      [class.shadow-sm]="activeTab === 'portfolio'"
-                      [class.text-slate-900]="activeTab === 'portfolio'"
-                      [class.dark:bg-slate-700]="activeTab === 'portfolio'"
-                      [class.dark:text-white]="activeTab === 'portfolio'"
-                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
-                  {{ 'companySettings.portfolio' | translate }}
-              </button>
-              <button (click)="activeTab = 'announcements'" 
-                      [class.bg-white]="activeTab === 'announcements'" 
-                      [class.shadow-sm]="activeTab === 'announcements'"
-                      [class.text-slate-900]="activeTab === 'announcements'"
-                      [class.dark:bg-slate-700]="activeTab === 'announcements'"
-                      [class.dark:text-white]="activeTab === 'announcements'"
-                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
-                  {{ 'companySettings.announcements' | translate }}
-              </button>
+        <div class="mb-12">
+          <h1 class="text-4xl font-bold text-slate-900 dark:text-white mb-8 tracking-tight">{{ 'companySettings.title' | translate }}</h1>
+          
+          <div class="bg-white dark:bg-slate-900 p-2 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-white/5 inline-flex flex-wrap gap-1">
+            <button (click)="activeTab = 'settings'" 
+                    [class.bg-slate-900]="activeTab === 'settings'" 
+                    [class.text-white]="activeTab === 'settings'"
+                    [class.dark:bg-white]="activeTab === 'settings'"
+                    [class.dark:text-slate-950]="activeTab === 'settings'"
+                    [class.text-slate-500]="activeTab !== 'settings'"
+                    class="px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                {{ 'companySettings.settings' | translate }}
+            </button>
+            <button (click)="activeTab = 'roles'" 
+                    [class.bg-slate-900]="activeTab === 'roles'" 
+                    [class.text-white]="activeTab === 'roles'"
+                    [class.dark:bg-white]="activeTab === 'roles'"
+                    [class.dark:text-slate-950]="activeTab === 'roles'"
+                    [class.text-slate-500]="activeTab !== 'roles'"
+                    class="px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                {{ 'companySettings.rolesPermissions' | translate }}
+            </button>
+            <button (click)="activeTab = 'hierarchy'" 
+                    [class.bg-slate-900]="activeTab === 'hierarchy'" 
+                    [class.text-white]="activeTab === 'hierarchy'"
+                    [class.dark:bg-white]="activeTab === 'hierarchy'"
+                    [class.dark:text-slate-950]="activeTab === 'hierarchy'"
+                    [class.text-slate-500]="activeTab !== 'hierarchy'"
+                    class="px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                {{ 'companySettings.phases' | translate }}
+            </button>
+            <button (click)="activeTab = 'designs'" 
+                    [class.bg-slate-900]="activeTab === 'designs'" 
+                    [class.text-white]="activeTab === 'designs'"
+                    [class.dark:bg-white]="activeTab === 'designs'"
+                    [class.dark:text-slate-950]="activeTab === 'designs'"
+                    [class.text-slate-500]="activeTab !== 'designs'"
+                    class="px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                {{ 'companySettings.designs' | translate }}
+            </button>
+            <button (click)="activeTab = 'portfolio'" 
+                    [class.bg-slate-900]="activeTab === 'portfolio'" 
+                    [class.text-white]="activeTab === 'portfolio'"
+                    [class.dark:bg-white]="activeTab === 'portfolio'"
+                    [class.dark:text-slate-950]="activeTab === 'portfolio'"
+                    [class.text-slate-500]="activeTab !== 'portfolio'"
+                    class="px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                {{ 'companySettings.portfolio' | translate }}
+            </button>
+            <button (click)="activeTab = 'announcements'" 
+                    [class.bg-slate-900]="activeTab === 'announcements'" 
+                    [class.text-white]="activeTab === 'announcements'"
+                    [class.dark:bg-white]="activeTab === 'announcements'"
+                    [class.dark:text-slate-950]="activeTab === 'announcements'"
+                    [class.text-slate-500]="activeTab !== 'announcements'"
+                    class="px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                {{ 'companySettings.announcements' | translate }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Sticky Bottom Bar for Save -->
+        @if (activeTab === 'settings' && isDirty) {
+          <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] w-fit animate-in fade-in slide-in-from-bottom-8 duration-500">
+            <div class="bg-slate-900/90 dark:bg-white/90 backdrop-blur-xl px-8 py-4 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/10 dark:border-slate-200 flex items-center gap-8">
+              <div class="hidden md:block">
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-400 dark:text-cyan-600 mb-0.5">Unsaved Changes</p>
+                <p class="text-xs text-white/60 dark:text-slate-600 font-medium">You have modified your business profile.</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <button (click)="loadSettings()" class="px-6 py-3 rounded-xl text-white/50 dark:text-slate-400 text-[11px] font-bold uppercase tracking-widest hover:text-white dark:hover:text-slate-950 transition-colors">
+                  Discard
+                </button>
+                <button (click)="saveSettings()" 
+                        [disabled]="loading"
+                        class="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-[11px] uppercase tracking-[0.2em] shadow-xl shadow-cyan-500/20 hover:scale-105 active:scale-95 transition-all flex items-center">
+                  @if (loading) {
+                    <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                  }
+                  {{ 'common.save' | translate }}
+                </button>
+              </div>
             </div>
           </div>
-
-          @if (activeTab === 'settings') {
-          <button 
-            (click)="saveSettings()"
-            [disabled]="loading || !isDirty"
-            class="px-8 py-4 rounded-[2rem] bg-gradient-to-br from-cyan-500 to-blue-600 text-white font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-cyan-500/20 hover:scale-105 active:scale-95 transition-all flex items-center disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed">
-            @if (loading) {
-              <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-            }
-            {{ 'common.save' | translate }}
-          </button>
-          }
-        </div>
+        }
 
         @if (activeTab === 'settings') {
 
@@ -134,19 +142,19 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                           </div>
                         }
                      </div>
-                     <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Company Logo</p>
+                     <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Company Logo</p>
                   </div>
 
                   <!-- Details -->
                   <div class="flex-1 space-y-6 w-full">
                      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                           <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Company Name</label>
+                           <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">Company Name</label>
                            <input type="text" [(ngModel)]="settings.name" 
                                   class="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 font-bold text-slate-900 dark:text-white focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all">
                         </div>
                         <div>
-                           <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Business Address</label>
+                           <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">Business Address</label>
                            <input type="text" [(ngModel)]="settings.address" 
                                   class="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 font-bold text-slate-900 dark:text-white focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all">
                         </div>
@@ -175,7 +183,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                      </svg>
                    </div>
                    <div>
-                     <h2 class="text-sm font-black text-slate-400 uppercase tracking-[0.2em]">{{ 'modules' | translate }}</h2>
+                     <h2 class="text-sm font-bold text-slate-400 uppercase tracking-[0.2em]">{{ 'modules' | translate }}</h2>
                       <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">{{ 'companySettings.platformControl' | translate }}</p>
                    </div>
                  </div>
@@ -184,7 +192,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                        <!-- Allow Measured -->
                        <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                          <span class="text-xs font-black text-slate-700 dark:text-slate-300">{{ 'allowMeasured' | translate }}</span>
+                          <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ 'allowMeasured' | translate }}</span>
                           <label class="relative inline-flex items-center cursor-pointer">
                              <input type="checkbox" [(ngModel)]="settings.allowMeasured" class="sr-only peer">
                              <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
@@ -193,7 +201,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
 
                        <!-- Allow Supervision -->
                        <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                          <span class="text-xs font-black text-slate-700 dark:text-slate-300">{{ 'allowSupervision' | translate }}</span>
+                          <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ 'allowSupervision' | translate }}</span>
                           <label class="relative inline-flex items-center cursor-pointer">
                              <input type="checkbox" [(ngModel)]="settings.allowSupervision" class="sr-only peer">
                              <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
@@ -202,7 +210,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
 
                        <!-- Allow Packages -->
                        <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                          <span class="text-xs font-black text-slate-700 dark:text-slate-300">{{ 'allowPackages' | translate }}</span>
+                          <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ 'allowPackages' | translate }}</span>
                           <label class="relative inline-flex items-center cursor-pointer">
                              <input type="checkbox" [(ngModel)]="settings.allowPackages" class="sr-only peer">
                              <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
@@ -211,7 +219,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
 
                        <!-- Allow Locations -->
                        <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                          <span class="text-xs font-black text-slate-700 dark:text-slate-300">{{ 'allowLocations' | translate }}</span>
+                          <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ 'allowLocations' | translate }}</span>
                           <label class="relative inline-flex items-center cursor-pointer">
                              <input type="checkbox" [(ngModel)]="settings.allowLocations" class="sr-only peer">
                              <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
@@ -220,7 +228,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
 
                        <!-- Allow HR -->
                        <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                          <span class="text-xs font-black text-slate-700 dark:text-slate-300">{{ 'allowHR' | translate }}</span>
+                          <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ 'allowHR' | translate }}</span>
                           <label class="relative inline-flex items-center cursor-pointer">
                              <input type="checkbox" [(ngModel)]="settings.allowHR" class="sr-only peer">
                              <div class="w-12 h-7 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
@@ -230,7 +238,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                         <!-- Allow Add Progress Entry -->
                         <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
                            <div>
-                              <span class="text-xs font-black text-slate-700 dark:text-slate-300 block">{{ 'companySettings.progressEntry' | translate }}</span>
+                              <span class="text-xs font-bold text-slate-700 dark:text-slate-300 block">{{ 'companySettings.progressEntry' | translate }}</span>
                               <span class="text-[8px] text-slate-400">{{ 'companySettings.workersCanLogProgress' | translate }}</span>
                            </div>
                            <label class="relative inline-flex items-center cursor-pointer">
@@ -242,7 +250,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                         <!-- Allow Reopen Closed Day -->
                         <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
                            <div>
-                              <span class="text-xs font-black text-slate-700 dark:text-slate-300 block">{{ 'companySettings.reopenClosedDay' | translate }}</span>
+                              <span class="text-xs font-bold text-slate-700 dark:text-slate-300 block">{{ 'companySettings.reopenClosedDay' | translate }}</span>
                               <span class="text-[8px] text-slate-400">{{ 'companySettings.adminsCanUnlockDays' | translate }}</span>
                            </div>
                            <label class="relative inline-flex items-center cursor-pointer">
@@ -254,7 +262,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                         <!-- Auto Close Day -->
                         <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
                            <div>
-                              <span class="text-xs font-black text-slate-700 dark:text-slate-300 block">{{ 'companySettings.autoCloseDay' | translate }}</span>
+                              <span class="text-xs font-bold text-slate-700 dark:text-slate-300 block">{{ 'companySettings.autoCloseDay' | translate }}</span>
                               <span class="text-[8px] text-slate-400">{{ 'companySettings.autoLockScheduledTime' | translate }}</span>
                            </div>
                            <label class="relative inline-flex items-center cursor-pointer">
@@ -267,7 +275,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                      <!-- Auto Close Time (only shown if Auto Close is enabled) -->
                      @if (settings.autoCloseDay) {
                      <div class="mt-6 p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20">
-                        <label class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest block mb-2">{{ 'companySettings.defaultAutoCloseTime' | translate }}</label>
+                        <label class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest block mb-2">{{ 'companySettings.defaultAutoCloseTime' | translate }}</label>
                         <input type="time" [(ngModel)]="settings.autoCloseDayTime" 
                                class="w-full max-w-xs px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-500/30 text-slate-900 dark:text-white font-bold text-sm outline-none focus:ring-4 focus:ring-indigo-500/10">
                         <p class="text-[9px] text-slate-500 mt-2">{{ 'companySettings.companyAdminOverride' | translate }}</p>
@@ -278,14 +286,14 @@ import { AnnouncementService } from '../../../core/services/announcement.service
 
               <!-- Client Visibility -->
               <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
-                 <h2 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'clientPortal' | translate }}</h2>
+                 <h2 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'clientPortal' | translate }}</h2>
                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     @for (opt of [{k:'clientCanSeeFinancials', l:'seeFinancials'}, {k:'clientCanSeeMedia', l:'seeMedia'}, {k:'clientCanSeeBOQ', l:'seeBoq'}]; track opt.k) {
                     <div (click)="toggleOption(opt.k)" 
                          [class.ring-2]="getOptionValue(opt.k)"
                          [class.ring-indigo-500]="getOptionValue(opt.k)"
                          class="cursor-pointer p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 text-center transition-all">
-                       <p class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">{{ opt.l | translate }}</p>
+                       <p class="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest">{{ opt.l | translate }}</p>
                     </div>
                     }
                  </div>
@@ -293,26 +301,26 @@ import { AnnouncementService } from '../../../core/services/announcement.service
 
               <!-- Notifications & Delays -->
               <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
-                 <h2 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'delayAndNotifications' | translate }}</h2>
+                 <h2 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'delayAndNotifications' | translate }}</h2>
                  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
-                       <span class="text-xs font-black text-slate-700 dark:text-slate-300">{{ 'enableDelayAlerts' | translate }}</span>
+                       <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ 'enableDelayAlerts' | translate }}</span>
                        <input type="checkbox" [(ngModel)]="settings.enableDelayNotification" class="w-12 h-6 rounded-full accent-indigo-500 cursor-pointer">
                     </div>
                     <div class="space-y-1 transition-opacity" [class.opacity-40]="!settings.enableDelayNotification">
-                       <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'notificationInterval' | translate }}</label>
+                       <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'notificationInterval' | translate }}</label>
                        <input type="number" [(ngModel)]="settings.delayNotificationIntervalDays" 
                               [disabled]="!settings.enableDelayNotification"
                               class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border-none outline-none font-bold disabled:cursor-not-allowed">
                     </div>
                      <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 transition-opacity" [class.opacity-40]="!settings.enableDelayNotification">
-                        <span class="text-xs font-black text-slate-700 dark:text-slate-300">{{ 'companySettings.sendEmail' | translate }}</span>
+                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ 'companySettings.sendEmail' | translate }}</span>
                         <input type="checkbox" [(ngModel)]="settings.delayNotificationSendEmail" 
                                [disabled]="!settings.enableDelayNotification"
                                class="w-12 h-6 rounded-full accent-indigo-500 transition-all disabled:cursor-not-allowed">
                      </div>
                      <div class="space-y-1 transition-opacity" [class.opacity-40]="!settings.enableDelayNotification">
-                       <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'gracePeriod' | translate }}</label>
+                       <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'gracePeriod' | translate }}</label>
                        <input type="number" [(ngModel)]="settings.delayGracePeriodDays" 
                               [disabled]="!settings.enableDelayNotification"
                               class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border-none outline-none font-bold disabled:cursor-not-allowed">
@@ -322,22 +330,22 @@ import { AnnouncementService } from '../../../core/services/announcement.service
 
                <!-- Media & Invoices -->
                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
-                  <h2 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'companySettings.mediaInvoices' | translate }}</h2>
+                  <h2 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'companySettings.mediaInvoices' | translate }}</h2>
                   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                      <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
-                        <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.photoUpload' | translate }}</span>
+                        <span class="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.photoUpload' | translate }}</span>
                         <input type="checkbox" [(ngModel)]="settings.enablePhotoUpload" class="w-5 h-5 accent-indigo-500">
                      </div>
                      <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
-                        <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.photoReview' | translate }}</span>
+                        <span class="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.photoReview' | translate }}</span>
                         <input type="checkbox" [(ngModel)]="settings.requirePhotoReview" class="w-5 h-5 accent-indigo-500">
                      </div>
                      <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
-                        <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.invoiceReview' | translate }}</span>
+                        <span class="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.invoiceReview' | translate }}</span>
                         <input type="checkbox" [(ngModel)]="settings.enableInvoiceReview" class="w-5 h-5 accent-indigo-500">
                      </div>
                      <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
-                        <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.invoiceAggregation' | translate }}</span>
+                        <span class="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.invoiceAggregation' | translate }}</span>
                         <input type="checkbox" [(ngModel)]="settings.enableInvoiceAggregation" class="w-5 h-5 accent-indigo-500">
                      </div>
                   </div>
@@ -345,31 +353,31 @@ import { AnnouncementService } from '../../../core/services/announcement.service
 
                <!-- Daily Log Settings (Super Admin) -->
                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
-                  <h2 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'companySettings.dailyLogSettings' | translate }}</h2>
+                  <h2 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'companySettings.dailyLogSettings' | translate }}</h2>
                   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                      <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
                         <div>
-                           <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.progressEntry' | translate }}</span>
+                           <span class="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.progressEntry' | translate }}</span>
                            <span class="text-[8px] text-slate-400">{{ 'companySettings.allowWorkersAddProgress' | translate }}</span>
                         </div>
                         <input type="checkbox" [(ngModel)]="settings.allowAddProgressEntry" class="w-5 h-5 accent-indigo-500">
                      </div>
                      <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
                         <div>
-                           <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.reopenClosedDay' | translate }}</span>
+                           <span class="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.reopenClosedDay' | translate }}</span>
                            <span class="text-[8px] text-slate-400">{{ 'companySettings.allowReopeningDays' | translate }}</span>
                         </div>
                         <input type="checkbox" [(ngModel)]="settings.allowReopenClosedDay" class="w-5 h-5 accent-indigo-500">
                      </div>
                      <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
                         <div>
-                           <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.autoCloseDay' | translate }}</span>
+                           <span class="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.autoCloseDay' | translate }}</span>
                            <span class="text-[8px] text-slate-400">{{ 'companySettings.closeDayAutomatically' | translate }}</span>
                         </div>
                         <input type="checkbox" [(ngModel)]="settings.autoCloseDay" class="w-5 h-5 accent-indigo-500">
                      </div>
                      <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 transition-opacity" [class.opacity-40]="!settings.autoCloseDay">
-                        <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase block mb-2">{{ 'companySettings.closeTime' | translate }}</span>
+                        <span class="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase block mb-2">{{ 'companySettings.closeTime' | translate }}</span>
                         <input type="time" [(ngModel)]="settings.autoCloseDayTime" 
                                [disabled]="!settings.autoCloseDay"
                                class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold text-xs outline-none disabled:cursor-not-allowed">
@@ -388,15 +396,15 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                              </svg>
                           </div>
                           <div>
-                             <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.masterStructureSetup' | translate }}</h3>
+                             <h3 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.masterStructureSetup' | translate }}</h3>
                              <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">{{ 'companySettings.globalDefinition' | translate }}</p>
                           </div>
                        </div>
                        <div class="flex space-x-2">
-                         <button (click)="openPermissionModal()" class="px-5 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-black text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all">
+                         <button (click)="openPermissionModal()" class="px-5 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all">
                             + {{ 'addPermission' | translate }}
                          </button>
-                         <button (click)="openRoleModal()" class="px-5 py-3 rounded-xl bg-indigo-500 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all">
+                         <button (click)="openRoleModal()" class="px-5 py-3 rounded-xl bg-indigo-500 text-white font-bold text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all">
                             + {{ 'companySettings.addRole' | translate }}
                          </button>
                        </div>
@@ -405,7 +413,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                        <!-- Roles List (Master) -->
                        <div class="space-y-4">
-                          <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">{{ 'companySettings.masterRoles' | translate }}</h4>
+                          <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">{{ 'companySettings.masterRoles' | translate }}</h4>
                           <div class="space-y-3">
                              @for (role of companyRoles; track role.id) {
                              <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 flex items-center justify-between group/role hover:border-indigo-500/30 transition-all">
@@ -435,7 +443,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
 
                        <!-- Permissions List (Master) -->
                        <div class="space-y-4">
-                          <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">{{ 'companySettings.masterPermissions' | translate }}</h4>
+                          <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">{{ 'companySettings.masterPermissions' | translate }}</h4>
                           <div class="flex flex-wrap gap-2">
                              @for (perm of companyPermissions; track perm.id) {
                              <div class="px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 flex items-center space-x-3 group/perm hover:border-indigo-500/50 transition-all shadow-sm">
@@ -464,21 +472,21 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                       </div>
                       <div>
-                         <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.inventoryManagement' | translate }}</h3>
+                         <h3 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.inventoryManagement' | translate }}</h3>
                          <p class="text-[10px] text-violet-500 font-bold uppercase tracking-widest">{{ 'companySettings.moduleSettings' | translate }}</p>
                       </div>
                    </div>
                    @if (!settings.enableInventoryManagement) {
-                      <span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 text-[10px] font-black uppercase tracking-widest">{{ 'companySettings.disabled' | translate }}</span>
+                      <span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 text-[10px] font-bold uppercase tracking-widest">{{ 'companySettings.disabled' | translate }}</span>
                    } @else {
-                      <span class="px-3 py-1 rounded-full bg-violet-500/10 text-violet-600 text-[10px] font-black uppercase tracking-widest">{{ 'companySettings.active' | translate }}</span>
+                      <span class="px-3 py-1 rounded-full bg-violet-500/10 text-violet-600 text-[10px] font-bold uppercase tracking-widest">{{ 'companySettings.active' | translate }}</span>
                    }
                 </div>
 
                 @if (isSuperAdmin) {
                 <div class="flex items-center justify-between p-4 rounded-2xl bg-violet-50 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/20 mb-6">
                    <div>
-                      <span class="text-xs font-black text-violet-700 dark:text-violet-300 uppercase block">{{ 'companySettings.enableInventoryModule' | translate }}</span>
+                      <span class="text-xs font-bold text-violet-700 dark:text-violet-300 uppercase block">{{ 'companySettings.enableInventoryModule' | translate }}</span>
                       <span class="text-[8px] text-violet-500">{{ 'companySettings.controlInventoryActive' | translate }}</span>
                    </div>
                    <label class="relative inline-flex items-center cursor-pointer">
@@ -493,7 +501,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                    <!-- Require Approval -->
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
                       <div>
-                         <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.requireMaterialApproval' | translate }}</span>
+                         <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.requireMaterialApproval' | translate }}</span>
                          <span class="text-[9px] text-slate-400 font-medium">{{ 'companySettings.requestsNeedManagerSignOff' | translate }}</span>
                       </div>
                       <label class="relative inline-flex items-center cursor-pointer">
@@ -504,7 +512,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                    <!-- Stock Alerts -->
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
                       <div>
-                         <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.enableStockAlerts' | translate }}</span>
+                         <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.enableStockAlerts' | translate }}</span>
                          <span class="text-[9px] text-slate-400 font-medium">{{ 'companySettings.notifyLowInventory' | translate }}</span>
                       </div>
                       <label class="relative inline-flex items-center cursor-pointer">
@@ -527,21 +535,21 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path></svg>
                       </div>
                       <div>
-                         <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.equipmentManagement' | translate }}</h3>
+                         <h3 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.equipmentManagement' | translate }}</h3>
                          <p class="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">{{ 'companySettings.assetTrackingMaintenance' | translate }}</p>
                       </div>
                    </div>
                       @if (!settings.enableEquipmentManagement) {
-                      <span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 text-[10px] font-black uppercase tracking-widest">{{ 'companySettings.disabled' | translate }}</span>
+                      <span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 text-[10px] font-bold uppercase tracking-widest">{{ 'companySettings.disabled' | translate }}</span>
                    } @else {
-                      <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 text-[10px] font-black uppercase tracking-widest">{{ 'companySettings.active' | translate }}</span>
+                      <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 text-[10px] font-bold uppercase tracking-widest">{{ 'companySettings.active' | translate }}</span>
                    }
                 </div>
 
                 @if (isSuperAdmin) {
                 <div class="flex items-center justify-between p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 mb-6">
                    <div>
-                      <span class="text-xs font-black text-emerald-700 dark:text-emerald-300 uppercase block">{{ 'companySettings.enableEquipmentModule' | translate }}</span>
+                      <span class="text-xs font-bold text-emerald-700 dark:text-emerald-300 uppercase block">{{ 'companySettings.enableEquipmentModule' | translate }}</span>
                       <span class="text-[8px] text-emerald-500">{{ 'companySettings.controlAssetTrackingBilling' | translate }}</span>
                    </div>
                    <label class="relative inline-flex items-center cursor-pointer">
@@ -555,7 +563,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in slide-in-from-top-2 duration-300">
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
                       <div>
-                        <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.gpsTracking' | translate }}</span>
+                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.gpsTracking' | translate }}</span>
                         <span class="text-[9px] text-slate-400 font-medium">{{ 'companySettings.realtimeLocationUpdates' | translate }}</span>
                       </div>
                       <label class="relative inline-flex items-center cursor-pointer">
@@ -565,7 +573,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
                       <div>
-                        <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.rentalBilling' | translate }}</span>
+                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.rentalBilling' | translate }}</span>
                         <span class="text-[9px] text-slate-400 font-medium">{{ 'companySettings.trackCostsRentedGear' | translate }}</span>
                       </div>
                       <label class="relative inline-flex items-center cursor-pointer">
@@ -575,7 +583,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
                       <div>
-                        <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.utilization' | translate }}</span>
+                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.utilization' | translate }}</span>
                         <span class="text-[9px] text-slate-400 font-medium">{{ 'companySettings.trackUsageHours' | translate }}</span>
                       </div>
                       <label class="relative inline-flex items-center cursor-pointer">
@@ -585,7 +593,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
                       <div>
-                         <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.maintenanceAlert' | translate }}</span>
+                         <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.maintenanceAlert' | translate }}</span>
                          <span class="text-[9px] text-slate-400 font-medium">{{ 'companySettings.daysBeforeServiceDue' | translate }}</span>
                       </div>
                       <input type="number" [(ngModel)]="settings.maintenanceReminderDays" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs text-center">
@@ -607,7 +615,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                         </svg>
                      </div>
                      <div>
-                        <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.safetyManagement' | translate }}</h3>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.safetyManagement' | translate }}</h3>
                         <p class="text-[10px] text-amber-500 font-bold uppercase tracking-widest">{{ 'companySettings.complianceIncidentControl' | translate }}</p>
                      </div>
                   </div>
@@ -616,7 +624,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                @if (isSuperAdmin) {
                <div class="flex items-center justify-between p-4 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 mb-4">
                   <div>
-                     <span class="text-xs font-black text-amber-700 dark:text-amber-300 uppercase block">{{ 'companySettings.enableSafetyModule' | translate }}</span>
+                     <span class="text-xs font-bold text-amber-700 dark:text-amber-300 uppercase block">{{ 'companySettings.enableSafetyModule' | translate }}</span>
                      <span class="text-[8px] text-amber-500">{{ 'companySettings.controlSafetyProtocolsReporting' | translate }}</span>
                   </div>
                   <label class="relative inline-flex items-center cursor-pointer">
@@ -629,19 +637,19 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                @if (settings.enableSafetyManagement) {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.requireTraining' | translate }}</span>
+                      <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.requireTraining' | translate }}</span>
                       <input type="checkbox" [(ngModel)]="settings.requireSafetyTraining" class="w-5 h-5 accent-amber-500">
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.incidentEscalation' | translate }}</span>
+                      <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.incidentEscalation' | translate }}</span>
                       <input type="checkbox" [(ngModel)]="settings.enableIncidentEscalation" class="w-5 h-5 accent-amber-500">
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.inspectionFrequencyDays' | translate }}</span>
+                      <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.inspectionFrequencyDays' | translate }}</span>
                       <input type="number" [(ngModel)]="settings.safetyInspectionFrequencyDays" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.reportingWindowHours' | translate }}</span>
+                      <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.reportingWindowHours' | translate }}</span>
                       <input type="number" [(ngModel)]="settings.incidentReportingHours" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
                    </div>
                 </div>
@@ -661,7 +669,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                         </svg>
                      </div>
                      <div>
-                        <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.subcontractorManagement' | translate }}</h3>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.subcontractorManagement' | translate }}</h3>
                         <p class="text-[10px] text-rose-500 font-bold uppercase tracking-widest">{{ 'companySettings.partnerPerformanceCompliance' | translate }}</p>
                      </div>
                   </div>
@@ -670,7 +678,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                @if (isSuperAdmin) {
                <div class="flex items-center justify-between p-4 rounded-2xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 mb-4">
                   <div>
-                     <span class="text-xs font-black text-rose-700 dark:text-rose-300 uppercase block">{{ 'companySettings.enableSubcontractorModule' | translate }}</span>
+                     <span class="text-xs font-bold text-rose-700 dark:text-rose-300 uppercase block">{{ 'companySettings.enableSubcontractorModule' | translate }}</span>
                      <span class="text-[8px] text-rose-500">{{ 'companySettings.manageExternalLaborContracts' | translate }}</span>
                   </div>
                   <label class="relative inline-flex items-center cursor-pointer">
@@ -683,19 +691,19 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                @if (settings.enableSubcontractorManagement) {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.requireContractMapping' | translate }}</span>
+                      <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.requireContractMapping' | translate }}</span>
                       <input type="checkbox" [(ngModel)]="settings.requireSubcontractorContract" class="w-5 h-5 accent-rose-500">
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.enablePartnerRatings' | translate }}</span>
+                      <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.enablePartnerRatings' | translate }}</span>
                       <input type="checkbox" [(ngModel)]="settings.enableSubcontractorRatings" class="w-5 h-5 accent-rose-500">
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.minRatingThreshold' | translate }}</span>
+                      <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.minRatingThreshold' | translate }}</span>
                       <input type="number" [(ngModel)]="settings.minimumRatingThreshold" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.insuranceWarningDays' | translate }}</span>
+                      <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.insuranceWarningDays' | translate }}</span>
                       <input type="number" [(ngModel)]="settings.subcontractorInsuranceWarningDays" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
                    </div>
                 </div>
@@ -715,7 +723,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                         </svg>
                      </div>
                      <div>
-                        <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.qualityControl' | translate }}</h3>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.qualityControl' | translate }}</h3>
                         <p class="text-[10px] text-blue-500 font-bold uppercase tracking-widest">{{ 'companySettings.inspectionDefectMitigation' | translate }}</p>
                      </div>
                   </div>
@@ -724,7 +732,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                @if (isSuperAdmin) {
                <div class="flex items-center justify-between p-4 rounded-2xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 mb-4">
                   <div>
-                     <span class="text-xs font-black text-blue-700 dark:text-blue-300 uppercase block">{{ 'companySettings.enableQualityModule' | translate }}</span>
+                     <span class="text-xs font-bold text-blue-700 dark:text-blue-300 uppercase block">{{ 'companySettings.enableQualityModule' | translate }}</span>
                      <span class="text-[8px] text-blue-500">{{ 'companySettings.controlQualityStandardsPunchLists' | translate }}</span>
                   </div>
                   <label class="relative inline-flex items-center cursor-pointer">
@@ -737,19 +745,19 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                @if (settings.enableQualityControl) {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.defectTracking' | translate }}</span>
+                      <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.defectTracking' | translate }}</span>
                       <input type="checkbox" [(ngModel)]="settings.defectTrackingEnabled" class="w-5 h-5 accent-blue-500">
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.autoEscalateCritical' | translate }}</span>
+                      <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.autoEscalateCritical' | translate }}</span>
                       <input type="checkbox" [(ngModel)]="settings.autoEscalateCriticalDefects" class="w-5 h-5 accent-blue-500">
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.passScore' | translate }}</span>
+                      <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.passScore' | translate }}</span>
                       <input type="number" [(ngModel)]="settings.qualityScoreThreshold" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
                    </div>
                    <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5">
-                      <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.fixWindowHours' | translate }}</span>
+                      <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">{{ 'companySettings.fixWindowHours' | translate }}</span>
                       <input type="number" [(ngModel)]="settings.defectResponseHours" class="w-20 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 font-bold text-xs">
                    </div>
                 </div>
@@ -774,7 +782,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                            <p class="text-[11px] font-bold text-indigo-700 dark:text-indigo-300">
                               {{ 'companySettings.configSaveNote' | translate }}
                            </p>
-                           <p class="text-[9px] text-indigo-500 mt-1 uppercase font-black tracking-widest">
+                           <p class="text-[9px] text-indigo-500 mt-1 uppercase font-bold tracking-widest">
                               {{ 'companySettings.catalogPackagesRolesNote' | translate }}
                            </p>
                         </div>
@@ -790,7 +798,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                            </svg>
                         </div>
                         <div>
-                           <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.configurationSettings' | translate }}</h3>
+                           <h3 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.configurationSettings' | translate }}</h3>
                            <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">{{ 'companySettings.globalOperationalVariables' | translate }}</p>
                         </div>
                      </div>
@@ -805,7 +813,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                             </div>
                             <div>
-                               <span class="text-xs font-black text-indigo-700 dark:text-indigo-300 uppercase block">{{ 'companySettings.analyticsMasterSwitch' | translate }}</span>
+                               <span class="text-xs font-bold text-indigo-700 dark:text-indigo-300 uppercase block">{{ 'companySettings.analyticsMasterSwitch' | translate }}</span>
                                <span class="text-[9px] text-indigo-400 font-medium">{{ 'companySettings.enableAiInsightsCompany' | translate }}</span>
                             </div>
                          </div>
@@ -823,12 +831,12 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                             <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500">
                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                             </div>
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'supervision' | translate }}</span>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'supervision' | translate }}</span>
                          </div>
-                         <label class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest block">{{ 'defaultSupervisionPercentage' | translate }}</label>
+                         <label class="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest block">{{ 'defaultSupervisionPercentage' | translate }}</label>
                          <div class="relative">
                             <input type="number" [(ngModel)]="settings.defaultSupervisionPercentage" 
-                                   class="w-full px-5 py-4 pl-5 pr-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-black text-sm outline-none transition-all focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 shadow-inner">
+                                   class="w-full px-5 py-4 pl-5 pr-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold text-sm outline-none transition-all focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 shadow-inner">
                             <span class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">%</span>
                          </div>
                          <p class="text-[9px] text-slate-500 italic">{{ 'companySettings.supervisionPercentageNote' | translate }}</p>
@@ -843,7 +851,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                             </div>
                             <div>
-                               <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.enableScheduledReports' | translate }}</span>
+                               <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase block">{{ 'companySettings.enableScheduledReports' | translate }}</span>
                                <span class="text-[9px] text-slate-400 font-medium">{{ 'companySettings.autoGenerateWeeklyInsights' | translate }}</span>
                             </div>
                          </div>
@@ -866,11 +874,11 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                             </svg>
                          </div>
                           <div>
-                             <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.catalog' | translate }}</h3>
+                             <h3 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ 'companySettings.catalog' | translate }}</h3>
                              <p class="text-[10px] text-cyan-500 font-bold uppercase tracking-widest">{{ 'companySettings.masterItemsForProjects' | translate }}</p>
                           </div>
                       </div>
-                      <button (click)="openCatalogModal()" class="px-6 py-3 rounded-2xl bg-cyan-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-cyan-500/20 hover:scale-105 active:scale-95 transition-all">
+                      <button (click)="openCatalogModal()" class="px-6 py-3 rounded-2xl bg-cyan-500 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-cyan-500/20 hover:scale-105 active:scale-95 transition-all">
                          + {{ 'addItem' | translate }}
                       </button>
                    </div>
@@ -882,9 +890,9 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                             <div>
                                <div class="flex items-center space-x-2 mb-1">
                                    @if (item.projectId) {
-                                      <span class="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-500 text-[8px] font-black uppercase tracking-widest">Project #{{item.projectId}}</span>
+                                      <span class="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-500 text-[8px] font-bold uppercase tracking-widest">Project #{{item.projectId}}</span>
                                    } @else {
-                                      <span class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-500 text-[8px] font-black uppercase tracking-widest">{{ 'companyGlobal' | translate }}</span>
+                                      <span class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-500 text-[8px] font-bold uppercase tracking-widest">{{ 'companyGlobal' | translate }}</span>
                                    }
                                 </div>
                                <h4 class="font-bold text-slate-900 dark:text-white">{{ item.name }}</h4>
@@ -920,9 +928,9 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                            </svg>
                         </div>
-                        <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'packagesManagement' | translate }}</h3>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ 'packagesManagement' | translate }}</h3>
                      </div>
-                     <button (click)="openPackageModal()" class="px-6 py-3 rounded-2xl bg-amber-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-amber-500/20 hover:scale-105 active:scale-95 transition-all">
+                     <button (click)="openPackageModal()" class="px-6 py-3 rounded-2xl bg-amber-500 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-amber-500/20 hover:scale-105 active:scale-95 transition-all">
                         {{ 'common.add_new' | translate }}
                      </button>
                   </div>
@@ -933,7 +941,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                         <div class="flex justify-between items-start mb-4">
                            <div>
                               <h3 class="font-bold text-slate-900 dark:text-white">{{ pkg.name }}</h3>
-                              <p class="text-amber-500 font-black text-sm">{{ pkg.price | currency }}</p>
+                              <p class="text-amber-500 font-bold text-sm">{{ pkg.price | currency }}</p>
                            </div>
                            <div class="flex space-x-2">
                               <button (click)="openPackageModal(pkg)" class="p-2 rounded-xl text-slate-400 hover:text-amber-500 transition-colors">
@@ -981,11 +989,11 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                            </svg>
                         </div>
                         <div>
-                           <h2 class="text-sm font-black text-slate-400 uppercase tracking-[0.2em]">{{ 'companySettings.rolesPermissions' | translate }}</h2>
+                           <h2 class="text-sm font-bold text-slate-400 uppercase tracking-[0.2em]">{{ 'companySettings.rolesPermissions' | translate }}</h2>
                            <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">{{ 'companySettings.accessControlManagement' | translate }}</p>
                         </div>
                      </div>
-                     <button (click)="openRoleModal()" class="px-5 py-2.5 rounded-xl bg-indigo-500 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-500/20">
+                     <button (click)="openRoleModal()" class="px-5 py-2.5 rounded-xl bg-indigo-500 text-white font-bold text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-500/20">
                         + {{ 'companySettings.addRole' | translate }}
                      </button>
                   </div>
@@ -995,7 +1003,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                      <div class="p-6 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 shadow-xl hover:border-indigo-500/50 transition-all group/role">
                         <div class="flex justify-between items-start mb-4">
                            <div>
-                              <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ role.name }}</h4>
+                              <h4 class="font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ role.name }}</h4>
                               <p class="text-[10px] text-slate-500 font-medium">{{ role.description || ('companySettings.noDescription' | translate) }}</p>
                            </div>
                             <div class="flex space-x-1">
@@ -1019,7 +1027,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                         </div>
                         
                         <div class="mt-4 pt-4 border-t border-slate-100 dark:border-white/5">
-                           <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ 'companySettings.permissions' | translate }}</p>
+                           <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2">{{ 'companySettings.permissions' | translate }}</p>
                            <div class="flex flex-wrap gap-1">
                               @for (perm of role.permissions; track perm.id) {
                                  <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[8px] font-bold">{{ perm.name }}</span>
@@ -1052,25 +1060,25 @@ import { AnnouncementService } from '../../../core/services/announcement.service
       @if (showPackageModal) {
       <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
          <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative overflow-hidden">
-            <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-6">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">
                {{ (selectedPackage ? 'editPackage' : 'addPackage') | translate }}
             </h2>
 
             <div class="space-y-4">
                <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'packageName' | translate }}</label>
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'packageName' | translate }}</label>
                   <input type="text" [(ngModel)]="packageForm.name" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold">
                </div>
                <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'packagePrice' | translate }}</label>
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'packagePrice' | translate }}</label>
                   <input type="number" [(ngModel)]="packageForm.price" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold">
                </div>
                <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'packageDesc' | translate }}</label>
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'packageDesc' | translate }}</label>
                   <textarea [(ngModel)]="packageForm.description" rows="3" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-medium"></textarea>
                </div>
                <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'variationCalc' | translate }}</label>
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'variationCalc' | translate }}</label>
                   <select [(ngModel)]="packageForm.variationCalculation" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold text-slate-900 dark:text-white appearance-none">
                      <option value="AddFullCost">Add Full Cost</option>
                      <option value="Differential">Add Difference</option>
@@ -1079,10 +1087,10 @@ import { AnnouncementService } from '../../../core/services/announcement.service
             </div>
 
             <div class="flex space-x-4 mt-8">
-               <button (click)="showPackageModal = false" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest">
+               <button (click)="showPackageModal = false" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-bold text-xs uppercase tracking-widest">
                   {{ 'common.cancel' | translate }}
                </button>
-               <button (click)="savePackage()" [disabled]="!packageForm.name || isSavingPackage" class="flex-[2] py-4 rounded-2xl bg-amber-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-3 transition-all hover:scale-105 active:scale-95 disabled:opacity-50">
+               <button (click)="savePackage()" [disabled]="!packageForm.name || isSavingPackage" class="flex-[2] py-4 rounded-2xl bg-amber-500 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-3 transition-all hover:scale-105 active:scale-95 disabled:opacity-50">
                   @if (isSavingPackage) {
                      <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -1102,26 +1110,26 @@ import { AnnouncementService } from '../../../core/services/announcement.service
       @if (showRoleModal) {
       <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
          <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative overflow-hidden">
-            <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-6">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">
                {{ (selectedRole ? 'editRole' : 'addRole') | translate }}
             </h2>
 
             <div class="space-y-4">
                <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'roleName' | translate }}</label>
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'roleName' | translate }}</label>
                   <input type="text" [(ngModel)]="roleForm.name" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold">
                </div>
                <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'roleDesc' | translate }}</label>
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'roleDesc' | translate }}</label>
                   <textarea [(ngModel)]="roleForm.description" rows="2" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-medium"></textarea>
                </div>
             </div>
 
                   <div class="flex space-x-4 pt-10">
-                     <button (click)="showRoleModal = false" class="flex-1 py-6 rounded-[2.5rem] bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+                     <button (click)="showRoleModal = false" class="flex-1 py-6 rounded-[2.5rem] bg-slate-100 dark:bg-slate-800 text-slate-500 font-bold text-xs uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
                         {{ 'common.cancel' | translate }}
                      </button>
-                     <button (click)="saveRole()" [disabled]="!roleForm.name || isSavingRole" class="flex-[2] py-6 rounded-[2.5rem] bg-indigo-600 text-white font-black text-xs uppercase tracking-widest shadow-2xl disabled:opacity-30 transition-all hover:scale-105 flex items-center justify-center space-x-3">
+                     <button (click)="saveRole()" [disabled]="!roleForm.name || isSavingRole" class="flex-[2] py-6 rounded-[2.5rem] bg-indigo-600 text-white font-bold text-xs uppercase tracking-widest shadow-2xl disabled:opacity-30 transition-all hover:scale-105 flex items-center justify-center space-x-3">
                         @if (isSavingRole) {
                            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -1141,8 +1149,8 @@ import { AnnouncementService } from '../../../core/services/announcement.service
       @if (showLinkModal) {
       <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
          <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative overflow-hidden">
-            <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-2">{{ 'linkPermissionsTo' | translate }}</h2>
-            <p class="text-[10px] font-black text-fuchsia-500 uppercase tracking-widest mb-8">{{ selectedRole?.name }}</p>
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">{{ 'linkPermissionsTo' | translate }}</h2>
+            <p class="text-[10px] font-bold text-fuchsia-500 uppercase tracking-widest mb-8">{{ selectedRole?.name }}</p>
 
             <div class="space-y-6">
                <!-- Search & Filter -->
@@ -1152,7 +1160,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                   <svg class="absolute left-3 top-3.5 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                </div>
 
-               <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-400 px-1">
+               <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-slate-400 px-1">
                   <span>{{ availablePermissionsForLinking.length }} Permissions Available</span>
                   <div class="flex space-x-2">
                      <button (click)="selectAllPermissions()" class="hover:text-fuchsia-500 transition-colors">Select All</button>
@@ -1165,7 +1173,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                   @for (group of permissionGroups; track group.name) {
                      @if (group.permissions.length > 0) {
                         <div class="mb-4 last:mb-0">
-                           <h3 class="sticky top-0 bg-slate-50 dark:bg-slate-950/95 backdrop-blur-sm py-2 px-2 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-200 dark:border-white/5 mb-2 z-10">
+                           <h3 class="sticky top-0 bg-slate-50 dark:bg-slate-950/95 backdrop-blur-sm py-2 px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-200 dark:border-white/5 mb-2 z-10">
                               {{ group.name }}
                               <span class="ml-2 px-1.5 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-500 text-[8px]">{{ group.permissions.length }}</span>
                            </h3>
@@ -1197,10 +1205,10 @@ import { AnnouncementService } from '../../../core/services/announcement.service
             </div>
 
             <div class="flex space-x-4 mt-8">
-               <button (click)="showLinkModal = false" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest">
+               <button (click)="showLinkModal = false" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-bold text-xs uppercase tracking-widest">
                   {{ 'common.cancel' | translate }}
                </button>
-               <button (click)="saveLink()" [disabled]="isSavingRole" class="flex-[2] py-4 rounded-2xl bg-fuchsia-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-fuchsia-500/20 flex items-center justify-center space-x-3 transition-all hover:scale-105 active:scale-95 disabled:opacity-50">
+               <button (click)="saveLink()" [disabled]="isSavingRole" class="flex-[2] py-4 rounded-2xl bg-fuchsia-500 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-fuchsia-500/20 flex items-center justify-center space-x-3 transition-all hover:scale-105 active:scale-95 disabled:opacity-50">
                   @if (isSavingRole) {
                      <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -1222,10 +1230,10 @@ import { AnnouncementService } from '../../../core/services/announcement.service
           <div class="bg-white dark:bg-slate-900 w-full max-w-xl rounded-[4rem] shadow-2xl p-12 relative overflow-hidden animate-in scale-in-95 duration-500 border border-white/10">
              <div class="flex items-center justify-between mb-10">
                 <div>
-                   <h2 class="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                   <h2 class="text-3xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">
                       {{ (selectedCatalogItem ? 'companySettings.editItem' : 'companySettings.createNewItem') | translate }}
                    </h2>
-                  <p class="text-[10px] text-cyan-500 font-black uppercase tracking-widest mt-2">{{ 'companySettings.companyGlobalCatalog' | translate }}</p>
+                  <p class="text-[10px] text-cyan-500 font-bold uppercase tracking-widest mt-2">{{ 'companySettings.companyGlobalCatalog' | translate }}</p>
                 </div>
                 <button (click)="showCatalogModal = false" class="p-4 rounded-3xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all shadow-sm group">
                    <svg class="w-6 h-6 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -1234,13 +1242,13 @@ import { AnnouncementService } from '../../../core/services/announcement.service
 
              <div class="space-y-6">
                 <div>
-                   <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2 block">{{ 'companySettings.itemName' | translate }}</label>
+                   <label class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2 block">{{ 'companySettings.itemName' | translate }}</label>
                    <input type="text" [(ngModel)]="catalogForm.name" placeholder="{{ 'companySettings.enterItemName' | translate }}"
                           class="w-full p-6 rounded-[2.5rem] bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 outline-none font-bold text-slate-900 dark:text-white focus:ring-4 focus:ring-cyan-500/10 transition-all">
                 </div>
 
                 <div>
-                   <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2 block">{{ 'companySettings.description' | translate }}</label>
+                   <label class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-2 mb-2 block">{{ 'companySettings.description' | translate }}</label>
                    <textarea [(ngModel)]="catalogForm.description" rows="3" placeholder="{{ 'companySettings.optionalDetails' | translate }}"
                              class="w-full p-6 rounded-[2.5rem] bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 outline-none font-medium text-slate-900 dark:text-white focus:ring-4 focus:ring-cyan-500/10 transition-all"></textarea>
                 </div>
@@ -1248,11 +1256,11 @@ import { AnnouncementService } from '../../../core/services/announcement.service
 
             <div class="flex space-x-4 mt-12 bg-slate-50/50 dark:bg-white/5 -mx-12 -mb-12 p-12 pt-8">
                <button (click)="showCatalogModal = false" 
-                       class="flex-1 py-6 rounded-[2.5rem] bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+                       class="flex-1 py-6 rounded-[2.5rem] bg-slate-100 dark:bg-slate-800 text-slate-500 font-bold text-xs uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
                   {{ 'common.cancel' | translate }}
                </button>
                <button (click)="saveCatalogItem()" [disabled]="!catalogForm.name || isSavingCatalog" 
-                       class="flex-[2] py-6 rounded-[2.5rem] bg-cyan-500 text-white font-black text-xs uppercase tracking-widest shadow-2xl shadow-cyan-500/20 disabled:opacity-30 transition-all hover:scale-105 flex items-center justify-center space-x-3">
+                       class="flex-[2] py-6 rounded-[2.5rem] bg-cyan-500 text-white font-bold text-xs uppercase tracking-widest shadow-2xl shadow-cyan-500/20 disabled:opacity-30 transition-all hover:scale-105 flex items-center justify-center space-x-3">
                   @if (isSavingCatalog) {
                      <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -1272,24 +1280,24 @@ import { AnnouncementService } from '../../../core/services/announcement.service
       @if (showPermissionModal) {
       <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
          <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 relative overflow-hidden">
-            <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-6">{{ 'addPermission' | translate }}</h2>
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">{{ 'addPermission' | translate }}</h2>
 
             <div class="space-y-4">
                <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'permissionName' | translate }}</label>
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'permissionName' | translate }}</label>
                   <input type="text" [(ngModel)]="permissionForm.name" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold">
                </div>
                <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'permissionDesc' | translate }}</label>
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'permissionDesc' | translate }}</label>
                   <textarea [(ngModel)]="permissionForm.desc" rows="2" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-medium"></textarea>
                </div>
             </div>
 
             <div class="flex space-x-4 mt-8">
-               <button (click)="showPermissionModal = false" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest">
+               <button (click)="showPermissionModal = false" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-bold text-xs uppercase tracking-widest">
                   {{ 'common.cancel' | translate }}
                </button>
-               <button (click)="savePermission()" [disabled]="!permissionForm.name || isSavingPermission" class="flex-[2] py-4 rounded-2xl bg-indigo-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20 flex items-center justify-center space-x-3 transition-all hover:scale-105 active:scale-95 disabled:opacity-50">
+               <button (click)="savePermission()" [disabled]="!permissionForm.name || isSavingPermission" class="flex-[2] py-4 rounded-2xl bg-indigo-500 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20 flex items-center justify-center space-x-3 transition-all hover:scale-105 active:scale-95 disabled:opacity-50">
                   @if (isSavingPermission) {
                      <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

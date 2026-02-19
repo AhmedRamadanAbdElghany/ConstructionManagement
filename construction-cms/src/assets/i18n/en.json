@@ -1133,9 +1133,9 @@
     "title": "Subcontractor Network",
     "subtitle": "Coordinate and manage your external partners and contracts",
     "add_subcontractor": "Add Subcontractor",
-    "list": "Network List",
-    "contracts": "Contracts",
-    "payments": "Payments",
+    "list": "Partner Network",
+    "contracts": "Engagements",
+    "payments": "Settlements",
     "ratings": "Ratings",
     "total": "Total Partners",
     "active": "Active",
@@ -1236,11 +1236,13 @@
     "no_equipment_found": "No equipment found matching your criteria"
   },
   "inventory": {
-    "title": "Inventory & Stock",
+    "title": "Inventory Architecture",
     "subtitle": "Manage raw materials, supplies, and warehouse logistics",
-    "materials": "Materials",
-    "warehouses": "Warehouses",
-    "requests": "Requests",
+    "tabs": {
+      "materials": "Stock Materials",
+      "warehouses": "Storage Hubs",
+      "requests": "Fulfillment"
+    },
     "add_new": "Add New",
     "in_stock": "In Stock",
     "low_stock": "Low Stock",
@@ -2151,9 +2153,9 @@
     "subtitle": "Monitor safety compliance and incidents",
     "tabs": {
       "overview": "Overview",
-      "incidents": "Incidents",
-      "inspections": "Inspections",
-      "trainings": "Trainings"
+      "incidents": "Incident Log",
+      "inspections": "Field Audits",
+      "trainings": "Skills & Training"
     },
     "stats": {
       "incidents_this_month": "Incidents This Month",
@@ -2412,11 +2414,11 @@
   },
   "companySettings": {
     "title": "Company Settings & Identity",
-    "settings": "Identity & Configuration",
-    "rolesPermissions": "Roles & Permissions",
-    "phases": "Project Hierarchy / Phases",
-    "designs": "Designs",
-    "portfolio": "Portfolio / Work Offerings",
+    "settings": "Business Profile",
+    "rolesPermissions": "Access Roles",
+    "phases": "Work Structure",
+    "designs": "Design Library",
+    "portfolio": "Service Catalog",
     "announcements": "Announcements"
   },
   "hr": {

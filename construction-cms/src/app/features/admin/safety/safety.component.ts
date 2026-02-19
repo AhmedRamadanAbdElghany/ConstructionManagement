@@ -11,54 +11,54 @@ import { Subject, takeUntil } from 'rxjs';
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule],
   template: `
-    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
+    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500 font-['Outfit']">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
-            <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">{{ 'safety.title' | translate }}</h1>
-            <div class="flex p-1 bg-slate-200 dark:bg-slate-800 rounded-xl w-fit">
+            <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-4 tracking-tight">{{ 'safety.title' | translate }}</h1>
+            <div class="flex p-1.5 bg-slate-100 dark:bg-slate-900 rounded-2xl w-fit border border-slate-200 dark:border-white/5">
               <button (click)="activeTab = 'dashboard'" 
                       [class.bg-white]="activeTab === 'dashboard'" 
-                      [class.shadow-sm]="activeTab === 'dashboard'"
+                      [class.dark:bg-slate-800]="activeTab === 'dashboard'"
                       [class.text-slate-900]="activeTab === 'dashboard'"
-                      [class.dark:bg-slate-700]="activeTab === 'dashboard'"
                       [class.dark:text-white]="activeTab === 'dashboard'"
-                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
+                      [class.shadow-xl]="activeTab === 'dashboard'"
+                      class="px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-500 transition-all duration-300 hover:text-slate-700 dark:hover:text-slate-300">
                   {{ 'safety.tabs.overview' | translate }}
               </button>
               <button (click)="activeTab = 'incidents'" 
                       [class.bg-white]="activeTab === 'incidents'" 
-                      [class.shadow-sm]="activeTab === 'incidents'"
+                      [class.dark:bg-slate-800]="activeTab === 'incidents'"
                       [class.text-slate-900]="activeTab === 'incidents'"
-                      [class.dark:bg-slate-700]="activeTab === 'incidents'"
                       [class.dark:text-white]="activeTab === 'incidents'"
-                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
+                      [class.shadow-xl]="activeTab === 'incidents'"
+                      class="px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-500 transition-all duration-300 hover:text-slate-700 dark:hover:text-slate-300">
                   {{ 'safety.tabs.incidents' | translate }}
               </button>
               <button (click)="activeTab = 'inspections'" 
                       [class.bg-white]="activeTab === 'inspections'" 
-                      [class.shadow-sm]="activeTab === 'inspections'"
+                      [class.dark:bg-slate-800]="activeTab === 'inspections'"
                       [class.text-slate-900]="activeTab === 'inspections'"
-                      [class.dark:bg-slate-700]="activeTab === 'inspections'"
                       [class.dark:text-white]="activeTab === 'inspections'"
-                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
+                      [class.shadow-xl]="activeTab === 'inspections'"
+                      class="px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-500 transition-all duration-300 hover:text-slate-700 dark:hover:text-slate-300">
                   {{ 'safety.tabs.inspections' | translate }}
               </button>
               <button (click)="activeTab = 'trainings'" 
                       [class.bg-white]="activeTab === 'trainings'" 
-                      [class.shadow-sm]="activeTab === 'trainings'"
+                      [class.dark:bg-slate-800]="activeTab === 'trainings'"
                       [class.text-slate-900]="activeTab === 'trainings'"
-                      [class.dark:bg-slate-700]="activeTab === 'trainings'"
                       [class.dark:text-white]="activeTab === 'trainings'"
-                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
+                      [class.shadow-xl]="activeTab === 'trainings'"
+                      class="px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-500 transition-all duration-300 hover:text-slate-700 dark:hover:text-slate-300">
                   {{ 'safety.tabs.trainings' | translate }}
               </button>
             </div>
           </div>
 
           <button (click)="openIncidentModal()"
-                  class="px-8 py-4 rounded-[2rem] bg-gradient-to-br from-rose-500 to-red-600 text-white font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-rose-500/20 hover:scale-105 active:scale-95 transition-all flex items-center">
+                  class="px-8 py-4 rounded-[2rem] bg-gradient-to-br from-rose-500 to-red-600 text-white font-bold text-xs uppercase tracking-[0.2em] shadow-2xl shadow-rose-500/20 hover:scale-105 active:scale-95 transition-all flex items-center">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
             </svg>
@@ -78,9 +78,9 @@ import { Subject, takeUntil } from 'rxjs';
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                   </svg>
                 </div>
-                <span class="text-[10px] font-black text-rose-500 uppercase tracking-widest">{{ 'common.this_month' | translate }}</span>
+                <span class="text-[10px] font-bold text-rose-500 uppercase tracking-widest">{{ 'common.this_month' | translate }}</span>
               </div>
-              <h3 class="text-4xl font-black text-slate-900 dark:text-white">{{ dashboard?.incidentsThisMonth || 0 }}</h3>
+              <h3 class="text-4xl font-bold text-slate-900 dark:text-white">{{ dashboard?.incidentsThisMonth || 0 }}</h3>
               <p class="text-[10px] text-slate-500 font-medium uppercase tracking-widest mt-1">{{ 'safety.stats.incidents_this_month' | translate }}</p>
             </div>
 
@@ -91,9 +91,9 @@ import { Subject, takeUntil } from 'rxjs';
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                   </svg>
                 </div>
-                <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest">{{ 'safety.stats.pass_rate' | translate }}</span>
+                <span class="text-[10px] font-bold text-amber-500 uppercase tracking-widest">{{ 'safety.stats.pass_rate' | translate }}</span>
               </div>
-              <h3 class="text-4xl font-black text-slate-900 dark:text-white">{{ dashboard?.averagePassRate || 0 }}%</h3>
+              <h3 class="text-4xl font-bold text-slate-900 dark:text-white">{{ dashboard?.averagePassRate || 0 }}%</h3>
               <p class="text-[10px] text-slate-500 font-medium uppercase tracking-widest mt-1">{{ 'safety.safety_inspections' | translate }}</p>
             </div>
 
@@ -104,9 +104,9 @@ import { Subject, takeUntil } from 'rxjs';
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
                 </div>
-                <span class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{{ 'common.completed' | translate }}</span>
+                <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">{{ 'common.completed' | translate }}</span>
               </div>
-              <h3 class="text-4xl font-black text-slate-900 dark:text-white">{{ dashboard?.trainingsCompleted || 0 }}</h3>
+              <h3 class="text-4xl font-bold text-slate-900 dark:text-white">{{ dashboard?.trainingsCompleted || 0 }}</h3>
               <p class="text-[10px] text-slate-500 font-medium uppercase tracking-widest mt-1">{{ 'safety.stats.trainings_completed' | translate }}</p>
             </div>
 
@@ -117,9 +117,9 @@ import { Subject, takeUntil } from 'rxjs';
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
                 </div>
-                <span class="text-[10px] font-black text-violet-500 uppercase tracking-widest">{{ 'common.upcoming' | translate }}</span>
+                <span class="text-[10px] font-bold text-violet-500 uppercase tracking-widest">{{ 'common.upcoming' | translate }}</span>
               </div>
-              <h3 class="text-4xl font-black text-slate-900 dark:text-white">{{ dashboard?.upcomingTrainings || 0 }}</h3>
+              <h3 class="text-4xl font-bold text-slate-900 dark:text-white">{{ dashboard?.upcomingTrainings || 0 }}</h3>
               <p class="text-[10px] text-slate-500 font-medium uppercase tracking-widest mt-1">{{ 'safety.stats.upcoming_trainings' | translate }}</p>
             </div>
           </div>
@@ -129,8 +129,8 @@ import { Subject, takeUntil } from 'rxjs';
             <!-- Recent Incidents -->
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
               <div class="flex items-center justify-between mb-8">
-                <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'safety.recent_incidents' | translate }}</h3>
-                <button (click)="activeTab = 'incidents'" class="text-xs font-black text-rose-500 uppercase tracking-widest hover:text-rose-600">{{ 'common.view_all' | translate }} →</button>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ 'safety.recent_incidents' | translate }}</h3>
+                <button (click)="activeTab = 'incidents'" class="text-xs font-bold text-rose-500 uppercase tracking-widest hover:text-rose-600">{{ 'common.view_all' | translate }} →</button>
               </div>
               <div class="space-y-4">
                 @for (incident of dashboard?.recentIncidents; track incident.id) {
@@ -138,7 +138,7 @@ import { Subject, takeUntil } from 'rxjs';
                   <div class="flex items-start justify-between">
                     <div>
                       <div class="flex items-center gap-2 mb-1">
-                        <span class="px-2 py-0.5 rounded-md text-[8px] font-black uppercase" 
+                        <span class="px-2 py-0.5 rounded-md text-[8px] font-bold uppercase" 
                               [class.bg-rose-500/10]="incident.severityName === 'High'"
                               [class.text-rose-500]="incident.severityName === 'High'"
                               [class.bg-amber-500/10]="incident.severityName === 'Medium'"
@@ -152,7 +152,7 @@ import { Subject, takeUntil } from 'rxjs';
                       <h4 class="font-bold text-slate-900 dark:text-white">{{ incident.title }}</h4>
                       <p class="text-[10px] text-slate-500 mt-1">{{ incident.location || ('safety.incident.location' | translate) }}</p>
                     </div>
-                    <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[8px] font-black text-slate-500 uppercase">
+                    <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[8px] font-bold text-slate-500 uppercase">
                       {{ incident.investigationStatusName }}
                     </span>
                   </div>
@@ -167,8 +167,8 @@ import { Subject, takeUntil } from 'rxjs';
             <!-- Upcoming Trainings -->
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
               <div class="flex items-center justify-between mb-8">
-                <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'safety.upcoming_trainings' | translate }}</h3>
-                <button (click)="activeTab = 'trainings'" class="text-xs font-black text-rose-500 uppercase tracking-widest hover:text-rose-600">{{ 'common.view_all' | translate }} →</button>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ 'safety.upcoming_trainings' | translate }}</h3>
+                <button (click)="activeTab = 'trainings'" class="text-xs font-bold text-rose-500 uppercase tracking-widest hover:text-rose-600">{{ 'common.view_all' | translate }} →</button>
               </div>
               <div class="space-y-4">
                 @for (training of dashboard?.upcomingTrainingsList; track training.id) {
@@ -179,7 +179,7 @@ import { Subject, takeUntil } from 'rxjs';
                       <p class="text-[10px] text-slate-500 mt-1">{{ training.trainingType }} • {{ training.durationMinutes }} min</p>
                       <p class="text-[10px] text-rose-500 mt-1 font-medium">{{ training.scheduledDate | date:'mediumDate' }}</p>
                     </div>
-                    <span class="px-2 py-0.5 rounded-md bg-violet-500/10 text-[8px] font-black text-violet-500 uppercase">
+                    <span class="px-2 py-0.5 rounded-md bg-violet-500/10 text-[8px] font-bold text-violet-500 uppercase">
                       {{ training.requiresCertification ? ('common.certification' | translate) : ('common.training' | translate) }}
                     </span>
                   </div>
@@ -198,8 +198,8 @@ import { Subject, takeUntil } from 'rxjs';
         @if (activeTab === 'incidents') {
         <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
           <div class="flex items-center justify-between mb-8">
-            <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'safety.incident_reports' | translate }}</h3>
-            <button (click)="openIncidentModal()" class="px-6 py-3 rounded-2xl bg-rose-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-rose-500/20 hover:scale-105 transition-all">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ 'safety.incident_reports' | translate }}</h3>
+            <button (click)="openIncidentModal()" class="px-6 py-3 rounded-2xl bg-rose-500 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-rose-500/20 hover:scale-105 transition-all">
               + {{ 'safety.incident.new' | translate }}
             </button>
           </div>
@@ -207,12 +207,12 @@ import { Subject, takeUntil } from 'rxjs';
             <table class="w-full">
               <thead>
                 <tr class="border-b border-slate-100 dark:border-white/5">
-                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">{{ 'common.date' | translate }}</th>
-                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">{{ 'common.title' | translate }}</th>
-                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">{{ 'safety.incident.severity' | translate }}</th>
-                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">{{ 'safety.incident.location' | translate }}</th>
-                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">{{ 'common.status' | translate }}</th>
-                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">{{ 'common.actions' | translate }}</th>
+                  <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-left">{{ 'common.date' | translate }}</th>
+                  <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-left">{{ 'common.title' | translate }}</th>
+                  <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-left">{{ 'safety.incident.severity' | translate }}</th>
+                  <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-left">{{ 'safety.incident.location' | translate }}</th>
+                  <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-left">{{ 'common.status' | translate }}</th>
+                  <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-left">{{ 'common.actions' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -221,7 +221,7 @@ import { Subject, takeUntil } from 'rxjs';
                   <td class="px-6 py-4 text-sm font-medium text-slate-600 dark:text-slate-400">{{ incident.incidentDate | date:'mediumDate' }}</td>
                   <td class="px-6 py-4 text-sm font-bold text-slate-900 dark:text-white">{{ incident.title }}</td>
                   <td class="px-6 py-4">
-                    <span class="px-2 py-0.5 rounded-md text-[8px] font-black uppercase" 
+                    <span class="px-2 py-0.5 rounded-md text-[8px] font-bold uppercase" 
                           [class.bg-rose-500/10]="incident.severityName === 'High'"
                           [class.text-rose-500]="incident.severityName === 'High'"
                           [class.bg-amber-500/10]="incident.severityName === 'Medium'"
@@ -233,12 +233,12 @@ import { Subject, takeUntil } from 'rxjs';
                   </td>
                   <td class="px-6 py-4 text-sm font-medium text-slate-600 dark:text-slate-400">{{ incident.location || '-' }}</td>
                   <td class="px-6 py-4">
-                    <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[8px] font-black text-slate-500 uppercase">
+                    <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[8px] font-bold text-slate-500 uppercase">
                       {{ incident.investigationStatusName }}
                     </span>
                   </td>
                   <td class="px-6 py-4">
-                    <button (click)="viewIncident(incident)" class="text-xs font-black text-rose-500 uppercase tracking-widest hover:text-rose-600">{{ 'common.view' | translate }}</button>
+                    <button (click)="viewIncident(incident)" class="text-xs font-bold text-rose-500 uppercase tracking-widest hover:text-rose-600">{{ 'common.view' | translate }}</button>
                   </td>
                 </tr>
                 }
@@ -259,8 +259,8 @@ import { Subject, takeUntil } from 'rxjs';
         @if (activeTab === 'trainings') {
         <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
           <div class="flex items-center justify-between mb-8">
-            <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'safety.training_records' | translate }}</h3>
-            <button class="px-6 py-3 rounded-2xl bg-violet-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-violet-500/20 hover:scale-105 transition-all">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ 'safety.training_records' | translate }}</h3>
+            <button class="px-6 py-3 rounded-2xl bg-violet-500 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-violet-500/20 hover:scale-105 transition-all">
               + {{ 'safety.training.schedule' | translate }}
             </button>
           </div>
@@ -268,7 +268,7 @@ import { Subject, takeUntil } from 'rxjs';
             @for (training of trainings; track training.id) {
             <div class="p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 hover:border-violet-500/50 transition-all">
               <div class="flex items-start justify-between mb-4">
-                <span class="px-2 py-0.5 rounded-md text-[8px] font-black uppercase" 
+                <span class="px-2 py-0.5 rounded-md text-[8px] font-bold uppercase" 
                       [class.bg-violet-500/10]="training.statusName === 'Scheduled'"
                       [class.text-violet-500]="training.statusName === 'Scheduled'"
                       [class.bg-emerald-500/10]="training.statusName === 'Completed'"
@@ -288,7 +288,7 @@ import { Subject, takeUntil } from 'rxjs';
                   <p class="text-amber-500">{{ 'safety.training.expires' | translate }}: {{ training.certificationExpiryDate | date:'mediumDate' }}</p>
                   }
                 </div>
-                <span class="px-2 py-0.5 rounded-md bg-violet-500/10 text-[8px] font-black text-violet-500 uppercase">
+                <span class="px-2 py-0.5 rounded-md bg-violet-500/10 text-[8px] font-bold text-violet-500 uppercase">
                   {{ training.requiresCertification ? ('safety.training.certified' | translate) : ('common.training' | translate) }}
                 </span>
               </div>
@@ -307,8 +307,8 @@ import { Subject, takeUntil } from 'rxjs';
         @if (activeTab === 'inspections') {
         <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
           <div class="flex items-center justify-between mb-8">
-            <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'safety.inspections' | translate }}</h3>
-            <button class="px-6 py-3 rounded-2xl bg-amber-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-amber-500/20 hover:scale-105 transition-all">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ 'safety.inspections' | translate }}</h3>
+            <button class="px-6 py-3 rounded-2xl bg-amber-500 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-amber-500/20 hover:scale-105 transition-all">
               + {{ 'safety.inspection.new' | translate }}
             </button>
           </div>
@@ -327,18 +327,18 @@ import { Subject, takeUntil } from 'rxjs';
           <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-[2.5rem] shadow-2xl p-8 relative overflow-hidden">
             <button (click)="showIncidentModal = false" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600 text-2xl">&times;</button>
             
-            <h2 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'safety.incident.report_new' | translate }}</h2>
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'safety.incident.report_new' | translate }}</h2>
             
             <div class="space-y-6">
               <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">{{ 'safety.incident.title' | translate }}</label>
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">{{ 'safety.incident.title' | translate }}</label>
                 <input type="text" [(ngModel)]="incidentForm.title" placeholder="{{ 'safety.incident.title_placeholder' | translate }}"
                        class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-rose-500/10">
               </div>
               
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">{{ 'safety.incident.severity' | translate }}</label>
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">{{ 'safety.incident.severity' | translate }}</label>
                   <select [(ngModel)]="incidentForm.severity" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none">
                     <option [value]="1">{{ 'safety.severity.low' | translate }}</option>
                     <option [value]="2">{{ 'safety.severity.medium' | translate }}</option>
@@ -347,20 +347,20 @@ import { Subject, takeUntil } from 'rxjs';
                   </select>
                 </div>
                 <div>
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">{{ 'safety.incident.date' | translate }}</label>
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">{{ 'safety.incident.date' | translate }}</label>
                   <input type="date" [(ngModel)]="incidentForm.incidentDate"
                          class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none">
                 </div>
               </div>
               
               <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">{{ 'safety.incident.location' | translate }}</label>
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">{{ 'safety.incident.location' | translate }}</label>
                 <input type="text" [(ngModel)]="incidentForm.location" placeholder="{{ 'safety.incident.location_placeholder' | translate }}"
                        class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none">
               </div>
               
               <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">{{ 'common.description' | translate }}</label>
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">{{ 'common.description' | translate }}</label>
                 <textarea [(ngModel)]="incidentForm.description" rows="3" placeholder="{{ 'safety.incident.description_placeholder' | translate }}"
                           class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold outline-none resize-none"></textarea>
               </div>
@@ -368,16 +368,16 @@ import { Subject, takeUntil } from 'rxjs';
               <div class="flex items-center gap-4">
                 <label class="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" [(ngModel)]="incidentForm.requiredMedicalAttention" class="w-5 h-5 rounded accent-rose-500">
-                  <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase">{{ 'safety.incident.medical_attention' | translate }}</span>
+                  <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">{{ 'safety.incident.medical_attention' | translate }}</span>
                 </label>
               </div>
             </div>
             
             <div class="flex gap-4 mt-8">
-              <button (click)="showIncidentModal = false" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xs uppercase tracking-widest">
+              <button (click)="showIncidentModal = false" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-bold text-xs uppercase tracking-widest">
                 {{ 'common.cancel' | translate }}
               </button>
-              <button (click)="submitIncident()" class="flex-1 py-4 rounded-2xl bg-rose-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-rose-500/20">
+              <button (click)="submitIncident()" class="flex-1 py-4 rounded-2xl bg-rose-500 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-rose-500/20">
                 {{ 'safety.incident.submit' | translate }}
               </button>
             </div>

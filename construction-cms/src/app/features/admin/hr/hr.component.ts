@@ -6,7 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { RolesService } from '../../../core/services/roles.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
-import { HrService, AttendanceDto, LeaveRequestDto, LeaveTypeDto, CertificationDto, PayrollDto, LeaveRequestStatus, AttendanceStatus } from '../../../core/services/hr.service';
+import { HrService, AttendanceDto, LeaveRequestDto, LeaveTypeDto, CertificationDto, PayrollDto, LeaveRequestStatus, AttendanceStatus, TeamMemberDto } from '../../../core/services/hr.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -19,23 +19,23 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         <!-- Header -->
         <div class="flex items-center justify-between mb-8">
           <div>
-            <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ 'hr.title' | translate }}</h1>
+            <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">{{ 'hr.title' | translate }}</h1>
             <p class="text-slate-500 dark:text-slate-400 font-medium">{{ 'hr.manage_team_subtitle' | translate }}</p>
           </div>
           <div class="flex space-x-3">
             @if (activeTab === 'attendance') {
                @if (!todayAttendance || todayAttendance.status === 'Absent') {
-                  <button (click)="checkIn()" class="px-6 py-3 rounded-2xl bg-emerald-500 text-white font-black uppercase tracking-widest text-xs hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/30 active:scale-95">
+                  <button (click)="checkIn()" class="px-6 py-3 rounded-2xl bg-emerald-500 text-white font-bold uppercase tracking-widest text-xs hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/30 active:scale-95">
                     {{ 'hr.check_in' | translate }}
                   </button>
                } @else if (!todayAttendance.checkOut) {
-                  <button (click)="checkOut()" class="px-6 py-3 rounded-2xl bg-rose-500 text-white font-black uppercase tracking-widest text-xs hover:bg-rose-600 transition-all shadow-lg shadow-rose-500/30 active:scale-95">
+                  <button (click)="checkOut()" class="px-6 py-3 rounded-2xl bg-rose-500 text-white font-bold uppercase tracking-widest text-xs hover:bg-rose-600 transition-all shadow-lg shadow-rose-500/30 active:scale-95">
                     {{ 'hr.check_out' | translate }}
                   </button>
                }
             }
             @if (activeTab === 'payroll' && isAdmin) {
-               <button (click)="processPayroll()" class="px-6 py-3 rounded-2xl bg-indigo-500 text-white font-black uppercase tracking-widest text-xs hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-500/30 active:scale-95">
+               <button (click)="processPayroll()" class="px-6 py-3 rounded-2xl bg-indigo-500 text-white font-bold uppercase tracking-widest text-xs hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-500/30 active:scale-95">
                  {{ 'hr.process_payroll' | translate }}
                </button>
             }
@@ -49,7 +49,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                   [class.dark:bg-slate-800]="activeTab === 'team'"
                   [class.text-cyan-600]="activeTab === 'team'"
                   [class.shadow-md]="activeTab === 'team'"
-                  class="px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 hover:text-cyan-500 text-slate-500 dark:text-slate-400">
+                  class="px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 hover:text-cyan-500 text-slate-500 dark:text-slate-400">
             {{ 'hr.team_members' | translate }}
           </button>
           <button (click)="activeTab = 'attendance'; loadAttendances()" 
@@ -57,7 +57,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                   [class.dark:bg-slate-800]="activeTab === 'attendance'"
                   [class.text-cyan-600]="activeTab === 'attendance'"
                   [class.shadow-md]="activeTab === 'attendance'"
-                  class="px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 hover:text-cyan-500 text-slate-500 dark:text-slate-400">
+                  class="px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 hover:text-cyan-500 text-slate-500 dark:text-slate-400">
             {{ 'hr.attendance' | translate }}
           </button>
           <button (click)="activeTab = 'leave'; loadLeaveRequests()" 
@@ -65,7 +65,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                   [class.dark:bg-slate-800]="activeTab === 'leave'"
                   [class.text-cyan-600]="activeTab === 'leave'"
                   [class.shadow-md]="activeTab === 'leave'"
-                  class="px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 hover:text-cyan-500 text-slate-500 dark:text-slate-400">
+                  class="px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 hover:text-cyan-500 text-slate-500 dark:text-slate-400">
             {{ 'hr.leave_requests' | translate }}
           </button>
           <button (click)="activeTab = 'payroll'; loadPayrolls()" 
@@ -73,7 +73,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                   [class.dark:bg-slate-800]="activeTab === 'payroll'"
                   [class.text-cyan-600]="activeTab === 'payroll'"
                   [class.shadow-md]="activeTab === 'payroll'"
-                  class="px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 hover:text-cyan-500 text-slate-500 dark:text-slate-400">
+                  class="px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 hover:text-cyan-500 text-slate-500 dark:text-slate-400">
             {{ 'hr.payroll' | translate }}
           </button>
           <button (click)="activeTab = 'certifications'; loadCertifications()" 
@@ -81,7 +81,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                   [class.dark:bg-slate-800]="activeTab === 'certifications'"
                   [class.text-cyan-600]="activeTab === 'certifications'"
                   [class.shadow-md]="activeTab === 'certifications'"
-                  class="px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 hover:text-cyan-500 text-slate-500 dark:text-slate-400">
+                  class="px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 hover:text-cyan-500 text-slate-500 dark:text-slate-400">
             {{ 'hr.certifications' | translate }}
           </button>
         </div>
@@ -98,8 +98,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                   </svg>
                 </div>
                 <div>
-                  <p class="text-2xl font-black text-slate-900 dark:text-white leading-none mb-1">{{ users.length }}</p>
-                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-nowrap">{{ 'hr.total_users' | translate }}</p>
+                  <p class="text-2xl font-bold text-slate-900 dark:text-white leading-none mb-1">{{ users.length }}</p>
+                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-nowrap">{{ 'hr.total_users' | translate }}</p>
                 </div>
               </div>
             </div>
@@ -112,8 +112,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                   </svg>
                 </div>
                 <div>
-                  <p class="text-2xl font-black text-slate-900 dark:text-white leading-none mb-1">{{ workingCount }}</p>
-                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-nowrap">{{ 'hr.working' | translate }}</p>
+                  <p class="text-2xl font-bold text-slate-900 dark:text-white leading-none mb-1">{{ workingCount }}</p>
+                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-nowrap">{{ 'hr.working' | translate }}</p>
                 </div>
               </div>
             </div>
@@ -126,8 +126,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                   </svg>
                 </div>
                 <div>
-                  <p class="text-2xl font-black text-slate-900 dark:text-white leading-none mb-1">{{ absentCount }}</p>
-                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-nowrap">{{ 'hr.absent' | translate }}</p>
+                  <p class="text-2xl font-bold text-slate-900 dark:text-white leading-none mb-1">{{ absentCount }}</p>
+                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-nowrap">{{ 'hr.absent' | translate }}</p>
                 </div>
               </div>
             </div>
@@ -140,8 +140,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                   </svg>
                 </div>
                 <div>
-                  <p class="text-2xl font-black text-slate-900 dark:text-white leading-none mb-1">{{ totalSalary | currency:'USD':'symbol':'1.0-0' }}</p>
-                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-nowrap">{{ 'hr.total_payroll' | translate }}</p>
+                  <p class="text-2xl font-bold text-slate-900 dark:text-white leading-none mb-1">{{ totalSalary | currency:'USD':'symbol':'1.0-0' }}</p>
+                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-nowrap">{{ 'hr.total_payroll' | translate }}</p>
                 </div>
               </div>
             </div>
@@ -150,17 +150,17 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
           <!-- Users Table -->
           <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden mb-8 transition-all">
             <div class="p-8 border-b border-slate-100 dark:border-white/5">
-              <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'hr.team_members' | translate }}</h2>
+              <h2 class="text-xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ 'hr.team_members' | translate }}</h2>
             </div>
             <div class="overflow-x-auto">
               <table class="w-full">
                 <thead>
-                  <tr class="text-left text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-widest bg-slate-50 dark:bg-slate-950/50">
-                    <th class="px-8 py-5 font-black">{{ 'hr.name' | translate }}</th>
-                    <th class="px-8 py-5 font-black">{{ 'hr.role' | translate }}</th>
-                    <th class="px-8 py-5 font-black">{{ 'hr.status' | translate }}</th>
-                    <th class="px-8 py-5 font-black">{{ 'hr.salary' | translate }}</th>
-                    <th class="px-8 py-5 font-black">{{ 'hr.actions' | translate }}</th>
+                  <tr class="text-left text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-widest bg-slate-50 dark:bg-slate-950/50">
+                    <th class="px-8 py-5 font-bold">{{ 'hr.name' | translate }}</th>
+                    <th class="px-8 py-5 font-bold">{{ 'hr.role' | translate }}</th>
+                    <th class="px-8 py-5 font-bold">{{ 'hr.status' | translate }}</th>
+                    <th class="px-8 py-5 font-bold">{{ 'hr.salary' | translate }}</th>
+                    <th class="px-8 py-5 font-bold">{{ 'hr.actions' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody class="text-slate-600 dark:text-slate-300">
@@ -168,20 +168,20 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                     <tr class="border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
                       <td class="px-8 py-5">
                         <div class="flex items-center space-x-4">
-                          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-black text-lg shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform">
+                          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform">
                             {{ user.fullName.charAt(0) }}
                           </div>
                           <div>
-                            <p class="text-base font-black text-slate-900 dark:text-white tracking-tight">{{ user.fullName }}</p>
+                            <p class="text-base font-bold text-slate-900 dark:text-white tracking-tight">{{ user.fullName }}</p>
                             <p class="text-[10px] text-slate-500 font-bold uppercase tracking-tight">{{ user.email }}</p>
                             @if (user.reportsToId) {
-                              <p class="text-[9px] text-indigo-500 font-black uppercase tracking-tighter mt-1 italic">{{ 'hr.reports_to' | translate }}: {{ getUserName(user.reportsToId) }}</p>
+                              <p class="text-[9px] text-indigo-500 font-bold uppercase tracking-tighter mt-1 italic">{{ 'hr.reports_to' | translate }}: {{ getUserName(user.reportsToId) }}</p>
                             }
                           </div>
                         </div>
                       </td>
                       <td class="px-8 py-5">
-                        <span class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest"
+                        <span class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest"
                               [ngClass]="{
                                 'bg-purple-500/10 text-purple-600 dark:text-purple-400': user.role === 'SuperAdmin',
                                 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400': user.role === 'CompanyAdmin',
@@ -200,7 +200,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                                   'bg-slate-400': user.status === 'Client'
                                 }">
                           </span>
-                          <span class="text-sm font-black uppercase tracking-widest"
+                          <span class="text-sm font-bold uppercase tracking-widest"
                                 [ngClass]="{
                                   'text-emerald-600 dark:text-emerald-400': user.status === 'Working',
                                   'text-rose-600 dark:text-rose-400': user.status === 'Absent',
@@ -212,9 +212,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                       </td>
                       <td class="px-8 py-5">
                         @if (user.salary > 0) {
-                          <p class="text-base font-black text-slate-900 dark:text-white tracking-tight">{{ user.salary | currency:'USD':'symbol':'1.0-0' }}</p>
+                          <p class="text-base font-bold text-slate-900 dark:text-white tracking-tight">{{ user.salary | currency:'USD':'symbol':'1.0-0' }}</p>
                         } @else {
-                          <span class="text-slate-400 font-black text-xs uppercase tracking-widest leading-none">{{ 'common.not_available' | translate }}</span>
+                          <span class="text-slate-400 font-bold text-xs uppercase tracking-widest leading-none">{{ 'common.not_available' | translate }}</span>
                         }
                       </td>
                       <td class="px-8 py-5">
@@ -238,28 +238,28 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         @if (activeTab === 'attendance') {
            <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all p-8">
               <div class="flex items-center justify-between mb-8">
-                 <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'hr.attendance' | translate }}</h2>
+                 <h2 class="text-xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ 'hr.attendance' | translate }}</h2>
                  <input type="date" [(ngModel)]="attendanceDate" (change)="loadAttendances()" class="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/5 text-sm font-bold">
               </div>
 
               <div class="overflow-x-auto">
                 <table class="w-full">
                   <thead>
-                    <tr class="text-left text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-widest bg-slate-50 dark:bg-slate-950/50">
-                      <th class="px-8 py-5 font-black">{{ 'hr.name' | translate }}</th>
-                      <th class="px-8 py-5 font-black">{{ 'hr.check_in' | translate }}</th>
-                      <th class="px-8 py-5 font-black">{{ 'hr.check_out' | translate }}</th>
-                      <th class="px-8 py-5 font-black">{{ 'hr.status' | translate }}</th>
+                    <tr class="text-left text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-widest bg-slate-50 dark:bg-slate-950/50">
+                      <th class="px-8 py-5 font-bold">{{ 'hr.name' | translate }}</th>
+                      <th class="px-8 py-5 font-bold">{{ 'hr.check_in' | translate }}</th>
+                      <th class="px-8 py-5 font-bold">{{ 'hr.check_out' | translate }}</th>
+                      <th class="px-8 py-5 font-bold">{{ 'hr.status' | translate }}</th>
                     </tr>
                   </thead>
                   <tbody class="text-slate-600 dark:text-slate-300">
                     @for (att of attendances; track att.id) {
                       <tr class="border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
-                        <td class="px-8 py-5 font-black">{{ att.userFullName }}</td>
+                        <td class="px-8 py-5 font-bold">{{ att.userFullName }}</td>
                         <td class="px-8 py-5 font-bold">{{ att.checkIn | date:'shortTime' }}</td>
                         <td class="px-8 py-5 font-bold">{{ att.checkOut | date:'shortTime' }}</td>
                         <td class="px-8 py-5">
-                           <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest"
+                           <span class="px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest"
                                  [ngClass]="{
                                    'bg-emerald-500/10 text-emerald-600': att.status === 'Present',
                                    'bg-amber-500/10 text-amber-600': att.status === 'Late',
@@ -279,8 +279,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         @if (activeTab === 'leave') {
            <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all p-8">
               <div class="flex items-center justify-between mb-8">
-                 <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'hr.leave_requests' | translate }}</h2>
-                 <button (click)="openLeaveRequestModal()" class="px-4 py-2 rounded-xl bg-cyan-500 text-white text-xs font-black uppercase tracking-widest">{{ 'hr.request_leave' | translate }}</button>
+                 <h2 class="text-xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ 'hr.leave_requests' | translate }}</h2>
+                 <button (click)="openLeaveRequestModal()" class="px-4 py-2 rounded-xl bg-cyan-500 text-white text-xs font-bold uppercase tracking-widest">{{ 'hr.request_leave' | translate }}</button>
               </div>
 
               <div class="grid grid-cols-1 gap-4">
@@ -292,11 +292,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                                 {{ req.userFullName.charAt(0) }}
                              </div>
                              <div>
-                                <h3 class="font-black text-slate-900 dark:text-white">{{ req.userFullName }}</h3>
+                                <h3 class="font-bold text-slate-900 dark:text-white">{{ req.userFullName }}</h3>
                                 <p class="text-xs text-slate-500 font-bold uppercase tracking-tight">{{ req.leaveTypeName }}</p>
                              </div>
                           </div>
-                          <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest"
+                          <span class="px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest"
                                 [ngClass]="{
                                   'bg-amber-500/10 text-amber-600': req.status === 'Pending',
                                   'bg-emerald-500/10 text-emerald-600': req.status === 'Approved',
@@ -326,7 +326,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         @if (activeTab === 'payroll') {
            <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all p-8">
               <div class="flex items-center justify-between mb-8">
-                 <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'hr.payroll' | translate }}</h2>
+                 <h2 class="text-xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">{{ 'hr.payroll' | translate }}</h2>
                  <div class="flex space-x-4">
                     <select [(ngModel)]="payrollMonth" (change)="loadPayrolls()" class="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/5 text-sm font-bold">
                        @for (m of months; track m) {
@@ -344,24 +344,24 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
               <div class="overflow-x-auto">
                 <table class="w-full">
                   <thead>
-                    <tr class="text-left text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-widest bg-slate-50 dark:bg-slate-950/50">
-                      <th class="px-8 py-5 font-black">{{ 'hr.name' | translate }}</th>
-                      <th class="px-8 py-5 font-black">{{ 'hr.base_salary' | translate }}</th>
-                      <th class="px-8 py-5 font-black">{{ 'hr.deductions' | translate }}</th>
-                      <th class="px-8 py-5 font-black">{{ 'hr.net_salary' | translate }}</th>
-                      <th class="px-8 py-5 font-black">{{ 'hr.status' | translate }}</th>
-                      <th class="px-8 py-5 font-black">{{ 'hr.actions' | translate }}</th>
+                    <tr class="text-left text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-widest bg-slate-50 dark:bg-slate-950/50">
+                      <th class="px-8 py-5 font-bold">{{ 'hr.name' | translate }}</th>
+                      <th class="px-8 py-5 font-bold">{{ 'hr.base_salary' | translate }}</th>
+                      <th class="px-8 py-5 font-bold">{{ 'hr.deductions' | translate }}</th>
+                      <th class="px-8 py-5 font-bold">{{ 'hr.net_salary' | translate }}</th>
+                      <th class="px-8 py-5 font-bold">{{ 'hr.status' | translate }}</th>
+                      <th class="px-8 py-5 font-bold">{{ 'hr.actions' | translate }}</th>
                     </tr>
                   </thead>
                   <tbody class="text-slate-600 dark:text-slate-300">
                     @for (p of payrolls; track p.id) {
                       <tr class="border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
-                        <td class="px-8 py-5 font-black">{{ p.userFullName }}</td>
+                        <td class="px-8 py-5 font-bold">{{ p.userFullName }}</td>
                         <td class="px-8 py-5 font-bold">{{ p.baseSalary | currency:'USD' }}</td>
                         <td class="px-8 py-5 font-bold text-rose-500">- {{ p.deductions | currency:'USD' }}</td>
-                        <td class="px-8 py-5 font-black text-slate-900 dark:text-white">{{ p.netSalary | currency:'USD' }}</td>
+                        <td class="px-8 py-5 font-bold text-slate-900 dark:text-white">{{ p.netSalary | currency:'USD' }}</td>
                         <td class="px-8 py-5">
-                           <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest"
+                           <span class="px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest"
                                  [ngClass]="{
                                    'bg-emerald-500/10 text-emerald-600': p.isPaid,
                                    'bg-amber-500/10 text-amber-600': !p.isPaid
@@ -384,16 +384,16 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
         @if (activeTab === 'certifications') {
            <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all p-8">
-              <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'hr.certifications' | translate }}</h2>
+              <h2 class="text-xl font-bold text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'hr.certifications' | translate }}</h2>
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                  @for (cert of certifications; track cert.id) {
                     <div class="bg-slate-50 dark:bg-white/[0.02] p-6 rounded-3xl border border-slate-100 dark:border-white/5 relative group">
                        <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-600 mb-4">
                           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                        </div>
-                       <h3 class="font-black text-slate-900 dark:text-white text-lg tracking-tight mb-1">{{ cert.name }}</h3>
+                       <h3 class="font-bold text-slate-900 dark:text-white text-lg tracking-tight mb-1">{{ cert.name }}</h3>
                        <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-4">{{ cert.issuingAuthority }}</p>
-                       <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-500 pt-4 border-t border-slate-100 dark:border-white/5">
+                       <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-slate-500 pt-4 border-t border-slate-100 dark:border-white/5">
                           <span>EXP: {{ cert.expiryDate | date:'mediumDate' }}</span>
                           @if (cert.isVerified) {
                              <span class="text-emerald-500">{{ 'hr.verified' | translate }}</span>
@@ -435,8 +435,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class HrComponent implements OnInit {
   activeTab: 'team' | 'attendance' | 'leave' | 'certifications' | 'payroll' = 'team';
-  users: User[] = [];
-  selectedUserForNotes: User | null = null;
+  users: TeamMemberDto[] = [];
+  selectedUserForNotes: TeamMemberDto | null = null;
 
   // HR Data
   attendances: AttendanceDto[] = [];
@@ -499,12 +499,13 @@ export class HrComponent implements OnInit {
   }
 
   private loadTeamMembers() {
-    const currentUser = this.authService.getCurrentUser();
-    if (currentUser?.companyId) {
-      // Mocking for now as we don't have a direct "get all company users" endpoint yet
-      // but often we might use a dedicated userService.
-      this.users = [];
-    }
+    this.hrService.getTeamMembers().subscribe({
+      next: (data) => this.users = data,
+      error: (err) => {
+        console.error('Failed to load team members:', err);
+        this.users = [];
+      }
+    });
   }
 
   loadAttendances() {
@@ -664,7 +665,7 @@ export class HrComponent implements OnInit {
     return u ? u.fullName : 'Unknown';
   }
 
-  openNotes(user: User) {
+  openNotes(user: TeamMemberDto) {
     this.selectedUserForNotes = user;
   }
 }

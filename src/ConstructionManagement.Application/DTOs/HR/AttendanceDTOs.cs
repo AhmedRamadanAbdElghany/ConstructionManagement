@@ -3,6 +3,19 @@ using ConstructionManagement.Domain.Enums;
 
 namespace ConstructionManagement.Application.DTOs.HR;
 
+public class TeamMemberDto
+{
+    public int Id { get; set; }
+    public string FullName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Role { get; set; } = string.Empty;
+    public string Status { get; set; } = "Absent"; // "Working", "Absent", "OnLeave", "Client"
+    public decimal Salary { get; set; }
+    public int? ReportsToId { get; set; }
+    public string? ReportsToName { get; set; }
+    public string? Notes { get; set; }
+}
+
 public class AttendanceDto
 {
     public int Id { get; set; }

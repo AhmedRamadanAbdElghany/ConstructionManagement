@@ -85,12 +85,47 @@ export interface CertificationDto {
     isVerified: boolean;
 }
 
+export interface TeamMemberDto {
+    id: number;
+    fullName: string;
+    email: string;
+    role: string;
+    status: string; // "Working", "Absent", "OnLeave", "Client"
+    salary: number;
+    reportsToId?: number;
+    reportsToName?: string;
+    notes?: string;
+}
+
+export interface UserHRStatsDto {
+    monthlySalary: number;
+    annualLeaveDays: number;
+    usedLeaveDays: number;
+    remainingLeaveDays: number;
+    pendingRequests: number;
+    workDaysThisMonth: number;
+}
+
 @Injectable({
     providedIn: 'root'
 })
 export class HrService {
     private http = inject(HttpClient);
     private baseUrl = '/api/HR';
+
+    // Team Members
+    getTeamMembers(): Observable<TeamMemberDto[]> {
+        return this.http.get<TeamMemberDto[]>(`${this.baseUrl}/team-members`);
+    }
+
+    // User Personal HR
+    getMyPayrollHistory(): Observable<PayrollDto[]> {
+        return this.http.get<PayrollDto[]>(`${this.baseUrl}/my-payroll`);
+    }
+
+    getMyHRStats(): Observable<UserHRStatsDto> {
+        return this.http.get<UserHRStatsDto>(`${this.baseUrl}/my-stats`);
+    }
 
     // Attendance
     getAttendances(date?: string, userId?: number): Observable<AttendanceDto[]> {

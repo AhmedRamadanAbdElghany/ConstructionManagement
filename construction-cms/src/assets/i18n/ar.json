@@ -1200,9 +1200,9 @@
       "grade_label": "درجة الأداء"
     },
     "add_subcontractor": "إضافة مقاول",
-    "list": "قائمة الشبكة",
-    "contracts": "العقود",
-    "payments": "المدفوعات",
+    "list": "شبكة الشركاء",
+    "contracts": "الارتباطات",
+    "payments": "التسويات",
     "ratings": "التقييمات",
     "total": "إجمالي الشركاء",
     "active": "نشط",
@@ -1276,11 +1276,13 @@
     "no_equipment_found": "لم يتم العثور على معدات تطابق معاييرك"
   },
   "inventory": {
-    "title": "المخزون والمستودعات",
+    "title": "إدارة المخزون",
     "subtitle": "إدارة المواد الخام والتوريدات ولوجستيات المستودعات",
-    "materials": "المواد",
-    "warehouses": "المستودعات",
-    "requests": "الطلبات",
+    "tabs": {
+      "materials": "المواد والمؤن",
+      "warehouses": "نقاط التخزين",
+      "requests": "التوريد"
+    },
     "add_new": "إضافة جديد",
     "in_stock": "متوفر",
     "low_stock": "مخزون منخفض",
@@ -2252,9 +2254,9 @@
     "subtitle": "مراقبة الامتثال للسلامة والحوداث",
     "tabs": {
       "overview": "نظرة عامة",
-      "incidents": "الحوداث",
-      "inspections": "الفحوصات",
-      "trainings": "التدريبات"
+      "incidents": "سجل الحوادث",
+      "inspections": "تدقيق الميدان",
+      "trainings": "المهارات والتدريب"
     },
     "stats": {
       "incidents_this_month": "الحوداث هذا الشهر",
@@ -2503,12 +2505,12 @@
   },
   "companySettings": {
     "title": "إعدادات الشركة والهوية",
-    "settings": "الهوية والإعدادات",
-    "rolesPermissions": "الأدوار والصلاحيات",
-    "phases": "هيكل المشروع / المراحل",
-    "designs": "التصاميم",
-    "portfolio": "المعرض / عروض العمل",
-    "announcements": "الإعلانات"
+    "settings": "ملف الشركة",
+    "rolesPermissions": "صلاحيات الوصول",
+    "phases": "هيكل العمل",
+    "designs": "مكتبة التصاميم",
+    "portfolio": "كتالوج الخدمات",
+    "announcements": "إعلانات الشركة"
   },
   "hr": {
     "title": "الموارد البشرية والرواتب",
