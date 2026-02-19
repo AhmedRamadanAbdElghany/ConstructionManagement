@@ -138,58 +138,13 @@ export class AuthService {
             }),
 
             catchError((error) => {
-                // Only provide mock fallback if it's a connection error or endpoint doesn't exist
-                // This allows real backend errors (like 400 validation) to be showed to the user
-                if (error.status !== 0 && error.status !== 404) {
-                    return throwError(() => error);
-                }
-
-                // Determine user role based on email for mock authentication
-                let roles: string[] = ['User']; // Default to 'User'
-                let userType = 0; // Default to User (0)
-                let fullName = 'Demo User';
-
-                if (request.email.includes('super') || request.email.includes('admin@super') || request.email === 'admin@construction.com') {
-                    roles = ['SuperAdmin'];
-                    userType = 0;
-                    fullName = 'Super Admin';
-                } else if (request.email.includes('worker')) {
-                    roles = ['CompanyUser'];
-                    userType = 1;
-                    fullName = 'Worker User';
-                } else if (request.email.includes('client')) {
-                    roles = ['User'];
-                    userType = 0; // Client is User (0)
-                    fullName = 'Client User';
-                }
-
-                // Mock user for demo purposes when backend is not running
-                const mockUser: User = {
-                    id: 1,
-                    userId: 1,
-                    fullName: fullName,
-                    email: request.email,
-                    role: roles[0],
-                    roles: roles,
-                    createdAt: new Date(),
-                    userType: userType,
-                    companyId: undefined,
-                    salary: 5000,
-                    status: 'Working'
-                };
-
-
-                localStorage.setItem('authToken', 'mock-token');
-                localStorage.setItem('currentUser', JSON.stringify(mockUser));
-                this.currentUserSubject.next(mockUser);
-                this.isAuthenticatedSubject.next(true);
-
-
-                // Return a mock response
-                return of({
-                    token: 'mock-token',
-                    user: mockUser
-                });
+                // SECURITY: Mock authentication bypass removed.
+                // In production, connection errors should be reported to the user,
+                // not bypassed with fake authentication that grants elevated privileges.
+                // 
+                // If you need mock authentication for development, use environment.isDevMode()
+                // and ensure mock users have limited privileges.
+                return throwError(() => error);
             })
         );
     }

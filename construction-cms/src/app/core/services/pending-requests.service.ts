@@ -53,6 +53,9 @@ export interface PublicCompany {
     name: string;
     address?: string;
     logoUrl?: string;
+    completedProjectsCount: number;
+    subscriberCount: number;
+    isSubscribed: boolean;
 }
 
 @Injectable({

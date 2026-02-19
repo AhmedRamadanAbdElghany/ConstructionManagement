@@ -161,6 +161,13 @@ public class ApplicationDbContext : DbContext
     public DbSet<PunchListItem> PunchListItems => Set<PunchListItem>();
     public DbSet<DefectResolution> DefectResolutions => Set<DefectResolution>();
 
+    // HR Management
+    public DbSet<Attendance> Attendances => Set<Attendance>();
+    public DbSet<LeaveType> LeaveTypes => Set<LeaveType>();
+    public DbSet<LeaveRequest> LeaveRequests => Set<LeaveRequest>();
+    public DbSet<Certification> Certifications => Set<Certification>();
+    public DbSet<Payroll> Payrolls => Set<Payroll>();
+
     // Analytics & Reporting
     public DbSet<ReportDefinition> ReportDefinitions => Set<ReportDefinition>();
     public DbSet<ReportExecution> ReportExecutions => Set<ReportExecution>();
@@ -181,6 +188,14 @@ public class ApplicationDbContext : DbContext
     public DbSet<ChangeOrderDocument> ChangeOrderDocuments => Set<ChangeOrderDocument>();
     public DbSet<ClientActivityLog> ClientActivityLogs => Set<ClientActivityLog>();
 
+    // Company Portfolio
+    public DbSet<PortfolioCategory> PortfolioCategories => Set<PortfolioCategory>();
+    public DbSet<PortfolioItem> PortfolioItems => Set<PortfolioItem>();
+
+    // Company Announcements & Followers (Subscribers)
+    public DbSet<CompanyAnnouncement> CompanyAnnouncements => Set<CompanyAnnouncement>();
+    public DbSet<CompanyFollower> CompanyFollowers => Set<CompanyFollower>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -196,6 +211,7 @@ public class ApplicationDbContext : DbContext
                 method?.Invoke(this, new object[] { modelBuilder });
             }
         }
+
 
         // 1. Composite / Junction Table Keys
         modelBuilder.Entity<UserRole>().HasKey(ur => new { ur.UserId, ur.RoleId });
@@ -304,6 +320,8 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<ItemDailyLog>().HasIndex(dl => new { dl.BOQItemId, dl.LogDate }).IsUnique();
         modelBuilder.Entity<SiteMedia>().HasIndex(sm => sm.ProjectId);
         modelBuilder.Entity<Notification>().HasIndex(n => n.UserId);
+        modelBuilder.Entity<Certification>().HasIndex(c => c.UserId);
+        modelBuilder.Entity<Payroll>().HasIndex(p => new { p.UserId, p.Year, p.Month }).IsUnique();
 
         // 9. Precision
         foreach (var property in modelBuilder.Model.GetEntityTypes().SelectMany(t => t.GetProperties()).Where(p => p.ClrType == typeof(decimal) || p.ClrType == typeof(decimal?)))
@@ -369,6 +387,15 @@ public class ApplicationDbContext : DbContext
         
         // Inventory Order System configurations
         ConfigureInventoryEntities(modelBuilder);
+        
+        // Portfolio Management
+        ConfigurePortfolioEntities(modelBuilder);
+
+        // Announcements & Subscriptions
+        ConfigureAnnouncementEntities(modelBuilder);
+        
+        // HR Management configurations
+        ConfigureHREntities(modelBuilder);
         
         // 10. SEEDING
         SeedData(modelBuilder);
@@ -657,6 +684,107 @@ public class ApplicationDbContext : DbContext
             .OnDelete(DeleteBehavior.NoAction);
     }
 
+    private void ConfigurePortfolioEntities(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<PortfolioCategory>()
+            .HasOne(c => c.ParentCategory)
+            .WithMany(c => c.ChildCategories)
+            .HasForeignKey(c => c.ParentCategoryId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<PortfolioItem>()
+            .HasOne(i => i.Category)
+            .WithMany(c => c.Items)
+            .HasForeignKey(i => i.CategoryId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+
+    private void ConfigureAnnouncementEntities(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<CompanyAnnouncement>()
+            .HasOne(a => a.Company)
+            .WithMany()
+            .HasForeignKey(a => a.CompanyId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<CompanyFollower>()
+            .HasOne(f => f.Company)
+            .WithMany()
+            .HasForeignKey(f => f.CompanyId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<CompanyFollower>()
+            .HasOne(f => f.User)
+            .WithMany()
+            .HasForeignKey(f => f.UserId)
+            .OnDelete(DeleteBehavior.NoAction)
+            .IsRequired(false);
+
+        // One user can only follow a company once
+        modelBuilder.Entity<CompanyFollower>()
+            .HasIndex(f => new { f.CompanyId, f.UserId })
+            .IsUnique();
+    }
+
+    private void ConfigureHREntities(ModelBuilder modelBuilder)
+    {
+        // Attendance
+        modelBuilder.Entity<Attendance>(entity =>
+        {
+            entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.Date);
+            entity.HasIndex(e => new { e.UserId, e.Date });
+            entity.HasIndex(e => e.Status);
+        });
+
+        // LeaveRequest
+        modelBuilder.Entity<LeaveRequest>(entity =>
+        {
+            entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.StartDate);
+            entity.HasIndex(e => e.EndDate);
+            entity.HasIndex(e => e.Status);
+        });
+
+        // LeaveType
+        modelBuilder.Entity<LeaveType>(entity =>
+        {
+            entity.HasIndex(e => e.Name);
+        });
+
+        // Certification
+        modelBuilder.Entity<Certification>(entity =>
+        {
+            entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.ExpiryDate);
+        });
+
+        // Relationships (Prevent cascades if needed, but these are mostly simple)
+        modelBuilder.Entity<Attendance>()
+            .HasOne(a => a.User)
+            .WithMany()
+            .HasForeignKey(a => a.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<LeaveRequest>()
+            .HasOne(l => l.User)
+            .WithMany()
+            .HasForeignKey(l => l.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<LeaveRequest>()
+            .HasOne(l => l.ApprovedByUser)
+            .WithMany()
+            .HasForeignKey(l => l.ApprovedByUserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Certification>()
+            .HasOne(c => c.User)
+            .WithMany()
+            .HasForeignKey(c => c.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
+    }
+
     private void SeedData(ModelBuilder modelBuilder)
     {
         var fixedDate = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -719,7 +847,10 @@ public class ApplicationDbContext : DbContext
 
             // Human Resources (121-140)
             new Permission { Id = 121, Name = "HR.ManageWorkers", Description = "Track site worker attendance and contacts", CreatedAt = fixedDate },
-            new Permission { Id = 122, Name = "HR.JobPostings", Description = "Manage company job recruitment", CreatedAt = fixedDate }
+            new Permission { Id = 122, Name = "HR.JobPostings", Description = "Manage company job recruitment", CreatedAt = fixedDate },
+            new Permission { Id = 123, Name = "HR.Attendance", Description = "Manage employee attendance", CreatedAt = fixedDate },
+            new Permission { Id = 124, Name = "HR.LeaveManagement", Description = "Manage employee leave requests", CreatedAt = fixedDate },
+            new Permission { Id = 125, Name = "HR.Certifications", Description = "Manage employee certifications", CreatedAt = fixedDate }
         };
         modelBuilder.Entity<Permission>().HasData(permissions);
 
@@ -733,6 +864,13 @@ public class ApplicationDbContext : DbContext
             new Role { Id = 3, Name = "User", Description = "Default authenticated user", CreatedAt = fixedDate, CompanyId = null },
             new Role { Id = 4, Name = "CompanyUser", Description = "Standard company staff/worker", CreatedAt = fixedDate, CompanyId = null },
             new Role { Id = 5, Name = "InventoryOwner", Description = "Inventory/warehouse owner", CreatedAt = fixedDate, CompanyId = null }
+        );
+
+        // --- Leave Types (Global/Default) ---
+        modelBuilder.Entity<LeaveType>().HasData(
+            new LeaveType { Id = 1, Name = "Annual Leave", Description = "Standard yearly vacation", DefaultDays = 21, IsPaid = true, RequiresApproval = true, CreatedAt = fixedDate },
+            new LeaveType { Id = 2, Name = "Sick Leave", Description = "Medical leave", DefaultDays = 15, IsPaid = true, RequiresApproval = true, CreatedAt = fixedDate },
+            new LeaveType { Id = 3, Name = "Unpaid Leave", Description = "Leave without pay", DefaultDays = 0, IsPaid = false, RequiresApproval = true, CreatedAt = fixedDate }
         );
 
         // --- Role-Permission Mapping ---

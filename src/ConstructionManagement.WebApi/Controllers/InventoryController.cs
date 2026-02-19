@@ -337,10 +337,12 @@ public class MaterialStocksController : ControllerBase
 public class MaterialRequestsController : ControllerBase
 {
     private readonly IMaterialRequestService _requestService;
+    private readonly IAuthService _authService;
 
-    public MaterialRequestsController(IMaterialRequestService requestService)
+    public MaterialRequestsController(IMaterialRequestService requestService, IAuthService authService)
     {
         _requestService = requestService;
+        _authService = authService;
     }
 
     /// <summary>
@@ -390,6 +392,12 @@ public class MaterialRequestsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<MaterialRequestDto>> CreateRequest([FromBody] CreateMaterialRequestDto request)
     {
+        var userId = _authService.GetCurrentUserId();
+        if (!userId.HasValue)
+        {
+            return Unauthorized(new { message = "User not authenticated" });
+        }
+
         var materialRequest = new MaterialRequest
         {
             ProjectId = request.ProjectId,
@@ -398,7 +406,7 @@ public class MaterialRequestsController : ControllerBase
             SourceWarehouse = request.SourceWarehouse,
             DeliveryLocation = request.DeliveryLocation,
             Notes = request.Notes,
-            RequestedByUserId = 1 // TODO: Get from current user
+            RequestedByUserId = userId.Value
         };
 
         foreach (var item in request.Items)
@@ -421,7 +429,12 @@ public class MaterialRequestsController : ControllerBase
     [HttpPost("{id}/approve")]
     public async Task<ActionResult<MaterialRequestDto>> ApproveRequest(int id)
     {
-        var approvedRequest = await _requestService.ApproveRequestAsync(id, 1); // TODO: Get from current user
+        var userId = _authService.GetCurrentUserId();
+        if (!userId.HasValue)
+        {
+            return Unauthorized(new { message = "User not authenticated" });
+        }
+        var approvedRequest = await _requestService.ApproveRequestAsync(id, userId.Value);
         return Ok(approvedRequest);
     }
 
@@ -431,7 +444,12 @@ public class MaterialRequestsController : ControllerBase
     [HttpPost("{id}/reject")]
     public async Task<ActionResult<MaterialRequestDto>> RejectRequest(int id, [FromBody] RejectRequestDto dto)
     {
-        var rejectedRequest = await _requestService.RejectRequestAsync(id, dto.Reason, 1); // TODO: Get from current user
+        var userId = _authService.GetCurrentUserId();
+        if (!userId.HasValue)
+        {
+            return Unauthorized(new { message = "User not authenticated" });
+        }
+        var rejectedRequest = await _requestService.RejectRequestAsync(id, dto.Reason, userId.Value);
         return Ok(rejectedRequest);
     }
 
@@ -441,7 +459,12 @@ public class MaterialRequestsController : ControllerBase
     [HttpPost("{id}/fulfill")]
     public async Task<ActionResult<MaterialRequestDto>> FulfillRequest(int id)
     {
-        var fulfilledRequest = await _requestService.FulfillRequestAsync(id, 1); // TODO: Get from current user
+        var userId = _authService.GetCurrentUserId();
+        if (!userId.HasValue)
+        {
+            return Unauthorized(new { message = "User not authenticated" });
+        }
+        var fulfilledRequest = await _requestService.FulfillRequestAsync(id, userId.Value);
         return Ok(fulfilledRequest);
     }
 
@@ -451,7 +474,12 @@ public class MaterialRequestsController : ControllerBase
     [HttpPost("{id}/cancel")]
     public async Task<ActionResult<MaterialRequestDto>> CancelRequest(int id)
     {
-        var cancelledRequest = await _requestService.CancelRequestAsync(id, 1); // TODO: Get from current user
+        var userId = _authService.GetCurrentUserId();
+        if (!userId.HasValue)
+        {
+            return Unauthorized(new { message = "User not authenticated" });
+        }
+        var cancelledRequest = await _requestService.CancelRequestAsync(id, userId.Value);
         return Ok(cancelledRequest);
     }
 }
@@ -470,10 +498,12 @@ public class RejectRequestDto
 public class MaterialConsumptionsController : ControllerBase
 {
     private readonly IMaterialConsumptionService _consumptionService;
+    private readonly IAuthService _authService;
 
-    public MaterialConsumptionsController(IMaterialConsumptionService consumptionService)
+    public MaterialConsumptionsController(IMaterialConsumptionService consumptionService, IAuthService authService)
     {
         _consumptionService = consumptionService;
+        _authService = authService;
     }
 
     /// <summary>
@@ -536,6 +566,12 @@ public class MaterialConsumptionsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<MaterialConsumptionDto>> CreateConsumption([FromBody] CreateMaterialConsumptionDto dto)
     {
+        var currentUserId = await _authService.GetCurrentUserIdAsync();
+        if (!currentUserId.HasValue)
+        {
+            return Unauthorized();
+        }
+
         var consumption = new MaterialConsumption
         {
             MaterialId = dto.MaterialId,
@@ -549,7 +585,7 @@ public class MaterialConsumptionsController : ControllerBase
             UnitCost = dto.UnitCost,
             ConsumptionDate = dto.ConsumptionDate,
             Notes = dto.Notes,
-            RecordedByUserId = 1 // TODO: Get from current user
+            RecordedByUserId = currentUserId.Value
         };
 
         var createdConsumption = await _consumptionService.CreateConsumptionAsync(consumption);

@@ -82,7 +82,7 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                   [class.shadow-xl]="activeTab === 'salary'"
                   [class.text-indigo-600]="activeTab === 'salary'"
                   [class.dark:text-white]="activeTab === 'salary'"
-                  class="px-10 py-4 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest transition-all">
+                  class="px-10 py-4 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest transition-all text-slate-400">
             {{ 'personal_hr.financial_ledger' | translate }}
           </button>
           <button (click)="activeTab = 'vacation'"

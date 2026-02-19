@@ -11,12 +11,15 @@ import { AuthService } from '../../../core/services/auth.service';
 import { PhaseService } from '../../../core/services/phase.service';
 import { ProjectHierarchyComponent } from '../project-hierarchy/project-hierarchy.component';
 import { CompanyDesignSettingsComponent } from './company-design-settings.component';
+import { CompanyPortfolioComponent } from './company-portfolio/company-portfolio.component';
+import { CompanyAnnouncementsManagerComponent } from './company-announcements-manager/company-announcements-manager.component';
 import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '../../../shared/interfaces';
+import { AnnouncementService } from '../../../core/services/announcement.service';
 
 @Component({
    selector: 'app-company-settings',
    standalone: true,
-   imports: [CommonModule, FormsModule, TranslateModule, ProjectHierarchyComponent, CompanyDesignSettingsComponent],
+   imports: [CommonModule, FormsModule, TranslateModule, ProjectHierarchyComponent, CompanyDesignSettingsComponent, CompanyPortfolioComponent, CompanyAnnouncementsManagerComponent],
    template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
@@ -62,6 +65,24 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
                       class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
                   {{ 'companySettings.designs' | translate }}
               </button>
+              <button (click)="activeTab = 'portfolio'" 
+                      [class.bg-white]="activeTab === 'portfolio'" 
+                      [class.shadow-sm]="activeTab === 'portfolio'"
+                      [class.text-slate-900]="activeTab === 'portfolio'"
+                      [class.dark:bg-slate-700]="activeTab === 'portfolio'"
+                      [class.dark:text-white]="activeTab === 'portfolio'"
+                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
+                  {{ 'companySettings.portfolio' | translate }}
+              </button>
+              <button (click)="activeTab = 'announcements'" 
+                      [class.bg-white]="activeTab === 'announcements'" 
+                      [class.shadow-sm]="activeTab === 'announcements'"
+                      [class.text-slate-900]="activeTab === 'announcements'"
+                      [class.dark:bg-slate-700]="activeTab === 'announcements'"
+                      [class.dark:text-white]="activeTab === 'announcements'"
+                      class="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-slate-500 transition-all">
+                  {{ 'companySettings.announcements' | translate }}
+              </button>
             </div>
           </div>
 
@@ -85,6 +106,62 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
 
         @if (settings) {
           <div class="space-y-12">
+            
+            <!-- SECTION 0: COMPANY IDENTITY (Common for Company Admin) -->
+            <section class="bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-xl p-10 relative overflow-hidden group">
+               <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+               
+               <div class="flex flex-col md:flex-row gap-10 items-start relative z-10">
+                  <!-- Logo Upload -->
+                  <div class="shrink-0 flex flex-col items-center gap-4">
+                     <div class="relative group/logo w-40 h-40">
+                        @if (settings.logoUrl) {
+                          <img [src]="settings.logoUrl" class="w-full h-full rounded-[2.5rem] object-cover border-4 border-slate-50 bg-slate-100 shadow-2xl transition-all duration-500 group-hover/logo:brightness-75" alt="Logo">
+                        } @else {
+                          <div class="w-full h-full rounded-[2.5rem] bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-300 border-4 border-dashed border-slate-200 dark:border-white/5 shadow-inner">
+                            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                          </div>
+                        }
+                        <label class="absolute inset-0 flex items-center justify-center cursor-pointer opacity-0 group-hover/logo:opacity-100 transition-all duration-300">
+                           <input type="file" (change)="onLogoSelected($event)" class="hidden" accept="image/*">
+                           <div class="bg-white/20 backdrop-blur-md p-4 rounded-full text-white">
+                              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                           </div>
+                        </label>
+                        @if (isUploadingLogo) {
+                          <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm rounded-[2.5rem] flex items-center justify-center">
+                             <svg class="animate-spin h-8 w-8 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                          </div>
+                        }
+                     </div>
+                     <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Company Logo</p>
+                  </div>
+
+                  <!-- Details -->
+                  <div class="flex-1 space-y-6 w-full">
+                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                           <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Company Name</label>
+                           <input type="text" [(ngModel)]="settings.name" 
+                                  class="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 font-bold text-slate-900 dark:text-white focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all">
+                        </div>
+                        <div>
+                           <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Business Address</label>
+                           <input type="text" [(ngModel)]="settings.address" 
+                                  class="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 font-bold text-slate-900 dark:text-white focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all">
+                        </div>
+                     </div>
+                     <div class="p-6 rounded-3xl bg-indigo-500/5 border border-indigo-100 dark:border-indigo-500/10">
+                        <div class="flex items-center gap-4">
+                           <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 shrink-0">
+                              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                           </div>
+                           <p class="text-[11px] text-slate-600 dark:text-slate-400 font-medium">This information is shown on your public profile, quotes, and reports.</p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </section>
             
             <!-- SECTION 1: PLATFORM MODULES (Super Admin View ONLY) -->
             @if (isSuperAdmin) {
@@ -1227,6 +1304,19 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
          </div>
       </div>
       }
+        @if (activeTab === 'designs' && settings) {
+          <app-company-design-settings [companyId]="settings.id"></app-company-design-settings>
+        }
+
+        @if (activeTab === 'portfolio' && settings) {
+          <app-company-portfolio [companyId]="settings.id"></app-company-portfolio>
+        }
+
+        @if (activeTab === 'announcements') {
+           <div class="bg-white dark:bg-slate-900 rounded-[3rem] shadow-xl border border-slate-200 dark:border-white/5 p-10 overflow-hidden">
+             <app-company-announcements-manager></app-company-announcements-manager>
+           </div>
+        }
     </div>
   `,
    styles: [`
@@ -1239,11 +1329,12 @@ import { CompanySettings, CompanyPackage, Role, Permission, CatalogItem } from '
   `]
 })
 export class CompanySettingsComponent implements OnInit {
-   activeTab: 'settings' | 'roles' | 'hierarchy' | 'catalog' | 'designs' = 'settings';
+   activeTab: 'settings' | 'roles' | 'hierarchy' | 'catalog' | 'designs' | 'portfolio' | 'announcements' = 'settings';
    settings?: CompanySettings;
    private originalSettings?: string;
    isCreatingGlobal = false;
    loading = false;
+   isUploadingLogo = false;
 
    companyPackages: CompanyPackage[] = [];
    isSavingPackage = false;
@@ -1302,6 +1393,7 @@ export class CompanySettingsComponent implements OnInit {
       private rolesService: RolesService,
       private catalogService: CatalogService,
       private phaseService: PhaseService,
+      private announcementService: AnnouncementService,
       public authService: AuthService
    ) { }
 
@@ -1320,7 +1412,34 @@ export class CompanySettingsComponent implements OnInit {
 
    get isDirty(): boolean {
       if (!this.settings || !this.originalSettings) return false;
-      return JSON.stringify(this.settings) !== this.originalSettings;
+      // We ignore logoUrl for isDirty because it's uploaded separately
+      const current = { ...this.settings };
+      const original = JSON.parse(this.originalSettings);
+      return JSON.stringify(current) !== JSON.stringify(original);
+   }
+
+   onLogoSelected(event: any) {
+      const file = event.target.files[0];
+      if (!file || !this.settings) return;
+
+      this.isUploadingLogo = true;
+      this.announcementService.uploadLogo(this.settings.id, file).subscribe({
+         next: (res) => {
+            this.isUploadingLogo = false;
+            if (this.settings) {
+               this.settings.logoUrl = res.logoUrl;
+               // Update original settings to avoid dirty state just from logo
+               const orig = JSON.parse(this.originalSettings!);
+               orig.logoUrl = res.logoUrl;
+               this.originalSettings = JSON.stringify(orig);
+            }
+         },
+         error: (err) => {
+            this.isUploadingLogo = false;
+            const msg = err?.error?.message || 'Failed to upload logo.';
+            alert(msg);
+         }
+      });
    }
 
    ngOnInit() {

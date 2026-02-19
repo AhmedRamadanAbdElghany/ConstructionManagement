@@ -73,7 +73,8 @@ public class AuthService : IAuthService
             roles,
             user.CreatedAt,
             user.UserType,
-            user.CompanyId
+            user.CompanyId,
+            user.RequiresPasswordChange
         );
 
         return new AuthResponse(true, _localizationService["Auth.LoginSuccess"], token, userDto);
@@ -216,7 +217,8 @@ public class AuthService : IAuthService
                 roles,
                 user.CreatedAt,
                 user.UserType,
-                user.CompanyId
+                user.CompanyId,
+                user.RequiresPasswordChange
             );
 
             return new AuthResponse(true, _localizationService["Auth.RegistrationSuccess"], token, userDto);
@@ -412,6 +414,7 @@ public class AuthService : IAuthService
         }
 
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+        user.RequiresPasswordChange = false; // Clear the flag after successful password change
 
         try
         {

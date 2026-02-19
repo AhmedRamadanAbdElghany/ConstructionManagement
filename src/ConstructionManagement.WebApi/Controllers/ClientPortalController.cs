@@ -92,7 +92,7 @@ namespace ConstructionManagement.WebApi.Controllers
                 var client = await _clientPortalService.CreateClientUserAsync(companyId, request);
                 return Created(nameof(GetClientUser), Success(client, MessageKeys.ClientCreated));
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException)
             {
                 return BadRequestResult<ClientUserDto>(MessageKeys.ClientCreateFailed);
             }

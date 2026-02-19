@@ -22,6 +22,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpGet("{projectId}")]
+    [Authorize(Policy = "CanViewProject")]  // Require view permission for project details
     public async Task<IActionResult> Get(int projectId)
     {
         var project = await _projectService.GetProjectByIdAsync(projectId);

@@ -3,3 +3,46 @@
 [Ob]j/
 *.user
 obj
+
+# Build and test output files
+*.log
+*.txt
+!README.txt
+!LICENSE.txt
+
+# Specific build/test output patterns
+build_output*.txt
+build_errors*.txt
+build_error*.txt
+build_*.txt
+build_*.log
+debug_output*.txt
+test_output*.txt
+test_results*.txt
+test_debug*.txt
+final_*.txt
+failures*.txt
+failure_*.txt
+integration_failures*.txt
+media_failure*.txt
+single_test_failure*.txt
+msbuild.log
+
+# Node modules (for Angular frontend)
+node_modules/
+
+# Angular build output
+construction-cms/dist/
+construction-cms/dist-test/
+
+# IDE and editor files
+.idea/
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Coverage reports
+coverage/
+*.coverage
+*.coveragexml
+TestResults/

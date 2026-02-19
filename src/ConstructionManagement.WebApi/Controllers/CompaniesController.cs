@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Hangfire;
 using System;
+using System.Security.Cryptography;
 
 namespace ConstructionManagement.WebApi.Controllers;
 
@@ -120,17 +121,19 @@ public class CompaniesController : ControllerBase
             // Seed Company-Specific Permissions & Admin Role
             await SyncCompanyPermissions(company.Id, request);
 
-            // Create Company Admin User
+            // Create Company Admin User with secure random password
             var nameParts = request.AdminName.Split(' ', 2);
+            var temporaryPassword = GenerateSecurePassword();
             var adminUser = new User
             {
                 FirstName = nameParts[0],
                 LastName = nameParts.Length > 1 ? nameParts[1] : string.Empty,
                 Email = request.AdminEmail,
                 Username = request.AdminEmail,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Construction@2026"),
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(temporaryPassword),
                 CompanyId = company.Id,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                RequiresPasswordChange = true
             };
 
             await _userRepo.AddAsync(adminUser);
@@ -154,11 +157,12 @@ public class CompaniesController : ControllerBase
 
             await _uow.CommitAsync();
 
-            // Send welcome email in background using Hangfire
+            // Send welcome email in background using Hangfire with temporary password
+            var capturedPassword = temporaryPassword;
             Hangfire.BackgroundJob.Enqueue<IEmailService>(x => 
                 x.SendAsync(request.AdminEmail, 
                     "Welcome to Construction Management System", 
-                    $"<h2>Welcome {request.AdminName}!</h2><p>Your company <b>{request.Name}</b> has been created successfully.</p><p>You can log in using your email and the default password: <b>Construction@2026</b></p>"));
+                    $"<h2>Welcome {request.AdminName}!</h2><p>Your company <b>{request.Name}</b> has been created successfully.</p><p>You can log in using your email and the temporary password: <b>{capturedPassword}</b></p><p><strong>Important:</strong> Please change your password immediately after your first login.</p>"));
 
             return Ok(company);
         }
@@ -378,5 +382,46 @@ public class CompaniesController : ControllerBase
                 await _rolePermissionRepo.DeleteAsync(rp);
             }
         }
+    }
+
+    /// <summary>
+    /// Generates a cryptographically secure random password.
+    /// Password format: 12 characters with uppercase, lowercase, digits, and special characters.
+    /// </summary>
+    private static string GenerateSecurePassword()
+    {
+        const int length = 12;
+        const string upperChars = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+        const string lowerChars = "abcdefghijkmnopqrstuvwxyz";
+        const string digitChars = "23456789";
+        const string specialChars = "!@#$%^&*";
+        const string allChars = upperChars + lowerChars + digitChars + specialChars;
+
+        using var rng = RandomNumberGenerator.Create();
+        var bytes = new byte[length];
+        rng.GetBytes(bytes);
+
+        var chars = new char[length];
+        
+        // Ensure at least one of each required character type
+        chars[0] = upperChars[bytes[0] % upperChars.Length];
+        chars[1] = lowerChars[bytes[1] % lowerChars.Length];
+        chars[2] = digitChars[bytes[2] % digitChars.Length];
+        chars[3] = specialChars[bytes[3] % specialChars.Length];
+
+        // Fill remaining positions with random characters from all sets
+        for (int i = 4; i < length; i++)
+        {
+            chars[i] = allChars[bytes[i] % allChars.Length];
+        }
+
+        // Shuffle the characters
+        for (int i = chars.Length - 1; i > 0; i--)
+        {
+            int j = bytes[i] % (i + 1);
+            (chars[i], chars[j]) = (chars[j], chars[i]);
+        }
+
+        return new string(chars);
     }
 }

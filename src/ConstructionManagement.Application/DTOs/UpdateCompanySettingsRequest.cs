@@ -4,6 +4,8 @@ public class UpdateCompanySettingsRequest
 {
     // All fields are nullable so partial updates are possible
     // (only send the fields you want to change)
+    public string? Name { get; set; }
+    public string? Address { get; set; }
 
     // ============================================
     // MODULE MASTER SWITCHES (Controlled by Super Admin)

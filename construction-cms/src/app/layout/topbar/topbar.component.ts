@@ -35,7 +35,7 @@ import { TranslateService } from '@ngx-translate/core';
         <!-- Theme Toggle -->
         <button 
           (click)="themeService.toggleTheme()"
-          class="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 flex items-center justify-center text-slate-400 hover:text-cyan-400 transition-all active:scale-90 overflow-hidden relative group shadow-lg">
+          class="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-cyan-500 dark:hover:text-cyan-400 transition-all active:scale-90 overflow-hidden relative group shadow-lg">
           <div class="relative w-6 h-6">
              <svg *ngIf="themeService.currentTheme() === 'dark'" class="w-6 h-6 transform transition-transform group-hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z"></path>
@@ -53,7 +53,11 @@ import { TranslateService } from '@ngx-translate/core';
         <div class="relative">
           <button 
             (click)="toggleNotifications()"
-            class="group relative w-12 h-12 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 flex items-center justify-center text-slate-400 hover:text-white hover:border-cyan-500/30 transition-all active:scale-90 shadow-lg">
+            class="group relative w-12 h-12 rounded-2xl transition-all active:scale-90 shadow-lg border flex items-center justify-center transition-all duration-300"
+            [ngClass]="{
+              'bg-white dark:bg-slate-800 text-cyan-500 border-white dark:border-slate-700 shadow-xl shadow-cyan-500/10': showNotifications,
+              'bg-white dark:bg-slate-900/50 border-slate-200 dark:border-white/5 text-slate-500 dark:text-slate-400 hover:text-cyan-500': !showNotifications
+            }">
             <svg class="w-6 h-6 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
             </svg>

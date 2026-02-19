@@ -163,6 +163,7 @@ builder.Services.AddScoped<IProjectDelayEscalationService, ProjectDelayEscalatio
 builder.Services.AddScoped<IProjectTransactionService, ProjectTransactionService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
     builder.Services.AddScoped<IDesignService, DesignService>();
+    builder.Services.AddScoped<IPortfolioService, PortfolioService>();
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<ICashVoucherService, CashVoucherService>();
 builder.Services.AddScoped<IMiscExpenseService, MiscExpenseService>();
@@ -195,7 +196,8 @@ builder.Services.AddScoped<IWarehouseOrderService, WarehouseOrderService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IActivityLogService, ActivityLogService>();
 builder.Services.AddScoped<ISubcontractorService, SubcontractorService>();
-
+builder.Services.AddScoped<ICompanyAnnouncementService, CompanyAnnouncementService>();
+builder.Services.AddScoped<IHRService, HRService>();
 
 
 
@@ -238,6 +240,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("CanManageUsers", policy => policy.RequireRole("SuperAdmin", "CompanyAdmin"));
 
     // Project-specific permissions
+    options.AddPolicy("CanViewProject", policy => policy.AddRequirements(new ProjectRoleRequirement("Project.View")));
     options.AddPolicy("CanEditProject", policy => policy.AddRequirements(new ProjectRoleRequirement("Project.Edit")));
     options.AddPolicy("CanCloseProject", policy => policy.AddRequirements(new ProjectRoleRequirement("Project.Close")));
     options.AddPolicy("CanViewProjectFinancials", policy => policy.AddRequirements(new ProjectRoleRequirement("Financials.View")));
@@ -303,8 +306,33 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddCors(options => {
-    options.AddPolicy("AllowAll",
+    // Development policy - more permissive for local development
+    options.AddPolicy("Development",
         builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
+    // Production policy - restrict to known origins
+    options.AddPolicy("Production", corsBuilder =>
+    {
+        var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+        if (allowedOrigins.Length > 0)
+        {
+            corsBuilder.WithOrigins(allowedOrigins)
+                   .AllowAnyMethod()
+                   .AllowAnyHeader()
+                   .AllowCredentials();
+        }
+        else
+        {
+            // Fallback: only allow same-origin if no origins configured
+            corsBuilder.SetIsOriginAllowed(origin => false);
+        }
+    });
+
+    // Default policy for backward compatibility (uses environment-appropriate settings)
+    options.AddPolicy("AllowAll",
+        corsBuilder => corsBuilder.SetIsOriginAllowed(_ => builder.Environment.IsDevelopment())
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
 });
 
 var app = builder.Build();
@@ -363,7 +391,16 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseRouting();
-app.UseCors("AllowAll");
+
+// Use environment-appropriate CORS policy
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors("Development");
+}
+else
+{
+    app.UseCors("Production");
+}
 
 // Localization middleware - MUST come before authentication
 var localizationOptions = app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<RequestLocalizationOptions>>().Value;

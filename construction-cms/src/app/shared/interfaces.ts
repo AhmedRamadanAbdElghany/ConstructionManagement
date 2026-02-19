@@ -165,6 +165,10 @@ export interface WorkerPerformance {
 }
 
 export interface CompanySettings {
+  id: number;
+  name?: string;
+  address?: string;
+  logoUrl?: string;
   // Master Switches
   enableUserManagement: boolean;
   enableProjectManagement: boolean;

@@ -1,9 +1,0 @@
-﻿C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\Services\VendorService.cs(342,59): error CS1503: Argument 1: cannot convert from 'int?' to 'int' [C:\Users\Ahmed.Ramadan\source\repos\Construction\src\ConstructionManagement.Infrastructure\ConstructionManagement.Infrastructure.csproj]
-
-Build FAILED.
-    40 Warning(s)
-    1 Error(s)
-
-Time Elapsed 00:00:04.95
-
-Workload updates are available. Run `dotnet workload list` for more information.

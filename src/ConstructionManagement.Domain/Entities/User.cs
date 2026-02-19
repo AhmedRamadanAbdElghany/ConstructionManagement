@@ -16,6 +16,10 @@ public class User : BaseEntity, ICompanyEntity
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public string? Phone { get; set; }
+    public decimal Salary { get; set; }
+    public int? ReportsToId { get; set; }
+    [ForeignKey(nameof(ReportsToId))]
+    public virtual User? ReportsTo { get; set; }
 
     /// <summary>
     /// The current type of the user (persisted for role switching)
@@ -29,6 +33,13 @@ public class User : BaseEntity, ICompanyEntity
     // -- Password Reset --------------------------------------------------------
     public string? PasswordResetToken { get; set; }
     public DateTime? PasswordResetTokenExpiry { get; set; }
+
+    // -- Password Change Required ------------------------------------------------
+    /// <summary>
+    /// When true, the user must change their password on next login.
+    /// Set to true when a temporary password is generated.
+    /// </summary>
+    public bool RequiresPasswordChange { get; set; } = false;
 
     // -- Multi-Tenancy ----------------------------------------------------------
     /// Logical tenant identifier for data isolation (all data in single database)

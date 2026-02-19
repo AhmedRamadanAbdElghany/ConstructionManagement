@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Linq;
 
 
+using Microsoft.EntityFrameworkCore;
 using ConstructionManagement.Domain.Enums;
 namespace ConstructionManagement.WebApi.Controllers;
 
@@ -17,11 +18,13 @@ namespace ConstructionManagement.WebApi.Controllers;
 public class CompanySettingsController : ControllerBase
 {
     private readonly IRepository<CompanySettings> _repo;
+    private readonly IRepository<Company> _companyRepo;
     private readonly IUnitOfWork _uow;
 
-    public CompanySettingsController(IRepository<CompanySettings> repo, IUnitOfWork uow)
+    public CompanySettingsController(IRepository<CompanySettings> repo, IRepository<Company> companyRepo, IUnitOfWork uow)
     {
         _repo = repo;
+        _companyRepo = companyRepo;
         _uow = uow;
     }
 
@@ -29,7 +32,9 @@ public class CompanySettingsController : ControllerBase
     public async Task<IActionResult> Get()
     {
         // Query filter in DbContext will limit this to the current tenant if not SuperAdmin
-        var settings = (await _repo.GetAllAsync()).FirstOrDefault();
+        var settings = await _repo.AsQueryable()
+            .Include(s => s.Company)
+            .FirstOrDefaultAsync();
         
         if (settings == null)
         {
@@ -60,7 +65,54 @@ public class CompanySettingsController : ControllerBase
             await _uow.SaveChangesAsync();
         }
 
-        return Ok(settings);
+        return Ok(new 
+        {
+            settings.Id,
+            settings.CompanyId,
+            Name = settings.Company?.Name,
+            Address = settings.Company?.Address,
+            LogoUrl = settings.Company?.LogoUrl,
+            settings.EnableUserManagement,
+            settings.EnableProjectManagement,
+            settings.EnableBOQManagement,
+            settings.EnableDailyLogs,
+            settings.EnableSiteMedia,
+            settings.EnableInventoryManagement,
+            settings.EnableEquipmentManagement,
+            settings.EnableQualityControl,
+            settings.EnableSafetyManagement,
+            settings.EnableSubcontractorManagement,
+            settings.EnableFinancialManagement,
+            settings.EnableAnalytics,
+            settings.EnableNotifications,
+            settings.EnableDocumentManagement,
+            settings.EnableDesignManagement,
+            settings.EnableClientPortal,
+            settings.EnableAccessControl,
+            settings.EnableHRManagement,
+            settings.EnableVendorManagement,
+            settings.EnableDelayNotification,
+            settings.DelayNotificationIsOneTimeOnly,
+            settings.DelayNotificationIntervalDays,
+            settings.DelayNotificationSendEmail,
+            settings.DelayGracePeriodDays,
+            settings.EnablePhotoUpload,
+            settings.RequirePhotoReview,
+            settings.PhotoApproverRole,
+            settings.EnableInvoiceReview,
+            settings.EnableInvoiceAggregation,
+            settings.MaxPhotosPerUpload,
+            settings.ClientCanSeeFinancials,
+            settings.ClientCanSeeMedia,
+            settings.ClientCanSeeBOQ,
+            settings.AllowMeasured,
+            settings.AllowSupervision,
+            settings.AllowPackages,
+            settings.AllowLocations,
+            settings.AllowHR,
+            settings.DefaultSupervisionPercentage,
+            DefaultMoneyCalculationMethod = settings.DefaultMoneyCalculationMethod.ToString()
+        });
     }
 
     [HttpPut]
@@ -68,6 +120,21 @@ public class CompanySettingsController : ControllerBase
     {
         var settings = (await _repo.GetAllAsync()).FirstOrDefault();
         if (settings == null) return NotFound("Settings not found for this company.");
+        
+        // Update Company Identity if provided
+        if (!string.IsNullOrEmpty(request.Name) || !string.IsNullOrEmpty(request.Address))
+        {
+            if (settings.CompanyId.HasValue)
+            {
+                var company = await _companyRepo.GetByIdAsync(settings.CompanyId.Value);
+                if (company != null)
+                {
+                    if (!string.IsNullOrEmpty(request.Name)) company.Name = request.Name;
+                    if (!string.IsNullOrEmpty(request.Address)) company.Address = request.Address;
+                    await _companyRepo.UpdateAsync(company);
+                }
+            }
+        }
 
         // Map request to entity
         

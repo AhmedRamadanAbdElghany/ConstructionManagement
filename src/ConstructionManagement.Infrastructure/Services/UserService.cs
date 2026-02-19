@@ -112,7 +112,8 @@ public class UserService : IUserService
                 u.UserRoles.Select(ur => ur.Role.Name).ToList(),
                 u.CreatedAt,
                 u.UserType,
-                u.CompanyId))
+                u.CompanyId,
+                u.RequiresPasswordChange))
             .FirstOrDefaultAsync();
     }
 
@@ -127,7 +128,8 @@ public class UserService : IUserService
                 u.UserRoles.Select(ur => ur.Role.Name).ToList(),
                 u.CreatedAt,
                 u.UserType,
-                u.CompanyId))
+                u.CompanyId,
+                u.RequiresPasswordChange))
             .ToListAsync();
     }
 

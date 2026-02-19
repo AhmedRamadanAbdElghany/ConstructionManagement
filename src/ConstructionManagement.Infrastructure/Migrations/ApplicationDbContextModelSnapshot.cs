@@ -349,6 +349,69 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.ToTable("ApprovalSteps");
                 });
 
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Attendance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<TimeSpan?>("CheckIn")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan?>("CheckOut")
+                        .HasColumnType("time");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Date");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("UserId", "Date");
+
+                    b.ToTable("Attendances");
+                });
+
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.BOQExecutedDelta", b =>
                 {
                     b.Property<int>("Id")
@@ -810,6 +873,63 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CatalogItems");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Certification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CertificateNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DocumentUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("IssueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IssuingAuthority")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpiryDate");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Certifications");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ChangeOrderDocument", b =>
@@ -1445,6 +1565,56 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.ToTable("Companies");
                 });
 
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyAnnouncement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("CompanyAnnouncements");
+                });
+
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyDefaultPhase", b =>
                 {
                     b.Property<int>("Id")
@@ -1540,6 +1710,45 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("DefaultPhaseId");
 
                     b.ToTable("CompanyDefaultPhaseItems");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyFollower", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FollowedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("CompanyId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("CompanyFollowers");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyPackage", b =>
@@ -4412,6 +4621,154 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.ToTable("KPIResults");
                 });
 
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.LeaveRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("ActionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ApprovedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LeaveTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RejectionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovedByUserId");
+
+                    b.HasIndex("EndDate");
+
+                    b.HasIndex("LeaveTypeId");
+
+                    b.HasIndex("StartDate");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("LeaveRequests");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.LeaveType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DefaultDays")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("RequiresApproval")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name");
+
+                    b.ToTable("LeaveTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DefaultDays = 21,
+                            Description = "Standard yearly vacation",
+                            IsDeleted = false,
+                            IsPaid = true,
+                            Name = "Annual Leave",
+                            RequiresApproval = true
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DefaultDays = 15,
+                            Description = "Medical leave",
+                            IsDeleted = false,
+                            IsPaid = true,
+                            Name = "Sick Leave",
+                            RequiresApproval = true
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DefaultDays = 0,
+                            Description = "Leave without pay",
+                            IsDeleted = false,
+                            IsPaid = false,
+                            Name = "Unpaid Leave",
+                            RequiresApproval = true
+                        });
+                });
+
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Material", b =>
                 {
                     b.Property<int>("Id")
@@ -5221,6 +5578,67 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.ToTable("PaymentHistories");
                 });
 
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Payroll", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("BaseSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Bonuses")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Deductions")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("NetSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "Year", "Month")
+                        .IsUnique();
+
+                    b.ToTable("Payrolls");
+                });
+
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Permission", b =>
                 {
                     b.Property<int>("Id")
@@ -5487,6 +5905,30 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             Description = "Manage company job recruitment",
                             IsDeleted = false,
                             Name = "HR.JobPostings"
+                        },
+                        new
+                        {
+                            Id = 123,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage employee attendance",
+                            IsDeleted = false,
+                            Name = "HR.Attendance"
+                        },
+                        new
+                        {
+                            Id = 124,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage employee leave requests",
+                            IsDeleted = false,
+                            Name = "HR.LeaveManagement"
+                        },
+                        new
+                        {
+                            Id = 125,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage employee certifications",
+                            IsDeleted = false,
+                            Name = "HR.Certifications"
                         });
                 });
 
@@ -5536,6 +5978,113 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("Phases");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.PortfolioCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ParentCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentCategoryId");
+
+                    b.ToTable("PortfolioCategories");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.PortfolioItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClientName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CompletionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("FileType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OriginalFileName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("PortfolioItems");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Project", b =>
@@ -8214,6 +8763,15 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<string>("ProfileImageUrl")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ReportsToId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("RequiresPasswordChange")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("Salary")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Specialization")
                         .HasColumnType("nvarchar(max)");
 
@@ -8234,6 +8792,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
                     b.HasIndex("CompanyId");
 
+                    b.HasIndex("ReportsToId");
+
                     b.ToTable("Users");
 
                     b.HasData(
@@ -8248,6 +8808,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             IsProfileComplete = false,
                             LastName = "Admin",
                             PasswordHash = "$2a$11$2V/xg8YvJCLO6hdSdHbmg.UIB1zjy0Y/lG0I2XXKlPUSXqMB0eYw6",
+                            RequiresPasswordChange = false,
+                            Salary = 0m,
                             UserType = 0,
                             Username = "admin"
                         });
@@ -8278,7 +8840,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             UserId = 1,
                             RoleId = 1,
-                            AssignedAt = new DateTime(2026, 2, 17, 13, 5, 37, 568, DateTimeKind.Utc).AddTicks(1133)
+                            AssignedAt = new DateTime(2026, 2, 19, 15, 0, 16, 231, DateTimeKind.Utc).AddTicks(6233)
                         });
                 });
 
@@ -9220,6 +9782,17 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("Request");
                 });
 
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Attendance", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.BOQExecutedDelta", b =>
                 {
                     b.HasOne("ConstructionManagement.Domain.Entities.BOQItem", "BOQItem")
@@ -9367,6 +9940,17 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("Project");
 
                     b.Navigation("WorkerUser");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Certification", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ChangeOrderDocument", b =>
@@ -9532,6 +10116,17 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("Package");
                 });
 
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyAnnouncement", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyDefaultPhase", b =>
                 {
                     b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
@@ -9563,6 +10158,25 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("Company");
 
                     b.Navigation("DefaultPhase");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyFollower", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyPackage", b =>
@@ -10166,6 +10780,32 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("KPIDefinition");
                 });
 
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.LeaveRequest", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "ApprovedByUser")
+                        .WithMany()
+                        .HasForeignKey("ApprovedByUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.LeaveType", "LeaveType")
+                        .WithMany()
+                        .HasForeignKey("LeaveTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ApprovedByUser");
+
+                    b.Navigation("LeaveType");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Material", b =>
                 {
                     b.HasOne("ConstructionManagement.Domain.Entities.MaterialCategory", "Category")
@@ -10458,6 +11098,17 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("RecordedByUser");
                 });
 
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Payroll", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Phase", b =>
                 {
                     b.HasOne("ConstructionManagement.Domain.Entities.Phase", "ParentPhase")
@@ -10474,6 +11125,26 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("ParentPhase");
 
                     b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.PortfolioCategory", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.PortfolioCategory", "ParentCategory")
+                        .WithMany("ChildCategories")
+                        .HasForeignKey("ParentCategoryId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("ParentCategory");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.PortfolioItem", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.PortfolioCategory", "Category")
+                        .WithMany("Items")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Project", b =>
@@ -11125,7 +11796,13 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .WithMany("Users")
                         .HasForeignKey("CompanyId");
 
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "ReportsTo")
+                        .WithMany()
+                        .HasForeignKey("ReportsToId");
+
                     b.Navigation("Company");
+
+                    b.Navigation("ReportsTo");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.UserRole", b =>
@@ -11552,6 +12229,13 @@ namespace ConstructionManagement.Infrastructure.Migrations
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Phase", b =>
                 {
                     b.Navigation("ChildPhases");
+
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.PortfolioCategory", b =>
+                {
+                    b.Navigation("ChildCategories");
 
                     b.Navigation("Items");
                 });
