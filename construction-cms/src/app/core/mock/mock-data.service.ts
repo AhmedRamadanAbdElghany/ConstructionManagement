@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { User, Project, BOQItem, DailyLog, SiteMedia, Transaction, VacationRequest, AppNotification, WorkerPerformance, Role, ProjectBill, ClientPayment, Design, DesignCategory } from '../../shared/interfaces';
+import { User, Project, ProjectItem, DailyLog, SiteMedia, Transaction, VacationRequest, AppNotification, WorkerPerformance, Role, ProjectBill, ClientPayment, Design, DesignCategory } from '../../shared/interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
@@ -90,15 +90,15 @@ export class MockDataService {
     }
   ];
 
-  private boqItems: BOQItem[] = [
-    { id: 1, projectId: 1, description: 'Excavation Works', unit: 'm³', totalQuantity: 5000, executedQuantity: 4500, rate: 50 },
-    { id: 2, projectId: 1, description: 'Concrete Foundation', unit: 'm³', totalQuantity: 2000, executedQuantity: 1200, rate: 300 },
-    { id: 3, projectId: 1, description: 'Reinforcement Steel', unit: 'ton', totalQuantity: 500, executedQuantity: 350, rate: 1500 },
-    { id: 4, projectId: 1, description: 'Formwork', unit: 'm²', totalQuantity: 8000, executedQuantity: 5200, rate: 45 },
-    { id: 5, projectId: 1, description: 'Waterproofing Membrane', unit: 'm²', totalQuantity: 3000, executedQuantity: 1800, rate: 80 },
-    { id: 6, projectId: 2, description: 'Brick Works', unit: 'm²', totalQuantity: 1000, executedQuantity: 200, rate: 80 },
-    { id: 7, projectId: 2, description: 'Plastering', unit: 'm²', totalQuantity: 5000, executedQuantity: 1000, rate: 25 },
-    { id: 8, projectId: 3, description: 'Landscaping', unit: 'm²', totalQuantity: 2500, executedQuantity: 1200, rate: 35 }
+  private projectItems: ProjectItem[] = [
+    { id: 1, projectId: 1, itemCode: 'EXC-001', itemName: 'Excavation Works', unit: 'm³', agreedQuantity: 5000, executedQuantity: 4500, unitPrice: 50, status: 'Active' },
+    { id: 2, projectId: 1, itemCode: 'CON-001', itemName: 'Concrete Foundation', unit: 'm³', agreedQuantity: 2000, executedQuantity: 1200, unitPrice: 300, status: 'Active' },
+    { id: 3, projectId: 1, itemCode: 'STL-001', itemName: 'Reinforcement Steel', unit: 'ton', agreedQuantity: 500, executedQuantity: 350, unitPrice: 1500, status: 'Active' },
+    { id: 4, projectId: 1, itemCode: 'FRM-001', itemName: 'Formwork', unit: 'm²', agreedQuantity: 8000, executedQuantity: 5200, unitPrice: 45, status: 'Active' },
+    { id: 5, projectId: 1, itemCode: 'WPR-001', itemName: 'Waterproofing Membrane', unit: 'm²', agreedQuantity: 3000, executedQuantity: 1800, unitPrice: 80, status: 'Active' },
+    { id: 6, projectId: 2, itemCode: 'BRK-001', itemName: 'Brick Works', unit: 'm²', agreedQuantity: 1000, executedQuantity: 200, unitPrice: 80, status: 'Active' },
+    { id: 7, projectId: 2, itemCode: 'PLS-001', itemName: 'Plastering', unit: 'm²', agreedQuantity: 5000, executedQuantity: 1000, unitPrice: 25, status: 'Active' },
+    { id: 8, projectId: 3, itemCode: 'LND-001', itemName: 'Landscaping', unit: 'm²', agreedQuantity: 2500, executedQuantity: 1200, unitPrice: 35, status: 'Active' }
   ];
 
   private dailyLogs: DailyLog[] = [
@@ -108,8 +108,8 @@ export class MockDataService {
       date: '2024-01-25T00:00:00Z',
       isClosed: true,
       items: [
-        { id: 1, boqItemId: 1, quantity: 150, notes: 'Completed excavation section A', startTime: '2024-01-25T08:00:00Z' },
-        { id: 2, boqItemId: 2, quantity: 50, notes: 'Foundation pouring for columns 1-5', startTime: '2024-01-25T10:30:00Z' }
+        { id: 1, projectItemId: 1, quantity: 150, notes: 'Completed excavation section A', startTime: '2024-01-25T08:00:00Z' },
+        { id: 2, projectItemId: 2, quantity: 50, notes: 'Foundation pouring for columns 1-5', startTime: '2024-01-25T10:30:00Z' }
       ]
     },
     {
@@ -118,7 +118,7 @@ export class MockDataService {
       date: '2024-01-26T00:00:00Z',
       isClosed: true,
       items: [
-        { id: 3, boqItemId: 3, quantity: 25, notes: 'Installed rebar for level 2', startTime: '2024-01-26T07:30:00Z' }
+        { id: 3, projectItemId: 3, quantity: 25, notes: 'Installed rebar for level 2', startTime: '2024-01-26T07:30:00Z' }
       ]
     },
     {
@@ -172,7 +172,7 @@ export class MockDataService {
     { id: 2, name: 'CompanyUser', description: 'Access to assigned projects and daily logs' },
     { id: 3, name: 'SiteManager', description: 'Management of site operations and worker logs' },
     { id: 4, name: 'Accountant', description: 'Access to financial records and project budgets' },
-    { id: 5, name: 'SiteEngineer', description: 'Technical oversight and BOQ management' }
+    { id: 5, name: 'SiteEngineer', description: 'Technical oversight and project items management' }
   ];
 
   private bills: ProjectBill[] = [
@@ -190,7 +190,7 @@ export class MockDataService {
 
   getUsers(): Observable<User[]> { return of(this.users); }
   getProjects(): Observable<Project[]> { return of(this.projects); }
-  getBOQItems(projectId: number): Observable<BOQItem[]> { return of(this.boqItems.filter(i => i.projectId === projectId)); }
+  getProjectItems(projectId: number): Observable<ProjectItem[]> { return of(this.projectItems.filter((i: ProjectItem) => i.projectId === projectId)); }
   getDailyLogs(projectId: number): Observable<DailyLog[]> { return of(this.dailyLogs.filter(l => l.projectId === projectId)); }
   getSiteMedia(projectId: number): Observable<SiteMedia[]> { return of(this.siteMedia.filter(m => m.projectId === projectId)); }
   getTransactions(projectId: number): Observable<Transaction[]> { return of(this.transactions.filter(t => t.projectId === projectId)); }

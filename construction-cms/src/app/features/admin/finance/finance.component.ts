@@ -9,6 +9,15 @@ import { TransactionsService, TransactionDto } from '../../../core/services/tran
 import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
 
+// Billing interface for platform subscription
+interface BillingInvoice {
+  id: number;
+  date: Date;
+  reference: string;
+  amount: number;
+  status: string;
+}
+
 @Component({
   selector: 'app-finance',
   standalone: true,
@@ -113,6 +122,9 @@ import { I18nService } from '../../../core/i18n/i18n.service';
           </button>
           <button class="tab-btn" [class.active]="activeTab === 'invoices'" (click)="activeTab = 'invoices'">
             <span class="icon">&#128190;</span> {{ 'finance.tabs.invoices' | translate }}
+          </button>
+          <button class="tab-btn" [class.active]="activeTab === 'billing'" (click)="activeTab = 'billing'">
+            <span class="icon">&#128179;</span> {{ 'finance.tabs.billing' | translate }}
           </button>
         </div>
 
@@ -248,7 +260,7 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                     <thead>
                       <tr>
                         <th>{{ 'finance.transaction.type' | translate }}</th>
-                        <th>{{ 'finance.transaction.boq_item' | translate }}</th>
+                        <th>{{ 'finance.transaction.project_item' | translate }}</th>
                         <th>{{ 'finance.transaction.amount' | translate }}</th>
                         <th>{{ 'finance.transaction.date' | translate }}</th>
                         <th>{{ 'common.status' | translate }}</th>
@@ -259,7 +271,7 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                       @for (transaction of transactions(); track transaction.id) {
                         <tr [class.pending]="transaction.status === 'Pending'" [class.approved]="transaction.status === 'Approved'" [class.rejected]="transaction.status === 'Rejected'">
                           <td>{{ transaction.transactionTypeName }}</td>
-                          <td>{{ transaction.boqItemName || '-' }}</td>
+                          <td>{{ transaction.projectItemName || '-' }}</td>
                           <td>{{ transaction.amount | currency:'USD':'symbol':'1.0-0' }}</td>
                           <td>{{ transaction.transactionDate | date:'shortDate' }}</td>
                           <td>
@@ -316,11 +328,11 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                         <tr [class.pending]="invoice.status === 'Pending'" [class.approved]="invoice.status === 'Approved'" [class.rejected]="invoice.status === 'Rejected'">
                           <td>{{ invoice.invoiceNumber }}</td>
                           <td>{{ invoice.itemName || '-' }}</td>
-                          <td>{{ invoice.amount | currency:'USD':'symbol':'1.0-0' }}</td>
+                          <td>{{ invoice.netAmount | currency:'USD':'symbol':'1.0-0' }}</td>
                           <td>{{ invoice.invoiceDate | date:'shortDate' }}</td>
                           <td>
                             <span class="status-badge" [class.pending]="invoice.status === 'Pending'" [class.approved]="invoice.status === 'Approved'" [class.rejected]="invoice.status === 'Rejected'">
-                              {{ invoice.statusName }}
+                              {{ invoice.statusDisplayName }}
                             </span>
                           </td>
                           <td>
@@ -340,6 +352,80 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                       } @empty {
                         <tr>
                           <td colspan="6" class="no-data">{{ 'finance.no_invoices' | translate }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            }
+            @case ('billing') {
+              <div class="billing-section">
+                <!-- MRR Card -->
+                <div class="billing-hero">
+                  <div class="billing-hero-content">
+                    <p class="billing-label">{{ 'finance.billing.mrr' | translate }}</p>
+                    <h3 class="billing-amount">{{ billingMRR() | currency:'USD':'symbol':'1.0-0' }}</h3>
+                    <div class="billing-info-cards">
+                      <div class="billing-info-card">
+                        <p class="info-label">{{ 'finance.billing.interval' | translate }}</p>
+                        <p class="info-value">{{ 'finance.billing.monthly' | translate }}</p>
+                      </div>
+                      <div class="billing-info-card">
+                        <p class="info-label">{{ 'finance.billing.next_renewal' | translate }}</p>
+                        <p class="info-value">{{ nextRenewal() }}</p>
+                      </div>
+                      <div class="billing-info-card status-good">
+                        <p class="info-label">{{ 'finance.billing.payment_status' | translate }}</p>
+                        <p class="info-value">&#10004; {{ 'finance.billing.good_standing' | translate }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Payout Method -->
+                <div class="payout-card">
+                  <div class="payout-icon">&#128179;</div>
+                  <h4>{{ 'finance.billing.payout_method' | translate }}</h4>
+                  <p class="payout-details">{{ payoutMethod() }}</p>
+                  <button class="btn btn-secondary" (click)="updatePayoutMethod()">
+                    {{ 'finance.billing.update_card' | translate }}
+                  </button>
+                </div>
+
+                <!-- Invoicing History -->
+                <div class="section-header">
+                  <h2>{{ 'finance.billing.invoicing_history' | translate }}</h2>
+                </div>
+                <div class="data-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>{{ 'finance.billing.billing_date' | translate }}</th>
+                        <th>{{ 'finance.billing.transaction_ref' | translate }}</th>
+                        <th>{{ 'finance.billing.amount_paid' | translate }}</th>
+                        <th>{{ 'finance.billing.status' | translate }}</th>
+                        <th>{{ 'common.actions' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (invoice of billingHistory(); track invoice.id) {
+                        <tr>
+                          <td>{{ invoice.date | date:'MMM dd, yyyy' }}</td>
+                          <td>{{ invoice.reference }}</td>
+                          <td>{{ invoice.amount | currency:'USD':'symbol':'1.0-0' }}</td>
+                          <td>
+                            <span class="status-badge approved">{{ invoice.status }}</span>
+                          </td>
+                          <td>
+                            <button class="btn-icon" (click)="viewInvoiceDetails(invoice)" title="{{ 'common.view' | translate }}">
+                              <span>&#128065;</span>
+                            </button>
+                          </td>
+                        </tr>
+                      } @empty {
+                        <tr>
+                          <td colspan="5" class="no-data">{{ 'finance.billing.no_history' | translate }}</td>
                         </tr>
                       }
                     </tbody>
@@ -643,6 +729,117 @@ import { I18nService } from '../../../core/i18n/i18n.service';
       color: #991b1b;
     }
 
+    /* Billing Section Styles */
+    .billing-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .billing-hero {
+      background: linear-gradient(135deg, #4f46e5 0%, #1e40af 100%);
+      border-radius: 2rem;
+      padding: 2rem;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .billing-hero::before {
+      content: '';
+      position: absolute;
+      right: -5rem;
+      top: -5rem;
+      width: 15rem;
+      height: 15rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      blur: 3rem;
+    }
+
+    .billing-hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .billing-label {
+      font-size: 0.625rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 0.5rem;
+    }
+
+    .billing-amount {
+      font-size: 3rem;
+      font-weight: 800;
+      margin: 0 0 1.5rem 0;
+    }
+
+    .billing-info-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .billing-info-card {
+      padding: 1rem 1.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .billing-info-card.status-good {
+      background: #10b981;
+    }
+
+    .info-label {
+      font-size: 0.5625rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 0.25rem;
+    }
+
+    .info-value {
+      font-weight: 700;
+      color: white;
+    }
+
+    .payout-card {
+      background: #f9fafb;
+      border-radius: 2rem;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      border: 1px solid #e5e7eb;
+    }
+
+    .payout-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .payout-card h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin: 0 0 0.5rem 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .payout-details {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin: 0 0 1rem 0;
+    }
+
     .no-data {
       text-align: center;
       padding: 2rem;
@@ -659,7 +856,7 @@ export class FinanceComponent implements OnInit {
   private destroy$ = new Subject<void>();
 
   isLoading = signal(true);
-  activeTab: 'vouchers' | 'expenses' | 'transactions' | 'invoices' = 'vouchers';
+  activeTab: 'vouchers' | 'expenses' | 'transactions' | 'invoices' | 'billing' = 'vouchers';
   selectedProjectId = signal<number | null>(null);
 
   cashVouchers = signal<CashVoucherDto[]>([]);
@@ -672,7 +869,18 @@ export class FinanceComponent implements OnInit {
   pendingTransactions = computed(() => this.transactions().filter(t => t.status === 'Pending').length);
   pendingInvoices = computed(() => this.invoices().filter(i => i.status === 'Pending').length);
   totalTransactionAmount = computed(() => this.transactions().reduce((sum, t) => sum + t.amount, 0));
-  totalInvoiceAmount = computed(() => this.invoices().reduce((sum, i) => sum + i.amount, 0));
+  totalInvoiceAmount = computed(() => this.invoices().reduce((sum, i) => sum + i.netAmount, 0));
+
+  // Billing signals
+  billingMRR = signal(5240);
+  nextRenewal = signal('March 15, 2024');
+  payoutMethod = signal('VISA ending in •••• 4422');
+  billingHistory = signal<BillingInvoice[]>([
+    { id: 1, date: new Date('2024-02-15'), reference: 'INV-2024-0215', amount: 5240, status: 'Settled' },
+    { id: 2, date: new Date('2024-01-15'), reference: 'INV-2024-0115', amount: 5240, status: 'Settled' },
+    { id: 3, date: new Date('2023-12-15'), reference: 'INV-2023-1215', amount: 5240, status: 'Settled' },
+    { id: 4, date: new Date('2023-11-15'), reference: 'INV-2023-1115', amount: 5240, status: 'Settled' }
+  ]);
 
   private i18nService = inject(I18nService);
 
@@ -718,8 +926,8 @@ export class FinanceComponent implements OnInit {
     // Load invoices
     this.invoicesService.getInvoices()
       .pipe(takeUntil(this.destroy$))
-      .subscribe(invoices => {
-        this.invoices.set(invoices);
+      .subscribe(result => {
+        this.invoices.set(result.items as any[]);
       });
 
     this.isLoading.set(false);
@@ -835,7 +1043,7 @@ export class FinanceComponent implements OnInit {
 
   approveInvoice(invoice: InvoiceDto): void {
     if (confirm('Approve invoice ' + invoice.invoiceNumber + '?')) {
-      this.invoicesService.reviewInvoice(1, invoice.id, { isApproved: true })
+      this.invoicesService.reviewInvoice(invoice.id, true)
         .pipe(takeUntil(this.destroy$))
         .subscribe(() => this.loadAllData());
     }
@@ -844,9 +1052,20 @@ export class FinanceComponent implements OnInit {
   rejectInvoice(invoice: InvoiceDto): void {
     const reason = prompt('Enter rejection reason:');
     if (reason) {
-      this.invoicesService.reviewInvoice(1, invoice.id, { isApproved: false, rejectionReason: reason })
+      this.invoicesService.reviewInvoice(invoice.id, false, reason)
         .pipe(takeUntil(this.destroy$))
         .subscribe(() => this.loadAllData());
     }
+  }
+
+  // Billing Actions
+  updatePayoutMethod(): void {
+    console.log('Opening payout method update dialog...');
+    // TODO: Implement payout method update modal
+  }
+
+  viewInvoiceDetails(invoice: BillingInvoice): void {
+    console.log('Viewing billing invoice:', invoice);
+    // TODO: Open invoice PDF or details modal
   }
 }

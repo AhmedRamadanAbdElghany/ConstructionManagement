@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { Project, User, DailyLog, BOQItem, CompanySettings, ProjectSettings, Role, Transaction, ProjectBill, ClientPayment, ProjectActivity, UpdateProjectRequest } from '../../../../shared/interfaces';
+import { Project, User, DailyLog, ProjectItem, CompanySettings, ProjectSettings, Role, Transaction, ProjectBill, ClientPayment, ProjectActivity, UpdateProjectRequest } from '../../../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../../../core/services/auth.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -10,7 +10,7 @@ import { PhaseService, Phase } from '../../../../core/services/phase.service';
 import { ProjectService } from '../../../../core/services/project.service';
 import { ProjectTeamService, TeamMemberDto } from '../../../../core/services/project-team.service';
 import { DailyLogsService, DailyLogDto } from '../../../../core/services/daily-logs.service';
-import { BOQService } from '../../../../core/services/boq.service';
+import { ProjectItemService } from '../../../../core/services/project-item.service';
 import { TransactionsService, TransactionDto } from '../../../../core/services/transactions.service';
 import { InvoicesService } from '../../../../core/services/invoices.service';
 import { RolesService } from '../../../../core/services/roles.service';
@@ -18,14 +18,14 @@ import { DesignService } from '../../../../core/services/design.service';
 import { VendorService } from '../../../../core/services/vendor.service';
 import { DashboardService } from '../../../../core/services/dashboard.service';
 import { PhaseNodeComponent } from '../../project-hierarchy/phase-node.component';
-import { BoqProgressNodeComponent } from '../../project-hierarchy/boq-progress-node.component';
+import { ProjectItemProgressNodeComponent } from '../../project-hierarchy/project-item-progress-node.component';
 import { DesignsTabComponent } from './designs-tab.component';
 import { map } from 'rxjs/operators';
 
 @Component({
    selector: 'app-project-detail',
    standalone: true,
-   imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ReactiveFormsModule, PhaseNodeComponent, BoqProgressNodeComponent, DesignsTabComponent], // Added FormsModule and ReactiveFormsModule
+   imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ReactiveFormsModule, PhaseNodeComponent, ProjectItemProgressNodeComponent, DesignsTabComponent], // Added FormsModule and ReactiveFormsModule
    template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       @if (project) {
@@ -142,7 +142,7 @@ import { map } from 'rxjs/operators';
             @for (tab of [
               { key: 'designs', label: 'project_detail.designs' },
               { key: 'phases', label: 'project_detail.phases_hierarchy' },
-              { key: 'boq', label: 'project_detail.boq_progress' },
+              { key: 'items', label: 'project_detail.items_progress' },
               { key: 'timeline', label: 'project_detail.timeline' },
               { key: 'team', label: 'project_detail.team_management' },
               { key: 'bills', label: 'sidebar.bills' },
@@ -448,7 +448,7 @@ import { map } from 'rxjs/operators';
                        </div>
 
                        <!-- Client Portal Section -->
-                       @if (companySettings?.clientCanSeeFinancials || companySettings?.clientCanSeeMedia || companySettings?.clientCanSeeBOQ) {
+                       @if (companySettings?.clientCanSeeFinancials || companySettings?.clientCanSeeMedia || companySettings?.clientCanSeeProjectItems) {
                         <div class="space-y-4 pt-8 border-t border-slate-200 dark:border-white/10">
                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6">{{ 'project_detail.client_portal_visibility' | translate }}</p>
                           
@@ -644,13 +644,13 @@ import { map } from 'rxjs/operators';
             </div>
           }
 
-           <!-- BOQ Tab (Renamed to Project Progress & BOQ) -->
-           @if (activeTab === 'boq') {
+           <!-- Project Items Tab -->
+           @if (activeTab === 'items') {
              <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all animate-in fade-in duration-500">
                <div class="px-8 py-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-slate-50/30 dark:bg-slate-950/20">
                  <div>
-                     <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'project_detail.boq_progress_dashboard' | translate }}</h3>
-                     <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">{{ 'project_detail.boq_progress_desc' | translate }}</p>
+                      <h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'project_detail.items_progress_dashboard' | translate }}</h3>
+                      <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">{{ 'project_detail.items_progress_desc' | translate }}</p>
                  </div>
                  <div class="flex items-center space-x-6">
                     <div class="text-right">
@@ -662,10 +662,10 @@ import { map } from 'rxjs/operators';
                <div class="p-8">
                   <div class="space-y-4">
                      @for (phase of projectPhases; track phase.id) {
-                        <app-boq-progress-node 
+                        <app-project-item-progress-node 
                             [node]="phase" 
                             [parentTotalMoney]="totalProjectValue">
-                        </app-boq-progress-node>
+                        </app-project-item-progress-node>
                      } @empty {
                         <div class="py-20 text-center bg-slate-50/50 dark:bg-white/[0.02] rounded-[2.5rem] border border-dashed border-slate-200 dark:border-white/5">
                            <div class="w-16 h-16 rounded-[2rem] bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-4 opacity-50">
@@ -1302,20 +1302,20 @@ import { map } from 'rxjs/operators';
             </div>
           }
 
-          <!-- Add BOQ Item Modal -->
-          @if (showAddBoqModal) {
+          <!-- Add Project Item Modal -->
+          @if (showAddItemModal) {
             <div class="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xl animate-in fade-in duration-300">
                <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[3rem] shadow-2xl flex flex-col relative overflow-hidden animate-in scale-in-95 duration-500 border border-white/10">
                   <div class="p-10 pb-6 flex items-center justify-between bg-slate-50/50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
                      <div>
                         <h3 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
-                           {{ selectedBoqItem ? 'Configure Item Dates' : 'Add BOQ Item' }}
+                           {{ selectedProjectItem ? 'Configure Item Dates' : 'Add Project Item' }}
                         </h3>
                         <p class="text-[10px] text-cyan-500 font-bold uppercase tracking-widest mt-1">
-                           {{ selectedBoqItem ? 'Update schedule for ' + selectedBoqItem.description : 'New work item definition' }}
+                           {{ selectedProjectItem ? 'Update schedule for ' + selectedProjectItem.itemName : 'New work item definition' }}
                         </p>
                      </div>
-                     <button (click)="showAddBoqModal = false" class="p-4 rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition-all shadow-sm">
+                     <button (click)="showAddItemModal = false" class="p-4 rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition-all shadow-sm">
                         <svg class="w-5 h-5 text-slate-400 font-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
                      </button>
                   </div>
@@ -1323,13 +1323,13 @@ import { map } from 'rxjs/operators';
                   <div class="p-10 pt-6 space-y-6">
                      <div class="relative group">
                         <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Description</label>
-                        <input type="text" [(ngModel)]="boqForm.description" placeholder="e.g. Excavation Works"
+                        <input type="text" [(ngModel)]="itemForm.description" placeholder="e.g. Excavation Works"
                                class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 outline-none transition-all">
                      </div>
                      <div class="grid grid-cols-2 gap-4">
                         <div class="relative group">
                            <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Unit</label>
-                           <select [(ngModel)]="boqForm.unit" 
+                           <select [(ngModel)]="itemForm.unit" 
                                    class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none appearance-none">
                               <option value="">Select Unit</option>
                               <option value="m³">m³ (Cubic Meter)</option>
@@ -1343,46 +1343,46 @@ import { map } from 'rxjs/operators';
                         </div>
                         <div class="relative group">
                            <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Total Quantity</label>
-                           <input type="number" [(ngModel)]="boqForm.totalQuantity" 
+                           <input type="number" [(ngModel)]="itemForm.totalQuantity" 
                                   class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none">
                         </div>
                      </div>
                      <div class="relative group">
                         <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">Unit Rate ($)</label>
-                        <input type="number" [(ngModel)]="boqForm.rate" 
+                        <input type="number" [(ngModel)]="itemForm.rate" 
                                class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none">
                      </div>
                       <div class="grid grid-cols-2 gap-4">
                          <div class="relative group">
                             <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'common.start_date' | translate }}</label>
-                            <input type="date" [(ngModel)]="boqForm.startDate" 
+                            <input type="date" [(ngModel)]="itemForm.startDate" 
                                    class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none">
                          </div>
                          <div class="relative group">
                             <label class="absolute -top-2 left-5 px-2 bg-white dark:bg-slate-900 text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'common.end_date' | translate }}</label>
-                            <input type="date" [(ngModel)]="boqForm.endDate" 
+                            <input type="date" [(ngModel)]="itemForm.endDate" 
                                    class="w-full p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white font-bold text-sm outline-none">
                          </div>
                       </div>
-                     @if (boqForm.totalQuantity > 0 && boqForm.rate > 0) {
+                     @if (itemForm.totalQuantity > 0 && itemForm.rate > 0) {
                         <div class="p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
                            <p class="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-1">Estimated Total Value</p>
-                           <p class="text-xl font-black text-emerald-600">{{ boqForm.totalQuantity * boqForm.rate | currency:'USD' }}</p>
+                           <p class="text-xl font-black text-emerald-600">{{ itemForm.totalQuantity * itemForm.rate | currency:'USD' }}</p>
                         </div>
                      }
                   </div>
 
                    <div class="p-10 pt-4 flex space-x-4 shrink-0 bg-slate-50/50 dark:bg-white/5">
-                      <button (click)="showAddBoqModal = false" class="flex-1 py-5 rounded-[1.5rem] bg-white dark:bg-slate-800 text-slate-500 font-black text-[11px] uppercase tracking-widest border border-slate-200 dark:border-white/5">Cancel</button>
-                      <button (click)="addBoqItem()" [disabled]="!boqForm.description || !boqForm.unit || boqForm.totalQuantity <= 0 || isSavingBoq" class="flex-[2] py-5 rounded-[1.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-[11px] uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 flex items-center justify-center space-x-3">
-                         @if (isSavingBoq) {
+                      <button (click)="showAddItemModal = false" class="flex-1 py-5 rounded-[1.5rem] bg-white dark:bg-slate-800 text-slate-500 font-black text-[11px] uppercase tracking-widest border border-slate-200 dark:border-white/5">Cancel</button>
+                      <button (click)="addProjectItem()" [disabled]="!itemForm.description || !itemForm.unit || itemForm.totalQuantity <= 0 || isSavingItem" class="flex-[2] py-5 rounded-[1.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-[11px] uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 flex items-center justify-center space-x-3">
+                         @if (isSavingItem) {
                             <svg class="animate-spin h-4 w-4 text-white dark:text-slate-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
                             <span>Processing...</span>
                          } @else {
-                            <span>{{ selectedBoqItem ? 'Update Configuration' : 'Add Item' }}</span>
+                            <span>{{ selectedProjectItem ? 'Update Configuration' : 'Add Item' }}</span>
                          }
                       </button>
                    </div>
@@ -1684,7 +1684,7 @@ import { map } from 'rxjs/operators';
                             <div class="p-6 rounded-[2rem] bg-slate-50 dark:bg-white/[0.02] border border-slate-100 dark:border-white/5 group hover:border-cyan-500/30 transition-all">
                                <div class="flex items-start justify-between">
                                   <div class="flex-1">
-                                     <p class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">{{ getBoqItemName(item.boqItemId) }}</p>
+                                     <p class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">{{ getProjectItemName(item.projectItemId) }}</p>
                                      <p class="text-xs text-slate-500 font-medium leading-relaxed italic">"{{ item.notes || 'No comments provided' }}"</p>
                                   </div>
                                   <div class="text-right ml-6">
@@ -1717,11 +1717,11 @@ import { map } from 'rxjs/operators';
 })
 export class ProjectDetailComponent implements OnInit {
    project: any | undefined;
-   activeTab: 'timeline' | 'team' | 'history' | 'boq' | 'finances' | 'bills' | 'payments' | 'phases' | 'designs' | 'settings' = 'designs';
+   activeTab: 'timeline' | 'team' | 'history' | 'items' | 'finances' | 'bills' | 'payments' | 'phases' | 'designs' | 'settings' = 'designs';
    teamMembers: any[] = [];
    companyUsers: User[] = [];
    dailyLogs: any[] = [];
-   boqItems: any[] = [];
+   projectItems: ProjectItem[] = [];
    activities: any[] = [];
 
    get totalCollected(): number {
@@ -1733,7 +1733,7 @@ export class ProjectDetailComponent implements OnInit {
    clientPayments: any[] = [];
 
    get totalProjectValue(): number {
-      return this.boqItems.reduce((sum, item) => sum + (item.totalQuantity * item.rate), 0);
+      return this.projectItems.reduce((sum, item) => sum + ((item.agreedQuantity || 0) * (item.unitPrice || 0)), 0);
    }
 
    // Daily Log View Logic (at the end of template context conceptually, but physically before properties)
@@ -1758,9 +1758,10 @@ export class ProjectDetailComponent implements OnInit {
    // Add Bill/Payment Modal State
    showAddBillModal = false;
    showAddPaymentModal = false;
-   showAddBoqModal = false;
-   selectedBoqItem: BOQItem | null = null;
-   boqForm: any = {
+   showAddItemModal = false;
+   isSavingItem = false;
+   selectedProjectItem: ProjectItem | null = null;
+   itemForm: any = {
       description: '',
       unit: '',
       totalQuantity: 0,
@@ -1818,7 +1819,7 @@ export class ProjectDetailComponent implements OnInit {
       private projectService: ProjectService,
       private projectTeamService: ProjectTeamService,
       private dailyLogsService: DailyLogsService,
-      private boqService: BOQService,
+      private projectItemService: ProjectItemService,
       private transactionsService: TransactionsService,
       private invoicesService: InvoicesService,
       private rolesService: RolesService,
@@ -1845,8 +1846,8 @@ export class ProjectDetailComponent implements OnInit {
             this.dailyLogs = logs;
          });
 
-         this.boqService.getItems(projectId).subscribe(items => {
-            this.boqItems = items;
+         this.projectItemService.getItemsByProject(projectId).subscribe((items: ProjectItem[]) => {
+            this.projectItems = items;
             this.loadProjectPhases(projectId); // Reload to pick up item date and money aggregation
          });
 
@@ -1882,15 +1883,15 @@ export class ProjectDetailComponent implements OnInit {
          });
 
          // Fetch Client Payments
-         this.invoicesService.getInvoices(projectId).subscribe((payments: any[]) => {
-            this.clientPayments = payments.map(p => ({
+         this.invoicesService.getInvoices({ projectId }).subscribe((result) => {
+            this.clientPayments = result.items.map(p => ({
                id: p.id,
                projectId: p.projectId,
-               amount: p.amount,
+               amount: p.netAmount,
                date: p.invoiceDate,
                method: 'Bank Transfer', // Default for now
                status: p.status,
-               actionBy: p.reviewerName
+               actionBy: p.createdByFullName
             }));
          });
 
@@ -2117,32 +2118,31 @@ export class ProjectDetailComponent implements OnInit {
       };
    }
 
-   addBoqItem() {
+   addProjectItem() {
       if (!this.project) return;
       const projectId = this.project.id;
-      this.isSavingBoq = true;
+      this.isSavingItem = true;
 
-      const operation = this.selectedBoqItem
-         // Re-save to fix argument mismatch
-         ? this.boqService.updateItem(projectId, this.selectedBoqItem.id, this.boqForm)
-         : this.boqService.createItem(projectId, { ...this.boqForm, phaseId: this.selectedPhase?.id });
+      const operation = this.selectedProjectItem
+         ? this.projectItemService.updateItem(projectId, this.selectedProjectItem.id, this.itemForm)
+         : this.projectItemService.createItem(projectId, { ...this.itemForm, phaseId: this.selectedPhase?.id });
 
       operation.subscribe({
          next: () => {
-            this.boqService.getItems(projectId).subscribe(items => {
-               this.boqItems = items;
+            this.projectItemService.getItemsByProject(projectId).subscribe((items: ProjectItem[]) => {
+               this.projectItems = items;
                this.loadProjectPhases(projectId);
-               this.showAddBoqModal = false;
-               this.isSavingBoq = false;
-               this.resetBoqForm();
+               this.showAddItemModal = false;
+               this.isSavingItem = false;
+               this.resetItemForm();
             });
          },
-         error: () => this.isSavingBoq = false
+         error: () => this.isSavingItem = false
       });
    }
 
-   resetBoqForm() {
-      this.boqForm = {
+   resetItemForm() {
+      this.itemForm = {
          description: '',
          unit: '',
          totalQuantity: 0,
@@ -2152,9 +2152,9 @@ export class ProjectDetailComponent implements OnInit {
       } as any;
    }
 
-   deleteBoqItem(id: number) {
-      if (confirm('Are you sure you want to delete this BOQ item?')) {
-         this.boqItems = this.boqItems.filter(item => item.id !== id);
+   deleteProjectItem(id: number) {
+      if (confirm('Are you sure you want to delete this project item?')) {
+         this.projectItems = this.projectItems.filter(item => item.id !== id);
       }
    }
 
@@ -2307,16 +2307,16 @@ export class ProjectDetailComponent implements OnInit {
       this.saveProjectSettings();
    }
 
-   toggleClientBOQ() {
+   toggleClientProjectItems() {
       if (!this.projectSettings || !this.companySettings) return;
-      const current = this.projectSettings.clientCanSeeBOQ ?? this.companySettings.clientCanSeeBOQ;
-      this.projectSettings.clientCanSeeBOQ = !current;
+      const current = this.projectSettings.clientCanSeeProjectItems ?? this.companySettings.clientCanSeeProjectItems;
+      this.projectSettings.clientCanSeeProjectItems = !current;
       this.saveProjectSettings();
    }
 
-   resetClientBOQ() {
+   resetClientProjectItems() {
       if (!this.projectSettings) return;
-      this.projectSettings.clientCanSeeBOQ = null;
+      this.projectSettings.clientCanSeeProjectItems = null;
       this.saveProjectSettings();
    }
 
@@ -2398,7 +2398,7 @@ export class ProjectDetailComponent implements OnInit {
    loadingPhases: { [key: number]: string } = {};
    isPhasesInitialized = false;
    isSaving = false;
-   isSavingBoq = false;
+   isSavingProjectItem = false;
    showPhaseModal = false;
    selectedPhase?: Phase;
    parentPhase?: Phase;
@@ -2463,22 +2463,22 @@ export class ProjectDetailComponent implements OnInit {
       this.showPhaseModal = true;
    }
 
-   openItemModal(phase: Phase, item?: BOQItem) {
+   openItemModal(phase: Phase, item?: ProjectItem) {
       this.selectedPhase = phase;
-      this.selectedBoqItem = item || null;
+      this.selectedProjectItem = item || null;
       if (item) {
-         this.boqForm = {
-            description: item.description,
+         this.itemForm = {
+            description: item.itemName,
             unit: item.unit,
-            totalQuantity: item.totalQuantity,
-            rate: item.rate,
+            totalQuantity: item.agreedQuantity,
+            rate: item.unitPrice,
             startDate: item.startDate || null,
             endDate: item.endDate || null
          } as any;
       } else {
-         this.resetBoqForm();
+         this.resetItemForm();
       }
-      this.showAddBoqModal = true;
+      this.showAddItemModal = true;
    }
 
    savePhase() {
@@ -2523,7 +2523,7 @@ export class ProjectDetailComponent implements OnInit {
    }
 
    onDeleteItem(event: { phase: Phase, itemId: number }) {
-      this.deleteBoqItem(event.itemId);
+      this.deleteProjectItem(event.itemId);
    }
 
    movePhase(id: number, direction: number) {
@@ -2543,14 +2543,14 @@ export class ProjectDetailComponent implements OnInit {
       this.showLogModal = true;
    }
 
-   getBoqItemName(id: number): string {
-      return this.boqItems.find(i => i.id === id)?.description || 'Unknown Item';
+   getProjectItemName(id: number): string {
+      return this.projectItems.find(i => i.id === id)?.itemName || 'Unknown Item';
    }
 
    getLogTotalExecution(log: DailyLog): number {
       return log.items.reduce((sum, item) => {
-         const boq = this.boqItems.find(b => b.id === item.boqItemId);
-         return sum + (item.quantity * (boq?.rate || 0));
+         const projectItem = this.projectItems.find(b => b.id === item.projectItemId);
+         return sum + (item.quantity * (projectItem?.unitPrice || 0));
       }, 0);
    }
 }

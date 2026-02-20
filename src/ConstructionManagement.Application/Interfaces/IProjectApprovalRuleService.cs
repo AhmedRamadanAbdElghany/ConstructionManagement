@@ -11,5 +11,5 @@ public interface IProjectApprovalRuleService
 
     Task<List<ProjectApprovalRuleDto>> GetRulesForProjectAsync(int projectId);
 
-    Task<ProjectApprovalRule?> GetApplicableRuleAsync(int projectId, int? boqItemId, SourceType sourceType);
+    Task<ProjectApprovalRule?> GetApplicableRuleAsync(int projectId, int? projectItemId, SourceType sourceType);
 }

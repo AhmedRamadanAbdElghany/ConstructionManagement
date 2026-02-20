@@ -983,14 +983,14 @@ namespace ConstructionManagement.Infrastructure.Services
             if (!projectIds.Any()) return new List<DailyReportListDto>();
 
             var query = _context.ItemDailyLogs
-                .Include(l => l.BOQItem)
+                .Include(l => l.ProjectItem)
                 .ThenInclude(i => i.Project)
                 .ThenInclude(p => p.Company)
-                .Where(l => projectIds.Contains(l.BOQItem.ProjectId));
+                .Where(l => projectIds.Contains(l.ProjectItem.ProjectId));
 
             if (filter.ProjectId.HasValue)
             {
-                query = query.Where(l => l.BOQItem.ProjectId == filter.ProjectId.Value);
+                query = query.Where(l => l.ProjectItem.ProjectId == filter.ProjectId.Value);
             }
 
             if (filter.FromDate.HasValue)
@@ -1005,7 +1005,7 @@ namespace ConstructionManagement.Infrastructure.Services
 
             if (!string.IsNullOrEmpty(filter.SearchTerm))
             {
-                query = query.Where(l => l.BOQItem.ItemName.Contains(filter.SearchTerm) || 
+                query = query.Where(l => l.ProjectItem.ItemName.Contains(filter.SearchTerm) || 
                                        (l.ProgressNotes != null && l.ProgressNotes.Contains(filter.SearchTerm)) ||
                                        (l.DailyWorkDescription != null && l.DailyWorkDescription.Contains(filter.SearchTerm)));
             }
@@ -1014,10 +1014,10 @@ namespace ConstructionManagement.Infrastructure.Services
 
             var groupedLogs = logs
                 .GroupBy(l => new { 
-                    l.BOQItem.ProjectId, 
-                    l.BOQItem.Project.ProjectName, 
-                    l.BOQItem.Project.CompanyId,
-                    CompanyName = l.BOQItem.Project.Company?.Name,
+                    l.ProjectItem.ProjectId, 
+                    l.ProjectItem.Project.ProjectName, 
+                    l.ProjectItem.Project.CompanyId,
+                    CompanyName = l.ProjectItem.Project.Company?.Name,
                     LogDate = l.LogDate.Date 
                 })
                 .Select(g => new DailyReportListDto
@@ -1048,8 +1048,8 @@ namespace ConstructionManagement.Infrastructure.Services
             if (!hasAccess) return null;
 
             var logs = await _context.ItemDailyLogs
-                .Include(l => l.BOQItem)
-                .Where(l => l.BOQItem.ProjectId == projectId && l.LogDate.Date == reportDate.Date)
+                .Include(l => l.ProjectItem)
+                .Where(l => l.ProjectItem.ProjectId == projectId && l.LogDate.Date == reportDate.Date)
                 .ToListAsync();
 
             if (!logs.Any()) return null;
@@ -1071,13 +1071,13 @@ namespace ConstructionManagement.Infrastructure.Services
                 ReportDate = reportDate,
                 Logs = logs.Select(l => new DailyLogItemDto
                 {
-                    ItemId = l.BOQItemId,
-                    ItemName = l.BOQItem.ItemName,
+                    ItemId = l.ProjectItemId,
+                    ItemName = l.ProjectItem.ItemName,
                     ProgressNotes = l.ProgressNotes ?? l.DailyWorkDescription,
                     Issues = l.ClosingNotes,
                     ProgressPercentage = l.DailyProgressPercentage ?? 0,
                     PhotoUrls = photos
-                        .Where(m => m.BOQItemId == l.BOQItemId)
+                        .Where(m => m.ProjectItemId == l.ProjectItemId)
                         .Select(m => m.FilePath)
                         .ToList()
                 }).ToList()

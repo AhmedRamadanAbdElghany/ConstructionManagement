@@ -287,8 +287,8 @@ import { AnnouncementService } from '../../../core/services/announcement.service
               <!-- Client Visibility -->
               <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
                  <h2 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'clientPortal' | translate }}</h2>
-                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    @for (opt of [{k:'clientCanSeeFinancials', l:'seeFinancials'}, {k:'clientCanSeeMedia', l:'seeMedia'}, {k:'clientCanSeeBOQ', l:'seeBoq'}]; track opt.k) {
+                   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    @for (opt of [{k:'clientCanSeeFinancials', l:'seeFinancials'}, {k:'clientCanSeeMedia', l:'seeMedia'}, {k:'clientCanSeeProjectItems', l:'seeProjectItems'}]; track opt.k) {
                     <div (click)="toggleOption(opt.k)" 
                          [class.ring-2]="getOptionValue(opt.k)"
                          [class.ring-indigo-500]="getOptionValue(opt.k)"

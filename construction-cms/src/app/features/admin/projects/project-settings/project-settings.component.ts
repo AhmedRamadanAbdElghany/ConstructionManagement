@@ -92,7 +92,7 @@ export class ProjectSettingsComponent implements OnInit {
       maxPhotosPerUpload: this.settings.maxPhotosPerUpload,
       clientCanSeeFinancials: this.settings.clientCanSeeFinancials,
       clientCanSeeMedia: this.settings.clientCanSeeMedia,
-      clientCanSeeBOQ: this.settings.clientCanSeeBOQ,
+      clientCanSeeProjectItems: this.settings.clientCanSeeProjectItems,
       moneyCalculationMethod: this.settings.moneyCalculationMethod,
       allowAddProgressEntry: this.settings.allowAddProgressEntry,
       allowReopenClosedDay: this.settings.allowReopenClosedDay,

@@ -150,7 +150,7 @@ public class CompanyRequestService : ICompanyRequestService
         {
             company.EnableUserManagement = config.EnableUserManagement;
             company.EnableProjectManagement = config.EnableProjectManagement;
-            company.EnableBOQManagement = config.EnableBOQManagement;
+            company.EnableProjectItemsManagement = config.EnableProjectItemsManagement;
             company.EnableDailyLogs = config.EnableDailyLogs;
             company.EnableSiteMedia = config.EnableSiteMedia;
             company.EnableEquipmentManagement = config.EnableEquipmentManagement;
@@ -202,7 +202,7 @@ public class CompanyRequestService : ICompanyRequestService
 
             company.Settings.EnableInvoiceReview = config.EnableInvoiceReview;
             company.Settings.ClientCanSeeMedia = config.ClientCanSeeMedia;
-            company.Settings.ClientCanSeeBOQ = config.ClientCanSeeBOQ;
+            company.Settings.ClientCanSeeProjectItems = config.ClientCanSeeProjectItems;
         }
 
         await _companyRepository.AddAsync(company);

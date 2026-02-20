@@ -6,8 +6,8 @@ export interface TransactionDto {
     id: number;
     projectId: number;
     projectName?: string;
-    boqItemId?: number;
-    boqItemName?: string;
+    projectItemId?: number;
+    projectItemName?: string;
     transactionType: string;
     transactionTypeName: string;
     amount: number;
@@ -25,7 +25,7 @@ export interface TransactionDto {
 }
 
 export interface CreateTransactionRequest {
-    boqItemId?: number;
+    projectItemId?: number;
     transactionType: string;
     amount: number;
     description?: string;
@@ -47,10 +47,10 @@ export class TransactionsService {
     constructor(private http: HttpClient) { }
 
     // GET: api/projects/{projectId}/transactions
-    getTransactions(projectId: number, boqItemId?: number): Observable<TransactionDto[]> {
+    getTransactions(projectId: number, projectItemId?: number): Observable<TransactionDto[]> {
         let url = `${this.apiUrl}/${projectId}/transactions`;
-        if (boqItemId) {
-            url += `?boqItemId=${boqItemId}`;
+        if (projectItemId) {
+            url += `?projectItemId=${projectItemId}`;
         }
         return this.http.get<TransactionDto[]>(url);
     }
@@ -63,7 +63,7 @@ export class TransactionsService {
     // POST: api/projects/{projectId}/transactions
     createTransaction(projectId: number, request: CreateTransactionRequest): Observable<{ transactionId: number }> {
         const formData = new FormData();
-        formData.append('boqItemId', request.boqItemId?.toString() || '');
+        formData.append('projectItemId', request.projectItemId?.toString() || '');
         formData.append('transactionType', request.transactionType);
         formData.append('amount', request.amount.toString());
         formData.append('description', request.description || '');

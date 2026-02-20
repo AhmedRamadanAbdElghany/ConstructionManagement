@@ -215,11 +215,11 @@ import { TranslateModule } from '@ngx-translate/core';
                             <span class="text-xl mb-1">📸</span>
                             <span class="font-black text-[9px] uppercase tracking-tighter">{{ 'companyFeatures.siteMedia' | translate }}</span>
                         </div>
-                        <div (click)="toggleFormControl('enableBOQManagement')" 
-                             [ngClass]="companyForm.get('enableBOQManagement')?.value ? 'border-emerald-500 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                        <div (click)="toggleFormControl('enableProjectItemsManagement')"
+                             [ngClass]="companyForm.get('enableProjectItemsManagement')?.value ? 'border-emerald-500 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
                              class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
                             <span class="text-xl mb-1">📊</span>
-                            <span class="font-black text-[9px] uppercase tracking-tighter">{{ 'companyFeatures.boqManagement' | translate }}</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">{{ 'companyFeatures.projectItemsManagement' | translate }}</span>
                         </div>
                         <div (click)="toggleFormControl('enableDocumentManagement')" 
                              [ngClass]="companyForm.get('enableDocumentManagement')?.value ? 'border-emerald-500 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
@@ -542,10 +542,10 @@ import { TranslateModule } from '@ngx-translate/core';
                                <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500"></div>
                              </label>
                           </div>
-                          <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
-                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">{{ 'companies.share_boq' | translate }}</span>
+                           <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
+                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">{{ 'companies.share_project_items' | translate }}</span>
                              <label class="relative inline-flex items-center cursor-pointer">
-                               <input type="checkbox" formControlName="clientCanSeeBOQ" class="sr-only peer">
+                               <input type="checkbox" formControlName="clientCanSeeProjectItems" class="sr-only peer">
                                <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500"></div>
                              </label>
                           </div>
@@ -639,7 +639,7 @@ export class CompaniesComponent implements OnInit {
       // Feature Toggles (entity-level)
       enableUserManagement: [true],
       enableProjectManagement: [true],
-      enableBOQManagement: [true],
+      enableProjectItemsManagement: [true],
       enableDailyLogs: [true],
       enableSiteMedia: [true],
       enableEquipmentManagement: [true],
@@ -681,7 +681,7 @@ export class CompaniesComponent implements OnInit {
       autoCloseDay: [true],
       enableInvoiceReview: [true],
       clientCanSeeMedia: [true],
-      clientCanSeeBOQ: [true]
+      clientCanSeeProjectItems: [true]
     });
   }
 
@@ -726,7 +726,7 @@ export class CompaniesComponent implements OnInit {
       // Feature Toggles
       enableUserManagement: true,
       enableProjectManagement: true,
-      enableBOQManagement: true,
+      enableProjectItemsManagement: true,
       enableDailyLogs: true,
       enableSiteMedia: true,
       enableEquipmentManagement: true,
@@ -768,7 +768,7 @@ export class CompaniesComponent implements OnInit {
       autoCloseDay: true,
       enableInvoiceReview: true,
       clientCanSeeMedia: true,
-      clientCanSeeBOQ: true
+      clientCanSeeProjectItems: true
     });
 
 
@@ -793,7 +793,7 @@ export class CompaniesComponent implements OnInit {
       // Feature Toggles from entity
       enableUserManagement: company.enableUserManagement,
       enableProjectManagement: company.enableProjectManagement,
-      enableBOQManagement: company.enableBOQManagement,
+      enableProjectItemsManagement: company.enableProjectItemsManagement,
       enableDailyLogs: company.enableDailyLogs,
       enableSiteMedia: company.enableSiteMedia,
       enableEquipmentManagement: company.enableEquipmentManagement,
@@ -839,7 +839,7 @@ export class CompaniesComponent implements OnInit {
         autoCloseDay: company.settings.autoCloseDay,
         enableInvoiceReview: company.settings.enableInvoiceReview,
         clientCanSeeMedia: company.settings.clientCanSeeMedia,
-        clientCanSeeBOQ: company.settings.clientCanSeeBOQ
+        clientCanSeeProjectItems: company.settings.clientCanSeeProjectItems
       });
     }
 

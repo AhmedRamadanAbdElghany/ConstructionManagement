@@ -14,9 +14,9 @@ public class ApprovalRequest : BaseEntity, ICompanyEntity
     [ForeignKey(nameof(ProjectId))]
     public virtual Project Project { get; set; } = null!;
 
-    public int? BOQItemId { get; set; }
-    [ForeignKey(nameof(BOQItemId))]
-    public virtual BOQItem? BOQItem { get; set; }
+    public int? ProjectItemId { get; set; }
+    [ForeignKey(nameof(ProjectItemId))]
+    public virtual ProjectItem? ProjectItem { get; set; }
 
     // The rule/policy that triggered this request
     public int? ProjectApprovalRuleId { get; set; }

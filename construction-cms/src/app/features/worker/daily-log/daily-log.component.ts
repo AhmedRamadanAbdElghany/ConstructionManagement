@@ -3,15 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { BOQItem, DailyLog, SiteMedia } from '../../../shared/interfaces';
+import { ProjectItem, DailyLog, SiteMedia } from '../../../shared/interfaces';
 import { AuthService } from '../../../core/services/auth.service';
 import { DailyLogsService } from '../../../core/services/daily-logs.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
 
 interface WorkTask {
   id: number;
-  boqItemId: number;
-  boqItemName: string;
+  projectItemId: number;
+  projectItemName: string;
   assignedQuantity: number;
   unit: string;
   status: 'Pending' | 'InProgress' | 'Completed' | 'Approved' | 'Rejected';
@@ -110,9 +110,9 @@ interface WorkTask {
                          'bg-rose-50 dark:bg-rose-500/5 border-rose-200 dark:border-rose-500/20': task.status === 'Rejected'
                        }">
                     <div class="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 class="text-lg font-black text-slate-900 dark:text-white tracking-tight">{{ task.boqItemName }}</h3>
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">
+                       <div>
+                         <h3 class="text-lg font-black text-slate-900 dark:text-white tracking-tight">{{ task.projectItemName }}</h3>
+                         <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">
                           {{ 'daily_log.target' | translate }}: {{ task.assignedQuantity }} {{ task.unit }}
                         </p>
                       </div>
@@ -193,12 +193,12 @@ interface WorkTask {
                 <form [formGroup]="dailyLogForm" (ngSubmit)="submitDailyLog()" class="space-y-6">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-2">
-                      <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'daily_log.boq_item' | translate }}</label>
-                      <select formControlName="boqItemId" 
+                      <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'daily_log.project_item' | translate }}</label>
+                      <select formControlName="projectItemId" 
                               class="w-full p-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none font-bold text-slate-950 dark:text-white">
                         <option value="">{{ 'daily_log.select_item' | translate }}</option>
-                        @for (item of boqItems; track item.id) {
-                          <option [value]="item.id">{{ item.description }} ({{ item.unit }})</option>
+                        @for (item of projectItems; track item.id) {
+                          <option [value]="item.id">{{ item.itemName }} ({{ item.unit }})</option>
                         }
                       </select>
                     </div>
@@ -329,7 +329,7 @@ export class DailyLogComponent implements OnInit, OnDestroy {
   private i18nService = inject(I18nService);
 
   dailyLogForm: FormGroup;
-  boqItems: BOQItem[] = [];
+  projectItems: ProjectItem[] = [];
   assignedTasks: WorkTask[] = [];
   selectedDate = new Date();
   selectedDateString = '';
@@ -364,7 +364,7 @@ export class DailyLogComponent implements OnInit, OnDestroy {
     private dailyLogsService: DailyLogsService
   ) {
     this.dailyLogForm = this.fb.group({
-      boqItemId: ['', Validators.required],
+      projectItemId: ['', Validators.required],
       quantity: ['', [Validators.required, Validators.min(1)]],
       notes: ['']
     });
@@ -391,8 +391,8 @@ export class DailyLogComponent implements OnInit, OnDestroy {
   }
 
   loadData() {
-    // TODO: Implement BOQ items API
-    this.boqItems = [];
+    // TODO: Implement Project Items API
+    this.projectItems = [];
     this.loadTasksForDate(this.selectedDate);
   }
 
@@ -403,8 +403,8 @@ export class DailyLogComponent implements OnInit, OnDestroy {
       // Map daily logs to work tasks
       this.assignedTasks = logs.map(log => ({
         id: log.id,
-        boqItemId: log.itemId || 0,
-        boqItemName: log.itemName || 'Unknown Task',
+        projectItemId: log.itemId || 0,
+        projectItemName: log.itemName || 'Unknown Task',
         assignedQuantity: log.completionPercentage || 0,
         unit: 'm³',
         status: log.isClosed ? 'Completed' : 'InProgress',
@@ -510,10 +510,10 @@ export class DailyLogComponent implements OnInit, OnDestroy {
     if (this.dailyLogForm.valid) {
       const newTask: WorkTask = {
         id: Date.now(),
-        boqItemId: Number(this.dailyLogForm.value.boqItemId),
-        boqItemName: this.boqItems.find(i => i.id === Number(this.dailyLogForm.value.boqItemId))?.description || 'Unknown',
+        projectItemId: Number(this.dailyLogForm.value.projectItemId),
+        projectItemName: this.projectItems.find(i => i.id === Number(this.dailyLogForm.value.projectItemId))?.itemName || 'Unknown',
         assignedQuantity: this.dailyLogForm.value.quantity,
-        unit: this.boqItems.find(i => i.id === Number(this.dailyLogForm.value.boqItemId))?.unit || '',
+        unit: this.projectItems.find(i => i.id === Number(this.dailyLogForm.value.projectItemId))?.unit || '',
         status: 'Pending',
         notes: this.dailyLogForm.value.notes,
         photos: []

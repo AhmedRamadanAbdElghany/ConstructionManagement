@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { DailyLogsService, DailyLogDto, CreateDailyLogRequest, CloseDailyLogRequest, ReopenDailyLogRequest } from '../../../../core/services/daily-logs.service';
-import { BOQService } from '../../../../core/services/boq.service';
-import { BOQItem } from '../../../../shared/interfaces';
+import { ProjectItemService } from '../../../../core/services/project-item.service';
+import { ProjectItem } from '../../../../shared/interfaces';
 
 @Component({
   selector: 'app-daily-logs',
@@ -17,7 +17,7 @@ import { BOQItem } from '../../../../shared/interfaces';
         <div class="flex items-center justify-between mb-10">
           <div>
             <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">Daily Logs</h1>
-            <p class="text-slate-500 dark:text-slate-400 text-sm">Track daily progress on BOQ items</p>
+            <p class="text-slate-500 dark:text-slate-400 text-sm">Track daily progress on project items</p>
           </div>
           <button (click)="openCreateModal()" 
                   class="px-8 py-4 rounded-[2rem] bg-gradient-to-br from-violet-500 to-purple-600 text-white font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-violet-500/20 hover:scale-105 active:scale-95 transition-all flex items-center">
@@ -91,8 +91,8 @@ import { BOQItem } from '../../../../shared/interfaces';
                         (change)="loadDailyLogs()"
                         class="px-4 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500/50">
                   <option value="">All Items</option>
-                  @for (item of boqItems; track item.id) {
-                    <option [value]="item.id">{{ item.description }}</option>
+                  @for (item of projectItems; track item.id) {
+                    <option [value]="item.id">{{ item.itemName }}</option>
                   }
                 </select>
               </div>
@@ -197,12 +197,12 @@ import { BOQItem } from '../../../../shared/interfaces';
           </div>
           <div class="p-8 space-y-6">
             <div>
-              <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">BOQ Item *</label>
+              <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ 'daily_log.project_item' | translate }} *</label>
               <select [(ngModel)]="selectedCreateItemId" 
                       class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500/50">
                 <option value="">Select an item</option>
-                @for (item of boqItems; track item.id) {
-                  <option [value]="item.id">{{ item.description }}</option>
+                @for (item of projectItems; track item.id) {
+                  <option [value]="item.id">{{ item.itemName }}</option>
                 }
               </select>
             </div>
@@ -300,7 +300,7 @@ import { BOQItem } from '../../../../shared/interfaces';
 export class DailyLogsComponent implements OnInit {
   dailyLogs: DailyLogDto[] = [];
   filteredLogs: DailyLogDto[] = [];
-  boqItems: BOQItem[] = [];
+  projectItems: ProjectItem[] = [];
   selectedItemId: number | null = null;
   projectId: number = 1; // TODO: Get from route or service
 
@@ -328,21 +328,21 @@ export class DailyLogsComponent implements OnInit {
 
   constructor(
     private dailyLogsService: DailyLogsService,
-    private boqService: BOQService
+    private projectItemService: ProjectItemService
   ) { }
 
   ngOnInit(): void {
-    this.loadBOQItems();
+    this.loadProjectItems();
     this.loadDailyLogs();
   }
 
-  loadBOQItems(): void {
-    this.boqService.getItems(this.projectId).subscribe({
-      next: (items) => {
-        this.boqItems = items;
+  loadProjectItems(): void {
+    this.projectItemService.getItemsByProject(this.projectId).subscribe({
+      next: (items: ProjectItem[]) => {
+        this.projectItems = items;
       },
-      error: (error) => {
-        console.error('Error loading BOQ items:', error);
+      error: (error: any) => {
+        console.error('Error loading project items:', error);
       }
     });
   }
@@ -361,13 +361,13 @@ export class DailyLogsComponent implements OnInit {
     } else {
       // Load logs for all items
       this.filteredLogs = [];
-      this.boqItems.forEach(item => {
+      this.projectItems.forEach(item => {
         this.dailyLogsService.getDailyLogHistory(item.id).subscribe({
           next: (logs) => {
             this.dailyLogs = [...this.dailyLogs, ...logs];
             this.filterLogs();
           },
-          error: (error) => {
+          error: (error: any) => {
             console.error('Error loading daily logs for item:', error);
           }
         });

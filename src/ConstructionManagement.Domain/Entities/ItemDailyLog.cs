@@ -3,18 +3,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ConstructionManagement.Domain.Entities;
 
 /// <summary>
-/// Daily progress log / diary entry for a specific BOQ item
+/// Daily progress log / diary entry for a specific Project item
 /// Used to track actual progress, notes, and closing of daily work
 /// </summary>
 public class ItemDailyLog : BaseEntity, ICompanyEntity
 {
     public int? CompanyId { get; set; }
 
-    // Which BOQ item this daily log belongs to
-    public int BOQItemId { get; set; }
+    // Which Project item this daily log belongs to
+    public int ProjectItemId { get; set; }
 
-    [ForeignKey(nameof(BOQItemId))]
-    public virtual BOQItem BOQItem { get; set; } = null!;
+    [ForeignKey(nameof(ProjectItemId))]
+    public virtual ProjectItem ProjectItem { get; set; } = null!;
 
     // The date this log represents (usually one log per day per item)
     public DateTime LogDate { get; set; }
@@ -42,11 +42,6 @@ public class ItemDailyLog : BaseEntity, ICompanyEntity
 
     [ForeignKey(nameof(ClosedByUserId))]
     public virtual User? ClosedByUser { get; set; }
-
-    // Optional: future extension points
-    // public int? VerifiedByUserId { get; set; }
-    // public virtual User? VerifiedByUser { get; set; }
-    // public DateTime? VerifiedAt { get; set; }
 
     // -- Reopen Closed Day Support -----------------------------------------------
     public int? ReopenedByUserId { get; set; }

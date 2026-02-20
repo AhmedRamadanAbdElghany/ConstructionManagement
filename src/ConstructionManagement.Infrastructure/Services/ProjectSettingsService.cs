@@ -60,7 +60,7 @@ public class ProjectSettingsService : IProjectSettingsService
             
             ClientCanSeeFinancials = projectSettings?.ClientCanSeeFinancials ?? companySettings.ClientCanSeeFinancials,
             ClientCanSeeMedia = projectSettings?.ClientCanSeeMedia ?? companySettings.ClientCanSeeMedia,
-            ClientCanSeeBOQ = projectSettings?.ClientCanSeeBOQ ?? companySettings.ClientCanSeeBOQ,
+            ClientCanSeeProjectItems = projectSettings?.ClientCanSeeProjectItems ?? companySettings.ClientCanSeeProjectItems,
             MoneyCalculationMethod = (projectSettings?.MoneyCalculationMethod ?? companySettings.DefaultMoneyCalculationMethod).ToString(),
             
             // Daily Log Settings
@@ -141,8 +141,8 @@ public class ProjectSettingsService : IProjectSettingsService
         if (request.ClientCanSeeMedia.HasValue)
             settings.ClientCanSeeMedia = request.ClientCanSeeMedia.Value;
             
-        if (request.ClientCanSeeBOQ.HasValue)
-            settings.ClientCanSeeBOQ = request.ClientCanSeeBOQ.Value;
+        if (request.ClientCanSeeProjectItems.HasValue)
+            settings.ClientCanSeeProjectItems = request.ClientCanSeeProjectItems.Value;
             
         if (request.MoneyCalculationMethod is not null)
              settings.MoneyCalculationMethod = Enum.TryParse<CalculationMethod>(request.MoneyCalculationMethod, true, out var m) ? m : null;
@@ -184,7 +184,7 @@ public class ProjectSettingsService : IProjectSettingsService
 
             ClientCanSeeFinancials = settings.ClientCanSeeFinancials ?? global.ClientCanSeeFinancials,
             ClientCanSeeMedia = settings.ClientCanSeeMedia ?? global.ClientCanSeeMedia,
-            ClientCanSeeBOQ = settings.ClientCanSeeBOQ ?? global.ClientCanSeeBOQ,
+            ClientCanSeeProjectItems = settings.ClientCanSeeProjectItems ?? global.ClientCanSeeProjectItems,
             MoneyCalculationMethod = (settings.MoneyCalculationMethod ?? global.DefaultMoneyCalculationMethod).ToString(),
             
             AllowAddProgressEntry = settings.AllowAddProgressEntry ?? global.AllowAddProgressEntry,

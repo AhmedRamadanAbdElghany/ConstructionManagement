@@ -10,7 +10,7 @@ public record PhaseDto(
     DateTime? StartDate = null,
     DateTime? EndDate = null,
     IEnumerable<PhaseDto>? Children = null,
-    IEnumerable<BOQItemDto>? Items = null
+    IEnumerable<ProjectItemDto>? Items = null
 );
 
 public record CreatePhaseRequest(

@@ -39,7 +39,7 @@ public class ProjectApprovalRuleService : IProjectApprovalRuleService
         var rule = new ProjectApprovalRule
         {
             ProjectId = projectId,
-            BOQItemId = request.BOQItemId,
+            ProjectItemId = request.ProjectItemId,
             Source = request.Source,
             UploaderRole = request.UploaderRole,
             ApproverRole = request.ApproverRole,
@@ -73,14 +73,14 @@ public class ProjectApprovalRuleService : IProjectApprovalRuleService
         return rules.Select(MapToDto).ToList();
     }
 
-    public async Task<ProjectApprovalRule?> GetApplicableRuleAsync(int projectId, int? boqItemId, SourceType sourceType)
+    public async Task<ProjectApprovalRule?> GetApplicableRuleAsync(int projectId, int? projectItemId, SourceType sourceType)
     {
         // 1. البحث عن قاعدة مخصصة للبند (Specific Rule)
-        if (boqItemId.HasValue)
+        if (projectItemId.HasValue)
         {
             var specific = await _ruleRepository.AsQueryable()
                 .FirstOrDefaultAsync(r => r.ProjectId == projectId && // تصحيح: استخدام ProjectID
-                                         r.BOQItemId == boqItemId &&
+                                         r.ProjectItemId == projectItemId &&
                                          r.Source == sourceType);
             if (specific != null) return specific;
         }
@@ -88,7 +88,7 @@ public class ProjectApprovalRuleService : IProjectApprovalRuleService
         // 2. إذا لم توجد، البحث عن القاعدة العامة للمشروع (Default Rule)
         return await _ruleRepository.AsQueryable()
             .FirstOrDefaultAsync(r => r.ProjectId == projectId && // تصحيح: استخدام ProjectID
-                                     r.BOQItemId == null &&
+                                     r.ProjectItemId == null &&
                                      r.Source == sourceType);
     }
 
@@ -97,7 +97,7 @@ public class ProjectApprovalRuleService : IProjectApprovalRuleService
         return new ProjectApprovalRuleDto(
             rule.Id,
             rule.ProjectId, // تصحيح الـ Mapping للـ DTO ليظهر ProjectID الفعلي
-            rule.BOQItemId,
+            rule.ProjectItemId,
             rule.Source,
             rule.UploaderRole,
             rule.ApproverRole,

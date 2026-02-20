@@ -29,11 +29,11 @@ public class MaterialConsumption : BaseEntity, ICompanyEntity
     public virtual Phase? Phase { get; set; }
     
     /// <summary>
-    /// Related BOQ item (if applicable)
+    /// Related project item (if applicable)
     /// </summary>
-    public int? BOQItemId { get; set; }
-    [ForeignKey(nameof(BOQItemId))]
-    public virtual BOQItem? BOQItem { get; set; }
+    public int? ProjectItemId { get; set; }
+    [ForeignKey(nameof(ProjectItemId))]
+    public virtual ProjectItem? ProjectItem { get; set; }
     
     /// <summary>
     /// Related daily log entry

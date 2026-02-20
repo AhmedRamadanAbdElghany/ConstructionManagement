@@ -42,7 +42,7 @@ public class SiteMediaService : ISiteMediaService
     }
 
     public async Task<int> UploadMediaAsync(
-        int? boqItemId,
+        int? projectItemId,
         int projectId,
         string mediaType,
         string? description,
@@ -69,7 +69,7 @@ public class SiteMediaService : ISiteMediaService
             var media = new SiteMedia
             {
                 ProjectId = projectId,
-                BOQItemId = boqItemId,
+                ProjectItemId = projectItemId,
                 FilePath = filePath,
                 MediaType = mediaType,
                 Description = description,
@@ -98,7 +98,7 @@ public class SiteMediaService : ISiteMediaService
                 var rule = await _ruleRepository.AsQueryable()
                     .FirstOrDefaultAsync(r =>
                         r.ProjectId == projectId &&
-                        (r.BOQItemId == boqItemId || r.BOQItemId == null) &&
+                        (r.ProjectItemId == projectItemId || r.ProjectItemId == null) &&
                         r.Source == source);
 
                 if (rule == null)
@@ -114,7 +114,7 @@ public class SiteMediaService : ISiteMediaService
                     var approvalRequest = new ApprovalRequest
                     {
                         ProjectId = projectId,
-                        BOQItemId = boqItemId,
+                        ProjectItemId = projectItemId,
                         ProjectApprovalRuleId = rule.Id,
                         Source = source,
                         SourceId = media.Id,
@@ -245,7 +245,7 @@ public class SiteMediaService : ISiteMediaService
             .Where(m => m.ProjectId == projectId);
 
         if (itemId.HasValue)
-            query = query.Where(m => m.BOQItemId == itemId.Value);
+            query = query.Where(m => m.ProjectItemId == itemId.Value);
 
         if (!string.IsNullOrEmpty(status))
             query = query.Where(m => m.Status == status);

@@ -17,6 +17,7 @@ public class User : BaseEntity, ICompanyEntity
     public string PasswordHash { get; set; } = string.Empty;
     public string? Phone { get; set; }
     public decimal Salary { get; set; }
+    public decimal? BaseSalary { get; set; }
     public int? ReportsToId { get; set; }
     [ForeignKey(nameof(ReportsToId))]
     public virtual User? ReportsTo { get; set; }

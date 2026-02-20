@@ -30,7 +30,7 @@ public class Company : BaseEntity
     // Feature Toggles
     public bool EnableUserManagement { get; set; } = true;
     public bool EnableProjectManagement { get; set; } = true;
-    public bool EnableBOQManagement { get; set; } = true;
+    public bool EnableProjectItemsManagement { get; set; } = true;
     public bool EnableDailyLogs { get; set; } = true;
     public bool EnableSiteMedia { get; set; } = true;
     public bool EnableEquipmentManagement { get; set; } = false;

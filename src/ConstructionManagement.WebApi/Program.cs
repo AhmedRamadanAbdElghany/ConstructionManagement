@@ -124,16 +124,16 @@ builder.Services.AddScoped<ICompanyContext, CompanyContext>();
 // 5. Repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IBOQItemRepository, BOQItemRepository>();
+builder.Services.AddScoped<IProjectItemRepository, ProjectItemRepository>();
 builder.Services.AddScoped<IRepository<ProjectApprovalRule>, Repository<ProjectApprovalRule>>();
-builder.Services.AddScoped<IRepository<BOQProfitabilityLog>, Repository<BOQProfitabilityLog>>();
+builder.Services.AddScoped<IRepository<ProjectItemProfitabilityLog>, Repository<ProjectItemProfitabilityLog>>();
 builder.Services.AddScoped<IRepository<ProjectSettings>, Repository<ProjectSettings>>();
 builder.Services.AddScoped<IRepository<EscalationLog>, Repository<EscalationLog>>();
 builder.Services.AddScoped<IRepository<Notification>, Repository<Notification>>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<IRepository<UserTypeHistory>, Repository<UserTypeHistory>>();
 builder.Services.AddScoped<IRepository<ProjectTeamRole>, Repository<ProjectTeamRole>>();
-builder.Services.AddScoped<IRepository<BOQExecutedDelta>, Repository<BOQExecutedDelta>>();
+builder.Services.AddScoped<IRepository<ProjectItemExecutedDelta>, Repository<ProjectItemExecutedDelta>>();
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<ICompanyRequestRepository, CompanyRequestRepository>();
 builder.Services.AddScoped<IJoinRequestRepository, JoinRequestRepository>();
@@ -151,7 +151,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IProjectTeamService, ProjectTeamService>();
-builder.Services.AddScoped<IBOQItemService, BOQItemService>();
+builder.Services.AddScoped<IProjectItemService, ProjectItemService>();
 builder.Services.AddScoped<IPhaseService, PhaseService>();
 builder.Services.AddScoped<IDailyLogService, DailyLogService>();
 builder.Services.AddScoped<ISiteMediaService, SiteMediaService>();
@@ -198,12 +198,16 @@ builder.Services.AddScoped<IActivityLogService, ActivityLogService>();
 builder.Services.AddScoped<ISubcontractorService, SubcontractorService>();
 builder.Services.AddScoped<ICompanyAnnouncementService, CompanyAnnouncementService>();
 builder.Services.AddScoped<IHRService, HRService>();
+builder.Services.AddScoped<IMessagingService, MessagingService>();
+builder.Services.AddScoped<ILocationTrackingService, LocationTrackingService>();
+builder.Services.AddScoped<IGeofenceService, GeofenceService>();
 
 
 
 
 // Approval-specific escalation job
 builder.Services.AddScoped<ApprovalEscalationJob>();
+builder.Services.AddScoped<LocationTrackingJobs>();
 
 // 7. JWT Authentication
 builder.Services.AddAuthentication(options =>
@@ -433,11 +437,36 @@ if (!isTesting && hfConnectionString != null && !hfConnectionString.Contains("Da
         job => job.CheckAndEscalateDelayedApprovalsAsync(),
         Cron.Hourly);  // Every hour
 
-    // في Program.cs بعد AddHangfireServer()
-    RecurringJob.AddOrUpdate<BOQProgressAggregationJob>(
-        "aggregate-boq-deltas",
-        job => job.AggregatePendingDeltas(),
-        Cron.Hourly);  // كل ساعة – أو Cron.Daily(3) لكل يوم الساعة 3 صباحًا
+    // TODO: Create ProjectItemProgressAggregationJob if needed
+    // RecurringJob.AddOrUpdate<ProjectItemProgressAggregationJob>(
+    //     "aggregate-projectitem-deltas",
+    //     job => job.AggregatePendingDeltas(),
+    //     Cron.Hourly);
+
+    // Location Tracking Jobs
+    // 4. Daily random check generation (early morning before work starts)
+    RecurringJob.AddOrUpdate<LocationTrackingJobs>(
+        "location-random-checks-daily",
+        job => job.GenerateDailyRandomChecksAsync(),
+        Cron.Daily(6));  // Every day at 6:00 AM
+
+    // 5. Process expired location requests (every 5 minutes)
+    RecurringJob.AddOrUpdate<LocationTrackingJobs>(
+        "location-expired-requests",
+        job => job.ProcessExpiredRequestsAsync(),
+        "*/5 * * * *");  // Every 5 minutes
+
+    // 6. Send location reminders (every 5 minutes)
+    RecurringJob.AddOrUpdate<LocationTrackingJobs>(
+        "location-reminders",
+        job => job.SendLocationRemindersAsync(),
+        "*/5 * * * *");  // Every 5 minutes
+
+    // 7. Check geofence violations (every 10 minutes)
+    RecurringJob.AddOrUpdate<LocationTrackingJobs>(
+        "geofence-violations-check",
+        job => job.CheckGeofenceViolationsAsync(),
+        "*/10 * * * *");  // Every 10 minutes
 }
 
 app.UseAuthentication();

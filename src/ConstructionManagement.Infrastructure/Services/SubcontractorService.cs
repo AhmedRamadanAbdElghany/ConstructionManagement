@@ -6,6 +6,10 @@ using ConstructionManagement.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using DomainPaymentStatus = ConstructionManagement.Domain.Entities.SubcontractorPaymentStatus;
+using DomainPaymentType = ConstructionManagement.Domain.Entities.SubcontractorPaymentType;
+using DtoPaymentStatus = ConstructionManagement.Application.DTOs.SubcontractorPaymentStatus;
+using DtoPaymentType = ConstructionManagement.Application.DTOs.SubcontractorPaymentType;
 
 namespace ConstructionManagement.Infrastructure.Services
 {
@@ -310,7 +314,7 @@ namespace ConstructionManagement.Infrastructure.Services
                 ContractId = request.ContractId,
                 ProjectId = request.ProjectId,
                 PaymentNumber = paymentNumber,
-                PaymentType = (Domain.Entities.PaymentType)(int)request.PaymentType,
+                PaymentType = (DomainPaymentType)(int)request.PaymentType,
                 Description = request.Description,
                 Amount = request.Amount,
                 Currency = request.Currency ?? "EGP",
@@ -324,7 +328,7 @@ namespace ConstructionManagement.Infrastructure.Services
                 MilestoneName = request.MilestoneName,
                 MilestoneNumber = request.MilestoneNumber,
                 InvoiceUrl = request.InvoiceUrl,
-                Status = Domain.Entities.PaymentStatus.Pending,
+                Status = DomainPaymentStatus.Pending,
                 RequestedBy = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "System",
                 CreatedAt = DateTime.UtcNow
             };
@@ -344,18 +348,18 @@ namespace ConstructionManagement.Infrastructure.Services
             var payment = await _context.SubcontractorPayments.FindAsync(id)
                 ?? throw new KeyNotFoundException($"Payment with ID {id} not found");
 
-            var newStatus = (Domain.Entities.PaymentStatus)(int)request.Status;
+            var newStatus = (DomainPaymentStatus)(int)request.Status;
             payment.Status = newStatus;
             payment.StatusDate = DateTime.UtcNow;
             if (request.Notes != null) payment.StatusNotes = request.Notes;
 
-            if (newStatus == Domain.Entities.PaymentStatus.Approved)
+            if (newStatus == DomainPaymentStatus.Approved)
             {
                 payment.ApprovedBy = _httpContextAccessor.HttpContext?.User?.Identity?.Name;
                 payment.ApprovalDate = DateTime.UtcNow;
             }
 
-            if (newStatus == Domain.Entities.PaymentStatus.Paid)
+            if (newStatus == DomainPaymentStatus.Paid)
             {
                 payment.PaymentDate = DateTime.UtcNow;
             }
@@ -369,7 +373,7 @@ namespace ConstructionManagement.Infrastructure.Services
             var payments = await _context.SubcontractorPayments
                 .Include(p => p.Subcontractor)
                 .Include(p => p.Contract)
-                .Where(p => p.Status == Domain.Entities.PaymentStatus.Pending || p.Status == Domain.Entities.PaymentStatus.Submitted)
+                .Where(p => p.Status == DomainPaymentStatus.Pending || p.Status == DomainPaymentStatus.Submitted)
                 .OrderBy(p => p.DueDate)
                 .ToListAsync();
 

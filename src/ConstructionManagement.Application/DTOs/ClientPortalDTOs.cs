@@ -262,21 +262,6 @@ namespace ConstructionManagement.Application.DTOs
 
     #region Client Payments
 
-    public class ClientPaymentDto
-    {
-        public int Id { get; set; }
-        public int ProjectId { get; set; }
-        public string ProjectName { get; set; } = string.Empty;
-        public string InvoiceNumber { get; set; } = string.Empty;
-        public decimal Amount { get; set; }
-        public decimal? PaidAmount { get; set; }
-        public string Currency { get; set; } = "USD";
-        public DateTime InvoiceDate { get; set; }
-        public DateTime DueDate { get; set; }
-        public DateTime? PaidDate { get; set; }
-        public string Status { get; set; } = string.Empty;
-        public string? PaymentMethod { get; set; }
-    }
 
     #endregion
 

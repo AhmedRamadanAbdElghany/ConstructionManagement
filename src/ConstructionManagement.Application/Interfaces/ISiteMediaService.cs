@@ -6,7 +6,7 @@ namespace ConstructionManagement.Application.Interfaces;
 public interface ISiteMediaService
 {
     Task<int> UploadMediaAsync(
-    int? boqItemId,
+    int? projectItemId,
     int projectId,
     string mediaType,
     string? description,

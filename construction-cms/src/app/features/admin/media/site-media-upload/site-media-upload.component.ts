@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { SiteMediaService, SiteMediaDto, UploadMediaRequest } from '../../../../core/services/site-media.service';
-import { BOQService } from '../../../../core/services/boq.service';
-import { BOQItem } from '../../../../shared/interfaces';
+import { ProjectItemService } from '../../../../core/services/project-item.service';
+import { ProjectItem } from '../../../../shared/interfaces';
 import { I18nService } from '../../../../core/i18n/i18n.service';
 
 @Component({
@@ -26,14 +26,14 @@ import { I18nService } from '../../../../core/i18n/i18n.service';
         <!-- Upload Form -->
         <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 mb-8">
           <div class="space-y-6">
-            <!-- BOQ Item Selection -->
+            <!-- Project Item Selection -->
             <div>
-              <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">BOQ Item (Optional)</label>
+              <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ 'site_media.project_item' | translate }}</label>
               <select [(ngModel)]="uploadForm.itemId" 
                       class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500/50">
                 <option value="">Select an item (optional)</option>
-                @for (item of boqItems; track item.id) {
-                  <option [value]="item.id">{{ item.description }}</option>
+                @for (item of projectItems; track item.id) {
+                  <option [value]="item.id">{{ item.itemName }}</option>
                 }
               </select>
             </div>
@@ -171,7 +171,7 @@ import { I18nService } from '../../../../core/i18n/i18n.service';
   styles: []
 })
 export class SiteMediaUploadComponent implements OnInit, OnDestroy {
-  boqItems: BOQItem[] = [];
+  projectItems: ProjectItem[] = [];
   recentUploads: SiteMediaDto[] = [];
   selectedFile: File | null = null;
   isUploading: boolean = false;
@@ -189,18 +189,18 @@ export class SiteMediaUploadComponent implements OnInit, OnDestroy {
 
   constructor(
     private siteMediaService: SiteMediaService,
-    private boqService: BOQService
+    private projectItemService: ProjectItemService
   ) { }
 
   ngOnInit(): void {
-    this.loadBOQItems();
+    this.loadProjectItems();
     this.loadRecentUploads();
 
     // Subscribe to language changes to refresh data
     this.i18nService.onLanguageChange()
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        this.loadBOQItems();
+        this.loadProjectItems();
         this.loadRecentUploads();
       });
   }
@@ -210,13 +210,13 @@ export class SiteMediaUploadComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loadBOQItems(): void {
-    this.boqService.getItems(this.projectId).subscribe({
-      next: (items) => {
-        this.boqItems = items;
+  loadProjectItems(): void {
+    this.projectItemService.getItemsByProject(this.projectId).subscribe({
+      next: (items: ProjectItem[]) => {
+        this.projectItems = items;
       },
-      error: (error) => {
-        console.error('Error loading BOQ items:', error);
+      error: (error: unknown) => {
+        console.error('Error loading project items:', error);
       }
     });
   }

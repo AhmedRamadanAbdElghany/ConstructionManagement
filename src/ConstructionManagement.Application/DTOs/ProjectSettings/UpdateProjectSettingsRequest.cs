@@ -73,7 +73,7 @@ public record UpdateProjectSettingsRequest
 
     public bool? ClientCanSeeFinancials { get; init; }
     public bool? ClientCanSeeMedia { get; init; }
-    public bool? ClientCanSeeBOQ { get; init; }
+    public bool? ClientCanSeeProjectItems { get; init; }
     public string? MoneyCalculationMethod { get; init; }
 
     // ── Daily Log ─────────────────────────────────────────────────────────────

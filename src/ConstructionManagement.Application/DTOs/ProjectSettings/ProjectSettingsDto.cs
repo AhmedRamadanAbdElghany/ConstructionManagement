@@ -64,7 +64,7 @@ public record ProjectSettingsDto
     
     public bool ClientCanSeeFinancials { get; init; } = false;
     public bool ClientCanSeeMedia { get; init; } = true;
-    public bool ClientCanSeeBOQ { get; init; } = true;
+    public bool ClientCanSeeProjectItems { get; init; } = true;
     public string MoneyCalculationMethod { get; init; } = "Measured";
 
     // ── Daily Log ─────────────────────────────────────────────────────────────

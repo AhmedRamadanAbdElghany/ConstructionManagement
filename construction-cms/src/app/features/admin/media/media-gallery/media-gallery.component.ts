@@ -206,7 +206,7 @@ import { I18nService } from '../../../../core/i18n/i18n.service';
             </div>
             @if (selectedMedia?.itemName) {
               <div class="mt-4 bg-slate-50 dark:bg-white/5 rounded-xl p-4">
-                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">BOQ Item</div>
+                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ 'site_media.project_item' | translate }}</div>
                 <div class="text-sm text-slate-900 dark:text-white">{{ selectedMedia!.itemName }}</div>
               </div>
             }

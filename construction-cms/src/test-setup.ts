@@ -91,19 +91,18 @@ export class MockDataFactory {
     }
 
     /**
-     * Generate a mock BOQ item
+     * Generate a mock ProjectItem
      */
-    static createBoqItem(overrides: Partial<any> = {}): any {
+    static createProjectItem(overrides: Partial<any> = {}): any {
         return {
             id: 1,
             projectId: 1,
-            code: 'BOQ-001',
-            description: 'Test BOQ Item',
+            itemCode: 'PRJ-001',
+            itemName: 'Test Project Item',
             unit: 'm2',
-            quantity: 100,
+            agreedQuantity: 100,
             unitPrice: 50,
-            totalPrice: 5000,
-            category: 'Civil Works',
+            status: 'Active',
             ...overrides
         };
     }
@@ -115,7 +114,7 @@ export class MockDataFactory {
         return {
             id: 1,
             projectId: 1,
-            boqItemId: 1,
+            projectItemId: 1,
             type: 'Expense',
             amount: 1000,
             description: 'Test transaction',

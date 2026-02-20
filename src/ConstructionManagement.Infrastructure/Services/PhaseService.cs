@@ -12,7 +12,7 @@ public class PhaseService : IPhaseService
     private readonly IRepository<Phase> _phaseRepository;
     private readonly IRepository<CompanyDefaultPhase> _defaultPhaseRepository;
     private readonly IRepository<CompanyDefaultPhaseItem> _defaultPhaseItemRepository;
-    private readonly IRepository<BOQItem> _boqItemRepository;
+    private readonly IRepository<ProjectItem> _projectItemRepository;
     private readonly IRepository<CatalogItem> _catalogItemRepository;
     private readonly IUnitOfWork _unitOfWork;
 
@@ -20,14 +20,14 @@ public class PhaseService : IPhaseService
         IRepository<Phase> phaseRepository,
         IRepository<CompanyDefaultPhase> defaultPhaseRepository,
         IRepository<CompanyDefaultPhaseItem> defaultPhaseItemRepository,
-        IRepository<BOQItem> boqItemRepository,
+        IRepository<ProjectItem> projectItemRepository,
         IRepository<CatalogItem> catalogItemRepository,
         IUnitOfWork unitOfWork)
     {
         _phaseRepository = phaseRepository;
         _defaultPhaseRepository = defaultPhaseRepository;
         _defaultPhaseItemRepository = defaultPhaseItemRepository;
-        _boqItemRepository = boqItemRepository;
+        _projectItemRepository = projectItemRepository;
         _catalogItemRepository = catalogItemRepository;
         _unitOfWork = unitOfWork;
     }
@@ -80,17 +80,16 @@ public class PhaseService : IPhaseService
             .Select(p => BuildPhaseTree(p, allPhases))
             .ToList();
 
-        var items = phase.Items.Select(i => new BOQItemDto(
-            i.Id,
-            i.ItemCode,
-            i.ItemName,
-            i.AccountingType.ToString(),
-            i.Status,
-            i.StartDate,
-            i.EndDate,
-            0, // Placeholder for progress
-            null // Placeholder for notes
-        )).ToList();
+        var items = phase.Items.Select(i => new ProjectItemDto
+        {
+            Id = i.Id,
+            ItemCode = i.ItemCode,
+            ItemName = i.ItemName,
+            Status = i.Status,
+            StartDate = i.StartDate,
+            EndDate = i.EndDate,
+            ProgressPercentage = 0 // Placeholder for progress
+        }).ToList();
 
         DateTime? minStart = null;
         DateTime? maxEnd = null;
@@ -189,17 +188,16 @@ public class PhaseService : IPhaseService
             // Clone items
             foreach (var defItem in def.Items)
             {
-                var boqItem = new BOQItem
+                var projectItem = new ProjectItem
                 {
                     ProjectId = projectId,
                     PhaseId = newPhase.Id,
                     ItemName = defItem.Name,
                     ItemCode = "TEMPL-" + defItem.Id,
                     Status = "جديد",
-                    AccountingType = CalculationMethod.Measured, // Default to measured
                     CompanyId = companyId
                 };
-                await _boqItemRepository.AddAsync(boqItem);
+                await _projectItemRepository.AddAsync(projectItem);
             }
 
             await CloneChildren(def, newPhase.Id, projectId, companyId, defaults, oldToNewIdMap);
@@ -214,15 +212,15 @@ public class PhaseService : IPhaseService
 
         if (!phases.Any()) return;
 
-        // Delete associated BOQ Items first to avoid foreign key constraint violation
+        // Delete associated Project Items first to avoid foreign key constraint violation
         var phaseIds = phases.Select(p => p.Id).ToList();
-        var boqItems = await _boqItemRepository.AsQueryable()
+        var projectItems = await _projectItemRepository.AsQueryable()
             .Where(b => b.PhaseId.HasValue && phaseIds.Contains(b.PhaseId.Value))
             .ToListAsync();
         
-        if (boqItems.Any())
+        if (projectItems.Any())
         {
-            await _boqItemRepository.DeleteRangeAsync(boqItems);
+            await _projectItemRepository.DeleteRangeAsync(projectItems);
         }
 
         // Safe to delete phases now
@@ -249,17 +247,16 @@ public class PhaseService : IPhaseService
             // Clone items
             foreach (var defItem in childDef.Items)
             {
-                var boqItem = new BOQItem
+                var projectItem = new ProjectItem
                 {
                     ProjectId = projectId,
                     PhaseId = newPhase.Id,
                     ItemName = defItem.Name,
                     ItemCode = "TEMPL-" + defItem.Id,
                     Status = "جديد",
-                    AccountingType = CalculationMethod.Measured,
                     CompanyId = companyId
                 };
-                await _boqItemRepository.AddAsync(boqItem);
+                await _projectItemRepository.AddAsync(projectItem);
             }
 
             await CloneChildren(childDef, newPhase.Id, projectId, companyId, allDefaults, map);
@@ -303,17 +300,14 @@ public class PhaseService : IPhaseService
             .Select(p => BuildDefaultPhaseTree(p, allPhases))
             .ToList();
 
-        var items = phase.Items.Select(i => new BOQItemDto(
-            i.Id,
-            "", // Template items don't have codes yet
-            i.Name,
-            "Measured",
-            "Template",
-            null,
-            null,
-            0,
-            i.Category
-        )).ToList();
+        var items = phase.Items.Select(i => new ProjectItemDto
+        {
+            Id = i.Id,
+            ItemCode = "", // Template items don't have codes yet
+            ItemName = i.Name,
+            Status = "Template",
+            Unit = i.Category
+        }).ToList();
 
         return new PhaseDto(
             phase.Id,

@@ -57,10 +57,7 @@ public class ProjectDelayEscalationService : IProjectDelayEscalationService
         var projects = await _projectRepository.AsQueryable()
             .Where(p => !p.IsClosed)
             .Include(p => p.Settings)
-            .Include(p => p.BOQItems)
-                .ThenInclude(i => i.MeasuredData)
-            .Include(p => p.BOQItems)
-                .ThenInclude(i => i.SupervisionData)
+            .Include(p => p.ProjectItems)
             .AsNoTracking()
             .ToListAsync();
 
@@ -81,7 +78,7 @@ public class ProjectDelayEscalationService : IProjectDelayEscalationService
                     messageArgs: new object[] { project.ProjectName, startDateStr });
             }
 
-            foreach (var item in project.BOQItems)
+            foreach (var item in project.ProjectItems)
             {
                 // تأخير بداية البند
                 if (item.StartDate.HasValue && today > item.StartDate.Value && item.Status == "جديد")
@@ -121,13 +118,13 @@ public class ProjectDelayEscalationService : IProjectDelayEscalationService
         await _unitOfWork.SaveChangesAsync();
     }
 
-    private async Task CheckBudgetWarningAsync(Project project, BOQItem item)
+    private async Task CheckBudgetWarningAsync(Project project, ProjectItem item)
     {
         decimal estimatedBudget = item.EstimatedBudget;
         if (estimatedBudget <= 0) return;
 
         var totalSpent = await _transactionRepository.AsQueryable()
-            .Where(t => t.BOQItemId == item.Id && t.Status == TransactionStatus.Approved)
+            .Where(t => t.ProjectItemId == item.Id && t.Status == TransactionStatus.Approved)
             .SumAsync(t => t.Amount);
 
         decimal warningThreshold = estimatedBudget * 0.90m;
@@ -163,7 +160,7 @@ public class ProjectDelayEscalationService : IProjectDelayEscalationService
 
         var alreadySent = await _escalationLogRepository.AsQueryable()
             .AnyAsync(l => l.ProjectId == project.Id &&
-                           l.BOQItemId == itemId &&
+                           l.ProjectItemId == itemId &&
                            l.EscalationType == type &&
                            (!(settings.DelayNotificationIsOneTimeOnly ?? false) || l.SentAt.Date == DateTime.UtcNow.Date));
 
@@ -192,7 +189,7 @@ public class ProjectDelayEscalationService : IProjectDelayEscalationService
         await _escalationLogRepository.AddAsync(new EscalationLog
         {
             ProjectId = project.Id,
-            BOQItemId = itemId,
+            ProjectItemId = itemId,
             EscalationType = type,
             RecipientUserId = recipientUserId,
             Message = message,

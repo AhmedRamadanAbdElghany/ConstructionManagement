@@ -42,6 +42,14 @@ public static class InvoiceStatusExtensions
     }
 
     /// <summary>
+    /// Gets the display name for the invoice status.
+    /// </summary>
+    public static string GetDisplayName(this InvoiceStatus status)
+    {
+        return status.GetEnglishDescription();
+    }
+
+    /// <summary>
     /// Determines if the status is a terminal (final) status.
     /// Once an invoice reaches a terminal status, it cannot be changed.
     /// </summary>

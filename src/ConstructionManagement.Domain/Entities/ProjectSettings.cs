@@ -33,7 +33,7 @@ public class ProjectSettings : BaseEntity, ICompanyEntity
 
     public bool? ClientCanSeeFinancials { get; set; }
     public bool? ClientCanSeeMedia { get; set; }
-    public bool? ClientCanSeeBOQ { get; set; }
+    public bool? ClientCanSeeProjectItems { get; set; }
 
     public ConstructionManagement.Domain.Enums.CalculationMethod? MoneyCalculationMethod { get; set; }
 

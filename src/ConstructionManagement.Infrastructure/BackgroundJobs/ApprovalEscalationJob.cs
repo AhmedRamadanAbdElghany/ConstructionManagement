@@ -107,7 +107,7 @@ public class ApprovalEscalationJob
             await _escalationLogRepo.AddAsync(new EscalationLog
             {
                 ProjectId = project.Id,
-                BOQItemId = request.BOQItemId,
+                ProjectItemId = request.ProjectItemId,
                 EscalationType = "ApprovalTimeout",
                 RecipientUserId = 0, // will update later after finding users
                 Message = $"Approval step {step.StepOrder} timed out for {request.Source} {request.SourceId}. Escalated to {rule.EscalationRole}",

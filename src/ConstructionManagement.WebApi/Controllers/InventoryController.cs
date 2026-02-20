@@ -577,7 +577,7 @@ public class MaterialConsumptionsController : ControllerBase
             MaterialId = dto.MaterialId,
             ProjectId = dto.ProjectId,
             PhaseId = dto.PhaseId,
-            BOQItemId = dto.BOQItemId,
+            ProjectItemId = dto.ProjectItemId,
             ItemDailyLogId = dto.ItemDailyLogId,
             MaterialRequestId = dto.MaterialRequestId,
             Quantity = dto.Quantity,

@@ -66,7 +66,7 @@ public class CompaniesController : ControllerBase
 
                 EnableUserManagement = request.EnableUserManagement,
                 EnableProjectManagement = request.EnableProjectManagement,
-                EnableBOQManagement = request.EnableBOQManagement,
+                EnableProjectItemsManagement = request.EnableProjectItemsManagement,
                 EnableDailyLogs = request.EnableDailyLogs,
                 EnableSiteMedia = request.EnableSiteMedia,
                 EnableEquipmentManagement = request.EnableEquipmentManagement,
@@ -209,7 +209,7 @@ public class CompaniesController : ControllerBase
 
         company.EnableUserManagement = request.EnableUserManagement;
         company.EnableProjectManagement = request.EnableProjectManagement;
-        company.EnableBOQManagement = request.EnableBOQManagement;
+        company.EnableProjectItemsManagement = request.EnableProjectItemsManagement;
         company.EnableDailyLogs = request.EnableDailyLogs;
         company.EnableSiteMedia = request.EnableSiteMedia;
         company.EnableEquipmentManagement = request.EnableEquipmentManagement;
@@ -274,7 +274,7 @@ public class CompaniesController : ControllerBase
         company.Settings.RecordCashVoucherToWorker = request.RecordCashVoucherToWorker;
 
         company.Settings.ClientCanSeeMedia = request.ClientCanSeeMedia;
-        company.Settings.ClientCanSeeBOQ = request.ClientCanSeeBOQ;
+        company.Settings.ClientCanSeeProjectItems = request.ClientCanSeeProjectItems;
 
         // Sync permissions on update
         await SyncCompanyPermissions(company.Id, new CreateCompanyRequest 

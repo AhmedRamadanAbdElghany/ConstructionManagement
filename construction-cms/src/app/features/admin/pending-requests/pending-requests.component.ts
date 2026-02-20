@@ -424,7 +424,7 @@ export class PendingRequestsComponent implements OnInit {
   siteFeatures = [
     { key: 'enableDailyLogs', label: 'Daily Logs', icon: '📝' },
     { key: 'enableSiteMedia', label: 'Site Media', icon: '📸' },
-    { key: 'enableBOQManagement', label: 'BOQ Mgmt', icon: '📊' },
+    { key: 'enableProjectItemsManagement', label: 'Project Items', icon: '📊' },
     { key: 'enableDocumentManagement', label: 'Documents', icon: '📁' },
     { key: 'enableDesignManagement', label: 'Design QA', icon: '🎨' },
   ];
@@ -457,7 +457,7 @@ export class PendingRequestsComponent implements OnInit {
       isActive: true,
       enableUserManagement: true,
       enableProjectManagement: true,
-      enableBOQManagement: true,
+      enableProjectItemsManagement: true,
       enableDailyLogs: true,
       enableSiteMedia: true,
       enableEquipmentManagement: false,
@@ -497,7 +497,7 @@ export class PendingRequestsComponent implements OnInit {
       autoCloseDay: false,
       enableInvoiceReview: true,
       clientCanSeeMedia: true,
-      clientCanSeeBOQ: true,
+      clientCanSeeProjectItems: true,
     };
   }
 
@@ -509,7 +509,7 @@ export class PendingRequestsComponent implements OnInit {
       isActive: [defaults.isActive],
       enableUserManagement: [defaults.enableUserManagement],
       enableProjectManagement: [defaults.enableProjectManagement],
-      enableBOQManagement: [defaults.enableBOQManagement],
+      enableProjectItemsManagement: [defaults.enableProjectItemsManagement],
       enableDailyLogs: [defaults.enableDailyLogs],
       enableSiteMedia: [defaults.enableSiteMedia],
       enableEquipmentManagement: [defaults.enableEquipmentManagement],
@@ -549,7 +549,7 @@ export class PendingRequestsComponent implements OnInit {
       autoCloseDay: [defaults.autoCloseDay],
       enableInvoiceReview: [defaults.enableInvoiceReview],
       clientCanSeeMedia: [defaults.clientCanSeeMedia],
-      clientCanSeeBOQ: [defaults.clientCanSeeBOQ],
+      clientCanSeeProjectItems: [defaults.clientCanSeeProjectItems],
     });
   }
 

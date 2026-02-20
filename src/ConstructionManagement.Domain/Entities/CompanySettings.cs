@@ -67,7 +67,7 @@ public class CompanySettings : BaseEntity, ICompanyEntity
     // ============================================
     public bool EnableUserManagement { get; set; } = true;
     public bool EnableProjectManagement { get; set; } = true;
-    public bool EnableBOQManagement { get; set; } = true;
+    public bool EnableProjectItemsManagement { get; set; } = true;
     public bool EnableDailyLogs { get; set; } = true;
     public bool EnableSiteMedia { get; set; } = true;
     public bool EnableInventoryManagement { get; set; } = false;
@@ -104,7 +104,7 @@ public class CompanySettings : BaseEntity, ICompanyEntity
     // Client Visibility Options
     public bool ClientCanSeeFinancials { get; set; } = false;
     public bool ClientCanSeeMedia { get; set; } = true;
-    public bool ClientCanSeeBOQ { get; set; } = true;
+    public bool ClientCanSeeProjectItems { get; set; } = true;
 
     // Project Money Calculation Options
     public bool AllowMeasured { get; set; } = true;

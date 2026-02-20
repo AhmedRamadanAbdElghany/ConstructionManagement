@@ -6,16 +6,16 @@ public class Transaction : BaseEntity, ICompanyEntity
 {
     public int? CompanyId { get; set; }
 
-    // Primary Key (inherited from BaseEntity ? public int Id { get; set; })
-
     // Required relationship - every transaction belongs to a project
     public int ProjectId { get; set; }
     [ForeignKey(nameof(ProjectId))]
     public virtual Project Project { get; set; } = null!;
 
-    // Optional relationship - can be linked to a specific BOQ item
-    public int? BOQItemId { get; set; }
-    public virtual BOQItem? BOQItem { get; set; }
+    // Optional relationship - can be linked to a specific Project item
+    public int? ProjectItemId { get; set; }
+    
+    [ForeignKey(nameof(ProjectItemId))]
+    public virtual ProjectItem? ProjectItem { get; set; }
 
     public TransactionType Type { get; set; }
 

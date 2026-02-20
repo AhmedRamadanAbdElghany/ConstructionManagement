@@ -9,16 +9,33 @@ public class ItemInvoice : BaseEntity, ICompanyEntity
     public int? CompanyId { get; set; }
 
     [Required]
-    public int BOQItemId { get; set; }
+    public int ProjectItemId { get; set; }
 
-    [ForeignKey(nameof(BOQItemId))]
-    public virtual BOQItem BOQItem { get; set; } = null!;
+    [ForeignKey(nameof(ProjectItemId))]
+    public virtual ProjectItem ProjectItem { get; set; } = null!;
 
     [Required]
     public int ProjectId { get; set; }
 
     [ForeignKey(nameof(ProjectId))]
     public virtual Project Project { get; set; } = null!;
+
+    /// <summary>
+    /// Type of invoice: Disbursement Authorization (اذن صرف) or Purchase Invoice (فاتورة شراء)
+    /// </summary>
+    [Required]
+    [MaxLength(50)]
+    public string InvoiceType { get; set; } = "PurchaseInvoice";
+
+    /// <summary>
+    /// Type-safe invoice type enum for business logic operations.
+    /// </summary>
+    [NotMapped]
+    public InvoiceType InvoiceTypeEnum
+    {
+        get => InvoiceTypeExtensions.FromString(InvoiceType) ?? Enums.InvoiceType.PurchaseInvoice;
+        set => InvoiceType = value.ToDatabaseString();
+    }
 
     [Required]
     [MaxLength(20)]
@@ -88,4 +105,10 @@ public class ItemInvoice : BaseEntity, ICompanyEntity
 
     [ForeignKey(nameof(CreatedByUserId))]
     public virtual User CreatedBy { get; set; } = null!;
+
+    /// <summary>
+    /// Collection of images attached to this invoice.
+    /// Supports multiple images for documentation purposes.
+    /// </summary>
+    public virtual ICollection<InvoiceImage> Images { get; set; } = new List<InvoiceImage>();
 }

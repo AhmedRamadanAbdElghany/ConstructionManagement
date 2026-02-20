@@ -8,6 +8,6 @@ namespace ConstructionManagement.Application.DTOs.ProjectApprovalRule
         string ApproverRole,
         int ResponseTimeoutHours = 48,
         string? EscalationRole = null,
-        int? BOQItemId = null             // null = عام للمشروع
+        int? ProjectItemId = null             // null = عام للمشروع
     );
 }

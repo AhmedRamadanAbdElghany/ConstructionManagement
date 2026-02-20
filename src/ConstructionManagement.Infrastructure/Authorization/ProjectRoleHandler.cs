@@ -49,7 +49,7 @@ public class ProjectRoleHandler : AuthorizationHandler<ProjectRoleRequirement>
         }
         else if (httpContext.Request.RouteValues["itemId"] != null && int.TryParse(httpContext.Request.RouteValues["itemId"]!.ToString(), out var itemId))
         {
-            projectId = await db.BOQItems.Where(i => i.Id == itemId).Select(i => i.ProjectId).FirstOrDefaultAsync();
+            projectId = await db.ProjectItems.Where(i => i.Id == itemId).Select(i => i.ProjectId).FirstOrDefaultAsync();
         }
         else if (httpContext.Request.RouteValues["categoryId"] != null && int.TryParse(httpContext.Request.RouteValues["categoryId"]!.ToString(), out var catId))
         {

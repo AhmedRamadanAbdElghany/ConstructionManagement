@@ -6,16 +6,16 @@ public class SiteMedia : BaseEntity, ICompanyEntity
 {
     public int? CompanyId { get; set; }
 
-    // Primary Key is inherited from BaseEntity ? public int Id { get; set; }
-
     // Optional: every media belongs to a project (usually), but package images might not
     public int? ProjectId { get; set; }
     [ForeignKey(nameof(ProjectId))]
     public virtual Project? Project { get; set; }
 
-    // Optional: can be linked to a specific BOQ item
-    public int? BOQItemId { get; set; }
-    public virtual BOQItem? BOQItem { get; set; }
+    // Optional: can be linked to a specific Project item
+    public int? ProjectItemId { get; set; }
+    
+    [ForeignKey(nameof(ProjectItemId))]
+    public virtual ProjectItem? ProjectItem { get; set; }
 
     // Who uploaded this media
     public int UploaderUserId { get; set; }
@@ -39,6 +39,6 @@ public class SiteMedia : BaseEntity, ICompanyEntity
 
     // Origin / context of upload
     public SourceType Source { get; set; }                    // OnlineUpload, PhysicalVisit, ...
-    public virtual ICollection<BOQItemNote> RelatedNotes { get; set; }
-        = new List<BOQItemNote>();
+    public virtual ICollection<ProjectItemNote> RelatedNotes { get; set; }
+        = new List<ProjectItemNote>();
 }

@@ -63,7 +63,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
         }
 
           @if (isClient || isWorker) {
-          <a routerLink="/browse-firms"
+          <a routerLink="/companies"
              routerLinkActive="nav-active"
              class="nav-item group">
             <div class="nav-icon-box">
@@ -72,6 +72,19 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
               </svg>
             </div>
             <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.companies' | translate }}</span>
+          </a>
+          }
+
+          @if (isClient || isWorker || isAdmin) {
+          <a routerLink="/messages"
+             routerLinkActive="nav-active"
+             class="nav-item group">
+            <div class="nav-icon-box">
+              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+              </svg>
+            </div>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.messages' | translate }}</span>
           </a>
           }
 
@@ -271,6 +284,17 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
                 </svg>
               </div>
               <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.configurations' | translate }}</span>
+            </a>
+
+            <a routerLink="/admin/finance" 
+               routerLinkActive="nav-active"
+               class="nav-item group">
+              <div class="nav-icon-box">
+                <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.finance' | translate }}</span>
             </a>
           }
         }

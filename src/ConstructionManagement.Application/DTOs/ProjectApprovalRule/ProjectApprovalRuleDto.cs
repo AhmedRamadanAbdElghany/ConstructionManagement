@@ -5,7 +5,7 @@ namespace ConstructionManagement.Application.DTOs.ProjectApprovalRule
     public record ProjectApprovalRuleDto(
         int Id,
         int ProjectId,
-        int? BOQItemId,
+        int? ProjectItemId,
         SourceType Source,
         string UploaderRole,
         string ApproverRole,

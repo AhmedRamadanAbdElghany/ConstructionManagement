@@ -12,7 +12,7 @@ public class UpdateCompanySettingsRequest
     // ============================================
     public bool? EnableUserManagement { get; set; }
     public bool? EnableProjectManagement { get; set; }
-    public bool? EnableBOQManagement { get; set; }
+    public bool? EnableProjectItemsManagement { get; set; }
     public bool? EnableDailyLogs { get; set; }
     public bool? EnableSiteMedia { get; set; }
     public bool? EnableInventoryManagement { get; set; }
@@ -47,7 +47,7 @@ public class UpdateCompanySettingsRequest
 
     public bool? ClientCanSeeFinancials { get; set; }
     public bool? ClientCanSeeMedia { get; set; }
-    public bool? ClientCanSeeBOQ { get; set; }
+    public bool? ClientCanSeeProjectItems { get; set; }
     
     public bool? AllowMeasured { get; set; }
     public bool? AllowSupervision { get; set; }

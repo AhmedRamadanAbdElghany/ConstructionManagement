@@ -19,11 +19,11 @@ public class ProjectApprovalRule : BaseEntity, ICompanyEntity
     public virtual Project Project { get; set; } = null!;
 
     // Optional: if null ? rule applies to the entire project
-    // if set   ? rule applies only to this specific BOQ item
-    public int? BOQItemId { get; set; }
+    // if set   ? rule applies only to this specific project item
+    public int? ProjectItemId { get; set; }
 
-    [ForeignKey(nameof(BOQItemId))]
-    public virtual BOQItem? BOQItem { get; set; }
+    [ForeignKey(nameof(ProjectItemId))]
+    public virtual ProjectItem? ProjectItem { get; set; }
 
     // What kind of upload/evidence this rule applies to
     public SourceType Source { get; set; }

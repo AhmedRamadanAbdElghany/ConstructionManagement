@@ -188,7 +188,7 @@ public class CreateMaterialConsumptionDto
     public int MaterialId { get; set; }
     public int ProjectId { get; set; }
     public int? PhaseId { get; set; }
-    public int? BOQItemId { get; set; }
+    public int? ProjectItemId { get; set; }
     public int? ItemDailyLogId { get; set; }
     public int? MaterialRequestId { get; set; }
     public decimal Quantity { get; set; }
@@ -211,7 +211,7 @@ public class MaterialConsumptionDto
     public string? ProjectName { get; set; }
     public int? PhaseId { get; set; }
     public string? PhaseName { get; set; }
-    public int? BOQItemId { get; set; }
+    public int? ProjectItemId { get; set; }
     public int? ItemDailyLogId { get; set; }
     public int? MaterialRequestId { get; set; }
     public decimal Quantity { get; set; }

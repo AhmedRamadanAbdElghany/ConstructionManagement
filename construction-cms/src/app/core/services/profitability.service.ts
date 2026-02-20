@@ -15,7 +15,7 @@ export class ProfitabilityService {
         return this.http.get<ProjectProfitability>(`${this.apiUrl}/${projectId}/profitability`);
     }
 
-    getItemProfitability(projectId: number, boqItemId: number): Observable<ItemProfitability> {
-        return this.http.get<ItemProfitability>(`${this.apiUrl}/${projectId}/profitability/item/${boqItemId}`);
+    getItemProfitability(projectId: number, projectItemId: number): Observable<ItemProfitability> {
+        return this.http.get<ItemProfitability>(`${this.apiUrl}/${projectId}/profitability/item/${projectItemId}`);
     }
 }

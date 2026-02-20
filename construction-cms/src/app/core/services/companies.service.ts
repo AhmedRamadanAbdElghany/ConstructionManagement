@@ -19,7 +19,7 @@ export interface CreateCompanyRequest {
     // Feature Toggles
     enableUserManagement: boolean;
     enableProjectManagement: boolean;
-    enableBOQManagement: boolean;
+    enableProjectItemsManagement: boolean;
     enableDailyLogs: boolean;
     enableSiteMedia: boolean;
     enableEquipmentManagement: boolean;
@@ -53,7 +53,7 @@ export interface UpdateCompanyRequest {
     // Feature Toggles
     enableUserManagement?: boolean;
     enableProjectManagement?: boolean;
-    enableBOQManagement?: boolean;
+    enableProjectItemsManagement?: boolean;
     enableDailyLogs?: boolean;
     enableSiteMedia?: boolean;
     enableEquipmentManagement?: boolean;

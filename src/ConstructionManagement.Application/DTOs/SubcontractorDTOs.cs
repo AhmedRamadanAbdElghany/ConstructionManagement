@@ -5,7 +5,7 @@ namespace ConstructionManagement.Application.DTOs
 {
     #region Enums
 
-    public enum PaymentType
+    public enum SubcontractorPaymentType
     {
         Advance,
         Milestone,
@@ -19,7 +19,7 @@ namespace ConstructionManagement.Application.DTOs
         Other
     }
 
-    public enum PaymentStatus
+    public enum SubcontractorPaymentStatus
     {
         Pending,
         Approved,
@@ -258,7 +258,7 @@ namespace ConstructionManagement.Application.DTOs
         public int? ContractId { get; set; }
         public int? ProjectId { get; set; }
         [Required]
-        public PaymentType PaymentType { get; set; }
+        public SubcontractorPaymentType PaymentType { get; set; }
         public string? Description { get; set; }
         [Required]
         public decimal Amount { get; set; }
@@ -277,7 +277,7 @@ namespace ConstructionManagement.Application.DTOs
     public class UpdatePaymentStatusRequest
     {
         [Required]
-        public PaymentStatus Status { get; set; }
+        public SubcontractorPaymentStatus Status { get; set; }
         public string? Notes { get; set; }
     }
 

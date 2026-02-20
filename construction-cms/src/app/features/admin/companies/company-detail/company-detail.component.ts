@@ -188,11 +188,11 @@ import { ProjectService } from '../../../../core/services/project.service';
                             <span class="text-xl mb-1">📸</span>
                             <span class="font-black text-[9px] uppercase tracking-tighter">Site Media</span>
                         </div>
-                        <div (click)="toggleFormControl('enableBOQManagement')" 
-                             [ngClass]="companyForm.get('enableBOQManagement')?.value ? 'border-emerald-500 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
+                        <div (click)="toggleFormControl('enableProjectItemsManagement')"
+                             [ngClass]="companyForm.get('enableProjectItemsManagement')?.value ? 'border-emerald-500 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
                              class="p-4 border-2 rounded-2xl cursor-pointer transition-all flex flex-col items-center hover:scale-[1.02]">
                             <span class="text-xl mb-1">📊</span>
-                            <span class="font-black text-[9px] uppercase tracking-tighter">BOQ Mgmt</span>
+                            <span class="font-black text-[9px] uppercase tracking-tighter">Project Items</span>
                         </div>
                         <div (click)="toggleFormControl('enableDocumentManagement')" 
                              [ngClass]="companyForm.get('enableDocumentManagement')?.value ? 'border-emerald-500 bg-emerald-50/40 text-emerald-900 dark:text-emerald-100' : 'border-slate-100 dark:border-slate-800 text-slate-300 opacity-60 grayscale'"
@@ -566,9 +566,9 @@ import { ProjectService } from '../../../../core/services/project.service';
                              </label>
                           </div>
                           <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
-                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Share BOQ Details</span>
+                             <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Share Project Items Details</span>
                              <label class="relative inline-flex items-center cursor-pointer">
-                               <input type="checkbox" formControlName="clientCanSeeBOQ" class="sr-only peer">
+                               <input type="checkbox" formControlName="clientCanSeeProjectItems" class="sr-only peer">
                                <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500"></div>
                              </label>
                           </div>
@@ -596,73 +596,7 @@ import { ProjectService } from '../../../../core/services/project.service';
               </form>
           </div>
 
-          <!-- TAB 2: BILLING & SUBS -->
-          <div *ngIf="activeTab === 'billing'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
-             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-               <div class="lg:col-span-2 bg-gradient-to-br from-indigo-700 to-blue-900 rounded-[3rem] p-10 text-white relative overflow-hidden shadow-2xl shadow-indigo-500/30">
-                 <div class="relative z-10 flex flex-col h-full justify-between">
-                    <div>
-                      <p class="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-200 mb-2">Platform Subscription MRR</p>
-                      <h3 class="text-6xl font-black tracking-tighter mb-8">$5,240<span class="text-lg font-medium text-indigo-300">.00</span></h3>
-                    </div>
-                    <div class="flex flex-wrap gap-4 mt-auto">
-                      <div class="px-6 py-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10">
-                        <p class="text-[9px] font-black text-indigo-200 uppercase tracking-widest mb-1">Billing Interval</p>
-                        <p class="font-bold">Monthly Recurring</p>
-                      </div>
-                      <div class="px-6 py-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10">
-                        <p class="text-[9px] font-black text-indigo-200 uppercase tracking-widest mb-1">Next Renewal</p>
-                        <p class="font-bold">March 15, 2024</p>
-                      </div>
-                      <div class="px-6 py-4 bg-emerald-500 rounded-2xl shadow-lg">
-                        <p class="text-[9px] font-black text-white/80 uppercase tracking-widest mb-1">Payment Status</p>
-                        <p class="font-black">✓ Good Standing</p>
-                      </div>
-                    </div>
-                 </div>
-                 <div class="absolute -right-20 -top-20 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
-                 <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl"></div>
-               </div>
-
-               <div class="bg-slate-50 dark:bg-white/5 rounded-[3rem] p-10 border border-slate-100 flex flex-col justify-center items-center text-center">
-                 <div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 shadow-xl flex items-center justify-center text-3xl mb-6">💳</div>
-                 <h4 class="font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-2">Payout Method</h4>
-                 <p class="text-xs text-slate-500 mb-6 font-medium">VISA ending in •••• 4422</p>
-                 <button class="w-full py-4 rounded-2xl border border-indigo-200 text-indigo-600 text-[10px] font-black uppercase tracking-widest hover:bg-indigo-50 transition-all">Update Card Details</button>
-               </div>
-             </div>
-
-             <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-8 px-4 flex items-center gap-3">
-               <span class="w-2 h-2 rounded-full bg-slate-300"></span>
-               Invoicing History
-             </h3>
-             <div class="rounded-[2.5rem] border border-slate-100 dark:border-white/5 overflow-hidden">
-                <table class="w-full text-left">
-                  <tr class="bg-slate-50/50 dark:bg-white/5">
-                    <th class="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Billing Date</th>
-                    <th class="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Transaction Ref</th>
-                    <th class="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Amount Paid</th>
-                    <th class="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Collection Status</th>
-                    <th class="px-8 py-6"></th>
-                  </tr>
-                  <tr *ngFor="let bill of bills" class="border-t border-slate-50 dark:border-white/5 hover:bg-slate-50/30 transition-all group">
-                    <td class="px-8 py-6 text-sm font-bold text-slate-600 dark:text-slate-400">{{ bill.date }}</td>
-                    <td class="px-8 py-6 text-sm font-black text-slate-800 dark:text-slate-200">{{ bill.desc }}</td>
-                    <td class="px-8 py-6 text-sm font-black text-indigo-600">{{ bill.amount | currency }}</td>
-                    <td class="px-8 py-6">
-                      <span class="px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-600 text-[9px] font-black uppercase tracking-widest border border-emerald-100">Settled</span>
-                    </td>
-                    <td class="px-8 py-6 text-right">
-                      <button class="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-900 flex items-center gap-2 justify-end">
-                        View Invoice <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
-                      </button>
-                    </td>
-                  </tr>
-                </table>
-             </div>
-          </div>
-
-          <!-- TAB 3: USERS & ACCESS -->
+          <!-- TAB 2: USERS & ACCESS -->
           <div *ngIf="activeTab === 'users'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
              <div class="flex justify-between items-center mb-10 px-4">
                 <div>
@@ -1026,15 +960,12 @@ export class CompanyDetailComponent implements OnInit {
 
   tabs = [
     { id: 'identity', label: 'Identity & Config' },
-    { id: 'billing', label: 'Billing & Subs' },
     { id: 'projects', label: 'Projects' },
     { id: 'users', label: 'Users & Access' },
     { id: 'roles', label: 'Privilege Structure' },
     { id: 'perms', label: 'Platform Capabilities' }
   ];
 
-
-  bills: any[] = [];
 
   users: any[] = [];
 
@@ -1060,7 +991,7 @@ export class CompanyDetailComponent implements OnInit {
       // Feature Toggles
       enableUserManagement: [true],
       enableProjectManagement: [true],
-      enableBOQManagement: [true],
+      enableProjectItemsManagement: [true],
       enableDailyLogs: [true],
       enableSiteMedia: [true],
       enableEquipmentManagement: [true],
@@ -1100,7 +1031,7 @@ export class CompanyDetailComponent implements OnInit {
       autoCloseDay: [true],
       enableInvoiceReview: [true],
       clientCanSeeMedia: [true],
-      clientCanSeeBOQ: [true],
+      clientCanSeeProjectItems: [true],
 
       // Financial Governance
       enableVendorInvoiceUpload: [false],
@@ -1211,7 +1142,7 @@ export class CompanyDetailComponent implements OnInit {
         autoCloseDay: company.settings.autoCloseDay,
         enableInvoiceReview: company.settings.enableInvoiceReview,
         clientCanSeeMedia: company.settings.clientCanSeeMedia,
-        clientCanSeeBOQ: company.settings.clientCanSeeBOQ,
+        clientCanSeeProjectItems: company.settings.clientCanSeeProjectItems,
 
         // Patch financial governance
         enableVendorInvoiceUpload: company.settings.enableVendorInvoiceUpload,

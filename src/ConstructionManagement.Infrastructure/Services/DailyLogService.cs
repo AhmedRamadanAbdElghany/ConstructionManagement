@@ -9,17 +9,17 @@ namespace ConstructionManagement.Infrastructure.Services;
 public class DailyLogService : IDailyLogService
 {
     private readonly IRepository<ItemDailyLog> _logRepository;
-    private readonly IRepository<BOQExecutedDelta> _deltaRepository;
+    private readonly IRepository<ProjectItemExecutedDelta> _deltaRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    private readonly IRepository<BOQItem> _itemRepository;
+    private readonly IRepository<ProjectItem> _itemRepository;
     private readonly IActivityLogService _activityLogService;
     private readonly ILocalizationService _localizationService;
 
     public DailyLogService(
         IRepository<ItemDailyLog> logRepository,
-        IRepository<BOQExecutedDelta> deltaRepository,
-        IRepository<BOQItem> itemRepository,
+        IRepository<ProjectItemExecutedDelta> deltaRepository,
+        IRepository<ProjectItem> itemRepository,
         IActivityLogService activityLogService,
         IUnitOfWork unitOfWork,
         ILocalizationService localizationService)
@@ -35,19 +35,19 @@ public class DailyLogService : IDailyLogService
     public async Task<bool> IsDayClosedForItemAsync(int itemId, DateTime date)
     {
         return await _logRepository.AsQueryable()
-            .AnyAsync(l => l.BOQItemId == itemId && l.LogDate.Date == date.Date && l.IsClosed);
+            .AnyAsync(l => l.ProjectItemId == itemId && l.LogDate.Date == date.Date && l.IsClosed);
     }
 
     public async Task<int> GetOrCreateDailyLogIdAsync(int itemId, DateTime logDate, int userId)
     {
         var log = await _logRepository.AsQueryable()
-            .FirstOrDefaultAsync(l => l.BOQItemId == itemId && l.LogDate.Date == logDate.Date);
+            .FirstOrDefaultAsync(l => l.ProjectItemId == itemId && l.LogDate.Date == logDate.Date);
 
         if (log != null) return log.Id;
 
         var newLog = new ItemDailyLog
         {
-            BOQItemId = itemId,
+            ProjectItemId = itemId,
             LogDate = logDate.Date,
             CreatedByUserId = userId,
             IsClosed = false
@@ -63,7 +63,7 @@ public class DailyLogService : IDailyLogService
     {
         // 1. Find the log
         var log = await _logRepository.AsQueryable()
-            .FirstOrDefaultAsync(l => l.BOQItemId == itemId && l.LogDate.Date == logDate.Date);
+            .FirstOrDefaultAsync(l => l.ProjectItemId == itemId && l.LogDate.Date == logDate.Date);
 
         if (log == null || log.IsClosed)
             return false;
@@ -72,18 +72,19 @@ public class DailyLogService : IDailyLogService
         // Here we assume DailyProgressPercentage is % of AgreedQuantity
         decimal deltaQty = 0m;
 
+        // Load the ProjectItem to get AgreedQuantity
+        var projectItem = await _itemRepository.GetByIdAsync(itemId);
+        
         if (request.DailyProgressPercentage > 0) // simple check (no HasValue needed)
         {
-            // REPLACE THIS WITH REAL AgreedQuantity loading logic
-            // Example: load from BOQMeasured (you may need to inject IRepository<BOQMeasured>)
-            decimal assumedAgreedQty = 1000m; // ← TEMPORARY — load real value!
-            deltaQty = (request.DailyProgressPercentage / 100m) * assumedAgreedQty;
+            decimal agreedQty = projectItem?.AgreedQuantity ?? 1000m;
+            deltaQty = (request.DailyProgressPercentage / 100m) * agreedQty;
         }
 
         // 3. Record delta (append-only — no direct update to ExecutedQuantity)
-        var delta = new BOQExecutedDelta
+        var delta = new ProjectItemExecutedDelta
         {
-            BOQItemId = itemId,
+            ProjectItemId = itemId,
             DeltaQuantity = deltaQty,
             ChangeType = "DailyLog",
             ReferenceId = log.Id,
@@ -104,14 +105,13 @@ public class DailyLogService : IDailyLogService
         await _logRepository.UpdateAsync(log);
 
         // 5. Activity Log
-        var item = await _itemRepository.GetByIdAsync(itemId);
-        if (item != null)
+        if (projectItem != null)
         {
             await _activityLogService.LogActivityAsync(
-                item.ProjectId, 
+                projectItem.ProjectId, 
                 "Log", 
                 "Daily Log Closed", 
-                $"Progress for '{item.ItemName}' recorded: {request.DailyProgressPercentage:N0}% on {logDate:yyyy-MM-dd}.", 
+                $"Progress for '{projectItem.ItemName}' recorded: {request.DailyProgressPercentage:N0}% on {logDate:yyyy-MM-dd}.", 
                 userId
             );
         }
@@ -128,14 +128,14 @@ public class DailyLogService : IDailyLogService
             throw new InvalidOperationException(_localizationService["DailyLog.ReopenReasonRequired"]);
 
         var log = await _logRepository.AsQueryable()
-            .FirstOrDefaultAsync(l => l.BOQItemId == itemId && l.LogDate.Date == logDate.Date);
+            .FirstOrDefaultAsync(l => l.ProjectItemId == itemId && l.LogDate.Date == logDate.Date);
 
         if (log == null || !log.IsClosed)
             return false;
 
         // Find associated delta and remove it
         var associatedDelta = await _deltaRepository.AsQueryable()
-            .FirstOrDefaultAsync(d => d.BOQItemId == itemId && d.ReferenceId == log.Id && d.ChangeType == "DailyLog");
+            .FirstOrDefaultAsync(d => d.ProjectItemId == itemId && d.ReferenceId == log.Id && d.ChangeType == "DailyLog");
         
         if (associatedDelta != null)
         {
@@ -170,12 +170,12 @@ public class DailyLogService : IDailyLogService
     {
         var logs = await _logRepository.AsQueryable()
             .Include(l => l.ClosedByUser)
-            .Where(l => l.BOQItemId == itemId)
+            .Where(l => l.ProjectItemId == itemId)
             .OrderByDescending(l => l.LogDate)
             .ToListAsync();
 
         return logs.Select(l => new DailyLogDto(
-            l.BOQItemId,
+            l.ProjectItemId,
             l.LogDate,
             l.IsClosed,
             l.DailyProgressPercentage,

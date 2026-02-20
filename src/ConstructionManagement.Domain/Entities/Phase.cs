@@ -28,8 +28,8 @@ public class Phase : BaseEntity, ICompanyEntity
     // Child phases
     public virtual ICollection<Phase> ChildPhases { get; set; } = new List<Phase>();
     
-    // Items (terminal nodes)
-    public virtual ICollection<BOQItem> Items { get; set; } = new List<BOQItem>();
+    // Items (terminal nodes) - Project Items (بنود المشروع)
+    public virtual ICollection<ProjectItem> Items { get; set; } = new List<ProjectItem>();
     
     // Computed helpers
     [NotMapped]

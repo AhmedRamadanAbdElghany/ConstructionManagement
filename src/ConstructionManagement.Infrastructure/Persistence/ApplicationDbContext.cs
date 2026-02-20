@@ -37,16 +37,10 @@ public class ApplicationDbContext : DbContext
     public DbSet<ProjectSettings> ProjectSettings => Set<ProjectSettings>();
     public DbSet<ProjectApprovalRule> ProjectApprovalRules => Set<ProjectApprovalRule>();
     public DbSet<CompanySettings> CompanySettings => Set<CompanySettings>();
-    public DbSet<BOQItem> BOQItems => Set<BOQItem>();
-    public DbSet<BOQMeasured> BOQMeasured => Set<BOQMeasured>();
-    public DbSet<BOQExecutedDelta> BOQExecutedDeltas => Set<BOQExecutedDelta>();
-    public DbSet<BOQSupervision> BOQSupervision => Set<BOQSupervision>();
     public DbSet<ItemDailyLog> ItemDailyLogs => Set<ItemDailyLog>();
     public DbSet<ItemInvoice> ItemInvoices => Set<ItemInvoice>();
     public DbSet<ClientPayment> ClientPayments => Set<ClientPayment>();
     public DbSet<SiteMedia> SiteMedias => Set<SiteMedia>();
-    public DbSet<BOQItemNote> BOQItemNotes => Set<BOQItemNote>();
-    public DbSet<BOQProfitabilityLog> BOQProfitabilityLogs => Set<BOQProfitabilityLog>();
     public DbSet<EscalationLog> EscalationLogs => Set<EscalationLog>();
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<UserTypeHistory> UserTypeHistories => Set<UserTypeHistory>();
@@ -54,11 +48,16 @@ public class ApplicationDbContext : DbContext
     public DbSet<CatalogItem> CatalogItems => Set<CatalogItem>();
     public DbSet<ApprovalRequest> ApprovalRequests => Set<ApprovalRequest>();
     public DbSet<ApprovalStep> ApprovalSteps => Set<ApprovalStep>();
-    public DbSet<BOQPackage> BOQPackages => Set<BOQPackage>();
-    public DbSet<CompanyPackage> CompanyPackages => Set<CompanyPackage>(); // Renamed from ClientPackage
+    public DbSet<CompanyPackage> CompanyPackages => Set<CompanyPackage>();
     public DbSet<InvoiceSequence> InvoiceSequences => Set<InvoiceSequence>();
     public DbSet<Phase> Phases => Set<Phase>();
     public DbSet<CompanyDefaultPhaseItem> CompanyDefaultPhaseItems => Set<CompanyDefaultPhaseItem>();
+    
+    // ProjectItem entities (renamed from BOQ)
+    public DbSet<ProjectItem> ProjectItems => Set<ProjectItem>();
+    public DbSet<ProjectItemExecutedDelta> ProjectItemExecutedDeltas => Set<ProjectItemExecutedDelta>();
+    public DbSet<ProjectItemNote> ProjectItemNotes => Set<ProjectItemNote>();
+    public DbSet<ProjectItemProfitabilityLog> ProjectItemProfitabilityLogs => Set<ProjectItemProfitabilityLog>();
 
     // HR / Job Postings
     public DbSet<JobPosting> JobPostings => Set<JobPosting>();
@@ -167,6 +166,11 @@ public class ApplicationDbContext : DbContext
     public DbSet<LeaveRequest> LeaveRequests => Set<LeaveRequest>();
     public DbSet<Certification> Certifications => Set<Certification>();
     public DbSet<Payroll> Payrolls => Set<Payroll>();
+    public DbSet<OvertimeRule> OvertimeRules => Set<OvertimeRule>();
+    public DbSet<OvertimeRecord> OvertimeRecords => Set<OvertimeRecord>();
+    public DbSet<RetentionSchedule> RetentionSchedules => Set<RetentionSchedule>();
+    public DbSet<EquipmentROI> EquipmentROIs => Set<EquipmentROI>();
+    public DbSet<EquipmentCostBreakdown> EquipmentCostBreakdowns => Set<EquipmentCostBreakdown>();
 
     // Analytics & Reporting
     public DbSet<ReportDefinition> ReportDefinitions => Set<ReportDefinition>();
@@ -195,6 +199,23 @@ public class ApplicationDbContext : DbContext
     // Company Announcements & Followers (Subscribers)
     public DbSet<CompanyAnnouncement> CompanyAnnouncements => Set<CompanyAnnouncement>();
     public DbSet<CompanyFollower> CompanyFollowers => Set<CompanyFollower>();
+
+    // Company Messaging System
+    public DbSet<CompanyConversation> CompanyConversations => Set<CompanyConversation>();
+    public DbSet<CompanyMessage> CompanyMessages => Set<CompanyMessage>();
+    public DbSet<MessageFileAttachment> MessageFileAttachments => Set<MessageFileAttachment>();
+    public DbSet<UserMessagingBlock> UserMessagingBlocks => Set<UserMessagingBlock>();
+
+    // Location Tracking System
+    public DbSet<CompanyLocationSettings> CompanyLocationSettings => Set<CompanyLocationSettings>();
+    public DbSet<WorkerLocation> WorkerLocations => Set<WorkerLocation>();
+    public DbSet<LocationRequest> LocationRequests => Set<LocationRequest>();
+    public DbSet<LocationRequestTarget> LocationRequestTargets => Set<LocationRequestTarget>();
+
+    // Geofencing System
+    public DbSet<GeofenceZone> GeofenceZones => Set<GeofenceZone>();
+    public DbSet<GeofenceEvent> GeofenceEvents => Set<GeofenceEvent>();
+    public DbSet<WorkerGeofenceAssignment> WorkerGeofenceAssignments => Set<WorkerGeofenceAssignment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -225,21 +246,41 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<ProjectSettings>().Property(ps => ps.Id).ValueGeneratedNever();
         modelBuilder.Entity<ProjectSettings>().HasOne(ps => ps.Project).WithOne(p => p.Settings).HasForeignKey<ProjectSettings>(ps => ps.Id).OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<BOQMeasured>().HasKey(m => m.Id);
-        modelBuilder.Entity<BOQMeasured>().Property(m => m.Id).ValueGeneratedNever();
-        modelBuilder.Entity<BOQMeasured>().HasOne(m => m.Item).WithOne(i => i.MeasuredData).HasForeignKey<BOQMeasured>(m => m.Id).OnDelete(DeleteBehavior.Cascade);
+        // ═══════════════════════════════════════════════════════════════════════════
+        // ProjectItem Entity Configurations
+        // ═══════════════════════════════════════════════════════════════════════════
+        
+        // ProjectItemExecutedDelta indexes
+        modelBuilder.Entity<ProjectItemExecutedDelta>().HasIndex(d => d.ProjectItemId);
+        modelBuilder.Entity<ProjectItemExecutedDelta>().HasIndex(d => d.ProcessedAt);
 
-        modelBuilder.Entity<BOQSupervision>().HasKey(s => s.Id);
-        modelBuilder.Entity<BOQSupervision>().Property(s => s.Id).ValueGeneratedNever();
-        modelBuilder.Entity<BOQSupervision>().HasOne(s => s.Item).WithOne(i => i.SupervisionData).HasForeignKey<BOQSupervision>(s => s.Id).OnDelete(DeleteBehavior.Cascade);
+        // ProjectItem relationships
+        modelBuilder.Entity<ProjectItem>()
+            .HasOne(pi => pi.Phase)
+            .WithMany(p => p.Items)
+            .HasForeignKey(pi => pi.PhaseId)
+            .OnDelete(DeleteBehavior.NoAction);
 
-        // Add Configuration for BOQPackage
-        modelBuilder.Entity<BOQPackage>().HasKey(p => p.Id);
-        modelBuilder.Entity<BOQPackage>().Property(p => p.Id).ValueGeneratedNever();
-        modelBuilder.Entity<BOQPackage>().HasOne(p => p.BOQItem).WithOne(i => i.PackageData).HasForeignKey<BOQPackage>(p => p.Id).OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<ProjectItem>().HasOne(pi => pi.Project).WithMany().HasForeignKey(pi => pi.ProjectId).OnDelete(DeleteBehavior.NoAction);
 
-        modelBuilder.Entity<BOQExecutedDelta>().HasIndex(d => d.BOQItemId);
-        modelBuilder.Entity<BOQExecutedDelta>().HasIndex(d => d.ProcessedAt);
+        // ProjectItemProfitabilityLog relationship
+        modelBuilder.Entity<ProjectItemProfitabilityLog>().HasOne(pl => pl.ProjectItem).WithMany(pi => pi.ProfitabilityLogs).HasForeignKey(pl => pl.ProjectItemId).OnDelete(DeleteBehavior.Cascade);
+
+        // ItemDailyLog relationship with ProjectItem
+        modelBuilder.Entity<ItemDailyLog>().HasOne(dl => dl.ProjectItem).WithMany(pi => pi.DailyLogs).HasForeignKey(dl => dl.ProjectItemId).OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<ItemDailyLog>().HasIndex(dl => new { dl.ProjectItemId, dl.LogDate }).IsUnique();
+
+        // SiteMedia relationship with ProjectItem
+        modelBuilder.Entity<SiteMedia>().HasOne(sm => sm.ProjectItem).WithMany(p => p.SiteMedias).HasForeignKey(sm => sm.ProjectItemId).OnDelete(DeleteBehavior.NoAction);
+
+        // Transaction relationship with ProjectItem
+        modelBuilder.Entity<Transaction>().HasOne(t => t.ProjectItem).WithMany(p => p.Transactions).HasForeignKey(t => t.ProjectItemId).OnDelete(DeleteBehavior.NoAction);
+
+        // EscalationLog relationship with ProjectItem
+        modelBuilder.Entity<EscalationLog>().HasOne(el => el.ProjectItem).WithMany(p => p.EscalationLogs).HasForeignKey(el => el.ProjectItemId).OnDelete(DeleteBehavior.NoAction);
+
+        // ItemInvoice relationship with ProjectItem
+        modelBuilder.Entity<ItemInvoice>().HasOne(ii => ii.ProjectItem).WithMany(p => p.Invoices).HasForeignKey(ii => ii.ProjectItemId).OnDelete(DeleteBehavior.NoAction);
 
         // 3. Hierarchical Phases
         modelBuilder.Entity<Phase>()
@@ -266,12 +307,6 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(i => i.DefaultPhaseId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<BOQItem>()
-            .HasOne(b => b.Phase)
-            .WithMany(p => p.Items)
-            .HasForeignKey(b => b.PhaseId)
-            .OnDelete(DeleteBehavior.NoAction);
-
         // 4. InvoiceSequence & Constraints
         modelBuilder.Entity<InvoiceSequence>().ToTable("InvoiceSequences").HasKey(s => s.YearPart);
         modelBuilder.Entity<InvoiceSequence>().Property(s => s.YearPart).ValueGeneratedNever();
@@ -279,9 +314,8 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<ItemInvoice>().HasIndex(ii => ii.InvoiceNumber).IsUnique().HasDatabaseName("IX_ItemInvoice_InvoiceNumber_Unique");
 
         // 4. Critical Relationships (NoAction to prevent cascade conflicts)
-        modelBuilder.Entity<BOQItem>().HasOne(b => b.Project).WithMany(p => p.BOQItems).HasForeignKey(b => b.ProjectId).OnDelete(DeleteBehavior.NoAction);
         modelBuilder.Entity<ApprovalRequest>().HasOne(ar => ar.Project).WithMany().HasForeignKey(ar => ar.ProjectId).OnDelete(DeleteBehavior.NoAction);
-        modelBuilder.Entity<ApprovalRequest>().HasOne(ar => ar.BOQItem).WithMany().HasForeignKey(ar => ar.BOQItemId).OnDelete(DeleteBehavior.SetNull);
+        modelBuilder.Entity<ApprovalRequest>().HasOne(ar => ar.ProjectItem).WithMany().HasForeignKey(ar => ar.ProjectItemId).OnDelete(DeleteBehavior.SetNull);
         modelBuilder.Entity<ApprovalRequest>().HasOne(ar => ar.ApprovalRule).WithMany(r => r.ApprovalRequests).HasForeignKey(ar => ar.ProjectApprovalRuleId).OnDelete(DeleteBehavior.NoAction);
         modelBuilder.Entity<SiteMedia>().HasOne(sm => sm.Project).WithMany(p => p.SiteMedias).HasForeignKey(sm => sm.ProjectId).OnDelete(DeleteBehavior.NoAction);
         modelBuilder.Entity<ItemInvoice>().HasOne(ii => ii.Project).WithMany(p => p.ItemInvoices).HasForeignKey(ii => ii.ProjectId).OnDelete(DeleteBehavior.NoAction);
@@ -313,11 +347,8 @@ public class ApplicationDbContext : DbContext
 
         // 7. Safe Cascade on Child Entities
         modelBuilder.Entity<ApprovalStep>().HasOne(step => step.Request).WithMany(req => req.Steps).HasForeignKey(step => step.ApprovalRequestId).OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<BOQProfitabilityLog>().HasOne(pl => pl.BOQItem).WithMany(b => b.ProfitabilityLogs).HasForeignKey(pl => pl.BOQItemId).OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<ItemDailyLog>().HasOne(dl => dl.BOQItem).WithMany(b => b.DailyLogs).HasForeignKey(dl => dl.BOQItemId).OnDelete(DeleteBehavior.Cascade);
 
         // 8. Performance Indexes
-        modelBuilder.Entity<ItemDailyLog>().HasIndex(dl => new { dl.BOQItemId, dl.LogDate }).IsUnique();
         modelBuilder.Entity<SiteMedia>().HasIndex(sm => sm.ProjectId);
         modelBuilder.Entity<Notification>().HasIndex(n => n.UserId);
         modelBuilder.Entity<Certification>().HasIndex(c => c.UserId);
@@ -397,8 +428,268 @@ public class ApplicationDbContext : DbContext
         // HR Management configurations
         ConfigureHREntities(modelBuilder);
         
+        // Messaging System configurations
+        ConfigureMessagingEntities(modelBuilder);
+        
+        // Location Tracking System configurations
+        ConfigureLocationTrackingEntities(modelBuilder);
+        
+        // Geofencing System configurations
+        ConfigureGeofencingEntities(modelBuilder);
+        
+        // Advanced Gap Analysis Features
+        ConfigureGapAnalysisEntities(modelBuilder);
+        
         // 10. SEEDING
         SeedData(modelBuilder);
+    }
+
+    private void ConfigureMessagingEntities(ModelBuilder modelBuilder)
+    {
+        // CompanyConversation configuration
+        modelBuilder.Entity<CompanyConversation>(entity =>
+        {
+            entity.HasOne(c => c.Company)
+                .WithMany()
+                .HasForeignKey(c => c.CompanyId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasOne(c => c.InitiatorUser)
+                .WithMany()
+                .HasForeignKey(c => c.InitiatorUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasOne(c => c.ApprovedByUser)
+                .WithMany()
+                .HasForeignKey(c => c.ApprovedByUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            // LastMessage relationship - one-to-one with CompanyMessage
+            entity.HasOne(c => c.LastMessage)
+                .WithMany()
+                .HasForeignKey(c => c.LastMessageId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasIndex(c => c.CompanyId);
+            entity.HasIndex(c => c.InitiatorUserId);
+            entity.HasIndex(c => c.Status);
+        });
+        
+        // CompanyMessage configuration
+        modelBuilder.Entity<CompanyMessage>(entity =>
+        {
+            entity.HasOne(m => m.Conversation)
+                .WithMany(c => c.Messages)
+                .HasForeignKey(m => m.ConversationId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            entity.HasOne(m => m.SenderUser)
+                .WithMany()
+                .HasForeignKey(m => m.SenderUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasOne(m => m.Company)
+                .WithMany()
+                .HasForeignKey(m => m.CompanyId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasIndex(m => m.ConversationId);
+            entity.HasIndex(m => m.SenderUserId);
+            entity.HasIndex(m => m.CreatedAt);
+        });
+        
+        // MessageFileAttachment configuration
+        modelBuilder.Entity<MessageFileAttachment>(entity =>
+        {
+            entity.HasOne(a => a.Message)
+                .WithMany(m => m.Attachments)
+                .HasForeignKey(a => a.MessageId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            entity.HasOne(a => a.Company)
+                .WithMany()
+                .HasForeignKey(a => a.CompanyId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasIndex(a => a.MessageId);
+        });
+        
+        // UserMessagingBlock configuration
+        modelBuilder.Entity<UserMessagingBlock>(entity =>
+        {
+            entity.HasOne(b => b.Company)
+                .WithMany()
+                .HasForeignKey(b => b.CompanyId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasOne(b => b.User)
+                .WithMany()
+                .HasForeignKey(b => b.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasOne(b => b.BlockedByUser)
+                .WithMany()
+                .HasForeignKey(b => b.BlockedByUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasIndex(b => new { b.CompanyId, b.UserId }).IsUnique();
+        });
+    }
+
+    private void ConfigureLocationTrackingEntities(ModelBuilder modelBuilder)
+    {
+        // CompanyLocationSettings configuration
+        modelBuilder.Entity<CompanyLocationSettings>(entity =>
+        {
+            entity.HasOne(s => s.Company)
+                .WithOne()
+                .HasForeignKey<CompanyLocationSettings>(s => s.CompanyId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            entity.HasIndex(s => s.CompanyId).IsUnique();
+        });
+        
+        // WorkerLocation configuration
+        modelBuilder.Entity<WorkerLocation>(entity =>
+        {
+            entity.HasOne(l => l.Company)
+                .WithMany()
+                .HasForeignKey(l => l.CompanyId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasOne(l => l.User)
+                .WithMany()
+                .HasForeignKey(l => l.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasOne(l => l.Request)
+                .WithMany()
+                .HasForeignKey(l => l.RequestId)
+                .OnDelete(DeleteBehavior.SetNull);
+            
+            entity.HasIndex(l => l.CompanyId);
+            entity.HasIndex(l => l.UserId);
+            entity.HasIndex(l => l.RecordedAt);
+            entity.HasIndex(l => new { l.UserId, l.RecordedAt });
+        });
+        
+        // LocationRequest configuration
+        modelBuilder.Entity<LocationRequest>(entity =>
+        {
+            entity.HasOne(r => r.Company)
+                .WithMany()
+                .HasForeignKey(r => r.CompanyId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasOne(r => r.RequestedByUser)
+                .WithMany()
+                .HasForeignKey(r => r.RequestedByUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasIndex(r => r.CompanyId);
+            entity.HasIndex(r => r.Status);
+            entity.HasIndex(r => r.ExpiresAt);
+            entity.HasIndex(r => r.ScheduledFor);
+        });
+        
+        // LocationRequestTarget configuration
+        modelBuilder.Entity<LocationRequestTarget>(entity =>
+        {
+            entity.HasOne(t => t.Request)
+                .WithMany(r => r.Targets)
+                .HasForeignKey(t => t.RequestId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            entity.HasOne(t => t.User)
+                .WithMany()
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasOne(t => t.Location)
+                .WithMany()
+                .HasForeignKey(t => t.LocationId)
+                .OnDelete(DeleteBehavior.SetNull);
+            
+            entity.HasIndex(t => t.RequestId);
+            entity.HasIndex(t => t.UserId);
+            entity.HasIndex(t => t.Status);
+            entity.HasIndex(t => new { t.RequestId, t.UserId });
+        });
+    }
+
+    private void ConfigureGeofencingEntities(ModelBuilder modelBuilder)
+    {
+        // GeofenceZone configuration
+        modelBuilder.Entity<GeofenceZone>(entity =>
+        {
+            entity.HasOne(z => z.Company)
+                .WithMany()
+                .HasForeignKey(z => z.CompanyId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasOne(z => z.Project)
+                .WithMany()
+                .HasForeignKey(z => z.ProjectId)
+                .OnDelete(DeleteBehavior.SetNull);
+            
+            entity.HasIndex(z => z.CompanyId);
+            entity.HasIndex(z => z.ProjectId);
+            entity.HasIndex(z => z.IsActive);
+        });
+        
+        // GeofenceEvent configuration
+        modelBuilder.Entity<GeofenceEvent>(entity =>
+        {
+            entity.HasOne(e => e.Company)
+                .WithMany()
+                .HasForeignKey(e => e.CompanyId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasOne(e => e.Zone)
+                .WithMany(z => z.Events)
+                .HasForeignKey(e => e.ZoneId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            entity.HasOne(e => e.Location)
+                .WithMany()
+                .HasForeignKey(e => e.LocationId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasIndex(e => e.CompanyId);
+            entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.ZoneId);
+            entity.HasIndex(e => e.EventTime);
+            entity.HasIndex(e => new { e.UserId, e.ZoneId, e.EventTime });
+        });
+        
+        // WorkerGeofenceAssignment configuration
+        modelBuilder.Entity<WorkerGeofenceAssignment>(entity =>
+        {
+            entity.HasOne(a => a.Zone)
+                .WithMany(z => z.WorkerAssignments)
+                .HasForeignKey(a => a.ZoneId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            entity.HasOne(a => a.User)
+                .WithMany()
+                .HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasOne(a => a.AssignedByUser)
+                .WithMany()
+                .HasForeignKey(a => a.AssignedBy)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasIndex(a => a.ZoneId);
+            entity.HasIndex(a => a.UserId);
+            entity.HasIndex(a => a.IsActive);
+            entity.HasIndex(a => new { a.ZoneId, a.UserId, a.IsActive });
+        });
     }
 
     private void ConfigureEquipmentEntities(ModelBuilder modelBuilder)
@@ -496,6 +787,88 @@ public class ApplicationDbContext : DbContext
             .WithMany()
             .HasForeignKey(eu => eu.ProjectId)
             .OnDelete(DeleteBehavior.NoAction);
+    }
+
+    private void ConfigureGapAnalysisEntities(ModelBuilder modelBuilder)
+    {
+        // RetentionSchedule
+        modelBuilder.Entity<RetentionSchedule>(entity =>
+        {
+            entity.HasOne(r => r.Project)
+                .WithMany()
+                .HasForeignKey(r => r.ProjectId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(r => r.ProgressInvoice)
+                .WithMany()
+                .HasForeignKey(r => r.ProgressInvoiceId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasIndex(r => r.ProjectId);
+            entity.HasIndex(r => r.Status);
+            entity.HasIndex(r => r.ReleaseDate);
+        });
+
+        // OvertimeRule
+        modelBuilder.Entity<OvertimeRule>(entity =>
+        {
+            entity.HasIndex(r => r.CompanyId);
+            entity.HasIndex(r => r.IsActive);
+        });
+
+        // OvertimeRecord
+        modelBuilder.Entity<OvertimeRecord>(entity =>
+        {
+            entity.HasOne(r => r.User)
+                .WithMany()
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(r => r.Project)
+                .WithMany()
+                .HasForeignKey(r => r.ProjectId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasIndex(r => r.UserId);
+            entity.HasIndex(r => r.Date);
+            entity.HasIndex(r => r.Status);
+        });
+
+        // EquipmentROI
+        modelBuilder.Entity<EquipmentROI>(entity =>
+        {
+            entity.HasOne(r => r.Equipment)
+                .WithMany()
+                .HasForeignKey(r => r.EquipmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(r => r.Project)
+                .WithMany()
+                .HasForeignKey(r => r.ProjectId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasIndex(r => r.EquipmentId);
+            entity.HasIndex(r => new { r.PeriodStart, r.PeriodEnd });
+            entity.HasIndex(r => r.PerformanceRating);
+        });
+
+        // EquipmentCostBreakdown
+        modelBuilder.Entity<EquipmentCostBreakdown>(entity =>
+        {
+            entity.HasOne(c => c.Equipment)
+                .WithMany()
+                .HasForeignKey(c => c.EquipmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(c => c.EquipmentROI)
+                .WithMany()
+                .HasForeignKey(c => c.EquipmentROIId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(c => c.EquipmentId);
+            entity.HasIndex(c => c.Date);
+            entity.HasIndex(c => c.CostType);
+        });
     }
 
     private void ConfigureInventoryEntities(ModelBuilder modelBuilder)
@@ -828,11 +1201,11 @@ public class ApplicationDbContext : DbContext
             new Permission { Id = 35, Name = "Project.ManageTeam", Description = "Assign and manage project members", CreatedAt = fixedDate },
             new Permission { Id = 36, Name = "Project.Close", Description = "Close or finalize projects", CreatedAt = fixedDate },
 
-            // BOQ & Financials (61-90)
+            // Project Items & Financials (61-90)
             new Permission { Id = 61, Name = "Finance.ViewFinancials", Description = "View project budgets and costs", CreatedAt = fixedDate },
             new Permission { Id = 62, Name = "Finance.CreateInvoice", Description = "Create project invoices", CreatedAt = fixedDate },
             new Permission { Id = 63, Name = "Finance.ApproveInvoice", Description = "Review and approve invoices", CreatedAt = fixedDate },
-            new Permission { Id = 64, Name = "Finance.ManageBOQ", Description = "Update BOQ quantities and rates", CreatedAt = fixedDate },
+            new Permission { Id = 64, Name = "Finance.ManageProjectItems", Description = "Update project items quantities and rates", CreatedAt = fixedDate },
             new Permission { Id = 65, Name = "Finance.AddTransaction", Description = "Add expenses and vouchers", CreatedAt = fixedDate },
             new Permission { Id = 66, Name = "Finance.ReviewTransaction", Description = "Approve or reject transactions", CreatedAt = fixedDate },
 

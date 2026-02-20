@@ -237,10 +237,10 @@
 
                 <div class="form-group">
                     <label class="checkbox-label">
-                        <input type="checkbox" [(ngModel)]="form.clientCanSeeBOQ"
-                            [indeterminate]="isNull(form.clientCanSeeBOQ)"
-                            (change)="form.clientCanSeeBOQ = $event.target.checked" />
-                        <span>{{ 'CLIENT_CAN_SEE_BOQ' | translate }}</span>
+                        <input type="checkbox" [(ngModel)]="form.clientCanSeeProjectItems"
+                            [indeterminate]="isNull(form.clientCanSeeProjectItems)"
+                            (change)="form.clientCanSeeProjectItems = $event.target.checked" />
+                        <span>{{ 'CLIENT_CAN_SEE_PROJECT_ITEMS' | translate }}</span>
                     </label>
                 </div>
             </div>

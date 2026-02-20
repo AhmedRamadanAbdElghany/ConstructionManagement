@@ -26,7 +26,7 @@ public class CreateCompanyRequest
     // Feature Toggles
     public bool EnableUserManagement { get; set; } = true;
     public bool EnableProjectManagement { get; set; } = true;
-    public bool EnableBOQManagement { get; set; } = true;
+    public bool EnableProjectItemsManagement { get; set; } = true;
     public bool EnableDailyLogs { get; set; } = true;
     public bool EnableSiteMedia { get; set; } = true;
     public bool EnableEquipmentManagement { get; set; } = false;
@@ -96,12 +96,12 @@ public class UpdateCompanyRequest
     // Reviews & Visibility
     public bool EnableInvoiceReview { get; set; }
     public bool ClientCanSeeMedia { get; set; }
-    public bool ClientCanSeeBOQ { get; set; }
+    public bool ClientCanSeeProjectItems { get; set; }
 
     // Feature Toggles (entity-level)
     public bool EnableUserManagement { get; set; }
     public bool EnableProjectManagement { get; set; }
-    public bool EnableBOQManagement { get; set; }
+    public bool EnableProjectItemsManagement { get; set; }
     public bool EnableDailyLogs { get; set; }
     public bool EnableSiteMedia { get; set; }
     public bool EnableEquipmentManagement { get; set; }

@@ -8,7 +8,7 @@ export interface UpdateCompanySettingsRequest {
     // Master Switches
     enableUserManagement?: boolean;
     enableProjectManagement?: boolean;
-    enableBOQManagement?: boolean;
+    enableProjectItemsManagement?: boolean;
     enableDailyLogs?: boolean;
     enableSiteMedia?: boolean;
     enableInventoryManagement?: boolean;
@@ -39,7 +39,7 @@ export interface UpdateCompanySettingsRequest {
     maxPhotosPerUpload?: number | null;
     clientCanSeeFinancials?: boolean;
     clientCanSeeMedia?: boolean;
-    clientCanSeeBOQ?: boolean;
+    clientCanSeeProjectItems?: boolean;
     allowMeasured?: boolean;
     allowSupervision?: boolean;
     allowPackages?: boolean;
@@ -128,7 +128,7 @@ export interface UpdateProjectSettingsRequest {
     maxPhotosPerUpload?: number | null;
     clientCanSeeFinancials?: boolean | null;
     clientCanSeeMedia?: boolean | null;
-    clientCanSeeBOQ?: boolean | null;
+    clientCanSeeProjectItems?: boolean | null;
     moneyCalculationMethod?: string | null;
     allowAddProgressEntry?: boolean | null;
     allowReopenClosedDay?: boolean | null;

@@ -29,7 +29,7 @@ namespace ConstructionManagement.Domain.Entities
 
         // Payment Details
         public string PaymentNumber { get; set; } = string.Empty;
-        public PaymentType PaymentType { get; set; }
+        public SubcontractorPaymentType PaymentType { get; set; }
         public string? Description { get; set; }
         public string? Notes { get; set; }
 
@@ -52,7 +52,7 @@ namespace ConstructionManagement.Domain.Entities
         public double? MilestoneCompletionPercentage { get; set; }
 
         // Status
-        public PaymentStatus Status { get; set; } = PaymentStatus.Pending;
+        public SubcontractorPaymentStatus Status { get; set; } = SubcontractorPaymentStatus.Pending;
         public DateTime? StatusDate { get; set; }
         public string? StatusNotes { get; set; }
 
@@ -77,7 +77,7 @@ namespace ConstructionManagement.Domain.Entities
         public string? RelatedInvoiceNumber { get; set; }
     }
 
-    public enum PaymentType
+    public enum SubcontractorPaymentType
     {
         Advance = 1,
         Milestone = 2,
@@ -90,7 +90,7 @@ namespace ConstructionManagement.Domain.Entities
         Penalty = 9
     }
 
-    public enum PaymentStatus
+    public enum SubcontractorPaymentStatus
     {
         Pending = 0,
         Submitted = 1,

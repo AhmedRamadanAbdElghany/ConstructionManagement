@@ -21,12 +21,12 @@ public class EscalationLog : BaseEntity, ICompanyEntity
     [ForeignKey(nameof(ProjectId))]
     public virtual Project Project { get; set; } = null!;
 
-    // Optional: specific BOQ item that caused the escalation
+    // Optional: specific Project item that caused the escalation
     // null ? escalation is for the entire project
-    public int? BOQItemId { get; set; }
+    public int? ProjectItemId { get; set; }
 
-    [ForeignKey(nameof(BOQItemId))]
-    public virtual BOQItem? BOQItem { get; set; }
+    [ForeignKey(nameof(ProjectItemId))]
+    public virtual ProjectItem? ProjectItem { get; set; }
 
     // -- Escalation details ----------------------------------------------------
     public string EscalationType { get; set; } = string.Empty;   // "StartDelay", "EndDelay", "ApprovalTimeout", "BudgetOverrun", etc.
@@ -42,9 +42,4 @@ public class EscalationLog : BaseEntity, ICompanyEntity
     // Delivery method & timestamp
     public bool SentByEmail { get; set; } = false;
     public DateTime SentAt { get; set; } = DateTime.UtcNow;
-
-    // Optional: useful for tracking delivery / acknowledgment
-    // public bool IsAcknowledged { get; set; } = false;
-    // public DateTime? AcknowledgedAt { get; set; }
-    // public string? DeliveryStatus { get; set; }  // "Sent", "Failed", "Delivered", etc.
 }

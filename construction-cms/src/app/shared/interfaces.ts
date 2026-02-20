@@ -12,7 +12,7 @@ export interface Company {
   // Feature Toggles
   enableUserManagement: boolean;
   enableProjectManagement: boolean;
-  enableBOQManagement: boolean;
+  enableProjectItemsManagement: boolean;
   enableDailyLogs: boolean;
   enableSiteMedia: boolean;
   enableEquipmentManagement: boolean;
@@ -73,17 +73,35 @@ export interface Project {
   generalManagerUserId?: number;
 }
 
-export interface BOQItem {
+export interface ProjectItem {
   id: number;
   projectId: number;
   phaseId?: number; // Linked phase in hierarchy
-  description: string;
-  unit: string;
-  totalQuantity: number;
-  executedQuantity: number;
-  rate: number;
+  itemCode: string;
+  itemName: string;
+  description?: string;
+  unit?: string;
+  status: string;
   startDate?: string;
   endDate?: string;
+
+  // Accounting determined by Project.AccountingSystem
+
+  // Measured data (for Measured accounting)
+  agreedQuantity?: number;
+  executedQuantity?: number;
+  unitPrice?: number;
+
+  // Supervision data (for Supervision accounting)
+  estimatedTotalCost?: number;
+  supervisionPercentage?: number;
+
+  // Package data (for Packages accounting)
+  totalPackageValue?: number;
+
+  // Computed
+  estimatedBudget?: number;
+  progressPercentage?: number;
 }
 
 export interface DailyLog {
@@ -96,7 +114,7 @@ export interface DailyLog {
 
 export interface DailyLogItem {
   id: number;
-  boqItemId: number;
+  projectItemId: number;
   quantity: number;
   notes: string;
   startTime?: string; // ISO string
@@ -172,7 +190,7 @@ export interface CompanySettings {
   // Master Switches
   enableUserManagement: boolean;
   enableProjectManagement: boolean;
-  enableBOQManagement: boolean;
+  enableProjectItemsManagement: boolean;
   enableDailyLogs: boolean;
   enableSiteMedia: boolean;
   enableInventoryManagement: boolean;
@@ -204,7 +222,7 @@ export interface CompanySettings {
   maxPhotosPerUpload: number | null;
   clientCanSeeFinancials: boolean;
   clientCanSeeMedia: boolean;
-  clientCanSeeBOQ: boolean;
+  clientCanSeeProjectItems: boolean;
   defaultMoneyCalculationMethod: string;
   allowMeasured: boolean;
   allowSupervision: boolean;
@@ -303,7 +321,7 @@ export interface ProjectSettings {
   maxPhotosPerUpload: number | null;
   clientCanSeeFinancials: boolean | null;
   clientCanSeeMedia: boolean | null;
-  clientCanSeeBOQ: boolean | null;
+  clientCanSeeProjectItems: boolean | null;
   moneyCalculationMethod: string | null;
   // Daily Log Settings (null = inherit from Company)
   allowAddProgressEntry: boolean | null;
@@ -319,7 +337,7 @@ export interface Package {
   price: number;
   maxTeamMembers: number;
   maxDailyPhotos: number;
-  maxBOQItems: number;
+  maxProjectItems: number;
   allowAdvancedReports: boolean;
   allowCustomBranding: boolean;
   allowAIAssistance: boolean;
@@ -355,7 +373,7 @@ export interface ProjectProfitability {
 }
 
 export interface ItemProfitability {
-  boqItemId: number;
+  projectItemId: number;
   itemName: string;
   estimatedBudget: number;
   totalSpent: number;
@@ -363,28 +381,36 @@ export interface ItemProfitability {
   profitPercentage: number;
 }
 
-export interface CreateBOQItemRequest {
+export interface CreateProjectItemRequest {
   itemCode?: string;
   itemName: string;
   description?: string;
   unit?: string;
+  phaseId?: number;
   startDate?: string;
   endDate?: string;
-  accountingType: string;
+  // Measured data
   agreedQuantity?: number;
   unitPrice?: number;
+  // Supervision data
   supervisionPercentage?: number;
-  baseCalculation?: string;
-  customBaseAmount?: number;
   estimatedTotalCost?: number;
+  // Package data
+  totalPackageValue?: number;
 }
 
-export interface UpdateBOQItemRequest {
+export interface UpdateProjectItemRequest {
   itemName?: string;
   description?: string;
   status?: string;
   startDate?: string;
   endDate?: string;
+  // Financial fields matching Create request
+  agreedQuantity?: number;
+  unitPrice?: number;
+  supervisionPercentage?: number;
+  estimatedTotalCost?: number;
+  totalPackageValue?: number;
 }
 
 export interface CompanyPackage {

@@ -13,6 +13,12 @@ public class EquipmentAssignment : BaseEntity, IProjectEntity
     [ForeignKey(nameof(EquipmentId))]
     public virtual Equipment? Equipment { get; set; }
     
+    // Tracking fields for ROI analysis
+    public decimal? HoursWorked { get; set; }
+    public decimal? WorkValue { get; set; } // Value created by this assignment
+    public decimal? FuelCost { get; set; }
+    public decimal? OperatorCost { get; set; }
+    
     public int? ProjectId { get; set; }
     [ForeignKey(nameof(ProjectId))]
     public virtual Project? Project { get; set; }

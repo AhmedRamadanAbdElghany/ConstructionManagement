@@ -36,6 +36,30 @@ export const routes: Routes = [
         canActivate: [roleGuard]
     },
 
+    // Companies Browse (for all authenticated users)
+    {
+        path: 'companies',
+        loadComponent: () => import('./features/common/companies/companies-browse.component').then(m => m.CompaniesBrowseComponent),
+        canActivate: [roleGuard]
+    },
+    {
+        path: 'companies/:id',
+        loadComponent: () => import('./features/common/companies/company-detail.component').then(m => m.CompanyDetailComponent),
+        canActivate: [roleGuard]
+    },
+
+    // Messages (for all authenticated users)
+    {
+        path: 'messages',
+        loadComponent: () => import('./features/common/messages/messages.component').then(m => m.MessagesComponent),
+        canActivate: [roleGuard]
+    },
+    {
+        path: 'messages/:id',
+        loadComponent: () => import('./features/common/messages/conversation-detail.component').then(m => m.ConversationDetailComponent),
+        canActivate: [roleGuard]
+    },
+
     // Notifications
     {
         path: 'notifications',
@@ -309,6 +333,12 @@ export const routes: Routes = [
             {
                 path: 'projects/:id/settings',
                 loadComponent: () => import('./features/admin/projects/project-settings/project-settings.component').then(m => m.ProjectSettingsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'finance',
+                loadComponent: () => import('./features/admin/finance/finance.component').then(m => m.FinanceComponent),
                 canActivate: [roleGuard],
                 data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
             }

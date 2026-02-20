@@ -91,7 +91,7 @@ public class ProjectService : IProjectService
                 settings.MaxPhotosPerUpload = request.Settings.MaxPhotosPerUpload;
                 settings.ClientCanSeeFinancials = request.Settings.ClientCanSeeFinancials;
                 settings.ClientCanSeeMedia = request.Settings.ClientCanSeeMedia;
-                settings.ClientCanSeeBOQ = request.Settings.ClientCanSeeBOQ;
+                settings.ClientCanSeeProjectItems = request.Settings.ClientCanSeeProjectItems;
                 settings.AllowAddProgressEntry = request.Settings.AllowAddProgressEntry;
                 settings.AllowReopenClosedDay = request.Settings.AllowReopenClosedDay;
                 settings.AutoCloseDay = request.Settings.AutoCloseDay;

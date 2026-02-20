@@ -74,7 +74,7 @@ public class CompanySettingsController : ControllerBase
             LogoUrl = settings.Company?.LogoUrl,
             settings.EnableUserManagement,
             settings.EnableProjectManagement,
-            settings.EnableBOQManagement,
+            settings.EnableProjectItemsManagement,
             settings.EnableDailyLogs,
             settings.EnableSiteMedia,
             settings.EnableInventoryManagement,
@@ -104,7 +104,7 @@ public class CompanySettingsController : ControllerBase
             settings.MaxPhotosPerUpload,
             settings.ClientCanSeeFinancials,
             settings.ClientCanSeeMedia,
-            settings.ClientCanSeeBOQ,
+            settings.ClientCanSeeProjectItems,
             settings.AllowMeasured,
             settings.AllowSupervision,
             settings.AllowPackages,
@@ -141,7 +141,7 @@ public class CompanySettingsController : ControllerBase
         // Master Switches (Super Admin Only - usually handled in CompaniesController too, but synced here for convenience)
         if (request.EnableUserManagement.HasValue) settings.EnableUserManagement = request.EnableUserManagement.Value;
         if (request.EnableProjectManagement.HasValue) settings.EnableProjectManagement = request.EnableProjectManagement.Value;
-        if (request.EnableBOQManagement.HasValue) settings.EnableBOQManagement = request.EnableBOQManagement.Value;
+        if (request.EnableProjectItemsManagement.HasValue) settings.EnableProjectItemsManagement = request.EnableProjectItemsManagement.Value;
         if (request.EnableDailyLogs.HasValue) settings.EnableDailyLogs = request.EnableDailyLogs.Value;
         if (request.EnableSiteMedia.HasValue) settings.EnableSiteMedia = request.EnableSiteMedia.Value;
         if (request.EnableInventoryManagement.HasValue) settings.EnableInventoryManagement = request.EnableInventoryManagement.Value;
@@ -186,8 +186,8 @@ public class CompanySettingsController : ControllerBase
             settings.ClientCanSeeFinancials = request.ClientCanSeeFinancials.Value;
         if (request.ClientCanSeeMedia.HasValue)
             settings.ClientCanSeeMedia = request.ClientCanSeeMedia.Value;
-        if (request.ClientCanSeeBOQ.HasValue)
-            settings.ClientCanSeeBOQ = request.ClientCanSeeBOQ.Value;
+        if (request.ClientCanSeeProjectItems.HasValue)
+            settings.ClientCanSeeProjectItems = request.ClientCanSeeProjectItems.Value;
         
         if (request.AllowMeasured.HasValue)
             settings.AllowMeasured = request.AllowMeasured.Value;

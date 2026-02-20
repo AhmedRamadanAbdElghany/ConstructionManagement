@@ -10,11 +10,11 @@ namespace ConstructionManagement.Infrastructure.Services;
 public class ProjectTransactionService : IProjectTransactionService
 {
     private readonly IRepository<Transaction> _transactionRepository;
-    private readonly IRepository<BOQItem> _boqItemRepository;
+    private readonly IRepository<ProjectItem> _projectItemRepository;
     private readonly IRepository<ProjectSettings> _settingsRepository;
     private readonly IFileStorageService _fileStorage;
     private readonly INotificationService _notificationService;
-    private readonly IRepository<BOQProfitabilityLog> _profitabilityLogRepository;
+    private readonly IRepository<ProjectItemProfitabilityLog> _profitabilityLogRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILocalizationService? _localizationService;
 
@@ -22,17 +22,17 @@ public class ProjectTransactionService : IProjectTransactionService
 
     public ProjectTransactionService(
         IRepository<Transaction> transactionRepository,
-        IRepository<BOQItem> boqItemRepository,
+        IRepository<ProjectItem> projectItemRepository,
         IRepository<ProjectSettings> settingsRepository,
         IFileStorageService fileStorage,
-        IRepository<BOQProfitabilityLog> profitabilityLogRepository,
+        IRepository<ProjectItemProfitabilityLog> profitabilityLogRepository,
         INotificationService notificationService,
         IUnitOfWork unitOfWork,
         IActivityLogService activityLogService,
         ILocalizationService? localizationService = null)
     {
         _transactionRepository = transactionRepository;
-        _boqItemRepository = boqItemRepository;
+        _projectItemRepository = projectItemRepository;
         _settingsRepository = settingsRepository;
         _fileStorage = fileStorage;
         _profitabilityLogRepository = profitabilityLogRepository;
@@ -52,16 +52,16 @@ public class ProjectTransactionService : IProjectTransactionService
         var settings = await _settingsRepository.GetByIdAsync(projectId)
             ?? throw new InvalidOperationException($"Project settings not found for project ID {projectId}");
 
-        BOQItem? boqItem = null;
-        if (request.BOQItemId.HasValue)
+        ProjectItem? projectItem = null;
+        if (request.ProjectItemId.HasValue)
         {
-            boqItem = await _boqItemRepository.AsQueryable()
+            projectItem = await _projectItemRepository.AsQueryable()
                 .Include(i => i.Project)
-                .FirstOrDefaultAsync(i => i.Id == request.BOQItemId.Value);
+                .FirstOrDefaultAsync(i => i.Id == request.ProjectItemId.Value);
 
             // تصحيح: التحقق من أن البند يخص المشروع عبر ProjectID
-            if (boqItem == null || boqItem.ProjectId != projectId)
-                throw new InvalidOperationException("BOQ item invalid or does not belong to this project");
+            if (projectItem == null || projectItem.ProjectId != projectId)
+                throw new InvalidOperationException("Project item invalid or does not belong to this project");
         }
 
         string? attachmentPath = null;
@@ -76,7 +76,7 @@ public class ProjectTransactionService : IProjectTransactionService
             var transaction = new Transaction
             {
                 ProjectId = projectId,
-                BOQItemId = request.BOQItemId,
+                ProjectItemId = request.ProjectItemId,
                 Type = request.Type,
                 Amount = request.Amount,
                 Description = request.Description,
@@ -95,28 +95,28 @@ public class ProjectTransactionService : IProjectTransactionService
 
             await _transactionRepository.AddAsync(transaction);
 
-            if (request.BOQItemId.HasValue && boqItem != null)
+            if (request.ProjectItemId.HasValue && projectItem != null)
             {
                 var previousSpent = await _transactionRepository.AsQueryable()
-                    .Where(t => t.BOQItemId == request.BOQItemId && t.Status == TransactionStatus.Approved)
+                    .Where(t => t.ProjectItemId == request.ProjectItemId && t.Status == TransactionStatus.Approved)
                     .SumAsync(t => t.Amount);
 
                 var totalSpent = previousSpent + (transaction.Status == TransactionStatus.Approved ? request.Amount : 0);
-                decimal currentProfit = boqItem.EstimatedBudget - totalSpent;
+                decimal currentProfit = projectItem.EstimatedBudget - totalSpent;
 
-                var log = new BOQProfitabilityLog
+                var log = new ProjectItemProfitabilityLog
                 {
-                    BOQItemId = boqItem.Id,
+                    ProjectItemId = projectItem.Id,
                     TotalSpent = totalSpent,
-                    EstimatedBudget = boqItem.EstimatedBudget,
+                    EstimatedBudget = projectItem.EstimatedBudget,
                     CurrentProfit = currentProfit,
-                    ProfitPercentage = boqItem.EstimatedBudget != 0 ? (currentProfit / boqItem.EstimatedBudget) * 100 : 0,
+                    ProfitPercentage = projectItem.EstimatedBudget != 0 ? (currentProfit / projectItem.EstimatedBudget) * 100 : 0,
                     LogDate = DateTime.UtcNow
                 };
                 await _profitabilityLogRepository.AddAsync(log);
 
                 await _unitOfWork.SaveChangesAsync();
-                await CheckAndSendBudgetNotifications(projectId, boqItem, totalSpent, currentProfit, userId);
+                await CheckAndSendBudgetNotifications(projectId, projectItem, totalSpent, currentProfit, userId);
             }
             else
             {
@@ -129,7 +129,7 @@ public class ProjectTransactionService : IProjectTransactionService
                 projectId, 
                 "Financial", 
                 "Expense Recorded", 
-                $"New {request.Type} of {request.Amount:N2} added{(boqItem != null ? $" for '{boqItem.ItemName}'" : "")}.", 
+                $"New {request.Type} of {request.Amount:N2} added{(projectItem != null ? $" for '{projectItem.ItemName}'" : "")}.", 
                 userId
             );
 
@@ -145,7 +145,7 @@ public class ProjectTransactionService : IProjectTransactionService
     public async Task<TransactionDto?> GetTransactionByIdAsync(int transactionId)
     {
         var transaction = await _transactionRepository.AsQueryable()
-            .Include(t => t.BOQItem)
+            .Include(t => t.ProjectItem)
             .Include(t => t.CreatedBy)
             .Include(t => t.ReviewedBy)
             .FirstOrDefaultAsync(t => t.Id == transactionId);
@@ -153,16 +153,16 @@ public class ProjectTransactionService : IProjectTransactionService
         return transaction == null ? null : MapToDto(transaction);
     }
 
-    public async Task<List<TransactionDto>> GetTransactionsForProjectAsync(int projectId, int? boqItemId = null)
+    public async Task<List<TransactionDto>> GetTransactionsForProjectAsync(int projectId, int? projectItemId = null)
     {
         var query = _transactionRepository.AsQueryable()
-            .Include(t => t.BOQItem)
+            .Include(t => t.ProjectItem)
             .Include(t => t.CreatedBy)
             .Include(t => t.ReviewedBy)
             .Where(t => t.ProjectId == projectId); // تصحيح: الفلترة بـ ProjectID
 
-        if (boqItemId.HasValue)
-            query = query.Where(t => t.BOQItemId == boqItemId.Value);
+        if (projectItemId.HasValue)
+            query = query.Where(t => t.ProjectItemId == projectItemId.Value);
 
         var transactions = await query.OrderByDescending(t => t.CreatedAt).ToListAsync();
         return transactions.Select(MapToDto).ToList();
@@ -196,7 +196,7 @@ public class ProjectTransactionService : IProjectTransactionService
     public async Task<ProjectProfitabilityDto> GetProjectProfitabilityAsync(int projectId)
     {
         // تصحيح: جلب كل بنود المشروع عبر ProjectID
-        var items = await _boqItemRepository.AsQueryable().Where(i => i.ProjectId == projectId).ToListAsync();
+        var items = await _projectItemRepository.AsQueryable().Where(i => i.ProjectId == projectId).ToListAsync();
         decimal totalEstimated = items.Sum(i => i.EstimatedBudget);
 
         // تصحيح: حساب إجمالي المصروفات المعتمدة للمشروع
@@ -208,49 +208,49 @@ public class ProjectTransactionService : IProjectTransactionService
             totalEstimated != 0 ? ((totalEstimated - totalSpent) / totalEstimated) * 100 : 0, items.Count);
     }
 
-    public async Task<ItemProfitabilityDto?> GetItemProfitabilityAsync(int projectId, int boqItemId)
+    public async Task<ItemProfitabilityDto?> GetItemProfitabilityAsync(int projectId, int projectItemId)
     {
-        var item = await _boqItemRepository.AsQueryable()
-            .FirstOrDefaultAsync(i => i.Id == boqItemId && i.ProjectId == projectId);
+        var item = await _projectItemRepository.AsQueryable()
+            .FirstOrDefaultAsync(i => i.Id == projectItemId && i.ProjectId == projectId);
 
         if (item == null) return null;
 
         var totalSpent = await _transactionRepository.AsQueryable()
-            .Where(t => t.BOQItemId == boqItemId && t.Status == TransactionStatus.Approved).SumAsync(t => t.Amount);
+            .Where(t => t.ProjectItemId == projectItemId && t.Status == TransactionStatus.Approved).SumAsync(t => t.Amount);
 
-        return new ItemProfitabilityDto(boqItemId, item.ItemName, item.EstimatedBudget, totalSpent,
+        return new ItemProfitabilityDto(projectItemId, item.ItemName, item.EstimatedBudget, totalSpent,
             item.EstimatedBudget - totalSpent, item.EstimatedBudget != 0 ? ((item.EstimatedBudget - totalSpent) / item.EstimatedBudget) * 100 : 0);
     }
 
-    private async Task CheckAndSendBudgetNotifications(int projectId, BOQItem boqItem, decimal totalSpent, decimal currentProfit, int userId)
+    private async Task CheckAndSendBudgetNotifications(int projectId, ProjectItem projectItem, decimal totalSpent, decimal currentProfit, int userId)
     {
-        if (boqItem.EstimatedBudget <= 0) return;
+        if (projectItem.EstimatedBudget <= 0) return;
 
-        decimal warningThreshold = boqItem.EstimatedBudget * 0.90m;
-        decimal criticalThreshold = boqItem.EstimatedBudget;
+        decimal warningThreshold = projectItem.EstimatedBudget * 0.90m;
+        decimal criticalThreshold = projectItem.EstimatedBudget;
 
         if (totalSpent >= criticalThreshold)
         {
             var title = _localizationService?["NotificationTitle.BudgetOverrun"] ?? "Budget Overrun";
-            var message = _localizationService?.GetString("NotificationMessage.BudgetOverrun.Critical", boqItem.ItemName, totalSpent.ToString("P1"))
-                ?? $"Item {boqItem.ItemName} exceeded budget ({totalSpent:P1})";
+            var message = _localizationService?.GetString("NotificationMessage.BudgetOverrun.Critical", projectItem.ItemName, totalSpent.ToString("P1"))
+                ?? $"Item {projectItem.ItemName} exceeded budget ({totalSpent:P1})";
             
             await _notificationService.CreateAndSendAsync(
-                userId: boqItem.Project.OwnerUserId,
+                userId: projectItem.Project.OwnerUserId,
                 title: title,
                 message: message,
                 link: $"/projects/{projectId}",
                 type: NotificationType.BudgetOverrun,
                 titleKey: "NotificationTitle.BudgetOverrun",
                 messageKey: "NotificationMessage.BudgetOverrun.Critical",
-                messageArgs: new object[] { boqItem.ItemName, totalSpent.ToString("P1") }
+                messageArgs: new object[] { projectItem.ItemName, totalSpent.ToString("P1") }
             );
         }
         else if (totalSpent >= warningThreshold)
         {
             var title = _localizationService?["NotificationTitle.BudgetWarning"] ?? "Budget Warning";
-            var message = _localizationService?.GetString("NotificationMessage.BudgetWarning.Approaching", boqItem.ItemName)
-                ?? $"Item {boqItem.ItemName} has consumed 90% of its budget";
+            var message = _localizationService?.GetString("NotificationMessage.BudgetWarning.Approaching", projectItem.ItemName)
+                ?? $"Item {projectItem.ItemName} has consumed 90% of its budget";
             
             await _notificationService.CreateAndSendAsync(
                 userId: userId,
@@ -260,7 +260,7 @@ public class ProjectTransactionService : IProjectTransactionService
                 type: NotificationType.BudgetWarning,
                 titleKey: "NotificationTitle.BudgetWarning",
                 messageKey: "NotificationMessage.BudgetWarning.Approaching",
-                messageArgs: new object[] { boqItem.ItemName }
+                messageArgs: new object[] { projectItem.ItemName }
             );
         }
     }
@@ -268,7 +268,7 @@ public class ProjectTransactionService : IProjectTransactionService
     private TransactionDto MapToDto(Transaction t)
     {
         return new TransactionDto(
-            t.Id, t.ProjectId, t.BOQItemId, t.BOQItem?.ItemName, t.Type, t.Amount, t.TransactionDate,
+            t.Id, t.ProjectId, t.ProjectItemId, t.ProjectItem?.ItemName, t.Type, t.Amount, t.TransactionDate,
             t.CreatedByUserId, t.CreatedBy?.FullName ?? "غير معروف", t.Description, t.InvoiceNumber, t.SupplierName,
             t.AttachmentPath, t.Status, t.ReviewedByUserId, t.ReviewedBy?.FullName, t.ReviewNotes, t.CreatedAt);
     }

@@ -92,10 +92,11 @@ public class Project : BaseEntity, ICompanyEntity
     public virtual ICollection<Phase> Phases { get; set; }
         = new List<Phase>();
 
-    // BOQ (Bill of Quantities) items
-    // NOTE: In the new hierarchical structure, items should be accessed via Phases.
-    public virtual ICollection<BOQItem> BOQItems { get; set; }
-        = new List<BOQItem>();
+    /// <summary>
+    /// Project items (بنود المشروع) - direct access for queries that don't need phase hierarchy
+    /// </summary>
+    public virtual ICollection<ProjectItem> ProjectItems { get; set; }
+        = new List<ProjectItem>();
 
     // Team members assigned to this project
     public virtual ICollection<ProjectTeamMember> TeamMembers { get; set; }
@@ -115,8 +116,8 @@ public class Project : BaseEntity, ICompanyEntity
 
     // -- Recommended additional collections (add as you implement features) -----
     public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
-    public virtual ICollection<BOQItemNote> Notes { get; set; }
-            = new List<BOQItemNote>();
+    public virtual ICollection<ProjectItemNote> Notes { get; set; }
+            = new List<ProjectItemNote>();
     public virtual ICollection<ProjectRole> ProjectRoles { get; set; } = new List<ProjectRole>();
 
     // NOTE: Add tests for status transitions and date validation.
