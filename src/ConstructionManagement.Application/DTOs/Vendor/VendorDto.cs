@@ -23,6 +23,8 @@ namespace ConstructionManagement.Application.DTOs.Vendor
         public bool IsPublic { get; set; }
         public int? CompanyId { get; set; }
         public int? UserId { get; set; }
+        public bool IsExternalVendor { get; set; }
+        public string? ExternalVendorSource { get; set; }
     }
 
     public class CreateVendorRequest
@@ -84,5 +86,55 @@ namespace ConstructionManagement.Application.DTOs.Vendor
     {
         public DateTime Date { get; set; }
         public decimal Amount { get; set; }
+    }
+
+    /// <summary>
+    /// Vendor with statistics for the finance page
+    /// </summary>
+    public class VendorWithStatsDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string? Phone { get; set; }
+        public string? Email { get; set; }
+        public string? VendorType { get; set; }
+        public bool IsExternalVendor { get; set; }
+        public bool IsActive { get; set; }
+        public int TotalInvoices { get; set; }
+        public decimal TotalAmount { get; set; }
+        public decimal PendingAmount { get; set; }
+        public decimal ApprovedAmount { get; set; }
+        public int ProjectCount { get; set; }
+        public DateTime? LastInvoiceDate { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
+    /// <summary>
+    /// Project associated with a vendor
+    /// </summary>
+    public class VendorProjectDto
+    {
+        public int ProjectId { get; set; }
+        public string ProjectName { get; set; } = string.Empty;
+        public int TotalInvoices { get; set; }
+        public decimal TotalAmount { get; set; }
+        public decimal PendingAmount { get; set; }
+        public decimal ApprovedAmount { get; set; }
+        public DateTime? LastInvoiceDate { get; set; }
+        public DateTime? FirstInvoiceDate { get; set; }
+    }
+
+    /// <summary>
+    /// Dashboard data for company owner to view vendor relationships
+    /// </summary>
+    public class VendorDashboardDto
+    {
+        public int TotalVendors { get; set; }
+        public int ExternalVendors { get; set; }
+        public int RegisteredVendors { get; set; }
+        public decimal TotalSpend { get; set; }
+        public decimal PendingApprovals { get; set; }
+        public List<VendorWithStatsDto> TopVendors { get; set; } = new();
+        public List<VendorWithStatsDto> RecentVendors { get; set; } = new();
     }
 }

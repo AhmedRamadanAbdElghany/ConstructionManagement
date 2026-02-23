@@ -220,6 +220,11 @@ public class User : BaseEntity, ICompanyEntity
     public int? TotalReviews { get; set; }
 
     /// <summary>
+    /// Employee skills for this user
+    /// </summary>
+    public virtual ICollection<EmployeeSkill> EmployeeSkills { get; set; } = new List<EmployeeSkill>();
+
+    /// <summary>
     /// Indicates if user has set their location
     /// </summary>
     public bool HasLocation => Latitude.HasValue && Longitude.HasValue;

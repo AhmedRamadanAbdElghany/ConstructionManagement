@@ -45,5 +45,37 @@ namespace ConstructionManagement.Application.Interfaces
         Task<VendorStatsDto?> GetVendorStatsByUserIdAsync(int userId);
         Task UpdateVendorLocationAsync(int userId, double latitude, double longitude);
         Task<VendorDto> ToggleVendorVisibilityAsync(int userId);
+
+        // Marketplace Features
+        Task<(IEnumerable<VendorProductDto> Products, int TotalCount)> SearchProductsAsync(
+            int? categoryId, string? searchTerm, decimal? minPrice, decimal? maxPrice, 
+            int? vendorId, string? sortBy, int page, int pageSize);
+        Task<VendorProductDetailDto?> GetProductByIdAsync(int productId);
+        Task<(IEnumerable<VendorProductDto> Products, int TotalCount)> GetProductsByCategoryAsync(
+            int categoryId, int page, int pageSize);
+        Task<IEnumerable<NearbyVendorDto>> GetNearbyVendorsAsync(
+            double latitude, double longitude, double radiusKm, int? categoryId);
+        Task<VendorProfileDto?> GetVendorProfileAsync(int vendorId);
+        Task<(IEnumerable<VendorProductDto> Products, int TotalCount)> GetVendorProductsAsync(
+            int vendorId, int? categoryId, int page, int pageSize);
+        Task<MarketplaceVendorStatsDto> GetVendorStatsAsync(int vendorId);
+        Task<(IEnumerable<VendorReviewDto> Reviews, int TotalCount)> GetVendorReviewsAsync(
+            int vendorId, int page, int pageSize);
+        Task<VendorReviewDto> CreateReviewAsync(int userId, int orderId, CreateVendorReviewDto dto);
+        Task<VendorReviewDto?> GetReviewByIdAsync(int reviewId);
+
+        // Vendor Dashboard & Statistics (Feature 1)
+        Task<IEnumerable<VendorWithStatsDto>> GetVendorsWithStatsAsync();
+        Task<VendorDashboardDto> GetVendorDashboardAsync();
+        Task<IEnumerable<VendorProjectDto>> GetVendorProjectsAsync(int vendorId);
+        Task<IEnumerable<VendorInvoiceDto>> GetAllVendorBillsAsync(int vendorId);
+
+        // Delivery Cost Tiers (Feature 2)
+        Task<IEnumerable<DeliveryCostTierDto>> GetDeliveryCostTiersAsync(int productId);
+        Task<DeliveryCostTierDto> CreateDeliveryCostTierAsync(CreateDeliveryCostTierRequest request);
+        Task<DeliveryCostTierDto> UpdateDeliveryCostTierAsync(int tierId, UpdateDeliveryCostTierRequest request);
+        Task<bool> DeleteDeliveryCostTierAsync(int tierId);
+        Task<DeliveryCalculationResult> CalculateDeliveryCostAsync(DeliveryCalculationRequest request);
+        Task<BulkDeliveryCalculationResult> CalculateBulkDeliveryCostAsync(BulkDeliveryCalculationRequest request);
     }
 }

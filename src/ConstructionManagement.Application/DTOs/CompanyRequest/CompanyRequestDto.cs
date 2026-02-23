@@ -1,3 +1,5 @@
+using ConstructionManagement.Domain.Enums;
+
 namespace ConstructionManagement.Application.DTOs.CompanyRequest;
 
 public class CompanyRequestDto
@@ -7,6 +9,7 @@ public class CompanyRequestDto
     public string UserFullName { get; set; } = string.Empty;
     public string UserEmail { get; set; } = string.Empty;
     public string CompanyName { get; set; } = string.Empty;
+    public CompanyType CompanyType { get; set; }
     public string? BusinessId { get; set; }
     public string? ContactEmail { get; set; }
     public string? ContactPhone { get; set; }
@@ -23,6 +26,7 @@ public class CompanyRequestDto
 public class CreateCompanyRequestDto
 {
     public string CompanyName { get; set; } = string.Empty;
+    public CompanyType CompanyType { get; set; } = CompanyType.Construction;
     public string? BusinessId { get; set; }
     public string? ContactEmail { get; set; }
     public string? ContactPhone { get; set; }

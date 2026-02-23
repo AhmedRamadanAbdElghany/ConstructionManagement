@@ -42,8 +42,9 @@ namespace ConstructionManagement.Infrastructure.Services
             bool isSuper = await IsSuperAdmin(userId);
             bool isCompanyAdmin = await IsCompanyAdmin(userId, user.CompanyId);
             bool isCompanyOwner = user.UserType == Domain.Enums.UserType.CompanyOwner;
+            bool isInventoryOwner = user.UserType == Domain.Enums.UserType.InventoryOwner;
 
-            if (!isSuper && !isCompanyAdmin && !isCompanyOwner)
+            if (!isSuper && !isCompanyAdmin && !isCompanyOwner && !isInventoryOwner)
                 throw new UnauthorizedAccessException("Not authorized to view roles.");
 
             // If not super, ignore requested companyId and use user's companyId
@@ -94,8 +95,9 @@ namespace ConstructionManagement.Infrastructure.Services
             bool isSuper = await IsSuperAdmin(userId);
             bool isCompanyAdmin = await IsCompanyAdmin(userId, user.CompanyId);
             bool isCompanyOwner = user.UserType == Domain.Enums.UserType.CompanyOwner;
+            bool isInventoryOwner = user.UserType == Domain.Enums.UserType.InventoryOwner;
 
-            if (!isSuper && !isCompanyAdmin && !isCompanyOwner)
+            if (!isSuper && !isCompanyAdmin && !isCompanyOwner && !isInventoryOwner)
                 throw new UnauthorizedAccessException("Not authorized to create roles.");
 
             int? targetCompanyId = isSuper ? request.CompanyId : user.CompanyId;
@@ -128,8 +130,9 @@ namespace ConstructionManagement.Infrastructure.Services
             bool isSuper = await IsSuperAdmin(userId);
             bool isCompanyAdmin = await IsCompanyAdmin(userId, user.CompanyId);
             bool isCompanyOwner = user.UserType == Domain.Enums.UserType.CompanyOwner;
+            bool isInventoryOwner = user.UserType == Domain.Enums.UserType.InventoryOwner;
 
-            if (!isSuper && ((!isCompanyAdmin && !isCompanyOwner) || role.CompanyId != user.CompanyId))
+            if (!isSuper && ((!isCompanyAdmin && !isCompanyOwner && !isInventoryOwner) || role.CompanyId != user.CompanyId))
                 throw new UnauthorizedAccessException("Not authorized to delete this role.");
 
             if (role.Name == "SuperAdmin" || role.Name == "CompanyAdmin")
@@ -152,8 +155,9 @@ namespace ConstructionManagement.Infrastructure.Services
             bool isSuper = await IsSuperAdmin(userId);
             bool isCompanyAdmin = await IsCompanyAdmin(userId, user.CompanyId);
             bool isCompanyOwner = user.UserType == Domain.Enums.UserType.CompanyOwner;
+            bool isInventoryOwner = user.UserType == Domain.Enums.UserType.InventoryOwner;
 
-            if (!isSuper && ((!isCompanyAdmin && !isCompanyOwner) || role.CompanyId != user.CompanyId))
+            if (!isSuper && ((!isCompanyAdmin && !isCompanyOwner && !isInventoryOwner) || role.CompanyId != user.CompanyId))
                 throw new UnauthorizedAccessException("Not authorized to update this role.");
 
             role.Name = name;
@@ -179,8 +183,9 @@ namespace ConstructionManagement.Infrastructure.Services
             bool isSuper = await IsSuperAdmin(userId);
             bool isCompanyAdmin = await IsCompanyAdmin(userId, user.CompanyId);
             bool isCompanyOwner = user.UserType == Domain.Enums.UserType.CompanyOwner;
+            bool isInventoryOwner = user.UserType == Domain.Enums.UserType.InventoryOwner;
 
-            if (!isSuper && ((!isCompanyAdmin && !isCompanyOwner) || role.CompanyId != user.CompanyId))
+            if (!isSuper && ((!isCompanyAdmin && !isCompanyOwner && !isInventoryOwner) || role.CompanyId != user.CompanyId))
                 throw new UnauthorizedAccessException("Not authorized to manage permissions for this role.");
 
             // Remove existing

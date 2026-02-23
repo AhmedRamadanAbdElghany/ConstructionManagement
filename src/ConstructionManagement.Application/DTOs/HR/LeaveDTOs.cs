@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using ConstructionManagement.Domain.Enums;
+using ConstructionManagement.Domain.Entities;
 
 namespace ConstructionManagement.Application.DTOs.HR;
 

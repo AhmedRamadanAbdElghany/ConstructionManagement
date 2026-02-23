@@ -36,6 +36,11 @@ public class InventoryOrder : BaseEntity
     public DateTime OrderDate { get; set; } = DateTime.UtcNow;
 
     /// <summary>
+    /// Created at timestamp (for marketplace orders)
+    /// </summary>
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    /// <summary>
     /// Expected delivery date
     /// </summary>
     public DateTime? ExpectedDeliveryDate { get; set; }
@@ -44,6 +49,11 @@ public class InventoryOrder : BaseEntity
     /// Actual delivery date
     /// </summary>
     public DateTime? ActualDeliveryDate { get; set; }
+
+    /// <summary>
+    /// Delivered at timestamp (for marketplace orders)
+    /// </summary>
+    public DateTime? DeliveredAt { get; set; }
 
     /// <summary>
     /// Payment due date
@@ -55,6 +65,16 @@ public class InventoryOrder : BaseEntity
     /// Subtotal before discounts
     /// </summary>
     public decimal SubTotal { get; set; }
+
+    /// <summary>
+    /// Subtotal (alias for marketplace orders)
+    /// </summary>
+    public decimal Subtotal { get; set; }
+
+    /// <summary>
+    /// Delivery fee
+    /// </summary>
+    public decimal DeliveryFee { get; set; }
 
     /// <summary>
     /// Overall discount percentage
@@ -75,6 +95,11 @@ public class InventoryOrder : BaseEntity
     /// Total order amount
     /// </summary>
     public decimal TotalAmount { get; set; }
+
+    /// <summary>
+    /// Total (alias for marketplace orders)
+    /// </summary>
+    public decimal Total { get; set; }
 
     /// <summary>
     /// Amount paid so far
@@ -107,6 +132,21 @@ public class InventoryOrder : BaseEntity
     /// </summary>
     public string? Notes { get; set; }
 
+    /// <summary>
+    /// Payment method: Cash, PayMob, Fawry, VodafoneCash, OrangeMoney, EtisalatCash, Card
+    /// </summary>
+    public string? PaymentMethod { get; set; }
+
+    /// <summary>
+    /// External payment reference (from PayMob, Fawry, etc.)
+    /// </summary>
+    public string? PaymentReference { get; set; }
+
+    /// <summary>
+    /// Payment gateway transaction ID
+    /// </summary>
+    public string? PaymentGatewayTransactionId { get; set; }
+
     // Relationships
     /// <summary>
     /// Company Owner (buyer)
@@ -121,6 +161,20 @@ public class InventoryOrder : BaseEntity
     public int? InventoryOwnerUserId { get; set; }
     [ForeignKey(nameof(InventoryOwnerUserId))]
     public virtual User? InventoryOwnerUser { get; set; }
+
+    /// <summary>
+    /// Customer ID (for marketplace orders)
+    /// </summary>
+    public int CustomerId { get; set; }
+    [ForeignKey(nameof(CustomerId))]
+    public virtual User? Customer { get; set; }
+
+    /// <summary>
+    /// Vendor ID (for marketplace orders)
+    /// </summary>
+    public int VendorId { get; set; }
+    [ForeignKey(nameof(VendorId))]
+    public virtual Vendor? Vendor { get; set; }
 
     /// <summary>
     /// Source warehouse
@@ -141,6 +195,16 @@ public class InventoryOrder : BaseEntity
     /// Delivery address
     /// </summary>
     public string? DeliveryAddress { get; set; }
+
+    /// <summary>
+    /// Delivery latitude
+    /// </summary>
+    public double? DeliveryLatitude { get; set; }
+
+    /// <summary>
+    /// Delivery longitude
+    /// </summary>
+    public double? DeliveryLongitude { get; set; }
 
     /// <summary>
     /// Delivery notes
@@ -182,6 +246,9 @@ public class InventoryOrder : BaseEntity
         ArrivedAtSite = 7,
         Unloaded = 8,
         Delivered = 9,
-        Cancelled = 10
+        Cancelled = 10,
+        Confirmed = 11,
+        Processing = 12,
+        Shipped = 13
     }
 }

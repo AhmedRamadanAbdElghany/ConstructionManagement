@@ -3,6 +3,7 @@ using ConstructionManagement.Application.Validators;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Authorization;
 using ConstructionManagement.Infrastructure.BackgroundJobs;
+using ConstructionManagement.Infrastructure.Configuration;
 using ConstructionManagement.Infrastructure.Persistence;
 using ConstructionManagement.Infrastructure.Persistence.Repositories;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
@@ -14,12 +15,14 @@ using Hangfire;
 using Hangfire.Dashboard;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.Extensions.FileProviders;
 using System.Globalization;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -167,20 +170,17 @@ builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<ICashVoucherService, CashVoucherService>();
 builder.Services.AddScoped<IMiscExpenseService, MiscExpenseService>();
+builder.Services.AddScoped<ISocialMediaService, SocialMediaService>();
+builder.Services.AddScoped<ITranslationService, TranslationService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<INotificationService, NotificationService>();
-builder.Services.AddScoped<IUserTypeService, UserTypeService>();
-builder.Services.AddScoped<IDashboardStatisticsService, DashboardStatisticsService>();
-builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
-builder.Services.AddScoped<IMaterialService, MaterialService>();
-builder.Services.AddScoped<IMaterialCategoryService, MaterialCategoryService>();
-builder.Services.AddScoped<IMaterialStockService, MaterialStockService>();
-builder.Services.AddScoped<IMaterialRequestService, MaterialRequestService>();
-builder.Services.AddScoped<IMaterialConsumptionService, MaterialConsumptionService>();
-builder.Services.AddScoped<IWarehouseService, WarehouseService>();
-builder.Services.AddScoped<IEquipmentService, EquipmentService>();
-builder.Services.AddScoped<IEquipmentMaintenanceService, EquipmentMaintenanceService>();
+
+// Configure settings
+builder.Services.Configure<SocialMediaSettings>(builder.Configuration.GetSection("SocialMedia"));
+builder.Services.Configure<TranslationSettings>(builder.Configuration.GetSection("Translation"));
+
+// Register HttpClient for external API calls
+builder.Services.AddHttpClient<ITranslationService, TranslationService>();
+builder.Services.AddHttpClient<ISocialMediaService, SocialMediaService>();
 builder.Services.AddScoped<IQualityService, QualityService>();
 builder.Services.AddScoped<ISafetyChecklistService, SafetyService>();
 builder.Services.AddScoped<ISafetyInspectionService, SafetyService>();
@@ -198,9 +198,36 @@ builder.Services.AddScoped<IActivityLogService, ActivityLogService>();
 builder.Services.AddScoped<ISubcontractorService, SubcontractorService>();
 builder.Services.AddScoped<ICompanyAnnouncementService, CompanyAnnouncementService>();
 builder.Services.AddScoped<IHRService, HRService>();
+builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 builder.Services.AddScoped<IMessagingService, MessagingService>();
 builder.Services.AddScoped<ILocationTrackingService, LocationTrackingService>();
 builder.Services.AddScoped<IGeofenceService, GeofenceService>();
+builder.Services.AddScoped<ISensitiveDataProtectionService, SensitiveDataProtectionService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IPushNotificationService, PushNotificationService>();
+builder.Services.AddScoped<ILeaveManagementService, LeaveManagementService>();
+builder.Services.AddScoped<IFinancialReportService, FinancialReportService>();
+builder.Services.AddScoped<IPerformanceEvaluationService, PerformanceEvaluationService>();
+builder.Services.AddScoped<IVideoVoiceCallService, VideoVoiceCallService>();
+builder.Services.AddScoped<IMultiCurrencyService, MultiCurrencyService>();
+builder.Services.AddScoped<ITrainingService, TrainingService>();
+builder.Services.AddScoped<IInspectionService, InspectionService>();
+// HR Gap Features Services
+builder.Services.AddScoped<IEmployeeDocumentService, EmployeeDocumentService>();
+builder.Services.AddScoped<IWorkerSelfServiceService, WorkerSelfServiceService>();
+builder.Services.AddScoped<IEmployeeOnboardingService, EmployeeOnboardingService>();
+builder.Services.AddScoped<IDisciplinaryActionService, DisciplinaryActionService>();
+builder.Services.AddScoped<ISkillsMatrixService, SkillsMatrixService>();
+builder.Services.AddScoped<IWarehouseJoinRequestService, WarehouseJoinRequestService>();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+// Task Management & Workflow Services
+builder.Services.AddScoped<ITaskManagementService, TaskManagementService>();
+builder.Services.AddScoped<ITaskNotificationService, TaskNotificationService>();
+builder.Services.AddScoped<IEscalationService, EscalationService>();
+builder.Services.AddScoped<IWorkflowConfigurationService, WorkflowConfigurationService>();
+builder.Services.AddScoped<IDailyTaskBoardService, DailyTaskBoardService>();
+builder.Services.AddScoped<IWorkflowBackgroundJobService, WorkflowBackgroundJobService>();
+builder.Services.AddHttpClient<PushNotificationService>();
 
 
 
@@ -339,6 +366,56 @@ builder.Services.AddCors(options => {
                           .AllowAnyHeader());
 });
 
+// 10.5 Rate Limiting for Payment Endpoints
+builder.Services.AddRateLimiter(options =>
+{
+    // Get rate limiting configuration
+    var paymentRateLimit = builder.Configuration.GetSection("RateLimiting:PaymentEndpoints");
+    var permitLimit = paymentRateLimit.GetValue<int>("PermitLimit", 10);
+    var windowMinutes = paymentRateLimit.GetValue<int>("WindowMinutes", 1);
+
+    // Payment endpoints rate limit policy - prevents abuse of payment initiation
+    options.AddPolicy("PaymentRateLimit", context =>
+    {
+        var userId = context.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "anonymous";
+        return RateLimitPartition.GetSlidingWindowLimiter(
+            partitionKey: userId,
+            factory: _ => new System.Threading.RateLimiting.SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = permitLimit,
+                Window = TimeSpan.FromMinutes(windowMinutes),
+                SegmentsPerWindow = 4, // Smoother distribution
+                QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst,
+                QueueLimit = 2 // Allow small queue for burst handling
+            });
+    });
+
+    // Global rate limit for all API endpoints
+    options.AddFixedWindowLimiter("GlobalApiLimit", limiterOptions =>
+    {
+        limiterOptions.PermitLimit = 100;
+        limiterOptions.Window = TimeSpan.FromMinutes(1);
+        limiterOptions.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+        limiterOptions.QueueLimit = 10;
+    });
+
+    // Handle rate limit exceeded
+    options.OnRejected = async (context, cancellationToken) =>
+    {
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        context.HttpContext.Response.ContentType = "application/json";
+        
+        var response = new
+        {
+            Success = false,
+            Message = "Too many requests. Please try again later.",
+            MessageKey = "Errors.RateLimitExceeded"
+        };
+        
+        await context.HttpContext.Response.WriteAsJsonAsync(response, cancellationToken);
+    };
+});
+
 var app = builder.Build();
 
 // --- 11. Middleware Pipeline (ترتيب Middleware مهم جداً) ---
@@ -467,10 +544,19 @@ if (!isTesting && hfConnectionString != null && !hfConnectionString.Contains("Da
         "geofence-violations-check",
         job => job.CheckGeofenceViolationsAsync(),
         "*/10 * * * *");  // Every 10 minutes
+
+    // 8. Social Media Fetch Job - Daily fetch from all configured sources
+    RecurringJob.AddOrUpdate<SocialMediaFetchJob>(
+        "social-media-fetch-daily",
+        job => job.FetchAndTranslateAsync(),
+        Cron.Daily(7));  // Every day at 7:00 AM
 }
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Rate limiting middleware - must be after authentication for user-based rate limiting
+app.UseRateLimiter();
 
 app.MapControllers();
 

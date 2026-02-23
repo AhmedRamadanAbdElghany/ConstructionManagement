@@ -341,6 +341,69 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/admin/finance/finance.component').then(m => m.FinanceComponent),
                 canActivate: [roleGuard],
                 data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            // New Feature Routes
+            {
+                path: 'leave',
+                loadComponent: () => import('./features/admin/leave/leave.component').then(m => m.LeaveComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'performance',
+                loadComponent: () => import('./features/admin/performance/performance.component').then(m => m.PerformanceComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'training',
+                loadComponent: () => import('./features/admin/training/training.component').then(m => m.TrainingComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'currencies',
+                loadComponent: () => import('./features/admin/currencies/currencies.component').then(m => m.CurrenciesComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'payments',
+                loadComponent: () => import('./features/admin/payments/payments.component').then(m => m.PaymentsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'location-tracking',
+                loadComponent: () => import('./features/admin/location-tracking/location-tracking.component').then(m => m.LocationTrackingComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'social-wall',
+                loadComponent: () => import('./features/admin/social-wall/social-wall.component').then(m => m.SocialWallComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin', 'CompanyUser', 'NormalUser', 'User'] }
+            },
+            // Task Management Routes
+            {
+                path: 'tasks',
+                loadComponent: () => import('./features/admin/tasks/task-board.component').then(m => m.TaskBoardComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin', 'CompanyUser'] }
+            },
+            {
+                path: 'tasks/:id',
+                loadComponent: () => import('./features/admin/tasks/task-detail.component').then(m => m.TaskDetailComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin', 'CompanyUser'] }
+            },
+            // Escalation Routes
+            {
+                path: 'escalations',
+                loadComponent: () => import('./features/admin/escalations/escalation-dashboard.component').then(m => m.EscalationDashboardComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
             }
         ]
     },

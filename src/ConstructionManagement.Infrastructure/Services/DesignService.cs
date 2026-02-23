@@ -10,6 +10,8 @@ public class DesignService : IDesignService
 {
     private readonly IRepository<Design> _designRepository;
     private readonly IRepository<DesignCategory> _categoryRepository;
+    private readonly IRepository<CompanyDefaultDesignCategory> _defaultCategoryRepository;
+    private readonly IRepository<CompanyDefaultDesign> _defaultDesignRepository;
     private readonly IFileStorageService _fileStorageService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICompanyContext _companyContext;
@@ -17,12 +19,16 @@ public class DesignService : IDesignService
     public DesignService(
         IRepository<Design> designRepository,
         IRepository<DesignCategory> categoryRepository,
+        IRepository<CompanyDefaultDesignCategory> defaultCategoryRepository,
+        IRepository<CompanyDefaultDesign> defaultDesignRepository,
         IFileStorageService fileStorageService,
         IUnitOfWork unitOfWork,
         ICompanyContext companyContext)
     {
         _designRepository = designRepository;
         _categoryRepository = categoryRepository;
+        _defaultCategoryRepository = defaultCategoryRepository;
+        _defaultDesignRepository = defaultDesignRepository;
         _fileStorageService = fileStorageService;
         _unitOfWork = unitOfWork;
         _companyContext = companyContext;
@@ -291,36 +297,35 @@ public class DesignService : IDesignService
 
     public async Task<IEnumerable<DesignCategoryDto>> GetCompanyDesignTemplatesAsync(int companyId)
     {
-        var allCategories = await _categoryRepository.AsQueryable()
-            .Where(c => c.CompanyId == companyId && c.ProjectId == null)
+        var allCategories = await _defaultCategoryRepository.AsQueryable()
+            .Where(c => c.CompanyId == companyId)
             .Include(c => c.Designs)
             .ToListAsync();
 
         var rootCategories = allCategories.Where(c => c.ParentCategoryId == null).OrderBy(c => c.Order).ToList();
 
-        return rootCategories.Select(c => BuildCategoryTree(c, allCategories));
+        return rootCategories.Select(c => BuildDefaultCategoryTree(c, allCategories));
     }
 
     public async Task<int> CreateTemplateCategoryAsync(CreateCategoryRequest request)
     {
-        var category = new DesignCategory
+        var category = new CompanyDefaultDesignCategory
         {
             Name = request.Name,
             Description = request.Description,
             Order = request.Order ?? 0,
             ParentCategoryId = request.ParentCategoryId,
-            CompanyId = request.CompanyId ?? _companyContext.CompanyId,
-            ProjectId = null // Explicitly null for company-wide templates
+            CompanyId = request.CompanyId ?? _companyContext.CompanyId
         };
 
-        await _categoryRepository.AddAsync(category);
+        await _defaultCategoryRepository.AddAsync(category);
         await _unitOfWork.SaveChangesAsync();
         return category.Id;
     }
 
     public async Task UpdateTemplateCategoryAsync(int categoryId, UpdateCategoryRequest request)
     {
-        var category = await _categoryRepository.GetByIdAsync(categoryId);
+        var category = await _defaultCategoryRepository.GetByIdAsync(categoryId);
         if (category == null) throw new KeyNotFoundException($"Template Category with ID {categoryId} not found");
 
         if (request.Name != null) category.Name = request.Name;
@@ -329,19 +334,18 @@ public class DesignService : IDesignService
         if (request.ParentCategoryId != null && request.ParentCategoryId.Value != categoryId)
             category.ParentCategoryId = request.ParentCategoryId;
 
-        await _categoryRepository.UpdateAsync(category);
+        await _defaultCategoryRepository.UpdateAsync(category);
         await _unitOfWork.SaveChangesAsync();
     }
 
     public async Task DeleteTemplateCategoryAsync(int categoryId)
     {
-        var category = await _categoryRepository.AsQueryable()
+        var category = await _defaultCategoryRepository.AsQueryable()
             .Include(c => c.ChildCategories)
             .Include(c => c.Designs)
             .FirstOrDefaultAsync(c => c.Id == categoryId);
 
         if (category == null) throw new KeyNotFoundException($"Template Category with ID {categoryId} not found");
-        if (category.ProjectId != null) throw new InvalidOperationException($"Category with ID {categoryId} is a project category, not a template category.");
 
         // Recursively delete child categories
         foreach (var child in category.ChildCategories.ToList())
@@ -352,16 +356,94 @@ public class DesignService : IDesignService
         // Delete all designs/templates in this category
         foreach (var design in category.Designs.ToList())
         {
-            await DeleteDesignAsync(design.Id);
+            await DeleteDefaultDesignAsync(design.Id);
         }
 
-        await _categoryRepository.DeleteAsync(category);
+        await _defaultCategoryRepository.DeleteAsync(category);
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task<int> CreateDefaultDesignAsync(int companyId, CreateDefaultDesignRequest request)
+    {
+        var design = new CompanyDefaultDesign
+        {
+            CompanyId = companyId,
+            Name = request.Name,
+            Description = request.Description,
+            CategoryId = request.CategoryId,
+            IsRequired = request.IsRequired,
+            Order = request.Order ?? 0,
+            Tags = request.Tags,
+            CreatedByUserId = _companyContext.CurrentUserId
+        };
+
+        // Handle file upload
+        if (request.File != null)
+        {
+            var fileResult = await _fileStorageService.SaveFileAsync(request.File, "design-templates");
+            design.FileUrl = fileResult.Path;
+            design.FileName = fileResult.FileName;
+            design.FileSize = request.File.Length;
+            design.FileType = request.File.ContentType;
+            design.OriginalFileName = request.File.FileName;
+        }
+
+        await _defaultDesignRepository.AddAsync(design);
+        await _unitOfWork.SaveChangesAsync();
+        return design.Id;
+    }
+
+    public async Task UpdateDefaultDesignAsync(int designId, UpdateDefaultDesignRequest request)
+    {
+        var design = await _defaultDesignRepository.GetByIdAsync(designId);
+        if (design == null) throw new KeyNotFoundException($"Default Design with ID {designId} not found");
+
+        if (request.Name != null) design.Name = request.Name;
+        if (request.Description != null) design.Description = request.Description;
+        if (request.CategoryId != null) design.CategoryId = request.CategoryId;
+        design.IsRequired = request.IsRequired;
+        design.Order = request.Order ?? design.Order;
+        if (request.Tags != null) design.Tags = request.Tags;
+
+        // Handle file upload
+        if (request.File != null)
+        {
+            // Delete old file if exists
+            if (!string.IsNullOrEmpty(design.FileUrl))
+            {
+                await _fileStorageService.DeleteFileAsync(design.FileUrl);
+            }
+
+            var fileResult = await _fileStorageService.SaveFileAsync(request.File, "design-templates");
+            design.FileUrl = fileResult.Path;
+            design.FileName = fileResult.FileName;
+            design.FileSize = request.File.Length;
+            design.FileType = request.File.ContentType;
+            design.OriginalFileName = request.File.FileName;
+        }
+
+        await _defaultDesignRepository.UpdateAsync(design);
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task DeleteDefaultDesignAsync(int designId)
+    {
+        var design = await _defaultDesignRepository.GetByIdAsync(designId);
+        if (design == null) throw new KeyNotFoundException($"Default Design with ID {designId} not found");
+
+        // Delete file if exists
+        if (!string.IsNullOrEmpty(design.FileUrl))
+        {
+            await _fileStorageService.DeleteFileAsync(design.FileUrl);
+        }
+
+        await _defaultDesignRepository.DeleteAsync(design);
         await _unitOfWork.SaveChangesAsync();
     }
 
     public async Task ImportDesignTemplateAsync(int templateId, int projectId)
     {
-        var template = await _categoryRepository.AsQueryable()
+        var template = await _defaultCategoryRepository.AsQueryable()
             .Include(t => t.ChildCategories)
             .Include(t => t.Designs)
             .FirstOrDefaultAsync(t => t.Id == templateId);
@@ -372,20 +454,28 @@ public class DesignService : IDesignService
         var oldToNewCategoryMap = new Dictionary<int, int>();
         var oldToNewDesignMap = new Dictionary<int, int>();
 
-        // Import root categories and their children
-        var rootTemplate = await _categoryRepository.AsQueryable()
-            .Where(c => c.Id == templateId)
-            .Include(c => c.ChildCategories)
-            .FirstOrDefaultAsync();
+        await ImportDefaultCategoryTreeAsync(template, null, projectId, companyId, oldToNewCategoryMap, oldToNewDesignMap);
+    }
 
-        if (rootTemplate != null)
+    public async Task CloneAllDefaultDesignsToProjectAsync(int companyId, int projectId)
+    {
+        var allCategories = await _defaultCategoryRepository.AsQueryable()
+            .Where(c => c.CompanyId == companyId)
+            .Include(c => c.Designs)
+            .ToListAsync();
+
+        var rootCategories = allCategories.Where(c => c.ParentCategoryId == null).OrderBy(c => c.Order).ToList();
+        var oldToNewCategoryMap = new Dictionary<int, int>();
+        var oldToNewDesignMap = new Dictionary<int, int>();
+
+        foreach (var rootCategory in rootCategories)
         {
-            await ImportCategoryTreeAsync(rootTemplate, null, projectId, companyId, oldToNewCategoryMap, oldToNewDesignMap);
+            await ImportDefaultCategoryTreeAsync(rootCategory, null, projectId, companyId, oldToNewCategoryMap, oldToNewDesignMap);
         }
     }
 
-    private async Task ImportCategoryTreeAsync(
-        DesignCategory template,
+    private async Task ImportDefaultCategoryTreeAsync(
+        CompanyDefaultDesignCategory template,
         int? parentNewId,
         int projectId,
         int companyId,
@@ -417,16 +507,16 @@ public class DesignService : IDesignService
                 Name = design.Name,
                 Description = design.Description,
                 CategoryId = newCategory.Id,
-                Status = design.Status,
+                Status = DesignStatus.Draft,
                 CompanyId = companyId,
                 CreatedByUserId = _companyContext.CurrentUserId,
-                Version = design.Version,
+                Version = 1,
                 FileUrl = design.FileUrl,
                 FileName = design.FileName,
                 FileSize = design.FileSize,
                 FileType = design.FileType,
                 OriginalFileName = design.OriginalFileName,
-                ChangeNotes = $"Imported from template: {design.ChangeNotes}"
+                ChangeNotes = $"Imported from company template"
             };
 
             await _designRepository.AddAsync(newDesign);
@@ -438,8 +528,56 @@ public class DesignService : IDesignService
         // Import child categories
         foreach (var child in template.ChildCategories)
         {
-            await ImportCategoryTreeAsync(child, newCategory.Id, projectId, companyId, categoryMap, designMap);
+            await ImportDefaultCategoryTreeAsync(child, newCategory.Id, projectId, companyId, categoryMap, designMap);
         }
+    }
+
+    private DesignCategoryDto BuildDefaultCategoryTree(CompanyDefaultDesignCategory category, List<CompanyDefaultDesignCategory> allCategories)
+    {
+        var dto = new DesignCategoryDto
+        {
+            Id = category.Id,
+            CompanyId = category.CompanyId,
+            ProjectId = 0, // Default templates don't have a project
+            Name = category.Name,
+            Description = category.Description,
+            Order = category.Order,
+            ParentCategoryId = category.ParentCategoryId,
+            ChildCategories = new List<DesignCategoryDto>(),
+            Designs = new List<DesignDto>(),
+            DesignCount = category.Designs?.Count ?? 0
+        };
+
+        // Map designs
+        dto.Designs = category.Designs?.Select(d => new DesignDto
+        {
+            Id = d.Id,
+            ProjectId = 0,
+            Name = d.Name,
+            Description = d.Description,
+            CategoryId = d.CategoryId,
+            CategoryName = category.Name,
+            Status = DesignStatus.Draft,
+            Version = 1,
+            FileUrl = d.FileUrl,
+            FileName = d.FileName,
+            OriginalFileName = d.OriginalFileName,
+            FileSize = d.FileSize,
+            FileType = d.FileType,
+            CreatedByUserId = d.CreatedByUserId,
+            CreatedByUserName = d.CreatedByUser?.FullName ?? "Unknown",
+            CreatedAt = d.CreatedAt,
+            UpdatedAt = d.UpdatedAt,
+            VersionCount = 0,
+            ChangeNotes = d.Description
+        }).ToList() ?? new List<DesignDto>();
+
+        // Build children recursively
+        var children = allCategories.Where(c => c.ParentCategoryId == category.Id).OrderBy(c => c.Order).ToList();
+        dto.ChildCategories = children.Select(c => BuildDefaultCategoryTree(c, allCategories)).ToList();
+        dto.DesignCount = dto.Designs.Count + dto.ChildCategories.Sum(c => c.DesignCount);
+
+        return dto;
     }
 
     #endregion

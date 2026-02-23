@@ -99,4 +99,21 @@ public interface IMessagingService
     /// Check if a user is blocked from messaging a company
     /// </summary>
     Task<bool> IsUserBlockedAsync(int companyId, int userId);
+    
+    // ── Search ─────────────────────────────────────────────────────────────────────
+    
+    /// <summary>
+    /// Search messages for a user (in their conversations)
+    /// </summary>
+    Task<IEnumerable<MessageSearchResultDto>> SearchUserMessagesAsync(int userId, MessageSearchRequest request);
+    
+    /// <summary>
+    /// Search messages for a company (in company conversations)
+    /// </summary>
+    Task<IEnumerable<MessageSearchResultDto>> SearchCompanyMessagesAsync(int companyId, MessageSearchRequest request);
+    
+    /// <summary>
+    /// Search messages in a specific conversation
+    /// </summary>
+    Task<IEnumerable<MessageSearchResultDto>> SearchConversationMessagesAsync(int conversationId, int userId, string searchTerm);
 }

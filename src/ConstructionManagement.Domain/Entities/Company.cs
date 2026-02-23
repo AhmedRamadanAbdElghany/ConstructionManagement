@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using ConstructionManagement.Domain.Enums;
 
 namespace ConstructionManagement.Domain.Entities;
 
@@ -7,11 +8,19 @@ public class Company : BaseEntity
     public string Name { get; set; } = string.Empty;
     public string? BusinessId { get; set; }
     
+    /// <summary>
+    /// Type of company: Construction or Warehouse
+    /// </summary>
+    public CompanyType Type { get; set; } = CompanyType.Construction;
 
     public string? LogoUrl { get; set; }
     public string? ContactEmail { get; set; }
     public string? ContactPhone { get; set; }
     public string? Address { get; set; }
+    
+    // Geolocation for Warehouse
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
     
     public bool IsActive { get; set; } = true;
 
@@ -23,6 +32,8 @@ public class Company : BaseEntity
     public virtual ICollection<User> Users { get; set; } = new List<User>();
     public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
     public virtual ICollection<CompanyDefaultPhase> DefaultPhases { get; set; } = new List<CompanyDefaultPhase>();
+    public virtual ICollection<CompanyDefaultDesignCategory> DefaultDesignCategories { get; set; } = new List<CompanyDefaultDesignCategory>();
+    public virtual ICollection<CompanyDefaultDesign> DefaultDesigns { get; set; } = new List<CompanyDefaultDesign>();
     
     // 1:1 settings
     public virtual CompanySettings? Settings { get; set; }

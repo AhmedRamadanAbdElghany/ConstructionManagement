@@ -290,5 +290,95 @@ namespace ConstructionManagement.WebApi.Controllers
             var vendor = await _vendorService.ToggleVendorVisibilityAsync(userId);
             return Ok(vendor);
         }
+
+        #region Vendor Dashboard & Statistics (Feature 1)
+
+        // GET: api/vendors/with-stats
+        [HttpGet("with-stats")]
+        public async Task<ActionResult<IEnumerable<VendorWithStatsDto>>> GetVendorsWithStats()
+        {
+            var vendors = await _vendorService.GetVendorsWithStatsAsync();
+            return Ok(vendors);
+        }
+
+        // GET: api/vendors/dashboard
+        [HttpGet("dashboard")]
+        public async Task<ActionResult<VendorDashboardDto>> GetVendorDashboard()
+        {
+            var dashboard = await _vendorService.GetVendorDashboardAsync();
+            return Ok(dashboard);
+        }
+
+        // GET: api/vendors/{id}/projects
+        [HttpGet("{id}/projects")]
+        public async Task<ActionResult<IEnumerable<VendorProjectDto>>> GetVendorProjects(int id)
+        {
+            var projects = await _vendorService.GetVendorProjectsAsync(id);
+            return Ok(projects);
+        }
+
+        // GET: api/vendors/{id}/bills
+        [HttpGet("{id}/bills")]
+        public async Task<ActionResult<IEnumerable<VendorInvoiceDto>>> GetVendorBills(int id)
+        {
+            var bills = await _vendorService.GetAllVendorBillsAsync(id);
+            return Ok(bills);
+        }
+
+        #endregion
+
+        #region Delivery Cost Tiers (Feature 2)
+
+        // GET: api/vendors/products/{productId}/delivery-tiers
+        [HttpGet("products/{productId}/delivery-tiers")]
+        public async Task<ActionResult<IEnumerable<DeliveryCostTierDto>>> GetDeliveryCostTiers(int productId)
+        {
+            var tiers = await _vendorService.GetDeliveryCostTiersAsync(productId);
+            return Ok(tiers);
+        }
+
+        // POST: api/vendors/products/{productId}/delivery-tiers
+        [HttpPost("products/{productId}/delivery-tiers")]
+        public async Task<ActionResult<DeliveryCostTierDto>> CreateDeliveryCostTier(int productId, [FromBody] CreateDeliveryCostTierRequest request)
+        {
+            request.VendorProductId = productId;
+            var tier = await _vendorService.CreateDeliveryCostTierAsync(request);
+            return Ok(tier);
+        }
+
+        // PUT: api/vendors/delivery-tiers/{tierId}
+        [HttpPut("delivery-tiers/{tierId}")]
+        public async Task<ActionResult<DeliveryCostTierDto>> UpdateDeliveryCostTier(int tierId, [FromBody] UpdateDeliveryCostTierRequest request)
+        {
+            var tier = await _vendorService.UpdateDeliveryCostTierAsync(tierId, request);
+            return Ok(tier);
+        }
+
+        // DELETE: api/vendors/delivery-tiers/{tierId}
+        [HttpDelete("delivery-tiers/{tierId}")]
+        public async Task<IActionResult> DeleteDeliveryCostTier(int tierId)
+        {
+            var result = await _vendorService.DeleteDeliveryCostTierAsync(tierId);
+            if (!result) return NotFound();
+            return NoContent();
+        }
+
+        // POST: api/vendors/calculate-delivery
+        [HttpPost("calculate-delivery")]
+        public async Task<ActionResult<DeliveryCalculationResult>> CalculateDeliveryCost([FromBody] DeliveryCalculationRequest request)
+        {
+            var result = await _vendorService.CalculateDeliveryCostAsync(request);
+            return Ok(result);
+        }
+
+        // POST: api/vendors/calculate-delivery/bulk
+        [HttpPost("calculate-delivery/bulk")]
+        public async Task<ActionResult<BulkDeliveryCalculationResult>> CalculateBulkDeliveryCost([FromBody] BulkDeliveryCalculationRequest request)
+        {
+            var result = await _vendorService.CalculateBulkDeliveryCostAsync(request);
+            return Ok(result);
+        }
+
+        #endregion
     }
 }

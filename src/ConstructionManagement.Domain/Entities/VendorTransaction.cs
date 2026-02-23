@@ -24,6 +24,9 @@ namespace ConstructionManagement.Domain.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal UnitPrice { get; set; }
         
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal TotalAmount { get; set; }
+        
         public DateTime TransactionDate { get; set; } = DateTime.UtcNow;
         public string? Notes { get; set; }
         public string? ReferenceNumber { get; set; } // Invoice # or External Ref

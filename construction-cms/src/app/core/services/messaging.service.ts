@@ -127,6 +127,34 @@ export interface ApproveConversationRequest {
     notes?: string;
 }
 
+// Search interfaces
+export interface MessageSearchRequest {
+    searchTerm: string;
+    conversationId?: number;
+    fromDate?: Date | string;
+    toDate?: Date | string;
+    hasAttachments?: boolean;
+    page?: number;
+    pageSize?: number;
+}
+
+export interface MessageSearchResultDto {
+    messageId: number;
+    conversationId: number;
+    conversationTitle: string;
+    content: string;
+    contentSnippet: string;
+    senderId: number;
+    senderName: string;
+    senderAvatar?: string;
+    isFromCompany: boolean;
+    createdAt: string;
+    companyName: string;
+    companyId: number;
+    hasAttachments: boolean;
+    attachments: MessageAttachmentDto[];
+}
+
 // ── Service ────────────────────────────────────────────────────────────────────
 
 @Injectable({
@@ -295,5 +323,23 @@ export class MessagingService {
      */
     getBlockedUsers(): Observable<BlockedUserDto[]> {
         return this.http.get<BlockedUserDto[]>(`${this.baseUrl}/messaging/company/blocked-users`);
+    }
+
+    // ── Search ─────────────────────────────────────────────────────────────────────
+
+    /**
+     * Search messages for the current user
+     */
+    searchMessages(request: MessageSearchRequest): Observable<MessageSearchResultDto[]> {
+        return this.http.post<MessageSearchResultDto[]>(`${this.baseUrl}/messaging/search`, request);
+    }
+
+    /**
+     * Search messages in a specific conversation
+     */
+    searchConversationMessages(conversationId: number, searchTerm: string): Observable<MessageSearchResultDto[]> {
+        return this.http.get<MessageSearchResultDto[]>(`${this.baseUrl}/messaging/conversations/${conversationId}/search`, {
+            params: { searchTerm }
+        });
     }
 }

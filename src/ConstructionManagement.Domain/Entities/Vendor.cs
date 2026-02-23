@@ -42,8 +42,19 @@ namespace ConstructionManagement.Domain.Entities
         // Discovery Visibility
         public bool IsPublic { get; set; } = false;
 
+        /// <summary>
+        /// Indicates if this vendor was created from an external/ad-hoc entry during invoice upload
+        /// </summary>
+        public bool IsExternalVendor { get; set; } = false;
+
+        /// <summary>
+        /// Source where this external vendor was entered from (e.g., "InvoiceUpload")
+        /// </summary>
+        public string? ExternalVendorSource { get; set; }
+
         // Navigation properties
         public virtual ICollection<VendorInvoice> Invoices { get; set; } = new List<VendorInvoice>();
         public virtual ICollection<VendorProduct> Products { get; set; } = new List<VendorProduct>();
+        public virtual ICollection<VendorProjectStat> ProjectStats { get; set; } = new List<VendorProjectStat>();
     }
 }

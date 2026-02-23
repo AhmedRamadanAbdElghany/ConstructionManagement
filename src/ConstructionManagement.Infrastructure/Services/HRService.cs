@@ -206,7 +206,7 @@ public class HRService : IHRService
                 Id = t.Id,
                 Name = t.Name,
                 Description = t.Description,
-                DefaultDays = t.DefaultDays,
+                DefaultDays = t.DefaultDaysPerYear,
                 IsPaid = t.IsPaid,
                 RequiresApproval = t.RequiresApproval
             }).ToListAsync();
@@ -217,7 +217,7 @@ public class HRService : IHRService
         var query = _db.LeaveRequests
             .Include(l => l.User)
             .Include(l => l.LeaveType)
-            .Include(l => l.ApprovedByUser)
+            .Include(l => l.ApprovedBy)
             .AsQueryable();
 
         if (userId.HasValue)
@@ -235,12 +235,11 @@ public class HRService : IHRService
         var leaveRequest = new LeaveRequest
         {
             UserId = userId.Value,
-            CompanyId = _companyContext.CompanyId,
             LeaveTypeId = request.LeaveTypeId,
             StartDate = request.StartDate,
             EndDate = request.EndDate,
             Reason = request.Reason,
-            Status = LeaveRequestStatus.Pending
+            Status = Domain.Entities.LeaveRequestStatus.Pending
         };
 
         _db.LeaveRequests.Add(leaveRequest);
@@ -261,9 +260,9 @@ public class HRService : IHRService
         var request = await _db.LeaveRequests.FindAsync(requestId);
         if (request == null) throw new KeyNotFoundException();
 
-        request.Status = review.Approved ? LeaveRequestStatus.Approved : LeaveRequestStatus.Rejected;
+        request.Status = review.Approved ? Domain.Entities.LeaveRequestStatus.Approved : Domain.Entities.LeaveRequestStatus.Rejected;
         request.ApprovedByUserId = reviewerId;
-        request.ActionDate = DateTime.UtcNow;
+        request.ApprovedAt = DateTime.UtcNow;
         request.RejectionReason = review.RejectionReason;
 
         await _unitOfWork.SaveChangesAsync();
@@ -518,13 +517,13 @@ public class HRService : IHRService
 
         // Get pending leave requests
         var pendingRequests = await _db.LeaveRequests
-            .Where(lr => lr.UserId == userId && lr.Status == LeaveRequestStatus.Pending)
+            .Where(lr => lr.UserId == userId && lr.Status == Domain.Entities.LeaveRequestStatus.Pending)
             .CountAsync();
 
         // Get used leave days this year
         var usedLeaveDays = await _db.LeaveRequests
             .Where(lr => lr.UserId == userId && 
-                         lr.Status == LeaveRequestStatus.Approved && 
+                         lr.Status == Domain.Entities.LeaveRequestStatus.Approved && 
                          lr.StartDate.Year == today.Year)
             .SumAsync(lr => lr.TotalDays);
 
@@ -535,8 +534,8 @@ public class HRService : IHRService
         {
             MonthlySalary = user.Salary,
             AnnualLeaveDays = defaultAnnualLeave,
-            UsedLeaveDays = usedLeaveDays,
-            RemainingLeaveDays = defaultAnnualLeave - usedLeaveDays,
+            UsedLeaveDays = (int)usedLeaveDays,
+            RemainingLeaveDays = defaultAnnualLeave - (int)usedLeaveDays,
             PendingRequests = pendingRequests,
             WorkDaysThisMonth = workDaysThisMonth
         };
@@ -623,10 +622,10 @@ public class HRService : IHRService
             Reason = l.Reason,
             Status = l.Status,
             ApprovedByUserId = l.ApprovedByUserId,
-            ApprovedByFullName = l.ApprovedByUser?.FirstName + " " + l.ApprovedByUser?.LastName,
-            ActionDate = l.ActionDate,
+            ApprovedByFullName = l.ApprovedBy?.FirstName + " " + l.ApprovedBy?.LastName,
+            ActionDate = l.ApprovedAt,
             RejectionReason = l.RejectionReason,
-            TotalDays = l.TotalDays
+            TotalDays = (int)l.TotalDays
         };
     }
 }

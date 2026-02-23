@@ -5,8 +5,10 @@ namespace ConstructionManagement.Application.DTOs.Vendor
     public class VendorInvoiceDto
     {
         public int Id { get; set; }
-        public int VendorId { get; set; }
+        public int? VendorId { get; set; }
         public string VendorName { get; set; } = string.Empty;
+        public string? ExternalVendorName { get; set; }
+        public bool IsExternalVendor { get; set; }
         public string InvoiceNumber { get; set; } = string.Empty;
         public DateTime InvoiceDate { get; set; }
         public decimal Amount { get; set; }
@@ -50,7 +52,7 @@ namespace ConstructionManagement.Application.DTOs.Vendor
 
     public class VendorInvoiceSummary
     {
-        public int VendorId { get; set; }
+        public int? VendorId { get; set; }
         public string VendorName { get; set; } = string.Empty;
         public int TotalInvoices { get; set; }
         public decimal TotalAmount { get; set; }

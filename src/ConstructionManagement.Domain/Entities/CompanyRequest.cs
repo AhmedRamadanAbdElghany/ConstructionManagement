@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using ConstructionManagement.Domain.Enums;
 
 namespace ConstructionManagement.Domain.Entities;
 
 /// <summary>
-/// Represents a company creation request submitted by a Company Owner
+/// Represents a company creation request submitted by a Company Owner or Warehouse Owner
 /// </summary>
 public class CompanyRequest : BaseEntity
 {
@@ -18,6 +19,11 @@ public class CompanyRequest : BaseEntity
     /// Proposed company name
     /// </summary>
     public string CompanyName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Type of company: Construction or Warehouse
+    /// </summary>
+    public CompanyType CompanyType { get; set; } = CompanyType.Construction;
 
     /// <summary>
     /// Business/registration ID (optional)

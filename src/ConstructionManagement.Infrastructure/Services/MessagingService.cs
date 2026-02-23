@@ -534,6 +534,172 @@ public class MessagingService : IMessagingService
             .AnyAsync(b => b.CompanyId == companyId && b.UserId == userId && b.IsActive);
     }
 
+    // ── Search ─────────────────────────────────────────────────────────────────────
+
+    public async Task<IEnumerable<MessageSearchResultDto>> SearchUserMessagesAsync(int userId, MessageSearchRequest request)
+    {
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null)
+            return Enumerable.Empty<MessageSearchResultDto>();
+
+        var query = _context.CompanyMessages
+            .Include(m => m.Conversation)
+            .Include(m => m.SenderUser)
+            .Include(m => m.Attachments)
+            .Where(m => m.Conversation.InitiatorUserId == userId);
+
+        return await ExecuteSearchAsync(query, request);
+    }
+
+    public async Task<IEnumerable<MessageSearchResultDto>> SearchCompanyMessagesAsync(int companyId, MessageSearchRequest request)
+    {
+        var query = _context.CompanyMessages
+            .Include(m => m.Conversation)
+            .Include(m => m.SenderUser)
+            .Include(m => m.Attachments)
+            .Where(m => m.Conversation.CompanyId == companyId);
+
+        return await ExecuteSearchAsync(query, request);
+    }
+
+    public async Task<IEnumerable<MessageSearchResultDto>> SearchConversationMessagesAsync(int conversationId, int userId, string searchTerm)
+    {
+        var user = await _context.Users.FindAsync(userId);
+        var conversation = await _context.CompanyConversations.FindAsync(conversationId);
+
+        if (user == null || conversation == null)
+            return Enumerable.Empty<MessageSearchResultDto>();
+
+        // Verify user has access to this conversation
+        var isInitiator = conversation.InitiatorUserId == userId;
+        var isCompanyOwner = user.CompanyId == conversation.CompanyId;
+
+        if (!isInitiator && !isCompanyOwner)
+            return Enumerable.Empty<MessageSearchResultDto>();
+
+        var request = new MessageSearchRequest
+        {
+            SearchTerm = searchTerm,
+            ConversationId = conversationId
+        };
+
+        var query = _context.CompanyMessages
+            .Include(m => m.Conversation)
+            .Include(m => m.SenderUser)
+            .Include(m => m.Attachments)
+            .Where(m => m.ConversationId == conversationId);
+
+        return await ExecuteSearchAsync(query, request);
+    }
+
+    private async Task<IEnumerable<MessageSearchResultDto>> ExecuteSearchAsync(
+        IQueryable<CompanyMessage> query, 
+        MessageSearchRequest request)
+    {
+        // Apply search term filter
+        if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+        {
+            var searchTerm = request.SearchTerm.ToLower();
+            query = query.Where(m => m.Content.ToLower().Contains(searchTerm));
+        }
+
+        // Apply conversation filter
+        if (request.ConversationId.HasValue)
+        {
+            query = query.Where(m => m.ConversationId == request.ConversationId.Value);
+        }
+
+        // Apply date filters
+        if (request.FromDate.HasValue)
+        {
+            query = query.Where(m => m.CreatedAt >= request.FromDate.Value);
+        }
+
+        if (request.ToDate.HasValue)
+        {
+            query = query.Where(m => m.CreatedAt <= request.ToDate.Value);
+        }
+
+        // Apply attachment filter
+        if (request.HasAttachments.HasValue && request.HasAttachments.Value)
+        {
+            query = query.Where(m => m.Attachments.Any());
+        }
+
+        // Order by date descending and apply pagination
+        var messages = await query
+            .OrderByDescending(m => m.CreatedAt)
+            .Skip((request.Page - 1) * request.PageSize)
+            .Take(request.PageSize)
+            .ToListAsync();
+
+        return messages.Select(m => new MessageSearchResultDto
+        {
+            MessageId = m.Id,
+            ConversationId = m.ConversationId,
+            ConversationTitle = m.Conversation?.Company?.Name ?? "Unknown",
+            Content = m.Content,
+            ContentSnippet = GetContentSnippet(m.Content, request.SearchTerm),
+            SenderId = m.SenderUserId,
+            SenderName = m.SenderUser?.FullName ?? m.SenderUser?.Email ?? "Unknown",
+            SenderAvatar = null,
+            IsFromCompany = m.IsFromCompany,
+            CreatedAt = m.CreatedAt,
+            CompanyName = m.Conversation?.Company?.Name ?? "Unknown",
+            CompanyId = m.Conversation?.CompanyId ?? 0,
+            HasAttachments = m.Attachments?.Any() ?? false,
+            Attachments = m.Attachments?.Select(a => new MessageAttachmentDto
+            {
+                Id = a.Id,
+                FileName = a.FileName,
+                OriginalFileName = a.OriginalFileName,
+                FilePath = a.FilePath,
+                FileType = a.FileType,
+                FileSize = a.FileSize,
+                UploadedAt = a.UploadedAt
+            }).ToList() ?? new List<MessageAttachmentDto>()
+        });
+    }
+
+    private string GetContentSnippet(string content, string? searchTerm)
+    {
+        const int snippetLength = 150;
+        
+        if (string.IsNullOrEmpty(content))
+            return string.Empty;
+
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            return content.Length <= snippetLength 
+                ? content 
+                : content.Substring(0, snippetLength) + "...";
+        }
+
+        // Find the position of the search term
+        var index = content.ToLower().IndexOf(searchTerm.ToLower());
+        
+        if (index < 0)
+        {
+            return content.Length <= snippetLength 
+                ? content 
+                : content.Substring(0, snippetLength) + "...";
+        }
+
+        // Calculate snippet start position to center around the search term
+        var start = Math.Max(0, index - snippetLength / 2);
+        var length = Math.Min(snippetLength, content.Length - start);
+
+        var snippet = content.Substring(start, length);
+        
+        if (start > 0)
+            snippet = "..." + snippet;
+        
+        if (start + length < content.Length)
+            snippet = snippet + "...";
+
+        return snippet;
+    }
+
     // ── Private Helper Methods ────────────────────────────────────────────────────
 
     private async Task<MessageFileAttachment> SaveAttachmentAsync(IFormFile file, CompanyMessage message, int? companyId)

@@ -25,7 +25,8 @@
     "role_admin": "مسؤول",
     "role_worker": "موظف",
     "role_client": "عميل",
-    "pending_requests": "الطلبات المعلقة"
+    "pending_requests": "الطلبات المعلقة",
+    "social_wall": "حائط التواصل"
   },
   "topbar": {
     "search_placeholder": "البحث في المشاريع والمستخدمين والمستندات...",
@@ -477,5 +478,367 @@
   "determineStructure": "تحديد الهيكل الافتراضي لجميع المشاريع الجديدة",
   "onePhase": "مرحلة واحدة",
   "twoPhases": "مرحلتان",
-  "multiPhases": "مراحل متعددة"
+  "multiPhases": "مراحل متعددة",
+  "finance": {
+    "title": "الإدارة المالية",
+    "subtitle": "إدارة السندات والمصروفات والمعاملات والفواتير",
+    "stats": {
+      "cash_vouchers": "سندات الصرف",
+      "misc_expenses": "المصروفات النثرية",
+      "transactions": "المعاملات",
+      "invoices": "الفواتير"
+    },
+    "tabs": {
+      "vouchers": "سندات الصرف",
+      "expenses": "المصروفات",
+      "transactions": "المعاملات",
+      "invoices": "الفواتير",
+      "billing": "الفوترة",
+      "vendors": "الموردين"
+    },
+    "voucher": {
+      "new": "سند جديد",
+      "number": "رقم السند",
+      "project": "المشروع",
+      "amount": "المبلغ",
+      "date": "التاريخ"
+    },
+    "expense": {
+      "new": "مصروف جديد",
+      "number": "رقم المصروف",
+      "category": "الفئة",
+      "project": "المشروع",
+      "amount": "المبلغ",
+      "date": "التاريخ"
+    },
+    "transaction": {
+      "type": "النوع",
+      "project_item": "بند المشروع",
+      "amount": "المبلغ",
+      "date": "التاريخ",
+      "all_projects": "جميع المشاريع"
+    },
+    "invoice": {
+      "new": "فاتورة جديدة",
+      "number": "رقم الفاتورة",
+      "item": "البند",
+      "amount": "المبلغ",
+      "date": "التاريخ"
+    },
+    "billing": {
+      "mrr": "الإيرادات الشهرية المتكررة",
+      "interval": "فترة الفوترة",
+      "monthly": "شهري",
+      "next_renewal": "التجديد القادم",
+      "payment_status": "حالة الدفع",
+      "good_standing": "سليم",
+      "payout_method": "طريقة الدفع",
+      "update_card": "تحديث البطاقة",
+      "invoicing_history": "سجل الفوترة",
+      "billing_date": "التاريخ",
+      "transaction_ref": "المرجع",
+      "amount_paid": "المبلغ",
+      "status": "الحالة",
+      "no_history": "لا يوجد سجل فوترة"
+    },
+    "vendors": {
+      "total_vendors": "إجمالي الموردين",
+      "total_spend": "إجمالي المصروفات",
+      "pending_approvals": "الموافقات المعلقة",
+      "name": "اسم المورد",
+      "type": "النوع",
+      "total_invoices": "الفواتير",
+      "total_amount": "المبلغ الإجمالي",
+      "pending": "معلق",
+      "projects": "المشاريع",
+      "external": "خارجي",
+      "no_vendors": "لا يوجد موردين",
+      "project_name": "المشروع",
+      "invoices": "الفواتير",
+      "total": "الإجمالي",
+      "last_invoice": "آخر فاتورة",
+      "no_projects": "لا توجد مشاريع مرتبطة",
+      "bills": "جميع الفواتير",
+      "invoice_number": "رقم الفاتورة",
+      "date": "التاريخ",
+      "amount": "المبلغ",
+      "no_bills": "لا توجد فواتير"
+    },
+    "no_vouchers": "لا توجد سندات صرف",
+    "no_expenses": "لا توجد مصروفات",
+    "no_transactions": "لا توجد معاملات",
+    "no_invoices": "لا توجد فواتير"
+  },
+  "socialWall": {
+    "title": "حائط أخبار البناء",
+    "subtitle": "آخر التحديثات من وسائل التواصل الاجتماعي حول صناعة البناء",
+    "filterByPlatform": "تصفية حسب المنصة",
+    "allPlatforms": "جميع المنصات",
+    "filterBySource": "تصفية حسب المصدر",
+    "allSources": "جميع المصادر",
+    "language": "اللغة",
+    "original": "الأصلي",
+    "arabic": "الترجمة العربية",
+    "refresh": "تحديث",
+    "todaysPosts": "{{count}} منشورات جديدة اليوم",
+    "loading": "جاري تحميل المنشورات...",
+    "translate": "ترجمة إلى العربية",
+    "viewOriginal": "عرض الأصلي",
+    "noPosts": "لا توجد منشورات",
+    "noPostsMessage": "تحقق لاحقاً من تحديثات صناعة البناء الجديدة",
+    "page": "صفحة {{current}} من {{total}}",
+    "timeAgo": {
+      "minutes": "منذ {{count}} دقيقة",
+      "hours": "منذ {{count}} ساعة",
+      "days": "منذ {{count}} يوم"
+    },
+    "admin": {
+      "sources": "مصادر المحتوى",
+      "postsCollected": "{{count}} منشور تم جمعه",
+      "lastFetch": "آخر جلب: {{time}}",
+      "addSource": "إضافة مصدر",
+      "platform": "المنصة",
+      "sourceType": "نوع المصدر",
+      "account": "حساب",
+      "hashtag": "هاشتاق",
+      "keyword": "كلمة مفتاحية",
+      "sourceValue": "قيمة المصدر",
+      "sourceValuePlaceholder": "مثال: @شركة_بناء أو #بناء",
+      "displayName": "اسم العرض",
+      "displayNamePlaceholder": "اسم ودود اختياري",
+      "fetchAll": "جلب من جميع المصادر",
+      "translateAll": "ترجمة جميع المنشورات",
+      "confirmDelete": "هل أنت متأكد من حذف هذا المصدر؟"
+    }
+  },
+  "tasks": {
+    "title": "إدارة المهام",
+    "dailyBoard": "لوحة المهام اليومية",
+    "myTasks": "مهامي",
+    "allTasks": "جميع المهام",
+    "createTask": "إنشاء مهمة",
+    "editTask": "تعديل المهمة",
+    "taskDetails": "تفاصيل المهمة",
+    "taskNumber": "رقم المهمة",
+    "taskTitle": "العنوان",
+    "description": "الوصف",
+    "status": "الحالة",
+    "priority": "الأولوية",
+    "assignedTo": "مسندة إلى",
+    "dueDate": "تاريخ الاستحقاق",
+    "scheduledStart": "البداية المجدولة",
+    "scheduledEnd": "النهاية المجدولة",
+    "actualStart": "البداية الفعلية",
+    "actualEnd": "النهاية الفعلية",
+    "progress": "التقدم",
+    "estimatedHours": "الساعات المقدرة",
+    "actualHours": "الساعات الفعلية",
+    "attachments": "المرفقات",
+    "addAttachment": "إضافة مرفق",
+    "history": "السجل",
+    "noTasks": "لا توجد مهام",
+    "noAttachments": "لا توجد مرفقات",
+    "statuses": {
+      "pending": "قيد الانتظار",
+      "inProgress": "قيد التنفيذ",
+      "readyForReview": "جاهزة للمراجعة",
+      "revisionRequested": "مطلوب تعديل",
+      "approved": "معتمدة",
+      "rejected": "مرفوضة",
+      "onHold": "معلقة",
+      "cancelled": "ملغاة"
+    },
+    "priorities": {
+      "low": "منخفضة",
+      "normal": "عادية",
+      "high": "عالية",
+      "critical": "حرجة"
+    },
+    "actions": {
+      "start": "بدء المهمة",
+      "submitReview": "إرسال للمراجعة",
+      "approve": "اعتماد",
+      "reject": "رفض",
+      "requestRevision": "طلب تعديل",
+      "putOnHold": "تعليق",
+      "resume": "استئناف",
+      "cancel": "إلغاء",
+      "assign": "إسناد",
+      "reassign": "إعادة إسناد",
+      "delete": "حذف"
+    },
+    "preStart": {
+      "title": "تأكيد ما قبل البدء",
+      "confirm": "تأكيد ما قبل البدء",
+      "authorizeForcedStart": "السماح بالبدء القسري",
+      "confirmationRequired": "مطلوب تأكيد ما قبل البدء",
+      "materialsReady": "المواد جاهزة",
+      "equipmentReady": "المعدات جاهزة",
+      "workersAvailable": "العمال متاحون",
+      "notes": "ملاحظات التأكيد",
+      "forcedStartReason": "سبب البدء القسري"
+    },
+    "review": {
+      "title": "مراجعة المهمة",
+      "comments": "تعليقات المراجعة",
+      "revisionInstructions": "تعليمات التعديل",
+      "rejectionReason": "سبب الرفض",
+      "qualityRating": "تقييم الجودة",
+      "meetsQualityStandards": "يحقق معايير الجودة",
+      "meetsSafetyStandards": "يحقق معايير السلامة"
+    },
+    "filters": {
+      "all": "الكل",
+      "myTasks": "مهامي",
+      "overdue": "متأخرة",
+      "dueSoon": "مستحقة قريباً",
+      "stuck": "عالقة"
+    },
+    "messages": {
+      "taskCreated": "تم إنشاء المهمة بنجاح",
+      "taskUpdated": "تم تحديث المهمة بنجاح",
+      "taskDeleted": "تم حذف المهمة بنجاح",
+      "taskStarted": "تم بدء المهمة بنجاح",
+      "taskSubmitted": "تم إرسال المهمة للمراجعة",
+      "taskApproved": "تم اعتماد المهمة بنجاح",
+      "taskRejected": "تم رفض المهمة",
+      "revisionRequested": "تم طلب تعديل",
+      "taskOnHold": "تم تعليق المهمة",
+      "taskResumed": "تم استئناف المهمة",
+      "taskCancelled": "تم إلغاء المهمة",
+      "preStartConfirmed": "تم تأكيد ما قبل البدء",
+      "forcedStartAuthorized": "تم السماح بالبدء القسري",
+      "attachmentAdded": "تم إضافة المرفق بنجاح",
+      "attachmentDeleted": "تم حذف المرفق"
+    }
+  },
+  "escalations": {
+    "title": "التصعيدات",
+    "openEscalations": "التصعيدات المفتوحة",
+    "myEscalations": "تصعيداتي",
+    "createEscalation": "إنشاء تصعيد",
+    "escalationDetails": "تفاصيل التصعيد",
+    "escalationType": "النوع",
+    "severity": "الخطورة",
+    "status": "الحالة",
+    "reportedBy": "المُبلغ",
+    "assignedTo": "مسندة إلى",
+    "createdAt": "تاريخ الإنشاء",
+    "resolvedAt": "تاريخ الحل",
+    "resolutionNotes": "ملاحظات الحل",
+    "resolutionAction": "إجراء الحل",
+    "escalationLevel": "المستوى",
+    "noEscalations": "لا توجد تصعيدات",
+    "types": {
+      "preStartNotConfirmed": "لم يتم تأكيد ما قبل البدء",
+      "materialsNotReady": "المواد غير جاهزة",
+      "equipmentNotReady": "المعدات غير جاهزة",
+      "workersNotAvailable": "العمال غير متاحين",
+      "forcedStartAuthorized": "تم السماح بالبدء القسري",
+      "issueDuringExecution": "مشكلة أثناء التنفيذ",
+      "noStartToday": "لم يبدأ اليوم",
+      "delayPredicted": "متوقع تأخير",
+      "budgetExceeded": "تجاوز الميزانية",
+      "taskStuck": "مهمة عالقة",
+      "reviewPendingTooLong": "المراجعة معلقة لفترة طويلة"
+    },
+    "severities": {
+      "low": "منخفضة",
+      "medium": "متوسطة",
+      "high": "عالية",
+      "critical": "حرجة"
+    },
+    "statuses": {
+      "open": "مفتوح",
+      "inProgress": "قيد المعالجة",
+      "resolved": "تم الحل",
+      "closed": "مغلق",
+      "escalated": "تم تصعيده"
+    },
+    "actions": {
+      "acknowledge": "إقرار",
+      "assign": "إسناد",
+      "resolve": "حل",
+      "close": "إغلاق",
+      "escalate": "تصعيد",
+      "reopen": "إعادة فتح",
+      "scheduleFollowUp": "جدولة متابعة"
+    },
+    "messages": {
+      "escalationCreated": "تم إنشاء التصعيد",
+      "escalationAcknowledged": "تم إقرار التصعيد",
+      "escalationAssigned": "تم إسناد التصعيد",
+      "escalationResolved": "تم حل التصعيد",
+      "escalationClosed": "تم إغلاق التصعيد",
+      "escalationEscalated": "تم تصعيد إلى المستوى التالي"
+    }
+  },
+  "dailyBoard": {
+    "title": "لوحة المهام اليومية",
+    "today": "اليوم",
+    "itemsStartingToday": "عناصر تبدأ اليوم",
+    "itemsEndingToday": "عناصر تنتهي اليوم",
+    "itemsInProgress": "عناصر قيد التنفيذ",
+    "overdueItems": "عناصر متأخرة",
+    "tasksScheduled": "مهام مجدولة",
+    "requiresAttention": "تحتاج انتباه",
+    "noItemsToday": "لا توجد عناصر مجدولة لليوم",
+    "stats": {
+      "startingToday": "تبدأ اليوم",
+      "endingToday": "تنتهي اليوم",
+      "overdue": "متأخرة",
+      "notStarted": "لم تبدأ"
+    },
+    "entryTypes": {
+      "itemStartingToday": "عنصر يبدأ اليوم",
+      "itemInProgress": "عنصر قيد التنفيذ",
+      "itemEndingToday": "عنصر ينتهي اليوم",
+      "taskScheduled": "مهمة مجدولة",
+      "overdueItem": "عنصر متأخر",
+      "requiresAttention": "يحتاج انتباه"
+    },
+    "entryStatuses": {
+      "pending": "قيد الانتظار",
+      "readyToStart": "جاهز للبدء",
+      "inProgress": "قيد التنفيذ",
+      "completed": "مكتمل",
+      "delayed": "متأخر",
+      "notStarted": "لم يبدأ",
+      "cancelled": "ملغى"
+    }
+  },
+  "workflow": {
+    "title": "إعدادات سير العمل",
+    "preStartConfirmation": "تأكيد ما قبل البدء",
+    "noStartCheck": "فحص عدم البدء",
+    "delayPrediction": "التنبؤ بالتأخير",
+    "taskStuckDetection": "كشف المهام العالقة",
+    "reviewTimeout": "مهلة المراجعة",
+    "notifications": "الإشعارات",
+    "escalationSettings": "إعدادات التصعيد",
+    "qualitySettings": "إعدادات الجودة",
+    "settings": {
+      "enabled": "مفعّل",
+      "confirmationHours": "ساعات التأكيد قبل البدء",
+      "escalationHours": "ساعات التصعيد",
+      "allowForcedStart": "السماح بالبدء القسري",
+      "checkHour": "ساعة الفحص",
+      "predictionThreshold": "عتبة التنبؤ (%)",
+      "daysBeforeEnd": "أيام قبل النهاية",
+      "stuckDays": "أيام بدون تحديث",
+      "timeoutHours": "ساعات المهلة",
+      "autoEscalateHours": "ساعات التصعيد التلقائي",
+      "maxEscalationLevel": "أقصى مستوى تصعيد",
+      "requirePhotoEvidence": "مطالبة بأدلة صور",
+      "minimumPhotos": "الحد الأدنى للصور",
+      "requireBeforeAfter": "مطالبة بصور قبل/بعد",
+      "requireVideoEvidence": "مطالبة بأدلة فيديو",
+      "requireManagerApproval": "مطالبة بموافقة المدير"
+    },
+    "messages": {
+      "configurationSaved": "تم حفظ الإعدادات بنجاح",
+      "configurationReset": "تم إعادة الإعدادات للقيم الافتراضية"
+    }
+  }
+}
 }

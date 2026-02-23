@@ -18,5 +18,7 @@ public interface IFileStorageService
 {
     Task<string> UploadFileAsync(IFormFile file, string? folder = null);
     Task<FileStorageResult> SaveFileAsync(IFormFile file, string folder);
+    Task<string> SaveFileAsync(byte[] fileData, string folder, string fileName);
     Task DeleteFileAsync(string filePath);
+    Task<byte[]> GetFileAsync(string filePath);
 }

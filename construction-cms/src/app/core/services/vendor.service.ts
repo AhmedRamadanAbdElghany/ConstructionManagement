@@ -22,6 +22,8 @@ export interface Vendor {
     longitude?: number;
     isPublic: boolean;
     userId?: number;
+    isExternalVendor?: boolean;
+    externalVendorSource?: string;
 }
 
 export interface VendorProduct {
@@ -96,6 +98,108 @@ export interface VendorSearchRequest {
     longitude?: number;
     radiusKm?: number;
     projectId?: number;
+}
+
+// Feature 1: Vendor Dashboard Types
+export interface VendorWithStats {
+    id: number;
+    name: string;
+    phone?: string;
+    email?: string;
+    vendorType?: string;
+    isExternalVendor: boolean;
+    isActive: boolean;
+    totalInvoices: number;
+    totalAmount: number;
+    pendingAmount: number;
+    approvedAmount: number;
+    projectCount: number;
+    lastInvoiceDate?: string;
+    createdAt: string;
+}
+
+export interface VendorProject {
+    projectId: number;
+    projectName: string;
+    totalInvoices: number;
+    totalAmount: number;
+    pendingAmount: number;
+    approvedAmount: number;
+    lastInvoiceDate?: string;
+    firstInvoiceDate?: string;
+}
+
+export interface VendorDashboard {
+    totalVendors: number;
+    externalVendors: number;
+    registeredVendors: number;
+    totalSpend: number;
+    pendingApprovals: number;
+    topVendors: VendorWithStats[];
+    recentVendors: VendorWithStats[];
+}
+
+// Feature 2: Delivery Cost Tiers Types
+export interface DeliveryCostTier {
+    id: number;
+    vendorProductId: number;
+    productName: string;
+    minWeightKg: number;
+    maxWeightKg: number;
+    pricePerKm: number;
+    fixedFee: number;
+    isActive: boolean;
+    description?: string;
+    createdAt: string;
+}
+
+export interface CreateDeliveryCostTierRequest {
+    vendorProductId: number;
+    minWeightKg: number;
+    maxWeightKg: number;
+    pricePerKm: number;
+    fixedFee?: number;
+    description?: string;
+}
+
+export interface UpdateDeliveryCostTierRequest {
+    minWeightKg: number;
+    maxWeightKg: number;
+    pricePerKm: number;
+    fixedFee: number;
+    isActive: boolean;
+    description?: string;
+}
+
+export interface DeliveryCalculationRequest {
+    productId: number;
+    weightKg: number;
+    distanceKm: number;
+}
+
+export interface DeliveryCalculationResult {
+    productId: number;
+    productName: string;
+    weightKg: number;
+    distanceKm: number;
+    appliedTierId?: number;
+    appliedTierDescription?: string;
+    pricePerKm: number;
+    fixedFee: number;
+    distanceCost: number;
+    totalDeliveryCost: number;
+    isCalculated: boolean;
+    errorMessage?: string;
+}
+
+export interface BulkDeliveryCalculationRequest {
+    items: DeliveryCalculationRequest[];
+}
+
+export interface BulkDeliveryCalculationResult {
+    results: DeliveryCalculationResult[];
+    totalDeliveryCost: number;
+    allCalculated: boolean;
 }
 
 export interface PublicVendor extends Vendor {
@@ -341,5 +445,47 @@ export class VendorService {
 
     toggleVisibility(): Observable<Vendor> {
         return this.http.patch<Vendor>(`${this.baseUrl}/my-visibility`, {});
+    }
+
+    // Feature 1: Vendor Dashboard & Statistics
+    getVendorsWithStats(): Observable<VendorWithStats[]> {
+        return this.http.get<VendorWithStats[]>(`${this.baseUrl}/with-stats`);
+    }
+
+    getVendorDashboard(): Observable<VendorDashboard> {
+        return this.http.get<VendorDashboard>(`${this.baseUrl}/dashboard`);
+    }
+
+    getVendorProjects(vendorId: number): Observable<VendorProject[]> {
+        return this.http.get<VendorProject[]>(`${this.baseUrl}/${vendorId}/projects`);
+    }
+
+    getVendorBills(vendorId: number): Observable<VendorInvoice[]> {
+        return this.http.get<VendorInvoice[]>(`${this.baseUrl}/${vendorId}/bills`);
+    }
+
+    // Feature 2: Delivery Cost Tiers
+    getDeliveryCostTiers(productId: number): Observable<DeliveryCostTier[]> {
+        return this.http.get<DeliveryCostTier[]>(`${this.baseUrl}/products/${productId}/delivery-tiers`);
+    }
+
+    createDeliveryCostTier(productId: number, request: CreateDeliveryCostTierRequest): Observable<DeliveryCostTier> {
+        return this.http.post<DeliveryCostTier>(`${this.baseUrl}/products/${productId}/delivery-tiers`, request);
+    }
+
+    updateDeliveryCostTier(tierId: number, request: UpdateDeliveryCostTierRequest): Observable<DeliveryCostTier> {
+        return this.http.put<DeliveryCostTier>(`${this.baseUrl}/delivery-tiers/${tierId}`, request);
+    }
+
+    deleteDeliveryCostTier(tierId: number): Observable<void> {
+        return this.http.delete<void>(`${this.baseUrl}/delivery-tiers/${tierId}`);
+    }
+
+    calculateDeliveryCost(request: DeliveryCalculationRequest): Observable<DeliveryCalculationResult> {
+        return this.http.post<DeliveryCalculationResult>(`${this.baseUrl}/calculate-delivery`, request);
+    }
+
+    calculateBulkDeliveryCost(request: BulkDeliveryCalculationRequest): Observable<BulkDeliveryCalculationResult> {
+        return this.http.post<BulkDeliveryCalculationResult>(`${this.baseUrl}/calculate-delivery/bulk`, request);
     }
 }

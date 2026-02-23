@@ -8,6 +8,7 @@ import { MiscExpensesService, MiscExpenseDto, MiscExpenseSummary } from '../../.
 import { TransactionsService, TransactionDto } from '../../../core/services/transactions.service';
 import { InvoicesService, InvoiceDto } from '../../../core/services/invoices.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
+import { VendorService, VendorWithStats, VendorDashboard, VendorProject, VendorInvoice } from '../../../core/services/vendor.service';
 
 // Billing interface for platform subscription
 interface BillingInvoice {
@@ -125,6 +126,9 @@ interface BillingInvoice {
           </button>
           <button class="tab-btn" [class.active]="activeTab === 'billing'" (click)="activeTab = 'billing'">
             <span class="icon">&#128179;</span> {{ 'finance.tabs.billing' | translate }}
+          </button>
+          <button class="tab-btn" [class.active]="activeTab === 'vendors'" (click)="activeTab = 'vendors'">
+            <span class="icon">&#128188;</span> {{ 'finance.tabs.vendors' | translate }}
           </button>
         </div>
 
@@ -433,10 +437,161 @@ interface BillingInvoice {
                 </div>
               </div>
             }
+            @case ('vendors') {
+              <div class="vendors-section">
+                <!-- Vendor Dashboard Summary -->
+                @if (vendorDashboard()) {
+                  <div class="vendor-summary-cards">
+                    <div class="summary-card">
+                      <span class="summary-label">{{ 'finance.vendors.total_vendors' | translate }}</span>
+                      <span class="summary-value">{{ vendorDashboard()!.totalVendors }}</span>
+                    </div>
+                    <div class="summary-card">
+                      <span class="summary-label">{{ 'finance.vendors.total_spend' | translate }}</span>
+                      <span class="summary-value">{{ vendorDashboard()!.totalSpend | currency:'USD':'symbol':'1.0-0' }}</span>
+                    </div>
+                    <div class="summary-card warning">
+                      <span class="summary-label">{{ 'finance.vendors.pending_approvals' | translate }}</span>
+                      <span class="summary-value">{{ vendorDashboard()!.pendingApprovals | currency:'USD':'symbol':'1.0-0' }}</span>
+                    </div>
+                  </div>
+                }
+
+                <div class="section-header">
+                  <h2>{{ 'finance.tabs.vendors' | translate }}</h2>
+                </div>
+                <div class="data-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>{{ 'finance.vendors.name' | translate }}</th>
+                        <th>{{ 'finance.vendors.type' | translate }}</th>
+                        <th>{{ 'finance.vendors.total_invoices' | translate }}</th>
+                        <th>{{ 'finance.vendors.total_amount' | translate }}</th>
+                        <th>{{ 'finance.vendors.pending' | translate }}</th>
+                        <th>{{ 'finance.vendors.projects' | translate }}</th>
+                        <th>{{ 'common.actions' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (vendor of vendorsWithStats(); track vendor.id) {
+                        <tr [class.inactive]="!vendor.isActive">
+                          <td>
+                            <span class="vendor-name">{{ vendor.name }}</span>
+                            @if (vendor.isExternalVendor) {
+                              <span class="badge external">{{ 'finance.vendors.external' | translate }}</span>
+                            }
+                          </td>
+                          <td>{{ vendor.vendorType || '-' }}</td>
+                          <td>{{ vendor.totalInvoices }}</td>
+                          <td>{{ vendor.totalAmount | currency:'USD':'symbol':'1.0-0' }}</td>
+                          <td>
+                            @if (vendor.pendingAmount > 0) {
+                              <span class="status-badge pending">{{ vendor.pendingAmount | currency:'USD':'symbol':'1.0-0' }}</span>
+                            } @else {
+                              <span>-</span>
+                            }
+                          </td>
+                          <td>{{ vendor.projectCount }}</td>
+                          <td>
+                            <button class="btn-icon" (click)="viewVendorDetail(vendor)" title="{{ 'common.view' | translate }}">
+                              <span>&#128065;</span>
+                            </button>
+                          </td>
+                        </tr>
+                      } @empty {
+                        <tr>
+                          <td colspan="7" class="no-data">{{ 'finance.vendors.no_vendors' | translate }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            }
           }
         </div>
       }
     </div>
+
+    <!-- Vendor Detail Modal -->
+    @if (showVendorDetail() && selectedVendor()) {
+      <div class="modal-overlay" (click)="closeVendorDetail()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h2>{{ selectedVendor()!.name }}</h2>
+            <button class="btn-close" (click)="closeVendorDetail()">&#10006;</button>
+          </div>
+          <div class="modal-body">
+            <!-- Vendor Projects -->
+            <div class="detail-section">
+              <h3>{{ 'finance.vendors.projects' | translate }}</h3>
+              <div class="data-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>{{ 'finance.vendors.project_name' | translate }}</th>
+                      <th>{{ 'finance.vendors.invoices' | translate }}</th>
+                      <th>{{ 'finance.vendors.total' | translate }}</th>
+                      <th>{{ 'finance.vendors.last_invoice' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (project of vendorProjects(); track project.projectId) {
+                      <tr>
+                        <td>{{ project.projectName }}</td>
+                        <td>{{ project.totalInvoices }}</td>
+                        <td>{{ project.totalAmount | currency:'USD':'symbol':'1.0-0' }}</td>
+                        <td>{{ project.lastInvoiceDate | date:'shortDate' }}</td>
+                      </tr>
+                    } @empty {
+                      <tr>
+                        <td colspan="4" class="no-data">{{ 'finance.vendors.no_projects' | translate }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Vendor Bills -->
+            <div class="detail-section">
+              <h3>{{ 'finance.vendors.bills' | translate }}</h3>
+              <div class="data-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>{{ 'finance.vendors.invoice_number' | translate }}</th>
+                      <th>{{ 'finance.vendors.date' | translate }}</th>
+                      <th>{{ 'finance.vendors.amount' | translate }}</th>
+                      <th>{{ 'common.status' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (bill of vendorBills(); track bill.id) {
+                      <tr>
+                        <td>{{ bill.invoiceNumber }}</td>
+                        <td>{{ bill.invoiceDate | date:'shortDate' }}</td>
+                        <td>{{ bill.amount | currency:'USD':'symbol':'1.0-0' }}</td>
+                        <td>
+                          <span class="status-badge" [class.pending]="bill.approvalStatus === 'Pending'" [class.approved]="bill.approvalStatus === 'Approved'" [class.rejected]="bill.approvalStatus === 'Rejected'">
+                            {{ bill.approvalStatus }}
+                          </span>
+                        </td>
+                      </tr>
+                    } @empty {
+                      <tr>
+                        <td colspan="4" class="no-data">{{ 'finance.vendors.no_bills' | translate }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
   `,
   styles: [`
     .finance-container {
@@ -846,6 +1001,134 @@ interface BillingInvoice {
       color: #6b7280;
       font-style: italic;
     }
+
+    /* Vendor Styles */
+    .vendor-summary-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .summary-card {
+      background: white;
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border-left: 4px solid #3b82f6;
+    }
+
+    .summary-card.warning {
+      border-left-color: #f59e0b;
+    }
+
+    .summary-label {
+      display: block;
+      font-size: 0.75rem;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .summary-value {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .vendor-name {
+      font-weight: 600;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.625rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-left: 0.5rem;
+    }
+
+    .badge.external {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    tr.inactive {
+      opacity: 0.5;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 1rem;
+      width: 100%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .modal-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin: 0;
+    }
+
+    .btn-close {
+      background: transparent;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: #6b7280;
+      padding: 0.25rem;
+    }
+
+    .btn-close:hover {
+      color: #1f2937;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .detail-section {
+      margin-bottom: 2rem;
+    }
+
+    .detail-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .detail-section h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #374151;
+      margin: 0 0 1rem 0;
+    }
   `]
 })
 export class FinanceComponent implements OnInit {
@@ -853,10 +1136,11 @@ export class FinanceComponent implements OnInit {
   private miscExpensesService = inject(MiscExpensesService);
   private transactionsService = inject(TransactionsService);
   private invoicesService = inject(InvoicesService);
+  private vendorService = inject(VendorService);
   private destroy$ = new Subject<void>();
 
   isLoading = signal(true);
-  activeTab: 'vouchers' | 'expenses' | 'transactions' | 'invoices' | 'billing' = 'vouchers';
+  activeTab: 'vouchers' | 'expenses' | 'transactions' | 'invoices' | 'billing' | 'vendors' = 'vouchers';
   selectedProjectId = signal<number | null>(null);
 
   cashVouchers = signal<CashVoucherDto[]>([]);
@@ -865,6 +1149,14 @@ export class FinanceComponent implements OnInit {
   miscExpenseSummary = signal<MiscExpenseSummary | null>(null);
   transactions = signal<TransactionDto[]>([]);
   invoices = signal<InvoiceDto[]>([]);
+
+  // Vendor signals
+  vendorsWithStats = signal<VendorWithStats[]>([]);
+  vendorDashboard = signal<VendorDashboard | null>(null);
+  selectedVendor = signal<VendorWithStats | null>(null);
+  vendorProjects = signal<VendorProject[]>([]);
+  vendorBills = signal<VendorInvoice[]>([]);
+  showVendorDetail = signal(false);
 
   pendingTransactions = computed(() => this.transactions().filter(t => t.status === 'Pending').length);
   pendingInvoices = computed(() => this.invoices().filter(i => i.status === 'Pending').length);
@@ -930,7 +1222,24 @@ export class FinanceComponent implements OnInit {
         this.invoices.set(result.items as any[]);
       });
 
+    // Load vendor data
+    this.loadVendorData();
+
     this.isLoading.set(false);
+  }
+
+  loadVendorData(): void {
+    this.vendorService.getVendorsWithStats()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(vendors => {
+        this.vendorsWithStats.set(vendors);
+      });
+
+    this.vendorService.getVendorDashboard()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(dashboard => {
+        this.vendorDashboard.set(dashboard);
+      });
   }
 
   loadCashVoucherSummary(): void {
@@ -1067,5 +1376,32 @@ export class FinanceComponent implements OnInit {
   viewInvoiceDetails(invoice: BillingInvoice): void {
     console.log('Viewing billing invoice:', invoice);
     // TODO: Open invoice PDF or details modal
+  }
+
+  // Vendor Actions
+  viewVendorDetail(vendor: VendorWithStats): void {
+    this.selectedVendor.set(vendor);
+    this.showVendorDetail.set(true);
+
+    // Load vendor projects
+    this.vendorService.getVendorProjects(vendor.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(projects => {
+        this.vendorProjects.set(projects);
+      });
+
+    // Load vendor bills
+    this.vendorService.getVendorBills(vendor.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(bills => {
+        this.vendorBills.set(bills);
+      });
+  }
+
+  closeVendorDetail(): void {
+    this.showVendorDetail.set(false);
+    this.selectedVendor.set(null);
+    this.vendorProjects.set([]);
+    this.vendorBills.set([]);
   }
 }

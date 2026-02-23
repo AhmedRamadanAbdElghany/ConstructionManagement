@@ -22,6 +22,7 @@ public class CompanyRequestService : ICompanyRequestService
     private readonly IRepository<Role> _roleRepository;
     private readonly IRepository<RolePermission> _rolePermissionRepository;
     private readonly IRepository<UserRole> _userRoleRepository;
+    private readonly IRepository<Vendor> _vendorRepository;
     private readonly IUnitOfWork _uow;
 
     public CompanyRequestService(
@@ -35,6 +36,7 @@ public class CompanyRequestService : ICompanyRequestService
         IRepository<Role> roleRepository,
         IRepository<RolePermission> rolePermissionRepository,
         IRepository<UserRole> userRoleRepository,
+        IRepository<Vendor> vendorRepository,
         IUnitOfWork uow)
     {
         _companyRequestRepository = companyRequestRepository;
@@ -47,6 +49,7 @@ public class CompanyRequestService : ICompanyRequestService
         _roleRepository = roleRepository;
         _rolePermissionRepository = rolePermissionRepository;
         _userRoleRepository = userRoleRepository;
+        _vendorRepository = vendorRepository;
         _uow = uow;
     }
 
@@ -67,6 +70,7 @@ public class CompanyRequestService : ICompanyRequestService
         {
             UserId = userId.Value,
             CompanyName = dto.CompanyName,
+            CompanyType = dto.CompanyType,
             BusinessId = dto.BusinessId,
             ContactEmail = dto.ContactEmail,
             ContactPhone = dto.ContactPhone,
@@ -138,6 +142,7 @@ public class CompanyRequestService : ICompanyRequestService
         var company = new Company
         {
             Name = request.CompanyName,
+            Type = request.CompanyType, // Set company type from request
             BusinessId = request.BusinessId,
             ContactEmail = request.ContactEmail ?? request.User?.Email ?? "",
             ContactPhone = request.ContactPhone,
@@ -224,7 +229,16 @@ public class CompanyRequestService : ICompanyRequestService
         if (user != null)
         {
             user.CompanyId = company.Id;
-            user.UserType = Domain.Enums.UserType.CompanyOwner;
+            
+            // Set user type based on company type
+            if (request.CompanyType == CompanyType.Warehouse)
+            {
+                user.UserType = Domain.Enums.UserType.InventoryOwner;
+            }
+            else
+            {
+                user.UserType = Domain.Enums.UserType.CompanyOwner;
+            }
 
             // IMPORTANT: Do NOT call user.UserRoles.Clear() — that wipes ALL existing roles
             // (including SuperAdmin, roles from other companies, etc.).
@@ -243,6 +257,25 @@ public class CompanyRequestService : ICompanyRequestService
                 });
             }
             await _userRepository.UpdateAsync(user);
+            
+            // Create Vendor record for Warehouse type
+            if (request.CompanyType == CompanyType.Warehouse)
+            {
+                var vendor = new Vendor
+                {
+                    CompanyId = company.Id,
+                    Name = company.Name,
+                    Phone = company.ContactPhone,
+                    Email = company.ContactEmail,
+                    Address = company.Address,
+                    UserId = user.Id, // Link vendor to the warehouse owner
+                    IsActive = true,
+                    IsPublic = true, // Make visible in marketplace
+                    Latitude = company.Latitude,
+                    Longitude = company.Longitude
+                };
+                await _vendorRepository.AddAsync(vendor);
+            }
         }
 
         // Update request status
@@ -381,6 +414,7 @@ public class CompanyRequestService : ICompanyRequestService
             UserFullName = request.User?.FullName ?? string.Empty,
             UserEmail = request.User?.Email ?? string.Empty,
             CompanyName = request.CompanyName,
+            CompanyType = request.CompanyType,
             BusinessId = request.BusinessId,
             ContactEmail = request.ContactEmail,
             ContactPhone = request.ContactPhone,

@@ -203,3 +203,43 @@ public class PortfolioCategoryDto
     public string? Description { get; set; }
     public int ItemCount { get; set; }
 }
+
+/// <summary>
+/// Request to search messages
+/// </summary>
+public class MessageSearchRequest
+{
+    public string SearchTerm { get; set; } = string.Empty;
+    public int? ConversationId { get; set; }
+    public DateTime? FromDate { get; set; }
+    public DateTime? ToDate { get; set; }
+    public bool? HasAttachments { get; set; }
+    public int Page { get; set; } = 1;
+    public int PageSize { get; set; } = 20;
+}
+
+/// <summary>
+/// Search result for messages
+/// </summary>
+public class MessageSearchResultDto
+{
+    public int MessageId { get; set; }
+    public int ConversationId { get; set; }
+    public string ConversationTitle { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
+    
+    /// <summary>
+    /// Highlighted content snippet with search term highlighted
+    /// </summary>
+    public string ContentSnippet { get; set; } = string.Empty;
+    
+    public int SenderId { get; set; }
+    public string SenderName { get; set; } = string.Empty;
+    public string? SenderAvatar { get; set; }
+    public bool IsFromCompany { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public string CompanyName { get; set; } = string.Empty;
+    public int CompanyId { get; set; }
+    public bool HasAttachments { get; set; }
+    public List<MessageAttachmentDto> Attachments { get; set; } = new();
+}

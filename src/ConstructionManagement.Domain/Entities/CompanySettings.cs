@@ -426,5 +426,83 @@ public class CompanySettings : BaseEntity, ICompanyEntity
     
     public bool EnableAnalyticsReporting { get; set; } = true;
 
+    // ============================================
+    // PAYMENT GATEWAY SETTINGS
+    // (For online payment processing)
+    // ============================================
+    
+    /// <summary>
+    /// Enable online payment processing
+    /// </summary>
+    public bool EnableOnlinePayments { get; set; } = false;
+    
+    /// <summary>
+    /// Enable Stripe payment gateway
+    /// </summary>
+    public bool EnableStripe { get; set; } = false;
+    
+    /// <summary>
+    /// Enable PayPal payment gateway
+    /// </summary>
+    public bool EnablePayPal { get; set; } = false;
+    
+    /// <summary>
+    /// Enable bank transfer payments
+    /// </summary>
+    public bool EnableBankTransfer { get; set; } = true;
+    
+    /// <summary>
+    /// Stripe public key (for frontend - not sensitive, can be stored in plain text)
+    /// </summary>
+    public string? StripePublicKey { get; set; }
+    
+    /// <summary>
+    /// Stripe secret key - ENCRYPTED storage. Use ISensitiveDataProtectionService to encrypt/decrypt.
+    /// This field stores the encrypted value. Never store plain text API secrets.
+    /// </summary>
+    public string? StripeSecretKeyEncrypted { get; set; }
+    
+    /// <summary>
+    /// PayPal client ID (not sensitive, can be stored in plain text)
+    /// </summary>
+    public string? PayPalClientId { get; set; }
+    
+    /// <summary>
+    /// PayPal client secret - ENCRYPTED storage. Use ISensitiveDataProtectionService to encrypt/decrypt.
+    /// This field stores the encrypted value. Never store plain text API secrets.
+    /// </summary>
+    public string? PayPalClientSecretEncrypted { get; set; }
+    
+    // Legacy properties for backward compatibility - these map to the encrypted versions
+    // and will be removed in a future version. Use the *Encrypted properties directly.
+    [Obsolete("Use StripeSecretKeyEncrypted instead. This property is for migration only.")]
+    public string? StripeSecretKey 
+    { 
+        get => StripeSecretKeyEncrypted; 
+        set => StripeSecretKeyEncrypted = value; 
+    }
+    
+    [Obsolete("Use PayPalClientSecretEncrypted instead. This property is for migration only.")]
+    public string? PayPalClientSecret 
+    { 
+        get => PayPalClientSecretEncrypted; 
+        set => PayPalClientSecretEncrypted = value; 
+    }
+    
+    /// <summary>
+    /// Default currency for payments
+    /// </summary>
+    public string Currency { get; set; } = "USD";
+    
+    /// <summary>
+    /// Minimum payment amount allowed
+    /// </summary>
+    public decimal MinimumPaymentAmount { get; set; } = 1;
+    
+    /// <summary>
+    /// Require approval for recorded payments
+    /// </summary>
+    public bool RequirePaymentApproval { get; set; } = false;
+
     // You can add more global defaults here later
 }

@@ -26,12 +26,16 @@ public interface IDesignService
     Task UpdateCategoryAsync(int categoryId, UpdateCategoryRequest request);
     Task DeleteCategoryAsync(int categoryId);
     
-    // Template operations
+    // Template operations (Company Default Designs)
     Task<IEnumerable<DesignCategoryDto>> GetCompanyDesignTemplatesAsync(int companyId);
     Task<int> CreateTemplateCategoryAsync(CreateCategoryRequest request);
     Task UpdateTemplateCategoryAsync(int categoryId, UpdateCategoryRequest request);
     Task DeleteTemplateCategoryAsync(int categoryId);
+    Task<int> CreateDefaultDesignAsync(int companyId, CreateDefaultDesignRequest request);
+    Task UpdateDefaultDesignAsync(int designId, UpdateDefaultDesignRequest request);
+    Task DeleteDefaultDesignAsync(int designId);
     Task ImportDesignTemplateAsync(int templateId, int targetProjectId);
+    Task CloneAllDefaultDesignsToProjectAsync(int companyId, int projectId);
     Task ClearProjectCategoriesAsync(int projectId);
 }
 

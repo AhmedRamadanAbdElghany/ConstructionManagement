@@ -99,6 +99,40 @@ public class LocalFileStorageService : IFileStorageService
         };
     }
 
+    public async Task<string> SaveFileAsync(byte[] fileData, string folder, string fileName)
+    {
+        if (fileData == null || fileData.Length == 0)
+            throw new ArgumentException("No file data provided or data is empty");
+
+        if (fileData.Length > MaxFileSize)
+            throw new ArgumentException($"File size exceeds maximum allowed ({MaxFileSize / 1024 / 1024} MB)");
+
+        var extension = Path.GetExtension(fileName).ToLowerInvariant();
+        var allowedExtensions = new HashSet<string> { ".jpg", ".jpeg", ".png", ".gif", ".mp4", ".mov", ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".dwg", ".dxf", ".m4a", ".mp3", ".wav", ".txt" };
+
+        if (!allowedExtensions.Contains(extension))
+            throw new ArgumentException($"File type '{extension}' is not supported");
+
+        var safeFolder = string.IsNullOrEmpty(folder)
+            ? "general"
+            : string.Concat(folder.Split(Path.GetInvalidFileNameChars())).Replace(" ", "_");
+
+        var targetDirectory = Path.Combine(_rootPath, safeFolder);
+
+        if (!Directory.Exists(targetDirectory))
+            Directory.CreateDirectory(targetDirectory);
+
+        var uniqueFileName = $"{Guid.NewGuid()}_{DateTime.UtcNow:yyyyMMddHHmmss}{extension}";
+        var fullPath = Path.Combine(targetDirectory, uniqueFileName);
+
+        using (var stream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, useAsync: true))
+        {
+            await stream.WriteAsync(fileData, 0, fileData.Length);
+        }
+
+        return $"/uploads/{safeFolder}/{uniqueFileName}";
+    }
+
 
     public Task DeleteFileAsync(string filePath)
     {
@@ -112,5 +146,19 @@ public class LocalFileStorageService : IFileStorageService
             File.Delete(physicalPath);
         }
         return Task.CompletedTask;
+    }
+
+    public async Task<byte[]> GetFileAsync(string filePath)
+    {
+        if (string.IsNullOrEmpty(filePath))
+            throw new ArgumentException("File path is required");
+
+        // تحويل المسار النسبي إلى مسار فيزيائي
+        var physicalPath = Path.Combine(_rootPath, "..", filePath.TrimStart('/'));
+
+        if (!File.Exists(physicalPath))
+            throw new FileNotFoundException("File not found", physicalPath);
+
+        return await File.ReadAllBytesAsync(physicalPath);
     }
 }

@@ -221,5 +221,53 @@ public class DesignsController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Clone all company default designs to a project
+    /// </summary>
+    [HttpPost("api/companies/{companyId}/projects/{projectId}/designs/clone-defaults")]
+    [Authorize(Policy = "CanAddDesign")]
+    public async Task<IActionResult> CloneAllDefaultDesigns(int companyId, int projectId)
+    {
+        await _designService.CloneAllDefaultDesignsToProjectAsync(companyId, projectId);
+        return NoContent();
+    }
+
+    #endregion
+
+    #region Default Design Template Operations
+
+    /// <summary>
+    /// Create a new default design template
+    /// </summary>
+    [HttpPost("api/companies/{companyId}/default-designs")]
+    [Authorize(Policy = "CanManageUsers")]
+    public async Task<IActionResult> CreateDefaultDesign(int companyId, [FromForm] CreateDefaultDesignRequest request)
+    {
+        var designId = await _designService.CreateDefaultDesignAsync(companyId, request);
+        return Ok(new { id = designId });
+    }
+
+    /// <summary>
+    /// Update a default design template
+    /// </summary>
+    [HttpPut("api/default-designs/{designId}")]
+    [Authorize(Policy = "CanManageUsers")]
+    public async Task<IActionResult> UpdateDefaultDesign(int designId, [FromForm] UpdateDefaultDesignRequest request)
+    {
+        await _designService.UpdateDefaultDesignAsync(designId, request);
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Delete a default design template
+    /// </summary>
+    [HttpDelete("api/default-designs/{designId}")]
+    [Authorize(Policy = "CanManageUsers")]
+    public async Task<IActionResult> DeleteDefaultDesign(int designId)
+    {
+        await _designService.DeleteDefaultDesignAsync(designId);
+        return NoContent();
+    }
+
     #endregion
 }

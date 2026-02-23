@@ -11,10 +11,16 @@ namespace ConstructionManagement.Domain.Entities
         [ForeignKey(nameof(CompanyId))]
         public virtual Company Company { get; set; } = null!;
 
-        // Vendor reference
-        public int VendorId { get; set; }
+        // Vendor reference (nullable to support external/ad-hoc vendors)
+        public int? VendorId { get; set; }
         [ForeignKey(nameof(VendorId))]
-        public virtual Vendor Vendor { get; set; } = null!;
+        public virtual Vendor? Vendor { get; set; }
+
+        /// <summary>
+        /// External vendor name for one-time vendors not in the system
+        /// Used when VendorId is null
+        /// </summary>
+        public string? ExternalVendorName { get; set; }
 
         // Invoice details
         public string InvoiceNumber { get; set; } = string.Empty;

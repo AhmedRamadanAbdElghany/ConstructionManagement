@@ -23,6 +23,7 @@ public class VendorService : IVendorService
     private readonly IActivityLogService _activityLogService;
 
     private readonly IRepository<VendorProduct> _productRepository;
+    private readonly IRepository<DeliveryCostTier> _deliveryTierRepository;
 
     public VendorService(
         IRepository<Vendor> vendorRepository,
@@ -34,6 +35,7 @@ public class VendorService : IVendorService
         IFileStorageService fileStorageService,
         IUnitOfWork unitOfWork,
         IActivityLogService activityLogService,
+        IRepository<DeliveryCostTier> deliveryTierRepository,
         INotificationService? notificationService = null,
         ICompanyContext companyContext = null!)
     {
@@ -46,6 +48,7 @@ public class VendorService : IVendorService
         _fileStorageService = fileStorageService;
         _unitOfWork = unitOfWork;
         _activityLogService = activityLogService;
+        _deliveryTierRepository = deliveryTierRepository;
         _notificationService = notificationService;
         _companyContext = companyContext;
     }
@@ -223,7 +226,7 @@ public class VendorService : IVendorService
         if ((request.VendorId == null || request.VendorId == 0) && !string.IsNullOrEmpty(request.NewVendorName))
         {
              var existingShadow = await _vendorRepository.AsQueryable()
-                .FirstOrDefaultAsync(v => v.Name == request.NewVendorName && v.IsPublic == false);
+                .FirstOrDefaultAsync(v => v.Name == request.NewVendorName && v.IsExternalVendor);
 
              if (existingShadow != null)
              {
@@ -236,8 +239,10 @@ public class VendorService : IVendorService
                      Name = request.NewVendorName,
                      IsPublic = false,
                      IsActive = true,
-                     VendorType = "Shadow", // Or "Supplier"
-                     CompanyId = null,
+                     IsExternalVendor = true,
+                     ExternalVendorSource = "InvoiceUpload",
+                     VendorType = "External",
+                     CompanyId = _companyContext?.CompanyId,
                      CreatedAt = DateTime.UtcNow
                  };
                  await _vendorRepository.AddAsync(newVendor);
@@ -312,14 +317,20 @@ public class VendorService : IVendorService
             Id = p.Id,
             VendorId = p.VendorId,
             Name = p.Name,
-            Category = p.Category,
+            CategoryId = p.CategoryId,
+            CategoryName = p.Category != null ? p.Category.Name : p.CategoryLegacy,
             Price = p.Price,
             Unit = p.Unit,
             Description = p.Description,
             QuantityInStock = p.QuantityInStock,
             LowStockThreshold = p.LowStockThreshold,
             PurchasePrice = p.PurchasePrice,
-            IsActive = p.IsActive
+            IsActive = p.IsActive,
+            ImageUrl = p.ImageUrl,
+            SKU = p.SKU,
+            SalesCount = p.SalesCount,
+            AverageRating = p.AverageRating,
+            TotalReviews = p.TotalReviews
         });
     }
 
@@ -333,13 +344,15 @@ public class VendorService : IVendorService
             VendorId = vendorId,
             CompanyId = vendor.CompanyId,
             Name = request.Name,
-            Category = request.Category,
+            CategoryId = request.CategoryId,
             Price = request.Price,
             Unit = request.Unit,
             Description = request.Description,
             QuantityInStock = request.QuantityInStock,
             LowStockThreshold = request.LowStockThreshold,
             PurchasePrice = request.PurchasePrice,
+            ImageUrl = request.ImageUrl,
+            SKU = request.SKU,
             IsActive = true
         };
 
@@ -369,13 +382,16 @@ public class VendorService : IVendorService
             Id = product.Id,
             VendorId = product.VendorId,
             Name = product.Name,
-            Category = product.Category,
+            CategoryId = product.CategoryId,
+            CategoryName = product.Category?.Name,
             Price = product.Price,
             Unit = product.Unit,
             Description = product.Description,
             QuantityInStock = product.QuantityInStock,
             LowStockThreshold = product.LowStockThreshold,
             PurchasePrice = product.PurchasePrice,
+            ImageUrl = product.ImageUrl,
+            SKU = product.SKU,
             IsActive = product.IsActive
         };
     }
@@ -386,13 +402,15 @@ public class VendorService : IVendorService
         if (product == null) throw new KeyNotFoundException("Product not found");
 
         product.Name = request.Name;
-        product.Category = request.Category;
+        product.CategoryId = request.CategoryId;
         product.Price = request.Price;
         product.Unit = request.Unit;
         product.Description = request.Description;
         product.LowStockThreshold = request.LowStockThreshold;
         product.PurchasePrice = request.PurchasePrice;
         product.QuantityInStock = request.QuantityInStock;
+        product.ImageUrl = request.ImageUrl;
+        product.SKU = request.SKU;
         product.IsActive = request.IsActive;
         
         await _unitOfWork.SaveChangesAsync();
@@ -402,13 +420,16 @@ public class VendorService : IVendorService
             Id = product.Id,
             VendorId = product.VendorId,
             Name = product.Name,
-            Category = product.Category,
+            CategoryId = product.CategoryId,
+            CategoryName = product.Category?.Name,
             Price = product.Price,
             Unit = product.Unit,
             Description = product.Description,
             QuantityInStock = product.QuantityInStock,
             LowStockThreshold = product.LowStockThreshold,
             PurchasePrice = product.PurchasePrice,
+            ImageUrl = product.ImageUrl,
+            SKU = product.SKU,
             IsActive = product.IsActive
         };
     }
@@ -594,7 +615,8 @@ public class VendorService : IVendorService
                         Id = p.Id,
                         VendorId = p.VendorId,
                         Name = p.Name,
-                        Category = p.Category,
+                        CategoryId = p.CategoryId,
+                        CategoryName = p.Category != null ? p.Category.Name : p.CategoryLegacy,
                         Price = p.Price,
                         Unit = p.Unit,
                         Description = p.Description,
@@ -602,7 +624,7 @@ public class VendorService : IVendorService
                         LowStockThreshold = p.LowStockThreshold,
                         PurchasePrice = p.PurchasePrice,
                         IsActive = p.IsActive,
-                        SalesCount = 0 // For now simpler
+                        SalesCount = p.SalesCount
                     })
                     .Take(5)
                     .ToList()
@@ -632,7 +654,8 @@ public class VendorService : IVendorService
                     Id = p.Id,
                     VendorId = p.VendorId,
                     Name = p.Name,
-                    Category = p.Category,
+                    CategoryId = p.CategoryId,
+                    CategoryName = p.Category != null ? p.Category.Name : p.CategoryLegacy,
                     Price = p.Price,
                     Unit = p.Unit,
                     Description = p.Description,
@@ -640,7 +663,7 @@ public class VendorService : IVendorService
                     LowStockThreshold = p.LowStockThreshold,
                     PurchasePrice = p.PurchasePrice,
                     IsActive = p.IsActive,
-                    SalesCount = 0 // For now simpler
+                    SalesCount = p.SalesCount
                 })
                 .Take(5)
                 .ToList()
@@ -702,7 +725,9 @@ public class VendorService : IVendorService
         {
             Id = invoice.Id,
             VendorId = invoice.VendorId,
-            VendorName = invoice.Vendor?.Name ?? string.Empty,
+            VendorName = invoice.Vendor?.Name ?? invoice.ExternalVendorName ?? string.Empty,
+            ExternalVendorName = invoice.ExternalVendorName,
+            IsExternalVendor = invoice.Vendor?.IsExternalVendor ?? !invoice.VendorId.HasValue,
             InvoiceNumber = invoice.InvoiceNumber,
             InvoiceDate = invoice.InvoiceDate,
             Amount = invoice.Amount,
@@ -781,4 +806,544 @@ public class VendorService : IVendorService
         await _unitOfWork.SaveChangesAsync();
         return await GetVendorByIdAsync(vendor.Id) ?? throw new Exception("Error reloading vendor");
     }
+
+    #region Marketplace Features
+
+    public async Task<(IEnumerable<VendorProductDto> Products, int TotalCount)> SearchProductsAsync(
+        int? categoryId, string? searchTerm, decimal? minPrice, decimal? maxPrice,
+        int? vendorId, string? sortBy, int page, int pageSize)
+    {
+        var query = _productRepository.AsQueryable()
+            .Include(p => p.Category)
+            .Include(p => p.Vendor)
+            .Where(p => p.IsActive && p.Vendor.IsActive && (p.Vendor.IsPublic || p.Vendor.Products.Any()));
+
+        // Apply filters
+        if (categoryId.HasValue)
+        {
+            query = query.Where(p => p.CategoryId == categoryId.Value);
+        }
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            query = query.Where(p => p.Name.Contains(searchTerm) ||
+                (p.Description != null && p.Description.Contains(searchTerm)) ||
+                (p.SKU != null && p.SKU.Contains(searchTerm)));
+        }
+
+        if (minPrice.HasValue)
+        {
+            query = query.Where(p => p.Price >= minPrice.Value);
+        }
+
+        if (maxPrice.HasValue)
+        {
+            query = query.Where(p => p.Price <= maxPrice.Value);
+        }
+
+        if (vendorId.HasValue)
+        {
+            query = query.Where(p => p.VendorId == vendorId.Value);
+        }
+
+        // Get total count before pagination
+        var totalCount = await query.CountAsync();
+
+        // Apply sorting
+        query = sortBy?.ToLower() switch
+        {
+            "price_asc" => query.OrderBy(p => p.Price),
+            "price_desc" => query.OrderByDescending(p => p.Price),
+            "name" => query.OrderBy(p => p.Name),
+            "popular" => query.OrderByDescending(p => p.SalesCount),
+            "rating" => query.OrderByDescending(p => p.AverageRating),
+            _ => query.OrderByDescending(p => p.SalesCount) // relevance = popularity by default
+        };
+
+        // Apply pagination
+        var products = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        var productDtos = products.Select(p => new VendorProductDto
+        {
+            Id = p.Id,
+            VendorId = p.VendorId,
+            Name = p.Name,
+            CategoryId = p.CategoryId,
+            CategoryName = p.Category?.Name,
+            Price = p.Price,
+            Unit = p.Unit,
+            Description = p.Description,
+            QuantityInStock = p.QuantityInStock,
+            LowStockThreshold = p.LowStockThreshold,
+            PurchasePrice = p.PurchasePrice,
+            IsActive = p.IsActive,
+            SalesCount = p.SalesCount,
+            ImageUrl = p.ImageUrl,
+            SKU = p.SKU,
+            AverageRating = p.AverageRating,
+            TotalReviews = p.TotalReviews
+        });
+
+        return (productDtos, totalCount);
+    }
+
+    public async Task<VendorProductDetailDto?> GetProductByIdAsync(int productId)
+    {
+        var product = await _productRepository.AsQueryable()
+            .Include(p => p.Category)
+            .Include(p => p.Vendor)
+            .FirstOrDefaultAsync(p => p.Id == productId && p.IsActive);
+
+        if (product == null) return null;
+
+        return new VendorProductDetailDto
+        {
+            Id = product.Id,
+            VendorId = product.VendorId,
+            VendorName = product.Vendor?.Name ?? string.Empty,
+            Name = product.Name,
+            CategoryId = product.CategoryId,
+            CategoryName = product.Category?.Name,
+            Price = product.Price,
+            Unit = product.Unit,
+            Description = product.Description,
+            QuantityInStock = product.QuantityInStock,
+            LowStockThreshold = product.LowStockThreshold,
+            PurchasePrice = product.PurchasePrice,
+            IsActive = product.IsActive,
+            SalesCount = product.SalesCount,
+            ImageUrl = product.ImageUrl,
+            SKU = product.SKU,
+            AverageRating = product.AverageRating,
+            TotalReviews = product.TotalReviews,
+            VendorLatitude = product.Vendor?.Latitude,
+            VendorLongitude = product.Vendor?.Longitude,
+            VendorAddress = product.Vendor?.Address
+        };
+    }
+
+    public async Task<(IEnumerable<VendorProductDto> Products, int TotalCount)> GetProductsByCategoryAsync(
+        int categoryId, int page, int pageSize)
+    {
+        return await SearchProductsAsync(categoryId, null, null, null, null, null, page, pageSize);
+    }
+
+    public async Task<IEnumerable<NearbyVendorDto>> GetNearbyVendorsAsync(
+        double latitude, double longitude, double radiusKm, int? categoryId)
+    {
+        var query = _vendorRepository.AsQueryable()
+            .Include(v => v.Products)
+                .ThenInclude(p => p.Category)
+            .Where(v => v.IsActive && (v.IsPublic || v.Products.Any(p => p.IsActive)));
+
+        var vendors = await query.ToListAsync();
+
+        // Filter by category if specified
+        if (categoryId.HasValue)
+        {
+            vendors = vendors.Where(v => v.Products.Any(p => p.CategoryId == categoryId.Value && p.IsActive)).ToList();
+        }
+
+        // Calculate distance and filter by radius
+        var nearbyVendors = vendors
+            .Where(v => v.Latitude.HasValue && v.Longitude.HasValue)
+            .Select(v => new NearbyVendorDto
+            {
+                VendorId = v.Id,
+                CompanyName = v.Name,
+                Description = v.Notes,
+                Address = v.Address,
+                Latitude = v.Latitude!.Value,
+                Longitude = v.Longitude!.Value,
+                DistanceKm = CalculateDistance(latitude, longitude, v.Latitude.Value, v.Longitude.Value),
+                AverageRating = (double)(v.Products.Average(p => p.AverageRating ?? 0)),
+                TotalReviews = v.Products.Sum(p => p.TotalReviews),
+                TotalOrders = v.Products.Sum(p => p.SalesCount),
+                ProductCount = v.Products.Count(p => p.IsActive),
+                CategoryIds = v.Products.Where(p => p.CategoryId.HasValue).Select(p => p.CategoryId!.Value).Distinct().ToList()
+            })
+            .Where(v => v.DistanceKm <= radiusKm)
+            .OrderBy(v => v.DistanceKm)
+            .ToList();
+
+        return nearbyVendors;
+    }
+
+    public async Task<VendorProfileDto?> GetVendorProfileAsync(int vendorId)
+    {
+        var vendor = await _vendorRepository.AsQueryable()
+            .Include(v => v.Products)
+                .ThenInclude(p => p.Category)
+            .FirstOrDefaultAsync(v => v.Id == vendorId && v.IsActive);
+
+        if (vendor == null) return null;
+
+        return new VendorProfileDto
+        {
+            Id = vendor.Id,
+            CompanyName = vendor.Name,
+            Description = vendor.Notes,
+            Address = vendor.Address,
+            Phone = vendor.Phone,
+            Email = vendor.Email,
+            Latitude = vendor.Latitude,
+            Longitude = vendor.Longitude,
+            AverageRating = (double)(vendor.Products.Any() ? vendor.Products.Average(p => p.AverageRating ?? 0) : 0),
+            TotalReviews = vendor.Products.Sum(p => p.TotalReviews),
+            TotalOrders = vendor.Products.Sum(p => p.SalesCount),
+            ProductCount = vendor.Products.Count(p => p.IsActive),
+            CreatedAt = vendor.CreatedAt
+        };
+    }
+
+    public async Task<(IEnumerable<VendorProductDto> Products, int TotalCount)> GetVendorProductsAsync(
+        int vendorId, int? categoryId, int page, int pageSize)
+    {
+        return await SearchProductsAsync(categoryId, null, null, null, vendorId, null, page, pageSize);
+    }
+
+    public async Task<MarketplaceVendorStatsDto> GetVendorStatsAsync(int vendorId)
+    {
+        var vendor = await _vendorRepository.AsQueryable()
+            .Include(v => v.Products)
+            .FirstOrDefaultAsync(v => v.Id == vendorId);
+
+        if (vendor == null)
+        {
+            return new MarketplaceVendorStatsDto();
+        }
+
+        var transactions = await _transactionRepository.AsQueryable()
+            .Where(t => t.VendorId == vendorId)
+            .ToListAsync();
+
+        var salesTransactions = transactions.Where(t => t.TransactionType == "Sale").ToList();
+
+        return new MarketplaceVendorStatsDto
+        {
+            TotalOrders = salesTransactions.Count,
+            CompletedOrders = salesTransactions.Count(t => t.TransactionDate < DateTime.UtcNow.AddDays(-30)),
+            PendingOrders = 0, // Would need order entity to track this
+            CancelledOrders = 0,
+            AverageRating = (double)(vendor.Products.Any() ? vendor.Products.Average(p => p.AverageRating ?? 0) : 0),
+            TotalReviews = vendor.Products.Sum(p => p.TotalReviews),
+            TotalRevenue = salesTransactions.Sum(t => t.TotalAmount),
+            TotalProducts = vendor.Products.Count(p => p.IsActive)
+        };
+    }
+
+    public async Task<(IEnumerable<VendorReviewDto> Reviews, int TotalCount)> GetVendorReviewsAsync(
+        int vendorId, int page, int pageSize)
+    {
+        // This would require a VendorReview entity - for now return empty
+        // In a full implementation, we would query a VendorReview table
+        await Task.CompletedTask;
+        return (Enumerable.Empty<VendorReviewDto>(), 0);
+    }
+
+    public async Task<VendorReviewDto> CreateReviewAsync(int userId, int orderId, CreateVendorReviewDto dto)
+    {
+        // This would require a VendorReview entity and order validation
+        // For now, throw NotImplementedException
+        await Task.CompletedTask;
+        throw new NotImplementedException("Review functionality requires VendorReview entity implementation");
+    }
+
+    public async Task<VendorReviewDto?> GetReviewByIdAsync(int reviewId)
+    {
+        // This would require a VendorReview entity
+        await Task.CompletedTask;
+        return null;
+    }
+
+    #endregion
+
+    #region Vendor Dashboard & Statistics (Feature 1)
+
+    public async Task<IEnumerable<VendorWithStatsDto>> GetVendorsWithStatsAsync()
+    {
+        var companyId = _companyContext?.CompanyId;
+        
+        var vendors = await _vendorRepository.AsQueryable()
+            .Where(v => v.CompanyId == companyId || v.CompanyId == null)
+            .ToListAsync();
+
+        var vendorIds = vendors.Select(v => v.Id).ToList();
+        
+        var invoices = await _invoiceRepository.AsQueryable()
+            .Where(i => vendorIds.Contains(i.VendorId ?? 0) || i.ExternalVendorName != null)
+            .ToListAsync();
+
+        var result = new List<VendorWithStatsDto>();
+
+        foreach (var vendor in vendors)
+        {
+            var vendorInvoices = invoices.Where(i => i.VendorId == vendor.Id).ToList();
+            
+            result.Add(new VendorWithStatsDto
+            {
+                Id = vendor.Id,
+                Name = vendor.Name,
+                Phone = vendor.Phone,
+                Email = vendor.Email,
+                VendorType = vendor.VendorType,
+                IsExternalVendor = vendor.IsExternalVendor,
+                IsActive = vendor.IsActive,
+                TotalInvoices = vendorInvoices.Count,
+                TotalAmount = vendorInvoices.Sum(i => i.Amount),
+                PendingAmount = vendorInvoices.Where(i => i.ApprovalStatus == InvoiceApprovalStatus.Pending).Sum(i => i.Amount),
+                ApprovedAmount = vendorInvoices.Where(i => i.ApprovalStatus == InvoiceApprovalStatus.Approved).Sum(i => i.Amount),
+                ProjectCount = vendorInvoices.Where(i => i.ProjectId.HasValue).Select(i => i.ProjectId).Distinct().Count(),
+                LastInvoiceDate = vendorInvoices.OrderByDescending(i => i.InvoiceDate).FirstOrDefault()?.InvoiceDate,
+                CreatedAt = vendor.CreatedAt
+            });
+        }
+
+        return result.OrderByDescending(v => v.TotalAmount);
+    }
+
+    public async Task<VendorDashboardDto> GetVendorDashboardAsync()
+    {
+        var vendors = await GetVendorsWithStatsAsync();
+        var vendorList = vendors.ToList();
+
+        return new VendorDashboardDto
+        {
+            TotalVendors = vendorList.Count,
+            ExternalVendors = vendorList.Count(v => v.IsExternalVendor),
+            RegisteredVendors = vendorList.Count(v => !v.IsExternalVendor),
+            TotalSpend = vendorList.Sum(v => v.TotalAmount),
+            PendingApprovals = vendorList.Sum(v => v.PendingAmount),
+            TopVendors = vendorList.OrderByDescending(v => v.TotalAmount).Take(5).ToList(),
+            RecentVendors = vendorList.OrderByDescending(v => v.CreatedAt).Take(5).ToList()
+        };
+    }
+
+    public async Task<IEnumerable<VendorProjectDto>> GetVendorProjectsAsync(int vendorId)
+    {
+        var invoices = await _invoiceRepository.AsQueryable()
+            .Where(i => i.VendorId == vendorId && i.ProjectId.HasValue)
+            .Include(i => i.Project)
+            .ToListAsync();
+
+        var projectGroups = invoices
+            .GroupBy(i => i.ProjectId!.Value)
+            .Select(g => new VendorProjectDto
+            {
+                ProjectId = g.Key,
+                ProjectName = g.First().Project?.ProjectName ?? "Unknown Project",
+                TotalInvoices = g.Count(),
+                TotalAmount = g.Sum(i => i.Amount),
+                PendingAmount = g.Where(i => i.ApprovalStatus == InvoiceApprovalStatus.Pending).Sum(i => i.Amount),
+                ApprovedAmount = g.Where(i => i.ApprovalStatus == InvoiceApprovalStatus.Approved).Sum(i => i.Amount),
+                LastInvoiceDate = g.OrderByDescending(i => i.InvoiceDate).First().InvoiceDate,
+                FirstInvoiceDate = g.OrderBy(i => i.InvoiceDate).First().InvoiceDate
+            })
+            .OrderByDescending(p => p.TotalAmount);
+
+        return projectGroups;
+    }
+
+    public async Task<IEnumerable<VendorInvoiceDto>> GetAllVendorBillsAsync(int vendorId)
+    {
+        return await GetInvoicesByVendorAsync(vendorId);
+    }
+
+    #endregion
+
+    #region Delivery Cost Tiers (Feature 2)
+
+    public async Task<IEnumerable<DeliveryCostTierDto>> GetDeliveryCostTiersAsync(int productId)
+    {
+        var tiers = await _productRepository.AsQueryable()
+            .Where(p => p.Id == productId)
+            .SelectMany(p => p.DeliveryCostTiers)
+            .Where(t => t.IsActive)
+            .OrderBy(t => t.MinWeightKg)
+            .ToListAsync();
+
+        return tiers.Select(t => new DeliveryCostTierDto
+        {
+            Id = t.Id,
+            VendorProductId = t.VendorProductId,
+            ProductName = t.VendorProduct.Name,
+            MinWeightKg = t.MinWeightKg,
+            MaxWeightKg = t.MaxWeightKg,
+            PricePerKm = t.PricePerKm,
+            FixedFee = t.FixedFee,
+            IsActive = t.IsActive,
+            Description = t.Description,
+            CreatedAt = t.CreatedAt
+        });
+    }
+
+    public async Task<DeliveryCostTierDto> CreateDeliveryCostTierAsync(CreateDeliveryCostTierRequest request)
+    {
+        var product = await _productRepository.GetByIdAsync(request.VendorProductId);
+        if (product == null) throw new KeyNotFoundException("Product not found");
+
+        // Validate tier doesn't overlap with existing tiers
+        var existingTiers = await _productRepository.AsQueryable()
+            .Where(p => p.Id == request.VendorProductId)
+            .SelectMany(p => p.DeliveryCostTiers)
+            .Where(t => t.IsActive)
+            .ToListAsync();
+
+        var hasOverlap = existingTiers.Any(t => 
+            (request.MinWeightKg >= t.MinWeightKg && request.MinWeightKg < t.MaxWeightKg) ||
+            (request.MaxWeightKg > t.MinWeightKg && request.MaxWeightKg <= t.MaxWeightKg) ||
+            (request.MinWeightKg <= t.MinWeightKg && request.MaxWeightKg >= t.MaxWeightKg));
+
+        if (hasOverlap)
+            throw new InvalidOperationException("Delivery tier overlaps with existing tier");
+
+        var tier = new DeliveryCostTier
+        {
+            VendorProductId = request.VendorProductId,
+            MinWeightKg = request.MinWeightKg,
+            MaxWeightKg = request.MaxWeightKg,
+            PricePerKm = request.PricePerKm,
+            FixedFee = request.FixedFee,
+            Description = request.Description,
+            IsActive = true,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        await _deliveryTierRepository.AddAsync(tier);
+        await _unitOfWork.SaveChangesAsync();
+
+        return new DeliveryCostTierDto
+        {
+            Id = tier.Id,
+            VendorProductId = tier.VendorProductId,
+            ProductName = product.Name,
+            MinWeightKg = tier.MinWeightKg,
+            MaxWeightKg = tier.MaxWeightKg,
+            PricePerKm = tier.PricePerKm,
+            FixedFee = tier.FixedFee,
+            IsActive = tier.IsActive,
+            Description = tier.Description,
+            CreatedAt = tier.CreatedAt
+        };
+    }
+
+    public async Task<DeliveryCostTierDto> UpdateDeliveryCostTierAsync(int tierId, UpdateDeliveryCostTierRequest request)
+    {
+        var tier = await _deliveryTierRepository.GetByIdAsync(tierId);
+        if (tier == null) throw new KeyNotFoundException("Delivery tier not found");
+
+        tier.MinWeightKg = request.MinWeightKg;
+        tier.MaxWeightKg = request.MaxWeightKg;
+        tier.PricePerKm = request.PricePerKm;
+        tier.FixedFee = request.FixedFee;
+        tier.IsActive = request.IsActive;
+        tier.Description = request.Description;
+        tier.UpdatedAt = DateTime.UtcNow;
+
+        await _unitOfWork.SaveChangesAsync();
+
+        var product = await _productRepository.GetByIdAsync(tier.VendorProductId);
+        return new DeliveryCostTierDto
+        {
+            Id = tier.Id,
+            VendorProductId = tier.VendorProductId,
+            ProductName = product?.Name ?? "",
+            MinWeightKg = tier.MinWeightKg,
+            MaxWeightKg = tier.MaxWeightKg,
+            PricePerKm = tier.PricePerKm,
+            FixedFee = tier.FixedFee,
+            IsActive = tier.IsActive,
+            Description = tier.Description,
+            CreatedAt = tier.CreatedAt
+        };
+    }
+
+    public async Task<bool> DeleteDeliveryCostTierAsync(int tierId)
+    {
+        var tier = await _deliveryTierRepository.GetByIdAsync(tierId);
+        if (tier == null) return false;
+
+        tier.IsActive = false;
+        tier.UpdatedAt = DateTime.UtcNow;
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<DeliveryCalculationResult> CalculateDeliveryCostAsync(DeliveryCalculationRequest request)
+    {
+        var product = await _productRepository.AsQueryable()
+            .Include(p => p.DeliveryCostTiers)
+            .FirstOrDefaultAsync(p => p.Id == request.ProductId);
+
+        if (product == null)
+        {
+            return new DeliveryCalculationResult
+            {
+                ProductId = request.ProductId,
+                WeightKg = request.WeightKg,
+                DistanceKm = request.DistanceKm,
+                IsCalculated = false,
+                ErrorMessage = "Product not found"
+            };
+        }
+
+        var applicableTier = product.DeliveryCostTiers
+            .Where(t => t.IsActive && request.WeightKg >= t.MinWeightKg && request.WeightKg < t.MaxWeightKg)
+            .OrderBy(t => t.PricePerKm) // Get cheapest tier if multiple match
+            .FirstOrDefault();
+
+        if (applicableTier == null)
+        {
+            return new DeliveryCalculationResult
+            {
+                ProductId = request.ProductId,
+                ProductName = product.Name,
+                WeightKg = request.WeightKg,
+                DistanceKm = request.DistanceKm,
+                IsCalculated = false,
+                ErrorMessage = $"No delivery tier found for weight {request.WeightKg}kg"
+            };
+        }
+
+        var distanceCost = applicableTier.PricePerKm * request.DistanceKm;
+        var totalCost = applicableTier.FixedFee + distanceCost;
+
+        return new DeliveryCalculationResult
+        {
+            ProductId = request.ProductId,
+            ProductName = product.Name,
+            WeightKg = request.WeightKg,
+            DistanceKm = request.DistanceKm,
+            AppliedTierId = applicableTier.Id,
+            AppliedTierDescription = applicableTier.Description ?? $"{applicableTier.MinWeightKg}-{applicableTier.MaxWeightKg}kg",
+            PricePerKm = applicableTier.PricePerKm,
+            FixedFee = applicableTier.FixedFee,
+            DistanceCost = distanceCost,
+            TotalDeliveryCost = totalCost,
+            IsCalculated = true
+        };
+    }
+
+    public async Task<BulkDeliveryCalculationResult> CalculateBulkDeliveryCostAsync(BulkDeliveryCalculationRequest request)
+    {
+        var results = new List<DeliveryCalculationResult>();
+
+        foreach (var item in request.Items)
+        {
+            var result = await CalculateDeliveryCostAsync(item);
+            results.Add(result);
+        }
+
+        return new BulkDeliveryCalculationResult
+        {
+            Results = results,
+            TotalDeliveryCost = results.Where(r => r.IsCalculated).Sum(r => r.TotalDeliveryCost),
+            AllCalculated = results.All(r => r.IsCalculated)
+        };
+    }
+
+    #endregion
 }

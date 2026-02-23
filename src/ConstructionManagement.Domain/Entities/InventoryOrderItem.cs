@@ -22,6 +22,18 @@ public class InventoryOrderItem : BaseEntity, ICompanyEntity
     public virtual InventoryStock? Stock { get; set; }
 
     /// <summary>
+    /// Product ID (for marketplace orders)
+    /// </summary>
+    public int ProductId { get; set; }
+    [ForeignKey(nameof(ProductId))]
+    public virtual VendorProduct? Product { get; set; }
+
+    /// <summary>
+    /// Product name (denormalized for history)
+    /// </summary>
+    public string ProductName { get; set; } = string.Empty;
+
+    /// <summary>
     /// Material name (denormalized for history)
     /// </summary>
     public string MaterialName { get; set; } = string.Empty;
@@ -51,6 +63,11 @@ public class InventoryOrderItem : BaseEntity, ICompanyEntity
     /// Original price per unit
     /// </summary>
     public decimal OriginalPrice { get; set; }
+
+    /// <summary>
+    /// Unit price (alias for marketplace orders)
+    /// </summary>
+    public decimal UnitPrice { get; set; }
 
     /// <summary>
     /// Negotiated price per unit

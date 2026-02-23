@@ -304,6 +304,14 @@ export interface CompanySettings {
 
   // Analytics Settings
   enableAnalyticsReporting?: boolean;
+
+  // New Feature Flags
+  enableLeaveManagement?: boolean;
+  enablePerformanceEvaluation?: boolean;
+  enableTrainingTracking?: boolean;
+  enableVideoCalls?: boolean;
+  enableMultiCurrency?: boolean;
+  enablePaymentGateway?: boolean;
 }
 
 

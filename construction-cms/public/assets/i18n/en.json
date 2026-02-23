@@ -35,7 +35,8 @@
         "payments": "Payments",
         "messages": "Messages",
         "change_orders": "Change Orders",
-        "pending_requests": "Pending Requests"
+        "pending_requests": "Pending Requests",
+        "social_wall": "Social Wall"
     },
     "topbar": {
         "search_placeholder": "Search projects, users, documents...",
@@ -658,5 +659,367 @@
             "reset_failed": "An error occurred while resetting your password.",
             "invalid_token": "Invalid or expired reset token."
         }
+    },
+    "finance": {
+        "title": "Financial Management",
+        "subtitle": "Manage vouchers, expenses, transactions, and invoices",
+        "stats": {
+            "cash_vouchers": "Cash Vouchers",
+            "misc_expenses": "Miscellaneous Expenses",
+            "transactions": "Transactions",
+            "invoices": "Invoices"
+        },
+        "tabs": {
+            "vouchers": "Cash Vouchers",
+            "expenses": "Misc Expenses",
+            "transactions": "Transactions",
+            "invoices": "Invoices",
+            "billing": "Billing",
+            "vendors": "Vendors"
+        },
+        "voucher": {
+            "new": "New Voucher",
+            "number": "Voucher #",
+            "project": "Project",
+            "amount": "Amount",
+            "date": "Date"
+        },
+        "expense": {
+            "new": "New Expense",
+            "number": "Expense #",
+            "category": "Category",
+            "project": "Project",
+            "amount": "Amount",
+            "date": "Date"
+        },
+        "transaction": {
+            "type": "Type",
+            "project_item": "Project Item",
+            "amount": "Amount",
+            "date": "Date",
+            "all_projects": "All Projects"
+        },
+        "invoice": {
+            "new": "New Invoice",
+            "number": "Invoice #",
+            "item": "Item",
+            "amount": "Amount",
+            "date": "Date"
+        },
+        "billing": {
+            "mrr": "Monthly Recurring Revenue",
+            "interval": "Billing Interval",
+            "monthly": "Monthly",
+            "next_renewal": "Next Renewal",
+            "payment_status": "Payment Status",
+            "good_standing": "Good Standing",
+            "payout_method": "Payout Method",
+            "update_card": "Update Card",
+            "invoicing_history": "Invoicing History",
+            "billing_date": "Date",
+            "transaction_ref": "Reference",
+            "amount_paid": "Amount",
+            "status": "Status",
+            "no_history": "No billing history available"
+        },
+        "vendors": {
+            "total_vendors": "Total Vendors",
+            "total_spend": "Total Spend",
+            "pending_approvals": "Pending Approvals",
+            "name": "Vendor Name",
+            "type": "Type",
+            "total_invoices": "Invoices",
+            "total_amount": "Total Amount",
+            "pending": "Pending",
+            "projects": "Projects",
+            "external": "External",
+            "no_vendors": "No vendors found",
+            "project_name": "Project",
+            "invoices": "Invoices",
+            "total": "Total",
+            "last_invoice": "Last Invoice",
+            "no_projects": "No projects associated",
+            "bills": "All Bills",
+            "invoice_number": "Invoice #",
+            "date": "Date",
+            "amount": "Amount",
+            "no_bills": "No bills found"
+        },
+        "no_vouchers": "No cash vouchers found",
+        "no_expenses": "No expenses found",
+        "no_transactions": "No transactions found",
+        "no_invoices": "No invoices found"
+    },
+    "socialWall": {
+        "title": "Construction News Wall",
+        "subtitle": "Latest updates from social media about construction industry",
+        "filterByPlatform": "Filter by Platform",
+        "allPlatforms": "All Platforms",
+        "filterBySource": "Filter by Source",
+        "allSources": "All Sources",
+        "language": "Language",
+        "original": "Original",
+        "arabic": "Arabic Translation",
+        "refresh": "Refresh",
+        "todaysPosts": "{{count}} new posts today",
+        "loading": "Loading posts...",
+        "translate": "Translate to Arabic",
+        "viewOriginal": "View Original",
+        "noPosts": "No posts available",
+        "noPostsMessage": "Check back later for new construction industry updates",
+        "page": "Page {{current}} of {{total}}",
+        "timeAgo": {
+            "minutes": "{{count}} min ago",
+            "hours": "{{count}}h ago",
+            "days": "{{count}}d ago"
+        },
+        "admin": {
+            "sources": "Content Sources",
+            "postsCollected": "{{count}} posts collected",
+            "lastFetch": "Last fetch: {{time}}",
+            "addSource": "Add Source",
+            "platform": "Platform",
+            "sourceType": "Source Type",
+            "account": "Account",
+            "hashtag": "Hashtag",
+            "keyword": "Keyword",
+            "sourceValue": "Source Value",
+            "sourceValuePlaceholder": "e.g., @construction_company or #construction",
+            "displayName": "Display Name",
+            "displayNamePlaceholder": "Optional friendly name",
+            "fetchAll": "Fetch All Sources",
+            "translateAll": "Translate All Posts",
+            "confirmDelete": "Are you sure you want to delete this source?"
+        }
+    },
+    "tasks": {
+        "title": "Task Management",
+        "dailyBoard": "Daily Task Board",
+        "myTasks": "My Tasks",
+        "allTasks": "All Tasks",
+        "createTask": "Create Task",
+        "editTask": "Edit Task",
+        "taskDetails": "Task Details",
+        "taskNumber": "Task Number",
+        "taskTitle": "Title",
+        "description": "Description",
+        "status": "Status",
+        "priority": "Priority",
+        "assignedTo": "Assigned To",
+        "dueDate": "Due Date",
+        "scheduledStart": "Scheduled Start",
+        "scheduledEnd": "Scheduled End",
+        "actualStart": "Actual Start",
+        "actualEnd": "Actual End",
+        "progress": "Progress",
+        "estimatedHours": "Estimated Hours",
+        "actualHours": "Actual Hours",
+        "attachments": "Attachments",
+        "addAttachment": "Add Attachment",
+        "history": "History",
+        "noTasks": "No tasks found",
+        "noAttachments": "No attachments yet",
+        "statuses": {
+            "pending": "Pending",
+            "inProgress": "In Progress",
+            "readyForReview": "Ready for Review",
+            "revisionRequested": "Revision Requested",
+            "approved": "Approved",
+            "rejected": "Rejected",
+            "onHold": "On Hold",
+            "cancelled": "Cancelled"
+        },
+        "priorities": {
+            "low": "Low",
+            "normal": "Normal",
+            "high": "High",
+            "critical": "Critical"
+        },
+        "actions": {
+            "start": "Start Task",
+            "submitReview": "Submit for Review",
+            "approve": "Approve",
+            "reject": "Reject",
+            "requestRevision": "Request Revision",
+            "putOnHold": "Put On Hold",
+            "resume": "Resume",
+            "cancel": "Cancel",
+            "assign": "Assign",
+            "reassign": "Reassign",
+            "delete": "Delete"
+        },
+        "preStart": {
+            "title": "Pre-Start Confirmation",
+            "confirm": "Confirm Pre-Start",
+            "authorizeForcedStart": "Authorize Forced Start",
+            "confirmationRequired": "Pre-start confirmation required",
+            "materialsReady": "Materials Ready",
+            "equipmentReady": "Equipment Ready",
+            "workersAvailable": "Workers Available",
+            "notes": "Confirmation Notes",
+            "forcedStartReason": "Reason for Forced Start"
+        },
+        "review": {
+            "title": "Review Task",
+            "comments": "Review Comments",
+            "revisionInstructions": "Revision Instructions",
+            "rejectionReason": "Rejection Reason",
+            "qualityRating": "Quality Rating",
+            "meetsQualityStandards": "Meets Quality Standards",
+            "meetsSafetyStandards": "Meets Safety Standards"
+        },
+        "filters": {
+            "all": "All",
+            "myTasks": "My Tasks",
+            "overdue": "Overdue",
+            "dueSoon": "Due Soon",
+            "stuck": "Stuck"
+        },
+        "messages": {
+            "taskCreated": "Task created successfully",
+            "taskUpdated": "Task updated successfully",
+            "taskDeleted": "Task deleted successfully",
+            "taskStarted": "Task started successfully",
+            "taskSubmitted": "Task submitted for review",
+            "taskApproved": "Task approved successfully",
+            "taskRejected": "Task rejected",
+            "revisionRequested": "Revision requested",
+            "taskOnHold": "Task put on hold",
+            "taskResumed": "Task resumed",
+            "taskCancelled": "Task cancelled",
+            "preStartConfirmed": "Pre-start confirmed",
+            "forcedStartAuthorized": "Forced start authorized",
+            "attachmentAdded": "Attachment added successfully",
+            "attachmentDeleted": "Attachment deleted"
+        }
+    },
+    "escalations": {
+        "title": "Escalations",
+        "openEscalations": "Open Escalations",
+        "myEscalations": "My Escalations",
+        "createEscalation": "Create Escalation",
+        "escalationDetails": "Escalation Details",
+        "escalationType": "Type",
+        "severity": "Severity",
+        "status": "Status",
+        "reportedBy": "Reported By",
+        "assignedTo": "Assigned To",
+        "createdAt": "Created At",
+        "resolvedAt": "Resolved At",
+        "resolutionNotes": "Resolution Notes",
+        "resolutionAction": "Resolution Action",
+        "escalationLevel": "Level",
+        "noEscalations": "No escalations found",
+        "types": {
+            "preStartNotConfirmed": "Pre-Start Not Confirmed",
+            "materialsNotReady": "Materials Not Ready",
+            "equipmentNotReady": "Equipment Not Ready",
+            "workersNotAvailable": "Workers Not Available",
+            "forcedStartAuthorized": "Forced Start Authorized",
+            "issueDuringExecution": "Issue During Execution",
+            "noStartToday": "No Start Today",
+            "delayPredicted": "Delay Predicted",
+            "budgetExceeded": "Budget Exceeded",
+            "taskStuck": "Task Stuck",
+            "reviewPendingTooLong": "Review Pending Too Long"
+        },
+        "severities": {
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High",
+            "critical": "Critical"
+        },
+        "statuses": {
+            "open": "Open",
+            "inProgress": "In Progress",
+            "resolved": "Resolved",
+            "closed": "Closed",
+            "escalated": "Escalated"
+        },
+        "actions": {
+            "acknowledge": "Acknowledge",
+            "assign": "Assign",
+            "resolve": "Resolve",
+            "close": "Close",
+            "escalate": "Escalate",
+            "reopen": "Reopen",
+            "scheduleFollowUp": "Schedule Follow-up"
+        },
+        "messages": {
+            "escalationCreated": "Escalation created",
+            "escalationAcknowledged": "Escalation acknowledged",
+            "escalationAssigned": "Escalation assigned",
+            "escalationResolved": "Escalation resolved",
+            "escalationClosed": "Escalation closed",
+            "escalationEscalated": "Escalation escalated to next level"
+        }
+    },
+    "dailyBoard": {
+        "title": "Daily Task Board",
+        "today": "Today",
+        "itemsStartingToday": "Items Starting Today",
+        "itemsEndingToday": "Items Ending Today",
+        "itemsInProgress": "Items In Progress",
+        "overdueItems": "Overdue Items",
+        "tasksScheduled": "Tasks Scheduled",
+        "requiresAttention": "Requires Attention",
+        "noItemsToday": "No items scheduled for today",
+        "stats": {
+            "startingToday": "Starting Today",
+            "endingToday": "Ending Today",
+            "overdue": "Overdue",
+            "notStarted": "Not Started"
+        },
+        "entryTypes": {
+            "itemStartingToday": "Item Starting Today",
+            "itemInProgress": "Item In Progress",
+            "itemEndingToday": "Item Ending Today",
+            "taskScheduled": "Task Scheduled",
+            "overdueItem": "Overdue Item",
+            "requiresAttention": "Requires Attention"
+        },
+        "entryStatuses": {
+            "pending": "Pending",
+            "readyToStart": "Ready to Start",
+            "inProgress": "In Progress",
+            "completed": "Completed",
+            "delayed": "Delayed",
+            "notStarted": "Not Started",
+            "cancelled": "Cancelled"
+        }
+    },
+    "workflow": {
+        "title": "Workflow Configuration",
+        "preStartConfirmation": "Pre-Start Confirmation",
+        "noStartCheck": "No-Start Check",
+        "delayPrediction": "Delay Prediction",
+        "taskStuckDetection": "Task Stuck Detection",
+        "reviewTimeout": "Review Timeout",
+        "notifications": "Notifications",
+        "escalationSettings": "Escalation Settings",
+        "qualitySettings": "Quality Settings",
+        "settings": {
+            "enabled": "Enabled",
+            "confirmationHours": "Confirmation Hours Before Start",
+            "escalationHours": "Escalation Hours",
+            "allowForcedStart": "Allow Forced Start",
+            "checkHour": "Check Hour",
+            "predictionThreshold": "Prediction Threshold (%)",
+            "daysBeforeEnd": "Days Before End",
+            "stuckDays": "Days Without Update",
+            "timeoutHours": "Timeout Hours",
+            "autoEscalateHours": "Auto-Escalate Hours",
+            "maxEscalationLevel": "Max Escalation Level",
+            "requirePhotoEvidence": "Require Photo Evidence",
+            "minimumPhotos": "Minimum Photos Required",
+            "requireBeforeAfter": "Require Before/After Photos",
+            "requireVideoEvidence": "Require Video Evidence",
+            "requireManagerApproval": "Require Manager Approval"
+        },
+        "messages": {
+            "configurationSaved": "Configuration saved successfully",
+            "configurationReset": "Configuration reset to defaults"
+        }
     }
+}
 }

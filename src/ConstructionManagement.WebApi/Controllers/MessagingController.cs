@@ -363,6 +363,56 @@ public class MessagingController : BaseApiController
         }
     }
 
+    // ── Search Endpoints ───────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Search messages for the current user
+    /// </summary>
+    [HttpPost("search")]
+    public async Task<ActionResult<IEnumerable<MessageSearchResultDto>>> SearchMessages([FromBody] MessageSearchRequest request)
+    {
+        try
+        {
+            var userId = GetCurrentUserId();
+            var user = await GetUserAsync();
+            
+            // If user is company owner, search company messages
+            if (user?.CompanyId.HasValue == true)
+            {
+                var companyResults = await _messagingService.SearchCompanyMessagesAsync(user.CompanyId.Value, request);
+                return Ok(companyResults);
+            }
+            
+            // Otherwise search user's own messages
+            var results = await _messagingService.SearchUserMessagesAsync(userId, request);
+            return Ok(results);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error searching messages");
+            return StatusCode(500, new { message = "An error occurred while searching messages." });
+        }
+    }
+
+    /// <summary>
+    /// Search messages in a specific conversation
+    /// </summary>
+    [HttpGet("conversations/{id}/search")]
+    public async Task<ActionResult<IEnumerable<MessageSearchResultDto>>> SearchConversationMessages(int id, [FromQuery] string searchTerm)
+    {
+        try
+        {
+            var userId = GetCurrentUserId();
+            var results = await _messagingService.SearchConversationMessagesAsync(id, userId, searchTerm);
+            return Ok(results);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error searching conversation messages");
+            return StatusCode(500, new { message = "An error occurred while searching conversation messages." });
+        }
+    }
+
     // ── Helper Methods ────────────────────────────────────────────────────────────
 
     private int GetCurrentUserId()

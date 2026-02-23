@@ -127,21 +127,42 @@ public class AuthService : IAuthService
             await _unitOfWork.SaveChangesAsync();
 
             // Auto-create Vendor profile if user is an InventoryOwner
+            // BUT: InventoryOwner now requires Admin approval (same as CompanyOwner)
+            // So we create a CompanyRequest instead of Vendor directly
             if (request.UserType == UserType.InventoryOwner)
             {
-                var vendor = new Vendor
+                // Create CompanyRequest for Warehouse (requires Admin approval)
+                var companyRequest = new CompanyRequest
                 {
-                    Name = request.FullName, // Default name, can be changed later
                     UserId = user.Id,
-                    IsPublic = true,         // Visible in public search by default? Or maybe waiting for location? 
-                                             // Let's set it to true but without location it won't show up in nearby.
-                    CompanyId = null,        // Independent vendor
-                    IsActive = true,
-                    CreatedAt = DateTime.UtcNow
+                    CompanyName = request.FullName + "'s Warehouse",
+                    ContactEmail = request.Email,
+                    ContactPhone = request.Phone,
+                    Status = "Pending",
+                    CreatedAt = DateTime.UtcNow,
+                    Notes = "Auto-created from InventoryOwner registration - Warehouse type",
+                    CompanyType = CompanyType.Warehouse // New field to track company type
                 };
-                
-                await _vendorRepository.AddAsync(vendor);
+                await _companyRequestRepository.AddAsync(companyRequest);
                 await _unitOfWork.SaveChangesAsync();
+
+                // Notify Super Admins
+                var superAdmins = await _userRepository.GetUsersByRoleAsync("SuperAdmin");
+                foreach (var admin in superAdmins)
+                {
+                    await _notificationService.NotifyNewCompanyRequestAsync(admin.Id, companyRequest.CompanyName, companyRequest.Id);
+                }
+
+                // Notify User
+                await _notificationService.CreateAndSendAsync(
+                    user.Id,
+                    _localizationService["NotificationTitle.RegistrationPending"],
+                    _localizationService["NotificationMessage.RegistrationPending"],
+                    null,
+                    NotificationType.General,
+                    titleKey: "NotificationTitle.RegistrationPending",
+                    messageKey: "RegistrationPending"
+                );
             }
 
             // Auto-create CompanyRequest ONLY if user is a CompanyOwner

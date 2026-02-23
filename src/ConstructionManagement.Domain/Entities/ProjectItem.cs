@@ -101,6 +101,9 @@ public class ProjectItem : BaseEntity, ICompanyEntity
     public virtual ICollection<ProjectItemExecutedDelta> ExecutedDeltas { get; set; }
         = new List<ProjectItemExecutedDelta>();
 
+    public virtual ICollection<ProjectItemTask> Tasks { get; set; }
+        = new List<ProjectItemTask>();
+
     // -- Computed Properties (not stored in DB) --------------------------------
     /// <summary>
     /// Contract value / estimated budget for this item

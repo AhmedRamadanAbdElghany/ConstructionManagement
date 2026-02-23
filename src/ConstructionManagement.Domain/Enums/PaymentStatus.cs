@@ -38,5 +38,15 @@ public enum PaymentStatus
     /// <summary>
     /// Payment has been rejected.
     /// </summary>
-    Rejected = 6
+    Rejected = 6,
+
+    /// <summary>
+    /// Payment has been paid.
+    /// </summary>
+    Paid = 7,
+
+    /// <summary>
+    /// Payment has been refunded.
+    /// </summary>
+    Refunded = 8
 }
