@@ -5,10 +5,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TrainingService, TrainingProgramDto, TrainingEnrollmentDto, TrainingDashboardDto } from '../../../core/services/training.service';
 
 @Component({
-    selector: 'app-training',
-    standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
-    template: `
+  selector: 'app-training',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule],
+  template: `
     <div class="p-6">
       <div class="mb-6">
         <h1 class="text-2xl font-bold text-slate-900 dark:text-white">{{ 'training.title' | translate }}</h1>
@@ -112,7 +112,7 @@ import { TrainingService, TrainingProgramDto, TrainingEnrollmentDto, TrainingDas
                     <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
                       <div class="flex items-center gap-4">
                         <div class="w-10 h-10 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center">
-                          <span class="text-cyan-600 dark:text-cyan-400 font-medium">{{ enrollment.userName?.charAt(0) || 'U' }}</span>
+                          <span class="text-cyan-600 dark:text-cyan-400 font-medium">{{ enrollment.userName.charAt(0) || 'U' }}</span>
                         </div>
                         <div>
                           <div class="font-medium text-slate-900 dark:text-white">{{ enrollment.userName }}</div>
@@ -150,45 +150,45 @@ import { TrainingService, TrainingProgramDto, TrainingEnrollmentDto, TrainingDas
   `
 })
 export class TrainingComponent implements OnInit {
-    private trainingService = inject(TrainingService);
+  private trainingService = inject(TrainingService);
 
-    activeTab = signal<'programs' | 'enrollments' | 'sessions' | 'compliance'>('programs');
-    programs = signal<TrainingProgramDto[]>([]);
-    enrollments = signal<TrainingEnrollmentDto[]>([]);
-    dashboard = signal<TrainingDashboardDto>({
-        totalPrograms: 0,
-        activeEnrollments: 0,
-        completedThisMonth: 0,
-        overdueTrainings: 0,
-        upcomingSessions: 0,
-        averageCompletionRate: 0,
-        mandatoryTrainings: [],
-        upcomingSessionList: [],
-        categoryStats: []
+  activeTab = signal<'programs' | 'enrollments' | 'sessions' | 'compliance'>('programs');
+  programs = signal<TrainingProgramDto[]>([]);
+  enrollments = signal<TrainingEnrollmentDto[]>([]);
+  dashboard = signal<TrainingDashboardDto>({
+    totalPrograms: 0,
+    activeEnrollments: 0,
+    completedThisMonth: 0,
+    overdueTrainings: 0,
+    upcomingSessions: 0,
+    averageCompletionRate: 0,
+    mandatoryTrainings: [],
+    upcomingSessionList: [],
+    categoryStats: []
+  });
+
+  ngOnInit(): void {
+    this.loadDashboardData();
+  }
+
+  loadDashboardData(): void {
+    this.trainingService.getDashboard().subscribe({
+      next: (data) => this.dashboard.set(data)
     });
+    this.trainingService.getPrograms().subscribe({
+      next: (data) => this.programs.set(data)
+    });
+    this.trainingService.getEnrollments().subscribe({
+      next: (data) => this.enrollments.set(data)
+    });
+  }
 
-    ngOnInit(): void {
-        this.loadDashboardData();
+  getEnrollmentStatusClass(status: string): string {
+    switch (status) {
+      case 'InProgress': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
+      case 'Completed': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
+      case 'Overdue': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
+      default: return 'bg-slate-100 text-slate-700';
     }
-
-    loadDashboardData(): void {
-        this.trainingService.getDashboard().subscribe({
-            next: (data) => this.dashboard.set(data)
-        });
-        this.trainingService.getPrograms().subscribe({
-            next: (data) => this.programs.set(data)
-        });
-        this.trainingService.getEnrollments().subscribe({
-            next: (data) => this.enrollments.set(data)
-        });
-    }
-
-    getEnrollmentStatusClass(status: string): string {
-        switch (status) {
-            case 'InProgress': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
-            case 'Completed': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
-            case 'Overdue': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
-            default: return 'bg-slate-100 text-slate-700';
-        }
-    }
+  }
 }

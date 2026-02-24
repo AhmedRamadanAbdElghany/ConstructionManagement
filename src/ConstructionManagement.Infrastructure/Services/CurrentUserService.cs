@@ -31,7 +31,7 @@ public class CurrentUserService : ICurrentUserService
     {
         get
         {
-            var companyIdClaim = User?.FindFirst("CompanyId")?.Value;
+            var companyIdClaim = User?.FindFirst("companyId")?.Value;
             return int.TryParse(companyIdClaim, out var companyId) ? companyId : null;
         }
     }

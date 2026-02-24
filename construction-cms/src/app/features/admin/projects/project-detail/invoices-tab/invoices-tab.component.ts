@@ -112,7 +112,7 @@ export interface PhaseInput {
                                 class="w-full flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-sm">
-                                        {{ item.itemName?.charAt(0) || 'I' }}
+                                        {{ item.itemName.charAt(0) || 'I' }}
                                     </div>
                                     <div class="text-left">
                                         <p class="font-bold text-slate-900 dark:text-white">{{ item.itemName }}</p>
@@ -182,7 +182,7 @@ export interface PhaseInput {
                         </div>
                     }
 
-                    @if (!itemsWithInvoices?.length) {
+                    @if (!itemsWithInvoices.length) {
                         <div class="text-center py-12">
                             <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4">
                                 <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -206,7 +206,7 @@ export interface PhaseInput {
                                 class="w-full flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-black text-sm">
-                                        {{ phase.name?.charAt(0) || 'P' }}
+                                        {{ phase.name.charAt(0) || 'P' }}
                                     </div>
                                     <div class="text-left">
                                         <p class="font-bold text-slate-900 dark:text-white">{{ phase.name }}</p>
@@ -236,7 +236,7 @@ export interface PhaseInput {
                                                 class="w-full flex items-center justify-between p-4 pl-8 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                                 <div class="flex items-center gap-3">
                                                     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs">
-                                                        {{ item.itemName?.charAt(0) || 'I' }}
+                                                        {{ item.itemName.charAt(0) || 'I' }}
                                                     </div>
                                                     <div class="text-left">
                                                         <p class="font-medium text-slate-900 dark:text-white text-sm">{{ item.itemName }}</p>
@@ -292,7 +292,7 @@ export interface PhaseInput {
                         </div>
                     }
 
-                    @if (!phasesWithInvoices?.length) {
+                    @if (!phasesWithInvoices.length) {
                         <div class="text-center py-12">
                             <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4">
                                 <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

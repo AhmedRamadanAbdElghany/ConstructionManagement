@@ -98,10 +98,7 @@ public class TaskNotification : BaseEntity, ICompanyEntity
     public bool SmsSent { get; set; } = false;
     
     // -- Timestamps -------------------------------------------------------------
-    /// <summary>
-    /// When the notification was created
-    /// </summary>
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
     
     /// <summary>
     /// When the notification was sent

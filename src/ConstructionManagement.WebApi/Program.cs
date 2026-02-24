@@ -149,6 +149,8 @@ builder.Services.AddScoped<IMaterialConsumptionRepository, MaterialConsumptionRe
 builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
 
 // 6. Services
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -205,6 +207,7 @@ builder.Services.AddScoped<IGeofenceService, GeofenceService>();
 builder.Services.AddScoped<ISensitiveDataProtectionService, SensitiveDataProtectionService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IPushNotificationService, PushNotificationService>();
+builder.Services.AddHttpClient<IPushNotificationService, PushNotificationService>();
 builder.Services.AddScoped<ILeaveManagementService, LeaveManagementService>();
 builder.Services.AddScoped<IFinancialReportService, FinancialReportService>();
 builder.Services.AddScoped<IPerformanceEvaluationService, PerformanceEvaluationService>();
@@ -219,6 +222,7 @@ builder.Services.AddScoped<IEmployeeOnboardingService, EmployeeOnboardingService
 builder.Services.AddScoped<IDisciplinaryActionService, DisciplinaryActionService>();
 builder.Services.AddScoped<ISkillsMatrixService, SkillsMatrixService>();
 builder.Services.AddScoped<IWarehouseJoinRequestService, WarehouseJoinRequestService>();
+builder.Services.AddScoped<IUserTypeService, UserTypeService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 // Task Management & Workflow Services
 builder.Services.AddScoped<ITaskManagementService, TaskManagementService>();
@@ -227,7 +231,7 @@ builder.Services.AddScoped<IEscalationService, EscalationService>();
 builder.Services.AddScoped<IWorkflowConfigurationService, WorkflowConfigurationService>();
 builder.Services.AddScoped<IDailyTaskBoardService, DailyTaskBoardService>();
 builder.Services.AddScoped<IWorkflowBackgroundJobService, WorkflowBackgroundJobService>();
-builder.Services.AddHttpClient<PushNotificationService>();
+// builder.Services.AddHttpClient<PushNotificationService>(); // Redundant and redundant
 
 
 
@@ -246,7 +250,7 @@ builder.Services.AddAuthentication(options =>
 {
     var jwtConfig = builder.Configuration.GetSection("JwtSettings");
     var secretKey = jwtConfig["Key"] ?? throw new InvalidOperationException("JWT Key is missing");
-    var keyBytes = Encoding.ASCII.GetBytes(secretKey);
+    var keyBytes = Encoding.UTF8.GetBytes(secretKey);
 
     options.TokenValidationParameters = new TokenValidationParameters
     {
@@ -418,7 +422,10 @@ builder.Services.AddRateLimiter(options =>
 
 var app = builder.Build();
 
-// --- 11. Middleware Pipeline (ترتيب Middleware مهم جداً) ---
+// 11. Middleware Pipeline (ترتيب Middleware مهم جداً) ---
+
+// Exception handler MUST be FIRST to catch everything
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
@@ -490,8 +497,6 @@ app.UseRequestLocalization(localizationOptions);
 // Company resolution middleware – MUST come early
 app.UseMiddleware<CompanyResolutionMiddleware>();
 
-app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
-
 // Hangfire Dashboard (secured – only SuperAdmin)
 if (!isTesting && hfConnectionString != null && !hfConnectionString.Contains("DataSource=", StringComparison.OrdinalIgnoreCase))
 {
@@ -561,7 +566,15 @@ app.UseRateLimiter();
 app.MapControllers();
 
 
-app.Run();
+try 
+{
+    app.Run();
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"FATAL: Application startup failed: {ex}");
+    throw;
+}
 
 // Hangfire Custom Authorization Filter
 public class HangfireCustomAuthorizationFilter : IDashboardAuthorizationFilter

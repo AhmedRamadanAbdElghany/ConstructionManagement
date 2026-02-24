@@ -140,10 +140,7 @@ public class DailyTaskBoard : BaseEntity, ICompanyEntity
     /// </summary>
     public DateTime GeneratedAt { get; set; } = DateTime.UtcNow;
     
-    /// <summary>
-    /// When this entry was last updated
-    /// </summary>
-    public DateTime? UpdatedAt { get; set; }
+
 }
 
 /// <summary>

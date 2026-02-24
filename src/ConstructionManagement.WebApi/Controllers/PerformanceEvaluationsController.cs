@@ -300,7 +300,7 @@ namespace ConstructionManagement.WebApi.Controllers
 
         private int? GetCompanyId()
         {
-            var companyIdClaim = User.FindFirst("CompanyId")?.Value;
+            var companyIdClaim = User.FindFirst("companyId")?.Value;
             if (string.IsNullOrEmpty(companyIdClaim) || !int.TryParse(companyIdClaim, out var companyId))
             {
                 return null;

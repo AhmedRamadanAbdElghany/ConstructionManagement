@@ -700,7 +700,7 @@ namespace ConstructionManagement.WebApi.Controllers
         private int GetCurrentCompanyId()
         {
             // Get company ID from claims or other context
-            var companyIdClaim = User.FindFirst("CompanyId")?.Value;
+            var companyIdClaim = User.FindFirst("companyId")?.Value;
             if (int.TryParse(companyIdClaim, out int companyId))
                 return companyId;
 

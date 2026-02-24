@@ -573,6 +573,12 @@ public class ApplicationDbContext : DbContext
         // HR Gap Features configurations
         ConfigureHRGapEntities(modelBuilder);
 
+        // Additional configurations to resolve cascade cycles
+        ConfigureTrainingEntities(modelBuilder);
+        ConfigureProjectItemTaskEntities(modelBuilder);
+        ConfigureCallEntities(modelBuilder);
+        ConfigurePerformanceEvaluationEntities(modelBuilder);
+
         // 10. SEEDING
         SeedData(modelBuilder);
     }
@@ -991,7 +997,7 @@ public class ApplicationDbContext : DbContext
             entity.HasOne(c => c.Equipment)
                 .WithMany()
                 .HasForeignKey(c => c.EquipmentId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasOne(c => c.EquipmentROI)
                 .WithMany()
@@ -1986,6 +1992,16 @@ public class ApplicationDbContext : DbContext
         {
             entity.HasIndex(e => e.OrderId);
             entity.HasIndex(e => e.StockId);
+
+            entity.HasOne(e => e.Order)
+                .WithMany(o => o.Items)
+                .HasForeignKey(e => e.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Product)
+                .WithMany()
+                .HasForeignKey(e => e.ProductId)
+                .OnDelete(DeleteBehavior.NoAction); // Fixed cycle
         });
 
         // InventoryOrderEvent
@@ -2418,7 +2434,175 @@ public class ApplicationDbContext : DbContext
         optionsBuilder.ConfigureWarnings(warnings =>
             warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
     }
-        // Single database mode - uses connection string from configuration only
+    private void ConfigureTrainingEntities(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<TrainingEnrollment>(entity =>
+        {
+            entity.HasOne(e => e.TrainingProgram)
+                .WithMany(p => p.Enrollments)
+                .HasForeignKey(e => e.TrainingProgramId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        modelBuilder.Entity<QuizAttempt>(entity =>
+        {
+            entity.HasOne(e => e.Quiz)
+                .WithMany(q => q.Attempts)
+                .HasForeignKey(e => e.QuizId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(e => e.Enrollment)
+                .WithMany(en => en.QuizAttempts)
+                .HasForeignKey(e => e.EnrollmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        modelBuilder.Entity<QuizResponse>(entity =>
+        {
+            entity.HasOne(e => e.Attempt)
+                .WithMany(a => a.Responses)
+                .HasForeignKey(e => e.AttemptId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Question)
+                .WithMany()
+                .HasForeignKey(e => e.QuestionId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+    }
+
+    private void ConfigureProjectItemTaskEntities(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ProjectItemTask>(entity =>
+        {
+            entity.HasOne(e => e.ProjectItem)
+                .WithMany(pi => pi.Tasks)
+                .HasForeignKey(e => e.ProjectItemId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.AssignedToUser)
+                .WithMany()
+                .HasForeignKey(e => e.AssignedToUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        modelBuilder.Entity<ProjectItemTaskAttachment>(entity =>
+        {
+            entity.HasOne(e => e.Task)
+                .WithMany(t => t.Attachments)
+                .HasForeignKey(e => e.ProjectItemTaskId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.UploadedByUser)
+                .WithMany()
+                .HasForeignKey(e => e.UploadedByUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        modelBuilder.Entity<ProjectItemTaskHistory>(entity =>
+        {
+            entity.HasOne(e => e.Task)
+                .WithMany(t => t.History)
+                .HasForeignKey(e => e.ProjectItemTaskId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.ChangedByUser)
+                .WithMany()
+                .HasForeignKey(e => e.ChangedByUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        modelBuilder.Entity<ProjectItemTaskReview>(entity =>
+        {
+            entity.HasOne(e => e.Task)
+                .WithMany(t => t.Reviews)
+                .HasForeignKey(e => e.ProjectItemTaskId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.ReviewerUser)
+                .WithMany()
+                .HasForeignKey(e => e.ReviewerUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+    }
+
+    private void ConfigureCallEntities(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<CallParticipant>(entity =>
+        {
+            entity.HasOne(e => e.CallSession)
+                .WithMany(s => s.Participants)
+                .HasForeignKey(e => e.CallSessionId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        modelBuilder.Entity<CallSignal>(entity =>
+        {
+            entity.HasOne(e => e.CallSession)
+                .WithMany(s => s.Signals)
+                .HasForeignKey(e => e.CallSessionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Sender)
+                .WithMany()
+                .HasForeignKey(e => e.SenderId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        modelBuilder.Entity<CallRecording>(entity =>
+        {
+            entity.HasOne(e => e.CallSession)
+                .WithMany()
+                .HasForeignKey(e => e.CallSessionId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+    }
+
+    private void ConfigurePerformanceEvaluationEntities(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<PerformanceEvaluation>(entity =>
+        {
+            entity.HasOne(e => e.Employee)
+                .WithMany()
+                .HasForeignKey(e => e.EmployeeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Manager)
+                .WithMany()
+                .HasForeignKey(e => e.ManagerId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        modelBuilder.Entity<PeerFeedback>(entity =>
+        {
+            entity.HasOne(e => e.Evaluation)
+                .WithMany(ev => ev.PeerFeedbacks)
+                .HasForeignKey(e => e.EvaluationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Reviewer)
+                .WithMany()
+                .HasForeignKey(e => e.ReviewerId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+    }
+
+    // Single database mode - uses connection string from configuration only
     private void SetCompanyFilter<T>(ModelBuilder modelBuilder) where T : class, ICompanyEntity
     {
         modelBuilder.Entity<T>().HasQueryFilter(e => 

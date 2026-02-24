@@ -5,10 +5,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PerformanceEvaluationService, EvaluationPeriodDto, PerformanceEvaluationDto } from '../../../core/services/performance-evaluation.service';
 
 @Component({
-    selector: 'app-performance',
-    standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
-    template: `
+  selector: 'app-performance',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule],
+  template: `
     <div class="p-6">
       <div class="mb-6">
         <h1 class="text-2xl font-bold text-slate-900 dark:text-white">{{ 'performance.title' | translate }}</h1>
@@ -96,7 +96,7 @@ import { PerformanceEvaluationService, EvaluationPeriodDto, PerformanceEvaluatio
                     <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
                       <div class="flex items-center gap-4">
                         <div class="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                          <span class="text-purple-600 dark:text-purple-400 font-medium">{{ evaluation.employeeName?.charAt(0) || 'U' }}</span>
+                          <span class="text-purple-600 dark:text-purple-400 font-medium">{{ evaluation.employeeName.charAt(0) || 'U' }}</span>
                         </div>
                         <div>
                           <div class="font-medium text-slate-900 dark:text-white">{{ evaluation.employeeName }}</div>
@@ -128,57 +128,57 @@ import { PerformanceEvaluationService, EvaluationPeriodDto, PerformanceEvaluatio
   `
 })
 export class PerformanceComponent implements OnInit {
-    private performanceService = inject(PerformanceEvaluationService);
+  private performanceService = inject(PerformanceEvaluationService);
 
-    activeTab = signal<'periods' | 'evaluations' | 'criteria'>('periods');
-    periods = signal<EvaluationPeriodDto[]>([]);
-    evaluations = signal<PerformanceEvaluationDto[]>([]);
+  activeTab = signal<'periods' | 'evaluations' | 'criteria'>('periods');
+  periods = signal<EvaluationPeriodDto[]>([]);
+  evaluations = signal<PerformanceEvaluationDto[]>([]);
 
-    activePeriods = signal(0);
-    pendingReviews = signal(0);
-    completedReviews = signal(0);
-    averageScore = signal(0);
+  activePeriods = signal(0);
+  pendingReviews = signal(0);
+  completedReviews = signal(0);
+  averageScore = signal(0);
 
-    ngOnInit(): void {
-        this.loadDashboardData();
-    }
+  ngOnInit(): void {
+    this.loadDashboardData();
+  }
 
-    loadDashboardData(): void {
-        this.performanceService.getPeriods().subscribe({
-            next: (data) => {
-                this.periods.set(data);
-                this.activePeriods.set(data.filter(p => p.status === 'Active').length);
-            }
-        });
-        this.performanceService.getEvaluations().subscribe({
-            next: (data) => {
-                this.evaluations.set(data);
-                this.pendingReviews.set(data.filter(e => e.status === 'Pending').length);
-                this.completedReviews.set(data.filter(e => e.status === 'Completed').length);
-                const completed = data.filter(e => e.overallScore !== undefined);
-                if (completed.length > 0) {
-                    const avg = completed.reduce((sum, e) => sum + (e.overallScore || 0), 0) / completed.length;
-                    this.averageScore.set(avg);
-                }
-            }
-        });
-    }
-
-    getPeriodStatusClass(status: string): string {
-        switch (status) {
-            case 'Active': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
-            case 'Upcoming': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
-            case 'Closed': return 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300';
-            default: return 'bg-slate-100 text-slate-700';
+  loadDashboardData(): void {
+    this.performanceService.getPeriods().subscribe({
+      next: (data) => {
+        this.periods.set(data);
+        this.activePeriods.set(data.filter(p => p.status === 'Active').length);
+      }
+    });
+    this.performanceService.getEvaluations().subscribe({
+      next: (data) => {
+        this.evaluations.set(data);
+        this.pendingReviews.set(data.filter(e => e.status === 'Pending').length);
+        this.completedReviews.set(data.filter(e => e.status === 'Completed').length);
+        const completed = data.filter(e => e.overallScore !== undefined);
+        if (completed.length > 0) {
+          const avg = completed.reduce((sum, e) => sum + (e.overallScore || 0), 0) / completed.length;
+          this.averageScore.set(avg);
         }
-    }
+      }
+    });
+  }
 
-    getEvaluationStatusClass(status: string): string {
-        switch (status) {
-            case 'Pending': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
-            case 'InProgress': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
-            case 'Completed': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
-            default: return 'bg-slate-100 text-slate-700';
-        }
+  getPeriodStatusClass(status: string): string {
+    switch (status) {
+      case 'Active': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
+      case 'Upcoming': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
+      case 'Closed': return 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300';
+      default: return 'bg-slate-100 text-slate-700';
     }
+  }
+
+  getEvaluationStatusClass(status: string): string {
+    switch (status) {
+      case 'Pending': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
+      case 'InProgress': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
+      case 'Completed': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
+      default: return 'bg-slate-100 text-slate-700';
+    }
+  }
 }

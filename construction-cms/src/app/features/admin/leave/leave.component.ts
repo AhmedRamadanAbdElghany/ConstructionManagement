@@ -5,10 +5,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { LeaveManagementService, LeaveRequest, LeaveBalance, LeaveType } from '../../../core/services/leave-management.service';
 
 @Component({
-    selector: 'app-leave',
-    standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
-    template: `
+  selector: 'app-leave',
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule],
+  template: `
     <div class="p-6">
       <div class="mb-6">
         <h1 class="text-2xl font-bold text-slate-900 dark:text-white">{{ 'leave.title' | translate }}</h1>
@@ -79,7 +79,7 @@ import { LeaveManagementService, LeaveRequest, LeaveBalance, LeaveType } from '.
                     <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
                       <div class="flex items-center gap-4">
                         <div class="w-10 h-10 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center">
-                          <span class="text-cyan-600 dark:text-cyan-400 font-medium">{{ request.userName?.charAt(0) || 'U' }}</span>
+                          <span class="text-cyan-600 dark:text-cyan-400 font-medium">{{ request.userName.charAt(0) || 'U' }}</span>
                         </div>
                         <div>
                           <div class="font-medium text-slate-900 dark:text-white">{{ request.userName }}</div>
@@ -161,59 +161,59 @@ import { LeaveManagementService, LeaveRequest, LeaveBalance, LeaveType } from '.
   `
 })
 export class LeaveComponent implements OnInit {
-    private leaveService = inject(LeaveManagementService);
+  private leaveService = inject(LeaveManagementService);
 
-    activeTab = signal<'requests' | 'balances' | 'types' | 'calendar'>('requests');
-    requests = signal<LeaveRequest[]>([]);
-    balances = signal<LeaveBalance[]>([]);
-    leaveTypes = signal<LeaveType[]>([]);
+  activeTab = signal<'requests' | 'balances' | 'types' | 'calendar'>('requests');
+  requests = signal<LeaveRequest[]>([]);
+  balances = signal<LeaveBalance[]>([]);
+  leaveTypes = signal<LeaveType[]>([]);
 
-    pendingCount = signal(0);
-    approvedCount = signal(0);
-    totalBalance = signal(0);
-    onLeaveToday = signal(0);
+  pendingCount = signal(0);
+  approvedCount = signal(0);
+  totalBalance = signal(0);
+  onLeaveToday = signal(0);
 
-    ngOnInit(): void {
-        this.loadDashboardData();
+  ngOnInit(): void {
+    this.loadDashboardData();
+  }
+
+  loadDashboardData(): void {
+    this.leaveService.getLeaveRequests({}).subscribe({
+      next: (data) => {
+        this.requests.set(data);
+        this.pendingCount.set(data.filter(r => r.status === 'Pending').length);
+        this.approvedCount.set(data.filter(r => r.status === 'Approved').length);
+      }
+    });
+    this.leaveService.getTeamLeaveBalances(0).subscribe({
+      next: (data) => {
+        this.balances.set(data);
+        this.totalBalance.set(data.reduce((sum, b) => sum + b.availableDays, 0));
+      }
+    });
+    this.leaveService.getLeaveTypes().subscribe({
+      next: (data) => this.leaveTypes.set(data)
+    });
+  }
+
+  approveRequest(id: number): void {
+    this.leaveService.approveLeaveRequest(id, {}).subscribe(() => {
+      this.loadDashboardData();
+    });
+  }
+
+  rejectRequest(id: number): void {
+    this.leaveService.rejectLeaveRequest(id, { reason: 'Rejected' }).subscribe(() => {
+      this.loadDashboardData();
+    });
+  }
+
+  getStatusClass(status: string): string {
+    switch (status) {
+      case 'Pending': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
+      case 'Approved': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
+      case 'Rejected': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
+      default: return 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300';
     }
-
-    loadDashboardData(): void {
-        this.leaveService.getLeaveRequests({}).subscribe({
-            next: (data) => {
-                this.requests.set(data);
-                this.pendingCount.set(data.filter(r => r.status === 'Pending').length);
-                this.approvedCount.set(data.filter(r => r.status === 'Approved').length);
-            }
-        });
-        this.leaveService.getTeamLeaveBalances(0).subscribe({
-            next: (data) => {
-                this.balances.set(data);
-                this.totalBalance.set(data.reduce((sum, b) => sum + b.availableDays, 0));
-            }
-        });
-        this.leaveService.getLeaveTypes().subscribe({
-            next: (data) => this.leaveTypes.set(data)
-        });
-    }
-
-    approveRequest(id: number): void {
-        this.leaveService.approveLeaveRequest(id, {}).subscribe(() => {
-            this.loadDashboardData();
-        });
-    }
-
-    rejectRequest(id: number): void {
-        this.leaveService.rejectLeaveRequest(id, { reason: 'Rejected' }).subscribe(() => {
-            this.loadDashboardData();
-        });
-    }
-
-    getStatusClass(status: string): string {
-        switch (status) {
-            case 'Pending': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
-            case 'Approved': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
-            case 'Rejected': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
-            default: return 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300';
-        }
-    }
+  }
 }

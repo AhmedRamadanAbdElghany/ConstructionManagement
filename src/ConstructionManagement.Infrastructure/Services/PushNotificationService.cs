@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using ConstructionManagement.Application.DTOs;
+using System.Net.Http;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence;
@@ -27,12 +28,12 @@ namespace ConstructionManagement.Infrastructure.Services
             ApplicationDbContext context,
             IConfiguration configuration,
             ILogger<PushNotificationService> logger,
-            IHttpClientFactory httpClientFactory)
+            HttpClient httpClient)
         {
             _context = context;
             _configuration = configuration;
             _logger = logger;
-            _httpClient = httpClientFactory.CreateClient();
+            _httpClient = httpClient;
         }
 
         #region Device Management

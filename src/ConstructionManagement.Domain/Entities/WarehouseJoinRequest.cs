@@ -55,8 +55,5 @@ public class WarehouseJoinRequest : BaseEntity
     /// </summary>
     public DateTime? ReviewedAt { get; set; }
 
-    /// <summary>
-    /// When the request was created
-    /// </summary>
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
 }

@@ -85,10 +85,7 @@ public class ProjectItemEscalation : BaseEntity, ICompanyEntity
     public virtual User? ResolvedByUser { get; set; }
     
     // -- Timestamps ------------------------------------------------------------
-    /// <summary>
-    /// When the escalation was created
-    /// </summary>
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
     
     /// <summary>
     /// When someone started working on the escalation

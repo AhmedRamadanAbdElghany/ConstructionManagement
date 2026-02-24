@@ -573,7 +573,7 @@ namespace ConstructionManagement.WebApi.Controllers
 
         private int GetCurrentCompanyId()
         {
-            var companyIdClaim = User.FindFirst("CompanyId")?.Value;
+            var companyIdClaim = User.FindFirst("companyId")?.Value;
             if (int.TryParse(companyIdClaim, out int companyId))
                 return companyId;
             return 1;

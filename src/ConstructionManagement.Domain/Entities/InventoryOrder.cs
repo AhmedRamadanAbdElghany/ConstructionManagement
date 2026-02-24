@@ -35,10 +35,7 @@ public class InventoryOrder : BaseEntity
     /// </summary>
     public DateTime OrderDate { get; set; } = DateTime.UtcNow;
 
-    /// <summary>
-    /// Created at timestamp (for marketplace orders)
-    /// </summary>
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
 
     /// <summary>
     /// Expected delivery date
@@ -67,11 +64,6 @@ public class InventoryOrder : BaseEntity
     public decimal SubTotal { get; set; }
 
     /// <summary>
-    /// Subtotal (alias for marketplace orders)
-    /// </summary>
-    public decimal Subtotal { get; set; }
-
-    /// <summary>
     /// Delivery fee
     /// </summary>
     public decimal DeliveryFee { get; set; }
@@ -97,9 +89,16 @@ public class InventoryOrder : BaseEntity
     public decimal TotalAmount { get; set; }
 
     /// <summary>
+    /// Subtotal (alias for marketplace orders)
+    /// </summary>
+    [NotMapped]
+    public decimal Subtotal { get => SubTotal; set => SubTotal = value; }
+
+    /// <summary>
     /// Total (alias for marketplace orders)
     /// </summary>
-    public decimal Total { get; set; }
+    [NotMapped]
+    public decimal Total { get => TotalAmount; set => TotalAmount = value; }
 
     /// <summary>
     /// Amount paid so far
