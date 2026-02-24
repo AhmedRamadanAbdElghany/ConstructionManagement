@@ -35,9 +35,9 @@ namespace ConstructionManagement.WebApi.Middleware
                     {
                         companyContext.CompanyId = null; // Bypass filters
                     }
-                    else if (companyIdClaim != null)
+                    else if (companyIdClaim != null && int.TryParse(companyIdClaim.Value, out var companyId))
                     {
-                        companyContext.CompanyId = int.Parse(companyIdClaim.Value);
+                        companyContext.CompanyId = companyId;
                     }
 
                     
