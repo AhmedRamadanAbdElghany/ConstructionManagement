@@ -229,7 +229,9 @@
     "pending": "Pending",
     "new_status": "New",
     "mrr_unit": "K",
-    "revenue_unit": "M"
+    "revenue_unit": "M",
+    "million": "M",
+    "total_revenue": "Total Revenue"
   },
   "projects": {
     "title": "Projects",

@@ -269,12 +269,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                     <tr class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
                       <td class="px-8 py-6 font-black text-slate-900 dark:text-white">{{ sub.companyName }}</td>
                       <td class="px-8 py-6">
-                        <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-indigo-50 text-indigo-600 border border-indigo-100">{{ sub.plan }}</span>
+                        <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-indigo-50 text-indigo-600 border border-indigo-100">{{ sub.packageName }}</span>
                       </td>
                       <td class="px-8 py-6">
                         <span class="text-xs font-bold" [ngClass]="sub.status === 'Active' ? 'text-emerald-500' : 'text-rose-500'">{{ 'projects.' + sub.status.toLowerCase() | translate }}</span>
                       </td>
-                      <td class="px-8 py-6 text-sm text-slate-500 font-medium">{{ sub.nextPayment }}</td>
+                      <td class="px-8 py-6 text-sm text-slate-500 font-medium">{{ sub.endDate | date:'mediumDate' }}</td>
                       <td class="px-8 py-6">
                         <span class="font-black text-slate-800 dark:text-slate-200">{{ sub.amount | currency }}</span>
                       </td>
@@ -972,7 +972,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                     </svg>
                   </div>
                 </div>
-                <p class="text-4xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ stats.totalRevenue / 1000000 | number:'1.1-1' }}{{ 'dashboard.million' | translate }}</p>
+                <p class="text-4xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ formatShortNumber(stats.totalRevenue) }}</p>
                 <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{{ 'dashboard.total_revenue' | translate }}</p>
               </div>
             </div>
@@ -1285,11 +1285,14 @@ export class DashboardComponent implements OnInit {
    */
   private updateChartData(): void {
     const monthKeys = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-    this.chartData = this.monthData.map((data, index) => ({
-      label: this.translate.instant(`common.months.${monthKeys[index]}`),
-      earned: data.earned,
-      collected: data.collected
-    }));
+    const translationKeys = monthKeys.map(k => `common.months.${k}`);
+    this.translate.get(translationKeys).subscribe(translations => {
+      this.chartData = this.monthData.map((data, index) => ({
+        label: translations[translationKeys[index]],
+        earned: data.earned,
+        collected: data.collected
+      }));
+    });
   }
 
   loadSuperAdminView() {

@@ -198,6 +198,7 @@ builder.Services.AddScoped<IWarehouseOrderService, WarehouseOrderService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IActivityLogService, ActivityLogService>();
 builder.Services.AddScoped<ISubcontractorService, SubcontractorService>();
+builder.Services.AddScoped<IDashboardStatisticsService, DashboardStatisticsService>();
 builder.Services.AddScoped<ICompanyAnnouncementService, CompanyAnnouncementService>();
 builder.Services.AddScoped<IHRService, HRService>();
 builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();

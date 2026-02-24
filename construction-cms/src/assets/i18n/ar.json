@@ -225,7 +225,9 @@
     "pending": "معلق",
     "new_status": "جديد",
     "mrr_unit": "ألف",
-    "revenue_unit": "مليون"
+    "revenue_unit": "مليون",
+    "million": "مليون",
+    "total_revenue": "إجمالي الإيرادات"
   },
   "projects": {
     "title": "المشاريع",
