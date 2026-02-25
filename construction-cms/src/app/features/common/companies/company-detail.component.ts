@@ -5,18 +5,19 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import {
-    MessagingService,
-    PublicCompanyDetailDto,
-    PortfolioItemDto,
-    StartConversationRequest
+  MessagingService,
+  PublicCompanyDetailDto,
+  PortfolioItemDto,
+  StartConversationRequest,
+  MessagingStatusDto
 } from '../../../core/services/messaging.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
-    selector: 'app-company-detail',
-    standalone: true,
-    imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
-    template: `
+  selector: 'app-company-detail',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
+  template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
       <!-- Loading State -->
       @if (isLoading) {
@@ -259,7 +260,7 @@ import { I18nService } from '../../../core/i18n/i18n.service';
       }
     </div>
   `,
-    styles: [`
+  styles: [`
     .line-clamp-2 {
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -269,137 +270,170 @@ import { I18nService } from '../../../core/i18n/i18n.service';
   `]
 })
 export class CompanyDetailComponent implements OnInit, OnDestroy {
-    private destroy$ = new Subject<void>();
-    private route = inject(ActivatedRoute);
-    private messagingService = inject(MessagingService);
-    private i18nService = inject(I18nService);
+  private destroy$ = new Subject<void>();
+  private route = inject(ActivatedRoute);
+  private messagingService = inject(MessagingService);
+  private i18nService = inject(I18nService);
 
-    company: PublicCompanyDetailDto | null = null;
-    isLoading = false;
-    selectedCategory: number | null = null;
+  company: PublicCompanyDetailDto | null = null;
+  isLoading = false;
+  selectedCategory: number | null = null;
 
-    // Message dialog
-    showMessageDialog = false;
-    messageContent = '';
-    selectedFiles: File[] = [];
-    isSending = false;
-    errorMessage = '';
+  // Message dialog
+  showMessageDialog = false;
+  messageContent = '';
+  selectedFiles: File[] = [];
+  isSending = false;
+  errorMessage = '';
 
-    ngOnInit() {
-        this.route.params.subscribe(params => {
-            const companyId = +params['id'];
-            if (companyId) {
-                this.loadCompany(companyId);
-            }
-        });
+  // Messaging restriction
+  messagingStatus: MessagingStatusDto | null = null;
+  isRestricted = false;
+  canMessage = true;
 
-        this.i18nService.onLanguageChange()
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(() => {
-                const companyId = this.company?.id;
-                if (companyId) {
-                    this.loadCompany(companyId);
-                }
-            });
-    }
+  ngOnInit() {
+    this.loadMessagingStatus();
+    this.route.params.subscribe(params => {
+      const companyId = +params['id'];
+      if (companyId) {
+        this.loadCompany(companyId);
+      }
+    });
 
-    ngOnDestroy(): void {
-        this.destroy$.next();
-        this.destroy$.complete();
-    }
-
-    get filteredPortfolio(): PortfolioItemDto[] {
-        if (!this.company) return [];
-        if (!this.selectedCategory) return this.company.portfolioItems;
-        return this.company.portfolioItems.filter(item => item.categoryId === this.selectedCategory);
-    }
-
-    loadCompany(companyId: number) {
-        this.isLoading = true;
-        this.messagingService.getCompanyDetail(companyId).subscribe({
-            next: (company) => {
-                this.company = company;
-                this.isLoading = false;
-            },
-            error: (error) => {
-                console.error('Error loading company:', error);
-                this.isLoading = false;
-            }
-        });
-    }
-
-    followCompany() {
-        if (!this.company) return;
-        this.messagingService.followCompany(this.company.id).subscribe({
-            next: () => {
-                if (this.company) {
-                    this.company.isFollowedByCurrentUser = true;
-                    this.company.followerCount++;
-                }
-            },
-            error: (error) => {
-                console.error('Error following company:', error);
-            }
-        });
-    }
-
-    unfollowCompany() {
-        if (!this.company) return;
-        this.messagingService.unfollowCompany(this.company.id).subscribe({
-            next: () => {
-                if (this.company) {
-                    this.company.isFollowedByCurrentUser = false;
-                    this.company.followerCount--;
-                }
-            },
-            error: (error) => {
-                console.error('Error unfollowing company:', error);
-            }
-        });
-    }
-
-    openMessageDialog() {
-        this.showMessageDialog = true;
-        this.messageContent = '';
-        this.selectedFiles = [];
-        this.errorMessage = '';
-    }
-
-    closeMessageDialog() {
-        this.showMessageDialog = false;
-        this.messageContent = '';
-        this.selectedFiles = [];
-        this.errorMessage = '';
-    }
-
-    onFileSelect(event: Event) {
-        const input = event.target as HTMLInputElement;
-        if (input.files) {
-            this.selectedFiles = Array.from(input.files);
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        const companyId = this.company?.id;
+        if (companyId) {
+          this.loadCompany(companyId);
         }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  get filteredPortfolio(): PortfolioItemDto[] {
+    if (!this.company) return [];
+    if (!this.selectedCategory) return this.company.portfolioItems;
+    return this.company.portfolioItems.filter(item => item.categoryId === this.selectedCategory);
+  }
+
+  loadMessagingStatus() {
+    this.messagingService.getMessagingStatus().subscribe({
+      next: (status) => {
+        this.messagingStatus = status;
+        this.isRestricted = status.isRestricted;
+        this.updateCanMessage();
+      },
+      error: (error) => {
+        console.error('Error loading messaging status:', error);
+      }
+    });
+  }
+
+  updateCanMessage() {
+    if (!this.isRestricted) {
+      this.canMessage = true;
+      return;
     }
 
-    sendMessage() {
-        if (!this.company || !this.messageContent.trim()) return;
-
-        this.isSending = true;
-        this.errorMessage = '';
-
-        const request: StartConversationRequest = {
-            companyId: this.company.id,
-            message: this.messageContent.trim()
-        };
-
-        this.messagingService.startConversation(request, this.selectedFiles).subscribe({
-            next: () => {
-                this.isSending = false;
-                this.closeMessageDialog();
-                // Show success message or navigate to messages
-            },
-            error: (error) => {
-                this.isSending = false;
-                this.errorMessage = error.error?.message || 'Failed to send message. Please try again.';
-            }
-        });
+    // If restricted, can only message SuperAdmin company
+    if (this.messagingStatus?.superAdminCompanyId && this.company) {
+      this.canMessage = this.company.id === this.messagingStatus.superAdminCompanyId;
+    } else {
+      this.canMessage = false;
     }
+  }
+
+  loadCompany(companyId: number) {
+    this.isLoading = true;
+    this.messagingService.getCompanyDetail(companyId).subscribe({
+      next: (company) => {
+        this.company = company;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading company:', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  followCompany() {
+    if (!this.company) return;
+    this.messagingService.followCompany(this.company.id).subscribe({
+      next: () => {
+        if (this.company) {
+          this.company.isFollowedByCurrentUser = true;
+          this.company.followerCount++;
+        }
+      },
+      error: (error) => {
+        console.error('Error following company:', error);
+      }
+    });
+  }
+
+  unfollowCompany() {
+    if (!this.company) return;
+    this.messagingService.unfollowCompany(this.company.id).subscribe({
+      next: () => {
+        if (this.company) {
+          this.company.isFollowedByCurrentUser = false;
+          this.company.followerCount--;
+        }
+      },
+      error: (error) => {
+        console.error('Error unfollowing company:', error);
+      }
+    });
+  }
+
+  openMessageDialog() {
+    this.showMessageDialog = true;
+    this.messageContent = '';
+    this.selectedFiles = [];
+    this.errorMessage = '';
+  }
+
+  closeMessageDialog() {
+    this.showMessageDialog = false;
+    this.messageContent = '';
+    this.selectedFiles = [];
+    this.errorMessage = '';
+  }
+
+  onFileSelect(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      this.selectedFiles = Array.from(input.files);
+    }
+  }
+
+  sendMessage() {
+    if (!this.company || !this.messageContent.trim()) return;
+
+    this.isSending = true;
+    this.errorMessage = '';
+
+    const request: StartConversationRequest = {
+      companyId: this.company.id,
+      message: this.messageContent.trim()
+    };
+
+    this.messagingService.startConversation(request, this.selectedFiles).subscribe({
+      next: () => {
+        this.isSending = false;
+        this.closeMessageDialog();
+        // Show success message or navigate to messages
+      },
+      error: (error) => {
+        this.isSending = false;
+        this.errorMessage = error.error?.message || 'Failed to send message. Please try again.';
+      }
+    });
+  }
 }

@@ -187,7 +187,7 @@ import * as L from 'leaflet';
               <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
                 @if (loading) {
                   <div class="flex flex-col items-center justify-center py-12 space-y-3">
-                    <div class="w-10 h-10 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+                    <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
                     <p class="text-slate-400 text-sm animate-pulse">{{ 'common.loading' | translate }}...</p>
                   </div>
                 } @else {

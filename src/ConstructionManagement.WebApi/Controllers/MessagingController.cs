@@ -72,15 +72,61 @@ public class MessagingController : BaseApiController
             var userId = GetCurrentUserId();
             var user = await GetUserAsync();
             
-            // If user is company owner, return company conversations
+            _logger.LogInformation("GetConversations called for userId: {UserId}, user.CompanyId: {CompanyId}", userId, user?.CompanyId);
+            
+            // Check if user is SuperAdmin
+            var isSuperAdmin = await _dbContext.UserRoles
+                .Include(ur => ur.Role)
+                .AnyAsync(ur => ur.UserId == userId && ur.Role.Name == "SuperAdmin");
+            
+            _logger.LogInformation("User {UserId} isSuperAdmin: {IsSuperAdmin}", userId, isSuperAdmin);
+            
+            // If user is company owner or SuperAdmin, return company conversations
             if (user?.CompanyId.HasValue == true)
             {
+                _logger.LogInformation("Getting company conversations for CompanyId: {CompanyId}", user.CompanyId.Value);
                 var companyConversations = await _messagingService.GetCompanyConversationsAsync(user.CompanyId.Value);
+                _logger.LogInformation("Found {Count} company conversations", companyConversations.Count());
                 return Ok(companyConversations);
             }
             
+            // If SuperAdmin without CompanyId, find their company via roles
+            if (isSuperAdmin)
+            {
+                // Find the company that has SuperAdmin users assigned
+                var superAdminCompanyId = await _dbContext.Users
+                    .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "SuperAdmin") && u.CompanyId.HasValue)
+                    .Select(u => (int?)u.CompanyId.Value)
+                    .FirstOrDefaultAsync();
+                
+                _logger.LogInformation("SuperAdmin company lookup found: {CompanyId}", superAdminCompanyId);
+                
+                if (superAdminCompanyId.HasValue && superAdminCompanyId.Value > 0)
+                {
+                    _logger.LogInformation("Getting company conversations for SuperAdmin CompanyId: {CompanyId}", superAdminCompanyId.Value);
+                    var companyConversations = await _messagingService.GetCompanyConversationsAsync(superAdminCompanyId.Value);
+                    _logger.LogInformation("Found {Count} company conversations for SuperAdmin", companyConversations.Count());
+                    return Ok(companyConversations);
+                }
+                
+                // Fallback: find company with BusinessId "SYSTEM-ADMIN"
+                var systemAdminCompany = await _dbContext.Companies
+                    .FirstOrDefaultAsync(c => c.BusinessId == "SYSTEM-ADMIN");
+                
+                _logger.LogInformation("SYSTEM-ADMIN company lookup found: {CompanyId}", systemAdminCompany?.Id);
+                
+                if (systemAdminCompany != null)
+                {
+                    var companyConversations = await _messagingService.GetCompanyConversationsAsync(systemAdminCompany.Id);
+                    _logger.LogInformation("Found {Count} company conversations for SYSTEM-ADMIN", companyConversations.Count());
+                    return Ok(companyConversations);
+                }
+            }
+            
             // Otherwise return user's own conversations
+            _logger.LogInformation("Getting user conversations for userId: {UserId}", userId);
             var conversations = await _messagingService.GetUserConversationsAsync(userId);
+            _logger.LogInformation("Found {Count} user conversations", conversations.Count());
             return Ok(conversations);
         }
         catch (Exception ex)
@@ -108,7 +154,7 @@ public class MessagingController : BaseApiController
         }
         catch (UnauthorizedAccessException ex)
         {
-            return Forbid(ex.Message);
+            return StatusCode(403, new { message = ex.Message });
         }
         catch (Exception ex)
         {
@@ -200,7 +246,7 @@ public class MessagingController : BaseApiController
         }
         catch (UnauthorizedAccessException ex)
         {
-            return Forbid(ex.Message);
+            return StatusCode(403, new { message = ex.Message });
         }
         catch (Exception ex)
         {
@@ -228,7 +274,7 @@ public class MessagingController : BaseApiController
         }
         catch (UnauthorizedAccessException ex)
         {
-            return Forbid(ex.Message);
+            return StatusCode(403, new { message = ex.Message });
         }
         catch (Exception ex)
         {
@@ -256,7 +302,7 @@ public class MessagingController : BaseApiController
         }
         catch (UnauthorizedAccessException ex)
         {
-            return Forbid(ex.Message);
+            return StatusCode(403, new { message = ex.Message });
         }
         catch (Exception ex)
         {
@@ -293,7 +339,7 @@ public class MessagingController : BaseApiController
         }
         catch (UnauthorizedAccessException ex)
         {
-            return Forbid(ex.Message);
+            return StatusCode(403, new { message = ex.Message });
         }
         catch (Exception ex)
         {
@@ -328,7 +374,7 @@ public class MessagingController : BaseApiController
         }
         catch (UnauthorizedAccessException ex)
         {
-            return Forbid(ex.Message);
+            return StatusCode(403, new { message = ex.Message });
         }
         catch (Exception ex)
         {
@@ -413,6 +459,85 @@ public class MessagingController : BaseApiController
         }
     }
 
+    // ── Messaging Status ───────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Get messaging restriction status for the current user
+    /// </summary>
+    [HttpGet("messaging-status")]
+    public async Task<ActionResult<MessagingStatusDto>> GetMessagingStatus()
+    {
+        try
+        {
+            var userId = GetCurrentUserId();
+            var result = await _messagingService.GetMessagingStatusAsync(userId);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting messaging status");
+            return StatusCode(500, new { message = "An error occurred." });
+        }
+    }
+
+    // ── Company to User Messaging ─────────────────────────────────────────────────
+
+    /// <summary>
+    /// Start a new conversation from a company to a user (client/worker)
+    /// Company owners can initiate conversations with clients and workers
+    /// </summary>
+    [HttpPost("conversations/with-user")]
+    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    public async Task<ActionResult<ConversationDto>> StartConversationWithUser([FromForm] StartConversationWithUserRequest request)
+    {
+        try
+        {
+            var userId = GetCurrentUserId();
+            var attachments = Request.Form.Files.ToList();
+            var result = await _messagingService.StartConversationWithUserAsync(userId, request, attachments);
+            return Ok(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(403, new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error starting conversation with user");
+            return StatusCode(500, new { message = "An error occurred while starting the conversation." });
+        }
+    }
+
+    /// <summary>
+    /// Get users that the company can message (clients and workers)
+    /// </summary>
+    [HttpGet("messagable-users")]
+    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    public async Task<ActionResult<IEnumerable<MessagableUserDto>>> GetMessagableUsers([FromQuery] string? userType = null)
+    {
+        try
+        {
+            var user = await GetUserAsync();
+            
+            if (user?.CompanyId == null)
+            {
+                return BadRequest(new { message = "You are not associated with a company." });
+            }
+
+            var result = await _messagingService.GetMessagableUsersAsync(user.CompanyId.Value, userType);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting messagable users");
+            return StatusCode(500, new { message = "An error occurred while getting messagable users." });
+        }
+    }
+
     // ── Helper Methods ────────────────────────────────────────────────────────────
 
     private int GetCurrentUserId()
@@ -429,5 +554,30 @@ public class MessagingController : BaseApiController
     {
         var userId = GetCurrentUserId();
         return await _dbContext.Users.FindAsync(userId);
+    }
+
+    /// <summary>
+    /// Start a new conversation between two workers in the same company
+    /// </summary>
+    [HttpPost("conversations/worker")]
+    [Authorize(Roles = "Worker,CompanyAdmin,Subcontractor,SiteManager,Engineer")]
+    public async Task<ActionResult<ConversationDto>> StartWorkerConversation([FromForm] StartWorkerConversationRequest request)
+    {
+        try
+        {
+            var userId = GetCurrentUserId();
+            var attachments = Request.Form.Files.ToList();
+            var result = await _messagingService.StartWorkerConversationAsync(userId, request, attachments);
+            return Ok(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error starting worker conversation");
+            return StatusCode(500, new { message = "An error occurred while starting the conversation." });
+        }
     }
 }

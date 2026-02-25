@@ -68,7 +68,7 @@ import { I18nService } from '../../../core/i18n/i18n.service';
 
         @if (isLoading) {
           <div class="flex flex-col items-center justify-center py-24 space-y-6">
-            <div class="w-16 h-16 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
+            <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
             <p class="text-slate-500 font-black uppercase tracking-[0.2em] animate-pulse">{{ 'common.loading' | translate }}...</p>
           </div>
         } @else if (reports.length === 0) {
@@ -146,7 +146,7 @@ import { I18nService } from '../../../core/i18n/i18n.service';
             </div>
             <div class="flex-1 overflow-y-auto p-8 custom-scrollbar">
               @if (isLoadingDetails) {
-                <div class="flex flex-col items-center justify-center py-20"><div class="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Loading...</p></div>
+                <div class="flex flex-col items-center justify-center py-20"><div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Loading...</p></div>
               } @else {
                 <div class="space-y-8">
                   @for (log of selectedReport?.logs; track log.itemId) {

@@ -116,4 +116,38 @@ public interface IMessagingService
     /// Search messages in a specific conversation
     /// </summary>
     Task<IEnumerable<MessageSearchResultDto>> SearchConversationMessagesAsync(int conversationId, int userId, string searchTerm);
+    
+    // ── Unverified Owner Restrictions ─────────────────────────────────────────────
+    
+    /// <summary>
+    /// Get messaging restriction status for a user
+    /// </summary>
+    /// <param name="userId">The user to check</param>
+    /// <returns>Information about messaging restrictions</returns>
+    Task<MessagingStatusDto> GetMessagingStatusAsync(int userId);
+    
+    // ── Company to User Messaging ─────────────────────────────────────────────────
+    
+    /// <summary>
+    /// Start a new conversation from a company to a user (client/worker)
+    /// Company owners can initiate conversations with clients and workers
+    /// </summary>
+    /// <param name="companyOwnerId">The company owner initiating the conversation</param>
+    /// <param name="request">The conversation request with target user ID and message</param>
+    /// <param name="attachments">Optional file attachments</param>
+    /// <returns>The created conversation</returns>
+    Task<ConversationDto> StartConversationWithUserAsync(int companyOwnerId, StartConversationWithUserRequest request, List<IFormFile>? attachments = null);
+    
+    /// <summary>
+    /// Get users that a company can message (clients and workers)
+    /// </summary>
+    /// <param name="companyId">The company to get users for</param>
+    /// <param name="userType">Optional filter by user type (NormalUser, Worker)</param>
+    /// <returns>List of users that can be messaged</returns>
+    Task<IEnumerable<MessagableUserDto>> GetMessagableUsersAsync(int companyId, string? userType = null);
+
+    /// <summary>
+    /// Start a new conversation between two workers in the same company
+    /// </summary>
+    Task<ConversationDto> StartWorkerConversationAsync(int initiatorId, StartWorkerConversationRequest request, List<IFormFile>? attachments = null);
 }

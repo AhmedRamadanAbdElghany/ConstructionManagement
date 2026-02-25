@@ -4,7 +4,9 @@ namespace ConstructionManagement.Domain.Entities;
 
 /// <summary>
 /// Represents a conversation between a user and a company.
-/// Users can only send one initial message until the company owner approves the conversation.
+/// Supports bidirectional messaging:
+/// - User → Company: User initiates, company approves
+/// - Company → User: Company initiates (for clients/workers), auto-approved
 /// </summary>
 public class CompanyConversation : BaseEntity, ICompanyEntity
 {
@@ -14,18 +16,35 @@ public class CompanyConversation : BaseEntity, ICompanyEntity
     public virtual Company? Company { get; set; }
     
     /// <summary>
-    /// The user who initiated the conversation
+    /// The user who initiated the conversation (always the sender of the first message)
     /// </summary>
     public int InitiatorUserId { get; set; }
     [ForeignKey(nameof(InitiatorUserId))]
     [System.Text.Json.Serialization.JsonIgnore]
     public virtual User InitiatorUser { get; set; } = null!;
+
+    /// <summary>
+    /// Optional target user for 1-on-1 messaging (e.g. Worker to Worker)
+    /// If null, the conversation is with the Company as a whole.
+    /// </summary>
+    public int? TargetUserId { get; set; }
+    [ForeignKey(nameof(TargetUserId))]
+    [System.Text.Json.Serialization.JsonIgnore]
+    public virtual User? TargetUser { get; set; }
+    
+    /// <summary>
+    /// Indicates who initiated the conversation:
+    /// - "User": A client or worker initiated contact with a company
+    /// - "Company": The company initiated contact with a user
+    /// - "Worker": Internal worker-to-worker messaging
+    /// </summary>
+    public string InitiatedBy { get; set; } = "User";
     
     /// <summary>
     /// Status: Pending, Approved, Blocked
     /// - Pending: User sent initial message, waiting for company approval
-    /// - Approved: Company approved, user can send unlimited messages
-    /// - Blocked: Company blocked this user from messaging
+    /// - Approved: Company approved (or company initiated), both can send messages
+    /// - Blocked: Conversation blocked
     /// </summary>
     public string Status { get; set; } = "Pending";
     

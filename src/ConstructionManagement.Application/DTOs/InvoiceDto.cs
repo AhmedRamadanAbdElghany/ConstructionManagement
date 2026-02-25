@@ -31,6 +31,9 @@ public record InvoiceListItemDto(
     string Status,
     string StatusDisplayName,
     string? Description,
+    int? VendorId,
+    string? VendorName,
+    string? ExternalVendorName,
     int ImageCount,
     string? CreatedByFullName,
     DateTime CreatedAt
@@ -59,6 +62,9 @@ public record InvoiceDto(
     string Currency,
     string? Description,
     string? SupplierVendor,
+    int? VendorId,
+    string? VendorName,
+    string? ExternalVendorName,
     string Status,
     string StatusDisplayName,
     string? RejectionReason,
@@ -93,6 +99,8 @@ public record CreateInvoiceRequest(
     string? Currency = null,     // Optional - Default: EGP
     string? Description = null,  // Optional
     string? SupplierVendor = null, // Optional
+    int? VendorId = null,
+    string? ExternalVendorName = null,
     string? AttachmentPath = null // Optional
 );
 
@@ -112,6 +120,8 @@ public record UpdateInvoiceRequest(
     string? Currency,
     string? Description,
     string? SupplierVendor,
+    int? VendorId,
+    string? ExternalVendorName,
     string? AttachmentPath
 );
 

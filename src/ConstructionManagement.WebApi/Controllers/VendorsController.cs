@@ -324,6 +324,14 @@ namespace ConstructionManagement.WebApi.Controllers
             var bills = await _vendorService.GetAllVendorBillsAsync(id);
             return Ok(bills);
         }
+        
+        // GET: api/vendors/financial-ledger
+        [HttpGet("financial-ledger")]
+        public async Task<ActionResult<IEnumerable<VendorInvoiceDto>>> GetFinancialLedger()
+        {
+            var ledger = await _vendorService.GetFinancialLedgerAsync();
+            return Ok(ledger);
+        }
 
         #endregion
 

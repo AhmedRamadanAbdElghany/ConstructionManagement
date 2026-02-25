@@ -11,43 +11,61 @@ public class StartConversationRequest
     public string Message { get; set; } = string.Empty;
 }
 
-/// <summary>
-/// Conversation summary for list views
-/// </summary>
-public class ConversationDto
-{
-    public int Id { get; set; }
-    public int CompanyId { get; set; }
-    public string CompanyName { get; set; } = string.Empty;
-    public string? CompanyLogo { get; set; }
-    public int InitiatorUserId { get; set; }
-    public string InitiatorName { get; set; } = string.Empty;
-    public string? InitiatorAvatar { get; set; }
-    
     /// <summary>
-    /// Status: Pending, Approved, Blocked
+    /// Conversation summary for list views
     /// </summary>
-    public string Status { get; set; } = string.Empty;
-    
-    public DateTime CreatedAt { get; set; }
-    public DateTime? LastMessageAt { get; set; }
-    public CompanyMessageDto? LastMessage { get; set; }
-    
-    /// <summary>
-    /// Number of unread messages for the current user
-    /// </summary>
-    public int UnreadCount { get; set; }
-    
-    /// <summary>
-    /// Whether the current user can send a message
-    /// </summary>
-    public bool CanSendMessage { get; set; }
-    
-    /// <summary>
-    /// Whether the current user is the company owner
-    /// </summary>
-    public bool IsCompanyOwner { get; set; }
-}
+    public class ConversationDto
+    {
+        public int Id { get; set; }
+        public int CompanyId { get; set; }
+        public string CompanyName { get; set; } = string.Empty;
+        public string? CompanyLogo { get; set; }
+        public int InitiatorUserId { get; set; }
+        public string InitiatorName { get; set; } = string.Empty;
+        public string? InitiatorAvatar { get; set; }
+        
+        /// <summary>
+        /// Who initiated the conversation: "User" or "Company"
+        /// </summary>
+        public string InitiatedBy { get; set; } = "User";
+        
+        /// <summary>
+        /// Type of conversation: "Company", "Worker", "Client", "SuperAdmin"
+        /// Used for tabbed interface filtering
+        /// </summary>
+        public string ConversationType { get; set; } = "Company";
+        
+        /// <summary>
+        /// User type of the other party in the conversation (for Company-initiated conversations)
+        /// </summary>
+        public string? TargetUserType { get; set; }
+        
+        /// <summary>
+        /// Status: Pending, Approved, Blocked
+        /// </summary>
+        public string Status { get; set; } = string.Empty;
+        
+        public DateTime CreatedAt { get; set; }
+        public DateTime? LastMessageAt { get; set; }
+        public CompanyMessageDto? LastMessage { get; set; }
+        
+        /// <summary>
+        /// Number of unread messages for the current user
+        /// </summary>
+        public int UnreadCount { get; set; }
+        
+        /// <summary>
+        /// Whether the current user can send a message
+        /// </summary>
+        public bool CanSendMessage { get; set; }
+        
+        /// <summary>
+        /// Whether the current user is the company owner
+        /// </summary>
+        public bool IsCompanyOwner { get; set; }
+        public int? TargetUserId { get; set; }
+        public string? TargetUserName { get; set; }
+    }
 
 /// <summary>
 /// Detailed conversation with all messages
@@ -242,4 +260,78 @@ public class MessageSearchResultDto
     public int CompanyId { get; set; }
     public bool HasAttachments { get; set; }
     public List<MessageAttachmentDto> Attachments { get; set; } = new();
+}
+
+/// <summary>
+/// Messaging restriction status for a user
+/// </summary>
+public class MessagingStatusDto
+{
+    /// <summary>
+    /// Whether the user has restricted messaging
+    /// </summary>
+    public bool IsRestricted { get; set; }
+    
+    /// <summary>
+    /// Reason for restriction if applicable
+    /// </summary>
+    public string? RestrictionReason { get; set; }
+    
+    /// <summary>
+    /// Company ID of SuperAdmin if restricted (the only allowed recipient)
+    /// </summary>
+    public int? SuperAdminCompanyId { get; set; }
+    
+    /// <summary>
+    /// Whether the user is an unverified company owner
+    /// </summary>
+    public bool IsUnverifiedCompanyOwner { get; set; }
+}
+
+/// <summary>
+/// Request to start a new conversation from a company to a user
+/// </summary>
+public class StartConversationWithUserRequest
+{
+    /// <summary>
+    /// The target user ID (client or worker)
+    /// </summary>
+    public int TargetUserId { get; set; }
+    
+    /// <summary>
+    /// The initial message content
+    /// </summary>
+    public string Message { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// User that can be messaged by a company
+/// </summary>
+public class MessagableUserDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string? Email { get; set; }
+    public string? Phone { get; set; }
+    public string UserType { get; set; } = string.Empty;
+    public string? ProfilePicture { get; set; }
+    
+    /// <summary>
+    /// Whether there's an existing conversation with this user
+    /// </summary>
+    public bool HasExistingConversation { get; set; }
+    
+    /// <summary>
+    /// Existing conversation ID if any
+    /// </summary>
+    public int? ExistingConversationId { get; set; }
+}
+
+/// <summary>
+/// Request to start a new conversation between workers
+/// </summary>
+public class StartWorkerConversationRequest
+{
+    public int TargetWorkerId { get; set; }
+    public string Message { get; set; } = string.Empty;
 }

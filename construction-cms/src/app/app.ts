@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RouterOutlet, Router } from '@angular/router';
+import { RouterOutlet, Router, Event, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { TopbarComponent } from './layout/topbar/topbar.component';
 import { ThemeService } from './core/theme/theme.service';
@@ -18,8 +18,20 @@ export class App {
   private router = inject(Router);
   private i18nService = inject(I18nService);
 
+  isNavigating = false;
+
   constructor() {
     this.i18nService.initializeLanguage();
+
+    // Show spinner during page loads/transitions
+    this.router.events.subscribe((event: Event) => {
+      if (event instanceof NavigationStart) {
+        this.isNavigating = true;
+      }
+      if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
+        this.isNavigating = false;
+      }
+    });
   }
 
   get showLayout(): boolean {

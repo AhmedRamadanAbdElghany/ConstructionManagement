@@ -1,6 +1,7 @@
 using ConstructionManagement.Application.DTOs.Vendor;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Domain.Enums;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -24,6 +25,7 @@ public class VendorService : IVendorService
 
     private readonly IRepository<VendorProduct> _productRepository;
     private readonly IRepository<DeliveryCostTier> _deliveryTierRepository;
+    private readonly IRepository<ItemInvoice> _itemInvoiceRepository;
 
     public VendorService(
         IRepository<Vendor> vendorRepository,
@@ -36,6 +38,7 @@ public class VendorService : IVendorService
         IUnitOfWork unitOfWork,
         IActivityLogService activityLogService,
         IRepository<DeliveryCostTier> deliveryTierRepository,
+        IRepository<ItemInvoice> itemInvoiceRepository,
         INotificationService? notificationService = null,
         ICompanyContext companyContext = null!)
     {
@@ -49,6 +52,7 @@ public class VendorService : IVendorService
         _unitOfWork = unitOfWork;
         _activityLogService = activityLogService;
         _deliveryTierRepository = deliveryTierRepository;
+        _itemInvoiceRepository = itemInvoiceRepository;
         _notificationService = notificationService;
         _companyContext = companyContext;
     }
@@ -554,19 +558,51 @@ public class VendorService : IVendorService
 
     public async Task<IEnumerable<VendorInvoiceSummary>> GetVendorInvoiceSummaryAsync()
     {
-        var summary = await _invoiceRepository.AsQueryable()
-            .GroupBy(i => new { i.VendorId, i.Vendor.Name })
-            .Select(g => new VendorInvoiceSummary
-            {
-                VendorId = g.Key.VendorId,
-                VendorName = g.Key.Name,
-                TotalInvoices = g.Count(),
-                TotalAmount = g.Sum(i => i.Amount),
-                PendingApprovals = g.Count(i => i.ApprovalStatus == InvoiceApprovalStatus.Pending)
-            })
+        var companyId = _companyContext?.CompanyId;
+        
+        var vInvoices = await _invoiceRepository.AsQueryable()
+            .Where(i => i.VendorId.HasValue)
             .ToListAsync();
+
+        var itemInvoices = await _itemInvoiceRepository.AsQueryable()
+            .Where(i => i.CompanyId == companyId && i.VendorId.HasValue)
+            .ToListAsync();
+
+        var vendorSummaries = new Dictionary<int, VendorInvoiceSummary>();
+
+        foreach (var inv in vInvoices)
+        {
+            var vid = inv.VendorId!.Value;
+            if (!vendorSummaries.ContainsKey(vid))
+            {
+                vendorSummaries[vid] = new VendorInvoiceSummary { VendorId = vid, VendorName = inv.Vendor?.Name ?? "Unknown" };
+            }
             
-        return summary;
+            var s = vendorSummaries[vid];
+            s.TotalInvoices++;
+            s.TotalAmount += inv.Amount;
+            if (inv.ApprovalStatus == InvoiceApprovalStatus.Pending) s.PendingApprovals++;
+            if (inv.ApprovalStatus == InvoiceApprovalStatus.Approved) s.ApprovedCount++;
+            if (inv.ApprovalStatus == InvoiceApprovalStatus.Rejected) s.RejectedCount++;
+        }
+
+        foreach (var inv in itemInvoices)
+        {
+            var vid = inv.VendorId!.Value;
+            if (!vendorSummaries.ContainsKey(vid))
+            {
+                vendorSummaries[vid] = new VendorInvoiceSummary { VendorId = vid, VendorName = inv.Vendor?.Name ?? inv.ExternalVendorName ?? "Unknown" };
+            }
+
+            var s = vendorSummaries[vid];
+            s.TotalInvoices++;
+            s.TotalAmount += inv.NetAmount;
+            if (inv.Status == InvoiceStatus.Pending.ToDatabaseString()) s.PendingApprovals++;
+            if (inv.Status == InvoiceStatus.Approved.ToDatabaseString()) s.ApprovedCount++;
+            if (inv.Status == InvoiceStatus.Rejected.ToDatabaseString()) s.RejectedCount++;
+        }
+
+        return vendorSummaries.Values.OrderByDescending(s => s.TotalAmount);
     }
 
     public async Task<IEnumerable<PublicVendorDto>> SearchPublicVendorsAsync(VendorSearchRequest request)
@@ -1071,18 +1107,42 @@ public class VendorService : IVendorService
             .Where(v => v.CompanyId == companyId || v.CompanyId == null)
             .ToListAsync();
 
-        var vendorIds = vendors.Select(v => v.Id).ToList();
+        var vendorIds = vendors.Select(v => (int?)v.Id).ToList();
         
-        var invoices = await _invoiceRepository.AsQueryable()
-            .Where(i => vendorIds.Contains(i.VendorId ?? 0) || i.ExternalVendorName != null)
+        var vendorInvoices = await _invoiceRepository.AsQueryable()
+            .Where(i => i.VendorId.HasValue && vendorIds.Contains(i.VendorId))
+            .ToListAsync();
+
+        var itemInvoices = await _itemInvoiceRepository.AsQueryable()
+            .Where(i => i.VendorId.HasValue && vendorIds.Contains(i.VendorId))
             .ToListAsync();
 
         var result = new List<VendorWithStatsDto>();
 
         foreach (var vendor in vendors)
         {
-            var vendorInvoices = invoices.Where(i => i.VendorId == vendor.Id).ToList();
+            var vInvoices = vendorInvoices.Where(i => i.VendorId == vendor.Id).ToList();
+            var iInvoices = itemInvoices.Where(i => i.VendorId == vendor.Id).ToList();
             
+            var allInvoicesCount = vInvoices.Count + iInvoices.Count;
+            var totalAmount = vInvoices.Sum(i => i.Amount) + iInvoices.Sum(i => i.NetAmount);
+            
+            var pendingAmount = vInvoices.Where(i => i.ApprovalStatus == InvoiceApprovalStatus.Pending).Sum(i => i.Amount) +
+                               iInvoices.Where(i => i.Status == InvoiceStatus.Pending.ToDatabaseString()).Sum(i => i.NetAmount);
+                               
+            var approvedAmount = vInvoices.Where(i => i.ApprovalStatus == InvoiceApprovalStatus.Approved).Sum(i => i.Amount) +
+                                iInvoices.Where(i => i.Status == InvoiceStatus.Approved.ToDatabaseString()).Sum(i => i.NetAmount);
+
+            var projectIds = vInvoices.Where(i => i.ProjectId.HasValue).Select(i => i.ProjectId!.Value)
+                            .Union(iInvoices.Select(i => i.ProjectId))
+                            .Distinct()
+                            .Count();
+
+            var lastInvoiceDate = vInvoices.Select(i => (DateTime?)i.InvoiceDate)
+                                 .Union(iInvoices.Select(i => (DateTime?)i.InvoiceDate))
+                                 .OrderByDescending(d => d)
+                                 .FirstOrDefault();
+
             result.Add(new VendorWithStatsDto
             {
                 Id = vendor.Id,
@@ -1092,12 +1152,12 @@ public class VendorService : IVendorService
                 VendorType = vendor.VendorType,
                 IsExternalVendor = vendor.IsExternalVendor,
                 IsActive = vendor.IsActive,
-                TotalInvoices = vendorInvoices.Count,
-                TotalAmount = vendorInvoices.Sum(i => i.Amount),
-                PendingAmount = vendorInvoices.Where(i => i.ApprovalStatus == InvoiceApprovalStatus.Pending).Sum(i => i.Amount),
-                ApprovedAmount = vendorInvoices.Where(i => i.ApprovalStatus == InvoiceApprovalStatus.Approved).Sum(i => i.Amount),
-                ProjectCount = vendorInvoices.Where(i => i.ProjectId.HasValue).Select(i => i.ProjectId).Distinct().Count(),
-                LastInvoiceDate = vendorInvoices.OrderByDescending(i => i.InvoiceDate).FirstOrDefault()?.InvoiceDate,
+                TotalInvoices = allInvoicesCount,
+                TotalAmount = totalAmount,
+                PendingAmount = pendingAmount,
+                ApprovedAmount = approvedAmount,
+                ProjectCount = projectIds,
+                LastInvoiceDate = lastInvoiceDate,
                 CreatedAt = vendor.CreatedAt
             });
         }
@@ -1124,34 +1184,147 @@ public class VendorService : IVendorService
 
     public async Task<IEnumerable<VendorProjectDto>> GetVendorProjectsAsync(int vendorId)
     {
-        var invoices = await _invoiceRepository.AsQueryable()
+        var vInvoices = await _invoiceRepository.AsQueryable()
             .Where(i => i.VendorId == vendorId && i.ProjectId.HasValue)
             .Include(i => i.Project)
             .ToListAsync();
 
-        var projectGroups = invoices
-            .GroupBy(i => i.ProjectId!.Value)
-            .Select(g => new VendorProjectDto
-            {
-                ProjectId = g.Key,
-                ProjectName = g.First().Project?.ProjectName ?? "Unknown Project",
-                TotalInvoices = g.Count(),
-                TotalAmount = g.Sum(i => i.Amount),
-                PendingAmount = g.Where(i => i.ApprovalStatus == InvoiceApprovalStatus.Pending).Sum(i => i.Amount),
-                ApprovedAmount = g.Where(i => i.ApprovalStatus == InvoiceApprovalStatus.Approved).Sum(i => i.Amount),
-                LastInvoiceDate = g.OrderByDescending(i => i.InvoiceDate).First().InvoiceDate,
-                FirstInvoiceDate = g.OrderBy(i => i.InvoiceDate).First().InvoiceDate
-            })
-            .OrderByDescending(p => p.TotalAmount);
+        var iInvoices = await _itemInvoiceRepository.AsQueryable()
+            .Where(i => i.VendorId == vendorId)
+            .Include(i => i.Project)
+            .ToListAsync();
 
-        return projectGroups;
+        var projectStats = new Dictionary<int, VendorProjectDto>();
+
+        foreach (var inv in vInvoices)
+        {
+            var pid = inv.ProjectId!.Value;
+            if (!projectStats.ContainsKey(pid))
+            {
+                projectStats[pid] = new VendorProjectDto { ProjectId = pid, ProjectName = inv.Project?.ProjectName ?? "Unknown" };
+            }
+            
+            var stats = projectStats[pid];
+            stats.TotalInvoices++;
+            stats.TotalAmount += inv.Amount;
+            if (inv.ApprovalStatus == InvoiceApprovalStatus.Pending) stats.PendingAmount += inv.Amount;
+            if (inv.ApprovalStatus == InvoiceApprovalStatus.Approved) stats.ApprovedAmount += inv.Amount;
+            
+            if (stats.LastInvoiceDate == null || inv.InvoiceDate > stats.LastInvoiceDate) stats.LastInvoiceDate = inv.InvoiceDate;
+            if (stats.FirstInvoiceDate == null || inv.InvoiceDate < stats.FirstInvoiceDate) stats.FirstInvoiceDate = inv.InvoiceDate;
+        }
+
+        foreach (var inv in iInvoices)
+        {
+            var pid = inv.ProjectId;
+            if (!projectStats.ContainsKey(pid))
+            {
+                projectStats[pid] = new VendorProjectDto { ProjectId = pid, ProjectName = inv.Project?.ProjectName ?? "Unknown" };
+            }
+
+            var stats = projectStats[pid];
+            stats.TotalInvoices++;
+            stats.TotalAmount += inv.NetAmount;
+            if (inv.Status == InvoiceStatus.Pending.ToDatabaseString()) stats.PendingAmount += inv.NetAmount;
+            if (inv.Status == InvoiceStatus.Approved.ToDatabaseString()) stats.ApprovedAmount += inv.NetAmount;
+
+            if (stats.LastInvoiceDate == null || inv.InvoiceDate > stats.LastInvoiceDate) stats.LastInvoiceDate = inv.InvoiceDate;
+            if (stats.FirstInvoiceDate == null || inv.InvoiceDate < stats.FirstInvoiceDate) stats.FirstInvoiceDate = inv.InvoiceDate;
+        }
+
+        return projectStats.Values.OrderByDescending(p => p.TotalAmount);
     }
 
     public async Task<IEnumerable<VendorInvoiceDto>> GetAllVendorBillsAsync(int vendorId)
     {
-        return await GetInvoicesByVendorAsync(vendorId);
+        var vInvoices = await _invoiceRepository.AsQueryable()
+            .Where(i => i.VendorId == vendorId)
+            .Include(i => i.Project)
+            .Include(i => i.CreatedByUser)
+            .Include(i => i.ApprovedByUser)
+            .ToListAsync();
+
+        var iInvoices = await _itemInvoiceRepository.AsQueryable()
+            .Where(i => i.VendorId == vendorId)
+            .Include(i => i.Project)
+            .Include(i => i.CreatedBy)
+            .Include(i => i.Reviewer)
+            .ToListAsync();
+
+        var result = vInvoices.Select(MapInvoiceToDto).ToList();
+        
+        result.AddRange(iInvoices.Select(i => new VendorInvoiceDto
+        {
+            Id = i.Id,
+            VendorId = i.VendorId,
+            VendorName = i.Vendor?.Name ?? i.ExternalVendorName ?? "Unknown",
+            ExternalVendorName = i.ExternalVendorName,
+            IsExternalVendor = i.VendorId == null,
+            InvoiceNumber = i.InvoiceNumber,
+            InvoiceDate = i.InvoiceDate,
+            Amount = i.NetAmount,
+            Description = i.Description,
+            ApprovalStatus = i.Status,
+            ApprovedByUserId = i.ReviewerUserId,
+            ApprovedByUserName = i.Reviewer?.FullName,
+            ApprovedDate = i.ReviewDate,
+            RejectionReason = i.RejectionReason,
+            CreatedByUserId = i.CreatedByUserId,
+            CreatedByUserName = i.CreatedBy?.FullName ?? "System",
+            ProjectId = i.ProjectId,
+            ProjectName = i.Project?.ProjectName,
+            CreatedAt = i.CreatedAt
+        }));
+
+        return result.OrderByDescending(i => i.InvoiceDate);
     }
 
+    public async Task<IEnumerable<VendorInvoiceDto>> GetFinancialLedgerAsync()
+    {
+        var companyId = _companyContext?.CompanyId;
+
+        var vInvoices = await _invoiceRepository.AsQueryable()
+            .Include(i => i.Vendor)
+            .Include(i => i.Project)
+            .Include(i => i.CreatedByUser)
+            .Include(i => i.ApprovedByUser)
+            .ToListAsync();
+
+        var iInvoices = await _itemInvoiceRepository.AsQueryable()
+            .Where(i => i.CompanyId == companyId || companyId == null)
+            .Include(i => i.Vendor)
+            .Include(i => i.Project)
+            .Include(i => i.CreatedBy)
+            .Include(i => i.Reviewer)
+            .ToListAsync();
+
+        var result = vInvoices.Select(MapInvoiceToDto).ToList();
+
+        result.AddRange(iInvoices.Select(i => new VendorInvoiceDto
+        {
+            Id = i.Id,
+            VendorId = i.VendorId,
+            VendorName = i.Vendor?.Name ?? i.ExternalVendorName ?? "Unknown",
+            ExternalVendorName = i.ExternalVendorName,
+            IsExternalVendor = i.VendorId == null,
+            InvoiceNumber = i.InvoiceNumber,
+            InvoiceDate = i.InvoiceDate,
+            Amount = i.NetAmount,
+            Description = i.Description,
+            ApprovalStatus = i.Status,
+            ApprovedByUserId = i.ReviewerUserId,
+            ApprovedByUserName = i.Reviewer?.FullName,
+            ApprovedDate = i.ReviewDate,
+            RejectionReason = i.RejectionReason,
+            CreatedByUserId = i.CreatedByUserId,
+            CreatedByUserName = i.CreatedBy?.FullName ?? "System",
+            ProjectId = i.ProjectId,
+            ProjectName = i.Project?.ProjectName,
+            CreatedAt = i.CreatedAt
+        }));
+
+        return result.OrderByDescending(i => i.InvoiceDate);
+    }
     #endregion
 
     #region Delivery Cost Tiers (Feature 2)

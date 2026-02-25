@@ -30,6 +30,9 @@ export interface InvoiceListItemDto {
     status: string;
     statusDisplayName: string;
     description?: string;
+    vendorId?: number;
+    vendorName?: string;
+    externalVendorName?: string;
     imageCount: number;
     createdByFullName?: string;
     createdAt: string;
@@ -55,6 +58,9 @@ export interface InvoiceDto {
     currency: string;
     description?: string;
     supplierVendor?: string;
+    vendorId?: number;
+    vendorName?: string;
+    externalVendorName?: string;
     status: string;
     statusDisplayName: string;
     rejectionReason?: string;
@@ -83,6 +89,8 @@ export interface CreateInvoiceRequest {
     currency?: string;          // Optional - Default: EGP
     description?: string;       // Optional
     supplierVendor?: string;    // Optional
+    vendorId?: number;
+    externalVendorName?: string;
     attachmentPath?: string;    // Optional
 }
 
@@ -99,6 +107,8 @@ export interface UpdateInvoiceRequest {
     currency?: string;
     description?: string;
     supplierVendor?: string;
+    vendorId?: number;
+    externalVendorName?: string;
     attachmentPath?: string;
 }
 

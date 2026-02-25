@@ -100,6 +100,17 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
             </div>
             <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.building_material_stores' | translate }}</span>
           </a>
+
+          <a routerLink="/admin/social-wall" 
+             routerLinkActive="nav-active"
+             class="nav-item group">
+            <div class="nav-icon-box">
+              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+              </svg>
+            </div>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.social_wall' | translate }}</span>
+          </a>
           }
 
         @if (!isPending && !isInventoryOwner && !isWorker) {
@@ -297,6 +308,17 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
               <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.finance' | translate }}</span>
             </a>
 
+            <a routerLink="/admin/inspections"
+               routerLinkActive="nav-active"
+               class="nav-item group">
+              <div class="nav-icon-box">
+                <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                </svg>
+              </div>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.inspections' | translate }}</span>
+            </a>
+
             @if (settings?.enableLeaveManagement) {
             <a routerLink="/admin/leave" 
                routerLinkActive="nav-active"
@@ -368,6 +390,30 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
         @if (!isClient && !isInventoryOwner && !isPending && (!isWorker || hasApprovedCompany())) {
         <p class="px-4 py-6 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
            [class.opacity-0]="isCollapsed()">{{ 'sidebar.operations' | translate }}</p>
+
+            <a routerLink="/admin/tasks" 
+               routerLinkActive="nav-active"
+               class="nav-item group">
+              <div class="nav-icon-box">
+                <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                </svg>
+              </div>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.tasks' | translate }}</span>
+            </a>
+
+            @if (isAdmin) {
+            <a routerLink="/admin/escalations" 
+               routerLinkActive="nav-active"
+               class="nav-item group">
+              <div class="nav-icon-box text-rose-500">
+                <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+              </div>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.escalations' | translate }}</span>
+            </a>
+            }
         }
 
 

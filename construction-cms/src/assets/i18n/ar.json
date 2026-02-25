@@ -19,6 +19,8 @@
     "analytics": "التحليلات",
     "configurations": "الإعدادات",
     "operations": "العمليات",
+    "tasks": "المهام",
+    "escalations": "البلاغات",
     "storefront": "واجهة المتجر",
     "vendor_analytics": "تحليلات المورد",
     "daily_log": "السجل اليومي",
@@ -44,7 +46,8 @@
     "leave_management": "إدارة الإجازات",
     "performance": "تقييم الأداء",
     "training": "التدريب",
-    "currencies": "العملات"
+    "currencies": "العملات",
+    "social_wall": "وال بار"
   },
   "reports": {
     "title": "تقارير التقدم اليومية",
@@ -226,8 +229,7 @@
     "new_status": "جديد",
     "mrr_unit": "ألف",
     "revenue_unit": "مليون",
-    "million": "مليون",
-    "total_revenue": "إجمالي الإيرادات"
+    "million": "مليون"
   },
   "projects": {
     "title": "المشاريع",
@@ -487,16 +489,44 @@
     "draft_status_description": "سيتم حفظ الفاتورة كمسودة حتى يتم رفع صور الفاتورة. يمكنك رفع الصور لاحقاً.",
     "pending_status_title": "جاهز للمراجعة",
     "pending_status_description": "سيتم إرسال الفاتورة للمراجعة بعد الحفظ.",
-    "override": "تجاوز",
-    "change_role": "تغيير الدور",
-    "clearAll": "مسح الكل",
-    "phaseHierarchy": "تسلسل المراحل",
-    "determineStructure": "تحديد الهيكل",
-    "addPhase": "إضافة مرحلة",
-    "editPhase": "تعديل مرحلة",
-    "noPhases": "لا توجد مراحل",
-    "governance_visibility": "Governance visibility",
-    "total_earned": "الإجمالي earned"
+    "tasks": "المهام",
+    "escalations": "البلاغات",
+    "items_progress": "تقدم البنود"
+  },
+  "invoices": {
+    "upload_invoice": "رفع فاتورة",
+    "upload_description_simple": "أدخل البند والمبلغ فقط، باقي البيانات اختيارية",
+    "select_item": "اختر البند",
+    "select_item_placeholder": "اختر البند المرتبط بالفاتورة",
+    "amount": "المبلغ",
+    "upload_images": "رفع صور الفاتورة",
+    "drag_drop_images": "اسحب وأفلت الصور هنا",
+    "or_click_browse": "أو انقر للاستعراض",
+    "submit_invoice": "حفظ الفاتورة",
+    "show_advanced": "عرض الخيارات المتقدمة",
+    "hide_advanced": "إخفاء الخيارات المتقدمة",
+    "draft_status_title": "سيتم الحفظ كمسودة",
+    "draft_status_description": "سيتم حفظ الفاتورة كمسودة حتى يتم رفع صور الفاتورة. يمكنك رفع الصور لاحقاً.",
+    "pending_status_title": "جاهز للمراجعة",
+    "pending_status_description": "سيتم إرسال الفاتورة للمراجعة بعد الحفظ.",
+    "select_existing": "اختر مورد مسجل",
+    "enter_manual": "إدخال اسم يدوي",
+    "select_vendor_placeholder": "اختر مورداً من القائمة",
+    "supplier_vendor": "المورد / البائع",
+    "supplier_vendor_placeholder": "أدخل اسم المورد",
+    "select_type": "نوع الفاتورة",
+    "disbursement_authorization": "إذن صرف",
+    "disbursement_authorization_ar": "إذن صرف",
+    "purchase_invoice": "فاتورة شراء",
+    "purchase_invoice_ar": "فاتورة شراء",
+    "invoice_number": "رقم الفاتورة",
+    "invoice_number_auto": "يُولّد تلقائياً",
+    "invoice_date": "تاريخ الفاتورة",
+    "due_date": "تاريخ الاستحقاق",
+    "tax_rate": "نسبة الضريبة",
+    "retention_rate": "نسبة الاستقطاع",
+    "description": "الوصف",
+    "description_placeholder": "أدخل وصف الفاتورة..."
   },
   "locations": {
     "title": "مواقع المشاريع",
@@ -932,6 +962,11 @@
     "notes": "ملاحظات",
     "invoices_count": "عدد الفواتير",
     "view_invoices": "عرض الفواتير",
+    "view_bills": "عرض الفواتير والمستخلصات",
+    "view_projects": "عرض المشاريع",
+    "projects_summary": "ملخص المشاريع",
+    "all_bills_and_invoices": "كافة الفواتير والمستخلصات",
+    "total_payments": "إجمالي المدفوعات",
     "add_invoice": "إضافة فاتورة",
     "invoices": "الفواتير",
     "invoice_number": "رقم الفاتورة",
@@ -2243,9 +2278,9 @@
     "add_worker": "إضافة worker"
   },
   "logout_confirm": {
-    "title": "العنوان",
-    "subtitle": "العنوان الفرعي",
-    "confirm": "تأكيد",
+    "title": "هل أنت متأكد؟",
+    "subtitle": "أنت على وشك تسجيل الخروج من حسابك. ستحتاج إلى تسجيل الدخول مرة أخرى للوصول إلى مشاريعك.",
+    "confirm": "تسجيل الخروج",
     "cancel": "إلغاء"
   },
   "companies": {
@@ -2354,12 +2389,37 @@
     "send": "إرسال",
     "approve": "موافقة",
     "block": "حظر",
-    "unblock": "إلغاء الحظر"
-  },
-  "common": {
-    "cancel": "إلغاء",
-    "send": "إرسال",
-    "sending": "جاري الإرسال..."
+    "unblock": "إلغاء الحظر",
+    "restricted_title": "المراسلة مقيدة",
+    "restricted_desc": "شركتك في انتظار الموافقة. يمكنك فقط مراسلة المدير العام حتى يتم الموافقة على شركتك.",
+    "restricted_empty_desc": "شركتك في انتظار الموافقة. يمكنك فقط التواصل مع المدير العام للمساعدة.",
+    "contact_admin": "تواصل مع المدير العام",
+    "approval_required": "موافقة مطلوبة",
+    "approval_required_tooltip": "يجب الموافقة على شركتك قبل أن تتمكن من مراسلة هذه الشركة",
+    "message_company": "مراسلة الشركة",
+    "start_conversation_admin": "ابدأ محادثة مع المدير العام",
+    "view_company": "عرض ملف الشركة",
+    "new_conversation": "محادثة جديدة",
+    "messaging_superadmin": "أنت تبدأ محادثة مع المدير العام",
+    "your_message": "رسالتك",
+    "message_placeholder": "اكتب رسالتك هنا...",
+    "send_message": "إرسال الرسالة",
+    "message_user": "مراسلة مستخدم",
+    "message_client_worker": "مراسلة عميل أو عامل",
+    "search_users": "البحث عن المستخدمين بالاسم أو البريد الإلكتروني...",
+    "all_users": "جميع المستخدمين",
+    "clients": "العملاء",
+    "workers": "العمال",
+    "existing_conversation": "محادثة قائمة",
+    "no_users_found": "لم يتم العثور على مستخدمين مطابقين لمعاييرك.",
+    "back_to_list": "العودة إلى قائمة المستخدمين",
+    "tabs": {
+      "all": "الكل",
+      "companies": "الشركات",
+      "workers": "العمال",
+      "clients": "العملاء",
+      "superadmin": "المدير العام"
+    }
   },
   "safety": {
     "title": "إدارة السلامة",
@@ -2447,13 +2507,17 @@
       "expenses": "النفقات المختلفة",
       "transactions": "المعاملات",
       "invoices": "الفواتير",
-      "billing": "فوترة المنصة"
+      "billing": "فوترة المنصة",
+      "vendors": "الموردين",
+      "ledger": "دفتر الشركة"
     },
     "stats": {
       "cash_vouchers": "سندات النقد",
       "misc_expenses": "النفقات المختلفة",
       "transactions": "المعاملات",
-      "invoices": "الفواتير"
+      "invoices": "الفواتير",
+      "vendor_bills": "فواتير الموردين",
+      "unpaid_liabilities": "إجمالي المستحقات"
     },
     "voucher": {
       "title": "عنوان السند",
@@ -2508,7 +2572,35 @@
     "no_vouchers": "لا سندات نقد موجودة",
     "no_expenses": "لا نفقات موجودة",
     "no_transactions": "لا معاملات موجودة",
-    "no_invoices": "لا فواتير موجودة"
+    "no_invoices": "لا فواتير موجودة",
+    "vendors": {
+      "name": "اسم المورد",
+      "type": "النوع",
+      "total_invoices": "الفواتير",
+      "total_amount": "إجمالي المبلغ",
+      "pending": "قيد الانتظار",
+      "projects": "المشاريع",
+      "external": "خارجي",
+      "project_name": "اسم المشروع",
+      "invoices": "عدد الفواتير",
+      "total": "المبلغ الإجمالي",
+      "last_invoice": "آخر فاتورة",
+      "bills": "فواتير المورد",
+      "invoice_number": "رقم الفاتورة",
+      "date": "التاريخ",
+      "amount": "المبلغ",
+      "no_projects": "لا مشاريع مسجلة",
+      "no_bills": "لا فواتير موجودة"
+    },
+    "ledger": {
+      "date": "تاريخ الفاتورة",
+      "vendor": "المورد / الحساب",
+      "number": "رقم الفاتورة",
+      "project": "المشروع",
+      "amount": "المبلغ",
+      "total_entries": "إجمالي القيود",
+      "no_data": "لا توجد قيود في الدفتر"
+    }
   },
   "access_control": {
     "title": "التحكم بالوصول",
@@ -3010,6 +3102,24 @@
       "NO_MOVEMENTS": "لا توجد حركات مخزون حديثة"
     }
   },
+  "LOCATION_TRACKING": {
+    "MY_LOCATION": "موقعي",
+    "PENDING_REQUESTS": "طلبات معلقة",
+    "SUBMIT_FOR_REQUEST": "إرسال للطلب",
+    "SUBMIT_LOCATION": "إرسال الموقع",
+    "LOCATION_TYPE": "نوع الموقع",
+    "START_OF_DAY": "بداية اليوم",
+    "END_OF_DAY": "نهاية اليوم",
+    "LOCATION_ACQUIRED": "تم تحديد الموقع",
+    "GETTING_LOCATION": "جاري تحديد الموقع...",
+    "GET_LOCATION": "تحديد الموقع",
+    "NOTES": "ملاحظات",
+    "NOTES_PLACEHOLDER": "أضف أي ملاحظات (اختياري)",
+    "SUBMITTING": "جاري الإرسال...",
+    "SUBMIT": "إرسال",
+    "RECENT_SUBMISSIONS": "الإرسالات الأخيرة",
+    "NO_SUBMISSIONS": "لا توجد إرسالات حديثة"
+  },
   "COMMON": {
     "CANCEL": "إلغاء",
     "SAVE": "حفظ",
@@ -3019,6 +3129,49 @@
     "CLOSE": "إغلاق",
     "LOADING": "جاري التحميل...",
     "ERROR": "خطأ",
-    "SUCCESS": "نجاح"
+    "SUCCESS": "نجاح",
+    "OPTIONAL": "اختياري"
+  },
+  "socialWall": {
+    "title": "جدار التواصل الاجتماعي",
+    "subtitle": "آخر التحديثات من الشركات وعالم البناء",
+    "filterByPlatform": "تصفية حسب المنصة",
+    "allPlatforms": "جميع المنصات",
+    "filterBySource": "تصفية حسب المصدر",
+    "allSources": "جميع المصادر",
+    "language": "اللغة",
+    "original": "الأصلية",
+    "arabic": "العربية (مترجمة)",
+    "refresh": "تحديث",
+    "todaysPosts": "{{count}} منشورات جديدة اليوم",
+    "loading": "جاري تحميل جدار التواصل الاجتماعي...",
+    "translate": "ترجمة",
+    "viewOriginal": "عرض المنشور الأصلي",
+    "noPosts": "لم يتم العثور على منشورات",
+    "noPostsMessage": "حاول تغيير عوامل التصفية أو إضافة مصادر جديدة في قسم الإدارة.",
+    "page": "صفحة {{current}} من {{total}}",
+    "timeAgo": {
+      "minutes": "منذ {{count}} دقيقة",
+      "hours": "منذ {{count}} ساعة",
+      "days": "منذ {{count}} يوم"
+    },
+    "admin": {
+      "sources": "مصادر المحتوى الاجتماعي",
+      "addSource": "إضافة مصدر اجتماعي",
+      "platform": "المنصة",
+      "sourceType": "نوع المصدر",
+      "sourceValue": "القيمة (المعرف/الاسم)",
+      "sourceValuePlaceholder": "مثال: 123456 أو account_name",
+      "displayName": "اسم العرض",
+      "displayNamePlaceholder": "مثال: شركة الماسة للمقاولات",
+      "fetchAll": "جلب الكل الآن",
+      "translateAll": "ترجمة الكل للعربية",
+      "account": "حساب",
+      "hashtag": "هاشتاج",
+      "keyword": "كلمة دلالية",
+      "confirmDelete": "هل أنت متأكد من حذف هذا المصدر؟",
+      "postsCollected": "تم جمع {{count}} منشور",
+      "lastFetch": "آخر جلب: {{time}}"
+    }
   }
 }

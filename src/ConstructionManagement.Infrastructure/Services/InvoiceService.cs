@@ -23,6 +23,7 @@ public class InvoiceService : IInvoiceService
     private readonly IRepository<ProjectItem> _projectItemRepository;
     private readonly IRepository<Project> _projectRepository;
     private readonly IRepository<CompanySettings> _companySettingsRepository;
+    private readonly IRepository<Vendor> _vendorRepository;
 
     // Used in production / integration scenarios
     private readonly ApplicationDbContext? _context;
@@ -38,6 +39,7 @@ public class InvoiceService : IInvoiceService
         IRepository<ProjectItem> projectItemRepository,
         IRepository<Project> projectRepository,
         IRepository<CompanySettings> companySettingsRepository,
+        IRepository<Vendor> vendorRepository,
         ApplicationDbContext context,
         IUnitOfWork unitOfWork,
         ILogger<InvoiceService> logger,
@@ -49,6 +51,7 @@ public class InvoiceService : IInvoiceService
         _projectItemRepository = projectItemRepository ?? throw new ArgumentNullException(nameof(projectItemRepository));
         _projectRepository = projectRepository ?? throw new ArgumentNullException(nameof(projectRepository));
         _companySettingsRepository = companySettingsRepository ?? throw new ArgumentNullException(nameof(companySettingsRepository));
+        _vendorRepository = vendorRepository ?? throw new ArgumentNullException(nameof(vendorRepository));
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -63,6 +66,7 @@ public class InvoiceService : IInvoiceService
         IRepository<ProjectItem> projectItemRepository,
         IRepository<Project> projectRepository,
         IRepository<CompanySettings> companySettingsRepository,
+        IRepository<Vendor> vendorRepository,
         ILogger<InvoiceService> logger,
         ILocalizationService localizationService)
     {
@@ -72,6 +76,7 @@ public class InvoiceService : IInvoiceService
         _projectItemRepository = projectItemRepository ?? throw new ArgumentNullException(nameof(projectItemRepository));
         _projectRepository = projectRepository ?? throw new ArgumentNullException(nameof(projectRepository));
         _companySettingsRepository = companySettingsRepository ?? throw new ArgumentNullException(nameof(companySettingsRepository));
+        _vendorRepository = vendorRepository ?? throw new ArgumentNullException(nameof(vendorRepository));
         _context = null;
         _unitOfWork = null;
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -136,10 +141,41 @@ public class InvoiceService : IInvoiceService
                 Description = request.Description,
                 SupplierVendor = request.SupplierVendor,
                 AttachmentPath = request.AttachmentPath,
+                VendorId = request.VendorId,
+                ExternalVendorName = request.ExternalVendorName,
                 StatusEnum = InvoiceStatus.Draft, // Draft status - will change to Pending when images are uploaded
                 CreatedByUserId = createdByUserId,
                 CreatedAt = DateTime.UtcNow
             };
+
+            // Handle External Vendor if provided (Auto-create shadow vendor if needed)
+            if (!invoice.VendorId.HasValue && !string.IsNullOrEmpty(request.ExternalVendorName))
+            {
+                var existingShadow = await _vendorRepository.AsQueryable()
+                    .FirstOrDefaultAsync(v => v.Name == request.ExternalVendorName && v.IsExternalVendor && v.CompanyId == companyId);
+
+                if (existingShadow != null)
+                {
+                    invoice.VendorId = existingShadow.Id;
+                }
+                else
+                {
+                    var newVendor = new Vendor
+                    {
+                        Name = request.ExternalVendorName,
+                        IsPublic = false,
+                        IsActive = true,
+                        IsExternalVendor = true,
+                        ExternalVendorSource = "InvoiceUpload",
+                        VendorType = "External",
+                        CompanyId = companyId,
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    await _vendorRepository.AddAsync(newVendor);
+                    await _unitOfWork.SaveChangesAsync();
+                    invoice.VendorId = newVendor.Id;
+                }
+            }
 
             // ── Budget Enforcement ──────────────────────────────────────────────
             if (item.EnforceBudget && item.BudgetAmount.HasValue)
@@ -192,6 +228,7 @@ public class InvoiceService : IInvoiceService
             .Include(i => i.Project)
             .Include(i => i.CreatedBy)
             .Include(i => i.Reviewer)
+            .Include(i => i.Vendor)
             .Include(i => i.Images)
             .FirstOrDefaultAsync(i => i.Id == invoiceId);
 
@@ -283,6 +320,10 @@ public class InvoiceService : IInvoiceService
             invoice.SupplierVendor = request.SupplierVendor;
         if (request.AttachmentPath != null)
             invoice.AttachmentPath = request.AttachmentPath;
+        if (request.VendorId.HasValue)
+            invoice.VendorId = request.VendorId.Value;
+        if (request.ExternalVendorName != null)
+            invoice.ExternalVendorName = request.ExternalVendorName;
 
         invoice.UpdatedAt = DateTime.UtcNow;
 
@@ -325,11 +366,11 @@ public class InvoiceService : IInvoiceService
     public async Task<PagedInvoiceResult> GetInvoicesAsync(InvoiceFilterRequest filter, int companyId)
     {
         _logger.LogDebug("Fetching invoices with filter for company {CompanyId}", companyId);
-
         var query = _invoiceRepository.AsQueryable()
             .Include(i => i.ProjectItem)
             .Include(i => i.Project)
             .Include(i => i.CreatedBy)
+            .Include(i => i.Vendor)
             .Include(i => i.Images)
             .Where(i => i.CompanyId == companyId);
 
@@ -399,6 +440,7 @@ public class InvoiceService : IInvoiceService
         var query = _invoiceRepository.AsQueryable()
             .Include(i => i.ProjectItem)
             .Include(i => i.CreatedBy)
+            .Include(i => i.Vendor)
             .Include(i => i.Images)
             .Where(i => i.ProjectId == projectId);
 
@@ -647,6 +689,9 @@ public class InvoiceService : IInvoiceService
             Currency: i.Currency,
             Description: i.Description,
             SupplierVendor: null,
+            VendorId: i.VendorId,
+            VendorName: i.VendorName,
+            ExternalVendorName: i.ExternalVendorName,
             Status: i.Status,
             StatusDisplayName: i.StatusDisplayName,
             RejectionReason: null,
@@ -685,6 +730,9 @@ public class InvoiceService : IInvoiceService
             Currency: i.Currency,
             Description: i.Description,
             SupplierVendor: null,
+            VendorId: i.VendorId,
+            VendorName: i.VendorName,
+            ExternalVendorName: i.ExternalVendorName,
             Status: i.Status,
             StatusDisplayName: i.StatusDisplayName,
             RejectionReason: null,
@@ -763,6 +811,9 @@ public class InvoiceService : IInvoiceService
             Currency: invoice.Currency ?? "EGP",
             Description: invoice.Description,
             SupplierVendor: invoice.SupplierVendor,
+            VendorId: invoice.VendorId,
+            VendorName: invoice.Vendor?.Name ?? invoice.ExternalVendorName,
+            ExternalVendorName: invoice.ExternalVendorName,
             Status: invoice.Status ?? "Pending",
             StatusDisplayName: status.GetDisplayName(),
             RejectionReason: invoice.RejectionReason,
@@ -805,6 +856,9 @@ public class InvoiceService : IInvoiceService
             Status: invoice.Status ?? "Pending",
             StatusDisplayName: status.GetDisplayName(),
             Description: invoice.Description,
+            VendorId: invoice.VendorId,
+            VendorName: invoice.Vendor?.Name ?? invoice.ExternalVendorName,
+            ExternalVendorName: invoice.ExternalVendorName,
             ImageCount: invoice.Images?.Count ?? 0,
             CreatedByFullName: invoice.CreatedBy != null ? $"{invoice.CreatedBy.FirstName} {invoice.CreatedBy.LastName}".Trim() : null,
             CreatedAt: invoice.CreatedAt

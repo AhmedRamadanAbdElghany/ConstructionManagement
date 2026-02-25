@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ThemeService } from '../../core/theme/theme.service';
 import { NotificationsService, NotificationDto } from '../../core/services/notifications.service';
 import { TranslateService } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-topbar',
@@ -237,11 +238,12 @@ import { TranslateService } from '@ngx-translate/core';
     .animate-bounce-subtle { animation: bounce-subtle 3s ease-in-out infinite; }
   `]
 })
-export class TopbarComponent implements OnInit {
+export class TopbarComponent implements OnInit, OnDestroy {
   showNotifications = false;
   showProfile = false;
   showLogoutConfirmation = false;
   notifications: NotificationDto[] = [];
+  private destroy$ = new Subject<void>();
 
   private router = inject(Router);
   public authService = inject(AuthService);
@@ -260,6 +262,18 @@ export class TopbarComponent implements OnInit {
 
   ngOnInit() {
     this.loadNotifications();
+
+    // Reload notifications when language changes to get localized messages
+    this.translateService.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadNotifications();
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadNotifications() {

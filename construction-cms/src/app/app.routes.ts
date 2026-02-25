@@ -342,6 +342,12 @@ export const routes: Routes = [
                 canActivate: [roleGuard],
                 data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
             },
+            {
+                path: 'inspections',
+                loadComponent: () => import('./features/admin/inspections/inspections.component').then(m => m.InspectionsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
             // New Feature Routes
             {
                 path: 'leave',
@@ -404,6 +410,10 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/admin/escalations/escalation-dashboard.component').then(m => m.EscalationDashboardComponent),
                 canActivate: [roleGuard],
                 data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
+                path: 'escalations/:id',
+                redirectTo: '/admin/escalations'
             }
         ]
     },

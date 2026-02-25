@@ -5,19 +5,19 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import {
-    MessagingService,
-    ConversationDetailDto,
-    CompanyMessageDto,
-    SendMessageRequest,
-    CanSendMessageResult
+  MessagingService,
+  ConversationDetailDto,
+  CompanyMessageDto,
+  SendMessageRequest,
+  CanSendMessageResult
 } from '../../../core/services/messaging.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
-    selector: 'app-conversation-detail',
-    standalone: true,
-    imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
-    template: `
+  selector: 'app-conversation-detail',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
+  template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
       <!-- Loading State -->
       @if (isLoading) {
@@ -221,6 +221,13 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                   {{ 'messages.send' | translate }}
                 </button>
               </div>
+              
+              <!-- Error Message -->
+              @if (errorMessage) {
+                <div class="mt-3 p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30">
+                  <p class="text-sm text-red-600 dark:text-red-400">{{ errorMessage }}</p>
+                </div>
+              }
             </div>
           }
 
@@ -236,157 +243,167 @@ import { I18nService } from '../../../core/i18n/i18n.service';
   `
 })
 export class ConversationDetailComponent implements OnInit, OnDestroy {
-    private destroy$ = new Subject<void>();
-    private route = inject(ActivatedRoute);
-    private messagingService = inject(MessagingService);
-    private i18nService = inject(I18nService);
+  private destroy$ = new Subject<void>();
+  private route = inject(ActivatedRoute);
+  private messagingService = inject(MessagingService);
+  private i18nService = inject(I18nService);
 
-    conversation: ConversationDetailDto | null = null;
-    isLoading = false;
-    canSend: CanSendMessageResult | null = null;
+  conversation: ConversationDetailDto | null = null;
+  isLoading = false;
+  canSend: CanSendMessageResult | null = null;
+  errorMessage: string | null = null;
 
-    // Reply
-    replyContent = '';
-    selectedFiles: File[] = [];
-    isSending = false;
+  // Reply
+  replyContent = '';
+  selectedFiles: File[] = [];
+  isSending = false;
 
-    ngOnInit() {
-        this.route.params.subscribe(params => {
-            const conversationId = +params['id'];
-            if (conversationId) {
-                this.loadConversation(conversationId);
-            }
-        });
+  ngOnInit() {
+    this.route.params.subscribe(params => {
+      const conversationId = +params['id'];
+      if (conversationId) {
+        this.loadConversation(conversationId);
+      }
+    });
 
-        this.i18nService.onLanguageChange()
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(() => {
-                const conversationId = this.conversation?.id;
-                if (conversationId) {
-                    this.loadConversation(conversationId);
-                }
-            });
-    }
-
-    ngOnDestroy(): void {
-        this.destroy$.next();
-        this.destroy$.complete();
-    }
-
-    loadConversation(conversationId: number) {
-        this.isLoading = true;
-        const userId = 0; // Will be determined by the service from the token
-
-        this.messagingService.getConversation(conversationId).subscribe({
-            next: (conversation) => {
-                this.conversation = conversation;
-                this.isLoading = false;
-                this.checkCanSend(conversationId);
-            },
-            error: (error) => {
-                console.error('Error loading conversation:', error);
-                this.isLoading = false;
-            }
-        });
-    }
-
-    checkCanSend(conversationId: number) {
-        this.messagingService.canSendMessage(conversationId).subscribe({
-            next: (result) => {
-                this.canSend = result;
-            },
-            error: (error) => {
-                console.error('Error checking can send:', error);
-                this.canSend = { canSend: false, reason: 'Unable to determine send permission' };
-            }
-        });
-    }
-
-    onFileSelect(event: Event) {
-        const input = event.target as HTMLInputElement;
-        if (input.files) {
-            this.selectedFiles = Array.from(input.files);
+    this.i18nService.onLanguageChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        const conversationId = this.conversation?.id;
+        if (conversationId) {
+          this.loadConversation(conversationId);
         }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadConversation(conversationId: number) {
+    this.isLoading = true;
+    const userId = 0; // Will be determined by the service from the token
+
+    this.messagingService.getConversation(conversationId).subscribe({
+      next: (conversation) => {
+        this.conversation = conversation;
+        this.isLoading = false;
+        this.checkCanSend(conversationId);
+      },
+      error: (error) => {
+        console.error('Error loading conversation:', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  checkCanSend(conversationId: number) {
+    this.messagingService.canSendMessage(conversationId).subscribe({
+      next: (result) => {
+        this.canSend = result;
+      },
+      error: (error) => {
+        console.error('Error checking can send:', error);
+        this.canSend = { canSend: false, reason: 'Unable to determine send permission' };
+      }
+    });
+  }
+
+  onFileSelect(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      this.selectedFiles = Array.from(input.files);
     }
+  }
 
-    sendReply() {
-        if (!this.conversation || !this.replyContent.trim()) return;
+  sendReply() {
+    if (!this.conversation || !this.replyContent.trim()) return;
 
-        this.isSending = true;
-        const request: SendMessageRequest = {
-            content: this.replyContent.trim()
-        };
+    this.isSending = true;
+    this.errorMessage = null;
+    const request: SendMessageRequest = {
+      content: this.replyContent.trim()
+    };
 
-        this.messagingService.sendMessage(this.conversation.id, request, this.selectedFiles).subscribe({
-            next: (message) => {
-                this.conversation?.messages.push(message);
-                this.replyContent = '';
-                this.selectedFiles = [];
-                this.isSending = false;
-            },
-            error: (error) => {
-                console.error('Error sending message:', error);
-                this.isSending = false;
-            }
-        });
-    }
+    this.messagingService.sendMessage(this.conversation.id, request, this.selectedFiles).subscribe({
+      next: (message) => {
+        this.conversation?.messages.push(message);
+        this.replyContent = '';
+        this.selectedFiles = [];
+        this.isSending = false;
+      },
+      error: (error) => {
+        console.error('Error sending message:', error);
+        this.isSending = false;
+        // Extract error message from response
+        if (error.error && error.error.message) {
+          this.errorMessage = error.error.message;
+        } else if (error.message) {
+          this.errorMessage = error.message;
+        } else {
+          this.errorMessage = 'Failed to send message. Please try again.';
+        }
+      }
+    });
+  }
 
-    approveConversation() {
-        if (!this.conversation) return;
+  approveConversation() {
+    if (!this.conversation) return;
 
-        this.messagingService.approveConversation(this.conversation.id).subscribe({
-            next: () => {
-                if (this.conversation) {
-                    this.conversation.status = 'Approved';
-                    this.checkCanSend(this.conversation.id);
-                }
-            },
-            error: (error) => {
-                console.error('Error approving conversation:', error);
-            }
-        });
-    }
+    this.messagingService.approveConversation(this.conversation.id).subscribe({
+      next: () => {
+        if (this.conversation) {
+          this.conversation.status = 'Approved';
+          this.checkCanSend(this.conversation.id);
+        }
+      },
+      error: (error) => {
+        console.error('Error approving conversation:', error);
+      }
+    });
+  }
 
-    blockConversation() {
-        if (!this.conversation) return;
+  blockConversation() {
+    if (!this.conversation) return;
 
-        this.messagingService.blockConversation(this.conversation.id).subscribe({
-            next: () => {
-                if (this.conversation) {
-                    this.conversation.status = 'Blocked';
-                    this.canSend = { canSend: false, reason: 'Conversation has been blocked' };
-                }
-            },
-            error: (error) => {
-                console.error('Error blocking conversation:', error);
-            }
-        });
-    }
+    this.messagingService.blockConversation(this.conversation.id).subscribe({
+      next: () => {
+        if (this.conversation) {
+          this.conversation.status = 'Blocked';
+          this.canSend = { canSend: false, reason: 'Conversation has been blocked' };
+        }
+      },
+      error: (error) => {
+        console.error('Error blocking conversation:', error);
+      }
+    });
+  }
 
-    unblockConversation() {
-        if (!this.conversation) return;
+  unblockConversation() {
+    if (!this.conversation) return;
 
-        this.messagingService.unblockConversation(this.conversation.id).subscribe({
-            next: () => {
-                if (this.conversation) {
-                    this.conversation.status = 'Approved';
-                    this.checkCanSend(this.conversation.id);
-                }
-            },
-            error: (error) => {
-                console.error('Error unblocking conversation:', error);
-            }
-        });
-    }
+    this.messagingService.unblockConversation(this.conversation.id).subscribe({
+      next: () => {
+        if (this.conversation) {
+          this.conversation.status = 'Approved';
+          this.checkCanSend(this.conversation.id);
+        }
+      },
+      error: (error) => {
+        console.error('Error unblocking conversation:', error);
+      }
+    });
+  }
 
-    formatDateTime(dateString: string): string {
-        const date = new Date(dateString);
-        return date.toLocaleString();
-    }
+  formatDateTime(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleString();
+  }
 
-    formatFileSize(bytes: number): string {
-        if (bytes < 1024) return bytes + ' B';
-        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-    }
+  formatFileSize(bytes: number): string {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
 }

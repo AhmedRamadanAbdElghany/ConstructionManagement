@@ -11,15 +11,18 @@ public class CompanyAnnouncementService : ICompanyAnnouncementService
     private readonly ApplicationDbContext _db;
     private readonly IFileStorageService _fileStorageService;
     private readonly ICompanyContext _companyContext;
+    private readonly INotificationService _notificationService;
 
     public CompanyAnnouncementService(
         ApplicationDbContext db,
         IFileStorageService fileStorageService,
-        ICompanyContext companyContext)
+        ICompanyContext companyContext,
+        INotificationService notificationService)
     {
         _db = db;
         _fileStorageService = fileStorageService;
         _companyContext = companyContext;
+        _notificationService = notificationService;
     }
 
     // ── Announcements ─────────────────────────────────────────────────────────
@@ -74,6 +77,12 @@ public class CompanyAnnouncementService : ICompanyAnnouncementService
 
         _db.CompanyAnnouncements.Add(entity);
         await _db.SaveChangesAsync();
+
+        if (entity.IsPublished)
+        {
+            await NotifySubscribersAsync(entity);
+        }
+
         return entity.Id;
     }
 
@@ -85,6 +94,8 @@ public class CompanyAnnouncementService : ICompanyAnnouncementService
         if (entity.CompanyId != _companyContext.CompanyId)
             throw new UnauthorizedAccessException("You do not have permission to update this announcement.");
 
+        bool newlyPublished = request.IsPublished == true && !entity.IsPublished;
+        
         if (request.Title != null) entity.Title = request.Title;
         if (request.Content != null) entity.Content = request.Content;
         if (request.Type.HasValue) entity.Type = request.Type.Value;
@@ -105,6 +116,11 @@ public class CompanyAnnouncementService : ICompanyAnnouncementService
         }
 
         await _db.SaveChangesAsync();
+
+        if (newlyPublished)
+        {
+            await NotifySubscribersAsync(entity);
+        }
     }
 
     public async Task DeleteAnnouncementAsync(int announcementId)
@@ -170,6 +186,33 @@ public class CompanyAnnouncementService : ICompanyAnnouncementService
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private async Task NotifySubscribersAsync(CompanyAnnouncement announcement)
+    {
+        var company = await _db.Companies.FindAsync(announcement.CompanyId);
+        var subscribers = await _db.CompanyFollowers
+            .Where(f => f.CompanyId == announcement.CompanyId)
+            .Select(f => f.UserId)
+            .ToListAsync();
+
+        string companyName = company?.Name ?? "Company";
+        string title = announcement.Type == AnnouncementType.Offer ? "New Offer" : "New Announcement";
+        string message = $"{companyName} published: {announcement.Title}";
+
+        foreach (var userId in subscribers)
+        {
+            await _notificationService.CreateAndSendAsync(
+                userId: userId,
+                title: title,
+                message: message,
+                link: $"/marketplace/companies/{announcement.CompanyId}",
+                type: NotificationType.General,
+                titleKey: announcement.Type == AnnouncementType.Offer ? "NOTIF_NEW_OFFER" : "NOTIF_NEW_ANNOUNCEMENT",
+                messageKey: "NOTIF_COMPANY_PUBLISHED",
+                messageArgs: new object[] { companyName, announcement.Title }
+            );
+        }
+    }
 
     private static CompanyAnnouncementDto MapToDto(CompanyAnnouncement a) => new()
     {

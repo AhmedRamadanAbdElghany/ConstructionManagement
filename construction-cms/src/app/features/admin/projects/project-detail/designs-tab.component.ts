@@ -58,7 +58,7 @@ interface DesignGroup {
 
             @if (loading) {
                 <div class="py-24 flex flex-col items-center justify-center space-y-4">
-                    <div class="w-12 h-12 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin"></div>
+                    <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] animate-pulse">Loading Explorer...</p>
                 </div>
             } @else {
@@ -266,7 +266,7 @@ interface DesignGroup {
                 <div class="p-8 space-y-4 max-h-80 overflow-y-auto">
                     @if (templatesLoading) {
                         <div class="py-12 text-center flex flex-col items-center justify-center gap-3">
-                            <div class="w-10 h-10 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin"></div>
+                            <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
                             <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest animate-pulse">Loading templates...</p>
                         </div>
                     } @else if (companyTemplates.length === 0) {

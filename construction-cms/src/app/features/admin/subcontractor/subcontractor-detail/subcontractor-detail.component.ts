@@ -49,7 +49,7 @@ import { I18nService } from '../../../../core/i18n/i18n.service';
 
         @if (isLoading) {
           <div class="flex items-center justify-center py-20">
-            <div class="animate-spin rounded-full h-14 w-14 border-[3px] border-indigo-500/20 border-t-indigo-500"></div>
+            <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         } @else if (subcontractor) {
           <!-- Stats Dashboard -->

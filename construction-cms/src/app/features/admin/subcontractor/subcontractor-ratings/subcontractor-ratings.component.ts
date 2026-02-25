@@ -151,7 +151,7 @@ import { I18nService } from '../../../../core/i18n/i18n.service';
         <!-- Ratings List -->
         <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
           <div *ngIf="isLoading" class="flex items-center justify-center py-20">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500"></div>
+            <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
           <div *ngIf="!isLoading && filteredRatings.length === 0" class="text-center py-20">
             <svg class="w-16 h-16 mx-auto text-slate-300 dark:text-slate-700 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

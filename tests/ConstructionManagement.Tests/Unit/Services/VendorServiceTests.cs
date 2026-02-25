@@ -28,6 +28,7 @@ public class VendorServiceTests
     private readonly Mock<ICompanyContext> _companyContextMock = new();
     private readonly Mock<IRepository<VendorTransaction>> _transactionRepoMock = new();
     private readonly Mock<IRepository<DeliveryCostTier>> _deliveryTierRepoMock = new();
+    private readonly Mock<IRepository<ItemInvoice>> _itemInvoiceRepoMock = new();
 
     private VendorService CreateService()
         => new(
@@ -41,6 +42,7 @@ public class VendorServiceTests
             _unitOfWorkMock.Object,
             _activityLogMock.Object,
             _deliveryTierRepoMock.Object,
+            _itemInvoiceRepoMock.Object,
             _notificationMock.Object,
             _companyContextMock.Object
         );

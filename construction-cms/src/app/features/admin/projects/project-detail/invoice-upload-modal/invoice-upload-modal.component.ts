@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { InvoicesService, CreateInvoiceRequest, InvoiceType } from '../../../../../core/services/invoices.service';
+import { VendorService, Vendor } from '../../../../../core/services/vendor.service';
 import { ProjectItem } from '../../../../../shared/interfaces';
 
 @Component({
@@ -271,16 +272,56 @@ import { ProjectItem } from '../../../../../shared/interfaces';
                                     </div>
                                 </div>
 
-                                <!-- Supplier/Vendor -->
+                                <!-- Supplier/Vendor Selection -->
                                 <div>
                                     <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
                                         {{ 'invoices.supplier_vendor' | translate }}
                                     </label>
-                                    <input 
-                                        type="text"
-                                        [(ngModel)]="form.supplierVendor"
-                                        class="w-full px-4 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-sm font-medium"
-                                        [placeholder]="'invoices.supplier_vendor_placeholder' | translate">
+                                    
+                                    <div class="space-y-3">
+                                        <!-- Selection Mode Tabs -->
+                                        <div class="flex p-1 bg-slate-100 dark:bg-slate-900 rounded-xl w-fit">
+                                            <button 
+                                                type="button"
+                                                (click)="vendorMode.set('select')"
+                                                class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all"
+                                                [class.bg-white]="vendorMode() === 'select'"
+                                                [class.dark:bg-slate-800]="vendorMode() === 'select'"
+                                                [class.text-cyan-600]="vendorMode() === 'select'"
+                                                [class.shadow-sm]="vendorMode() === 'select'"
+                                                [class.text-slate-500]="vendorMode() !== 'select'">
+                                                {{ 'invoices.select_existing' | translate }}
+                                            </button>
+                                            <button 
+                                                type="button"
+                                                (click)="vendorMode.set('manual')"
+                                                class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all"
+                                                [class.bg-white]="vendorMode() === 'manual'"
+                                                [class.dark:bg-slate-800]="vendorMode() === 'manual'"
+                                                [class.text-cyan-600]="vendorMode() === 'manual'"
+                                                [class.shadow-sm]="vendorMode() === 'manual'"
+                                                [class.text-slate-500]="vendorMode() !== 'manual'">
+                                                {{ 'invoices.enter_manual' | translate }}
+                                            </button>
+                                        </div>
+
+                                        @if (vendorMode() === 'select') {
+                                            <select 
+                                                [(ngModel)]="form.vendorId"
+                                                class="w-full px-4 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-sm font-medium">
+                                                <option [ngValue]="null">{{ 'invoices.select_vendor_placeholder' | translate }}</option>
+                                                @for (vendor of vendors(); track vendor.id) {
+                                                    <option [ngValue]="vendor.id">{{ vendor.name }}</option>
+                                                }
+                                            </select>
+                                        } @else {
+                                            <input 
+                                                type="text"
+                                                [(ngModel)]="form.externalVendorName"
+                                                class="w-full px-4 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-sm font-medium"
+                                                [placeholder]="'invoices.supplier_vendor_placeholder' | translate">
+                                        }
+                                    </div>
                                 </div>
 
                                 <!-- Description -->
@@ -340,19 +381,31 @@ export class InvoiceUploadModalComponent implements OnInit {
         taxRate: 0,
         retentionRate: 0,
         description: '',
-        supplierVendor: ''
+        supplierVendor: '',
+        vendorId: null as number | null,
+        externalVendorName: ''
     };
 
+    vendors = signal<any[]>([]);
+    vendorMode = signal<'select' | 'manual'>('select');
     selectedFiles: File[] = [];
     isDragging = signal(false);
     isSubmitting = signal(false);
     showAdvanced = signal(false);
 
-    constructor(private invoicesService: InvoicesService) { }
+    constructor(
+        private invoicesService: InvoicesService,
+        private vendorService: VendorService
+    ) { }
 
     ngOnInit(): void {
         // Set default date to today
         this.form.invoiceDate = new Date().toISOString().split('T')[0];
+
+        // Load vendors
+        this.vendorService.getVendors().subscribe(vendors => {
+            this.vendors.set(vendors);
+        });
     }
 
     isFormValid(): boolean {
@@ -415,7 +468,9 @@ export class InvoiceUploadModalComponent implements OnInit {
                 taxRate: this.form.taxRate || undefined,
                 retentionRate: this.form.retentionRate || undefined,
                 description: this.form.description || undefined,
-                supplierVendor: this.form.supplierVendor || undefined
+                supplierVendor: this.form.supplierVendor || undefined,
+                vendorId: this.vendorMode() === 'select' ? (this.form.vendorId || undefined) : undefined,
+                externalVendorName: this.vendorMode() === 'manual' ? (this.form.externalVendorName || undefined) : undefined
             };
 
             const result = await this.invoicesService.createInvoiceForItem(

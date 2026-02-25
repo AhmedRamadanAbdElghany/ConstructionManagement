@@ -166,7 +166,7 @@ import { I18nService } from '../../../../core/i18n/i18n.service';
         <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
           @if (isLoading) {
             <div class="flex items-center justify-center py-20">
-              <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
+              <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
           } @else if (filteredPayments.length === 0) {
             <div class="text-center py-20">

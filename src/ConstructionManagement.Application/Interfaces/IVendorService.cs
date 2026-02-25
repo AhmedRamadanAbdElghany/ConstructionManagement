@@ -69,6 +69,7 @@ namespace ConstructionManagement.Application.Interfaces
         Task<VendorDashboardDto> GetVendorDashboardAsync();
         Task<IEnumerable<VendorProjectDto>> GetVendorProjectsAsync(int vendorId);
         Task<IEnumerable<VendorInvoiceDto>> GetAllVendorBillsAsync(int vendorId);
+        Task<IEnumerable<VendorInvoiceDto>> GetFinancialLedgerAsync();
 
         // Delivery Cost Tiers (Feature 2)
         Task<IEnumerable<DeliveryCostTierDto>> GetDeliveryCostTiersAsync(int productId);

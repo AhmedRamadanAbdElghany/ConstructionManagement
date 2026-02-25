@@ -108,6 +108,20 @@ interface BillingInvoice {
               {{ totalInvoiceAmount() | currency:'USD':'symbol':'1.0-0' }}
             </div>
           </div>
+
+          <div class="metric-card vendor-bills">
+            <div class="metric-icon">&#128188;</div>
+            <div class="metric-content">
+              <span class="metric-title">{{ 'finance.stats.vendor_bills' | translate }}</span>
+              <span class="metric-value">{{ vendorDashboard()?.pendingApprovals || 0 | currency:'USD':'symbol':'1.0-0' }}</span>
+              <span class="metric-subtitle">
+                {{ 'finance.stats.unpaid_liabilities' | translate }}
+              </span>
+            </div>
+            <div class="metric-amount warning">
+              {{ vendorDashboard()?.pendingApprovals || 0 | currency:'USD':'symbol':'1.0-0' }}
+            </div>
+          </div>
         </div>
 
         <!-- Tabs -->
@@ -129,6 +143,9 @@ interface BillingInvoice {
           </button>
           <button class="tab-btn" [class.active]="activeTab === 'vendors'" (click)="activeTab = 'vendors'">
             <span class="icon">&#128188;</span> {{ 'finance.tabs.vendors' | translate }}
+          </button>
+          <button class="tab-btn" [class.active]="activeTab === 'ledger'" (click)="activeTab = 'ledger'">
+            <span class="icon">&#128221;</span> {{ 'finance.tabs.ledger' | translate }}
           </button>
         </div>
 
@@ -509,6 +526,65 @@ interface BillingInvoice {
                 </div>
               </div>
             }
+            @case ('ledger') {
+              <div class="ledger-section">
+                <div class="section-header">
+                  <h2>{{ 'finance.tabs.ledger' | translate }}</h2>
+                  <div class="header-actions">
+                    <span class="text-xs font-bold uppercase tracking-widest text-slate-400">
+                      {{ ledger().length }} {{ 'finance.ledger.total_entries' | translate }}
+                    </span>
+                  </div>
+                </div>
+                <div class="data-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>{{ 'finance.ledger.date' | translate }}</th>
+                        <th>{{ 'finance.ledger.vendor' | translate }}</th>
+                        <th>{{ 'finance.ledger.number' | translate }}</th>
+                        <th>{{ 'finance.ledger.project' | translate }}</th>
+                        <th>{{ 'finance.ledger.amount' | translate }}</th>
+                        <th>{{ 'common.status' | translate }}</th>
+                        <th>{{ 'common.actions' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (entry of ledger(); track entry.id) {
+                        <tr [class.pending]="entry.approvalStatus === 'Pending'" [class.approved]="entry.approvalStatus === 'Approved'" [class.rejected]="entry.approvalStatus === 'Rejected'">
+                          <td>{{ entry.invoiceDate | date:'shortDate' }}</td>
+                          <td>
+                            <div class="flex flex-col">
+                              <span class="font-bold">{{ entry.vendorName }}</span>
+                              @if (entry.isExternalVendor) {
+                                <span class="text-[9px] uppercase tracking-tighter text-amber-600 font-black">{{ 'finance.vendors.external' | translate }}</span>
+                              }
+                            </div>
+                          </td>
+                          <td class="font-mono text-xs">{{ entry.invoiceNumber }}</td>
+                          <td>{{ entry.projectName || '-' }}</td>
+                          <td class="font-bold text-slate-900">{{ entry.amount | currency }}</td>
+                          <td>
+                            <span class="status-badge" [class.pending]="entry.approvalStatus === 'Pending'" [class.approved]="entry.approvalStatus === 'Approved'" [class.rejected]="entry.approvalStatus === 'Rejected'">
+                              {{ entry.approvalStatus }}
+                            </span>
+                          </td>
+                          <td>
+                            <button class="btn-icon" (click)="viewLedgerEntry(entry)" title="{{ 'common.view' | translate }}">
+                              <span>&#128065;</span>
+                            </button>
+                          </td>
+                        </tr>
+                      } @empty {
+                        <tr>
+                          <td colspan="7" class="no-data">{{ 'finance.ledger.no_data' | translate }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            }
           }
         </div>
       }
@@ -714,6 +790,7 @@ interface BillingInvoice {
     .metric-card.misc-expenses { border-left-color: #f59e0b; }
     .metric-card.transactions { border-left-color: #10b981; }
     .metric-card.invoices { border-left-color: #8b5cf6; }
+    .metric-card.vendor-bills { border-left-color: #ef4444; }
 
     .metric-icon {
       font-size: 2rem;
@@ -751,6 +828,10 @@ interface BillingInvoice {
       font-size: 1.25rem;
       font-weight: 700;
       color: #059669;
+    }
+
+    .metric-amount.warning {
+      color: #ef4444;
     }
 
     .tabs-container {
@@ -1131,7 +1212,7 @@ interface BillingInvoice {
     }
   `]
 })
-export class FinanceComponent implements OnInit {
+export class FinanceComponent implements OnInit, OnDestroy {
   private cashVouchersService = inject(CashVouchersService);
   private miscExpensesService = inject(MiscExpensesService);
   private transactionsService = inject(TransactionsService);
@@ -1140,7 +1221,7 @@ export class FinanceComponent implements OnInit {
   private destroy$ = new Subject<void>();
 
   isLoading = signal(true);
-  activeTab: 'vouchers' | 'expenses' | 'transactions' | 'invoices' | 'billing' | 'vendors' = 'vouchers';
+  activeTab: 'vouchers' | 'expenses' | 'transactions' | 'invoices' | 'billing' | 'vendors' | 'ledger' = 'vouchers';
   selectedProjectId = signal<number | null>(null);
 
   cashVouchers = signal<CashVoucherDto[]>([]);
@@ -1156,6 +1237,7 @@ export class FinanceComponent implements OnInit {
   selectedVendor = signal<VendorWithStats | null>(null);
   vendorProjects = signal<VendorProject[]>([]);
   vendorBills = signal<VendorInvoice[]>([]);
+  ledger = signal<VendorInvoice[]>([]);
   showVendorDetail = signal(false);
 
   pendingTransactions = computed(() => this.transactions().filter(t => t.status === 'Pending').length);
@@ -1189,6 +1271,11 @@ export class FinanceComponent implements OnInit {
     this.loadAllData();
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   loadAllData(): void {
     this.isLoading.set(true);
 
@@ -1208,24 +1295,23 @@ export class FinanceComponent implements OnInit {
         this.loadMiscExpenseSummary();
       });
 
-    // Load transactions (default project ID 1 for now)
-    this.transactionsService.getTransactions(1)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(transactions => {
-        this.transactions.set(transactions);
-      });
+    // Transactions tab is project-scoped; load only when a project filter is selected
+    // (deferred to loadTransactionsForProject, not fetched globally here)
+    this.transactions.set([]);
 
-    // Load invoices
+    // Load invoices (company-scoped; backend filters by companyId from JWT)
     this.invoicesService.getInvoices()
       .pipe(takeUntil(this.destroy$))
       .subscribe(result => {
         this.invoices.set(result.items as any[]);
+        this.isLoading.set(false);
       });
 
     // Load vendor data
     this.loadVendorData();
 
-    this.isLoading.set(false);
+    // Load financial ledger
+    this.loadLedger();
   }
 
   loadVendorData(): void {
@@ -1403,5 +1489,18 @@ export class FinanceComponent implements OnInit {
     this.selectedVendor.set(null);
     this.vendorProjects.set([]);
     this.vendorBills.set([]);
+  }
+
+  loadLedger(): void {
+    this.vendorService.getFinancialLedger()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(ledger => {
+        this.ledger.set(ledger);
+      });
+  }
+
+  viewLedgerEntry(entry: VendorInvoice): void {
+    console.log('Viewing ledger entry:', entry);
+    // You could open a shared "Invoice View" modal here
   }
 }

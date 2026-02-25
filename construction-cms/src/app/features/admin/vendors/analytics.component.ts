@@ -42,7 +42,7 @@ import { format } from 'date-fns';
 
       @if (loading) {
         <div class="flex flex-col items-center justify-center py-20 space-y-4">
-          <div class="w-12 h-12 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+          <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
           <p class="text-slate-400 font-medium animate-pulse">{{ 'common.loading_reports' | translate }}...</p>
         </div>
       } @else if (report) {

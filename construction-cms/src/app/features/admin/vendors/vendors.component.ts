@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { VendorService, Vendor, VendorInvoice, VendorInvoiceSummary, CreateVendorRequest, CreateVendorInvoiceRequest } from '../../../core/services/vendor.service';
+import { VendorService, Vendor, VendorInvoice, VendorInvoiceSummary, CreateVendorRequest, CreateVendorInvoiceRequest, VendorProject, VendorWithStats } from '../../../core/services/vendor.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
 
@@ -61,7 +61,7 @@ import { I18nService } from '../../../core/i18n/i18n.service';
 
             @if (loading) {
                 <div class="flex items-center justify-center py-12">
-                    <div class="w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+                    <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
                 </div>
             } @else {
                 <!-- Vendors List Tab -->
@@ -114,15 +114,27 @@ import { I18nService } from '../../../core/i18n/i18n.service';
 
                                 <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
                                     <div class="flex items-center justify-between text-sm">
-                                        <span class="text-slate-500 dark:text-slate-400">{{ 'vendors.invoices_count' | translate }}: {{ vendor.invoiceCount }}</span>
-                                        <div class="flex gap-2">
+                                        <div class="flex flex-col">
+                                            <span class="text-slate-500 dark:text-slate-400 font-medium">{{ 'vendors.invoices_count' | translate }}: {{ vendor.totalInvoices || 0 }}</span>
+                                            @if (vendor.totalAmount) {
+                                                <div class="flex flex-col">
+                                                    <span class="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-1">{{ 'vendors.total_payments' | translate }}</span>
+                                                    <span class="text-cyan-600 dark:text-cyan-400 font-bold">{{ (vendor.totalAmount || 0) | currency }}</span>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="flex flex-wrap gap-2 justify-end">
                                             <button (click)="viewVendorInvoices(vendor)" 
-                                                    class="px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                                                {{ 'vendors.view_invoices' | translate }}
+                                                    class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors uppercase tracking-wider">
+                                                {{ 'vendors.view_bills' | translate }}
+                                            </button>
+                                            <button (click)="viewVendorProjects(vendor)" 
+                                                    class="px-2 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-[10px] font-bold hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors uppercase tracking-wider">
+                                                {{ 'vendors.view_projects' | translate }}
                                             </button>
                                             @if (canAddVendor) {
                                                 <button (click)="showAddInvoice(vendor)" 
-                                                        class="px-3 py-1 rounded-lg bg-cyan-500 text-white text-xs hover:bg-cyan-600 transition-colors">
+                                                        class="px-2 py-1 rounded-lg bg-cyan-500 text-white text-[10px] font-bold hover:bg-cyan-600 transition-colors uppercase tracking-wider">
                                                     {{ 'vendors.add_invoice' | translate }}
                                                 </button>
                                             }
@@ -402,69 +414,157 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                 </div>
             }
 
+            <!-- Vendor Projects Modal -->
+            @if (showVendorProjectsModal && selectedVendor) {
+                <div class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" (click)="showVendorProjectsModal = false">
+                    <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] w-full max-w-2xl shadow-2xl max-h-[80vh] overflow-hidden border border-slate-200 dark:border-slate-800" (click)="$event.stopPropagation()">
+                        <div class="flex items-center justify-between p-8 border-b border-slate-200 dark:border-slate-700">
+                            <div>
+                                <h3 class="text-2xl font-black text-slate-900 dark:text-white">{{ selectedVendor.name }}</h3>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{{ 'vendors.projects_summary' | translate }}</span>
+                                </div>
+                            </div>
+                            <button (click)="showVendorProjectsModal = false" class="p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                                <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="p-8 overflow-y-auto max-h-[60vh] space-y-6">
+                            @for (project of vendorProjects; track project.projectId) {
+                                <div class="p-6 rounded-[2.5rem] bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/5 hover:border-indigo-500/30 transition-all group">
+                                    <div class="flex items-start justify-between mb-4">
+                                        <div>
+                                            <h4 class="font-black text-slate-900 dark:text-white text-xl">{{ project.projectName }}</h4>
+                                            <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mt-1">
+                                                {{ project.firstInvoiceDate | date:'mediumDate' }} — {{ project.lastInvoiceDate | date:'mediumDate' }}
+                                            </p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-2xl font-black text-indigo-600 dark:text-indigo-400">{{ project.totalAmount | currency }}</p>
+                                            <div class="flex items-center justify-end gap-1 mt-1">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                                                <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest">{{ project.totalInvoices }} Invoices</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 gap-4 pt-6 border-t border-slate-200 dark:border-white/5">
+                                        <div class="p-4 rounded-3xl bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/20">
+                                            <p class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-1">Approved</p>
+                                            <p class="text-base font-black text-emerald-700 dark:text-emerald-300">{{ project.approvedAmount | currency }}</p>
+                                        </div>
+                                        <div class="p-4 rounded-3xl bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20">
+                                            <p class="text-[9px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-1">Pending</p>
+                                            <p class="text-base font-black text-amber-700 dark:text-amber-300">{{ project.pendingAmount | currency }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @empty {
+                                <div class="flex flex-col items-center justify-center py-20 text-slate-400">
+                                    <div class="w-20 h-20 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center mb-6">
+                                        <svg class="w-10 h-10 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                        </svg>
+                                    </div>
+                                    <p class="font-bold text-lg text-slate-500 dark:text-slate-400">No projects found</p>
+                                    <p class="text-sm mt-1">This vendor hasn't been linked to any projects yet.</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+
             <!-- Vendor Invoices Modal -->
             @if (showVendorInvoicesModal && selectedVendor) {
-                <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" (click)="showVendorInvoicesModal = false">
-                    <div class="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-2xl shadow-2xl max-h-[80vh] overflow-hidden" (click)="$event.stopPropagation()">
-                        <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+                <div class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" (click)="showVendorInvoicesModal = false">
+                    <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] w-full max-w-4xl shadow-2xl max-h-[90vh] overflow-hidden border border-slate-200 dark:border-slate-800" (click)="$event.stopPropagation()">
+                        <div class="flex items-center justify-between p-8 border-b border-slate-200 dark:border-slate-700">
                             <div>
-                                <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ selectedVendor.name }} - {{ 'vendors.invoices' | translate }}</h3>
-                                <p class="text-sm text-slate-500 dark:text-slate-400">{{ selectedVendor.email }}</p>
+                                <h3 class="text-2xl font-black text-slate-900 dark:text-white">{{ selectedVendor.name }}</h3>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{{ 'vendors.all_bills_and_invoices' | translate }}</span>
+                                </div>
                             </div>
-                            <button (click)="showVendorInvoicesModal = false" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                                <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button (click)="showVendorInvoicesModal = false" class="p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                                <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                 </svg>
                             </button>
                         </div>
                         
                         <!-- Invoice Filters -->
-                        <div class="px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-center">
-                            <div class="flex items-center gap-2">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ 'common.from' | translate }}</span>
-                                <input type="date" [(ngModel)]="invoiceFilters.fromDate" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-xs focus:ring-1 focus:ring-cyan-500" />
+                        <div class="px-8 py-4 bg-slate-50 dark:bg-slate-800/30 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-6 items-center">
+                            <div class="flex items-center gap-3 bg-white dark:bg-slate-900 px-4 py-2 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'common.from' | translate }}</span>
+                                <input type="date" [(ngModel)]="invoiceFilters.fromDate" class="bg-transparent border-none text-xs font-bold p-0 focus:ring-0 text-slate-700 dark:text-slate-200" />
                             </div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ 'common.to' | translate }}</span>
-                                <input type="date" [(ngModel)]="invoiceFilters.toDate" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-xs focus:ring-1 focus:ring-cyan-500" />
+                            <div class="flex items-center gap-3 bg-white dark:bg-slate-900 px-4 py-2 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'common.to' | translate }}</span>
+                                <input type="date" [(ngModel)]="invoiceFilters.toDate" class="bg-transparent border-none text-xs font-bold p-0 focus:ring-0 text-slate-700 dark:text-slate-200" />
                             </div>
                             <div class="flex-1"></div>
-                            <button (click)="resetInvoiceFilters()" class="text-[10px] font-bold text-cyan-500 hover:underline">Reset Filters</button>
-                        </div>
+                            <button (click)="resetInvoiceFilters()" class="text-xs font-black text-cyan-500 hover:text-cyan-600 uppercase tracking-widest">Reset Filters</button>
+                        </div> 
 
-                        <div class="p-4 overflow-y-auto max-h-[60vh]">
-                            <div class="space-y-3">
+                        <div class="p-8 overflow-y-auto max-h-[60vh]">
+                            <div class="space-y-4">
                                 @for (invoice of filteredInvoices; track invoice.id) {
-                                    <div class="flex items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/5">
-                                        <div class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center flex-shrink-0">
-                                            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="flex items-center gap-6 p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-white/5 hover:border-cyan-500/30 transition-all group">
+                                        <div class="w-14 h-14 rounded-2xl bg-white dark:bg-slate-900 shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-center flex-shrink-0 group-hover:bg-cyan-500 group-hover:text-white transition-all transform group-hover:scale-105">
+                                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                             </svg>
                                         </div>
                                         <div class="flex-1 min-w-0">
-                                            <div class="flex items-center gap-2">
-                                                <span class="font-bold text-slate-900 dark:text-white">{{ invoice.invoiceNumber }}</span>
-                                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase"
+                                            <div class="flex items-center flex-wrap gap-2">
+                                                <span class="text-lg font-black text-slate-900 dark:text-white">{{ invoice.invoiceNumber }}</span>
+                                                <span class="px-3 py-1 rounded-xl text-[9px] font-black uppercase tracking-[0.15em]"
                                                       [ngClass]="{
                                                           'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400': invoice.approvalStatus === 'Pending',
-                                                          'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400': invoice.approvalStatus === 'Approved',
+                                                          'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400': invoice.approvalStatus === 'Approved' || invoice.approvalStatus === 'Reviewed',
                                                           'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400': invoice.approvalStatus === 'Rejected'
                                                       }">
                                                     {{ invoice.approvalStatus | translate }}
                                                 </span>
+                                                @if (invoice.projectName) {
+                                                    <span class="text-[10px] font-black text-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 px-3 py-1 rounded-xl border border-indigo-100 dark:border-indigo-900/40">
+                                                        {{ invoice.projectName }}
+                                                    </span>
+                                                }
                                             </div>
-                                            <div class="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                                                {{ invoice.amount | currency }} • {{ invoice.invoiceDate | date:'mediumDate' }}
+                                            <div class="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mt-2">
+                                                {{ invoice.invoiceDate | date:'mediumDate' }}
+                                                <span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700"></span>
+                                                {{ invoice.materialType || 'General Materials' }}
                                             </div>
                                             @if (invoice.description) {
-                                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{ invoice.description }}</p>
+                                                <p class="text-xs text-slate-400 mt-2 font-medium line-clamp-1 italic">{{ invoice.description }}</p>
+                                            }
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-2xl font-black text-slate-900 dark:text-white">{{ invoice.amount | currency }}</p>
+                                            @if (invoice.fileUrl) {
+                                                <a [href]="invoice.fileUrl" target="_blank" class="inline-flex items-center gap-1.5 mt-2 px-3 py-1.5 rounded-xl bg-cyan-50 dark:bg-cyan-900/10 text-[10px] font-black text-cyan-600 dark:text-cyan-400 uppercase tracking-widest hover:bg-cyan-100 dark:hover:bg-cyan-900/30 transition-all">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                                    View File
+                                                </a>
                                             }
                                         </div>
                                     </div>
                                 }
                                 @empty {
-                                    <div class="text-center py-8 text-slate-500 dark:text-slate-400">
-                                        <p>{{ 'vendors.no_invoices' | translate }}</p>
+                                    <div class="flex flex-col items-center justify-center py-20 text-slate-400">
+                                        <div class="w-20 h-20 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center mb-6">
+                                            <svg class="w-10 h-10 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
+                                        </div>
+                                        <p class="font-bold text-lg text-slate-500 dark:text-slate-400">No invoices found</p>
                                     </div>
                                 }
                             </div>
@@ -482,16 +582,19 @@ export class VendorsComponent implements OnInit, OnDestroy {
     loading = false;
     activeTab: 'vendors' | 'pending' | 'summary' = 'vendors';
 
-    vendors: Vendor[] = [];
+    vendors: VendorWithStats[] = [];
     pendingInvoices: VendorInvoice[] = [];
     vendorSummary: VendorInvoiceSummary[] = [];
     vendorInvoices: VendorInvoice[] = [];
-    selectedVendor: Vendor | null = null;
+    vendorProjects: VendorProject[] = [];
+    selectedVendor: Vendor | VendorWithStats | null = null;
+    selectedInvoice: VendorInvoice | null = null;
 
     showCreateModal = false;
     showAddInvoiceModal = false;
     showRejectInvoiceModal = false;
     showVendorInvoicesModal = false;
+    showVendorProjectsModal = false;
     isChangingVendor = false;
 
     invoiceFilters = {
@@ -510,7 +613,6 @@ export class VendorsComponent implements OnInit, OnDestroy {
     resetInvoiceFilters() {
         this.invoiceFilters = { fromDate: '', toDate: '' };
     }
-    selectedInvoice: VendorInvoice | null = null;
     rejectionReason = '';
     selectedFile: File | null = null;
 
@@ -566,7 +668,7 @@ export class VendorsComponent implements OnInit, OnDestroy {
     loadData(): void {
         this.loading = true;
 
-        this.vendorService.getVendors().subscribe({
+        this.vendorService.getVendorsWithStats().subscribe({
             next: (vendors) => {
                 this.vendors = vendors;
                 this.loading = false;
@@ -603,9 +705,9 @@ export class VendorsComponent implements OnInit, OnDestroy {
         });
     }
 
-    viewVendorInvoices(vendor: Vendor): void {
+    viewVendorInvoices(vendor: Vendor | VendorWithStats): void {
         this.selectedVendor = vendor;
-        this.vendorService.getInvoicesByVendor(vendor.id).subscribe({
+        this.vendorService.getVendorBills(vendor.id).subscribe({
             next: (invoices) => {
                 this.vendorInvoices = invoices;
                 this.showVendorInvoicesModal = true;
@@ -616,7 +718,20 @@ export class VendorsComponent implements OnInit, OnDestroy {
         });
     }
 
-    showAddInvoice(vendor?: Vendor): void {
+    viewVendorProjects(vendor: Vendor | VendorWithStats): void {
+        this.selectedVendor = vendor;
+        this.vendorService.getVendorProjects(vendor.id).subscribe({
+            next: (projects) => {
+                this.vendorProjects = projects;
+                this.showVendorProjectsModal = true;
+            },
+            error: (err) => {
+                console.error('Error loading vendor projects:', err);
+            }
+        });
+    }
+
+    showAddInvoice(vendor?: Vendor | VendorWithStats): void {
         this.selectedVendor = vendor || null;
         this.isChangingVendor = !vendor;
         this.newInvoice = {
@@ -650,8 +765,8 @@ export class VendorsComponent implements OnInit, OnDestroy {
         if (!this.newVendor.name) return;
 
         this.vendorService.createVendor(this.newVendor).subscribe({
-            next: (vendor) => {
-                this.vendors.push(vendor);
+            next: () => {
+                this.loadData();
                 this.showCreateModal = false;
                 this.newVendor = {
                     name: '',

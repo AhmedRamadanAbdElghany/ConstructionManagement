@@ -69,6 +69,22 @@ public class ItemInvoice : BaseEntity, ICompanyEntity
     [MaxLength(200)]
     public string? SupplierVendor { get; set; }
 
+    /// <summary>
+    /// ID of the vendor from the system. 
+    /// If null, ExternalVendorName should be used.
+    /// </summary>
+    public int? VendorId { get; set; }
+
+    [ForeignKey(nameof(VendorId))]
+    public virtual Vendor? Vendor { get; set; }
+
+    /// <summary>
+    /// Name of an external vendor not registered in the system.
+    /// Used when VendorId is null.
+    /// </summary>
+    [MaxLength(200)]
+    public string? ExternalVendorName { get; set; }
+
     [MaxLength(500)]
     public string? AttachmentPath { get; set; }
 

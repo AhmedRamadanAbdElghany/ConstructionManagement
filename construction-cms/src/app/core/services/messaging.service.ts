@@ -51,6 +51,9 @@ export interface ConversationDto {
     initiatorUserId: number;
     initiatorName: string;
     initiatorAvatar?: string;
+    initiatedBy: string; // 'User' | 'Company'
+    conversationType: string; // 'Company' | 'Worker' | 'Client' | 'SuperAdmin'
+    targetUserType?: string; // User type for company-initiated conversations
     status: string; // 'Pending' | 'Approved' | 'Blocked'
     createdAt: string;
     lastMessageAt?: string;
@@ -153,6 +156,30 @@ export interface MessageSearchResultDto {
     companyId: number;
     hasAttachments: boolean;
     attachments: MessageAttachmentDto[];
+}
+
+export interface MessagingStatusDto {
+    isRestricted: boolean;
+    restrictionReason?: string;
+    superAdminCompanyId?: number;
+    isUnverifiedCompanyOwner: boolean;
+}
+
+// Company to User messaging
+export interface StartConversationWithUserRequest {
+    targetUserId: number;
+    message: string;
+}
+
+export interface MessagableUserDto {
+    id: number;
+    name: string;
+    email?: string;
+    phone?: string;
+    userType: string;
+    profilePicture?: string;
+    hasExistingConversation: boolean;
+    existingConversationId?: number;
 }
 
 // ── Service ────────────────────────────────────────────────────────────────────
@@ -341,5 +368,43 @@ export class MessagingService {
         return this.http.get<MessageSearchResultDto[]>(`${this.baseUrl}/messaging/conversations/${conversationId}/search`, {
             params: { searchTerm }
         });
+    }
+
+    /**
+     * Get messaging restriction status for the current user
+     */
+    getMessagingStatus(): Observable<MessagingStatusDto> {
+        return this.http.get<MessagingStatusDto>(`${this.baseUrl}/messaging/messaging-status`);
+    }
+
+    // ── Company to User Messaging ─────────────────────────────────────────────────
+
+    /**
+     * Start a new conversation from a company to a user (client/worker)
+     * Company owners can initiate conversations with clients and workers
+     */
+    startConversationWithUser(request: StartConversationWithUserRequest, attachments?: File[]): Observable<ConversationDto> {
+        const formData = new FormData();
+        formData.append('targetUserId', request.targetUserId.toString());
+        formData.append('message', request.message);
+
+        if (attachments) {
+            attachments.forEach(file => {
+                formData.append('attachments', file);
+            });
+        }
+
+        return this.http.post<ConversationDto>(`${this.baseUrl}/messaging/conversations/with-user`, formData);
+    }
+
+    /**
+     * Get users that the company can message (clients and workers)
+     */
+    getMessagableUsers(userType?: string): Observable<MessagableUserDto[]> {
+        let url = `${this.baseUrl}/messaging/messagable-users`;
+        if (userType) {
+            url += `?userType=${encodeURIComponent(userType)}`;
+        }
+        return this.http.get<MessagableUserDto[]>(url);
     }
 }

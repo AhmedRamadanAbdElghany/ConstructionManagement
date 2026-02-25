@@ -101,21 +101,13 @@ export interface VendorSearchRequest {
 }
 
 // Feature 1: Vendor Dashboard Types
-export interface VendorWithStats {
-    id: number;
-    name: string;
-    phone?: string;
-    email?: string;
-    vendorType?: string;
-    isExternalVendor: boolean;
-    isActive: boolean;
+export interface VendorWithStats extends Vendor {
     totalInvoices: number;
     totalAmount: number;
     pendingAmount: number;
     approvedAmount: number;
     projectCount: number;
     lastInvoiceDate?: string;
-    createdAt: string;
 }
 
 export interface VendorProject {
@@ -229,8 +221,10 @@ export interface SpendByDateItem {
 
 export interface VendorInvoice {
     id: number;
-    vendorId: number;
+    vendorId?: number;
     vendorName: string;
+    externalVendorName?: string;
+    isExternalVendor: boolean;
     invoiceNumber: string;
     invoiceDate: string;
     amount: number;
@@ -462,6 +456,10 @@ export class VendorService {
 
     getVendorBills(vendorId: number): Observable<VendorInvoice[]> {
         return this.http.get<VendorInvoice[]>(`${this.baseUrl}/${vendorId}/bills`);
+    }
+
+    getFinancialLedger(): Observable<VendorInvoice[]> {
+        return this.http.get<VendorInvoice[]>(`${this.baseUrl}/financial-ledger`);
     }
 
     // Feature 2: Delivery Cost Tiers

@@ -25,7 +25,7 @@ import { I18nService } from '../../../core/i18n/i18n.service';
       <div class="max-w-7xl mx-auto p-6">
         <!-- Loading State -->
         <div *ngIf="loading" class="flex items-center justify-center h-64">
-          <div class="animate-spin rounded-full h-12 w-12 border-4 border-cyan-500 border-t-transparent"></div>
+          <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
 
         <!-- Task Content -->

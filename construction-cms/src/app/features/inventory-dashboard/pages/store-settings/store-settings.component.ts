@@ -14,7 +14,7 @@ import { VendorService, Vendor, CreateVendorRequest } from '../../../../core/ser
       
       <!-- Loading State -->
       <div *ngIf="loading" class="flex justify-center items-center h-48">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
       
       <!-- Error State -->

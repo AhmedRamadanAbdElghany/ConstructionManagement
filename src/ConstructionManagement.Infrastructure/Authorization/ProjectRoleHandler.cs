@@ -70,6 +70,7 @@ public class ProjectRoleHandler : AuthorizationHandler<ProjectRoleRequirement>
             {
                 if (projectId != null)
                 {
+                    // Project-level check: verify the project belongs to the CompanyAdmin's company
                     var proj = await db.Projects.AsNoTracking().FirstOrDefaultAsync(p => p.Id == projectId);
                     if (proj != null && proj.CompanyId == userCompanyId)
                     {
@@ -77,16 +78,23 @@ public class ProjectRoleHandler : AuthorizationHandler<ProjectRoleRequirement>
                         return;
                     }
                 }
+                else if (httpContext.Request.RouteValues["companyId"] != null &&
+                         int.TryParse(httpContext.Request.RouteValues["companyId"]!.ToString(), out var routeCompanyId))
+                {
+                    // Explicit companyId in route: verify it matches the admin's company
+                    if (routeCompanyId == userCompanyId)
+                    {
+                        context.Succeed(requirement);
+                        return;
+                    }
+                }
                 else
                 {
-                    if (httpContext.Request.RouteValues["companyId"] != null && int.TryParse(httpContext.Request.RouteValues["companyId"]!.ToString(), out var routeCompanyId))
-                    {
-                        if (routeCompanyId == userCompanyId)
-                        {
-                            context.Succeed(requirement);
-                            return;
-                        }
-                    }
+                    // No project or company route context (e.g. global Finance page endpoints like
+                    // GET /api/invoices, GET /api/invoices/pending, PUT /api/invoices/{id}/review).
+                    // A CompanyAdmin with a valid companyId is authorised at the company level.
+                    context.Succeed(requirement);
+                    return;
                 }
             }
         }
