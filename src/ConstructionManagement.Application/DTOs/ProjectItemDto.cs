@@ -1,3 +1,5 @@
+using ConstructionManagement.Domain.Enums;
+
 namespace ConstructionManagement.Application.DTOs;
 
 /// <summary>
@@ -32,4 +34,22 @@ public class ProjectItemDto
     // Computed
     public decimal EstimatedBudget { get; set; }
     public decimal ProgressPercentage { get; set; }
+
+    // Workflow & Escalation
+    public ProjectItemWorkflowStatus WorkflowStatus { get; set; }
+    public bool RequiresPreStartConfirmation { get; set; }
+    public DateTime? PreStartConfirmationDeadline { get; set; }
+    public DateTime? PreStartConfirmedAt { get; set; }
+    public string? PreStartConfirmedByName { get; set; }
+    public string? PreStartConfirmationNotes { get; set; }
+    public bool IsForcedStart { get; set; }
+    public string? ForcedStartReason { get; set; }
+    public int? ResponsibleUserId { get; set; }
+    public string? ResponsibleUserName { get; set; }
+    public decimal? EstimatedRemainingDays { get; set; }
+    public DateTime? ActualStartDate { get; set; }
+    public DateTime? ActualEndDate { get; set; }
+    public DateTime? LastDailyLogDate { get; set; }
+    public decimal? LastProgressPercentage { get; set; }
 }
+

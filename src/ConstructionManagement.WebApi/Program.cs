@@ -208,6 +208,9 @@ builder.Services.AddScoped<ILocationTrackingService, LocationTrackingService>();
 builder.Services.AddScoped<IGeofenceService, GeofenceService>();
 builder.Services.AddScoped<ISensitiveDataProtectionService, SensitiveDataProtectionService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IPayMobService, PayMobService>();
+builder.Services.AddHttpClient<IPayMobService, PayMobService>();
+builder.Services.AddScoped<IEgyptianPaymentService, EgyptianPaymentService>();
 builder.Services.AddScoped<IPushNotificationService, PushNotificationService>();
 builder.Services.AddHttpClient<IPushNotificationService, PushNotificationService>();
 builder.Services.AddScoped<ILeaveManagementService, LeaveManagementService>();
@@ -557,6 +560,92 @@ if (!isTesting && hfConnectionString != null && !hfConnectionString.Contains("Da
         "social-media-fetch-daily",
         job => job.FetchAndTranslateAsync(),
         Cron.Daily(7));  // Every day at 7:00 AM
+
+    // ── Workflow Background Jobs ───────────────────────────────────────────
+
+    // 9. Pre-start confirmation reminders (every 30 minutes)
+    RecurringJob.AddOrUpdate<IWorkflowBackgroundJobService>(
+        "workflow-prestart-reminders",
+        svc => svc.SendPreStartConfirmationRemindersAsync(),
+        "*/30 * * * *");
+
+    // 10. Pre-start confirmation check / escalation (hourly)
+    RecurringJob.AddOrUpdate<IWorkflowBackgroundJobService>(
+        "workflow-prestart-check",
+        svc => svc.CheckPreStartConfirmationsAsync(),
+        Cron.Hourly);
+
+    // 11. No-start check – items/tasks that should have started today (daily at 10 AM)
+    RecurringJob.AddOrUpdate<IWorkflowBackgroundJobService>(
+        "workflow-nostart-check",
+        svc => svc.RunNoStartCheckAsync(),
+        Cron.Daily(10));
+
+    // 12. Delay prediction analysis (daily at 9 AM)
+    RecurringJob.AddOrUpdate<IWorkflowBackgroundJobService>(
+        "workflow-delay-prediction",
+        svc => svc.RunDelayPredictionAsync(),
+        Cron.Daily(9));
+
+    // 13. Stuck task detection (daily at 11 AM)
+    RecurringJob.AddOrUpdate<IWorkflowBackgroundJobService>(
+        "workflow-stuck-tasks",
+        svc => svc.DetectStuckTasksAsync(),
+        Cron.Daily(11));
+
+    // 14. Review timeout check (every 2 hours)
+    RecurringJob.AddOrUpdate<IWorkflowBackgroundJobService>(
+        "workflow-review-timeout",
+        svc => svc.CheckReviewTimeoutsAsync(),
+        "0 */2 * * *");
+
+    // 15. Daily board generation (daily at 5 AM – before work starts)
+    RecurringJob.AddOrUpdate<IWorkflowBackgroundJobService>(
+        "workflow-daily-board",
+        svc => svc.GenerateDailyBoardsAsync(),
+        Cron.Daily(5));
+
+    // 16. Auto-escalation processing (every 30 minutes)
+    RecurringJob.AddOrUpdate<IWorkflowBackgroundJobService>(
+        "workflow-auto-escalation",
+        svc => svc.ProcessAutoEscalationsAsync(),
+        "*/30 * * * *");
+
+    // 17. Escalation reminders (every 4 hours)
+    RecurringJob.AddOrUpdate<IWorkflowBackgroundJobService>(
+        "workflow-escalation-reminders",
+        svc => svc.SendEscalationRemindersAsync(),
+        "0 */4 * * *");
+
+    // 18. Task due-soon reminders (daily at 8 AM)
+    RecurringJob.AddOrUpdate<IWorkflowBackgroundJobService>(
+        "workflow-task-due-soon",
+        svc => svc.SendTaskDueSoonRemindersAsync(),
+        Cron.Daily(8));
+
+    // 19. Task overdue notifications (daily at 9 AM)
+    RecurringJob.AddOrUpdate<IWorkflowBackgroundJobService>(
+        "workflow-task-overdue",
+        svc => svc.SendTaskOverdueNotificationsAsync(),
+        Cron.Daily(9));
+
+    // 20. Send pending notifications (every 5 minutes)
+    RecurringJob.AddOrUpdate<IWorkflowBackgroundJobService>(
+        "workflow-pending-notifications",
+        svc => svc.SendPendingNotificationsAsync(),
+        "*/5 * * * *");
+
+    // 21. Cleanup old notifications (weekly on Sunday at 2 AM)
+    RecurringJob.AddOrUpdate<IWorkflowBackgroundJobService>(
+        "workflow-cleanup-notifications",
+        svc => svc.CleanupOldNotificationsAsync(),
+        Cron.Weekly(DayOfWeek.Sunday, 2));
+
+    // 22. Cleanup old board entries (weekly on Sunday at 3 AM)
+    RecurringJob.AddOrUpdate<IWorkflowBackgroundJobService>(
+        "workflow-cleanup-board",
+        svc => svc.CleanupOldBoardEntriesAsync(),
+        Cron.Weekly(DayOfWeek.Sunday, 3));
 }
 
 app.UseAuthentication();

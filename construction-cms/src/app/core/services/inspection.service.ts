@@ -137,6 +137,13 @@ export interface InspectionPayment {
     paidAt?: Date;
 }
 
+export interface InspectionMessage {
+    id: number;
+    message: string;
+    isCompany: boolean;
+    createdAt: Date;
+}
+
 export interface InspectionWorkRequest {
     id: number;
     status: number;
@@ -437,6 +444,10 @@ export class InspectionService {
 
     createPayment(inspectionId: number, payment: CreatePayment): Observable<ApiResponse<InspectionPayment>> {
         return this.http.post<ApiResponse<InspectionPayment>>(`${this.apiUrl}/${inspectionId}/payment`, payment);
+    }
+
+    processPayment(inspectionId: number, payment: CreatePayment): Observable<ApiResponse<InspectionPayment>> {
+        return this.http.post<ApiResponse<InspectionPayment>>(`${this.apiUrl}/${inspectionId}/payment/process`, payment);
     }
 
     // Work Requests

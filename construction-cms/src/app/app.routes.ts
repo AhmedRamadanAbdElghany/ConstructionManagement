@@ -29,6 +29,12 @@ export const routes: Routes = [
         loadChildren: () => import('./features/inventory-dashboard/inventory-dashboard.routes').then(m => m.inventoryRoutes)
     },
 
+    // Marketplace
+    {
+        path: 'marketplace',
+        loadChildren: () => import('./features/marketplace/marketplace.routes').then(m => m.marketplaceRoutes)
+    },
+
     // Profile
     {
         path: 'profile',
@@ -533,6 +539,11 @@ export const routes: Routes = [
             {
                 path: 'reports',
                 loadComponent: () => import('./features/client/reports/client-reports.component').then(m => m.ClientReportsComponent),
+                canActivate: [roleGuard, companyApprovalGuard]
+            },
+            {
+                path: 'inspections',
+                loadComponent: () => import('./features/client/client-inspections/client-inspections.component').then(m => m.ClientInspectionsComponent),
                 canActivate: [roleGuard, companyApprovalGuard]
             },
             {

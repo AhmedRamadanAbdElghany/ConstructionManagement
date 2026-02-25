@@ -62,7 +62,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
         </a>
         }
 
-          @if (isClient || isWorker) {
+          @if (isClient || isWorker || isAdmin) {
           <a routerLink="/companies"
              routerLinkActive="nav-active"
              class="nav-item group">
@@ -88,19 +88,6 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
           </a>
           }
 
-          @if (isPending || isClient || isWorker || isAdmin) {
-          <a routerLink="/admin/vendors/discovery" 
-             routerLinkActive="nav-active"
-             class="nav-item group">
-            <div class="nav-icon-box">
-              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-              </svg>
-            </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.building_material_stores' | translate }}</span>
-          </a>
-
           <a routerLink="/admin/social-wall" 
              routerLinkActive="nav-active"
              class="nav-item group">
@@ -111,7 +98,6 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
             </div>
             <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.social_wall' | translate }}</span>
           </a>
-          }
 
         @if (!isPending && !isInventoryOwner && !isWorker) {
         <p class="px-4 py-2 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
@@ -470,6 +456,19 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
             }
           }
 
+        @if (isClient) {
+          <a routerLink="/client-portal/inspections" 
+             routerLinkActive="nav-active"
+             class="nav-item group">
+            <div class="nav-icon-box">
+              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+              </svg>
+            </div>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.inspections' | translate }}</span>
+          </a>
+        }
+
         @if (isClient && hasApprovedCompany()) {
           <a routerLink="/client-portal/projects" 
              routerLinkActive="nav-active"
@@ -481,7 +480,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
             </div>
             <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.my_projects' | translate }}</span>
           </a>
-
+          
           <a routerLink="/client-portal/payments" 
              routerLinkActive="nav-active"
              class="nav-item group">
@@ -636,6 +635,47 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
               }
           </div>
         </a>
+        @if (!isInventoryOwner) {
+          <div class="px-4 pt-6 pb-2">
+            <p class="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em]" [class.hidden]="isCollapsed()">{{ 'sidebar.building_material_stores' | translate }}</p>
+            <div class="h-px bg-slate-200 dark:bg-slate-800/60 mt-2" [class.hidden]="!isCollapsed()"></div>
+          </div>
+
+          <a routerLink="/marketplace" 
+             routerLinkActive="nav-active"
+             [routerLinkActiveOptions]="{exact: true}"
+             class="nav-item group">
+            <div class="nav-icon-box text-amber-500">
+              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+              </svg>
+            </div>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'MARKETPLACE.HOME' | translate }}</span>
+          </a>
+
+          <a routerLink="/marketplace/nearby" 
+             routerLinkActive="nav-active"
+             class="nav-item group">
+            <div class="nav-icon-box text-emerald-500">
+              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+            </div>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'MARKETPLACE.FIND_NEARBY' | translate }}</span>
+          </a>
+
+          <a routerLink="/marketplace/orders" 
+             routerLinkActive="nav-active"
+             class="nav-item group">
+            <div class="nav-icon-box text-blue-500">
+              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+              </svg>
+            </div>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'MARKETPLACE.MY_ORDERS' | translate }}</span>
+          </a>
+        }
       </nav>
 
 
@@ -797,7 +837,7 @@ export class SidebarComponent {
   }
 
   get isVendor(): boolean {
-    return this.currentUserType === 4; // WarehouseOwner = 4
+    return false; // Merged into InventoryOwner
   }
 
   get isPending(): boolean {

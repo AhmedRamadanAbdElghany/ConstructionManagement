@@ -286,6 +286,16 @@ public class MessagingStatusDto
     /// Whether the user is an unverified company owner
     /// </summary>
     public bool IsUnverifiedCompanyOwner { get; set; }
+
+    /// <summary>
+    /// Whether the user is a worker
+    /// </summary>
+    public bool IsWorker { get; set; }
+
+    /// <summary>
+    /// The user's home company ID
+    /// </summary>
+    public int? UserCompanyId { get; set; }
 }
 
 /// <summary>

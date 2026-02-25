@@ -29,4 +29,10 @@ public class CreateProjectItemRequest
     // Package System Fields (used when Project.AccountingSystem = Packages)
     public decimal? TotalPackageValue { get; set; }
     public string? PaymentTerms { get; set; }
+
+    // Workflow & Escalation
+    public int? ResponsibleUserId { get; set; }
+    public bool RequiresPreStartConfirmation { get; set; } = true;
+    public int PreStartConfirmationHours { get; set; } = 24;
 }
+

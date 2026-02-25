@@ -6,39 +6,39 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 interface Order {
-    id: number;
-    vendorId: number;
-    vendorName: string;
-    status: string;
-    totalAmount: number;
-    paymentMethod: string;
-    paymentStatus: string;
-    deliveryAddress: string;
-    createdAt: string;
-    updatedAt: string;
-    items: OrderItem[];
-    notes: string | null;
+  id: number;
+  vendorId: number;
+  vendorName: string;
+  status: string;
+  totalAmount: number;
+  paymentMethod: string;
+  paymentStatus: string;
+  deliveryAddress: string;
+  createdAt: string;
+  updatedAt: string;
+  items: OrderItem[];
+  notes: string | null;
 }
 
 interface OrderItem {
-    productId: number;
-    productName: string;
-    quantity: number;
-    price: number;
-    unit: string | null;
-    imageUrl: string | null;
+  productId: number;
+  productName: string;
+  quantity: number;
+  price: number;
+  unit: string | null;
+  imageUrl: string | null;
 }
 
 interface ReviewRequest {
-    rating: number;
-    comment: string;
+  rating: number;
+  comment: string;
 }
 
 @Component({
-    selector: 'app-order-detail',
-    standalone: true,
-    imports: [CommonModule, RouterModule, FormsModule, TranslateModule],
-    template: `
+  selector: 'app-order-detail',
+  standalone: true,
+  imports: [CommonModule, RouterModule, FormsModule, TranslateModule],
+  template: `
     <div class="order-detail-page">
       <!-- Loading State -->
       @if (loading()) {
@@ -50,6 +50,15 @@ interface ReviewRequest {
 
       <!-- Order Content -->
       @if (!loading() && order()) {
+        <!-- Status Messages -->
+        @if (paymentStatusMessage()) {
+          <div class="status-banner" [class]="paymentStatusMessage()?.type">
+            <i class="pi" [class.pi-check-circle]="paymentStatusMessage()?.type === 'success'" [class.pi-exclamation-circle]="paymentStatusMessage()?.type === 'error'"></i>
+            <span>{{ paymentStatusMessage()?.text | translate }}</span>
+            <button (click)="paymentStatusMessage.set(null)"><i class="pi pi-times"></i></button>
+          </div>
+        }
+
         <!-- Header -->
         <div class="page-header">
           <div class="header-content">
@@ -121,6 +130,12 @@ interface ReviewRequest {
 
             <!-- Actions -->
             <div class="actions-section">
+              @if (canPay()) {
+                <button class="pay-btn" (click)="payNow()">
+                  <i class="pi pi-credit-card"></i>
+                  {{ 'MARKETPLACE.PAY_NOW' | translate }}
+                </button>
+              }
               @if (canCancel()) {
                 <button class="cancel-btn" (click)="cancelOrder()">
                   <i class="pi pi-times"></i>
@@ -230,7 +245,7 @@ interface ReviewRequest {
       }
     </div>
   `,
-    styles: [`
+  styles: [`
     .order-detail-page {
       min-height: 100vh;
       background: #f9fafb;
@@ -265,6 +280,47 @@ interface ReviewRequest {
 
     .page-header {
       margin-bottom: 2rem;
+    }
+
+    .status-banner {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .status-banner.success {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #10b981;
+    }
+
+    .status-banner.error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #ef4444;
+    }
+
+    .status-banner button {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
+
+    .status-banner button:hover {
+      opacity: 1;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
     .header-content {
@@ -458,7 +514,7 @@ interface ReviewRequest {
       gap: 1rem;
     }
 
-    .cancel-btn, .confirm-btn {
+    .cancel-btn, .confirm-btn, .pay-btn {
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -467,6 +523,16 @@ interface ReviewRequest {
       font-weight: 500;
       cursor: pointer;
       transition: all 0.3s;
+    }
+    
+    .pay-btn {
+      background: #1e3a5f;
+      border: none;
+      color: white;
+    }
+
+    .pay-btn:hover {
+      background: #2d5a87;
     }
 
     .cancel-btn {
@@ -643,174 +709,236 @@ interface ReviewRequest {
   `]
 })
 export class OrderDetailComponent implements OnInit {
-    private http = inject(HttpClient);
-    private route = inject(ActivatedRoute);
-    private router = inject(Router);
-    protected translate = inject(TranslateService);
+  private http = inject(HttpClient);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  protected translate = inject(TranslateService);
 
-    loading = signal(true);
-    order = signal<Order | null>(null);
-    reviewRating = signal(0);
-    reviewComment = '';
+  loading = signal(true);
+  order = signal<Order | null>(null);
+  reviewRating = signal(0);
+  reviewComment = '';
 
-    progressSteps = [
-        { id: 'pending', name: 'MARKETPLACE.STEP_PENDING', icon: 'pi pi-clock' },
-        { id: 'processing', name: 'MARKETPLACE.STEP_PROCESSING', icon: 'pi pi-cog' },
-        { id: 'ready', name: 'MARKETPLACE.STEP_READY', icon: 'pi pi-box' },
-        { id: 'delivered', name: 'MARKETPLACE.STEP_DELIVERED', icon: 'pi pi-check' }
-    ];
+  progressSteps = [
+    { id: 'pending', name: 'MARKETPLACE.STEP_PENDING', icon: 'pi pi-clock' },
+    { id: 'processing', name: 'MARKETPLACE.STEP_PROCESSING', icon: 'pi pi-cog' },
+    { id: 'ready', name: 'MARKETPLACE.STEP_READY', icon: 'pi pi-box' },
+    { id: 'delivered', name: 'MARKETPLACE.STEP_DELIVERED', icon: 'pi pi-check' }
+  ];
 
-    private get apiUrl(): string {
-        return (window as any).__API_URL__ || 'https://localhost:7001/api';
-    }
+  private get apiUrl(): string {
+    return (window as any).__API_URL__ || 'https://localhost:7001/api';
+  }
 
-    ngOnInit(): void {
-        this.route.params.subscribe(params => {
-            const orderId = params['id'];
-            if (orderId) {
-                this.loadOrder(+orderId);
-            }
-        });
-    }
+  paymentStatusMessage = signal<{ type: 'success' | 'error', text: string } | null>(null);
 
-    private loadOrder(orderId: number): void {
-        this.loading.set(true);
+  ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      const orderId = params['id'];
+      if (orderId) {
+        this.loadOrder(+orderId);
+      }
+    });
 
-        this.http.get<Order>(`${this.apiUrl}/marketplace/orders/${orderId}`).subscribe({
-            next: (order) => {
-                this.order.set(order);
-                this.loading.set(false);
-            },
-            error: (error) => {
-                console.error('Error loading order:', error);
-                this.loading.set(false);
-            }
-        });
-    }
+    this.route.queryParams.subscribe(params => {
+      if (params['payment'] === 'success') {
+        this.paymentStatusMessage.set({ type: 'success', text: 'MARKETPLACE.PAYMENT_SUCCESS_MSG' });
+        // Clear the query param without reloading
+        this.router.navigate([], { relativeTo: this.route, queryParams: { payment: null }, queryParamsHandling: 'merge' });
+      } else if (params['payment'] === 'failed') {
+        this.paymentStatusMessage.set({ type: 'error', text: 'MARKETPLACE.PAYMENT_FAILED_MSG' });
+        this.router.navigate([], { relativeTo: this.route, queryParams: { payment: null }, queryParamsHandling: 'merge' });
+      }
+    });
+  }
 
-    isStepCompleted(stepId: string): boolean {
-        const order = this.order();
-        if (!order) return false;
+  private loadOrder(orderId: number): void {
+    this.loading.set(true);
 
-        const stepOrder = ['pending', 'processing', 'ready', 'delivered'];
-        const currentIndex = stepOrder.indexOf(order.status.toLowerCase());
-        const stepIndex = stepOrder.indexOf(stepId);
+    this.http.get<Order>(`${this.apiUrl}/marketplace/orders/${orderId}`).subscribe({
+      next: (order) => {
+        this.order.set(order);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        console.error('Error loading order:', error);
+        this.loading.set(false);
+      }
+    });
+  }
 
-        return stepIndex < currentIndex;
-    }
+  isStepCompleted(stepId: string): boolean {
+    const order = this.order();
+    if (!order) return false;
 
-    isStepCurrent(stepId: string): boolean {
-        const order = this.order();
-        if (!order) return false;
-        return order.status.toLowerCase() === stepId;
-    }
+    const stepOrder = ['pending', 'processing', 'ready', 'delivered'];
+    const currentIndex = stepOrder.indexOf(order.status.toLowerCase());
+    const stepIndex = stepOrder.indexOf(stepId);
 
-    getStatusClass(status: string): string {
-        return status.toLowerCase();
-    }
+    return stepIndex < currentIndex;
+  }
 
-    getStatusLabel(status: string): string {
-        const labels: Record<string, string> = {
-            'pending': 'MARKETPLACE.STATUS_PENDING',
-            'processing': 'MARKETPLACE.STATUS_PROCESSING',
-            'ready': 'MARKETPLACE.STATUS_READY',
-            'delivered': 'MARKETPLACE.STATUS_DELIVERED',
-            'cancelled': 'MARKETPLACE.STATUS_CANCELLED'
-        };
-        return labels[status.toLowerCase()] || status;
-    }
+  isStepCurrent(stepId: string): boolean {
+    const order = this.order();
+    if (!order) return false;
+    return order.status.toLowerCase() === stepId;
+  }
 
-    getPaymentMethodLabel(method: string): string {
-        const labels: Record<string, string> = {
-            'cash': 'MARKETPLACE.PAYMENT_CASH',
-            'card': 'MARKETPLACE.PAYMENT_CARD',
-            'paymob': 'PayMob',
-            'fawry': 'Fawry',
-            'vodafone': 'Vodafone Cash',
-            'orange': 'Orange Money'
-        };
-        return labels[method.toLowerCase()] || method;
-    }
+  getStatusClass(status: string): string {
+    return status.toLowerCase();
+  }
 
-    calculateSubtotal(): number {
-        const order = this.order();
-        if (!order) return 0;
-        return order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    }
+  getStatusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      'pending': 'MARKETPLACE.STATUS_PENDING',
+      'processing': 'MARKETPLACE.STATUS_PROCESSING',
+      'ready': 'MARKETPLACE.STATUS_READY',
+      'delivered': 'MARKETPLACE.STATUS_DELIVERED',
+      'cancelled': 'MARKETPLACE.STATUS_CANCELLED'
+    };
+    return labels[status.toLowerCase()] || status;
+  }
 
-    canCancel(): boolean {
-        const order = this.order();
-        return order !== null && (order.status === 'pending' || order.status === 'processing');
-    }
+  getPaymentMethodLabel(method: string): string {
+    const labels: Record<string, string> = {
+      'cash': 'MARKETPLACE.PAYMENT_CASH',
+      'card': 'MARKETPLACE.PAYMENT_CARD',
+      'paymob': 'PayMob',
+      'fawry': 'Fawry',
+      'vodafone': 'Vodafone Cash',
+      'orange': 'Orange Money'
+    };
+    return labels[method.toLowerCase()] || method;
+  }
 
-    canConfirmDelivery(): boolean {
-        const order = this.order();
-        return order !== null && order.status === 'ready';
-    }
+  calculateSubtotal(): number {
+    const order = this.order();
+    if (!order) return 0;
+    return order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  }
 
-    canReview(): boolean {
-        const order = this.order();
-        return order !== null && order.status === 'delivered';
-    }
+  canPay(): boolean {
+    const order = this.order();
+    return order !== null &&
+      order.paymentStatus?.toLowerCase() !== 'paid' &&
+      order.paymentMethod?.toLowerCase() !== 'cash' &&
+      order.status?.toLowerCase() !== 'cancelled';
+  }
 
-    cancelOrder(): void {
-        if (!confirm('Are you sure you want to cancel this order?')) return;
+  payNow(): void {
+    const order = this.order();
+    if (!order) return;
 
-        const order = this.order();
-        if (!order) return;
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const paymentMethodMap: Record<string, number> = {
+      'card': 1,
+      'paymob': 2,
+      'fawry': 3,
+      'vodafone': 4,
+      'orange': 5,
+      'etisalat': 6
+    };
 
-        this.http.post(`${this.apiUrl}/marketplace/orders/${order.id}/cancel`, {}).subscribe({
-            next: () => {
-                this.loadOrder(order.id);
-            },
-            error: (error) => {
-                console.error('Error cancelling order:', error);
-                alert('Failed to cancel order.');
-            }
-        });
-    }
+    const paymentRequest = {
+      orderId: order.id,
+      paymentMethod: paymentMethodMap[order.paymentMethod.toLowerCase()] || 1,
+      billingInfo: {
+        firstName: user.firstName || user.fullName?.split(' ')[0] || 'Guest',
+        lastName: user.lastName || user.fullName?.split(' ')[1] || 'Guest',
+        email: user.email || 'guest@example.com',
+        phoneNumber: user.phoneNumber || '01000000000'
+      },
+      phoneNumber: user.phoneNumber
+    };
 
-    confirmDelivery(): void {
-        const order = this.order();
-        if (!order) return;
-
-        this.http.post(`${this.apiUrl}/marketplace/orders/${order.id}/confirm-delivery`, {}).subscribe({
-            next: () => {
-                this.loadOrder(order.id);
-            },
-            error: (error) => {
-                console.error('Error confirming delivery:', error);
-                alert('Failed to confirm delivery.');
-            }
-        });
-    }
-
-    goToVendor(): void {
-        const order = this.order();
-        if (order) {
-            this.router.navigate(['/marketplace/vendors', order.vendorId]);
+    this.http.post(`${this.apiUrl}/EgyptianPayment/initiate`, paymentRequest).subscribe({
+      next: (response: any) => {
+        if (response.success && response.paymentUrl) {
+          window.location.href = response.paymentUrl;
+        } else {
+          alert('Payment initiation failed. Please try again.');
         }
+      },
+      error: (error) => {
+        console.error('Error initiating payment:', error);
+        alert('Payment initiation error.');
+      }
+    });
+  }
+
+  canCancel(): boolean {
+    const order = this.order();
+    return order !== null && (order.status === 'pending' || order.status === 'processing');
+  }
+
+  canConfirmDelivery(): boolean {
+    const order = this.order();
+    return order !== null && order.status === 'ready';
+  }
+
+  canReview(): boolean {
+    const order = this.order();
+    return order !== null && order.status === 'delivered';
+  }
+
+  cancelOrder(): void {
+    if (!confirm('Are you sure you want to cancel this order?')) return;
+
+    const order = this.order();
+    if (!order) return;
+
+    this.http.post(`${this.apiUrl}/marketplace/orders/${order.id}/cancel`, {}).subscribe({
+      next: () => {
+        this.loadOrder(order.id);
+      },
+      error: (error) => {
+        console.error('Error cancelling order:', error);
+        alert('Failed to cancel order.');
+      }
+    });
+  }
+
+  confirmDelivery(): void {
+    const order = this.order();
+    if (!order) return;
+
+    this.http.post(`${this.apiUrl}/marketplace/orders/${order.id}/confirm-delivery`, {}).subscribe({
+      next: () => {
+        this.loadOrder(order.id);
+      },
+      error: (error) => {
+        console.error('Error confirming delivery:', error);
+        alert('Failed to confirm delivery.');
+      }
+    });
+  }
+
+  goToVendor(): void {
+    const order = this.order();
+    if (order) {
+      this.router.navigate(['/marketplace/vendors', order.vendorId]);
     }
+  }
 
-    submitReview(): void {
-        const order = this.order();
-        if (!order || this.reviewRating() === 0) return;
+  submitReview(): void {
+    const order = this.order();
+    if (!order || this.reviewRating() === 0) return;
 
-        const reviewData = {
-            rating: this.reviewRating(),
-            comment: this.reviewComment
-        };
+    const reviewData = {
+      rating: this.reviewRating(),
+      comment: this.reviewComment
+    };
 
-        this.http.post(`${this.apiUrl}/marketplace/orders/${order.id}/review`, reviewData).subscribe({
-            next: () => {
-                alert('Review submitted successfully!');
-                this.reviewRating.set(0);
-                this.reviewComment = '';
-            },
-            error: (error) => {
-                console.error('Error submitting review:', error);
-                alert('Failed to submit review.');
-            }
-        });
-    }
+    this.http.post(`${this.apiUrl}/marketplace/orders/${order.id}/review`, reviewData).subscribe({
+      next: () => {
+        alert('Review submitted successfully!');
+        this.reviewRating.set(0);
+        this.reviewComment = '';
+      },
+      error: (error) => {
+        console.error('Error submitting review:', error);
+        alert('Failed to submit review.');
+      }
+    });
+  }
 }

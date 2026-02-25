@@ -109,10 +109,6 @@ export class AuthService {
                         response.user.role = 'InventoryOwner';
                         if (!response.user.roles || response.user.roles.length === 0) response.user.roles = ['InventoryOwner'];
                     }
-                    else if (response.user.userType === 4) {
-                        response.user.role = 'WarehouseOwner';
-                        if (!response.user.roles || response.user.roles.length === 0) response.user.roles = ['WarehouseOwner'];
-                    }
                     else {
                         response.user.role = response.user.userType === 2 ? 'CompanyAdmin' : 'User';
                         if (!response.user.roles || response.user.roles.length === 0)

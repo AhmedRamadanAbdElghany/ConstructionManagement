@@ -375,32 +375,28 @@ public class MessagingService : IMessagingService
             return new CanSendMessageResult { CanSend = true, Status = conversation.Status };
         }
 
-        // Check if conversation is approved OR if messaging a registered company
+        // 3. Worker restriction: Can ONLY message their own company
+        if (user?.UserType == UserType.Worker && user.CompanyId != conversation.CompanyId)
+        {
+            return new CanSendMessageResult { CanSend = false, Reason = "As a worker, you can only message your own company workers and owner." };
+        }
+
+        // Check if conversation is approved 
         if (conversation.Status == "Pending")
         {
-            // Check if company is "Registered" (has an approved request)
-            var isRegisteredCompany = await _context.CompanyRequests
-                .AnyAsync(cr => cr.CompanyName == conversation.Company.Name && cr.Status == "Approved");
-
-            if (isRegisteredCompany)
-            {
-                // Registered companies can receive any number of messages from clients
-                return new CanSendMessageResult { CanSend = true, Status = "Pending" };
-            }
-
-            // Unregistered companies: only one message allowed
+            // Unverified companies or companies the user doesn't belong to: only one message allowed
             var messageCount = await _context.CompanyMessages
                 .CountAsync(m => m.ConversationId == conversationId && !m.IsFromCompany);
 
             if (messageCount == 0)
             {
-                return new CanSendMessageResult { CanSend = true };
+                return new CanSendMessageResult { CanSend = true, Status = "Pending" };
             }
 
             return new CanSendMessageResult 
             { 
                 CanSend = false, 
-                Reason = "This company is not yet registered. You can only send one message until they are approved.",
+                Reason = "You have already sent an initial message. Please wait for the company to approve the conversation before sending more messages.",
                 Status = "Pending"
             };
         }
@@ -899,7 +895,6 @@ public class MessagingService : IMessagingService
                 UserType.NormalUser => "Client",
                 UserType.CompanyOwner => "Company",
                 UserType.InventoryOwner => "Company",
-                UserType.WarehouseOwner => "Company",
                 UserType.Subcontractor => "Company",
                 _ => "Client"
             };
@@ -994,30 +989,41 @@ public class MessagingService : IMessagingService
     }
 
     /// <summary>
-    /// Check if a user can message a specific company (restriction for unverified owners)
+    /// Check if a user can message a specific company (restriction for unverified owners and workers)
     /// </summary>
     private async Task<bool> CanMessageRecipientAsync(int senderId, int recipientCompanyId)
     {
-        // If sender is not an unverified owner, allow
-        if (!await IsUnverifiedCompanyOwnerAsync(senderId))
-            return true;
+        var user = await _context.Users.FindAsync(senderId);
+        if (user == null) return false;
 
-        // Unverified owners can ONLY message SuperAdmin
-        // Check if any SuperAdmin is associated with this company
-        var hasSuperAdmin = await _context.Users
-            .Include(u => u.UserRoles)
-            .ThenInclude(ur => ur.Role)
-            .AnyAsync(u => u.CompanyId == recipientCompanyId &&
-                           u.UserRoles.Any(ur => ur.Role.Name == "SuperAdmin"));
+        // 1. Worker Restriction: Can ONLY message their own company
+        if (user.UserType == UserType.Worker)
+        {
+            return user.CompanyId == recipientCompanyId;
+        }
 
-        if (hasSuperAdmin)
-            return true;
+        // 2. Unverified Owner Restriction: Can ONLY message SuperAdmin
+        if (await IsUnverifiedCompanyOwnerAsync(senderId))
+        {
+            // Check if any SuperAdmin is associated with this company
+            var hasSuperAdmin = await _context.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .AnyAsync(u => u.CompanyId == recipientCompanyId &&
+                               u.UserRoles.Any(ur => ur.Role.Name == "SuperAdmin"));
 
-        // Also check if this is the System Administration company (created for SuperAdmin messaging)
-        var isSystemCompany = await _context.Companies
-            .AnyAsync(c => c.Id == recipientCompanyId && c.BusinessId == "SYSTEM-ADMIN");
+            if (hasSuperAdmin)
+                return true;
 
-        return isSystemCompany;
+            // Also check if this is the System Administration company
+            var isSystemCompany = await _context.Companies
+                .AnyAsync(c => c.Id == recipientCompanyId && c.BusinessId == "SYSTEM-ADMIN");
+
+            return isSystemCompany;
+        }
+
+        // Other users (Clients, Verified Owners, Admins) are allowed to initiate
+        return true;
     }
 
     /// <summary>
@@ -1025,17 +1031,40 @@ public class MessagingService : IMessagingService
     /// </summary>
     public async Task<MessagingStatusDto> GetMessagingStatusAsync(int userId)
     {
-        var isUnverifiedOwner = await IsUnverifiedCompanyOwnerAsync(userId);
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) return new MessagingStatusDto();
 
-        if (!isUnverifiedOwner)
+        var isUnverifiedOwner = await IsUnverifiedCompanyOwnerAsync(userId);
+        var isWorker = user.UserType == UserType.Worker;
+
+        var status = new MessagingStatusDto
         {
-            return new MessagingStatusDto
+            IsUnverifiedCompanyOwner = isUnverifiedOwner,
+            IsWorker = isWorker,
+            UserCompanyId = user.CompanyId,
+            IsRestricted = isUnverifiedOwner || isWorker
+        };
+
+        if (status.IsRestricted)
+        {
+            if (isUnverifiedOwner)
             {
-                IsRestricted = false,
-                IsUnverifiedCompanyOwner = false
-            };
+                status.RestrictionReason = "Your company is pending approval. You can only message SuperAdmin.";
+                status.SuperAdminCompanyId = await GetSuperAdminCompanyIdAsync();
+            }
+            else if (isWorker)
+            {
+                status.RestrictionReason = "As a worker, you can only message your own company workers and owner.";
+                // For workers, IsRestricted is true, but they can still message their OWN company.
+                // We'll handle the specific check in the UI by comparing CompanyId with UserCompanyId.
+            }
         }
 
+        return status;
+    }
+
+    private async Task<int?> GetSuperAdminCompanyIdAsync()
+    {
         int? superAdminCompanyId = null;
 
         // Strategy 1: Find a SuperAdmin user with a company assigned
@@ -1102,14 +1131,7 @@ public class MessagingService : IMessagingService
             superAdminCompanyId = systemCompany.Id;
             _logger.LogInformation("Created system company with ID: {CompanyId}", superAdminCompanyId);
         }
-
-        return new MessagingStatusDto
-        {
-            IsRestricted = true,
-            IsUnverifiedCompanyOwner = true,
-            RestrictionReason = "Your company is pending approval. You can only message SuperAdmin until your company is approved.",
-            SuperAdminCompanyId = superAdminCompanyId
-        };
+        return superAdminCompanyId;
     }
 
     // ── Company to User Messaging ─────────────────────────────────────────────────

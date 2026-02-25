@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using ConstructionManagement.Domain.Enums;
 
 namespace ConstructionManagement.Domain.Entities;
 
@@ -103,6 +104,40 @@ public class ProjectItem : BaseEntity, ICompanyEntity
 
     public virtual ICollection<ProjectItemTask> Tasks { get; set; }
         = new List<ProjectItemTask>();
+
+    // -- Workflow & Escalation --------------------------------------------------
+    public ProjectItemWorkflowStatus WorkflowStatus { get; set; } = ProjectItemWorkflowStatus.Pending;
+
+    public bool RequiresPreStartConfirmation { get; set; } = true;
+    public DateTime? PreStartConfirmationDeadline { get; set; }
+    public DateTime? PreStartConfirmedAt { get; set; }
+    public int? PreStartConfirmedByUserId { get; set; }
+
+    [ForeignKey(nameof(PreStartConfirmedByUserId))]
+    public virtual User? PreStartConfirmedByUser { get; set; }
+
+    public string? PreStartConfirmationNotes { get; set; }
+
+    public bool IsForcedStart { get; set; } = false;
+    public int? ForcedStartAuthorizedByUserId { get; set; }
+
+    [ForeignKey(nameof(ForcedStartAuthorizedByUserId))]
+    public virtual User? ForcedStartAuthorizedByUser { get; set; }
+
+    public DateTime? ForcedStartAuthorizedAt { get; set; }
+    public string? ForcedStartReason { get; set; }
+
+    public int? ResponsibleUserId { get; set; }
+
+    [ForeignKey(nameof(ResponsibleUserId))]
+    public virtual User? ResponsibleUser { get; set; }
+
+    public decimal? EstimatedRemainingDays { get; set; }
+    public DateTime? ActualStartDate { get; set; }
+    public DateTime? ActualEndDate { get; set; }
+    public DateTime? LastDailyLogDate { get; set; }
+    public decimal? LastProgressPercentage { get; set; }
+
 
     // -- Computed Properties (not stored in DB) --------------------------------
     /// <summary>

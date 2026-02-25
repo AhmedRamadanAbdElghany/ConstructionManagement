@@ -114,6 +114,7 @@ public interface ITaskNotificationService
     Task SendTaskCancelledNotificationAsync(ProjectItemTask task, string? reason);
     Task SendTaskOverdueNotificationAsync(ProjectItemTask task);
     Task SendTaskDueSoonNotificationAsync(ProjectItemTask task, int daysRemaining);
+    Task SendPreStartConfirmationReminderAsync(ProjectItem item);
     Task SendPreStartConfirmationReminderAsync(ProjectItemTask task);
     Task SendPreStartConfirmedNotificationAsync(ProjectItemTask task, int confirmedByUserId);
     Task SendForcedStartAuthorizedNotificationAsync(ProjectItemTask task, int authorizedByUserId, string reason);

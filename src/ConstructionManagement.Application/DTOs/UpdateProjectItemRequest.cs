@@ -1,8 +1,12 @@
-// Application/DTOs/UpdateProjectItemRequest.cs
+namespace ConstructionManagement.Application.DTOs;
+
 public record UpdateProjectItemRequest(
     string? ItemName,
     string? Description,
     string? Status,
     DateTime? StartDate,
     DateTime? EndDate,
-    int? PhaseId);
+    int? PhaseId,
+    int? ResponsibleUserId,
+    bool? RequiresPreStartConfirmation,
+    decimal? EstimatedRemainingDays);

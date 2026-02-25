@@ -49,4 +49,36 @@ public class ProjectItemsController : ControllerBase
         await _service.DeleteProjectItemAsync(projectId, itemId);
         return NoContent();
     }
+
+    [HttpPost("{itemId}/confirm-prestart")]
+    public async Task<IActionResult> ConfirmPreStart(int projectId, int itemId, [FromBody] ConfirmRequest request)
+    {
+        await _service.ConfirmPreStartAsync(itemId, int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value), request.Notes);
+        return Ok();
+    }
+
+    [HttpPost("{itemId}/authorize-forced-start")]
+    public async Task<IActionResult> AuthorizeForcedStart(int projectId, int itemId, [FromBody] AuthorizeRequest request)
+    {
+        await _service.AuthorizeForcedStartAsync(itemId, int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value), request.Reason);
+        return Ok();
+    }
+
+    [HttpPost("{itemId}/start")]
+    public async Task<IActionResult> Start(int projectId, int itemId)
+    {
+        await _service.StartProjectItemAsync(itemId, int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value));
+        return Ok();
+    }
+
+    [HttpPost("{itemId}/complete")]
+    public async Task<IActionResult> Complete(int projectId, int itemId)
+    {
+        await _service.CompleteProjectItemAsync(itemId, int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value));
+        return Ok();
+    }
 }
+
+public record ConfirmRequest(string? Notes);
+public record AuthorizeRequest(string Reason);
+

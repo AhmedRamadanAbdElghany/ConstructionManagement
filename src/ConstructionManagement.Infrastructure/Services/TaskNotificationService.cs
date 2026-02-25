@@ -505,6 +505,23 @@ public class TaskNotificationService : ITaskNotificationService
         );
     }
 
+    public async Task SendPreStartConfirmationReminderAsync(ProjectItem item)
+    {
+        if (!item.ResponsibleUserId.HasValue) return;
+
+        await CreateNotificationAsync(
+            item.CompanyId ?? 0,
+            0, // No specific task, it's the whole item
+            TaskNotificationType.PreStartConfirmationReminder,
+            $"Pre-Start Confirmation Required: {item.ItemName}",
+            $"Please confirm materials and equipment are ready for project item '{item.ItemName}' scheduled to start at {item.StartDate:yyyy-MM-dd HH:mm}.",
+            new[] { item.ResponsibleUserId.Value },
+            priority: NotificationPriority.High,
+            actionUrl: $"/project-items/{item.Id}",
+            actionText: "Confirm"
+        );
+    }
+
     public async Task SendPreStartConfirmationReminderAsync(ProjectItemTask task)
     {
         if (!task.AssignedToUserId.HasValue) return;
@@ -521,6 +538,7 @@ public class TaskNotificationService : ITaskNotificationService
             actionText: "Confirm"
         );
     }
+
 
     public async Task SendPreStartConfirmedNotificationAsync(ProjectItemTask task, int confirmedByUserId)
     {

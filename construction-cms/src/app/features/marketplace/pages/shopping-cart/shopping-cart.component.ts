@@ -6,34 +6,34 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 interface CartItem {
-    productId: number;
-    quantity: number;
-    product?: Product;
+  productId: number;
+  quantity: number;
+  product?: Product;
 }
 
 interface Product {
-    id: number;
-    name: string;
-    price: number;
-    unit: string | null;
-    imageUrl: string | null;
-    vendorName: string;
-    vendorId: number;
-    quantityInStock: number;
+  id: number;
+  name: string;
+  price: number;
+  unit: string | null;
+  imageUrl: string | null;
+  vendorName: string;
+  vendorId: number;
+  quantityInStock: number;
 }
 
 interface PaymentMethod {
-    id: string;
-    name: string;
-    nameAr: string;
-    icon: string;
+  id: string;
+  name: string;
+  nameAr: string;
+  icon: string;
 }
 
 @Component({
-    selector: 'app-shopping-cart',
-    standalone: true,
-    imports: [CommonModule, RouterModule, FormsModule, TranslateModule],
-    template: `
+  selector: 'app-shopping-cart',
+  standalone: true,
+  imports: [CommonModule, RouterModule, FormsModule, TranslateModule],
+  template: `
     <div class="cart-page">
       <!-- Header -->
       <div class="page-header">
@@ -159,7 +159,7 @@ interface PaymentMethod {
       }
     </div>
   `,
-    styles: [`
+  styles: [`
     .cart-page {
       min-height: 100vh;
       background: #f9fafb;
@@ -490,134 +490,176 @@ interface PaymentMethod {
   `]
 })
 export class ShoppingCartComponent implements OnInit {
-    private http = inject(HttpClient);
-    private router = inject(Router);
-    protected translate = inject(TranslateService);
+  private http = inject(HttpClient);
+  private router = inject(Router);
+  protected translate = inject(TranslateService);
 
-    cartItems = signal<CartItem[]>([]);
-    deliveryAddress = '';
-    selectedPaymentMethod = signal<string>('cash');
+  cartItems = signal<CartItem[]>([]);
+  deliveryAddress = '';
+  selectedPaymentMethod = signal<string>('cash');
 
-    paymentMethods: PaymentMethod[] = [
-        { id: 'cash', name: 'Cash on Delivery', nameAr: 'الدفع عند الاستلام', icon: 'pi pi-money-bill' },
-        { id: 'card', name: 'Credit/Debit Card', nameAr: 'بطاقة ائتمان', icon: 'pi pi-credit-card' },
-        { id: 'paymob', name: 'PayMob', nameAr: 'باي موب', icon: 'pi pi-mobile' },
-        { id: 'fawry', name: 'Fawry', nameAr: 'فوري', icon: 'pi pi-building' },
-        { id: 'vodafone', name: 'Vodafone Cash', nameAr: 'فودافون كاش', icon: 'pi pi-mobile' },
-        { id: 'orange', name: 'Orange Money', nameAr: 'أورنج موني', icon: 'pi pi-mobile' }
-    ];
+  paymentMethods: PaymentMethod[] = [
+    { id: 'cash', name: 'Cash on Delivery', nameAr: 'الدفع عند الاستلام', icon: 'pi pi-money-bill' },
+    { id: 'card', name: 'Credit/Debit Card', nameAr: 'بطاقة ائتمان', icon: 'pi pi-credit-card' },
+    { id: 'paymob', name: 'PayMob', nameAr: 'باي موب', icon: 'pi pi-mobile' },
+    { id: 'fawry', name: 'Fawry', nameAr: 'فوري', icon: 'pi pi-building' },
+    { id: 'vodafone', name: 'Vodafone Cash', nameAr: 'فودافون كاش', icon: 'pi pi-mobile' },
+    { id: 'orange', name: 'Orange Money', nameAr: 'أورنج موني', icon: 'pi pi-mobile' }
+  ];
 
-    private get apiUrl(): string {
-        return (window as any).__API_URL__ || 'https://localhost:7001/api';
-    }
+  private get apiUrl(): string {
+    return (window as any).__API_URL__ || 'https://localhost:7001/api';
+  }
 
-    ngOnInit(): void {
-        this.loadCart();
-    }
+  ngOnInit(): void {
+    this.loadCart();
+  }
 
-    private loadCart(): void {
-        const cartJson = localStorage.getItem('marketplace_cart');
-        const cart: CartItem[] = cartJson ? JSON.parse(cartJson) : [];
+  private loadCart(): void {
+    const cartJson = localStorage.getItem('marketplace_cart');
+    const cart: CartItem[] = cartJson ? JSON.parse(cartJson) : [];
 
-        // Load product details for each cart item
-        if (cart.length > 0) {
-            const productIds = cart.map(item => item.productId);
-            this.http.post<Product[]>(`${this.apiUrl}/marketplace/products/by-ids`, { ids: productIds }).subscribe({
-                next: (products) => {
-                    const itemsWithProducts = cart.map(item => ({
-                        ...item,
-                        product: products.find(p => p.id === item.productId)
-                    })).filter(item => item.product);
-                    this.cartItems.set(itemsWithProducts);
-                },
-                error: (error) => {
-                    console.error('Error loading cart products:', error);
-                    // Fallback: use cart as-is without product details
-                    this.cartItems.set(cart);
-                }
-            });
+    // Load product details for each cart item
+    if (cart.length > 0) {
+      const productIds = cart.map(item => item.productId);
+      this.http.post<Product[]>(`${this.apiUrl}/marketplace/products/by-ids`, { ids: productIds }).subscribe({
+        next: (products) => {
+          const itemsWithProducts = cart.map(item => ({
+            ...item,
+            product: products.find(p => p.id === item.productId)
+          })).filter(item => item.product);
+          this.cartItems.set(itemsWithProducts);
+        },
+        error: (error) => {
+          console.error('Error loading cart products:', error);
+          // Fallback: use cart as-is without product details
+          this.cartItems.set(cart);
         }
+      });
     }
+  }
 
-    subtotal = signal(0);
-    deliveryFee = signal(0);
-    total = signal(0);
+  subtotal = signal(0);
+  deliveryFee = signal(0);
+  total = signal(0);
 
-    private updateTotals(): void {
-        const items = this.cartItems();
-        const sub = items.reduce((sum, item) => sum + ((item.product?.price || 0) * item.quantity), 0);
-        this.subtotal.set(sub);
-        this.deliveryFee.set(sub > 0 ? 50 : 0); // Fixed delivery fee
-        this.total.set(sub + this.deliveryFee());
+  private updateTotals(): void {
+    const items = this.cartItems();
+    const sub = items.reduce((sum, item) => sum + ((item.product?.price || 0) * item.quantity), 0);
+    this.subtotal.set(sub);
+    this.deliveryFee.set(sub > 0 ? 50 : 0); // Fixed delivery fee
+    this.total.set(sub + this.deliveryFee());
+  }
+
+  incrementQuantity(item: CartItem): void {
+    item.quantity++;
+    this.saveCart();
+    this.updateTotals();
+  }
+
+  decrementQuantity(item: CartItem): void {
+    if (item.quantity > 1) {
+      item.quantity--;
+      this.saveCart();
+      this.updateTotals();
     }
+  }
 
-    incrementQuantity(item: CartItem): void {
-        item.quantity++;
-        this.saveCart();
-        this.updateTotals();
-    }
+  updateQuantity(item: CartItem, quantity: number): void {
+    item.quantity = Math.max(1, Math.min(quantity, item.product?.quantityInStock || 999));
+    this.saveCart();
+    this.updateTotals();
+  }
 
-    decrementQuantity(item: CartItem): void {
-        if (item.quantity > 1) {
-            item.quantity--;
-            this.saveCart();
-            this.updateTotals();
+  removeItem(item: CartItem): void {
+    const items = this.cartItems().filter(i => i.productId !== item.productId);
+    this.cartItems.set(items);
+    this.saveCart();
+    this.updateTotals();
+  }
+
+  private saveCart(): void {
+    const cart = this.cartItems().map(item => ({
+      productId: item.productId,
+      quantity: item.quantity
+    }));
+    localStorage.setItem('marketplace_cart', JSON.stringify(cart));
+  }
+
+  canCheckout(): boolean {
+    return this.cartItems().length > 0 &&
+      this.deliveryAddress.trim() !== '' &&
+      this.selectedPaymentMethod() !== '';
+  }
+
+  checkout(): void {
+    if (!this.canCheckout()) return;
+
+    const orderData = {
+      vendorId: this.cartItems()[0]?.product?.vendorId,
+      items: this.cartItems().map(item => ({
+        productId: item.productId,
+        quantity: item.quantity
+      })),
+      deliveryAddress: this.deliveryAddress,
+      paymentMethod: this.selectedPaymentMethod(),
+      notes: ''
+    };
+
+    this.http.post(`${this.apiUrl}/marketplace/orders`, orderData).subscribe({
+      next: (order: any) => {
+        localStorage.removeItem('marketplace_cart');
+
+        // If online payment (not cash), initiate payment
+        if (this.selectedPaymentMethod() !== 'cash') {
+          this.initiatePayment(order);
+        } else {
+          this.router.navigate(['/marketplace/orders', order.id]);
         }
-    }
+      },
+      error: (error) => {
+        console.error('Error creating order:', error);
+        alert('Failed to create order. Please try again.');
+      }
+    });
+  }
 
-    updateQuantity(item: CartItem, quantity: number): void {
-        item.quantity = Math.max(1, Math.min(quantity, item.product?.quantityInStock || 999));
-        this.saveCart();
-        this.updateTotals();
-    }
+  private initiatePayment(order: any): void {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const paymentMethodMap: Record<string, number> = {
+      'card': 1, // Card
+      'paymob': 2, // PayMob
+      'fawry': 3, // Fawry
+      'vodafone': 4, // VodafoneCash
+      'orange': 5, // OrangeMoney
+      'etisalat': 6 // EtisalatCash
+    };
 
-    removeItem(item: CartItem): void {
-        const items = this.cartItems().filter(i => i.productId !== item.productId);
-        this.cartItems.set(items);
-        this.saveCart();
-        this.updateTotals();
-    }
+    const paymentRequest = {
+      orderId: order.id,
+      paymentMethod: paymentMethodMap[this.selectedPaymentMethod()] || 1,
+      billingInfo: {
+        firstName: user.firstName || user.fullName?.split(' ')[0] || 'Guest',
+        lastName: user.lastName || user.fullName?.split(' ')[1] || 'Guest',
+        email: user.email || 'guest@example.com',
+        phoneNumber: user.phoneNumber || '01000000000'
+      },
+      phoneNumber: user.phoneNumber // For wallet payments
+    };
 
-    private saveCart(): void {
-        const cart = this.cartItems().map(item => ({
-            productId: item.productId,
-            quantity: item.quantity
-        }));
-        localStorage.setItem('marketplace_cart', JSON.stringify(cart));
-    }
-
-    canCheckout(): boolean {
-        return this.cartItems().length > 0 &&
-            this.deliveryAddress.trim() !== '' &&
-            this.selectedPaymentMethod() !== '';
-    }
-
-    checkout(): void {
-        if (!this.canCheckout()) return;
-
-        const orderData = {
-            vendorId: this.cartItems()[0]?.product?.vendorId, // Assuming single vendor for now
-            items: this.cartItems().map(item => ({
-                productId: item.productId,
-                quantity: item.quantity,
-                price: item.product?.price
-            })),
-            deliveryAddress: this.deliveryAddress,
-            paymentMethod: this.selectedPaymentMethod(),
-            totalAmount: this.total()
-        };
-
-        this.http.post(`${this.apiUrl}/marketplace/orders`, orderData).subscribe({
-            next: (response: any) => {
-                // Clear cart
-                localStorage.removeItem('marketplace_cart');
-                // Navigate to order confirmation
-                this.router.navigate(['/marketplace/orders', response.id]);
-            },
-            error: (error) => {
-                console.error('Error creating order:', error);
-                alert('Failed to create order. Please try again.');
-            }
-        });
-    }
+    this.http.post(`${this.apiUrl}/EgyptianPayment/initiate`, paymentRequest).subscribe({
+      next: (response: any) => {
+        if (response.success && response.paymentUrl) {
+          window.location.href = response.paymentUrl;
+        } else {
+          alert('Payment initiation failed. Please try again from Order Detail page.');
+          this.router.navigate(['/marketplace/orders', order.id]);
+        }
+      },
+      error: (error) => {
+        console.error('Error initiating payment:', error);
+        this.router.navigate(['/marketplace/orders', order.id]);
+      }
+    });
+  }
 }

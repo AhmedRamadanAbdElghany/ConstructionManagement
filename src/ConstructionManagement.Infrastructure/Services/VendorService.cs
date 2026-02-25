@@ -988,21 +988,21 @@ public class VendorService : IVendorService
             .Where(v => v.Latitude.HasValue && v.Longitude.HasValue)
             .Select(v => new NearbyVendorDto
             {
-                VendorId = v.Id,
-                CompanyName = v.Name,
+                Id = v.Id,
+                Name = v.Name,
                 Description = v.Notes,
                 Address = v.Address,
                 Latitude = v.Latitude!.Value,
                 Longitude = v.Longitude!.Value,
-                DistanceKm = CalculateDistance(latitude, longitude, v.Latitude.Value, v.Longitude.Value),
-                AverageRating = (double)(v.Products.Average(p => p.AverageRating ?? 0)),
+                Distance = CalculateDistance(latitude, longitude, v.Latitude.Value, v.Longitude.Value),
+                AverageRating = (double)(v.Products.Any() ? v.Products.Average(p => p.AverageRating ?? 0) : 0),
                 TotalReviews = v.Products.Sum(p => p.TotalReviews),
                 TotalOrders = v.Products.Sum(p => p.SalesCount),
                 ProductCount = v.Products.Count(p => p.IsActive),
-                CategoryIds = v.Products.Where(p => p.CategoryId.HasValue).Select(p => p.CategoryId!.Value).Distinct().ToList()
+                Categories = v.Products.Where(p => p.Category != null).Select(p => p.Category!.Name).Distinct().ToList()
             })
-            .Where(v => v.DistanceKm <= radiusKm)
-            .OrderBy(v => v.DistanceKm)
+            .Where(v => v.Distance <= radiusKm)
+            .OrderBy(v => v.Distance)
             .ToList();
 
         return nearbyVendors;

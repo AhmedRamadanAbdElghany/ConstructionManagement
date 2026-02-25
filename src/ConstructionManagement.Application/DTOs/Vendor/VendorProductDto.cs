@@ -78,18 +78,18 @@ namespace ConstructionManagement.Application.DTOs.Vendor
     // Marketplace DTOs
     public class NearbyVendorDto
     {
-        public int VendorId { get; set; }
-        public string CompanyName { get; set; } = string.Empty;
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         public string? Address { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        public double DistanceKm { get; set; }
+        public double Distance { get; set; }
         public double AverageRating { get; set; }
         public int TotalReviews { get; set; }
         public int TotalOrders { get; set; }
         public int ProductCount { get; set; }
-        public List<int> CategoryIds { get; set; } = new();
+        public List<string> Categories { get; set; } = new();
     }
 
     public class VendorProfileDto

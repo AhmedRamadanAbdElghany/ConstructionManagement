@@ -5,8 +5,10 @@ using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Domain.Enums;
 using ConstructionManagement.Infrastructure.Persistence.Repositories;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
+using ConstructionManagement.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Hangfire;
+using ConstructionManagement.Infrastructure.Data;
 
 namespace ConstructionManagement.Infrastructure.Services;
 
@@ -24,6 +26,7 @@ public class CompanyRequestService : ICompanyRequestService
     private readonly IRepository<UserRole> _userRoleRepository;
     private readonly IRepository<Vendor> _vendorRepository;
     private readonly IUnitOfWork _uow;
+    private readonly ApplicationDbContext _context;
 
     public CompanyRequestService(
         ICompanyRequestRepository companyRequestRepository,
@@ -37,7 +40,8 @@ public class CompanyRequestService : ICompanyRequestService
         IRepository<RolePermission> rolePermissionRepository,
         IRepository<UserRole> userRoleRepository,
         IRepository<Vendor> vendorRepository,
-        IUnitOfWork uow)
+        IUnitOfWork uow,
+        ApplicationDbContext context)
     {
         _companyRequestRepository = companyRequestRepository;
         _userRepository = userRepository;
@@ -51,6 +55,7 @@ public class CompanyRequestService : ICompanyRequestService
         _userRoleRepository = userRoleRepository;
         _vendorRepository = vendorRepository;
         _uow = uow;
+        _context = context;
     }
 
     public async Task<CompanyRequestDto> CreateRequestAsync(int? userId, CreateCompanyRequestDto dto)
@@ -222,6 +227,15 @@ public class CompanyRequestService : ICompanyRequestService
             EnablePhotoUpload = true,
             RequirePhotoReview = true
         });
+
+        // Seed Warehouse specific roles if it's a warehouse
+        if (request.CompanyType == CompanyType.Warehouse)
+        {
+            await WarehouseRoleSeeder.SeedWarehouseRolesAsync(
+                _context, 
+                company.Id);
+        }
+
         await _uow.SaveChangesAsync();
 
         // Update user to be Company Admin of the new company

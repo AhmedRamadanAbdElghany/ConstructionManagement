@@ -163,6 +163,8 @@ export interface MessagingStatusDto {
     restrictionReason?: string;
     superAdminCompanyId?: number;
     isUnverifiedCompanyOwner: boolean;
+    isWorker?: boolean;
+    userCompanyId?: number;
 }
 
 // Company to User messaging

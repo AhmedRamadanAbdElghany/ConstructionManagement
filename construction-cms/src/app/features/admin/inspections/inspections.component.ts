@@ -16,19 +16,25 @@ type ViewMode = 'list' | 'detail' | 'create';
 type DetailTab = 'overview' | 'documents' | 'quotes' | 'session' | 'chat' | 'payment';
 
 const STATUS_MAP: Record<number, { label: string; color: string }> = {
-  1: { label: 'Pending', color: '#f59e0b' },
-  2: { label: 'Quoted', color: '#3b82f6' },
-  3: { label: 'Approved', color: '#10b981' },
-  4: { label: 'Rejected', color: '#ef4444' },
-  5: { label: 'Ready for Inspection', color: '#8b5cf6' },
-  6: { label: 'In Progress', color: '#06b6d4' },
-  7: { label: 'Completed', color: '#22c55e' },
-  8: { label: 'Cancelled', color: '#6b7280' },
+  1: { label: 'inspections.status.pending', color: '#f59e0b' },
+  2: { label: 'inspections.status.quoted', color: '#3b82f6' },
+  3: { label: 'inspections.status.approved', color: '#10b981' },
+  4: { label: 'inspections.status.rejected', color: '#ef4444' },
+  5: { label: 'inspections.status.ready', color: '#8b5cf6' },
+  6: { label: 'inspections.status.in_progress', color: '#06b6d4' },
+  7: { label: 'inspections.status.completed', color: '#22c55e' },
+  8: { label: 'inspections.status.cancelled', color: '#6b7280' },
 };
 
 const PROPERTY_TYPE_MAP: Record<number, string> = {
-  1: 'Villa', 2: 'Apartment', 3: 'House', 4: 'Land',
-  5: 'Commercial', 6: 'Office', 7: 'Warehouse', 99: 'Other',
+  1: 'inspections.property_type.villa',
+  2: 'inspections.property_type.apartment',
+  3: 'inspections.property_type.house',
+  4: 'inspections.property_type.land',
+  5: 'inspections.property_type.commercial',
+  6: 'inspections.property_type.office',
+  7: 'inspections.property_type.warehouse',
+  99: 'inspections.property_type.other',
 };
 
 @Component({
@@ -100,13 +106,13 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
       <select class="filter-select" [(ngModel)]="statusFilter" (ngModelChange)="onFilterChange()">
         <option value="">{{ 'inspections.all_statuses' | translate }}</option>
         @for (s of statusOptions; track s.value) {
-          <option [value]="s.value">{{ s.label }}</option>
+          <option [value]="s.value">{{ s.label | translate }}</option>
         }
       </select>
       <select class="filter-select" [(ngModel)]="propertyFilter" (ngModelChange)="onFilterChange()">
         <option value="">{{ 'inspections.all_types' | translate }}</option>
         @for (p of propertyOptions; track p.value) {
-          <option [value]="p.value">{{ p.label }}</option>
+          <option [value]="p.value">{{ p.label | translate }}</option>
         }
       </select>
     </div>
@@ -127,9 +133,9 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
         @for (insp of inspections(); track insp.id) {
           <div class="inspection-card" (click)="openDetail(insp.id)">
             <div class="card-header">
-              <div class="prop-badge">{{ propertyLabel(insp.propertyType) }}</div>
+              <div class="prop-badge">{{ propertyLabel(insp.propertyType) | translate }}</div>
               <span class="status-pill" [style.background]="statusBg(insp.status)" [style.color]="statusColor(insp.status)">
-                {{ statusLabel(insp.status) }}
+                {{ statusLabel(insp.status) | translate }}
               </span>
             </div>
             <h3 class="card-title">{{ insp.title }}</h3>
@@ -176,9 +182,9 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
         <div class="info-card">
           <div class="info-header">
             <span class="status-pill large" [style.background]="statusBg(selectedInspection()!.status)" [style.color]="statusColor(selectedInspection()!.status)">
-              {{ statusLabel(selectedInspection()!.status) }}
+              {{ statusLabel(selectedInspection()!.status) | translate }}
             </span>
-            <span class="prop-badge">{{ propertyLabel(selectedInspection()!.propertyType) }}</span>
+            <span class="prop-badge">{{ propertyLabel(selectedInspection()!.propertyType) | translate }}</span>
           </div>
           <h2 class="detail-title">{{ selectedInspection()!.title }}</h2>
 
@@ -278,7 +284,7 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
         @if (activeDetailTab === 'overview') {
           <div class="tab-content">
             <div class="time-slots-section">
-              <h4>{{ 'inspections.time_slots' | translate }}</h4>
+              <h4>{{ 'inspections.details.time_slots' | translate }}</h4>
               @if (selectedInspection()!.timeSlots?.length) {
                 <div class="slots-list">
                   @for (slot of selectedInspection()!.timeSlots; track slot.id) {
@@ -288,18 +294,18 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
                       <span class="slot-by">{{ slot.proposedBy === 1 ? ('inspections.client' | translate) : ('inspections.company' | translate) }}</span>
                       @if (slot.isSelected) { <span class="selected-badge">✓</span> }
                       @if (!slot.isSelected && selectedInspection()!.status <= 3) {
-                        <button class="btn btn-xs" (click)="selectSlot(slot.id)">{{ 'inspections.select' | translate }}</button>
+                        <button class="btn btn-xs" (click)="selectSlot(slot.id)">{{ 'inspections.details.select' | translate }}</button>
                       }
                     </div>
                   }
                 </div>
               } @else {
-                <p class="empty-msg">{{ 'inspections.no_time_slots' | translate }}</p>
+                <p class="empty-msg">{{ 'inspections.details.no_slots' | translate }}</p>
               }
             </div>
 
             <div class="team-section">
-              <h4>{{ 'inspections.team' | translate }}</h4>
+              <h4>{{ 'inspections.details.team' | translate }}</h4>
               @if (selectedInspection()!.teamMembers?.length) {
                 <div class="team-list">
                   @for (m of selectedInspection()!.teamMembers; track m.id) {
@@ -314,7 +320,7 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
                   }
                 </div>
               } @else {
-                <p class="empty-msg">{{ 'inspections.no_team' | translate }}</p>
+                <p class="empty-msg">{{ 'inspections.details.no_team' | translate }}</p>
               }
             </div>
           </div>
@@ -324,7 +330,7 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
         @if (activeDetailTab === 'documents') {
           <div class="tab-content">
             <div class="docs-header">
-              <h4>{{ 'inspections.documents' | translate }}</h4>
+              <h4>{{ 'inspections.details.documents' | translate }}</h4>
               @if ([5,6].includes(selectedInspection()!.status)) {
                 <label class="btn btn-primary btn-sm upload-btn">
                   {{ 'inspections.upload_document' | translate }}
@@ -348,7 +354,7 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
             } @else {
               <div class="empty-state small">
                 <div class="empty-icon">📎</div>
-                <p>{{ 'inspections.no_documents' | translate }}</p>
+                <p>{{ 'inspections.details.no_docs' | translate }}</p>
               </div>
             }
           </div>
@@ -359,13 +365,13 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
           <div class="tab-content">
             @if (selectedInspection()!.status === 1) {
               <div class="quote-form">
-                <h4>{{ 'inspections.create_quote' | translate }}</h4>
+                <h4>{{ 'inspections.details.create_quote' | translate }}</h4>
                 <div class="form-row">
-                  <label>{{ 'inspections.fee_amount' | translate }}</label>
+                  <label>{{ 'inspections.details.fee_amount' | translate }}</label>
                   <input type="number" class="form-input" [(ngModel)]="quoteForm.amount" placeholder="0.00"/>
                 </div>
                 <div class="form-row">
-                  <label>{{ 'inspections.currency' | translate }}</label>
+                  <label>{{ 'inspections.details.currency' | translate }}</label>
                   <select class="form-input" [(ngModel)]="quoteForm.currency">
                     <option value="USD">USD</option>
                     <option value="SAR">SAR</option>
@@ -374,15 +380,15 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
                   </select>
                 </div>
                 <div class="form-row">
-                  <label>{{ 'inspections.valid_until' | translate }}</label>
+                  <label>{{ 'inspections.details.valid_until' | translate }}</label>
                   <input type="date" class="form-input" [(ngModel)]="quoteForm.validUntilStr"/>
                 </div>
                 <div class="form-row">
-                  <label>{{ 'inspections.terms' | translate }}</label>
-                  <textarea class="form-input" rows="3" [(ngModel)]="quoteForm.terms" placeholder="{{ 'inspections.terms_placeholder' | translate }}"></textarea>
+                  <label>{{ 'inspections.details.terms' | translate }}</label>
+                  <textarea class="form-input" rows="3" [(ngModel)]="quoteForm.terms" placeholder="{{ 'inspections.details.terms_placeholder' | translate }}"></textarea>
                 </div>
                 <button class="btn btn-primary" [disabled]="isSaving()" (click)="sendQuote()">
-                  {{ isSaving() ? ('common.saving' | translate) : ('inspections.send_quote' | translate) }}
+                  {{ isSaving() ? ('common.saving' | translate) : ('inspections.details.send_quote' | translate) }}
                 </button>
               </div>
             }
@@ -392,10 +398,10 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
                   <div class="quote-item">
                     <div class="quote-top">
                       <span class="quote-amount">{{ q.currency }} {{ q.amount | number:'1.2-2' }}</span>
-                      <span class="status-pill" [style.background]="quoteStatusBg(q.status)">{{ quoteStatusLabel(q.status) }}</span>
+                      <span class="status-pill" [style.background]="quoteStatusBg(q.status)">{{ quoteStatusLabel(q.status) | translate }}</span>
                     </div>
                     @if (q.terms) { <p class="quote-terms">{{ q.terms }}</p> }
-                    <p class="quote-meta">{{ 'inspections.valid_until' | translate }}: {{ q.validUntil | date:'mediumDate' }}</p>
+                    <p class="quote-meta">{{ 'inspections.details.valid_until' | translate }}: {{ q.validUntil | date:'mediumDate' }}</p>
                   </div>
                 }
               </div>
@@ -409,24 +415,24 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
             @if (selectedInspection()!.session) {
               <div class="session-card">
                 <div class="session-row">
-                  <span>{{ 'inspections.started_at' | translate }}</span>
+                  <span>{{ 'inspections.details.started_at' | translate }}</span>
                   <span>{{ selectedInspection()!.session!.startedAt | date:'medium' }}</span>
                 </div>
                 @if (selectedInspection()!.session!.completedAt) {
                   <div class="session-row">
-                    <span>{{ 'inspections.completed_at' | translate }}</span>
+                    <span>{{ 'inspections.details.completed_at' | translate }}</span>
                     <span>{{ selectedInspection()!.session!.completedAt | date:'medium' }}</span>
                   </div>
                 }
                 <div class="session-row">
-                  <span>{{ 'inspections.inspector' | translate }}</span>
+                  <span>{{ 'inspections.details.inspector' | translate }}</span>
                   <span>{{ selectedInspection()!.session!.companyUserName }}</span>
                 </div>
               </div>
             } @else {
               <div class="empty-state small">
                 <div class="empty-icon">📋</div>
-                <p>{{ 'inspections.session_not_started' | translate }}</p>
+                 <p>{{ 'inspections.details.session_not_started' | translate }}</p>
               </div>
             }
           </div>
@@ -445,11 +451,11 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
                 </div>
               }
               @if (!chatMessages().length) {
-                <div class="empty-state small"><p>{{ 'inspections.no_messages' | translate }}</p></div>
+                <div class="empty-state small"><p>{{ 'inspections.details.no_messages' | translate }}</p></div>
               }
             </div>
             <div class="chat-input-row">
-              <input type="text" class="chat-input" [(ngModel)]="chatMessage" placeholder="{{ 'inspections.type_message' | translate }}"
+              <input type="text" class="chat-input" [(ngModel)]="chatMessage" placeholder="{{ 'inspections.details.type_message' | translate }}"
                 (keyup.enter)="sendMessage()"/>
               <button class="btn btn-primary btn-sm" (click)="sendMessage()">{{ 'common.send' | translate }}</button>
             </div>
@@ -472,14 +478,14 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
                 </div>
                 @if (selectedInspection()!.payment!.status === 1 && selectedInspection()!.status === 7) {
                   <button class="btn btn-success" (click)="confirmCash()">
-                    {{ 'inspections.confirm_cash' | translate }}
+                    {{ 'inspections.details.confirm_cash' | translate }}
                   </button>
                 }
               </div>
             } @else {
               <div class="empty-state small">
                 <div class="empty-icon">💳</div>
-                <p>{{ 'inspections.no_payment' | translate }}</p>
+                <p>{{ 'inspections.details.no_payment' | translate }}</p>
               </div>
             }
           </div>
@@ -977,9 +983,13 @@ export class InspectionsComponent implements OnInit, OnDestroy {
   statusColor(s: number): string { return STATUS_MAP[s]?.color ?? '#6b7280'; }
   statusBg(s: number): string { return STATUS_MAP[s]?.color ? STATUS_MAP[s].color + '22' : '#f3f4f6'; }
   propertyLabel(t: number): string { return PROPERTY_TYPE_MAP[t] ?? 'Other'; }
-  quoteStatusLabel(s: number): string { return ['', 'Pending', 'Accepted', 'Rejected', 'Expired'][s] ?? 'Unknown'; }
+  quoteStatusLabel(s: number): string {
+    return ['', 'inspections.quote_status.pending', 'inspections.quote_status.accepted', 'inspections.quote_status.rejected', 'inspections.quote_status.expired'][s] ?? 'Unknown';
+  }
   quoteStatusBg(s: number): string { return ['', '#fef3c7', '#d1fae5', '#fee2e2', '#f3f4f6'][s] ?? '#f3f4f6'; }
-  paymentStatusLabel(s: number): string { return ['', 'Pending', 'Paid', 'Failed', 'Refunded'][s] ?? 'Unknown'; }
+  paymentStatusLabel(s: number): string {
+    return ['', 'inspections.payment_status.pending', 'inspections.payment_status.paid', 'inspections.payment_status.failed', 'inspections.payment_status.refunded'][s] ?? 'Unknown';
+  }
   paymentStatusBg(s: number): string { return ['', '#fef3c7', '#d1fae5', '#fee2e2', '#f3f4f6'][s] ?? '#f3f4f6'; }
   docIcon(t: number): string { return ['', '📷', '🎥', '📄', '🎵', '📎'][t] ?? '📎'; }
 

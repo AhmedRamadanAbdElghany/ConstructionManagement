@@ -56,9 +56,13 @@ public class ProjectItemService : IProjectItemService
                 Unit = request.Unit ?? string.Empty,
                 PhaseId = request.PhaseId,
                 Status = "جديد",
+                WorkflowStatus = ProjectItemWorkflowStatus.Pending,
                 StartDate = request.StartDate,
                 EndDate = request.EndDate,
-                CompanyId = project.CompanyId
+                CompanyId = project.CompanyId,
+                ResponsibleUserId = request.ResponsibleUserId,
+                RequiresPreStartConfirmation = request.RequiresPreStartConfirmation,
+                PreStartConfirmationDeadline = request.StartDate?.AddHours(-request.PreStartConfirmationHours)
             };
 
             // Set accounting-specific fields based on Project.AccountingSystem
@@ -114,6 +118,8 @@ public class ProjectItemService : IProjectItemService
         var item = await _itemRepository.AsQueryable()
             .Include(i => i.Project)
             .Include(i => i.Phase)
+            .Include(i => i.ResponsibleUser)
+            .Include(i => i.PreStartConfirmedByUser)
             .FirstOrDefaultAsync(i => i.Id == itemId);
 
         if (item == null) return null;
@@ -132,6 +138,8 @@ public class ProjectItemService : IProjectItemService
         var items = await _itemRepository.AsQueryable()
             .Where(i => i.ProjectId == projectId)
             .Include(i => i.Phase)
+            .Include(i => i.ResponsibleUser)
+            .Include(i => i.PreStartConfirmedByUser)
             .ToListAsync();
 
         var invoices = await _invoiceRepo.AsQueryable()
@@ -171,6 +179,12 @@ public class ProjectItemService : IProjectItemService
             item.EndDate = request.EndDate;
         if (request.PhaseId.HasValue)
             item.PhaseId = request.PhaseId;
+        if (request.ResponsibleUserId.HasValue)
+            item.ResponsibleUserId = request.ResponsibleUserId;
+        if (request.RequiresPreStartConfirmation.HasValue)
+            item.RequiresPreStartConfirmation = request.RequiresPreStartConfirmation.Value;
+        if (request.EstimatedRemainingDays.HasValue)
+            item.EstimatedRemainingDays = request.EstimatedRemainingDays;
 
         await _itemRepository.UpdateAsync(item);
         await _unitOfWork.SaveChangesAsync();
@@ -185,6 +199,111 @@ public class ProjectItemService : IProjectItemService
         await _itemRepository.DeleteAsync(item);
         await _unitOfWork.SaveChangesAsync();
     }
+
+    public async Task ConfirmPreStartAsync(int itemId, int userId, string? notes)
+    {
+        var item = await _itemRepository.GetByIdAsync(itemId)
+            ?? throw new InvalidOperationException("البند غير موجود");
+
+        item.PreStartConfirmedAt = DateTime.UtcNow;
+        item.PreStartConfirmedByUserId = userId;
+        item.PreStartConfirmationNotes = notes;
+        item.WorkflowStatus = ProjectItemWorkflowStatus.ReadyToStart;
+
+        await _itemRepository.UpdateAsync(item);
+        await _unitOfWork.SaveChangesAsync();
+        
+        await _activityLogService.LogActivityAsync(
+            item.ProjectId,
+            "Log",
+            "Pre-Start Confirmed",
+            $"Pre-start requirements confirmed for item '{item.ItemName}' by user ID {userId}.",
+            userId
+        );
+    }
+
+    public async Task AuthorizeForcedStartAsync(int itemId, int userId, string reason)
+    {
+        var item = await _itemRepository.GetByIdAsync(itemId)
+            ?? throw new InvalidOperationException("البند غير موجود");
+
+        item.IsForcedStart = true;
+        item.ForcedStartAuthorizedByUserId = userId;
+        item.ForcedStartAuthorizedAt = DateTime.UtcNow;
+        item.ForcedStartReason = reason;
+        item.WorkflowStatus = ProjectItemWorkflowStatus.ReadyToStart;
+
+        await _itemRepository.UpdateAsync(item);
+        await _unitOfWork.SaveChangesAsync();
+
+        await _activityLogService.LogActivityAsync(
+            item.ProjectId,
+            "Log",
+            "Forced Start Authorized",
+            $"Forced start authorized for item '{item.ItemName}' by user ID {userId}. Reason: {reason}",
+            userId
+        );
+    }
+
+    public async Task StartProjectItemAsync(int itemId, int userId)
+    {
+        var item = await _itemRepository.GetByIdAsync(itemId)
+            ?? throw new InvalidOperationException("البند غير موجود");
+
+        if (item.WorkflowStatus != ProjectItemWorkflowStatus.ReadyToStart && !item.IsForcedStart)
+            throw new InvalidOperationException("البند غير جاهز للبدء. يجب تأكيد المتطلبات أولاً أو الحصول على تصريح بدء قسري.");
+
+        item.ActualStartDate = DateTime.UtcNow;
+        item.WorkflowStatus = ProjectItemWorkflowStatus.InProgress;
+        item.Status = "InProgress";
+
+        await _itemRepository.UpdateAsync(item);
+        await _unitOfWork.SaveChangesAsync();
+
+        await _activityLogService.LogActivityAsync(
+            item.ProjectId,
+            "Log",
+            "Item Started",
+            $"Work started on item '{item.ItemName}'.",
+            userId
+        );
+    }
+
+    public async Task CompleteProjectItemAsync(int itemId, int userId)
+    {
+        var item = await _itemRepository.GetByIdAsync(itemId)
+            ?? throw new InvalidOperationException("البند غير موجود");
+
+        item.ActualEndDate = DateTime.UtcNow;
+        item.WorkflowStatus = ProjectItemWorkflowStatus.Completed;
+        item.Status = "Completed";
+
+        await _itemRepository.UpdateAsync(item);
+        await _unitOfWork.SaveChangesAsync();
+
+        await _activityLogService.LogActivityAsync(
+            item.ProjectId,
+            "Log",
+            "Item Completed",
+            $"Work completed on item '{item.ItemName}'.",
+            userId
+        );
+    }
+
+    public async Task UpdateWorkflowStatusAsync(int itemId, ProjectItemWorkflowStatus status)
+    {
+        var item = await _itemRepository.GetByIdAsync(itemId)
+            ?? throw new InvalidOperationException("البند غير موجود");
+
+        item.WorkflowStatus = status;
+        
+        // Sync with legacy status string
+        item.Status = status.ToString();
+
+        await _itemRepository.UpdateAsync(item);
+        await _unitOfWork.SaveChangesAsync();
+    }
+
 
     private ProjectItemDto MapToDto(ProjectItem item, decimal progress)
     {
@@ -207,7 +326,22 @@ public class ProjectItemService : IProjectItemService
             SupervisionPercentage = item.SupervisionPercentage,
             TotalPackageValue = item.TotalPackageValue,
             EstimatedBudget = item.EstimatedBudget,
-            ProgressPercentage = progress
+            ProgressPercentage = progress,
+            WorkflowStatus = item.WorkflowStatus,
+            RequiresPreStartConfirmation = item.RequiresPreStartConfirmation,
+            PreStartConfirmationDeadline = item.PreStartConfirmationDeadline,
+            PreStartConfirmedAt = item.PreStartConfirmedAt,
+            PreStartConfirmedByName = item.PreStartConfirmedByUser != null ? $"{item.PreStartConfirmedByUser.FirstName} {item.PreStartConfirmedByUser.LastName}" : null,
+            PreStartConfirmationNotes = item.PreStartConfirmationNotes,
+            IsForcedStart = item.IsForcedStart,
+            ForcedStartReason = item.ForcedStartReason,
+            ResponsibleUserId = item.ResponsibleUserId,
+            ResponsibleUserName = item.ResponsibleUser != null ? $"{item.ResponsibleUser.FirstName} {item.ResponsibleUser.LastName}" : null,
+            EstimatedRemainingDays = item.EstimatedRemainingDays,
+            ActualStartDate = item.ActualStartDate,
+            ActualEndDate = item.ActualEndDate,
+            LastDailyLogDate = item.LastDailyLogDate,
+            LastProgressPercentage = item.LastProgressPercentage
         };
     }
 

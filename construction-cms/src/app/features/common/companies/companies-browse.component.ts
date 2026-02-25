@@ -4,13 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { MessagingService, PublicCompanyDto } from '../../../core/services/messaging.service';
+import { MessagingService, PublicCompanyDto, MessagingStatusDto } from '../../../core/services/messaging.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
+import { RequestInspectionDialogComponent } from '../../client/client-inspections/request-inspection-dialog.component';
 
 @Component({
   selector: 'app-companies-browse',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, RequestInspectionDialogComponent],
   template: `
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
@@ -24,8 +25,17 @@ import { I18nService } from '../../../core/i18n/i18n.service';
             </p>
           </div>
           
-          <!-- Search -->
+          <!-- Search & Selection -->
           <div class="flex items-center gap-4">
+            @if (selectedIds.size > 0) {
+              <button (click)="openBulkRequest()" 
+                class="px-6 py-3 rounded-xl bg-amber-500 text-white font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20 animate-in zoom-in duration-300">
+                {{ 'inspections.request.bulk_title' | translate:{count: selectedIds.size} }}
+              </button>
+              <button (click)="selectedIds.clear()" class="text-slate-400 hover:text-rose-500 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
+            }
             <div class="relative">
               <input 
                 type="text" 
@@ -53,8 +63,22 @@ import { I18nService } from '../../../core/i18n/i18n.service';
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @for (company of companies; track company.id) {
               <div 
-                class="group flex flex-col bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl hover:shadow-2xl transition-all cursor-pointer overflow-hidden"
-                [routerLink]="['/companies', company.id]">
+                [routerLink]="['/companies', company.id]"
+                [class.ring-4]="selectedIds.has(company.id)"
+                [class.ring-amber-500/50]="selectedIds.has(company.id)"
+                class="group flex flex-col bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl hover:shadow-2xl transition-all cursor-pointer overflow-hidden relative">
+                
+                <!-- Selection Overlay -->
+                <div (click)="toggleSelection(company.id, $event)" 
+                  class="absolute top-4 left-4 z-20 w-8 h-8 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center transition-all hover:scale-110 active:scale-90"
+                  [class.bg-amber-500]="selectedIds.has(company.id)"
+                  [class.text-white]="selectedIds.has(company.id)">
+                  @if (selectedIds.has(company.id)) {
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                  } @else {
+                    <div class="w-2 h-2 rounded-full bg-white animate-pulse"></div>
+                  }
+                </div>
                 
                 <!-- Company Logo/Header -->
                 <div class="h-32 bg-gradient-to-br from-indigo-500 to-purple-600 relative">
@@ -74,12 +98,22 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                       </svg>
                     </button>
+                    @if (canMessageCompany(company)) {
+                      <button 
+                        (click)="openMessageDialog(company, $event)"
+                        [title]="'companies.send_message' | translate"
+                        class="p-2.5 rounded-xl bg-white/20 backdrop-blur-md text-white hover:bg-white/30 transition-all duration-300 transform active:scale-95">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                      </button>
+                    }
                     <button 
-                      (click)="openMessageDialog(company, $event)"
-                      [title]="'companies.send_message' | translate"
-                      class="p-2.5 rounded-xl bg-white/20 backdrop-blur-md text-white hover:bg-white/30 transition-all duration-300 transform active:scale-95">
+                      (click)="openRequestInspection(company, $event)"
+                      [title]="'inspections.request.title' | translate"
+                      class="p-2.5 rounded-xl bg-amber-500/80 backdrop-blur-md text-white hover:bg-amber-500 transition-all duration-300 transform active:scale-95">
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                       </svg>
                     </button>
                   </div>
@@ -232,6 +266,16 @@ import { I18nService } from '../../../core/i18n/i18n.service';
           </div>
         </div>
       }
+
+      <!-- Request Inspection Dialog -->
+      @if (showRequestInspection && (selectedCompany || selectedIds.size > 0)) {
+        <app-request-inspection-dialog 
+          [companyIds]="getActiveCompanyIds()" 
+          [companyName]="getActiveCompanyName()"
+          (close)="closeRequestInspection()"
+          (success)="onRequestSuccess()">
+        </app-request-inspection-dialog>
+      }
   `
 })
 export class CompaniesBrowseComponent implements OnInit, OnDestroy {
@@ -253,7 +297,16 @@ export class CompaniesBrowseComponent implements OnInit, OnDestroy {
   isSending = false;
   errorMessage = '';
 
+  // Messaging restriction
+  messagingStatus: MessagingStatusDto | null = null;
+  isRestricted = false;
+  superAdminCompanyId: number | null = null;
+  // Inspection Request
+  showRequestInspection = false;
+  selectedIds: Set<number> = new Set();
+
   ngOnInit() {
+    this.loadMessagingStatus();
     this.loadCompanies();
 
     this.i18nService.onLanguageChange()
@@ -269,6 +322,36 @@ export class CompaniesBrowseComponent implements OnInit, OnDestroy {
     if (this.searchTimeout) {
       clearTimeout(this.searchTimeout);
     }
+  }
+
+  loadMessagingStatus() {
+    this.messagingService.getMessagingStatus().subscribe({
+      next: (status) => {
+        this.messagingStatus = status;
+        this.isRestricted = status.isRestricted;
+        this.superAdminCompanyId = status.superAdminCompanyId ?? null;
+      },
+      error: (error) => {
+        console.error('Error loading messaging status:', error);
+      }
+    });
+  }
+
+  canMessageCompany(company: PublicCompanyDto): boolean {
+    if (!this.isRestricted) return true;
+    if (!this.messagingStatus) return false;
+
+    // Worker can only message their own company
+    if (this.messagingStatus.isWorker) {
+      return company.id === this.messagingStatus.userCompanyId;
+    }
+
+    // Unverified owner can only message SuperAdmin
+    if (this.messagingStatus.isUnverifiedCompanyOwner) {
+      return company.id === this.superAdminCompanyId;
+    }
+
+    return false;
   }
 
   loadCompanies() {
@@ -360,5 +443,47 @@ export class CompaniesBrowseComponent implements OnInit, OnDestroy {
         this.errorMessage = error.error?.message || 'Failed to send message. Please try again.';
       }
     });
+  }
+
+  openRequestInspection(company: PublicCompanyDto, event: Event) {
+    event.stopPropagation();
+    this.selectedCompany = company;
+    this.showRequestInspection = true;
+  }
+
+  openBulkRequest() {
+    this.selectedCompany = null;
+    this.showRequestInspection = true;
+  }
+
+  toggleSelection(id: number, event: Event) {
+    event.stopPropagation();
+    if (this.selectedIds.has(id)) {
+      this.selectedIds.delete(id);
+    } else {
+      this.selectedIds.add(id);
+    }
+  }
+
+  getActiveCompanyIds(): number[] {
+    if (this.selectedCompany) return [this.selectedCompany.id];
+    return Array.from(this.selectedIds);
+  }
+
+  getActiveCompanyName(): string {
+    if (this.selectedCompany) return this.selectedCompany.name;
+    return `${this.selectedIds.size} Companies`;
+  }
+
+  closeRequestInspection() {
+    this.showRequestInspection = false;
+    this.selectedCompany = null;
+  }
+
+  onRequestSuccess() {
+    this.showRequestInspection = false;
+    this.selectedCompany = null;
+    this.selectedIds.clear();
+    alert('Inspection request(s) submitted successfully!');
   }
 }

@@ -12,11 +12,12 @@ import {
   MessagingStatusDto
 } from '../../../core/services/messaging.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
+import { RequestInspectionDialogComponent } from '../../client/client-inspections/request-inspection-dialog.component';
 
 @Component({
   selector: 'app-company-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, RequestInspectionDialogComponent],
   template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
       <!-- Loading State -->
@@ -67,6 +68,16 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                 }
               </div>
               <div class="flex items-center gap-3">
+                <!-- Request Inspection Button -->
+                <button 
+                  (click)="showRequestInspection = true"
+                  class="px-6 py-3 rounded-xl bg-amber-500 text-white text-sm font-bold hover:bg-amber-600 transition-colors flex items-center gap-2 shadow-lg shadow-amber-500/20">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                  </svg>
+                  {{ 'inspections.request.title' | translate }}
+                </button>
+
                 <!-- Follow Button -->
                 @if (company.isFollowedByCurrentUser) {
                   <button 
@@ -83,14 +94,16 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                 }
                 
                 <!-- Message Button -->
-                <button 
-                  (click)="openMessageDialog()"
-                  class="px-6 py-3 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-colors flex items-center gap-2">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                  </svg>
-                  {{ 'companies.send_message' | translate }}
-                </button>
+                @if (canMessage) {
+                  <button 
+                    (click)="openMessageDialog()"
+                    class="px-6 py-3 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-colors flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                    {{ 'companies.send_message' | translate }}
+                  </button>
+                }
               </div>
             </div>
           </div>
@@ -258,6 +271,15 @@ import { I18nService } from '../../../core/i18n/i18n.service';
           </div>
         </div>
       }
+      <!-- Request Inspection Dialog -->
+      @if (showRequestInspection && company) {
+        <app-request-inspection-dialog 
+          [companyIds]="[company.id]" 
+          [companyName]="company.name"
+          (close)="showRequestInspection = false"
+          (success)="onRequestSuccess()">
+        </app-request-inspection-dialog>
+      }
     </div>
   `,
   styles: [`
@@ -285,6 +307,9 @@ export class CompanyDetailComponent implements OnInit, OnDestroy {
   selectedFiles: File[] = [];
   isSending = false;
   errorMessage = '';
+
+  // Inspection Request
+  showRequestInspection = false;
 
   // Messaging restriction
   messagingStatus: MessagingStatusDto | null = null;
@@ -340,12 +365,24 @@ export class CompanyDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // If restricted, can only message SuperAdmin company
-    if (this.messagingStatus?.superAdminCompanyId && this.company) {
-      this.canMessage = this.company.id === this.messagingStatus.superAdminCompanyId;
-    } else {
+    if (!this.company || !this.messagingStatus) {
       this.canMessage = false;
+      return;
     }
+
+    // Worker can only message their own company
+    if (this.messagingStatus.isWorker) {
+      this.canMessage = this.company.id === this.messagingStatus.userCompanyId;
+      return;
+    }
+
+    // Unverified owner can only message SuperAdmin
+    if (this.messagingStatus.isUnverifiedCompanyOwner) {
+      this.canMessage = this.company.id === this.messagingStatus.superAdminCompanyId;
+      return;
+    }
+
+    this.canMessage = false;
   }
 
   loadCompany(companyId: number) {
@@ -435,5 +472,11 @@ export class CompanyDetailComponent implements OnInit, OnDestroy {
         this.errorMessage = error.error?.message || 'Failed to send message. Please try again.';
       }
     });
+  }
+
+  onRequestSuccess() {
+    this.showRequestInspection = false;
+    // Potentially navigate or show a success toast
+    alert('Inspection request submitted successfully!');
   }
 }
