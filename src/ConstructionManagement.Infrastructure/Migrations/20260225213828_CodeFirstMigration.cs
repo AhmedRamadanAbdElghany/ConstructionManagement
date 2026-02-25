@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ConstructionManagement.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class ProjectInitialCreate : Migration
+    public partial class CodeFirstMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -7125,6 +7125,22 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     BudgetUsed = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     EnforceBudget = table.Column<bool>(type: "bit", nullable: false),
                     BudgetWarningThreshold = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    WorkflowStatus = table.Column<int>(type: "int", nullable: false),
+                    RequiresPreStartConfirmation = table.Column<bool>(type: "bit", nullable: false),
+                    PreStartConfirmationDeadline = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PreStartConfirmedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PreStartConfirmedByUserId = table.Column<int>(type: "int", nullable: true),
+                    PreStartConfirmationNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsForcedStart = table.Column<bool>(type: "bit", nullable: false),
+                    ForcedStartAuthorizedByUserId = table.Column<int>(type: "int", nullable: true),
+                    ForcedStartAuthorizedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ForcedStartReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ResponsibleUserId = table.Column<int>(type: "int", nullable: true),
+                    EstimatedRemainingDays = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    ActualStartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ActualEndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastDailyLogDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastProgressPercentage = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     ProjectId1 = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -7148,6 +7164,21 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         name: "FK_ProjectItems_Projects_ProjectId1",
                         column: x => x.ProjectId1,
                         principalTable: "Projects",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ProjectItems_Users_ForcedStartAuthorizedByUserId",
+                        column: x => x.ForcedStartAuthorizedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ProjectItems_Users_PreStartConfirmedByUserId",
+                        column: x => x.PreStartConfirmedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ProjectItems_Users_ResponsibleUserId",
+                        column: x => x.ResponsibleUserId,
+                        principalTable: "Users",
                         principalColumn: "Id");
                 });
 
@@ -7389,7 +7420,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     PaymentStatus = table.Column<int>(type: "int", nullable: false),
                     RecurringOrderId = table.Column<int>(type: "int", nullable: true),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ExpectedDeliveryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ActualDeliveryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeliveredAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -7422,6 +7452,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     DriverName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DriverPhone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     VehicleNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -8123,6 +8154,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     Currency = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     SupplierVendor = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    VendorId = table.Column<int>(type: "int", nullable: true),
+                    ExternalVendorName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     AttachmentPath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     RejectionReason = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
@@ -8156,6 +8189,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         name: "FK_ItemInvoice_Users_ReviewerUserId",
                         column: x => x.ReviewerUserId,
                         principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ItemInvoice_Vendors_VendorId",
+                        column: x => x.VendorId,
+                        principalTable: "Vendors",
                         principalColumn: "Id");
                 });
 
@@ -9002,8 +9040,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     IsOverdue = table.Column<bool>(type: "bit", nullable: false),
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GeneratedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -9052,7 +9090,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     ReportedByUserId = table.Column<int>(type: "int", nullable: true),
                     AssignedToUserId = table.Column<int>(type: "int", nullable: true),
                     ResolvedByUserId = table.Column<int>(type: "int", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AcknowledgedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ResolvedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ResolutionDeadline = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -9069,6 +9106,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     RequiresFollowUp = table.Column<bool>(type: "bit", nullable: false),
                     FollowUpDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     FollowUpNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -9233,7 +9271,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     PushSent = table.Column<bool>(type: "bit", nullable: false),
                     EmailSent = table.Column<bool>(type: "bit", nullable: false),
                     SmsSent = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     SentAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     AllReadAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     AdditionalData = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -9241,6 +9278,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     RequiresAction = table.Column<bool>(type: "bit", nullable: false),
                     ActionUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ActionText = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -9680,6 +9718,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CompanyId = table.Column<int>(type: "int", nullable: true),
                     InitiatorUserId = table.Column<int>(type: "int", nullable: false),
+                    TargetUserId = table.Column<int>(type: "int", nullable: true),
+                    InitiatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ApprovedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ApprovedByUserId = table.Column<int>(type: "int", nullable: true),
@@ -9708,6 +9748,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_CompanyConversations_Users_InitiatorUserId",
                         column: x => x.InitiatorUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_CompanyConversations_Users_TargetUserId",
+                        column: x => x.TargetUserId,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -9917,7 +9962,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "RoleId", "UserId", "AssignedAt", "CompanyId" },
-                values: new object[] { 1, 1, new DateTime(2026, 2, 24, 0, 56, 8, 446, DateTimeKind.Utc).AddTicks(5314), null });
+                values: new object[] { 1, 1, new DateTime(2026, 2, 25, 21, 38, 23, 103, DateTimeKind.Utc).AddTicks(6204), null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ActivityLogs_CompanyId",
@@ -10273,6 +10318,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "IX_CompanyConversations_Status",
                 table: "CompanyConversations",
                 column: "Status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CompanyConversations_TargetUserId",
+                table: "CompanyConversations",
+                column: "TargetUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CompanyCurrencySettings_BaseCurrencyId",
@@ -11585,6 +11635,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "ReviewerUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ItemInvoice_VendorId",
+                table: "ItemInvoice",
+                column: "VendorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_JobPostings_CompanyId",
                 table: "JobPostings",
                 column: "CompanyId");
@@ -12252,9 +12307,19 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "ProjectItemId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProjectItems_ForcedStartAuthorizedByUserId",
+                table: "ProjectItems",
+                column: "ForcedStartAuthorizedByUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProjectItems_PhaseId",
                 table: "ProjectItems",
                 column: "PhaseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectItems_PreStartConfirmedByUserId",
+                table: "ProjectItems",
+                column: "PreStartConfirmedByUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProjectItems_ProjectId",
@@ -12265,6 +12330,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 name: "IX_ProjectItems_ProjectId1",
                 table: "ProjectItems",
                 column: "ProjectId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectItems_ResponsibleUserId",
+                table: "ProjectItems",
+                column: "ResponsibleUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProjectItemTaskAttachments_ProjectItemTaskId",
@@ -13355,6 +13425,10 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             migrationBuilder.DropForeignKey(
                 name: "FK_CompanyConversations_Users_InitiatorUserId",
+                table: "CompanyConversations");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_CompanyConversations_Users_TargetUserId",
                 table: "CompanyConversations");
 
             migrationBuilder.DropForeignKey(

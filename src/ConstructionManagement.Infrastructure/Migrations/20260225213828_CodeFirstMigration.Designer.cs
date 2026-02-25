@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ConstructionManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260224005611_ProjectInitialCreate")]
-    partial class ProjectInitialCreate
+    [Migration("20260225213828_CodeFirstMigration")]
+    partial class CodeFirstMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1745,6 +1745,10 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("InitiatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("InitiatorUserId")
                         .HasColumnType("int");
 
@@ -1761,6 +1765,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int?>("TargetUserId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -1775,6 +1782,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("LastMessageId");
 
                     b.HasIndex("Status");
+
+                    b.HasIndex("TargetUserId");
 
                     b.ToTable("CompanyConversations");
                 });
@@ -7673,6 +7682,10 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<DateTime?>("DueDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("ExternalVendorName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<DateTime>("InvoiceDate")
                         .HasColumnType("datetime2");
 
@@ -7735,6 +7748,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("VendorId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedByUserId");
@@ -7748,6 +7764,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("ProjectItemId");
 
                     b.HasIndex("ReviewerUserId");
+
+                    b.HasIndex("VendorId");
 
                     b.ToTable("ItemInvoice");
                 });
@@ -11387,6 +11405,12 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("ActualEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ActualStartDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<decimal?>("AgreedQuantity")
                         .HasColumnType("decimal(18,2)");
 
@@ -11420,13 +11444,28 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<bool>("EnforceBudget")
                         .HasColumnType("bit");
 
+                    b.Property<decimal?>("EstimatedRemainingDays")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal?>("EstimatedTotalCost")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("ExecutedQuantity")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<DateTime?>("ForcedStartAuthorizedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ForcedStartAuthorizedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ForcedStartReason")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsForcedStart")
                         .HasColumnType("bit");
 
                     b.Property<string>("ItemCode")
@@ -11437,16 +11476,40 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("LastDailyLogDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("LastProgressPercentage")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("PaymentTerms")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("PhaseId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("PreStartConfirmationDeadline")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PreStartConfirmationNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PreStartConfirmedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("PreStartConfirmedByUserId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
                     b.Property<int?>("ProjectId1")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("RequiresPreStartConfirmation")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ResponsibleUserId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("StartDate")
@@ -11471,13 +11534,22 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("WorkflowStatus")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("ForcedStartAuthorizedByUserId");
+
                     b.HasIndex("PhaseId");
+
+                    b.HasIndex("PreStartConfirmedByUserId");
 
                     b.HasIndex("ProjectId");
 
                     b.HasIndex("ProjectId1");
+
+                    b.HasIndex("ResponsibleUserId");
 
                     b.ToTable("ProjectItems");
                 });
@@ -16292,7 +16364,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             UserId = 1,
                             RoleId = 1,
-                            AssignedAt = new DateTime(2026, 2, 24, 0, 56, 8, 446, DateTimeKind.Utc).AddTicks(5314)
+                            AssignedAt = new DateTime(2026, 2, 25, 21, 38, 23, 103, DateTimeKind.Utc).AddTicks(6204)
                         });
                 });
 
@@ -18123,6 +18195,10 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasForeignKey("LastMessageId")
                         .OnDelete(DeleteBehavior.NoAction);
 
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "TargetUser")
+                        .WithMany()
+                        .HasForeignKey("TargetUserId");
+
                     b.Navigation("ApprovedByUser");
 
                     b.Navigation("Company");
@@ -18130,6 +18206,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("InitiatorUser");
 
                     b.Navigation("LastMessage");
+
+                    b.Navigation("TargetUser");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyCurrencySetting", b =>
@@ -19765,6 +19843,10 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasForeignKey("ReviewerUserId")
                         .OnDelete(DeleteBehavior.NoAction);
 
+                    b.HasOne("ConstructionManagement.Domain.Entities.Vendor", "Vendor")
+                        .WithMany()
+                        .HasForeignKey("VendorId");
+
                     b.Navigation("CreatedBy");
 
                     b.Navigation("Project");
@@ -19772,6 +19854,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("ProjectItem");
 
                     b.Navigation("Reviewer");
+
+                    b.Navigation("Vendor");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.JobPosting", b =>
@@ -20645,10 +20729,18 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectItem", b =>
                 {
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "ForcedStartAuthorizedByUser")
+                        .WithMany()
+                        .HasForeignKey("ForcedStartAuthorizedByUserId");
+
                     b.HasOne("ConstructionManagement.Domain.Entities.Phase", "Phase")
                         .WithMany("Items")
                         .HasForeignKey("PhaseId")
                         .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "PreStartConfirmedByUser")
+                        .WithMany()
+                        .HasForeignKey("PreStartConfirmedByUserId");
 
                     b.HasOne("ConstructionManagement.Domain.Entities.Project", "Project")
                         .WithMany()
@@ -20660,9 +20752,19 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .WithMany("ProjectItems")
                         .HasForeignKey("ProjectId1");
 
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "ResponsibleUser")
+                        .WithMany()
+                        .HasForeignKey("ResponsibleUserId");
+
+                    b.Navigation("ForcedStartAuthorizedByUser");
+
                     b.Navigation("Phase");
 
+                    b.Navigation("PreStartConfirmedByUser");
+
                     b.Navigation("Project");
+
+                    b.Navigation("ResponsibleUser");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.ProjectItemEscalation", b =>
