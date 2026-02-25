@@ -305,6 +305,29 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
               <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.inspections' | translate }}</span>
             </a>
 
+            <a routerLink="/admin/location-tracking"
+               routerLinkActive="nav-active"
+               class="nav-item group">
+              <div class="nav-icon-box">
+                <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+              </div>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.location_tracking' | translate }}</span>
+            </a>
+
+            <a routerLink="/admin/geofencing"
+               routerLinkActive="nav-active"
+               class="nav-item group">
+              <div class="nav-icon-box">
+                <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                </svg>
+              </div>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.geofencing' | translate }}</span>
+            </a>
+
             @if (settings?.enableLeaveManagement) {
             <a routerLink="/admin/leave" 
                routerLinkActive="nav-active"
@@ -414,6 +437,18 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
                 </svg>
               </div>
               <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.daily_log' | translate }}</span>
+            </a>
+
+            <a routerLink="/worker/location-submit" 
+               routerLinkActive="nav-active"
+               class="nav-item group">
+              <div class="nav-icon-box">
+                <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+              </div>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.my_location' | translate }}</span>
             </a>
           }
 

@@ -392,6 +392,34 @@ export const routes: Routes = [
                 data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
             },
             {
+                path: 'geofencing',
+                children: [
+                    {
+                        path: 'map',
+                        loadComponent: () => import('./features/admin/geofencing/geofence-map/geofence-map').then(m => m.GeofenceMap)
+                    },
+                    {
+                        path: 'list',
+                        loadComponent: () => import('./features/admin/geofencing/geofence-list/geofence-list').then(m => m.GeofenceList)
+                    },
+                    {
+                        path: 'events',
+                        loadComponent: () => import('./features/admin/geofencing/geofence-events/geofence-events').then(m => m.GeofenceEvents)
+                    },
+                    {
+                        path: 'status',
+                        loadComponent: () => import('./features/admin/geofencing/worker-zone-status/worker-zone-status').then(m => m.WorkerZoneStatus)
+                    },
+                    {
+                        path: '',
+                        redirectTo: 'list',
+                        pathMatch: 'full'
+                    }
+                ],
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+            },
+            {
                 path: 'social-wall',
                 loadComponent: () => import('./features/admin/social-wall/social-wall.component').then(m => m.SocialWallComponent),
                 canActivate: [roleGuard],
@@ -454,6 +482,12 @@ export const routes: Routes = [
             {
                 path: 'documents',
                 loadComponent: () => import('./features/worker/worker-documents/worker-documents.component').then(m => m.WorkerDocumentsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['SuperAdmin', 'CompanyAdmin', 'CompanyUser'] }
+            },
+            {
+                path: 'location-submit',
+                loadComponent: () => import('./features/worker/location-submit/location-submit.component').then(m => m.WorkerLocationComponent),
                 canActivate: [roleGuard],
                 data: { roles: ['SuperAdmin', 'CompanyAdmin', 'CompanyUser'] }
             }

@@ -2,7 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { LocationTrackingService, PendingLocationRequestDto, WorkerLocationDto, LocationType, SubmitLocationRequest } from '../../../core/services/location-tracking.service';
+import { LocationTrackingService, PendingLocationRequestDto, WorkerLocationDto, LocationType, SubmitLocationRequest, WorkerZoneStatusDto } from '../../../core/services/location-tracking.service';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -11,7 +11,7 @@ import { AuthService } from '../../../core/services/auth.service';
     imports: [CommonModule, FormsModule, TranslateModule],
     template: `
     <div class="p-6 max-w-lg mx-auto">
-        <h1 class="text-2xl font-bold mb-6">{{ 'LOCATION_TRACKING.MY_LOCATION' | translate }}</h1>
+        <h1 class="text-2xl font-bold mb-6 text-slate-900 dark:text-white">{{ 'LOCATION_TRACKING.MY_LOCATION' | translate }}</h1>
 
         <!-- Pending Requests Alert -->
         <div *ngIf="pendingRequests.length > 0" class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
@@ -33,6 +33,68 @@ import { AuthService } from '../../../core/services/auth.service';
                         </button>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Geofence Status Card -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-lg font-semibold mb-4">{{ 'GEOFENCING.MY_STATUS' | translate }}</h2>
+            
+            <div *ngIf="loadingGeofence" class="flex justify-center py-4">
+                <svg class="animate-spin h-6 w-6 text-blue-600" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                </svg>
+            </div>
+
+            <div *ngIf="!loadingGeofence && geofenceStatus">
+                <!-- Current Status Badge -->
+                <div class="flex items-center justify-between p-4 rounded-lg mb-4" 
+                    [class.bg-green-100]="geofenceStatus.isInsideZone"
+                    [class.bg-red-100]="!geofenceStatus.isInsideZone">
+                    <div>
+                        <p class="text-sm font-medium text-gray-700">{{ 'GEOFENCING.STATUS' | translate }}</p>
+                        <p class="text-xl font-bold" [class.text-green-700]="geofenceStatus.isInsideZone" [class.text-red-700]="!geofenceStatus.isInsideZone">
+                            {{ (geofenceStatus.isInsideZone ? 'GEOFENCING.INSIDE' : 'GEOFENCING.OUTSIDE') | translate }}
+                        </p>
+                    </div>
+                    <div class="text-right" *ngIf="geofenceStatus.currentZoneName">
+                        <p class="text-sm font-medium text-gray-700">{{ 'GEOFENCING.ZONE' | translate }}</p>
+                        <p class="text-lg font-semibold text-gray-800">{{ geofenceStatus.currentZoneName }}</p>
+                    </div>
+                </div>
+
+                <!-- Overdue Alert -->
+                <div *ngIf="geofenceStatus.isOverdue" class="mb-4 p-3 bg-red-600 text-white rounded-lg flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    <span class="font-medium">{{ 'GEOFENCING.OVERDUE' | translate }}! ({{ geofenceStatus.minutesOutside }} {{ 'LOCATION_TRACKING.MINUTES' | translate }})</span>
+                </div>
+
+                <!-- Assigned Zones List -->
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">{{ 'GEOFENCING.ASSIGNED_ZONES' | translate }}</h3>
+                    <div *ngIf="geofenceStatus.assignedZones.length === 0" class="text-sm text-gray-400 italic">
+                        {{ 'GEOFENCING.NO_ASSIGNED_ZONES' | translate }}
+                    </div>
+                    <ul class="space-y-2">
+                        <li *ngFor="let azone of geofenceStatus.assignedZones" class="flex items-center justify-between text-sm p-2 hover:bg-gray-50 rounded">
+                            <span class="font-medium">{{ azone.zoneName }}</span>
+                            <span class="px-2 py-0.5 rounded text-xs" 
+                                [class.bg-green-100]="azone.isCurrentlyInside" 
+                                [class.text-green-700]="azone.isCurrentlyInside"
+                                [class.bg-gray-100]="!azone.isCurrentlyInside"
+                                [class.text-gray-500]="!azone.isCurrentlyInside">
+                                {{ (azone.isCurrentlyInside ? 'GEOFENCING.INSIDE' : 'GEOFENCING.OUTSIDE') | translate }}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div *ngIf="!loadingGeofence && !geofenceStatus" class="text-center text-gray-500 py-4">
+                {{ 'GEOFENCING.NO_ASSIGNED_ZONES' | translate }}
             </div>
         </div>
 
@@ -172,9 +234,29 @@ export class WorkerLocationComponent implements OnInit {
     errorMessage = '';
     successMessage = '';
 
+    geofenceStatus: WorkerZoneStatusDto | null = null;
+    loadingGeofence = false;
+
     ngOnInit(): void {
         this.loadPendingRequests();
         this.loadRecentLocations();
+        this.loadGeofenceStatus();
+    }
+
+    loadGeofenceStatus(): void {
+        this.loadingGeofence = true;
+        this.locationService.getMyZoneStatus().subscribe({
+            next: (status) => {
+                this.geofenceStatus = status;
+                this.loadingGeofence = false;
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Failed to load geofence status:', err);
+                this.loadingGeofence = false;
+                this.cdr.detectChanges();
+            }
+        });
     }
 
     loadPendingRequests(): void {
@@ -282,6 +364,8 @@ export class WorkerLocationComponent implements OnInit {
                 }
 
                 this.cdr.detectChanges();
+                this.loadGeofenceStatus(); // Refresh status after submission
+
 
                 // Clear success message after 3 seconds
                 setTimeout(() => {
