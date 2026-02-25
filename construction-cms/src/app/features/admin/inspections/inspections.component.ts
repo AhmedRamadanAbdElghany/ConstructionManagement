@@ -285,7 +285,7 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
           <div class="tab-content">
             <div class="time-slots-section">
               <h4>{{ 'inspections.details.time_slots' | translate }}</h4>
-              @if (selectedInspection()!.timeSlots?.length) {
+              @if (selectedInspection()!.timeSlots.length) {
                 <div class="slots-list">
                   @for (slot of selectedInspection()!.timeSlots; track slot.id) {
                     <div class="slot-item" [class.selected]="slot.isSelected">
@@ -306,7 +306,7 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
 
             <div class="team-section">
               <h4>{{ 'inspections.details.team' | translate }}</h4>
-              @if (selectedInspection()!.teamMembers?.length) {
+              @if (selectedInspection()!.teamMembers.length) {
                 <div class="team-list">
                   @for (m of selectedInspection()!.teamMembers; track m.id) {
                     <div class="team-member">
@@ -338,7 +338,7 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
                 </label>
               }
             </div>
-            @if (selectedInspection()!.documents?.length) {
+            @if (selectedInspection()!.documents.length) {
               <div class="docs-grid">
                 @for (doc of selectedInspection()!.documents; track doc.id) {
                   <div class="doc-card">
@@ -392,7 +392,7 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
                 </button>
               </div>
             }
-            @if (selectedInspection()!.quotes?.length) {
+            @if (selectedInspection()!.quotes.length) {
               <div class="quotes-list">
                 @for (q of selectedInspection()!.quotes; track q.id) {
                   <div class="quote-item">

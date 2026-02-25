@@ -5,11 +5,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { ClientPortalService, DailyReportList, DailyReportDetail, DailyReportFilter, ClientProjectSummary } from '../../../core/services/client-portal.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-client-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, LoadingSpinnerComponent],
   template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 md:p-8 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
@@ -67,10 +68,7 @@ import { I18nService } from '../../../core/i18n/i18n.service';
         }
 
         @if (isLoading) {
-          <div class="flex flex-col items-center justify-center py-24 space-y-6">
-            <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-            <p class="text-slate-500 font-black uppercase tracking-[0.2em] animate-pulse">{{ 'common.loading' | translate }}...</p>
-          </div>
+          <app-loading-spinner [label]="('common.loading' | translate) + '...'"></app-loading-spinner>
         } @else if (reports.length === 0) {
           <div class="flex flex-col items-center justify-center py-32 bg-white dark:bg-slate-900 rounded-[3rem] border border-dashed border-slate-300 dark:border-white/10 text-center">
             <div class="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center text-3xl mb-6">🏜️</div>
@@ -146,7 +144,7 @@ import { I18nService } from '../../../core/i18n/i18n.service';
             </div>
             <div class="flex-1 overflow-y-auto p-8 custom-scrollbar">
               @if (isLoadingDetails) {
-                <div class="flex flex-col items-center justify-center py-20"><div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div><p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Loading...</p></div>
+                <app-loading-spinner [label]="'Loading...'" containerClass="py-20"></app-loading-spinner>
               } @else {
                 <div class="space-y-8">
                   @for (log of selectedReport?.logs; track log.itemId) {

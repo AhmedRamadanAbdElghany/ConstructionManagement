@@ -7,11 +7,12 @@ import { Subject, takeUntil } from 'rxjs';
 import { MessagingService, ConversationDto, MessagingStatusDto, MessagableUserDto } from '../../../core/services/messaging.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-messages',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, TranslateModule],
+  imports: [CommonModule, RouterLink, FormsModule, TranslateModule, LoadingSpinnerComponent],
   template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
@@ -76,9 +77,7 @@ import { AuthService } from '../../../core/services/auth.service';
 
         <!-- Loading State -->
         @if (isLoading || isStatusLoading) {
-          <div class="flex items-center justify-center py-20">
-            <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-          </div>
+          <app-loading-spinner containerClass="py-20"></app-loading-spinner>
         }
 
         <!-- Tabs -->
@@ -345,9 +344,7 @@ import { AuthService } from '../../../core/services/auth.service';
 
               <!-- Loading State -->
               @if (isLoadingUsers) {
-                <div class="flex items-center justify-center py-10">
-                  <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-                </div>
+                <app-loading-spinner containerClass="py-10"></app-loading-spinner>
               }
 
               <!-- Users List -->

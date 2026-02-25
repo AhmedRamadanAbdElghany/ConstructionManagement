@@ -23,12 +23,19 @@ export class App {
   constructor() {
     this.i18nService.initializeLanguage();
 
-    // Show spinner during page loads/transitions
+    // Show spinner during page loads/transitions if it takes long enough
+    let navTimeout: any;
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
-        this.isNavigating = true;
+        // Clear any existing timeout
+        if (navTimeout) clearTimeout(navTimeout);
+        // Delay showing the loader to avoid flickering on fast navigations
+        navTimeout = setTimeout(() => {
+          this.isNavigating = true;
+        }, 250);
       }
       if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
+        if (navTimeout) clearTimeout(navTimeout);
         this.isNavigating = false;
       }
     });
