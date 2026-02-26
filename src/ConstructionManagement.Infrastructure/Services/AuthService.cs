@@ -1,6 +1,7 @@
 using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Infrastructure.Persistence;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using ConstructionManagement.Domain.Enums;
 using Microsoft.AspNetCore.Http;
@@ -20,6 +21,7 @@ public class AuthService : IAuthService
     private readonly IUserRepository _userRepository;
     private readonly IConfiguration _configuration;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ApplicationDbContext _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ICompanyRequestRepository _companyRequestRepository;
     private readonly INotificationService _notificationService;
@@ -33,6 +35,7 @@ public class AuthService : IAuthService
         IUserRepository userRepository,
         IConfiguration configuration,
         IUnitOfWork unitOfWork,
+        ApplicationDbContext context,
         IHttpContextAccessor httpContextAccessor,
         ICompanyRequestRepository companyRequestRepository,
         INotificationService notificationService,
@@ -45,6 +48,7 @@ public class AuthService : IAuthService
         _userRepository = userRepository;
         _configuration = configuration;
         _unitOfWork = unitOfWork;
+        _context = context;
         _httpContextAccessor = httpContextAccessor;
         _companyRequestRepository = companyRequestRepository;
         _notificationService = notificationService;
@@ -69,10 +73,33 @@ public class AuthService : IAuthService
 
         var roles = user.UserRoles?.Select(ur => ur.Role.Name).ToList() ?? new List<string>();
 
-        // Get primary company ID from CompanyUser table
-        var activeCompanyUsers = await _companyUserRepository.GetActiveByUserIdAsync(user.Id);
-        var primaryCompany = activeCompanyUsers.FirstOrDefault(cu => cu.IsPrimary);
-        var companyId = primaryCompany?.CompanyId ?? activeCompanyUsers.FirstOrDefault()?.CompanyId;
+        // Get company associations from CompanyUser table
+        // Skip for SuperAdmin - they don't belong to any company (determined by role, not UserType)
+        int? companyId = null;
+        List<CompanyAssociationDto>? companies = null;
+        var userRoles = user.UserRoles?.Select(ur => ur.Role.Name).ToList() ?? new List<string>();
+        if (!userRoles.Contains("SuperAdmin"))
+        {
+            var companyUsers = await _companyUserRepository.GetActiveByUserIdAsync(user.Id);
+            
+            // Get company details with names
+            var companyIds = companyUsers.Select(cu => cu.CompanyId).ToList();
+            var companyDetails = await _context.Companies
+                .Where(c => companyIds.Contains(c.Id))
+                .ToDictionaryAsync(c => c.Id, c => c.Name);
+            
+            companies = companyUsers.Select(cu => new CompanyAssociationDto(
+                cu.CompanyId,
+                companyDetails.GetValueOrDefault(cu.CompanyId, "Unknown"),
+                cu.Role,
+                cu.Status.ToString(),
+                cu.ContractStartDate,
+                cu.ContractEndDate
+            )).ToList();
+            
+            // Use first active company for backward compatibility with single-company APIs
+            companyId = companyUsers.FirstOrDefault()?.CompanyId;
+        }
 
         var userDto = new UserDto(
             user.Id,
@@ -82,7 +109,8 @@ public class AuthService : IAuthService
             user.CreatedAt,
             user.UserType,
             companyId,
-            user.RequiresPasswordChange
+            user.RequiresPasswordChange,
+            companies
         );
 
         return new AuthResponse(true, _localizationService["Auth.LoginSuccess"], token, userDto);
@@ -487,15 +515,10 @@ public class AuthService : IAuthService
 
         // Get active company memberships from CompanyUser table
         var activeCompanyUsers = await _companyUserRepository.GetActiveByUserIdAsync(user.Id);
-        var primaryCompany = activeCompanyUsers.FirstOrDefault(cu => cu.IsPrimary);
         
-        if (primaryCompany != null)
+        if (activeCompanyUsers.Any())
         {
-            claims.Add(new Claim("companyId", primaryCompany.CompanyId.ToString()));
-        }
-        else if (activeCompanyUsers.Any())
-        {
-            // Use first active company if no primary
+            // Use first active company for backward compatibility
             claims.Add(new Claim("companyId", activeCompanyUsers.First().CompanyId.ToString()));
         }
         

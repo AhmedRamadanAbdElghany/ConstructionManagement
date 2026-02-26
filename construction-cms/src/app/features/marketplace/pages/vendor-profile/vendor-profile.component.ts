@@ -994,9 +994,11 @@ interface ReviewsResponse {
     }
 
     @media (max-width: 768px) {
-        justify-content: center;
+      .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 2rem;
       }
-
       .vendor-actions {
         width: 100%;
         justify-content: center;

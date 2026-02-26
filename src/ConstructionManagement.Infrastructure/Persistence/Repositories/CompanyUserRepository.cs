@@ -17,8 +17,7 @@ public class CompanyUserRepository : Repository<CompanyUser>, ICompanyUserReposi
         return await _dbSet
             .Include(cu => cu.Company)
             .Where(cu => cu.UserId == userId && !cu.IsDeleted)
-            .OrderByDescending(cu => cu.IsPrimary)
-            .ThenBy(cu => cu.CreatedAt)
+            .OrderBy(cu => cu.CreatedAt)
             .ToListAsync();
     }
 
@@ -45,8 +44,7 @@ public class CompanyUserRepository : Repository<CompanyUser>, ICompanyUserReposi
         return await _dbSet
             .Include(cu => cu.Company)
             .Where(cu => cu.UserId == userId && cu.Status == ContractStatusEnum.Active && !cu.IsDeleted)
-            .OrderByDescending(cu => cu.IsPrimary)
-            .ThenBy(cu => cu.Company != null ? cu.Company.Name : null)
+            .OrderBy(cu => cu.Company != null ? cu.Company.Name : null)
             .ToListAsync();
     }
 
@@ -80,12 +78,7 @@ public class CompanyUserRepository : Repository<CompanyUser>, ICompanyUserReposi
             .ToListAsync();
     }
 
-    public async Task<CompanyUser?> GetPrimaryByUserIdAsync(int userId)
-    {
-        return await _dbSet
-            .Include(cu => cu.Company)
-            .FirstOrDefaultAsync(cu => cu.UserId == userId && cu.IsPrimary && !cu.IsDeleted);
-    }
+
 
     public async Task<bool> IsUserAssociatedWithCompanyAsync(int userId, int companyId)
     {

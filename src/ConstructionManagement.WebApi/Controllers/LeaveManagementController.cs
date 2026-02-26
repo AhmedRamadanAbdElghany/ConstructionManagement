@@ -12,7 +12,7 @@ namespace ConstructionManagement.WebApi.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-    public class LeaveManagementController : ControllerBase
+    public class LeaveManagementController : BaseApiController
     {
         private readonly ILeaveManagementService _leaveService;
 
@@ -158,11 +158,23 @@ namespace ConstructionManagement.WebApi.Controllers
         [HttpGet("requests")]
         public async Task<ActionResult<List<LeaveRequestDto>>> GetLeaveRequests([FromQuery] LeaveRequestFilter filter)
         {
-            // Company isolation: enforce user's company if not SuperAdmin
-            var userCompanyId = GetCompanyId();
-            if (!User.IsInRole("SuperAdmin") && userCompanyId.HasValue)
+            // Company isolation: enforce user's companies if not SuperAdmin
+            if (!User.IsInRole("SuperAdmin"))
             {
-                filter.CompanyId = userCompanyId.Value;
+                if (filter.CompanyId.HasValue)
+                {
+                    // If a specific company is requested, ensure user has access to it
+                    var myCompanies = GetAllCompanyIds();
+                    if (!myCompanies.Contains(filter.CompanyId.Value))
+                    {
+                        return Forbid();
+                    }
+                }
+                else
+                {
+                    // Otherwise, fetch for all our companies
+                    filter.CompanyIds = GetAllCompanyIds();
+                }
             }
             
             var requests = await _leaveService.GetLeaveRequestsAsync(filter);
@@ -208,7 +220,7 @@ namespace ConstructionManagement.WebApi.Controllers
         [HttpPost("requests")]
         public async Task<ActionResult<LeaveRequestDto>> CreateLeaveRequest([FromBody] CreateLeaveRequestRequest request)
         {
-            var userId = GetCurrentUserId();
+            var userId = GetUserId();
             var leaveRequest = await _leaveService.CreateLeaveRequestAsync(userId, request);
             return CreatedAtAction(nameof(GetLeaveRequest), new { id = leaveRequest.Id }, leaveRequest);
         }
@@ -232,7 +244,7 @@ namespace ConstructionManagement.WebApi.Controllers
         [HttpPost("requests/{id}/cancel")]
         public async Task<ActionResult> CancelLeaveRequest(int id)
         {
-            var userId = GetCurrentUserId();
+            var userId = GetUserId();
             await _leaveService.CancelLeaveRequestAsync(id, userId);
             return Ok();
         }
@@ -241,7 +253,7 @@ namespace ConstructionManagement.WebApi.Controllers
         [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
         public async Task<ActionResult<LeaveRequestDto>> ApproveLeaveRequest(int id, [FromBody] ApproveLeaveRequestRequest request)
         {
-            var approverId = GetCurrentUserId();
+            var approverId = GetUserId();
             var leaveRequest = await _leaveService.ApproveLeaveRequestAsync(id, approverId, request);
             return Ok(leaveRequest);
         }
@@ -250,7 +262,7 @@ namespace ConstructionManagement.WebApi.Controllers
         [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
         public async Task<ActionResult<LeaveRequestDto>> RejectLeaveRequest(int id, [FromBody] RejectLeaveRequestRequest request)
         {
-            var approverId = GetCurrentUserId();
+            var approverId = GetUserId();
             var leaveRequest = await _leaveService.RejectLeaveRequestAsync(id, approverId, request);
             return Ok(leaveRequest);
         }
@@ -349,28 +361,6 @@ namespace ConstructionManagement.WebApi.Controllers
 
         #endregion
 
-        #region Private Helpers
 
-        private int GetCurrentUserId()
-        {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
-            {
-                throw new UnauthorizedAccessException("User not authenticated");
-            }
-            return userId;
-        }
-
-        private int? GetCompanyId()
-        {
-            var companyIdClaim = User.FindFirst("companyId")?.Value;
-            if (string.IsNullOrEmpty(companyIdClaim) || !int.TryParse(companyIdClaim, out var companyId))
-            {
-                return null;
-            }
-            return companyId;
-        }
-
-        #endregion
     }
 }

@@ -13,6 +13,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // Get the current language from localStorage (using the same key as I18nService) or default to Arabic (primary language)
   const currentLanguage = localStorage.getItem('app-language') || 'ar';
 
+  // Get selected company ID for multi-company context
+  const selectedCompanyId = localStorage.getItem('selectedCompanyId');
+
   // Build headers object
   const headers: Record<string, string> = {
     'Accept-Language': currentLanguage,
@@ -26,6 +29,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   // Add tenant ID
   headers['X-Tenant-ID'] = tenantId;
+
+  // Add selected company context for multi-company support
+  if (selectedCompanyId) {
+    headers['X-Company-ID'] = selectedCompanyId;
+  }
 
   // Clone request with all headers
   const clonedReq = req.clone({

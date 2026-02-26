@@ -260,7 +260,6 @@ public class CompanyRequestService : ICompanyRequestService
                 Role = "CompanyAdmin",
                 ContractStartDate = DateTime.UtcNow,
                 Status = ContractStatus.Active,
-                IsPrimary = true,
                 JoinedAt = DateTime.UtcNow
             };
             

@@ -3,6 +3,15 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, of, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 
+export interface CompanyAssociation {
+    companyId: number;
+    companyName: string;
+    role: string;
+    status: string;
+    contractStartDate: string;
+    contractEndDate?: string;
+}
+
 export interface User {
     id: number; // For compatibility with shared/interfaces
     userId: number;
@@ -12,7 +21,8 @@ export interface User {
     roles: string[]; // Role array from backend
     createdAt: Date;
     userType: number;
-    companyId?: number;
+    companyId?: number; // Currently selected company (for backward compatibility)
+    companies?: CompanyAssociation[]; // All company associations
     salary?: number;
     status?: string;
 }
@@ -77,6 +87,9 @@ export class AuthService {
     private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
     public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
+    private selectedCompanySubject = new BehaviorSubject<CompanyAssociation | null>(null);
+    public selectedCompany$ = this.selectedCompanySubject.asObservable();
+
     constructor() {
         this.checkAuthStatus();
     }
@@ -86,12 +99,58 @@ export class AuthService {
         const user = localStorage.getItem('currentUser');
         if (token && user) {
             try {
-                this.currentUserSubject.next(JSON.parse(user));
+                const parsedUser = JSON.parse(user);
+                this.currentUserSubject.next(parsedUser);
                 this.isAuthenticatedSubject.next(true);
+                // Restore selected company from localStorage
+                this.restoreSelectedCompany(parsedUser);
             } catch {
                 this.logout();
             }
         }
+    }
+
+    private restoreSelectedCompany(user: User): void {
+        const savedCompanyId = localStorage.getItem('selectedCompanyId');
+        const activeCompanies = this.getActiveCompanies(user);
+        if (savedCompanyId && activeCompanies.length > 0) {
+            const found = activeCompanies.find(c => c.companyId === parseInt(savedCompanyId));
+            if (found) {
+                this.selectedCompanySubject.next(found);
+                return;
+            }
+        }
+        // Default to first active company if none saved
+        if (activeCompanies.length > 0) {
+            this.selectedCompanySubject.next(activeCompanies[0]);
+            localStorage.setItem('selectedCompanyId', activeCompanies[0].companyId.toString());
+        }
+    }
+
+    getActiveCompanies(user?: User | null): CompanyAssociation[] {
+        const u = user || this.getCurrentUser();
+        if (!u?.companies) return [];
+        return u.companies.filter(c => c.status === 'Active');
+    }
+
+    getSelectedCompany(): CompanyAssociation | null {
+        return this.selectedCompanySubject.value;
+    }
+
+    selectCompany(company: CompanyAssociation): void {
+        this.selectedCompanySubject.next(company);
+        localStorage.setItem('selectedCompanyId', company.companyId.toString());
+        // Update user's companyId for backward compatibility
+        const user = this.getCurrentUser();
+        if (user) {
+            user.companyId = company.companyId;
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            this.currentUserSubject.next({ ...user });
+        }
+    }
+
+    hasMultipleCompanies(): boolean {
+        return this.getActiveCompanies().length > 1;
     }
 
     login(request: LoginRequest): Observable<LoginResponse> {
@@ -127,10 +186,11 @@ export class AuthService {
                     response.user.userId = response.user.id;
                 }
                 localStorage.setItem('authToken', response.token);
-
                 localStorage.setItem('currentUser', JSON.stringify(response.user));
                 this.currentUserSubject.next(response.user);
                 this.isAuthenticatedSubject.next(true);
+                // Set up company context
+                this.restoreSelectedCompany(response.user);
             }),
 
             catchError((error) => {
@@ -260,7 +320,9 @@ export class AuthService {
     logout(): void {
         localStorage.removeItem('authToken');
         localStorage.removeItem('currentUser');
+        localStorage.removeItem('selectedCompanyId');
         this.currentUserSubject.next(null);
         this.isAuthenticatedSubject.next(false);
+        this.selectedCompanySubject.next(null);
     }
 }

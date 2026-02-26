@@ -135,14 +135,6 @@ namespace ConstructionManagement.WebApi.Controllers
             return Ok(result);
         }
 
-        private int GetUserId()
-        {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
-            {
-                throw new UnauthorizedAccessException("User not authenticated");
-            }
-            return userId;
-        }
+
     }
 }

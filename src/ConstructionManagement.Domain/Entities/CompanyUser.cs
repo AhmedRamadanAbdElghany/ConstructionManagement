@@ -60,11 +60,6 @@ public class CompanyUser : BaseEntity
     public string? Notes { get; set; }
 
     /// <summary>
-    /// Is this the primary company for the user
-    /// </summary>
-    public bool IsPrimary { get; set; } = false;
-
-    /// <summary>
     /// Date when the user joined this company
     /// </summary>
     public DateTime JoinedAt { get; set; }

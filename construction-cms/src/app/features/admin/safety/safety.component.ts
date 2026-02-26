@@ -482,7 +482,6 @@ import { Subject, takeUntil } from 'rxjs';
           </div>
         </div>
         }
-        }
       </div>
     </div>
   `

@@ -113,7 +113,8 @@ public class UserService : IUserService
                 u.CreatedAt,
                 u.UserType,
                 u.CompanyId,
-                u.RequiresPasswordChange))
+                u.RequiresPasswordChange,
+                null))
             .FirstOrDefaultAsync();
     }
 
@@ -129,7 +130,8 @@ public class UserService : IUserService
                 u.CreatedAt,
                 u.UserType,
                 u.CompanyId,
-                u.RequiresPasswordChange))
+                u.RequiresPasswordChange,
+                null))
             .ToListAsync();
     }
 

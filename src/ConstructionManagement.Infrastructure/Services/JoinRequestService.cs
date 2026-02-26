@@ -138,7 +138,6 @@ public class JoinRequestService : IJoinRequestService
                 Role = request.RequestedRole ?? "User",
                 ContractStartDate = DateTime.UtcNow,
                 Status = ContractStatus.Active,
-                IsPrimary = !await _companyUserRepository.GetActiveByUserIdAsync(user.Id).ContinueWith(t => t.Result.Any()),
                 JoinedAt = DateTime.UtcNow
             };
             await _companyUserRepository.AddAsync(companyUser);

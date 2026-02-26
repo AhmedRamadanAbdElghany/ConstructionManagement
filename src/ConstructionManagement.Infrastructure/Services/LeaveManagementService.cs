@@ -286,6 +286,8 @@ namespace ConstructionManagement.Infrastructure.Services
 
             if (filter.CompanyId.HasValue)
                 query = query.Where(lr => lr.User.CompanyId == filter.CompanyId.Value);
+            else if (filter.CompanyIds != null && filter.CompanyIds.Any())
+                query = query.Where(lr => lr.User.CompanyId != null && filter.CompanyIds.Contains(lr.User.CompanyId.Value));
 
             var requests = await query
                 .OrderByDescending(lr => lr.CreatedAt)

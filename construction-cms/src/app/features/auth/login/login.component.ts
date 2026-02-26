@@ -541,9 +541,8 @@ export class LoginComponent {
       next: (response) => {
         const user = response.user;
 
-        if (user.roles.includes('SuperAdmin') || user.companyId || user.userType === 2 || user.userType === 0 || user.userType === 1 || user.userType === 5) {
-          this.router.navigate(['/dashboard']);
-        } else if (user.userType === 3) {
+        // All users go to their appropriate dashboard — multi-company data is shown automatically
+        if (user.userType === 3) {
           this.router.navigate(['/inventory-dashboard']);
         } else {
           this.router.navigate(['/dashboard']);

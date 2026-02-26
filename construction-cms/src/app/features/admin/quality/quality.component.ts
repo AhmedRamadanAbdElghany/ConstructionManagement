@@ -11,146 +11,245 @@ import { Subject, takeUntil } from 'rxjs';
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule],
   template: `
-    <div class="quality-page">
-      <div class="page-header">
-        <h1>{{ 'quality.title' | translate }}</h1>
-        <div class="header-actions">
-          <button class="btn btn-outline" (click)="activeTab = 'inspections'">
-            <i class="icon-clipboard"></i> {{ 'quality.inspection.title' | translate }}
-          </button>
-          <button class="btn btn-primary" (click)="activeTab = 'defects'">
-            <i class="icon-alert"></i> {{ 'quality.defect.title' | translate }}
-          </button>
-        </div>
-      </div>
+    <div class="min-h-screen bg-[#f8fafc] dark:bg-slate-950 p-6 md:p-10 transition-colors duration-500 font-['Outfit']">
+      <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-10 mb-16 animate-premium-fade">
+          <div class="space-y-8">
+            <div class="space-y-2">
+              <h1 class="text-5xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tighter uppercase leading-none">{{ 'quality.title' | translate }}</h1>
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-1 bg-indigo-500 rounded-full"></div>
+                <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.4em] opacity-70">Control & Standards Excellence</p>
+              </div>
+            </div>
+            
+            <div class="flex p-2 bg-white/50 dark:bg-white/5 backdrop-blur-xl rounded-[2rem] w-fit border border-slate-200/60 dark:border-white/5 shadow-2xl shadow-slate-200/50 dark:shadow-none ring-1 ring-white/50 dark:ring-white/5">
+              <button (click)="activeTab = 'inspections'" 
+                      [class.bg-white]="activeTab === 'inspections'" 
+                      [class.dark:bg-slate-800]="activeTab === 'inspections'"
+                      [class.text-indigo-600]="activeTab === 'inspections'"
+                      [class.dark:text-white]="activeTab === 'inspections'"
+                      [class.shadow-2xl]="activeTab === 'inspections'"
+                      [class.scale-105]="activeTab === 'inspections'"
+                      class="px-8 py-4 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest text-slate-400 transition-all duration-500 hover:text-slate-600 dark:hover:text-slate-200 active:scale-95">
+                  {{ 'quality.tabs.inspections' | translate }}
+              </button>
+              <button (click)="activeTab = 'defects'" 
+                      [class.bg-white]="activeTab === 'defects'" 
+                      [class.dark:bg-slate-800]="activeTab === 'defects'"
+                      [class.text-rose-600]="activeTab === 'defects'"
+                      [class.dark:text-white]="activeTab === 'defects'"
+                      [class.shadow-2xl]="activeTab === 'defects'"
+                      [class.scale-105]="activeTab === 'defects'"
+                      class="px-8 py-4 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest text-slate-400 transition-all duration-500 hover:text-slate-600 dark:hover:text-slate-200 active:scale-95">
+                  {{ 'quality.tabs.defects' | translate }}
+              </button>
+              <button (click)="activeTab = 'punchlist'" 
+                      [class.bg-white]="activeTab === 'punchlist'" 
+                      [class.dark:bg-slate-800]="activeTab === 'punchlist'"
+                      [class.text-amber-600]="activeTab === 'punchlist'"
+                      [class.dark:text-white]="activeTab === 'punchlist'"
+                      [class.shadow-2xl]="activeTab === 'punchlist'"
+                      [class.scale-105]="activeTab === 'punchlist'"
+                      class="px-8 py-4 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest text-slate-400 transition-all duration-500 hover:text-slate-600 dark:hover:text-slate-200 active:scale-95">
+                  {{ 'quality.tabs.punchlist' | translate }}
+              </button>
+              <button (click)="activeTab = 'standards'" 
+                      [class.bg-white]="activeTab === 'standards'" 
+                      [class.dark:bg-slate-800]="activeTab === 'standards'"
+                      [class.text-violet-600]="activeTab === 'standards'"
+                      [class.dark:text-white]="activeTab === 'standards'"
+                      [class.shadow-2xl]="activeTab === 'standards'"
+                      [class.scale-105]="activeTab === 'standards'"
+                      class="px-8 py-4 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest text-slate-400 transition-all duration-500 hover:text-slate-600 dark:hover:text-slate-200 active:scale-95">
+                  {{ 'quality.tabs.standards' | translate }}
+              </button>
+            </div>
+          </div>
 
-      <!-- Summary Cards -->
-      <div class="summary-cards">
-        <div class="summary-card" (click)="activeTab = 'inspections'">
-          <div class="card-icon blue">
-            <i class="icon-clipboard"></i>
-          </div>
-          <div class="card-content">
-            <span class="card-value">{{ statistics?.totalInspections || 0 }}</span>
-            <span class="card-label">{{ 'quality.stats.total_inspections' | translate }}</span>
-          </div>
-        </div>
-        <div class="summary-card" (click)="activeTab = 'defects'">
-          <div class="card-icon red">
-            <i class="icon-alert"></i>
-          </div>
-          <div class="card-content">
-            <span class="card-value">{{ statistics?.openDefects || 0 }}</span>
-            <span class="card-label">{{ 'quality.stats.open_defects' | translate }}</span>
-          </div>
-        </div>
-        <div class="summary-card" (click)="activeTab = 'defects'">
-          <div class="card-icon orange">
-            <i class="icon-warning"></i>
-          </div>
-          <div class="card-content">
-            <span class="card-value">{{ statistics?.criticalDefects || 0 }}</span>
-            <span class="card-label">{{ 'quality.stats.critical' | translate }}</span>
+          <div class="flex flex-wrap items-center gap-4">
+            <button (click)="activeTab = 'defects'"
+                    class="group relative overflow-hidden px-8 py-5 rounded-[2.25rem] bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 font-black text-[10px] uppercase tracking-[0.25em] border border-slate-200/60 dark:border-white/10 shadow-xl hover:shadow-rose-500/10 hover:-translate-y-1 transition-all">
+              <span class="relative z-10 flex items-center">
+                <svg class="w-5 h-5 mr-3 text-rose-500 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                {{ 'quality.defect.title' | translate }}
+              </span>
+            </button>
+            <button (click)="activeTab = 'inspections'"
+                    class="group relative overflow-hidden px-10 py-5 rounded-[2.25rem] bg-gradient-to-r from-indigo-600 to-blue-700 text-white font-black text-[10px] uppercase tracking-[0.25em] shadow-2xl shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-1 active:scale-95 transition-all">
+              <span class="relative z-10 flex items-center">
+                <svg class="w-5 h-5 mr-3 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                {{ 'quality.inspection.title' | translate }}
+              </span>
+              <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+            </button>
           </div>
         </div>
-        <div class="summary-card" (click)="activeTab = 'punchlist'">
-          <div class="card-icon green">
-            <i class="icon-list"></i>
-          </div>
-          <div class="card-content">
-            <span class="card-value">{{ statistics?.pendingPunchListItems || 0 }}</span>
-            <span class="card-label">{{ 'quality.stats.punch_list' | translate }}</span>
-          </div>
-        </div>
-        <div class="summary-card">
-          <div class="card-icon purple">
-            <i class="icon-chart"></i>
-          </div>
-          <div class="card-content">
-            <span class="card-value">{{ statistics ? statistics.averageInspectionScore.toFixed(1) : '0.0' }}%</span>
-            <span class="card-label">{{ 'quality.stats.avg_score' | translate }}</span>
-          </div>
-        </div>
-      </div>
 
-      <!-- Tabs -->
-      <div class="tabs">
-        <button [class.active]="activeTab === 'inspections'" (click)="activeTab = 'inspections'">
-          {{ 'quality.tabs.inspections' | translate }}
-        </button>
-        <button [class.active]="activeTab === 'defects'" (click)="activeTab = 'defects'">
-          {{ 'quality.tabs.defects' | translate }}
-        </button>
-        <button [class.active]="activeTab === 'punchlist'" (click)="activeTab = 'punchlist'">
-          {{ 'quality.tabs.punchlist' | translate }}
-        </button>
-        <button [class.active]="activeTab === 'standards'" (click)="activeTab = 'standards'">
-          {{ 'quality.tabs.standards' | translate }}
-        </button>
-      </div>
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-20">
+          <div (click)="activeTab = 'inspections'" class="group relative bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200/60 dark:border-white/5 shadow-2xl shadow-slate-200/40 dark:shadow-none p-10 hover:shadow-indigo-500/20 cursor-pointer transition-all duration-500 animate-premium-fade ring-1 ring-inset ring-transparent hover:ring-indigo-500/20" style="animation-delay: 100ms">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white mb-8 group-hover:scale-110 group-hover:rotate-3 transition-all shadow-lg shadow-indigo-500/30">
+              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+            </div>
+            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter leading-none mb-2">{{ statistics?.totalInspections || 0 }}</h3>
+            <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] opacity-80">{{ 'quality.stats.total_inspections' | translate }}</p>
+            <div class="absolute top-6 right-8 opacity-10 group-hover:opacity-20 transition-opacity">
+               <svg class="w-16 h-16 text-indigo-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            </div>
+          </div>
+
+          <div (click)="activeTab = 'defects'" class="group relative bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200/60 dark:border-white/5 shadow-2xl shadow-slate-200/40 dark:shadow-none p-10 hover:shadow-rose-500/20 cursor-pointer transition-all duration-500 animate-premium-fade ring-1 ring-inset ring-transparent hover:ring-rose-500/20" style="animation-delay: 200ms">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white mb-8 group-hover:scale-110 group-hover:-rotate-3 transition-all shadow-lg shadow-rose-500/30">
+              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            </div>
+            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter leading-none mb-2">{{ statistics?.openDefects || 0 }}</h3>
+            <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] opacity-80">{{ 'quality.stats.open_defects' | translate }}</p>
+            <div class="absolute top-6 right-8 opacity-10 group-hover:opacity-20 transition-opacity">
+               <svg class="w-16 h-16 text-rose-500" fill="currentColor" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+            </div>
+          </div>
+
+          <div (click)="activeTab = 'defects'" class="group relative bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200/60 dark:border-white/5 shadow-2xl shadow-slate-200/40 dark:shadow-none p-10 hover:shadow-amber-500/20 cursor-pointer transition-all duration-500 animate-premium-fade ring-1 ring-inset ring-transparent hover:ring-amber-500/20" style="animation-delay: 300ms">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white mb-8 group-hover:scale-110 transition-all shadow-lg shadow-amber-500/30">
+              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter leading-none mb-2">{{ statistics?.criticalDefects || 0 }}</h3>
+            <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] opacity-80">{{ 'quality.stats.critical' | translate }}</p>
+            <div class="absolute top-6 right-8 opacity-10 group-hover:opacity-20 transition-opacity">
+               <svg class="w-16 h-16 text-amber-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            </div>
+          </div>
+
+          <div (click)="activeTab = 'punchlist'" class="group relative bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200/60 dark:border-white/5 shadow-2xl shadow-slate-200/40 dark:shadow-none p-10 hover:shadow-emerald-500/20 cursor-pointer transition-all duration-500 animate-premium-fade ring-1 ring-inset ring-transparent hover:ring-emerald-500/20" style="animation-delay: 400ms">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white mb-8 group-hover:scale-110 group-hover:rotate-3 transition-all shadow-lg shadow-emerald-500/30">
+              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter leading-none mb-2">{{ statistics?.pendingPunchListItems || 0 }}</h3>
+            <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] opacity-80">{{ 'quality.stats.punch_list' | translate }}</p>
+            <div class="absolute top-6 right-8 opacity-10 group-hover:opacity-20 transition-opacity">
+               <svg class="w-16 h-16 text-emerald-500" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            </div>
+          </div>
+
+          <div class="group relative bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200/60 dark:border-white/5 shadow-2xl shadow-slate-200/40 dark:shadow-none p-10 hover:shadow-violet-500/20 transition-all duration-500 animate-premium-fade ring-1 ring-inset ring-transparent hover:ring-violet-500/20" style="animation-delay: 500ms">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white mb-8 group-hover:scale-110 transition-all shadow-lg shadow-violet-500/30">
+              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+            </div>
+            <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter leading-none mb-2">{{ statistics ? statistics.averageInspectionScore.toFixed(1) : '0.0' }}%</h3>
+            <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] opacity-80">{{ 'quality.stats.avg_score' | translate }}</p>
+            <div class="absolute top-6 right-8 opacity-10 group-hover:opacity-20 transition-opacity">
+               <svg class="w-16 h-16 text-violet-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 15.66z"/></svg>
+            </div>
+          </div>
+        </div>
 
       <!-- Inspections Tab -->
-      <div class="tab-content" *ngIf="activeTab === 'inspections'">
-        <div class="filter-section">
-          <div class="search-box">
-            <i class="icon-search"></i>
-            <input type="text" [(ngModel)]="inspectionSearch" [placeholder]="'common.search' | translate">
+      <div class="bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200/60 dark:border-white/5 shadow-2xl shadow-slate-200/40 dark:shadow-none overflow-hidden animate-premium-fade" *ngIf="activeTab === 'inspections'">
+        <div class="p-10 border-b border-slate-100 dark:border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-8 bg-slate-50/50 dark:bg-white/[0.02]">
+          <div class="flex flex-wrap items-center gap-6">
+            <div class="relative group min-w-[320px]">
+              <svg class="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+              <input type="text" [(ngModel)]="inspectionSearch" [placeholder]="'common.search' | translate"
+                     class="w-full pl-14 pr-8 py-4 rounded-[1.5rem] bg-white dark:bg-slate-950 border border-slate-200/60 dark:border-white/10 text-sm font-black outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm">
+            </div>
+            <div class="flex items-center gap-4">
+              <select [(ngModel)]="inspectionStatusFilter" class="px-8 py-4 rounded-[1.5rem] bg-white dark:bg-slate-950 border border-slate-200/60 dark:border-white/10 text-[10px] font-black uppercase tracking-widest outline-none focus:border-indigo-500 transition-all shadow-sm appearance-none cursor-pointer pr-12 relative">
+                <option value="">{{ 'common.all_status' | translate }}</option>
+                <option value="Scheduled">{{ 'quality.inspection.scheduled' | translate }}</option>
+                <option value="InProgress">{{ 'quality.inspection.in_progress' | translate }}</option>
+                <option value="Completed">{{ 'common.completed' | translate }}</option>
+              </select>
+            </div>
           </div>
-          <select [(ngModel)]="inspectionStatusFilter">
-            <option value="">{{ 'common.all' | translate }}</option>
-            <option value="Scheduled">{{ 'quality.inspection.scheduled' | translate }}</option>
-            <option value="InProgress">{{ 'quality.inspection.in_progress' | translate }}</option>
-            <option value="Completed">{{ 'common.completed' | translate }}</option>
-          </select>
-          <select [(ngModel)]="inspectionTypeFilter">
-            <option value="">{{ 'quality.inspection.all_types' | translate }}</option>
-            <option value="Daily">{{ 'quality.inspection.daily' | translate }}</option>
-            <option value="Weekly">{{ 'quality.inspection.weekly' | translate }}</option>
-            <option value="Monthly">{{ 'quality.inspection.monthly' | translate }}</option>
-            <option value="Final">{{ 'quality.inspection.final' | translate }}</option>
-          </select>
+          <button class="group relative px-10 py-5 rounded-[2rem] bg-indigo-600 text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-indigo-500/20 hover:brightness-110 active:scale-95 transition-all overflow-hidden">
+            <span class="relative z-10">+ {{ 'quality.inspection.new' | translate }}</span>
+            <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+          </button>
         </div>
 
-        <div class="data-table">
-          <table>
+        <div class="overflow-x-auto">
+          <table class="w-full">
             <thead>
-              <tr>
-                <th>{{ 'quality.inspection.number' | translate }}</th>
-                <th>{{ 'common.title' | translate }}</th>
-                <th>{{ 'common.project' | translate }}</th>
-                <th>{{ 'common.type' | translate }}</th>
-                <th>{{ 'common.status' | translate }}</th>
-                <th>{{ 'common.date' | translate }}</th>
-                <th>{{ 'quality.inspection.score' | translate }}</th>
-                <th>{{ 'common.actions' | translate }}</th>
+              <tr class="text-left text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-[0.25em] bg-slate-50/50 dark:bg-slate-950/50 border-b border-slate-100 dark:border-white/5">
+                <th class="px-10 py-8">{{ 'quality.inspection.number' | translate }}</th>
+                <th class="px-10 py-8">{{ 'common.title' | translate }}</th>
+                <th class="px-10 py-8">{{ 'common.project' | translate }}</th>
+                <th class="px-10 py-8">{{ 'common.status' | translate }}</th>
+                <th class="px-10 py-8">{{ 'common.date' | translate }}</th>
+                <th class="px-10 py-8">{{ 'quality.inspection.score' | translate }}</th>
+                <th class="px-10 py-8 text-right">{{ 'common.actions' | translate }}</th>
               </tr>
             </thead>
-            <tbody>
-              <tr *ngFor="let inspection of filteredInspections">
-                <td>{{ inspection.inspectionNumber }}</td>
-                <td>{{ inspection.title }}</td>
-                <td>{{ inspection.projectName }}</td>
-                <td>{{ inspection.inspectionType }}</td>
-                <td>
-                  <span class="status-badge" [ngClass]="getStatusClass(inspection.status)">
+            <tbody class="text-slate-600 dark:text-slate-300">
+              <tr *ngFor="let inspection of filteredInspections; let i = index" 
+                  class="border-b border-slate-50 dark:border-white/5 hover:bg-slate-50/80 dark:hover:bg-white/[0.02] transition-all duration-300 group animate-premium-fade"
+                  [style.animation-delay]="(i * 30 + 100) + 'ms'">
+                <td class="px-10 py-8">
+                  <span class="text-xs font-black text-slate-400 uppercase tracking-widest opacity-60">{{ inspection.inspectionNumber }}</span>
+                </td>
+                <td class="px-10 py-8">
+                  <div class="space-y-2">
+                    <span class="text-sm font-black text-slate-900 dark:text-white tracking-tight block group-hover:text-indigo-600 transition-colors">{{ inspection.title }}</span>
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-indigo-500/5 text-[9px] font-black text-indigo-500 uppercase tracking-widest">{{ inspection.inspectionType }}</span>
+                  </div>
+                </td>
+                <td class="px-10 py-8">
+                  <div class="flex items-center gap-2">
+                    <div class="w-1.5 h-1.5 rounded-full bg-slate-400 opacity-40"></div>
+                    <span class="text-xs font-black text-slate-500 tracking-tight uppercase tracking-widest">{{ inspection.projectName }}</span>
+                  </div>
+                </td>
+                <td class="px-10 py-8">
+                  <span class="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-sm ring-1 ring-inset ring-current" 
+                        [class.bg-indigo-500/10]="inspection.status === 'Scheduled'"
+                        [class.text-indigo-600]="inspection.status === 'Scheduled'"
+                        [class.bg-amber-500/10]="inspection.status === 'InProgress'"
+                        [class.text-amber-600]="inspection.status === 'InProgress'"
+                        [class.bg-emerald-500/10]="inspection.status === 'Completed'"
+                        [class.text-emerald-600]="inspection.status === 'Completed'">
                     {{ inspection.status }}
                   </span>
                 </td>
-                <td>{{ inspection.scheduledDate | date:'mediumDate' }}</td>
-                <td>
-                  <div class="score-bar" *ngIf="inspection.score > 0">
-                    <div class="score-fill" [style.width.%]="inspection.score" [ngClass]="getScoreClass(inspection.score)"></div>
-                    <span>{{ inspection.score }}%</span>
-                  </div>
-                  <span *ngIf="inspection.score === 0">-</span>
+                <td class="px-10 py-8">
+                  <span class="text-xs font-black text-slate-400 tracking-tight uppercase">{{ inspection.scheduledDate | date:'mediumDate' }}</span>
                 </td>
-                <td>
-                  <button class="btn-icon" [title]="'common.view' | translate" (click)="viewInspection(inspection)">
-                    <i class="icon-eye"></i>
-                  </button>
-                  <button class="btn-icon" *ngIf="inspection.status === 'Scheduled'" [title]="'common.start' | translate" (click)="startInspection(inspection)">
-                    <i class="icon-play"></i>
-                  </button>
+                <td class="px-10 py-8">
+                  <div class="flex flex-col gap-2" *ngIf="inspection.score > 0">
+                    <div class="flex items-end justify-between">
+                      <span class="text-[10px] font-black" 
+                            [class.text-emerald-600]="inspection.score >= 90"
+                            [class.text-amber-600]="inspection.score < 90 && inspection.score >= 70"
+                            [class.text-rose-600]="inspection.score < 70">{{ inspection.score }}%</span>
+                    </div>
+                    <div class="w-24 h-2 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden shadow-inner">
+                       <div class="h-full rounded-full transition-all duration-1000 group-hover:brightness-110" 
+                            [class.bg-gradient-to-r]="true"
+                            [class.from-emerald-400]="inspection.score >= 90"
+                            [class.to-emerald-600]="inspection.score >= 90"
+                            [class.from-amber-400]="inspection.score < 90 && inspection.score >= 70"
+                            [class.to-amber-600]="inspection.score < 90 && inspection.score >= 70"
+                            [class.from-rose-400]="inspection.score < 70"
+                            [class.to-rose-600]="inspection.score < 70"
+                            [style.width.%]="inspection.score"></div>
+                    </div>
+                  </div>
+                  <span *ngIf="inspection.score === 0" class="text-slate-300 font-black">-</span>
+                </td>
+                <td class="px-10 py-8 text-right">
+                  <div class="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0">
+                    <button class="p-3.5 rounded-2xl bg-white dark:bg-slate-800 text-slate-400 hover:text-indigo-500 transition-all shadow-xl ring-1 ring-slate-100 dark:ring-white/5 hover:-translate-y-1 active:scale-90 group/btn" (click)="viewInspection(inspection)">
+                      <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    </button>
+                    <button *ngIf="inspection.status === 'Scheduled'" class="p-3.5 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white hover:brightness-110 shadow-xl shadow-indigo-500/20 hover:-translate-y-1 active:scale-90 transition-all" (click)="startInspection(inspection)">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -159,70 +258,83 @@ import { Subject, takeUntil } from 'rxjs';
       </div>
 
       <!-- Defects Tab -->
-      <div class="tab-content" *ngIf="activeTab === 'defects'">
-        <div class="filter-section">
-          <div class="search-box">
-            <i class="icon-search"></i>
-            <input type="text" [(ngModel)]="defectSearch" [placeholder]="'quality.defect.search_placeholder' | translate">
+      <div class="bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200/60 dark:border-white/5 shadow-2xl shadow-slate-200/40 dark:shadow-none overflow-hidden animate-premium-fade" *ngIf="activeTab === 'defects'">
+        <div class="p-10 border-b border-slate-100 dark:border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-8 bg-slate-50/50 dark:bg-white/[0.02]">
+          <div class="flex flex-wrap items-center gap-6">
+            <div class="relative group min-w-[320px]">
+              <svg class="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-rose-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+              <input type="text" [(ngModel)]="defectSearch" [placeholder]="'quality.defect.search_placeholder' | translate"
+                     class="w-full pl-14 pr-8 py-4 rounded-[1.5rem] bg-white dark:bg-slate-950 border border-slate-200/60 dark:border-white/10 text-sm font-black outline-none focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all shadow-sm">
+            </div>
+            <div class="flex items-center gap-4">
+              <select [(ngModel)]="defectStatusFilter" class="px-8 py-4 rounded-[1.5rem] bg-white dark:bg-slate-950 border border-slate-200/60 dark:border-white/10 text-[10px] font-black uppercase tracking-widest outline-none focus:border-rose-500 transition-all shadow-sm appearance-none cursor-pointer pr-12 relative text-rose-600 dark:text-rose-400">
+                <option value="">{{ 'quality.defect.all_status' | translate }}</option>
+                <option value="Open">{{ 'quality.defect.open' | translate }}</option>
+                <option value="InProgress">{{ 'quality.defect.in_progress' | translate }}</option>
+                <option value="Resolved">{{ 'quality.defect.resolved' | translate }}</option>
+              </select>
+            </div>
           </div>
-          <select [(ngModel)]="defectStatusFilter">
-            <option value="">{{ 'quality.defect.all_status' | translate }}</option>
-            <option value="Open">{{ 'quality.defect.open' | translate }}</option>
-            <option value="InProgress">{{ 'quality.defect.in_progress' | translate }}</option>
-            <option value="Resolved">{{ 'quality.defect.resolved' | translate }}</option>
-            <option value="Closed">{{ 'quality.defect.closed' | translate }}</option>
-          </select>
-          <select [(ngModel)]="defectSeverityFilter">
-            <option value="">{{ 'quality.defect.all_severity' | translate }}</option>
-            <option value="Critical">{{ 'quality.defect.critical' | translate }}</option>
-            <option value="Major">{{ 'quality.defect.major' | translate }}</option>
-            <option value="Minor">{{ 'quality.defect.minor' | translate }}</option>
-          </select>
+          <button class="group relative px-10 py-5 rounded-[2rem] bg-rose-600 text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-rose-500/20 hover:brightness-110 active:scale-95 transition-all overflow-hidden">
+            <span class="relative z-10">+ {{ 'quality.defect.report' | translate }}</span>
+            <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+          </button>
         </div>
 
-        <div class="data-table">
-          <table>
+        <div class="overflow-x-auto">
+          <table class="w-full">
             <thead>
-              <tr>
-                <th>{{ 'quality.defect.number' | translate }}</th>
-                <th>{{ 'common.title' | translate }}</th>
-                <th>{{ 'common.category' | translate }}</th>
-                <th>{{ 'quality.defect.severity' | translate }}</th>
-                <th>{{ 'common.status' | translate }}</th>
-                <th>{{ 'quality.defect.priority' | translate }}</th>
-                <th>{{ 'quality.defect.reported' | translate }}</th>
-                <th>{{ 'common.actions' | translate }}</th>
+              <tr class="text-left text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-[0.25em] bg-slate-50/50 dark:bg-slate-950/50 border-b border-slate-100 dark:border-white/5">
+                <th class="px-10 py-8">{{ 'quality.defect.number' | translate }}</th>
+                <th class="px-10 py-8">{{ 'common.title' | translate }}</th>
+                <th class="px-10 py-8">{{ 'quality.defect.severity' | translate }}</th>
+                <th class="px-10 py-8">{{ 'common.status' | translate }}</th>
+                <th class="px-10 py-8 text-right">{{ 'common.actions' | translate }}</th>
               </tr>
             </thead>
-            <tbody>
-              <tr *ngFor="let defect of filteredDefects" [class.safety-row]="defect.isSafetyRelated">
-                <td>{{ defect.defectNumber }}</td>
-                <td>{{ defect.title }}</td>
-                <td>{{ defect.category }}</td>
-                <td>
-                  <span class="severity-badge" [ngClass]="defect.severity.toLowerCase()">
+            <tbody class="text-slate-600 dark:text-slate-300">
+              <tr *ngFor="let defect of filteredDefects; let i = index" 
+                  class="border-b border-slate-50 dark:border-white/5 hover:bg-slate-50/80 dark:hover:bg-white/[0.02] transition-all duration-300 group animate-premium-fade"
+                  [class.bg-rose-500/[0.02]]="defect.isSafetyRelated"
+                  [style.animation-delay]="(i * 30 + 100) + 'ms'">
+                <td class="px-10 py-8">
+                  <span class="text-xs font-black text-slate-400 uppercase tracking-widest opacity-60">{{ defect.defectNumber }}</span>
+                </td>
+                <td class="px-10 py-8">
+                  <div class="space-y-2">
+                    <div class="flex items-center gap-3">
+                       <span class="text-sm font-black text-slate-900 dark:text-white tracking-tight group-hover:text-rose-600 transition-colors uppercase">{{ defect.title }}</span>
+                       <div *ngIf="defect.isSafetyRelated" class="flex items-center gap-1.5 px-2 py-1 rounded-md bg-rose-500 text-[8px] text-white font-black animate-pulse shadow-lg shadow-rose-500/20">
+                          <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                          SAFETY
+                       </div>
+                    </div>
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-rose-500/5 text-[9px] font-black text-rose-500 uppercase tracking-widest">{{ defect.category }}</span>
+                  </div>
+                </td>
+                <td class="px-10 py-8">
+                  <span class="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-sm ring-1 ring-inset ring-current" 
+                        [class.bg-rose-500/10]="defect.severity === 'Critical' || defect.severity === 'Major'"
+                        [class.text-rose-600]="defect.severity === 'Critical' || defect.severity === 'Major'"
+                        [class.bg-amber-500/10]="defect.severity === 'Minor'"
+                        [class.text-amber-600]="defect.severity === 'Minor'">
                     {{ defect.severity }}
                   </span>
                 </td>
-                <td>
-                  <span class="status-badge" [ngClass]="getDefectStatusClass(defect.status)">
+                <td class="px-10 py-8">
+                  <span class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-white/5 text-[9px] font-black text-slate-400 uppercase tracking-widest border border-slate-200 dark:border-white/10 shadow-sm opacity-60">
                     {{ defect.status }}
                   </span>
                 </td>
-                <td>
-                  <span class="priority-badge" [ngClass]="defect.priority.toLowerCase()">
-                    {{ defect.priority }}
-                  </span>
-                </td>
-                <td>{{ defect.reportedDate | date:'mediumDate' }}</td>
-                <td>
-                  <button class="btn-icon" [title]="'common.view' | translate" (click)="viewDefect(defect)">
-                    <i class="icon-eye"></i>
-                  </button>
-                  <button class="btn-icon" [title]="'common.assign' | translate" *ngIf="defect.status === 'Open'" (click)="assignDefect(defect)">
-                    <i class="icon-user"></i>
-                  </button>
-                  <i class="icon-alert safety-icon" *ngIf="defect.isSafetyRelated" [title]="'quality.defect.safety_related' | translate"></i>
+                <td class="px-10 py-8 text-right">
+                  <div class="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0">
+                    <button class="p-3.5 rounded-2xl bg-white dark:bg-slate-800 text-slate-400 hover:text-rose-500 transition-all shadow-xl ring-1 ring-slate-100 dark:ring-white/5 hover:-translate-y-1 active:scale-90 group/btn" (click)="viewDefect(defect)">
+                      <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    </button>
+                    <button *ngIf="defect.status === 'Open'" class="p-3.5 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 text-white hover:brightness-110 shadow-xl shadow-rose-500/20 hover:-translate-y-1 active:scale-90 transition-all" (click)="assignDefect(defect)">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -231,498 +343,172 @@ import { Subject, takeUntil } from 'rxjs';
       </div>
 
       <!-- Punch List Tab -->
-      <div class="tab-content" *ngIf="activeTab === 'punchlist'">
-        <div class="filter-section">
-          <div class="search-box">
-            <i class="icon-search"></i>
-            <input type="text" [(ngModel)]="punchListSearch" [placeholder]="'quality.punchlist.search_placeholder' | translate">
+      <div class="bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200/60 dark:border-white/5 shadow-2xl shadow-slate-200/40 dark:shadow-none p-12 animate-premium-fade" *ngIf="activeTab === 'punchlist'">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-10 mb-12">
+          <div class="space-y-2">
+            <h3 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{{ 'quality.tabs.punchlist' | translate }}</h3>
+            <div class="flex items-center gap-2 opacity-60">
+               <div class="w-8 h-0.5 bg-amber-500 rounded-full"></div>
+               <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em]">Final Completion Tracking</p>
+            </div>
           </div>
-          <select [(ngModel)]="punchListStatusFilter">
-            <option value="">{{ 'common.all_status' | translate }}</option>
-            <option value="Pending">{{ 'common.pending' | translate }}</option>
-            <option value="InProgress">{{ 'common.in_progress' | translate }}</option>
-            <option value="Completed">{{ 'common.completed' | translate }}</option>
-            <option value="Verified">{{ 'quality.punchlist.verified' | translate }}</option>
-            <option value="Accepted">{{ 'quality.punchlist.accepted' | translate }}</option>
-          </select>
+          <div class="relative group min-w-[320px]">
+            <svg class="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-amber-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <input type="text" [(ngModel)]="punchListSearch" [placeholder]="'quality.punchlist.search_placeholder' | translate"
+                   class="w-full pl-14 pr-8 py-4 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950 border border-slate-200/60 dark:border-white/10 text-sm font-black outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all shadow-inner">
+          </div>
         </div>
-
-        <div class="punch-list-grid">
-          <div class="punch-card" *ngFor="let item of filteredPunchListItems" [ngClass]="item.status.toLowerCase()">
-            <div class="punch-header">
-              <span class="item-number">{{ item.itemNumber }}</span>
-              <span class="status-badge small" [ngClass]="getPunchListStatusClass(item.status)">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          <div *ngFor="let item of filteredPunchListItems; let i = index" 
+               class="relative p-10 rounded-[3rem] bg-white dark:bg-slate-800/40 border border-slate-100 dark:border-white/5 hover:border-amber-500/40 transition-all duration-500 group animate-premium-fade shadow-xl shadow-slate-200/40 dark:shadow-none hover:-translate-y-2 ring-1 ring-inset ring-transparent hover:ring-amber-500/20"
+               [style.animation-delay]="(i * 50 + 100) + 'ms'">
+            <div class="flex items-start justify-between mb-8">
+              <span class="px-3 py-1 rounded-lg bg-amber-500/5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ item.itemNumber }}</span>
+              <span class="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-sm ring-1 ring-inset ring-current" 
+                    [class.bg-amber-500/10]="item.status === 'Pending' || item.status === 'InProgress'"
+                    [class.text-amber-600]="item.status === 'Pending' || item.status === 'InProgress'"
+                    [class.bg-emerald-500/10]="item.status === 'Completed' || item.status === 'Verified' || item.status === 'Accepted'"
+                    [class.text-emerald-600]="item.status === 'Completed' || item.status === 'Verified' || item.status === 'Accepted'">
                 {{ item.status }}
               </span>
             </div>
-            <p class="punch-description">{{ item.description }}</p>
-            <div class="punch-meta">
-              <span><i class="icon-location"></i> {{ item.location }}</span>
-              <span><i class="icon-category"></i> {{ item.category }}</span>
+            
+            <h4 class="text-lg font-black text-slate-900 dark:text-white mb-6 tracking-tight group-hover:text-amber-600 transition-colors leading-tight">{{ item.description }}</h4>
+            
+            <div class="grid grid-cols-2 gap-4 mb-8">
+               <div class="space-y-1 opacity-60">
+                 <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Location</p>
+                 <div class="flex items-center gap-2">
+                   <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                   <span class="text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-tight">{{ item.location }}</span>
+                 </div>
+               </div>
+               <div class="space-y-1 opacity-60">
+                 <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Category</p>
+                 <div class="flex items-center gap-2">
+                   <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+                   <span class="text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-tight">{{ item.category }}</span>
+                 </div>
+               </div>
             </div>
-            <div class="punch-footer">
-              <span class="priority-badge" [ngClass]="item.priority.toLowerCase()">
-                {{ item.priority }}
-              </span>
-              <span class="due-date" *ngIf="item.dueDate" [class.overdue]="isOverdue(item)">
-                Due: {{ item.dueDate | date:'shortDate' }}
-              </span>
+
+            <div class="flex items-center justify-between p-5 rounded-[1.5rem] bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 mb-8 group-hover:bg-amber-500/5 transition-colors">
+              <span class="px-3 py-1.5 rounded-lg bg-rose-500 text-[8px] font-black text-white uppercase tracking-widest shadow-lg shadow-rose-500/20">{{ item.priority }}</span>
+              <div class="text-right">
+                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Deadline</p>
+                <p class="text-[10px] font-black tracking-tight uppercase" [class.text-rose-600]="isOverdue(item)" [class.text-slate-600]="!isOverdue(item)">
+                  {{ item.dueDate | date:'mediumDate' }}
+                </p>
+              </div>
             </div>
-            <div class="punch-actions">
-              <button class="btn btn-small" *ngIf="item.status === 'Pending'" (click)="startPunchItem(item)">Start</button>
-              <button class="btn btn-small btn-primary" *ngIf="item.status === 'InProgress'" (click)="completePunchItem(item)">Complete</button>
-              <button class="btn btn-small btn-outline" *ngIf="item.status === 'Completed'" (click)="verifyPunchItem(item)">Verify</button>
+
+            <div class="flex gap-4">
+              <button class="flex-1 py-4 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white font-black text-[10px] uppercase tracking-widest shadow-xl shadow-indigo-500/20 hover:brightness-110 active:scale-95 transition-all" *ngIf="item.status === 'Pending'" (click)="startPunchItem(item)">Start Mission</button>
+              <button class="flex-1 py-4 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-black text-[10px] uppercase tracking-widest shadow-xl shadow-emerald-500/20 hover:brightness-110 active:scale-95 transition-all" *ngIf="item.status === 'InProgress'" (click)="completePunchItem(item)">Mark Complete</button>
+              <button class="flex-1 py-4 rounded-2xl bg-white dark:bg-slate-700 text-slate-600 dark:text-white font-black text-[10px] uppercase tracking-widest border border-slate-200 dark:border-white/10 active:scale-95 transition-all shadow-lg" *ngIf="item.status === 'Completed'" (click)="verifyPunchItem(item)">Verify</button>
             </div>
+
+            <div class="absolute -bottom-2 -right-2 w-20 h-20 bg-amber-500/5 rounded-full blur-3xl group-hover:bg-amber-500/10 transition-colors"></div>
           </div>
         </div>
       </div>
 
       <!-- Standards Tab -->
-      <div class="tab-content" *ngIf="activeTab === 'standards'">
-        <div class="standards-grid">
-          <div class="standard-card">
-            <h4>Structural</h4>
-            <ul>
-              <li>Concrete compressive strength verification</li>
-              <li>Steel reinforcement placement</li>
-              <li>Foundation alignment</li>
-            </ul>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 animate-premium-fade" *ngIf="activeTab === 'standards'">
+        <div class="group relative bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200/60 dark:border-white/5 shadow-2xl shadow-slate-200/40 dark:shadow-none p-12 hover:shadow-violet-500/20 transition-all duration-700 hover:-translate-y-2 ring-1 ring-inset ring-transparent hover:ring-violet-500/20 overflow-hidden">
+          <div class="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white mb-10 group-hover:scale-110 group-hover:rotate-6 transition-all shadow-xl shadow-violet-500/30">
+             <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
           </div>
-          <div class="standard-card">
-            <h4>Electrical</h4>
-            <ul>
-              <li>Wiring gauge compliance</li>
-              <li>Connection torque verification</li>
-              <li>Ground resistance testing</li>
-            </ul>
+          <h4 class="text-2xl font-black text-slate-900 dark:text-white mb-8 uppercase tracking-tighter leading-none">Structural</h4>
+          <ul class="space-y-6">
+            <li class="flex items-start gap-4 group/item">
+              <div class="w-2 h-2 rounded-full bg-violet-500 mt-2 shadow-lg shadow-violet-500/50 group-hover/item:scale-150 transition-transform"></div>
+              <span class="text-sm font-black text-slate-500 dark:text-slate-400 leading-tight tracking-tight uppercase opacity-80 group-hover/item:opacity-100 transition-opacity">Concrete strength verification</span>
+            </li>
+            <li class="flex items-start gap-4 group/item">
+              <div class="w-2 h-2 rounded-full bg-violet-500 mt-2 shadow-lg shadow-violet-500/50 group-hover/item:scale-150 transition-transform"></div>
+              <span class="text-sm font-black text-slate-500 dark:text-slate-400 leading-tight tracking-tight uppercase opacity-80 group-hover/item:opacity-100 transition-opacity">Steel reinforcement placement</span>
+            </li>
+            <li class="flex items-start gap-4 group/item">
+              <div class="w-2 h-2 rounded-full bg-violet-500 mt-2 shadow-lg shadow-violet-500/50 group-hover/item:scale-150 transition-transform"></div>
+              <span class="text-sm font-black text-slate-500 dark:text-slate-400 leading-tight tracking-tight uppercase opacity-80 group-hover/item:opacity-100 transition-opacity">Foundation alignment</span>
+            </li>
+          </ul>
+          <div class="absolute -bottom-4 -right-4 w-32 h-32 bg-violet-500/5 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="group relative bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200/60 dark:border-white/5 shadow-2xl shadow-slate-200/40 dark:shadow-none p-12 hover:shadow-amber-500/20 transition-all duration-700 hover:-translate-y-2 ring-1 ring-inset ring-transparent hover:ring-amber-500/20 overflow-hidden">
+          <div class="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white mb-10 group-hover:scale-110 group-hover:-rotate-6 transition-all shadow-xl shadow-amber-500/30">
+             <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
           </div>
-          <div class="standard-card">
-            <h4>Plumbing</h4>
-            <ul>
-              <li>Pressure testing</li>
-              <li>Pipe slope verification</li>
-              <li>Joint integrity inspection</li>
-            </ul>
+          <h4 class="text-2xl font-black text-slate-900 dark:text-white mb-8 uppercase tracking-tighter leading-none">Electrical</h4>
+          <ul class="space-y-6">
+            <li class="flex items-start gap-4 group/item">
+              <div class="w-2 h-2 rounded-full bg-amber-500 mt-2 shadow-lg shadow-amber-500/50 group-hover/item:scale-150 transition-transform"></div>
+              <span class="text-sm font-black text-slate-500 dark:text-slate-400 leading-tight tracking-tight uppercase opacity-80 group-hover/item:opacity-100 transition-opacity">Wiring gauge compliance</span>
+            </li>
+            <li class="flex items-start gap-4 group/item">
+              <div class="w-2 h-2 rounded-full bg-amber-500 mt-2 shadow-lg shadow-amber-500/50 group-hover/item:scale-150 transition-transform"></div>
+              <span class="text-sm font-black text-slate-500 dark:text-slate-400 leading-tight tracking-tight uppercase opacity-80 group-hover/item:opacity-100 transition-opacity">Connection torque verification</span>
+            </li>
+            <li class="flex items-start gap-4 group/item">
+              <div class="w-2 h-2 rounded-full bg-amber-500 mt-2 shadow-lg shadow-amber-500/50 group-hover/item:scale-150 transition-transform"></div>
+              <span class="text-sm font-black text-slate-500 dark:text-slate-400 leading-tight tracking-tight uppercase opacity-80 group-hover/item:opacity-100 transition-opacity">Ground resistance testing</span>
+            </li>
+          </ul>
+          <div class="absolute -bottom-4 -right-4 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="group relative bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200/60 dark:border-white/5 shadow-2xl shadow-slate-200/40 dark:shadow-none p-12 hover:shadow-indigo-500/20 transition-all duration-700 hover:-translate-y-2 ring-1 ring-inset ring-transparent hover:ring-indigo-500/20 overflow-hidden">
+          <div class="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white mb-10 group-hover:scale-110 group-hover:rotate-6 transition-all shadow-xl shadow-indigo-500/30">
+             <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
           </div>
-          <div class="standard-card">
-            <h4>Finishing</h4>
-            <ul>
-              <li>Surface flatness tolerance</li>
-              <li>Paint adhesion testing</li>
-              <li>Tile lippage limits</li>
-            </ul>
+          <h4 class="text-2xl font-black text-slate-900 dark:text-white mb-8 uppercase tracking-tighter leading-none">Plumbing</h4>
+          <ul class="space-y-6">
+            <li class="flex items-start gap-4 group/item">
+              <div class="w-2 h-2 rounded-full bg-indigo-500 mt-2 shadow-lg shadow-indigo-500/50 group-hover/item:scale-150 transition-transform"></div>
+              <span class="text-sm font-black text-slate-500 dark:text-slate-400 leading-tight tracking-tight uppercase opacity-80 group-hover/item:opacity-100 transition-opacity">Pressure testing</span>
+            </li>
+            <li class="flex items-start gap-4 group/item">
+              <div class="w-2 h-2 rounded-full bg-indigo-500 mt-2 shadow-lg shadow-indigo-500/50 group-hover/item:scale-150 transition-transform"></div>
+              <span class="text-sm font-black text-slate-500 dark:text-slate-400 leading-tight tracking-tight uppercase opacity-80 group-hover/item:opacity-100 transition-opacity">Pipe slope verification</span>
+            </li>
+            <li class="flex items-start gap-4 group/item">
+              <div class="w-2 h-2 rounded-full bg-indigo-500 mt-2 shadow-lg shadow-indigo-500/50 group-hover/item:scale-150 transition-transform"></div>
+              <span class="text-sm font-black text-slate-500 dark:text-slate-400 leading-tight tracking-tight uppercase opacity-80 group-hover/item:opacity-100 transition-opacity">Joint integrity inspection</span>
+            </li>
+          </ul>
+          <div class="absolute -bottom-4 -right-4 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="group relative bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200/60 dark:border-white/5 shadow-2xl shadow-slate-200/40 dark:shadow-none p-12 hover:shadow-emerald-500/20 transition-all duration-700 hover:-translate-y-2 ring-1 ring-inset ring-transparent hover:ring-emerald-500/20 overflow-hidden">
+          <div class="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white mb-10 group-hover:scale-110 group-hover:-rotate-6 transition-all shadow-xl shadow-emerald-500/30">
+             <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
           </div>
+          <h4 class="text-2xl font-black text-slate-900 dark:text-white mb-8 uppercase tracking-tighter leading-none">Finishing</h4>
+          <ul class="space-y-6">
+            <li class="flex items-start gap-4 group/item">
+              <div class="w-2 h-2 rounded-full bg-emerald-500 mt-2 shadow-lg shadow-emerald-500/50 group-hover/item:scale-150 transition-transform"></div>
+              <span class="text-sm font-black text-slate-500 dark:text-slate-400 leading-tight tracking-tight uppercase opacity-80 group-hover/item:opacity-100 transition-opacity">Surface flatness tolerance</span>
+            </li>
+            <li class="flex items-start gap-4 group/item">
+              <div class="w-2 h-2 rounded-full bg-emerald-500 mt-2 shadow-lg shadow-emerald-500/50 group-hover/item:scale-150 transition-transform"></div>
+              <span class="text-sm font-black text-slate-500 dark:text-slate-400 leading-tight tracking-tight uppercase opacity-80 group-hover/item:opacity-100 transition-opacity">Paint adhesion testing</span>
+            </li>
+            <li class="flex items-start gap-4 group/item">
+              <div class="w-2 h-2 rounded-full bg-emerald-500 mt-2 shadow-lg shadow-emerald-500/50 group-hover/item:scale-150 transition-transform"></div>
+              <span class="text-sm font-black text-slate-500 dark:text-slate-400 leading-tight tracking-tight uppercase opacity-80 group-hover/item:opacity-100 transition-opacity">Tile lippage limits</span>
+            </li>
+          </ul>
+          <div class="absolute -bottom-4 -right-4 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl"></div>
         </div>
       </div>
 
       <!-- Modals would go here -->
     </div>
   `,
-  styles: [`
-    .quality-page {
-      padding: 24px;
-      background: #f5f7fa;
-      min-height: 100%;
-    }
-
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-    }
-
-    .page-header h1 {
-      font-size: 24px;
-      font-weight: 600;
-      color: #1a1a2e;
-      margin: 0;
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 12px;
-    }
-
-    .summary-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .summary-card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .summary-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-    }
-
-    .card-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .card-icon.blue { background: #e3f2fd; color: #1976d2; }
-    .card-icon.green { background: #e8f5e9; color: #388e3c; }
-    .card-icon.orange { background: #fff3e0; color: #f57c00; }
-    .card-icon.red { background: #ffebee; color: #d32f2f; }
-    .card-icon.purple { background: #f3e5f5; color: #7b1fa2; }
-
-    .card-content {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .card-value {
-      font-size: 24px;
-      font-weight: 700;
-      color: #1a1a2e;
-    }
-
-    .card-label {
-      font-size: 13px;
-      color: #64748b;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 24px;
-      background: white;
-      padding: 8px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
-
-    .tabs button {
-      padding: 12px 24px;
-      border: none;
-      background: transparent;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      color: #64748b;
-      transition: all 0.2s;
-    }
-
-    .tabs button:hover {
-      background: #f5f7fa;
-    }
-
-    .tabs button.active {
-      background: #3b82f6;
-      color: white;
-    }
-
-    .tab-content {
-      background: white;
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
-
-    .filter-section {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-
-    .search-box {
-      position: relative;
-      flex: 1;
-      min-width: 250px;
-    }
-
-    .search-box i {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #94a3b8;
-    }
-
-    .search-box input {
-      width: 100%;
-      padding: 12px 12px 12px 40px;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-
-    .filter-section select {
-      padding: 12px 16px;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      background: white;
-      font-size: 14px;
-      min-width: 150px;
-    }
-
-    .data-table {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      padding: 12px 16px;
-      text-align: left;
-      border-bottom: 1px solid #f0f0f0;
-    }
-
-    th {
-      font-weight: 600;
-      color: #64748b;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    tr:hover {
-      background: #f8fafc;
-    }
-
-    .safety-row {
-      background: #fff8e1 !important;
-    }
-
-    .status-badge {
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .status-badge.small {
-      padding: 2px 8px;
-      font-size: 10px;
-    }
-
-    .status-badge.scheduled { background: #e3f2fd; color: #1976d2; }
-    .status-badge.inprogress, .status-badge.in-progress { background: #fff3e0; color: #f57c00; }
-    .status-badge.completed { background: #e8f5e9; color: #388e3c; }
-    .status-badge.open { background: #ffebee; color: #d32f2f; }
-    .status-badge.inprogress { background: #fff3e0; color: #f57c00; }
-    .status-badge.resolved { background: #e8f5e9; color: #388e3c; }
-    .status-badge.closed { background: #eceff1; color: #546e7a; }
-    .status-badge.pending { background: #fce4ec; color: #c2185b; }
-    .status-badge.verified { background: #e3f2fd; color: #1976d2; }
-    .status-badge.accepted { background: #e8f5e9; color: #388e3c; }
-
-    .severity-badge {
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 600;
-    }
-
-    .severity-badge.critical { background: #d32f2f; color: white; }
-    .severity-badge.major { background: #f57c00; color: white; }
-    .severity-badge.minor { background: #ffeb3b; color: #333; }
-
-    .priority-badge {
-      padding: 2px 8px;
-      border-radius: 8px;
-      font-size: 10px;
-      font-weight: 600;
-    }
-
-    .priority-badge.high { background: #d32f2f; color: white; }
-    .priority-badge.medium { background: #f57c00; color: white; }
-    .priority-badge.low { background: #4caf50; color: white; }
-
-    .score-bar {
-      width: 100px;
-      height: 8px;
-      background: #e2e8f0;
-      border-radius: 4px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .score-fill {
-      height: 100%;
-      border-radius: 4px;
-      transition: width 0.3s;
-    }
-
-    .score-fill.excellent { background: #4caf50; }
-    .score-fill.good { background: #8bc34a; }
-    .score-fill.fair { background: #ffeb3b; }
-    .score-fill.poor { background: #f44336; }
-
-    .score-bar span {
-      position: absolute;
-      right: -40px;
-      top: -4px;
-      font-size: 12px;
-      font-weight: 500;
-    }
-
-    .btn-icon {
-      width: 32px;
-      height: 32px;
-      border: none;
-      background: #f5f7fa;
-      border-radius: 6px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 4px;
-      transition: all 0.2s;
-    }
-
-    .btn-icon:hover {
-      background: #e2e8f0;
-    }
-
-    .safety-icon {
-      color: #d32f2f;
-      font-size: 16px;
-    }
-
-    .punch-list-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 16px;
-    }
-
-    .punch-card {
-      background: #f8fafc;
-      border-radius: 12px;
-      padding: 16px;
-      border-left: 4px solid #e2e8f0;
-    }
-
-    .punch-card.completed { border-left-color: #4caf50; }
-    .punch-card.inprogress, .punch-card.in-progress { border-left-color: #f57c00; }
-    .punch-card.verified { border-left-color: #1976d2; }
-
-    .punch-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .item-number {
-      font-weight: 600;
-      color: #64748b;
-      font-size: 12px;
-    }
-
-    .punch-description {
-      margin: 0 0 12px 0;
-      font-weight: 500;
-      color: #1a1a2e;
-    }
-
-    .punch-meta {
-      display: flex;
-      gap: 16px;
-      font-size: 13px;
-      color: #64748b;
-      margin-bottom: 12px;
-    }
-
-    .punch-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .due-date {
-      font-size: 12px;
-      color: #64748b;
-    }
-
-    .due-date.overdue {
-      color: #d32f2f;
-      font-weight: 500;
-    }
-
-    .punch-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .btn {
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      border: none;
-    }
-
-    .btn-primary {
-      background: #3b82f6;
-      color: white;
-    }
-
-    .btn-small {
-      padding: 6px 12px;
-      font-size: 12px;
-    }
-
-    .btn-outline {
-      background: white;
-      border: 1px solid #e2e8f0;
-      color: #475569;
-    }
-
-    .standards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 16px;
-    }
-
-    .standard-card {
-      background: #f8fafc;
-      border-radius: 12px;
-      padding: 20px;
-    }
-
-    .standard-card h4 {
-      margin: 0 0 12px 0;
-      color: #1a1a2e;
-      font-size: 16px;
-    }
-
-    .standard-card ul {
-      margin: 0;
-      padding-left: 20px;
-    }
-
-    .standard-card li {
-      margin-bottom: 8px;
-      color: #64748b;
-      font-size: 14px;
-    }
-  `]
+  styles: [``]
 })
 export class QualityComponent implements OnInit {
   activeTab = 'inspections';

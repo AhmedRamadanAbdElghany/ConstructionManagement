@@ -12,35 +12,36 @@ import { I18nService } from '../../../core/i18n/i18n.service';
     standalone: true,
     imports: [CommonModule, FormsModule, TranslateModule],
     template: `
-        <div class="vendors-container p-6">
+        <div class="p-6 transition-all duration-500 font-['Outfit']">
             <!-- Header -->
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 animate-premium-fade">
-                <div class="space-y-1">
-                    <h2 class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tight uppercase drop-shadow-sm">{{ 'vendors.title' | translate }}</h2>
-                    <p class="text-slate-500 dark:text-slate-400 font-medium italic opacity-80">{{ 'vendors.description' | translate }}</p>
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12 animate-premium-fade">
+                <div class="space-y-2">
+                    <h2 class="text-5xl font-black text-slate-900 dark:text-white tracking-tight uppercase leading-none">{{ 'vendors.title' | translate }}</h2>
+                    <p class="text-slate-500 dark:text-slate-400 font-medium italic opacity-75 text-lg">{{ 'vendors.description' | translate }}</p>
                 </div>
                 @if (canAddVendor) {
                     <button (click)="showCreateModal = true" 
-                            class="px-4 py-2 rounded-xl bg-cyan-500 text-white font-medium text-sm hover:bg-cyan-600 transition-colors flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            class="group relative px-10 py-5 rounded-[2.5rem] bg-gradient-to-r from-cyan-600 to-blue-700 text-white font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:-translate-y-1 active:scale-95 transition-all overflow-hidden flex items-center gap-3">
+                        <svg class="w-5 h-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path>
                         </svg>
-                        {{ 'vendors.add_vendor' | translate }}
+                        <span class="relative z-10">{{ 'vendors.add_vendor' | translate }}</span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
                     </button>
                 }
             </div>
 
-            <!-- Tabs -->
-            <div class="flex items-center gap-2 mb-10 p-1.5 bg-white dark:bg-slate-900 rounded-[1.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none w-fit animate-premium-fade" style="animation-delay: 100ms">
+            <!-- Premium Tabs -->
+            <div class="flex items-center gap-2 mb-12 p-2 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200/60 dark:border-white/5 shadow-2xl shadow-slate-200/50 dark:shadow-none w-fit animate-premium-fade" style="animation-delay: 100ms">
                 <button (click)="activeTab = 'vendors'"
                         [class.bg-gradient-to-r]="activeTab === 'vendors'"
                         [class.from-indigo-600]="activeTab === 'vendors'"
                         [class.to-blue-700]="activeTab === 'vendors'"
                         [class.text-white]="activeTab === 'vendors'"
-                        [class.shadow-lg]="activeTab === 'vendors'"
-                        [class.shadow-indigo-500/20]="activeTab === 'vendors'"
+                        [class.shadow-xl]="activeTab === 'vendors'"
+                        [class.shadow-indigo-500/30]="activeTab === 'vendors'"
                         [class.text-slate-500]="activeTab !== 'vendors'"
-                        class="px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all">
+                        class="px-10 py-4 rounded-[2rem] font-black text-[11px] uppercase tracking-widest transition-all duration-500 hover:text-indigo-600 active:scale-95">
                     {{ 'vendors.vendors_list' | translate }}
                 </button>
                 @if (canApproveInvoices) {
@@ -49,13 +50,13 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                             [class.from-indigo-600]="activeTab === 'pending'"
                             [class.to-blue-700]="activeTab === 'pending'"
                             [class.text-white]="activeTab === 'pending'"
-                            [class.shadow-lg]="activeTab === 'pending'"
-                            [class.shadow-indigo-500/20]="activeTab === 'pending'"
+                            [class.shadow-xl]="activeTab === 'pending'"
+                            [class.shadow-indigo-500/30]="activeTab === 'pending'"
                             [class.text-slate-500]="activeTab !== 'pending'"
-                            class="px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center gap-3">
+                            class="px-10 py-4 rounded-[2rem] font-black text-[11px] uppercase tracking-widest transition-all duration-500 hover:text-indigo-600 active:scale-95 flex items-center gap-4">
                         {{ 'vendors.pending_approvals' | translate }}
                         @if (pendingCount > 0) {
-                            <span class="px-2 py-0.5 rounded-lg bg-white/20 text-white text-[9px] font-black">
+                            <span class="px-2.5 py-1 rounded-xl bg-white/20 text-white text-[10px] font-black animate-premium-pulse">
                                 {{ pendingCount }}
                             </span>
                         }
@@ -66,93 +67,98 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                         [class.from-indigo-600]="activeTab === 'summary'"
                         [class.to-blue-700]="activeTab === 'summary'"
                         [class.text-white]="activeTab === 'summary'"
-                        [class.shadow-lg]="activeTab === 'summary'"
-                        [class.shadow-indigo-500/20]="activeTab === 'summary'"
+                        [class.shadow-xl]="activeTab === 'summary'"
+                        [class.shadow-indigo-500/30]="activeTab === 'summary'"
                         [class.text-slate-500]="activeTab !== 'summary'"
-                        class="px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all">
+                        class="px-10 py-4 rounded-[2rem] font-black text-[11px] uppercase tracking-widest transition-all duration-500 hover:text-indigo-600 active:scale-95">
                     {{ 'vendors.summary' | translate }}
                 </button>
             </div>
 
             @if (loading) {
-                <div class="flex items-center justify-center py-12">
-                    <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                <div class="flex flex-col items-center justify-center py-24 animate-premium-fade">
+                    <div class="w-20 h-20 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin shadow-xl"></div>
+                    <p class="mt-6 text-slate-400 font-black uppercase tracking-[0.25em] text-[10px] animate-premium-pulse">Orchestrating Vendor Intelligence...</p>
                 </div>
             } @else {
                 <!-- Vendors List Tab -->
                 @if (activeTab === 'vendors') {
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         @for (vendor of vendors; track vendor.id; let i = $index) {
-                            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 hover:border-indigo-500/50 shadow-2xl shadow-slate-200/50 dark:shadow-none hover:scale-[1.02] transition-all group animate-premium-fade"
+                            <div class="group bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200/60 dark:border-white/5 shadow-2xl shadow-slate-200/40 dark:shadow-none p-10 hover:shadow-indigo-500/20 hover:-translate-y-2 transition-all duration-500 animate-premium-fade"
                                  [style.animation-delay]="(i * 50 + 200) + 'ms'">
-                                <div class="flex items-start justify-between mb-6">
-                                    <div class="space-y-1">
-                                        <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tight group-hover:text-indigo-600 transition-colors">{{ vendor.name }}</h3>
+                                <div class="flex items-start justify-between mb-8">
+                                    <div class="space-y-2 text-left">
+                                        <h3 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight leading-none group-hover:text-indigo-600 transition-colors">{{ vendor.name }}</h3>
                                         @if (vendor.vendorType) {
-                                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] opacity-60">{{ vendor.vendorType }}</span>
+                                            <span class="px-3 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">{{ vendor.vendorType }}</span>
                                         }
                                     </div>
-                                    <span class="px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-sm"
-                                          [class.bg-emerald-500]="vendor.isActive"
-                                          [class.text-white]="vendor.isActive"
-                                          [class.bg-slate-200]="!vendor.isActive"
+                                    <span class="px-5 py-2 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.15em] shadow-sm ring-1 ring-inset whitespace-nowrap"
+                                          [class.bg-emerald-500/10]="vendor.isActive"
+                                          [class.text-emerald-600]="vendor.isActive"
+                                          [class.ring-emerald-500/20]="vendor.isActive"
+                                          [class.bg-slate-100]="!vendor.isActive"
                                           [class.text-slate-500]="!vendor.isActive">
                                         {{ (vendor.isActive ? 'common.active' : 'common.inactive') | translate }}
                                     </span>
                                 </div>
                                 
-                                <div class="space-y-4 text-sm mb-8">
+                                <div class="space-y-4 mb-10">
                                     @if (vendor.phone) {
-                                        <div class="flex items-center gap-3 text-slate-600 dark:text-slate-400 font-bold tracking-tight">
-                                            <div class="w-8 h-8 rounded-xl bg-slate-50 dark:bg-white/5 flex items-center justify-center text-indigo-500">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                        <div class="flex items-center gap-4 text-slate-600 dark:text-slate-400 font-bold tracking-tight">
+                                            <div class="w-10 h-10 rounded-[1.25rem] bg-slate-50 dark:bg-white/5 flex items-center justify-center text-indigo-500 shadow-inner group-hover:scale-110 transition-transform">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                                                 </svg>
                                             </div>
-                                            <span>{{ vendor.phone }}</span>
+                                            <span class="text-sm">{{ vendor.phone }}</span>
                                         </div>
                                     }
                                     @if (vendor.email) {
-                                        <div class="flex items-center gap-3 text-slate-600 dark:text-slate-400 font-bold tracking-tight">
-                                            <div class="w-8 h-8 rounded-xl bg-slate-50 dark:bg-white/5 flex items-center justify-center text-indigo-500">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                        <div class="flex items-center gap-4 text-slate-600 dark:text-slate-400 font-bold tracking-tight">
+                                            <div class="w-10 h-10 rounded-[1.25rem] bg-slate-50 dark:bg-white/5 flex items-center justify-center text-indigo-500 shadow-inner group-hover:scale-110 transition-transform">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                                 </svg>
                                             </div>
-                                            <span class="truncate">{{ vendor.email }}</span>
+                                            <span class="text-sm truncate max-w-[200px]">{{ vendor.email }}</span>
                                         </div>
                                     }
                                 </div>
                                 
-                                <div class="grid grid-cols-2 gap-4 mb-8">
-                                    <div class="p-4 rounded-3xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
-                                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ 'vendors.invoices_count' | translate }}</p>
-                                        <p class="text-lg font-black text-slate-900 dark:text-white">{{ vendor.totalInvoices || 0 }}</p>
+                                <div class="grid grid-cols-2 gap-4 mb-10">
+                                    <div class="p-6 rounded-[2rem] bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 group-hover:bg-white dark:group-hover:bg-white/10 transition-all duration-500 shadow-sm text-center">
+                                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 opacity-60">{{ 'vendors.invoices_count' | translate }}</p>
+                                        <p class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{{ vendor.totalInvoices || 0 }}</p>
                                     </div>
-                                    <div class="p-4 rounded-3xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20">
-                                        <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-1">{{ 'vendors.total_payments' | translate }}</p>
-                                        <p class="text-lg font-black text-indigo-600 dark:text-indigo-400">{{ (vendor.totalAmount || 0) | currency }}</p>
+                                    <div class="p-6 rounded-[2rem] bg-indigo-50/50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 group-hover:bg-indigo-50 transition-all duration-500 shadow-sm text-center">
+                                        <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2 opacity-60">Revenue Flow</p>
+                                        <p class="text-xl font-black text-indigo-600 dark:text-indigo-400 tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">{{ (vendor.totalAmount || 0) | currency }}</p>
                                     </div>
                                 </div>
                                 
-                                <div class="flex flex-wrap gap-2 pt-6 border-t border-slate-100 dark:border-white/5">
+                                <div class="flex flex-wrap gap-4 pt-8 border-t border-slate-100 dark:border-white/5">
                                     <button (click)="viewVendorInvoices(vendor)" 
-                                            class="flex-1 px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-black hover:bg-slate-200 transition-all uppercase tracking-widest">
+                                            class="flex-1 px-4 py-4 rounded-[1.25rem] bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 text-[11px] font-black hover:bg-slate-50 dark:hover:bg-white/10 shadow-lg shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-white/5 transition-all duration-300 active:scale-95 uppercase tracking-widest">
                                         {{ 'vendors.view_bills' | translate }}
                                     </button>
                                     <button (click)="viewVendorProjects(vendor)" 
-                                            class="flex-1 px-3 py-2.5 rounded-xl bg-indigo-500 dark:bg-indigo-600 text-white text-[10px] font-black hover:brightness-110 shadow-lg shadow-indigo-500/20 transition-all uppercase tracking-widest">
+                                            class="flex-1 px-4 py-4 rounded-[1.25rem] bg-gradient-to-r from-indigo-600 to-blue-700 text-white text-[11px] font-black hover:brightness-110 shadow-xl shadow-indigo-500/30 transition-all active:scale-95 uppercase tracking-widest">
                                         {{ 'vendors.view_projects' | translate }}
                                     </button>
                                 </div>
                             </div>
                         }
                         @empty {
-                            <div class="col-span-full text-center py-12 text-slate-500 dark:text-slate-400">
-                                <svg class="w-12 h-12 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                                </svg>
-                                <p>{{ 'vendors.no_vendors' | translate }}</p>
+                            <div class="col-span-full flex flex-col items-center justify-center py-24 text-slate-400 animate-premium-fade">
+                                <div class="w-24 h-24 rounded-full bg-slate-50 dark:bg-slate-900 flex items-center justify-center mb-8 border-2 border-dashed border-slate-200 dark:border-white/10">
+                                    <svg class="w-12 h-12 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                    </svg>
+                                </div>
+                                <p class="text-xl font-black text-slate-500 uppercase tracking-tight">{{ 'vendors.no_vendors' | translate }}</p>
+                                <p class="mt-2 text-sm italic opacity-60">Ready to expand your supply chain?</p>
                             </div>
                         }
                     </div>
@@ -160,46 +166,49 @@ import { I18nService } from '../../../core/i18n/i18n.service';
 
                 <!-- Pending Approvals Tab -->
                 @if (activeTab === 'pending') {
-                    <div class="space-y-6">
+                    <div class="space-y-8 max-w-5xl mx-auto">
                         @for (invoice of pendingInvoices; track invoice.id; let i = $index) {
-                            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 shadow-2xl shadow-slate-200/50 dark:shadow-none animate-premium-fade"
+                            <div class="group bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-200/60 dark:border-white/5 shadow-2xl shadow-slate-200/50 dark:shadow-none animate-premium-fade transition-all duration-500 hover:shadow-amber-500/10"
                                  [style.animation-delay]="(i * 50 + 200) + 'ms'">
-                                <div class="flex flex-col md:flex-row md:items-center gap-8">
-                                    <div class="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-amber-500/20 to-orange-600/20 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0 shadow-inner">
-                                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                <div class="flex flex-col lg:flex-row lg:items-center gap-10">
+                                    <div class="w-24 h-24 rounded-[2.5rem] bg-gradient-to-br from-amber-500/10 to-orange-600/10 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0 shadow-inner group-hover:rotate-6 group-hover:scale-110 transition-all duration-500 ring-1 ring-amber-500/20">
+                                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                         </svg>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <div class="flex items-center gap-3 flex-wrap mb-2">
-                                            <span class="text-2xl font-black text-slate-900 dark:text-white">{{ invoice.invoiceNumber }}</span>
-                                            <span class="px-4 py-1.5 rounded-xl bg-amber-500 text-white text-[9px] font-black uppercase tracking-widest shadow-lg shadow-amber-500/20">
+                                        <div class="flex items-center gap-4 flex-wrap mb-4">
+                                            <span class="text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-none group-hover:text-amber-600 transition-colors">{{ invoice.invoiceNumber }}</span>
+                                            <span class="px-5 py-2 rounded-[1rem] bg-amber-500 text-white text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-amber-500/30 ring-1 ring-amber-400">
                                                 {{ 'vendors.pending' | translate }}
                                             </span>
                                         </div>
-                                        <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400 font-bold tracking-tight mb-4">
-                                            <span class="text-indigo-600 dark:text-indigo-400">{{ invoice.vendorName }}</span>
+                                        <div class="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 font-bold tracking-tight mb-6 p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 shadow-inner">
+                                            <span class="text-indigo-600 dark:text-indigo-400 uppercase tracking-widest text-[11px] font-black">{{ invoice.vendorName }}</span>
                                             <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
-                                            <span class="text-slate-900 dark:text-white">{{ invoice.amount | currency }}</span>
+                                            <span class="text-lg font-black text-slate-900 dark:text-white">{{ invoice.amount | currency }}</span>
                                             <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
-                                            <span>{{ invoice.invoiceDate | date:'mediumDate' }}</span>
+                                            <span class="text-[11px] font-black uppercase opacity-60">{{ invoice.invoiceDate | date:'mediumDate' }}</span>
                                         </div>
                                         @if (invoice.description) {
-                                            <p class="text-sm text-slate-500 dark:text-slate-400 italic opacity-80 mb-4 bg-slate-50 dark:bg-white/5 p-4 rounded-2xl border border-slate-100 dark:border-white/5">{{ invoice.description }}</p>
+                                            <p class="text-sm text-slate-500 dark:text-slate-400 italic opacity-80 mb-6 pl-4 border-l-4 border-slate-200 dark:border-slate-800">{{ invoice.description }}</p>
                                         }
-                                        <div class="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                            👤 {{ 'vendors.submitted_by' | translate }}: <span class="text-slate-600 dark:text-slate-300">{{ invoice.createdByUserName }}</span> 
-                                            <span class="mx-1">•</span> 
-                                            📅 {{ invoice.createdAt | date:'medium' }}
+                                        <div class="flex items-center gap-4 text-[11px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
+                                            <div class="flex items-center gap-2">
+                                              <div class="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-[10px]">{{ invoice.createdByUserName.charAt(0) }}</div>
+                                              <span>{{ invoice.createdByUserName }}</span> 
+                                            </div>
+                                            <span class="opacity-30">•</span> 
+                                            <span class="opacity-60">{{ invoice.createdAt | date:'medium' }}</span>
                                         </div>
                                     </div>
-                                    <div class="flex flex-row md:flex-col gap-3">
+                                    <div class="flex flex-row lg:flex-col gap-4">
                                         <button (click)="approveInvoice(invoice)" 
-                                                class="flex-1 px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-[10px] uppercase tracking-widest hover:brightness-110 shadow-lg shadow-emerald-500/20 transition-all active:scale-95">
+                                                class="flex-1 px-10 py-5 rounded-[1.5rem] bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-xs uppercase tracking-[0.2em] hover:brightness-110 shadow-2xl shadow-emerald-500/30 hover:-translate-y-1 transition-all active:scale-95">
                                             {{ 'vendors.approve' | translate }}
                                         </button>
                                         <button (click)="showRejectModal(invoice)" 
-                                                class="flex-1 px-8 py-4 rounded-2xl bg-white dark:bg-slate-800 text-rose-500 border-2 border-rose-100 dark:border-rose-500/20 font-black text-[10px] uppercase tracking-widest hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all active:scale-95">
+                                                class="flex-1 px-10 py-5 rounded-[1.5rem] bg-white dark:bg-slate-800 text-rose-500 border-2 border-rose-100 dark:border-rose-500/20 font-black text-xs uppercase tracking-[0.2em] hover:bg-rose-50 dark:hover:bg-rose-500/10 shadow-lg shadow-slate-200/50 dark:shadow-none hover:-translate-y-1 transition-all active:scale-95">
                                             {{ 'vendors.reject' | translate }}
                                         </button>
                                     </div>
@@ -207,11 +216,14 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                             </div>
                         }
                         @empty {
-                            <div class="text-center py-12 text-slate-500 dark:text-slate-400">
-                                <svg class="w-12 h-12 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                <p>{{ 'vendors.no_pending_invoices' | translate }}</p>
+                            <div class="flex flex-col items-center justify-center py-24 text-slate-400 animate-premium-fade text-center">
+                                <div class="w-24 h-24 rounded-full bg-emerald-50 dark:bg-emerald-900/10 flex items-center justify-center mb-8 border border-emerald-100 dark:border-emerald-900/20">
+                                    <svg class="w-12 h-12 text-emerald-500/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <p class="text-xl font-black text-slate-500 uppercase tracking-tight">{{ 'vendors.no_pending_invoices' | translate }}</p>
+                                <p class="mt-2 text-sm italic opacity-60">All approvals have been meticulously processed.</p>
                             </div>
                         }
                     </div>
@@ -221,34 +233,36 @@ import { I18nService } from '../../../core/i18n/i18n.service';
                 @if (activeTab === 'summary') {
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         @for (summary of vendorSummary; track summary.vendorId; let i = $index) {
-                            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 shadow-2xl shadow-slate-200/50 dark:shadow-none animate-premium-fade"
+                            <div class="group bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-200/60 dark:border-white/5 shadow-2xl shadow-slate-200/40 dark:shadow-none animate-premium-fade hover:-translate-y-2 transition-all duration-500"
                                  [style.animation-delay]="(i * 50 + 200) + 'ms'">
-                                <h3 class="text-xl font-black text-slate-900 dark:text-white mb-6 uppercase tracking-tight">{{ summary.vendorName }}</h3>
-                                <div class="space-y-4">
-                                    <div class="flex justify-between items-center bg-slate-50 dark:bg-white/5 p-4 rounded-2xl border border-slate-100 dark:border-white/5">
-                                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'vendors.total_invoices' | translate }}</span>
-                                        <span class="text-lg font-black text-slate-900 dark:text-white">{{ summary.totalInvoices }}</span>
+                                <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-8 uppercase tracking-tight leading-none group-hover:text-indigo-600 transition-colors">{{ summary.vendorName }}</h3>
+                                <div class="space-y-6">
+                                    <div class="flex justify-between items-center bg-slate-50 dark:bg-white/5 p-6 rounded-[2rem] border border-slate-100 dark:border-white/5 shadow-sm">
+                                        <span class="text-[11px] font-black text-slate-400 uppercase tracking-widest opacity-60">{{ 'vendors.total_invoices' | translate }}</span>
+                                        <span class="text-2xl font-black text-slate-900 dark:text-white">{{ summary.totalInvoices }}</span>
                                     </div>
-                                    <div class="flex justify-between items-center bg-emerald-50 dark:bg-emerald-500/10 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-500/20">
-                                        <span class="text-[10px] font-black text-emerald-600/60 uppercase tracking-widest">{{ 'vendors.total_amount' | translate }}</span>
-                                        <span class="text-xl font-black text-emerald-600 dark:text-emerald-400">{{ summary.totalAmount | currency }}</span>
+                                    <div class="flex justify-between items-center bg-emerald-50/50 dark:bg-emerald-500/10 p-6 rounded-[2rem] border border-emerald-100 dark:border-emerald-500/20 shadow-sm relative overflow-hidden">
+                                        <span class="text-[11px] font-black text-emerald-600/60 uppercase tracking-widest relative z-10">{{ 'vendors.total_amount' | translate }}</span>
+                                        <span class="text-2xl font-black text-emerald-600 dark:text-emerald-400 relative z-10">{{ summary.totalAmount | currency }}</span>
+                                        <div class="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-emerald-400 to-teal-500 opacity-20"></div>
                                     </div>
-                                    <div class="grid grid-cols-2 gap-3 mt-4">
-                                        <div class="text-center p-3 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20">
-                                            <p class="text-[8px] font-black text-amber-500 uppercase tracking-[0.2em] mb-1">Pending</p>
-                                            <p class="text-sm font-black text-amber-600">{{ summary.pendingApprovals }}</p>
+                                    <div class="grid grid-cols-2 gap-4 mt-6">
+                                        <div class="text-center p-5 rounded-[1.5rem] bg-amber-50/50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 shadow-sm transition-all group-hover:bg-amber-50">
+                                            <p class="text-[9px] font-black text-amber-500 uppercase tracking-[0.25em] mb-2">Pending</p>
+                                            <p class="text-lg font-black text-amber-600 leading-none">{{ summary.pendingApprovals }}</p>
                                         </div>
-                                        <div class="text-center p-3 rounded-2xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20">
-                                            <p class="text-[8px] font-black text-rose-500 uppercase tracking-[0.2em] mb-1">Rejected</p>
-                                            <p class="text-sm font-black text-rose-600">{{ summary.rejectedCount }}</p>
+                                        <div class="text-center p-5 rounded-[1.5rem] bg-rose-50/50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 shadow-sm transition-all group-hover:bg-rose-50">
+                                            <p class="text-[9px] font-black text-rose-500 uppercase tracking-[0.25em] mb-2">Rejected</p>
+                                            <p class="text-lg font-black text-rose-600 leading-none">{{ summary.rejectedCount }}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         }
                         @empty {
-                            <div class="col-span-full text-center py-12 text-slate-500 dark:text-slate-400">
-                                <p>{{ 'vendors.no_summary' | translate }}</p>
+                            <div class="col-span-full flex flex-col items-center justify-center py-24 text-slate-400 animate-premium-fade text-center">
+                                <p class="text-xl font-black text-slate-500 uppercase tracking-tight">{{ 'vendors.no_summary' | translate }}</p>
+                                <p class="mt-2 text-sm italic opacity-60">Insight generator is waiting for financial data.</p>
                             </div>
                         }
                     </div>

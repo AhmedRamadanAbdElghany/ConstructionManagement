@@ -2,6 +2,7 @@ using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Domain.Enums;
+using ConstructionManagement.Infrastructure.Persistence;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
@@ -18,6 +19,7 @@ public class AuthServiceTests
     private readonly Mock<IUserRepository> _userRepoMock = new();
     private readonly Mock<IConfiguration> _configMock = new();
     private readonly Mock<IUnitOfWork> _uowMock = new();
+    private readonly Mock<ApplicationDbContext> _contextMock = new();
     private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock = new();
     private readonly Mock<ICompanyRequestRepository> _companyRequestRepoMock = new();
     private readonly Mock<INotificationService> _notificationServiceMock = new();
@@ -43,6 +45,7 @@ public class AuthServiceTests
             _userRepoMock.Object,
             _configMock.Object,
             _uowMock.Object,
+            _contextMock.Object,
             _httpContextAccessorMock.Object,
             _companyRequestRepoMock.Object,
             _notificationServiceMock.Object,
@@ -179,6 +182,7 @@ public class AuthServiceTests
             _userRepoMock.Object,
             configWithoutKey.Object,
             _uowMock.Object,
+            _contextMock.Object,
             _httpContextAccessorMock.Object,
             _companyRequestRepoMock.Object,
             _notificationServiceMock.Object,

@@ -43,10 +43,6 @@ public interface ICompanyUserRepository : IRepository<CompanyUser>
     /// </summary>
     Task<IEnumerable<CompanyUser>> GetByCompanyAndStatusAsync(int companyId, ContractStatusEnum status);
 
-    /// <summary>
-    /// Get the primary company for a user
-    /// </summary>
-    Task<CompanyUser?> GetPrimaryByUserIdAsync(int userId);
 
     /// <summary>
     /// Check if a user is associated with a company

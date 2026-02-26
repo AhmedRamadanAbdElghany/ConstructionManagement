@@ -27,24 +27,29 @@ namespace ConstructionManagement.WebApi.Middleware
                     var handler = new JwtSecurityTokenHandler();
                     var jwt = handler.ReadJwtToken(token);
 
-                    var companyIdClaim = jwt.Claims.FirstOrDefault(c => c.Type == "companyId");
-
                     var roleClaim = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role || c.Type == "role");
-                    
+
+                    // 1. If SuperAdmin, always bypass global filters
                     if (roleClaim?.Value == "SuperAdmin")
                     {
-                        companyContext.CompanyId = null; // Bypass filters
+                        companyContext.CompanyId = null; 
                     }
-                    else if (companyIdClaim != null && int.TryParse(companyIdClaim.Value, out var companyId))
+                    // 2. If X-Company-ID header is provided, use it for specific company context
+                    else if (httpContext.Request.Headers.TryGetValue("X-Company-ID", out var headerCompanyId) 
+                             && int.TryParse(headerCompanyId, out var cid))
                     {
-                        companyContext.CompanyId = companyId;
+                        companyContext.CompanyId = cid;
                     }
-
-                    
+                    // 3. Otherwise, set to null to allow multi-company fetching in services/controllers
+                    // (The controllers/services will then use GetAllCompanyIds() to filter)
+                    else
+                    {
+                        companyContext.CompanyId = null;
+                    }
                 }
                 catch
                 {
-                    // Invalid token → let auth middleware reject later
+                    companyContext.CompanyId = null;
                 }
             }
 

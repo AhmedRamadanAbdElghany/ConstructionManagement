@@ -8,7 +8,7 @@ namespace ConstructionManagement.WebApi.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class DashboardController : ControllerBase
+public class DashboardController : BaseApiController
 {
     private readonly IDashboardStatisticsService _dashboardStatisticsService;
 

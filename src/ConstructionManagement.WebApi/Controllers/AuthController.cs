@@ -48,7 +48,8 @@ public class AuthController : ControllerBase
                 roles = user.Roles,
                 createdAt = user.CreatedAt,
                 userType = (int)user.CurrentUserType,
-                companyId = user.CompanyId
+                companyId = user.CompanyId,
+                companies = user.Companies
             }
         });
     }
@@ -76,7 +77,8 @@ public class AuthController : ControllerBase
                 roles = response.User.Roles,
                 createdAt = response.User.CreatedAt,
                 userType = (int)response.User.CurrentUserType,
-                companyId = response.User.CompanyId
+                companyId = response.User.CompanyId,
+                companies = response.User.Companies
             } : null
         });
     }

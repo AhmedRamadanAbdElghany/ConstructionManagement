@@ -191,7 +191,6 @@ public class WarehouseJoinRequestService : IWarehouseJoinRequestService
                 Role = request.Role?.Name ?? "User",
                 ContractStartDate = DateTime.UtcNow,
                 Status = ContractStatus.Active,
-                IsPrimary = true,
                 JoinedAt = DateTime.UtcNow
             };
             await _companyUserRepository.AddAsync(companyUser);

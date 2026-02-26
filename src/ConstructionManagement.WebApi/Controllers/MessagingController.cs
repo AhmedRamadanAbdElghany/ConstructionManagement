@@ -45,7 +45,7 @@ public class MessagingController : BaseApiController
     {
         try
         {
-            var userId = GetCurrentUserId();
+            var userId = GetUserId();
             var attachments = Request.Form.Files.ToList();
             var result = await _messagingService.StartConversationAsync(userId, request, attachments);
             return Ok(result);
@@ -69,7 +69,7 @@ public class MessagingController : BaseApiController
     {
         try
         {
-            var userId = GetCurrentUserId();
+            var userId = GetUserId();
             var user = await GetUserAsync();
             
             _logger.LogInformation("GetConversations called for userId: {UserId}, user.CompanyId: {CompanyId}, UserType: {UserType}", 
@@ -107,7 +107,7 @@ public class MessagingController : BaseApiController
                     // Find SuperAdmin's designated company
                     companyIdToFetch = await _dbContext.Users
                         .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "SuperAdmin") && u.CompanyId.HasValue)
-                        .Select(u => (int?)u.CompanyId.Value)
+                        .Select(u => u.CompanyId)
                         .FirstOrDefaultAsync();
                         
                     if (!companyIdToFetch.HasValue || companyIdToFetch.Value == 0)
@@ -150,7 +150,7 @@ public class MessagingController : BaseApiController
     {
         try
         {
-            var userId = GetCurrentUserId();
+            var userId = GetUserId();
             var result = await _messagingService.GetConversationAsync(id, userId);
             return Ok(result);
         }
@@ -177,7 +177,7 @@ public class MessagingController : BaseApiController
     {
         try
         {
-            var userId = GetCurrentUserId();
+            var userId = GetUserId();
             var attachments = Request.Form.Files.ToList();
             var result = await _messagingService.SendMessageAsync(id, userId, request, attachments);
             return Ok(result);
@@ -201,7 +201,7 @@ public class MessagingController : BaseApiController
     {
         try
         {
-            var userId = GetCurrentUserId();
+            var userId = GetUserId();
             var result = await _messagingService.CanUserSendMessageAsync(id, userId);
             return Ok(result);
         }
@@ -220,7 +220,7 @@ public class MessagingController : BaseApiController
     {
         try
         {
-            var userId = GetCurrentUserId();
+            var userId = GetUserId();
             var count = await _messagingService.GetUnreadCountAsync(userId);
             return Ok(new { count });
         }
@@ -242,7 +242,7 @@ public class MessagingController : BaseApiController
     {
         try
         {
-            var userId = GetCurrentUserId();
+            var userId = GetUserId();
             await _messagingService.ApproveConversationAsync(id, userId, request?.Notes);
             return Ok(new { message = "Conversation approved successfully." });
         }
@@ -270,7 +270,7 @@ public class MessagingController : BaseApiController
     {
         try
         {
-            var userId = GetCurrentUserId();
+            var userId = GetUserId();
             await _messagingService.BlockConversationAsync(id, userId, request?.Reason);
             return Ok(new { message = "Conversation blocked successfully." });
         }
@@ -298,7 +298,7 @@ public class MessagingController : BaseApiController
     {
         try
         {
-            var userId = GetCurrentUserId();
+            var userId = GetUserId();
             await _messagingService.UnblockConversationAsync(id, userId);
             return Ok(new { message = "Conversation unblocked successfully." });
         }
@@ -328,7 +328,7 @@ public class MessagingController : BaseApiController
     {
         try
         {
-            var userId = GetCurrentUserId();
+            var userId = GetUserId();
             var user = await GetUserAsync();
             
             if (user?.CompanyId == null)
@@ -363,7 +363,7 @@ public class MessagingController : BaseApiController
     {
         try
         {
-            var userId = GetCurrentUserId();
+            var userId = GetUserId();
             var user = await GetUserAsync();
             
             if (user?.CompanyId == null)
@@ -425,7 +425,7 @@ public class MessagingController : BaseApiController
     {
         try
         {
-            var userId = GetCurrentUserId();
+            var userId = GetUserId();
             var user = await GetUserAsync();
             
             // If user is company owner, search company messages
@@ -454,7 +454,7 @@ public class MessagingController : BaseApiController
     {
         try
         {
-            var userId = GetCurrentUserId();
+            var userId = GetUserId();
             var results = await _messagingService.SearchConversationMessagesAsync(id, userId, searchTerm);
             return Ok(results);
         }
@@ -475,7 +475,7 @@ public class MessagingController : BaseApiController
     {
         try
         {
-            var userId = GetCurrentUserId();
+            var userId = GetUserId();
             var result = await _messagingService.GetMessagingStatusAsync(userId);
             return Ok(result);
         }
@@ -498,7 +498,7 @@ public class MessagingController : BaseApiController
     {
         try
         {
-            var userId = GetCurrentUserId();
+            var userId = GetUserId();
             var attachments = Request.Form.Files.ToList();
             
             // Check if SuperAdmin
@@ -557,7 +557,7 @@ public class MessagingController : BaseApiController
     {
         try
         {
-            var userId = GetCurrentUserId();
+            var userId = GetUserId();
             var user = await GetUserAsync();
             
             // Check if SuperAdmin
@@ -589,19 +589,11 @@ public class MessagingController : BaseApiController
 
     // ── Helper Methods ────────────────────────────────────────────────────────────
 
-    private int GetCurrentUserId()
-    {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
-        {
-            throw new UnauthorizedAccessException("User ID not found in token.");
-        }
-        return userId;
-    }
+
 
     private async Task<User?> GetUserAsync()
     {
-        var userId = GetCurrentUserId();
+        var userId = GetUserId();
         return await _dbContext.Users.FindAsync(userId);
     }
 
@@ -614,7 +606,7 @@ public class MessagingController : BaseApiController
     {
         try
         {
-            var userId = GetCurrentUserId();
+            var userId = GetUserId();
             var attachments = Request.Form.Files.ToList();
             var result = await _messagingService.StartWorkerConversationAsync(userId, request, attachments);
             return Ok(result);

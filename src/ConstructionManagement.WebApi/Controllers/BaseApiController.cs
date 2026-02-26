@@ -2,6 +2,7 @@ using ConstructionManagement.Application.Constants;
 using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ConstructionManagement.WebApi.Controllers;
 
@@ -173,5 +174,68 @@ public abstract class BaseApiController : ControllerBase
     protected ActionResult<ApiResponse<T>> Created<T>(T data, string? messageKey = null)
     {
         return Success(data, messageKey, 201);
+    }
+
+    /// <summary>
+    /// Gets the current user's ID from the JWT token claims.
+    /// </summary>
+    /// <returns>The current user's ID</returns>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the user is not authenticated</exception>
+    protected int GetUserId()
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+        {
+            throw new UnauthorizedAccessException("User not authenticated");
+        }
+        return userId;
+    }
+
+    /// <summary>
+    /// Gets the current company context. 
+    /// Priority: X-Company-ID header > JWT companyId claim.
+    /// Use this for operations that target a specific company.
+    /// </summary>
+    /// <returns>The company ID if found, null otherwise</returns>
+    protected int? GetCompanyId()
+    {
+        // First, check for X-Company-ID header (specific company context)
+        if (Request.Headers.TryGetValue("X-Company-ID", out var headerCompanyId))
+        {
+            if (int.TryParse(headerCompanyId, out var companyIdFromHeader))
+            {
+                return companyIdFromHeader;
+            }
+        }
+
+        // Fallback to JWT claim
+        var companyIdClaim = User.FindFirst("companyId")?.Value;
+        if (!string.IsNullOrEmpty(companyIdClaim) && int.TryParse(companyIdClaim, out var companyId))
+        {
+            return companyId;
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Gets ALL company IDs the user is registered with.
+    /// Use this for operations that should show data across all companies.
+    /// </summary>
+    /// <returns>List of company IDs from the JWT companyIds claim</returns>
+    protected List<int> GetAllCompanyIds()
+    {
+        var companyIdsClaim = User.FindFirst("companyIds")?.Value;
+        if (string.IsNullOrEmpty(companyIdsClaim))
+        {
+            // Fallback to single companyId claim
+            var singleId = GetCompanyId();
+            return singleId.HasValue ? new List<int> { singleId.Value } : new List<int>();
+        }
+
+        return companyIdsClaim.Split(',')
+            .Where(s => int.TryParse(s.Trim(), out _))
+            .Select(s => int.Parse(s.Trim()))
+            .ToList();
     }
 }

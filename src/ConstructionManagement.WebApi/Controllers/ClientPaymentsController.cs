@@ -269,13 +269,7 @@ public class ClientPaymentsController : BaseApiController
 
     #region Helper Methods
 
-    private int GetUserId()
-    {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
-            throw new UnauthorizedAccessException("User not authenticated");
-        return userId;
-    }
+
 
     #endregion
 }

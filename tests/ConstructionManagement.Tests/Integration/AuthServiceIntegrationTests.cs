@@ -44,6 +44,7 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
             _userRepoMock.Object,
             configuration,
             UnitOfWork,
+            Context,
             _httpContextAccessorMock.Object,
             _companyRequestRepoMock.Object,
             _notificationServiceMock.Object,
@@ -128,7 +129,7 @@ public class AuthServiceIntegrationTests : IntegrationTestBase
         Context.Users.Add(user);
         await Context.SaveChangesAsync();
 
-        var service = new AuthService(new UserRepository(Context), config, UnitOfWork, _httpContextAccessorMock.Object, _companyRequestRepoMock.Object, _notificationServiceMock.Object, new Repository<Vendor>(Context), new Repository<Role>(Context), new Repository<UserRole>(Context), _localizationServiceMock.Object, new CompanyUserRepository(Context));
+        var service = new AuthService(new UserRepository(Context), config, UnitOfWork, Context, _httpContextAccessorMock.Object, _companyRequestRepoMock.Object, _notificationServiceMock.Object, new Repository<Vendor>(Context), new Repository<Role>(Context), new Repository<UserRole>(Context), _localizationServiceMock.Object, new CompanyUserRepository(Context));
 
         // Act
         var result = await service.LoginAsync(new LoginRequest("auth@test.com", password));

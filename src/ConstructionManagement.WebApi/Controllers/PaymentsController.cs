@@ -884,25 +884,7 @@ namespace ConstructionManagement.WebApi.Controllers
 
         #endregion
 
-        private int GetUserId()
-        {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
-            {
-                throw new UnauthorizedAccessException("User not authenticated");
-            }
-            return userId;
-        }
 
-        private int? GetCompanyId()
-        {
-            var companyIdClaim = User.FindFirst("companyId")?.Value;
-            if (string.IsNullOrEmpty(companyIdClaim) || !int.TryParse(companyIdClaim, out var companyId))
-            {
-                return null;
-            }
-            return companyId;
-        }
     }
 
     // Request DTOs for controller

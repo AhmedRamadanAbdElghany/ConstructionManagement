@@ -11,6 +11,7 @@ namespace ConstructionManagement.Application.DTOs
         DateTime CreatedAt,
         UserType CurrentUserType,
         int? CompanyId = null,
-        bool RequiresPasswordChange = false
+        bool RequiresPasswordChange = false,
+        List<CompanyAssociationDto>? Companies = null
     );
 }
