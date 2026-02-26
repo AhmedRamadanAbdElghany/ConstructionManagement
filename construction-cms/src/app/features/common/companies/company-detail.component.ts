@@ -13,11 +13,12 @@ import {
 } from '../../../core/services/messaging.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { RequestInspectionDialogComponent } from '../../client/client-inspections/request-inspection-dialog.component';
+import { CompanyAnnouncementsDialogComponent } from './company-announcements-dialog.component';
 
 @Component({
   selector: 'app-company-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, RequestInspectionDialogComponent],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, RequestInspectionDialogComponent, CompanyAnnouncementsDialogComponent],
   template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
       <!-- Loading State -->
@@ -76,6 +77,16 @@ import { RequestInspectionDialogComponent } from '../../client/client-inspection
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                   </svg>
                   {{ 'inspections.request.title' | translate }}
+                </button>
+
+                <!-- Announcements Button -->
+                <button 
+                  (click)="openAnnouncements()"
+                  class="px-6 py-3 rounded-xl bg-sky-500 text-white text-sm font-bold hover:bg-sky-600 transition-colors flex items-center gap-2 shadow-lg shadow-sky-500/20">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
+                  </svg>
+                  {{ 'browse_firms.view_announcements' | translate }}
                 </button>
 
                 <!-- Follow Button -->
@@ -280,6 +291,15 @@ import { RequestInspectionDialogComponent } from '../../client/client-inspection
           (success)="onRequestSuccess()">
         </app-request-inspection-dialog>
       }
+
+      <!-- Announcements Dialog -->
+      @if (showAnnouncementsDialog && company) {
+        <app-company-announcements-dialog
+          [companyId]="company.id"
+          [companyName]="company.name"
+          (close)="showAnnouncementsDialog = false">
+        </app-company-announcements-dialog>
+      }
     </div>
   `,
   styles: [`
@@ -310,6 +330,7 @@ export class CompanyDetailComponent implements OnInit, OnDestroy {
 
   // Inspection Request
   showRequestInspection = false;
+  showAnnouncementsDialog = false;
 
   // Messaging restriction
   messagingStatus: MessagingStatusDto | null = null;
@@ -478,5 +499,9 @@ export class CompanyDetailComponent implements OnInit, OnDestroy {
     this.showRequestInspection = false;
     // Potentially navigate or show a success toast
     alert('Inspection request submitted successfully!');
+  }
+
+  openAnnouncements() {
+    this.showAnnouncementsDialog = true;
   }
 }

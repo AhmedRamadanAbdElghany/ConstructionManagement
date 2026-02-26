@@ -22,6 +22,7 @@ public class ApplicationDbContext : DbContext
 
     // ── DbSets ──────────────────────────────────────────────────────────────────
     public DbSet<Company> Companies => Set<Company>();
+    public DbSet<CompanyUser> CompanyUsers => Set<CompanyUser>();
     public DbSet<CompanyDefaultPhase> CompanyDefaultPhases => Set<CompanyDefaultPhase>();
     public DbSet<User> Users => Set<User>();
     public DbSet<Role> Roles => Set<Role>();

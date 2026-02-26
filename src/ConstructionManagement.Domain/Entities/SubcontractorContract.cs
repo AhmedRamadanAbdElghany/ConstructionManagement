@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using ConstructionManagement.Domain.Enums;
 
 namespace ConstructionManagement.Domain.Entities
 {
@@ -46,7 +47,7 @@ namespace ConstructionManagement.Domain.Entities
         public DateTime? CompletionCertificateDate { get; set; }
 
         // Status
-        public ContractStatus Status { get; set; } = ContractStatus.Draft;
+        public SubcontractorContractStatus Status { get; set; } = SubcontractorContractStatus.Draft;
         public DateTime? StatusDate { get; set; }
         public string? StatusNotes { get; set; }
 
@@ -73,7 +74,10 @@ namespace ConstructionManagement.Domain.Entities
         public virtual ICollection<SubcontractorPayment> Payments { get; set; } = new List<SubcontractorPayment>();
     }
 
-    public enum ContractStatus
+    /// <summary>
+    /// Status values for subcontractor contracts
+    /// </summary>
+    public enum SubcontractorContractStatus
     {
         Draft = 0,
         PendingApproval = 1,

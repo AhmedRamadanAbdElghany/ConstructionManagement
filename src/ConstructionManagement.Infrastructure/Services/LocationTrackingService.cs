@@ -42,6 +42,15 @@ public class LocationTrackingService : ILocationTrackingService
         _logger = logger;
     }
 
+    // Helper method to get user's company IDs via CompanyUser table
+    private async Task<List<int>> GetUserCompanyIdsAsync(int userId)
+    {
+        return await _context.CompanyUsers
+            .Where(cu => cu.UserId == userId && cu.Status == ContractStatus.Active)
+            .Select(cu => cu.CompanyId)
+            .ToListAsync();
+    }
+
     private int? GetCurrentUserId()
     {
         var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier);

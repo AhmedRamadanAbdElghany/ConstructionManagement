@@ -40,6 +40,22 @@ namespace ConstructionManagement.Infrastructure.Services
             _emailService = emailService;
         }
 
+        // Helper method to check if user belongs to a company via CompanyUser table
+        private async Task<bool> IsUserInCompanyAsync(int userId, int companyId)
+        {
+            return await _context.CompanyUsers
+                .AnyAsync(cu => cu.UserId == userId && cu.CompanyId == companyId && cu.Status == ContractStatus.Active);
+        }
+
+        // Helper method to get user's company IDs via CompanyUser table
+        private async Task<List<int>> GetUserCompanyIdsAsync(int userId)
+        {
+            return await _context.CompanyUsers
+                .Where(cu => cu.UserId == userId && cu.Status == ContractStatus.Active)
+                .Select(cu => cu.CompanyId)
+                .ToListAsync();
+        }
+
         #region Inspection Requests
 
         public async Task<InspectionRequestDto> CreateRequestAsync(int clientUserId, CreateInspectionRequestDto dto)

@@ -139,15 +139,21 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
         <p>{{ 'common.loading' | translate }}</p>
       </div>
     } @else if (inspections().length === 0) {
-      <div class="empty-state">
-        <div class="empty-icon">🔍</div>
+      <div class="empty-state animate-premium-scale">
+        <div class="empty-icon-modern">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+          </svg>
+        </div>
         <h3>{{ 'inspections.no_results' | translate }}</h3>
         <p>{{ 'inspections.no_results_desc' | translate }}</p>
       </div>
     } @else {
       <div class="inspection-grid">
         @for (insp of inspections(); track insp.id) {
-          <div class="inspection-card-premium glass-morph" (click)="openDetail(insp.id)">
+          <div class="inspection-card-premium glass-morph animate-premium-fade" 
+               (click)="openDetail(insp.id)"
+               [style.animation-delay]="($index * 50) + 'ms'">
             <div class="card-glow"></div>
             <div class="card-header">
               <div class="prop-badge-premium">{{ propertyLabel(insp.propertyType) | translate }}</div>
@@ -711,21 +717,31 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
       border-radius: 24px;
     }
     .empty-state.small { padding: 3rem 2rem; background: transparent; border: none; }
-    .empty-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      opacity: 0.6;
+    .empty-icon-modern {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--glass-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-blue);
+      margin-bottom: 1.5rem;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
     }
     .empty-state h3 {
-      font-size: 1.15rem;
-      font-weight: 700;
+      font-size: 1.25rem;
+      font-weight: 800;
       color: var(--app-text);
       margin: 0 0 0.5rem;
+      letter-spacing: -0.01em;
     }
     .empty-state p {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       color: var(--muted-text);
       margin: 0;
+      max-width: 300px;
+      line-height: 1.5;
     }
     .empty-msg {
       font-size: 0.9rem;
@@ -870,11 +886,15 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.4rem 0.8rem;
-      border-radius: 10px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      &.large { padding: 0.6rem 1rem; font-size: 0.85rem; }
+      padding: 0.45rem 1rem;
+      border-radius: 99px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.1);
+      &.large { padding: 0.75rem 1.5rem; font-size: 0.85rem; }
     }
 
     .status-dot {

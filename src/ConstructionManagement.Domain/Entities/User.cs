@@ -44,11 +44,17 @@ public class User : BaseEntity, ICompanyEntity
 
     // -- Multi-Tenancy ----------------------------------------------------------
     /// Logical tenant identifier for data isolation (all data in single database)
+    /// Kept for backward compatibility - prefer using CompanyUsers for multi-company support
     /// </summary>
     public int? CompanyId { get; set; }
     [ForeignKey(nameof(CompanyId))]
     [System.Text.Json.Serialization.JsonIgnore]
     public virtual Company? Company { get; set; }
+
+    /// <summary>
+    /// Company-user relationships (for users working with multiple companies)
+    /// </summary>
+    public virtual ICollection<CompanyUser> CompanyUsers { get; set; } = new List<CompanyUser>();
 
 
 

@@ -147,6 +147,14 @@ public interface IMessagingService
     Task<IEnumerable<MessagableUserDto>> GetMessagableUsersAsync(int companyId, string? userType = null);
 
     /// <summary>
+    /// Get users that SuperAdmin can message (all company owners across all companies)
+    /// </summary>
+    /// <param name="superAdminUserId">The SuperAdmin's user ID</param>
+    /// <param name="userType">Optional filter by user type</param>
+    /// <returns>List of company owners that can be messaged</returns>
+    Task<IEnumerable<MessagableUserDto>> GetMessagableUsersForSuperAdminAsync(int superAdminUserId, string? userType = null);
+
+    /// <summary>
     /// Start a new conversation between two workers in the same company
     /// </summary>
     Task<ConversationDto> StartWorkerConversationAsync(int initiatorId, StartWorkerConversationRequest request, List<IFormFile>? attachments = null);

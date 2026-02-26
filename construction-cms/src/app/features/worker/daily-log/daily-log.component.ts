@@ -27,33 +27,33 @@ interface WorkTask {
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header with Date Navigation -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 animate-premium-fade">
           <div>
-            <h1 class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tight uppercase">{{ 'daily_log.title' | translate }}</h1>
-            <p class="text-slate-500 dark:text-slate-400 font-medium">{{ 'daily_log.subtitle' | translate }}</p>
+            <h1 class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tight uppercase drop-shadow-sm">{{ 'daily_log.title' | translate }}</h1>
+            <p class="text-slate-500 dark:text-slate-400 font-medium italic opacity-80">{{ 'daily_log.subtitle' | translate }}</p>
           </div>
           
           <!-- Date Navigation -->
-          <div class="flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-200 dark:border-white/5 shadow-xl">
-            <button (click)="navigateDay(-1)" class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-indigo-500 hover:text-white transition-all">
+          <div class="flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none">
+            <button (click)="navigateDay(-1)" class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-indigo-500 hover:text-white transition-all hover:scale-110 active:scale-90">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path>
               </svg>
             </button>
             
             <div class="px-6 py-3 text-center min-w-[200px]">
-               <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ 'daily_log.selected_date' | translate }}</p>
+               <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 opacity-60">{{ 'daily_log.selected_date' | translate }}</p>
               <input type="date" [(ngModel)]="selectedDateString" (change)="onDateChange()" 
-                     class="bg-transparent text-sm font-black text-indigo-600 dark:text-indigo-400 border-none outline-none text-center cursor-pointer">
+                     class="bg-transparent text-sm font-black text-indigo-600 dark:text-indigo-400 border-none outline-none text-center cursor-pointer hover:scale-105 transition-transform">
             </div>
             
-            <button (click)="navigateDay(1)" class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-indigo-500 hover:text-white transition-all">
+            <button (click)="navigateDay(1)" class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-indigo-500 hover:text-white transition-all hover:scale-110 active:scale-90">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
               </svg>
             </button>
             
-            <button (click)="goToToday()" class="px-5 py-3 rounded-xl bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/20">
+            <button (click)="goToToday()" class="px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-700 text-white text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-indigo-500/20 active:scale-95">
                {{ 'daily_log.today' | translate }}
             </button>
           </div>
@@ -101,8 +101,9 @@ interface WorkTask {
               </div>
 
               <div class="space-y-6">
-                @for (task of assignedTasks; track task.id) {
-                  <div class="p-6 rounded-[2rem] border-2 transition-all hover:shadow-lg"
+                @for (task of assignedTasks; track task.id; let i = $index) {
+                  <div class="p-6 rounded-[2rem] border-2 transition-all hover:shadow-xl hover:scale-[1.01] group animate-premium-fade"
+                       [style.animation-delay]="(i * 100 + 100) + 'ms'"
                        [ngClass]="{
                          'bg-slate-50 dark:bg-slate-800/30 border-slate-200 dark:border-white/5': task.status === 'Pending',
                          'bg-amber-50 dark:bg-amber-500/5 border-amber-200 dark:border-amber-500/20': task.status === 'InProgress',
@@ -111,17 +112,17 @@ interface WorkTask {
                        }">
                     <div class="flex items-start justify-between mb-4">
                        <div>
-                         <h3 class="text-lg font-black text-slate-900 dark:text-white tracking-tight">{{ task.projectItemName }}</h3>
-                         <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">
+                         <h3 class="text-lg font-black text-slate-900 dark:text-white tracking-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{{ task.projectItemName }}</h3>
+                         <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1 opacity-70">
                           {{ 'daily_log.target' | translate }}: {{ task.assignedQuantity }} {{ task.unit }}
                         </p>
                       </div>
-                      <span class="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest"
+                      <span class="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-sm"
                             [ngClass]="{
                               'bg-slate-200 text-slate-600': task.status === 'Pending',
-                              'bg-amber-500 text-white': task.status === 'InProgress',
-                              'bg-emerald-500 text-white': task.status === 'Completed' || task.status === 'Approved',
-                              'bg-rose-500 text-white': task.status === 'Rejected'
+                              'bg-gradient-to-r from-amber-500 to-orange-600 text-white': task.status === 'InProgress',
+                              'bg-gradient-to-r from-emerald-500 to-teal-600 text-white': task.status === 'Completed' || task.status === 'Approved',
+                              'bg-gradient-to-r from-rose-500 to-pink-600 text-white': task.status === 'Rejected'
                             }">
                         {{ 'common.' + (task.status === 'InProgress' ? 'work_in_progress' : task.status.toLowerCase()) | translate }}
                       </span>
@@ -261,16 +262,17 @@ interface WorkTask {
             }
 
             <!-- Recent History -->
-            <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-8 border border-slate-200 dark:border-white/5 shadow-2xl">
+            <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-8 border border-slate-200 dark:border-white/5 shadow-2xl animate-premium-fade" style="animation-delay: 400ms">
                <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight mb-6">{{ 'daily_log.recent_days' | translate }}</h3>
               <div class="space-y-3">
-                @for (day of recentDays; track day.date) {
+                @for (day of recentDays; track day.date; let i = $index) {
                   <button (click)="selectDate(day.date)" 
-                          class="w-full p-4 rounded-2xl text-left transition-all hover:scale-[1.02]"
-                          [ngClass]="isSameDay(day.date, selectedDate) ? 'bg-indigo-500 text-white' : 'bg-slate-50 dark:bg-slate-800/50'">
+                          class="w-full p-4 rounded-2xl text-left transition-all hover:scale-[1.02] active:scale-95 animate-premium-fade"
+                          [style.animation-delay]="(i * 50 + 500) + 'ms'"
+                          [ngClass]="isSameDay(day.date, selectedDate) ? 'bg-gradient-to-r from-indigo-600 to-blue-700 text-white shadow-lg shadow-indigo-500/30' : 'bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800'">
                     <p class="text-sm font-black">{{ day.date | date:'EEE, MMM d' }}</p>
-                    <p class="text-[10px] font-bold uppercase tracking-widest mt-1"
-                       [ngClass]="isSameDay(day.date, selectedDate) ? 'text-indigo-200' : 'text-slate-400'">
+                    <p class="text-[10px] font-bold uppercase tracking-widest mt-1 opacity-70"
+                       [ngClass]="isSameDay(day.date, selectedDate) ? 'text-indigo-100' : 'text-slate-400'">
                       {{ day.taskCount }} {{ 'daily_log.tasks_label' | translate }} · {{ day.isClosed ? ('daily_log.day_locked' | translate) : ('daily_log.day_open' | translate) }}
                     </p>
                   </button>

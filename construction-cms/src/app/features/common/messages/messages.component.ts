@@ -118,7 +118,8 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
             @for (conversation of filteredConversations; track conversation.id) {
               <a 
                 [routerLink]="['/messages', conversation.id]"
-                class="block group bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl hover:shadow-2xl transition-all">
+                class="block group bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl hover:shadow-2xl transition-all animate-premium-fade"
+                [style.animation-delay]="($index * 50) + 'ms'">
                 
                 <div class="p-6">
                   <div class="flex items-start gap-4">
@@ -210,9 +211,9 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
 
         <!-- Empty State -->
         @if (!isLoading && !isStatusLoading && filteredConversations.length === 0 && conversations.length === 0) {
-          <div class="flex flex-col items-center justify-center py-20 text-center">
-            <div class="w-24 h-24 mb-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center shadow-inner">
-              <svg class="w-10 h-10 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="flex flex-col items-center justify-center py-20 text-center animate-premium-scale">
+            <div class="w-24 h-24 mb-6 rounded-3xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-lg shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-white/5">
+              <svg class="w-10 h-10 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
               </svg>
             </div>

@@ -1,9 +1,11 @@
 using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Infrastructure.Persistence;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using ConstructionManagement.Infrastructure.Services;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using MockQueryable;
 using Moq;
 
@@ -17,9 +19,18 @@ public class RoleServiceTests
     private readonly Mock<IRepository<RolePermission>> _rolePermRepo = new();
     private readonly Mock<IRepository<User>> _userRepo = new();
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
+    private readonly ApplicationDbContext _context;
+
+    public RoleServiceTests()
+    {
+        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+        _context = new ApplicationDbContext(options);
+    }
 
     private RoleService CreateService() =>
-        new(_roleRepo.Object, _userRoleRepo.Object, _permRepo.Object, _rolePermRepo.Object, _userRepo.Object, _unitOfWork.Object);
+        new(_context, _roleRepo.Object, _userRoleRepo.Object, _permRepo.Object, _rolePermRepo.Object, _userRepo.Object, _unitOfWork.Object);
 
     private void SetupAdmin(int adminId, bool isSuper)
     {

@@ -4,6 +4,7 @@ using ConstructionManagement.Domain.Entities;
 using ConstructionManagement.Infrastructure.Persistence.Repositories;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using ConstructionManagement.Domain.Enums;
 
 namespace ConstructionManagement.Infrastructure.Services;
 
@@ -15,6 +16,8 @@ public class JoinRequestService : IJoinRequestService
     private readonly INotificationService _notificationService;
     private readonly IEmailService _emailService;
     private readonly IRepository<Role> _roleRepository;
+    private readonly ICompanyUserRepository _companyUserRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public JoinRequestService(
         IJoinRequestRepository joinRequestRepository,
@@ -22,7 +25,9 @@ public class JoinRequestService : IJoinRequestService
         ICompanyRepository companyRepository,
         INotificationService notificationService,
         IEmailService emailService,
-        IRepository<Role> roleRepository)
+        IRepository<Role> roleRepository,
+        ICompanyUserRepository companyUserRepository,
+        IUnitOfWork unitOfWork)
     {
         _joinRequestRepository = joinRequestRepository;
         _userRepository = userRepository;
@@ -30,6 +35,8 @@ public class JoinRequestService : IJoinRequestService
         _notificationService = notificationService;
         _emailService = emailService;
         _roleRepository = roleRepository;
+        _companyUserRepository = companyUserRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<JoinRequestDto> CreateRequestAsync(int? userId, CreateJoinRequestDto dto)
@@ -45,9 +52,10 @@ public class JoinRequestService : IJoinRequestService
             throw new InvalidOperationException("You already have a pending request to join this company.");
         }
 
-        // Check if user is already part of the company
+        // Check if user is already part of the company (using CompanyUser table)
         var user = await _userRepository.GetByIdAsync(userId.Value);
-        if (user != null && user.CompanyId == dto.CompanyId)
+        var existingCompanyUsers = await _companyUserRepository.GetActiveByUserIdAsync(userId.Value);
+        if (existingCompanyUsers.Any(cu => cu.CompanyId == dto.CompanyId))
         {
             throw new InvalidOperationException("You are already part of this company.");
         }
@@ -118,15 +126,23 @@ public class JoinRequestService : IJoinRequestService
             throw new InvalidOperationException("Only pending requests can be approved.");
         }
 
-        // Add user to company
+        // Add user to company via CompanyUser table
         var user = await _userRepository.GetByIdAsync(request.UserId ?? 0);
         if (user != null)
         {
-            user.CompanyId = request.CompanyId;
-
-            // IMPORTANT: Do NOT change user.UserType here.
-            // UserType is set at registration and is immutable.
-            // The join request approval only assigns the user to the company.
+            // Create CompanyUser record instead of setting User.CompanyId
+            var companyUser = new CompanyUser
+            {
+                UserId = user.Id,
+                CompanyId = request.CompanyId,
+                Role = request.RequestedRole ?? "User",
+                ContractStartDate = DateTime.UtcNow,
+                Status = ContractStatus.Active,
+                IsPrimary = !await _companyUserRepository.GetActiveByUserIdAsync(user.Id).ContinueWith(t => t.Result.Any()),
+                JoinedAt = DateTime.UtcNow
+            };
+            await _companyUserRepository.AddAsync(companyUser);
+            await _unitOfWork.SaveChangesAsync();
 
             // Determine the appropriate role name based on the user's existing UserType
             var roleName = user.UserType switch

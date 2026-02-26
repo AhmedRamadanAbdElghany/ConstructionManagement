@@ -1,6 +1,8 @@
 using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Domain.Enums;
+using ConstructionManagement.Infrastructure.Persistence;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -11,6 +13,7 @@ namespace ConstructionManagement.Infrastructure.Services
 {
     public class RoleService : IRoleService
     {
+        private readonly ApplicationDbContext _context;
         private readonly IRepository<Role> _roleRepository;
         private readonly IRepository<UserRole> _userRoleRepository;
         private readonly IRepository<Permission> _permissionRepository;
@@ -19,6 +22,7 @@ namespace ConstructionManagement.Infrastructure.Services
         private readonly IUnitOfWork _unitOfWork;
 
         public RoleService(
+            ApplicationDbContext context,
             IRepository<Role> roleRepository,
             IRepository<UserRole> userRoleRepository,
             IRepository<Permission> permissionRepository,
@@ -26,12 +30,22 @@ namespace ConstructionManagement.Infrastructure.Services
             IRepository<User> userRepository,
             IUnitOfWork unitOfWork)
         {
+            _context = context;
             _roleRepository = roleRepository;
             _userRoleRepository = userRoleRepository;
             _permissionRepository = permissionRepository;
             _rolePermissionRepository = rolePermissionRepository;
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
+        }
+
+        // Helper method to get user's company IDs via CompanyUser table
+        private async Task<List<int>> GetUserCompanyIdsAsync(int userId)
+        {
+            return await _context.CompanyUsers
+                .Where(cu => cu.UserId == userId && cu.Status == ContractStatus.Active)
+                .Select(cu => cu.CompanyId)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<RoleDto>> GetRolesByCompanyAsync(int? companyId, int userId)

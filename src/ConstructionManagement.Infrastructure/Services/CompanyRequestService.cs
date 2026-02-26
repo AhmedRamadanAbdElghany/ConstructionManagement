@@ -242,8 +242,6 @@ public class CompanyRequestService : ICompanyRequestService
         var user = await _userRepository.GetByIdAsync(request.UserId ?? 0);
         if (user != null)
         {
-            user.CompanyId = company.Id;
-            
             // Set user type based on company type
             if (request.CompanyType == CompanyType.Warehouse)
             {
@@ -253,6 +251,24 @@ public class CompanyRequestService : ICompanyRequestService
             {
                 user.UserType = Domain.Enums.UserType.CompanyOwner;
             }
+
+            // Create CompanyUser record for the company owner
+            var companyUser = new CompanyUser
+            {
+                UserId = user.Id,
+                CompanyId = company.Id,
+                Role = "CompanyAdmin",
+                ContractStartDate = DateTime.UtcNow,
+                Status = ContractStatus.Active,
+                IsPrimary = true,
+                JoinedAt = DateTime.UtcNow
+            };
+            
+            // Add to context directly since we have access to it
+            _context.CompanyUsers.Add(companyUser);
+            
+            // Also set the legacy CompanyId for backward compatibility
+            user.CompanyId = company.Id;
 
             // IMPORTANT: Do NOT call user.UserRoles.Clear() — that wipes ALL existing roles
             // (including SuperAdmin, roles from other companies, etc.).

@@ -27,6 +27,7 @@ public class AuthService : IAuthService
     private readonly IRepository<UserRole> _userRoleRepository;
     private readonly ILocalizationService _localizationService;
     private readonly IRepository<Vendor> _vendorRepository;
+    private readonly ICompanyUserRepository _companyUserRepository;
 
     public AuthService(
         IUserRepository userRepository,
@@ -38,7 +39,8 @@ public class AuthService : IAuthService
         IRepository<Vendor> vendorRepository,
         IRepository<Role> roleRepository,
         IRepository<UserRole> userRoleRepository,
-        ILocalizationService localizationService)
+        ILocalizationService localizationService,
+        ICompanyUserRepository companyUserRepository)
     {
         _userRepository = userRepository;
         _configuration = configuration;
@@ -50,6 +52,7 @@ public class AuthService : IAuthService
         _roleRepository = roleRepository;
         _userRoleRepository = userRoleRepository;
         _localizationService = localizationService;
+        _companyUserRepository = companyUserRepository;
     }
 
 
@@ -62,9 +65,14 @@ public class AuthService : IAuthService
             return new AuthResponse(false, _localizationService["Auth.InvalidCredentials"], null, null);
         }
 
-        var token = GenerateJwtToken(user);
+        var token = await GenerateJwtToken(user);
 
         var roles = user.UserRoles?.Select(ur => ur.Role.Name).ToList() ?? new List<string>();
+
+        // Get primary company ID from CompanyUser table
+        var activeCompanyUsers = await _companyUserRepository.GetActiveByUserIdAsync(user.Id);
+        var primaryCompany = activeCompanyUsers.FirstOrDefault(cu => cu.IsPrimary);
+        var companyId = primaryCompany?.CompanyId ?? activeCompanyUsers.FirstOrDefault()?.CompanyId;
 
         var userDto = new UserDto(
             user.Id,
@@ -73,7 +81,7 @@ public class AuthService : IAuthService
             roles,
             user.CreatedAt,
             user.UserType,
-            user.CompanyId,
+            companyId,
             user.RequiresPasswordChange
         );
 
@@ -228,7 +236,7 @@ public class AuthService : IAuthService
             }
 
             // TODO: Send verification email with user.EmailVerificationToken
-            var token = GenerateJwtToken(user);
+            var token = await GenerateJwtToken(user);
             var roles = new List<string> { roleName };
             
             var userDto = new UserDto(
@@ -459,7 +467,7 @@ public class AuthService : IAuthService
         return null;
     }
 
-    private string GenerateJwtToken(User user)
+    private async Task<string> GenerateJwtToken(User user)
     {
         var secretKey = _configuration["JwtSettings:Key"];
         if (string.IsNullOrEmpty(secretKey))
@@ -477,9 +485,25 @@ public class AuthService : IAuthService
             new Claim(ClaimTypes.Name, user.FullName)
         };
 
-        if (user.CompanyId.HasValue)
+        // Get active company memberships from CompanyUser table
+        var activeCompanyUsers = await _companyUserRepository.GetActiveByUserIdAsync(user.Id);
+        var primaryCompany = activeCompanyUsers.FirstOrDefault(cu => cu.IsPrimary);
+        
+        if (primaryCompany != null)
         {
-            claims.Add(new Claim("companyId", user.CompanyId.Value.ToString()));
+            claims.Add(new Claim("companyId", primaryCompany.CompanyId.ToString()));
+        }
+        else if (activeCompanyUsers.Any())
+        {
+            // Use first active company if no primary
+            claims.Add(new Claim("companyId", activeCompanyUsers.First().CompanyId.ToString()));
+        }
+        
+        // Add all company IDs as a separate claim for multi-company support
+        if (activeCompanyUsers.Any())
+        {
+            var companyIds = activeCompanyUsers.Select(cu => cu.CompanyId.ToString()).ToList();
+            claims.Add(new Claim("companyIds", string.Join(",", companyIds)));
         }
 
         if (user.UserRoles != null)

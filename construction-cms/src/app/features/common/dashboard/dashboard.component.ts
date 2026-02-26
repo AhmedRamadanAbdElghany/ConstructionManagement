@@ -130,69 +130,69 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
           <!-- Stats Cards -->
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <!-- Total Companies -->
-            <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-white/5 group hover:border-indigo-500/30 transition-all duration-300 shadow-xl shadow-slate-200/50 dark:shadow-none">
+            <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 group hover:border-indigo-500/30 transition-all duration-300 shadow-2xl shadow-slate-200/50 dark:shadow-none animate-premium-fade" style="animation-delay: 100ms">
               <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl transition-colors"></div>
               <div class="relative">
-                <div class="flex items-center justify-between mb-4">
-                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center justify-between mb-6">
+                  <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 via-blue-600 to-blue-700 flex items-center justify-center shadow-lg shadow-indigo-500/30 group-hover:scale-110 transition-transform">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                     </svg>
                   </div>
-                   <span *ngIf="saStats.newCompaniesCount > 0" class="text-emerald-500 text-sm font-black">+{{ saStats.newCompaniesCount }} {{ 'common.new' | translate }}</span>
+                   <span *ngIf="saStats.newCompaniesCount > 0" class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] font-black uppercase tracking-widest">+{{ saStats.newCompaniesCount }} {{ 'common.new' | translate }}</span>
                 </div>
                 <p class="text-4xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ saStats.totalCompanies }}</p>
-                <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{{ 'dashboard.global_companies' | translate }}</p>
+                <p class="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">{{ 'dashboard.global_companies' | translate }}</p>
               </div>
             </div>
 
             <!-- Active Subs -->
-            <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-white/5 group hover:border-emerald-500/30 transition-all duration-300 shadow-xl shadow-slate-200/50 dark:shadow-none">
+            <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 group hover:border-emerald-500/30 transition-all duration-300 shadow-2xl shadow-slate-200/50 dark:shadow-none animate-premium-fade" style="animation-delay: 200ms">
               <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full blur-3xl transition-colors"></div>
               <div class="relative">
-                <div class="flex items-center justify-between mb-4">
-                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/30">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center justify-between mb-6">
+                  <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-600 to-teal-700 flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                     </svg>
                   </div>
-                   <span class="text-emerald-500 text-sm font-black">{{ 'dashboard.subscription_health' | translate }}</span>
+                   <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] font-black uppercase tracking-widest">{{ 'dashboard.subscription_health' | translate }}</span>
                 </div>
                 <p class="text-4xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ saStats.activeSubscriptions }}</p>
-                <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{{ 'dashboard.active_licenses' | translate }}</p>
+                <p class="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">{{ 'dashboard.active_licenses' | translate }}</p>
               </div>
             </div>
 
             <!-- MRR -->
-            <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-white/5 group hover:border-amber-500/30 transition-all duration-300 shadow-xl shadow-slate-200/50 dark:shadow-none">
+            <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 group hover:border-amber-500/30 transition-all duration-300 shadow-2xl shadow-slate-200/50 dark:shadow-none animate-premium-fade" style="animation-delay: 300ms">
               <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 dark:bg-amber-500/10 rounded-full blur-3xl transition-colors"></div>
               <div class="relative">
-                <div class="flex items-center justify-between mb-4">
-                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center justify-between mb-6">
+                  <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 via-orange-600 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/30 group-hover:scale-110 transition-transform">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                   </div>
                 </div>
                 <p class="text-4xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ formatShortNumber(saStats.monthlyRecurringRevenue) }}</p>
-                <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{{ 'dashboard.mrr' | translate }}</p>
+                <p class="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">{{ 'dashboard.mrr' | translate }}</p>
               </div>
             </div>
 
             <!-- Pending -->
-            <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-white/5 group hover:border-rose-500/30 transition-all duration-300 shadow-xl shadow-slate-200/50 dark:shadow-none">
+            <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 group hover:border-rose-500/30 transition-all duration-300 shadow-2xl shadow-slate-200/50 dark:shadow-none animate-premium-fade" style="animation-delay: 400ms">
               <div class="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 dark:bg-rose-500/10 rounded-full blur-3xl transition-colors"></div>
               <div class="relative">
-                <div class="flex items-center justify-between mb-4">
-                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-lg shadow-rose-500/30">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center justify-between mb-6">
+                  <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-rose-500 via-pink-600 to-rose-700 flex items-center justify-center shadow-lg shadow-rose-500/30 group-hover:scale-110 transition-transform">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                   </div>
-                  <span class="px-2 py-1 bg-rose-500 text-white rounded text-[10px] font-black tracking-tighter uppercase animate-pulse">{{ 'dashboard.action_required' | translate }}</span>
+                  <span class="px-3 py-1 bg-gradient-to-r from-rose-500 to-pink-600 text-white rounded-full text-[9px] font-black tracking-widest uppercase animate-pulse shadow-lg shadow-rose-500/20">{{ 'dashboard.action_required' | translate }}</span>
                 </div>
                 <p class="text-4xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ saStats.pendingOnboardings }}</p>
-                <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{{ 'dashboard.pending_onboardings' | translate }}</p>
+                <p class="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">{{ 'dashboard.pending_onboardings' | translate }}</p>
               </div>
             </div>
           </div>
@@ -336,47 +336,51 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
             <!-- PORTAL METRICS (Top Row) -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <!-- Projects -->
-              <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-xl p-6 group hover:-translate-y-1 transition-all">
-                <div class="flex items-center justify-between mb-4">
-                  <div class="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+              <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-2xl p-8 group hover:-translate-y-1 transition-all animate-premium-fade" style="animation-delay: 100ms">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl"></div>
+                <div class="flex items-center justify-between mb-6">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20 group-hover:rotate-12 transition-transform">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                   </div>
-                  <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">{{ 'client_portal.active_projects' | translate }}</span>
+                  <span class="text-[10px] font-black text-indigo-500 uppercase tracking-[0.2em]">{{ 'client_portal.active_projects' | translate }}</span>
                 </div>
-                <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{{ clientDashboard?.projects?.length || 0 }}</h3>
+                <h3 class="text-5xl font-black text-slate-900 dark:text-white tracking-tighter">{{ clientDashboard?.projects?.length || 0 }}</h3>
               </div>
 
               <!-- Payments -->
-              <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-xl p-6 group hover:-translate-y-1 transition-all">
-                <div class="flex items-center justify-between mb-4">
-                  <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-2xl p-8 group hover:-translate-y-1 transition-all animate-premium-fade" style="animation-delay: 200ms">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl"></div>
+                <div class="flex items-center justify-between mb-6">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 group-hover:rotate-12 transition-transform">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                   </div>
-                  <span class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{{ 'client_portal.pending_payment' | translate }}</span>
+                  <span class="text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em]">{{ 'client_portal.pending_payment' | translate }}</span>
                 </div>
-                <h3 class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{{ formatCurrencyValue(clientDashboard?.paymentSummary?.pendingAmount || 0) }}</h3>
+                <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{{ formatCurrencyValue(clientDashboard?.paymentSummary?.pendingAmount || 0) }}</h3>
               </div>
 
               <!-- Messages -->
-              <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-xl p-6 group hover:-translate-y-1 transition-all">
-                <div class="flex items-center justify-between mb-4">
-                  <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+              <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-2xl p-8 group hover:-translate-y-1 transition-all animate-premium-fade" style="animation-delay: 300ms">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl"></div>
+                <div class="flex items-center justify-between mb-6">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/20 group-hover:rotate-12 transition-transform">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
                   </div>
-                  <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest">{{ 'client_portal.unread_messages' | translate }}</span>
+                  <span class="text-[10px] font-black text-amber-500 uppercase tracking-[0.2em]">{{ 'client_portal.unread_messages' | translate }}</span>
                 </div>
-                <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{{ clientDashboard?.unreadMessagesCount || 0 }}</h3>
+                <h3 class="text-5xl font-black text-slate-900 dark:text-white tracking-tighter">{{ clientDashboard?.unreadMessagesCount || 0 }}</h3>
               </div>
 
               <!-- Change Orders -->
-              <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-xl p-6 group hover:-translate-y-1 transition-all">
-                <div class="flex items-center justify-between mb-4">
-                  <div class="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+              <div class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-2xl p-8 group hover:-translate-y-1 transition-all animate-premium-fade" style="animation-delay: 400ms">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-3xl"></div>
+                <div class="flex items-center justify-between mb-6">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/20 group-hover:rotate-12 transition-transform">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                   </div>
-                  <span class="text-[10px] font-black text-purple-500 uppercase tracking-widest">{{ 'client_portal.pending_change_orders' | translate }}</span>
+                  <span class="text-[10px] font-black text-purple-500 uppercase tracking-[0.2em]">{{ 'client_portal.pending_change_orders' | translate }}</span>
                 </div>
-                <h3 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{{ clientDashboard?.pendingChangeOrdersCount || 0 }}</h3>
+                <h3 class="text-5xl font-black text-slate-900 dark:text-white tracking-tighter">{{ clientDashboard?.pendingChangeOrdersCount || 0 }}</h3>
               </div>
             </div>
 
@@ -780,30 +784,34 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
                     <!-- Quick Actions Grid -->
                     <div class="grid grid-cols-1 gap-4">
-                      <a routerLink="/worker/daily-log" class="flex-1 bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-white/5 hover:border-indigo-500/50 transition-all group flex items-center justify-between shadow-sm">
+                      <a routerLink="/worker/daily-log" class="flex-1 bg-white dark:bg-slate-900 rounded-[1.5rem] p-6 border border-slate-200 dark:border-white/5 hover:border-indigo-500/50 transition-all group flex items-center justify-between shadow-sm animate-premium-fade" style="animation-delay: 100ms">
                         <div class="flex items-center gap-4">
-                          <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-indigo-500/20">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
                           </div>
                           <div>
+                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{{ 'dashboard.live' | translate }}</p>
                             <p class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'dashboard.log_today' | translate }}</p>
-                            <p class="text-[10px] text-slate-500 font-medium">{{ 'dashboard.live' | translate }}</p>
                           </div>
                         </div>
-                        <svg class="w-5 h-5 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                        <div class="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-all">
+                          <svg class="w-5 h-5 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
                       </a>
                       
-                      <a routerLink="/worker/personal-hr" class="flex-1 bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-white/5 hover:border-cyan-500/50 transition-all group flex items-center justify-between shadow-sm">
+                      <a routerLink="/worker/personal-hr" class="flex-1 bg-white dark:bg-slate-900 rounded-[1.5rem] p-6 border border-slate-200 dark:border-white/5 hover:border-cyan-500/50 transition-all group flex items-center justify-between shadow-sm animate-premium-fade" style="animation-delay: 200ms">
                         <div class="flex items-center gap-4">
-                          <div class="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-teal-500 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-cyan-500/20">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                           </div>
                           <div>
-                            <p class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'dashboard.finance_vacation' | translate }}</p>
-                            <p class="text-[10px] text-slate-500 font-medium">HR Center</p>
+                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{{ 'dashboard.live' | translate }}</p>
+                            <p class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'sidebar.personal_hr' | translate }}</p>
                           </div>
                         </div>
-                        <svg class="w-5 h-5 text-slate-300 group-hover:text-cyan-500 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                        <div class="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-cyan-500 group-hover:text-white transition-all">
+                          <svg class="w-5 h-5 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
                       </a>
                     </div>
                   </div>

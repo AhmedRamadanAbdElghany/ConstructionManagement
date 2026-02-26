@@ -72,62 +72,68 @@ public class MessagingController : BaseApiController
             var userId = GetCurrentUserId();
             var user = await GetUserAsync();
             
-            _logger.LogInformation("GetConversations called for userId: {UserId}, user.CompanyId: {CompanyId}", userId, user?.CompanyId);
+            _logger.LogInformation("GetConversations called for userId: {UserId}, user.CompanyId: {CompanyId}, UserType: {UserType}", 
+                userId, user?.CompanyId, user?.UserType);
             
-            // Check if user is SuperAdmin
+            // 1. Every user can have user-level conversations (as initiator or target)
+            var userConversations = await _messagingService.GetUserConversationsAsync(userId);
+            _logger.LogInformation("Found {Count} user conversations", userConversations.Count());
+            
+            var allConversations = new Dictionary<int, ConversationDto>();
+            foreach (var c in userConversations)
+            {
+                allConversations[c.Id] = c;
+            }
+
+            // 2. Determine if user is allowed to see company-level conversations
             var isSuperAdmin = await _dbContext.UserRoles
                 .Include(ur => ur.Role)
                 .AnyAsync(ur => ur.UserId == userId && ur.Role.Name == "SuperAdmin");
-            
-            _logger.LogInformation("User {UserId} isSuperAdmin: {IsSuperAdmin}", userId, isSuperAdmin);
-            
-            // If user is company owner or SuperAdmin, return company conversations
-            if (user?.CompanyId.HasValue == true)
-            {
-                _logger.LogInformation("Getting company conversations for CompanyId: {CompanyId}", user.CompanyId.Value);
-                var companyConversations = await _messagingService.GetCompanyConversationsAsync(user.CompanyId.Value);
-                _logger.LogInformation("Found {Count} company conversations", companyConversations.Count());
-                return Ok(companyConversations);
-            }
-            
-            // If SuperAdmin without CompanyId, find their company via roles
-            if (isSuperAdmin)
-            {
-                // Find the company that has SuperAdmin users assigned
-                var superAdminCompanyId = await _dbContext.Users
-                    .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "SuperAdmin") && u.CompanyId.HasValue)
-                    .Select(u => (int?)u.CompanyId.Value)
-                    .FirstOrDefaultAsync();
                 
-                _logger.LogInformation("SuperAdmin company lookup found: {CompanyId}", superAdminCompanyId);
-                
-                if (superAdminCompanyId.HasValue && superAdminCompanyId.Value > 0)
+            var isCompanyOwner = user?.UserType == ConstructionManagement.Domain.Enums.UserType.CompanyOwner;
+            _logger.LogInformation("User {UserId} isSuperAdmin: {IsSuperAdmin}, isCompanyOwner: {IsCompanyOwner}", 
+                userId, isSuperAdmin, isCompanyOwner);
+
+            if (isSuperAdmin || isCompanyOwner)
+            {
+                int? companyIdToFetch = null;
+
+                if (isCompanyOwner && user?.CompanyId.HasValue == true)
                 {
-                    _logger.LogInformation("Getting company conversations for SuperAdmin CompanyId: {CompanyId}", superAdminCompanyId.Value);
-                    var companyConversations = await _messagingService.GetCompanyConversationsAsync(superAdminCompanyId.Value);
-                    _logger.LogInformation("Found {Count} company conversations for SuperAdmin", companyConversations.Count());
-                    return Ok(companyConversations);
+                    companyIdToFetch = user.CompanyId.Value;
                 }
-                
-                // Fallback: find company with BusinessId "SYSTEM-ADMIN"
-                var systemAdminCompany = await _dbContext.Companies
-                    .FirstOrDefaultAsync(c => c.BusinessId == "SYSTEM-ADMIN");
-                
-                _logger.LogInformation("SYSTEM-ADMIN company lookup found: {CompanyId}", systemAdminCompany?.Id);
-                
-                if (systemAdminCompany != null)
+                else if (isSuperAdmin)
                 {
-                    var companyConversations = await _messagingService.GetCompanyConversationsAsync(systemAdminCompany.Id);
-                    _logger.LogInformation("Found {Count} company conversations for SYSTEM-ADMIN", companyConversations.Count());
-                    return Ok(companyConversations);
+                    // Find SuperAdmin's designated company
+                    companyIdToFetch = await _dbContext.Users
+                        .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "SuperAdmin") && u.CompanyId.HasValue)
+                        .Select(u => (int?)u.CompanyId.Value)
+                        .FirstOrDefaultAsync();
+                        
+                    if (!companyIdToFetch.HasValue || companyIdToFetch.Value == 0)
+                    {
+                        var systemAdminCompany = await _dbContext.Companies
+                            .FirstOrDefaultAsync(c => c.BusinessId == "SYSTEM-ADMIN");
+                        companyIdToFetch = systemAdminCompany?.Id;
+                    }
+                }
+
+                if (companyIdToFetch.HasValue && companyIdToFetch.Value > 0)
+                {
+                    _logger.LogInformation("Getting company conversations for CompanyId: {CompanyId}", companyIdToFetch.Value);
+                    var companyConversations = await _messagingService.GetCompanyConversationsAsync(companyIdToFetch.Value);
+                    _logger.LogInformation("Found {Count} company conversations", companyConversations.Count());
+                    
+                    foreach (var c in companyConversations)
+                    {
+                        // Deduplicate (company conversation representation takes precedence for owner/admin)
+                        allConversations[c.Id] = c;
+                    }
                 }
             }
-            
-            // Otherwise return user's own conversations
-            _logger.LogInformation("Getting user conversations for userId: {UserId}", userId);
-            var conversations = await _messagingService.GetUserConversationsAsync(userId);
-            _logger.LogInformation("Found {Count} user conversations", conversations.Count());
-            return Ok(conversations);
+
+            _logger.LogInformation("Returning {Count} total conversations", allConversations.Count);
+            return Ok(allConversations.Values.OrderByDescending(c => c.LastMessageAt ?? c.CreatedAt));
         }
         catch (Exception ex)
         {
@@ -494,8 +500,38 @@ public class MessagingController : BaseApiController
         {
             var userId = GetCurrentUserId();
             var attachments = Request.Form.Files.ToList();
-            var result = await _messagingService.StartConversationWithUserAsync(userId, request, attachments);
-            return Ok(result);
+            
+            // Check if SuperAdmin
+            var isSuperAdmin = await _dbContext.UserRoles
+                .Include(ur => ur.Role)
+                .AnyAsync(ur => ur.UserId == userId && ur.Role.Name == "SuperAdmin");
+            
+            if (isSuperAdmin)
+            {
+                // SuperAdmin messaging a user: create conversation targeting the user's company
+                var targetUser = await _dbContext.Users.FindAsync(request.TargetUserId);
+                if (targetUser == null)
+                {
+                    return BadRequest(new { message = "Target user not found." });
+                }
+                
+                if (!targetUser.CompanyId.HasValue)
+                {
+                    return BadRequest(new { message = "Target user is not associated with a company." });
+                }
+                
+                // Use StartConversation targeting the user's company
+                var startRequest = new StartConversationRequest
+                {
+                    CompanyId = targetUser.CompanyId.Value,
+                    Message = request.Message
+                };
+                var result = await _messagingService.StartConversationAsync(userId, startRequest, attachments);
+                return Ok(result);
+            }
+            
+            var normalResult = await _messagingService.StartConversationWithUserAsync(userId, request, attachments);
+            return Ok(normalResult);
         }
         catch (InvalidOperationException ex)
         {
@@ -521,15 +557,28 @@ public class MessagingController : BaseApiController
     {
         try
         {
+            var userId = GetCurrentUserId();
             var user = await GetUserAsync();
+            
+            // Check if SuperAdmin
+            var isSuperAdmin = await _dbContext.UserRoles
+                .Include(ur => ur.Role)
+                .AnyAsync(ur => ur.UserId == userId && ur.Role.Name == "SuperAdmin");
+            
+            if (isSuperAdmin)
+            {
+                // SuperAdmin can message all company owners
+                var result = await _messagingService.GetMessagableUsersForSuperAdminAsync(userId, userType);
+                return Ok(result);
+            }
             
             if (user?.CompanyId == null)
             {
                 return BadRequest(new { message = "You are not associated with a company." });
             }
 
-            var result = await _messagingService.GetMessagableUsersAsync(user.CompanyId.Value, userType);
-            return Ok(result);
+            var companyResult = await _messagingService.GetMessagableUsersAsync(user.CompanyId.Value, userType);
+            return Ok(companyResult);
         }
         catch (Exception ex)
         {

@@ -15,18 +15,18 @@ import { HrService, LeaveRequestDto, PayrollDto, UserHRStatsDto, LeaveTypeDto } 
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500 font-['Outfit']">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 animate-premium-fade">
           <div class="space-y-1">
-            <h1 class="text-4xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight flex items-center gap-4">
-              <span class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white flex items-center justify-center text-xl shadow-lg shadow-indigo-500/20">👤</span>
+            <h1 class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tight flex items-center gap-4 uppercase">
+              <span class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white flex items-center justify-center text-xl shadow-xl shadow-indigo-500/20">👤</span>
               {{ 'personal_hr.title' | translate }}
             </h1>
-            <p class="text-slate-500 dark:text-slate-400 font-medium tracking-tight">{{ 'personal_hr.subtitle' | translate }}</p>
+            <p class="text-slate-500 dark:text-slate-400 font-medium tracking-tight italic opacity-80">{{ 'personal_hr.subtitle' | translate }}</p>
           </div>
           <div class="flex items-center gap-3">
-             <div class="px-6 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 shadow-sm text-slate-500">
-               <span class="text-[9px] font-bold uppercase tracking-[0.2em] block leading-none mb-1 opacity-60">{{ 'dashboard.status' | translate }}</span>
-               <span class="text-xs font-bold text-emerald-500 uppercase tracking-widest">{{ 'personal_hr.active_associate' | translate }}</span>
+             <div class="px-6 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none text-slate-500">
+               <span class="text-[9px] font-black uppercase tracking-[0.2em] block leading-none mb-1 opacity-40">{{ 'dashboard.status' | translate }}</span>
+               <span class="text-xs font-black text-emerald-500 uppercase tracking-widest">{{ 'personal_hr.active_associate' | translate }}</span>
              </div>
           </div>
         </div>
@@ -34,43 +34,43 @@ import { HrService, LeaveRequestDto, PayrollDto, UserHRStatsDto, LeaveTypeDto } 
         <!-- Metric Engine -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <!-- Monthly Compensation -->
-          <div class="premium-card group">
+          <div class="premium-card group animate-premium-fade" style="animation-delay: 100ms">
             <div class="flex items-center justify-between mb-8">
-              <div class="w-16 h-16 rounded-[1.5rem] bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">💰</div>
-              <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl">{{ 'personal_hr.financial_label' | translate }}</div>
+              <div class="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-indigo-500/20 to-blue-600/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">💰</div>
+              <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl opacity-60">{{ 'personal_hr.financial_label' | translate }}</div>
             </div>
-            <p class="text-4xl font-bold text-slate-900 dark:text-white mb-2 tracking-tighter">{{ monthlySalary | currency:'USD':'symbol':'1.0-0' }}</p>
-            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-[0.2em]">{{ 'personal_hr.monthly_compensation' | translate }}</p>
+            <p class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tighter">{{ monthlySalary | currency:'USD':'symbol':'1.0-0' }}</p>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.2em] opacity-80">{{ 'personal_hr.monthly_compensation' | translate }}</p>
           </div>
-
+ 
           <!-- Leave Allowance -->
-          <div class="premium-card group">
+          <div class="premium-card group animate-premium-fade" style="animation-delay: 200ms">
             <div class="flex items-center justify-between mb-8">
-              <div class="w-16 h-16 rounded-[1.5rem] bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">📅</div>
-              <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl">{{ 'personal_hr.allowance_label' | translate }}</div>
+              <div class="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-emerald-500/20 to-teal-600/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">📅</div>
+              <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl opacity-60">{{ 'personal_hr.allowance_label' | translate }}</div>
             </div>
-            <p class="text-4xl font-bold text-slate-900 dark:text-white mb-2 tracking-tighter">{{ annualLeaveDays }}</p>
-            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-[0.2em]">{{ 'personal_hr.annual_leave_remaining' | translate }}</p>
+            <p class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tighter">{{ annualLeaveDays }}</p>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.2em] opacity-80">{{ 'personal_hr.annual_leave_remaining' | translate }}</p>
           </div>
-
+ 
           <!-- Active Requests -->
-          <div class="premium-card group">
+          <div class="premium-card group animate-premium-fade" style="animation-delay: 300ms">
             <div class="flex items-center justify-between mb-8">
-              <div class="w-16 h-16 rounded-[1.5rem] bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">⏳</div>
-              <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl">{{ 'dashboard.pending' | translate }}</div>
+              <div class="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-amber-500/20 to-orange-600/20 text-amber-600 dark:text-amber-400 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">⏳</div>
+              <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl opacity-60">{{ 'dashboard.pending' | translate }}</div>
             </div>
-            <p class="text-4xl font-bold text-slate-900 dark:text-white mb-2 tracking-tighter">{{ pendingRequests }}</p>
-            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-[0.2em]">{{ 'personal_hr.awaiting_authorization' | translate }}</p>
+            <p class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tighter">{{ pendingRequests }}</p>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.2em] opacity-80">{{ 'personal_hr.awaiting_authorization' | translate }}</p>
           </div>
-
+ 
           <!-- Utilization -->
-          <div class="premium-card group">
+          <div class="premium-card group animate-premium-fade" style="animation-delay: 400ms">
             <div class="flex items-center justify-between mb-8">
-              <div class="w-16 h-16 rounded-[1.5rem] bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">📊</div>
-              <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl">{{ 'personal_hr.work_days_label' | translate }}</div>
+              <div class="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-purple-500/20 to-fuchsia-600/20 text-purple-600 dark:text-purple-400 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">📊</div>
+              <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-xl opacity-60">{{ 'personal_hr.work_days_label' | translate }}</div>
             </div>
-            <p class="text-4xl font-bold text-slate-900 dark:text-white mb-2 tracking-tighter">{{ workDaysThisMonth }}</p>
-            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-[0.2em]">{{ 'personal_hr.cycle_performance' | translate }}</p>
+            <p class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tighter">{{ workDaysThisMonth }}</p>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.2em] opacity-80">{{ 'personal_hr.cycle_performance' | translate }}</p>
           </div>
         </div>
 
@@ -122,24 +122,24 @@ import { HrService, LeaveRequestDto, PayrollDto, UserHRStatsDto, LeaveTypeDto } 
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-slate-100 dark:divide-white/5">
-                    @for (record of salaryHistory; track record.id) {
-                      <tr class="group hover:bg-slate-50/80 dark:hover:bg-white/[0.01] transition-all">
+                    @for (record of salaryHistory; track record.id; let i = $index) {
+                      <tr class="group hover:bg-slate-50/80 dark:hover:bg-white/[0.01] transition-all animate-premium-fade" [style.animation-delay]="(i * 50 + 100) + 'ms'">
                         <td class="px-10 py-8">
-                           <p class="text-base font-bold text-slate-900 dark:text-white tracking-tight">{{ getMonthName(record.month, record.year) }}</p>
+                           <p class="text-base font-black text-slate-900 dark:text-white tracking-tight group-hover:text-indigo-600 transition-colors">{{ getMonthName(record.month, record.year) }}</p>
                         </td>
                         <td class="px-10 py-8 text-sm font-bold text-slate-600 dark:text-slate-400 capitalize">{{ record.baseSalary | currency:'USD' }}</td>
-                        <td class="px-10 py-8 text-sm font-bold text-emerald-500">+{{ record.bonuses | currency:'USD' }}</td>
-                        <td class="px-10 py-8 text-sm font-bold text-rose-500">-{{ record.deductions | currency:'USD' }}</td>
+                        <td class="px-10 py-8 text-sm font-black text-emerald-500">+{{ record.bonuses | currency:'USD' }}</td>
+                        <td class="px-10 py-8 text-sm font-black text-rose-500">-{{ record.deductions | currency:'USD' }}</td>
                         <td class="px-10 py-8">
-                           <span class="text-lg font-bold text-indigo-600 dark:text-indigo-400 tracking-tighter">{{ record.netSalary | currency:'USD' }}</span>
+                           <span class="text-lg font-black text-indigo-600 dark:text-indigo-400 tracking-tighter">{{ record.netSalary | currency:'USD' }}</span>
                         </td>
                         <td class="px-10 py-8">
-                          <span class="px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest border transition-all"
+                          <span class="px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm transition-all"
                                 [ngClass]="{
                                   'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/10': record.isPaid,
                                   'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/10': !record.isPaid
                                 }">
-                            {{ record.isPaid ? 'Paid' : 'Pending' }}
+                            {{ (record.isPaid ? 'common.paid' : 'common.pending') | translate }}
                           </span>
                         </td>
                       </tr>

@@ -39,91 +39,104 @@ interface MaterialRequest {
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500 font-['Outfit']">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-10">
-          <div>
-            <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-4 tracking-tight">{{ 'inventory.title' | translate }}</h1>
-            <div class="flex p-1.5 bg-slate-100 dark:bg-slate-900 rounded-2xl w-fit border border-slate-200 dark:border-white/5">
-              <button (click)="activeTab = 'materials'" 
-                      [class.bg-white]="activeTab === 'materials'" 
-                      [class.dark:bg-slate-800]="activeTab === 'materials'"
-                      [class.text-slate-900]="activeTab === 'materials'"
-                      [class.dark:text-white]="activeTab === 'materials'"
-                      [class.shadow-xl]="activeTab === 'materials'"
-                      class="px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-500 transition-all duration-300 hover:text-slate-700 dark:hover:text-slate-300">
-                  {{ 'inventory.tabs.materials' | translate }}
-              </button>
-              <button (click)="activeTab = 'warehouses'" 
-                      [class.bg-white]="activeTab === 'warehouses'" 
-                      [class.dark:bg-slate-800]="activeTab === 'warehouses'"
-                      [class.text-slate-900]="activeTab === 'warehouses'"
-                      [class.dark:text-white]="activeTab === 'warehouses'"
-                      [class.shadow-xl]="activeTab === 'warehouses'"
-                      class="px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-500 transition-all duration-300 hover:text-slate-700 dark:hover:text-slate-300">
-                  {{ 'inventory.tabs.warehouses' | translate }}
-              </button>
-              <button (click)="activeTab = 'requests'" 
-                      [class.bg-white]="activeTab === 'requests'" 
-                      [class.dark:bg-slate-800]="activeTab === 'requests'"
-                      [class.text-slate-900]="activeTab === 'requests'"
-                      [class.dark:text-white]="activeTab === 'requests'"
-                      [class.shadow-xl]="activeTab === 'requests'"
-                      class="px-8 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-500 transition-all duration-300 hover:text-slate-700 dark:hover:text-slate-300">
-                  {{ 'inventory.tabs.requests' | translate }}
-              </button>
-            </div>
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 animate-premium-fade">
+          <div class="space-y-1">
+            <h1 class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tight uppercase drop-shadow-sm">
+              {{ 'inventory.title' | translate }}
+            </h1>
+            <p class="text-slate-500 dark:text-slate-400 font-medium italic opacity-80">
+              Manage items, warehouses, and requests
+            </p>
           </div>
           <button (click)="openAddModal()" 
-                  class="px-8 py-4 rounded-[2rem] bg-gradient-to-br from-violet-500 to-purple-600 text-white font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-violet-500/20 hover:scale-105 active:scale-95 transition-all flex items-center">
-            + Add New
+                  class="px-10 py-5 rounded-[2rem] bg-gradient-to-r from-violet-600 to-indigo-700 text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-2xl shadow-violet-500/30 hover:shadow-violet-500/50 hover:-translate-y-1 active:scale-95 transition-all">
+            + {{ 'common.add_new' | translate }}
+          </button>
+        </div>
+
+        <!-- Premium Tabs -->
+        <div class="flex flex-wrap items-center gap-2 p-1.5 bg-white dark:bg-slate-900 rounded-[1.5rem] mb-10 border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none w-fit animate-premium-fade" style="animation-delay: 100ms">
+          <button (click)="activeTab = 'materials'" 
+                  [class.bg-gradient-to-r]="activeTab === 'materials'"
+                  [class.from-violet-600]="activeTab === 'materials'"
+                  [class.to-indigo-700]="activeTab === 'materials'"
+                  [class.text-white]="activeTab === 'materials'"
+                  [class.shadow-lg]="activeTab === 'materials'"
+                  [class.shadow-violet-500/20]="activeTab === 'materials'"
+                  class="px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 text-slate-500 dark:text-slate-400 hover:text-violet-500">
+            {{ 'inventory.tabs.materials' | translate }}
+          </button>
+          <button (click)="activeTab = 'warehouses'" 
+                  [class.bg-gradient-to-r]="activeTab === 'warehouses'"
+                  [class.from-violet-600]="activeTab === 'warehouses'"
+                  [class.to-indigo-700]="activeTab === 'warehouses'"
+                  [class.text-white]="activeTab === 'warehouses'"
+                  [class.shadow-lg]="activeTab === 'warehouses'"
+                  [class.shadow-violet-500/20]="activeTab === 'warehouses'"
+                  class="px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 text-slate-500 dark:text-slate-400 hover:text-violet-500">
+            {{ 'inventory.tabs.warehouses' | translate }}
+          </button>
+          <button (click)="activeTab = 'requests'" 
+                  [class.bg-gradient-to-r]="activeTab === 'requests'"
+                  [class.from-violet-600]="activeTab === 'requests'"
+                  [class.to-indigo-700]="activeTab === 'requests'"
+                  [class.text-white]="activeTab === 'requests'"
+                  [class.shadow-lg]="activeTab === 'requests'"
+                  [class.shadow-violet-500/20]="activeTab === 'requests'"
+                  class="px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 text-slate-500 dark:text-slate-400 hover:text-violet-500">
+            {{ 'inventory.tabs.requests' | translate }}
           </button>
         </div>
 
         @if (activeTab === 'materials') {
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @for (material of materials; track material.id) {
-            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-6 hover:shadow-2xl hover:shadow-violet-500/10 transition-all duration-300 group">
-               <div class="flex items-start justify-between mb-4">
-                 <div class="flex items-center space-x-3">
-                   <div class="w-12 h-12 rounded-2xl bg-violet-500/10 flex items-center justify-center text-violet-500">
-                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            @for (material of materials; track material.id; let i = $index) {
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-2xl shadow-slate-200/50 dark:shadow-none p-8 hover:shadow-violet-500/10 transition-all duration-500 group animate-premium-fade"
+                 [style.animation-delay]="(i * 50 + 200) + 'ms'">
+               <div class="flex items-start justify-between mb-8">
+                 <div class="flex items-center space-x-5">
+                   <div class="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-violet-500/10 to-indigo-600/10 flex items-center justify-center text-violet-600 dark:text-violet-400 group-hover:scale-110 transition-transform duration-500 shadow-inner ring-1 ring-violet-500/10">
+                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                      </svg>
                    </div>
                    <div>
-                     <h3 class="font-bold text-slate-900 dark:text-white">{{ material.name }}</h3>
-                     <span class="text-xs text-violet-500 font-medium uppercase">{{ material.category }}</span>
+                     <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none mb-2">{{ material.name }}</h3>
+                     <span class="text-[10px] text-violet-500 font-black uppercase tracking-widest opacity-80">{{ material.category }}</span>
                    </div>
                  </div>
-                 <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase" 
-                       [class.bg-green-500/10]="material.quantity > material.reorderPoint"
-                       [class.text-green-500]="material.quantity > material.reorderPoint"
+                 <span class="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-sm ring-1 ring-inset" 
+                       [class.bg-emerald-500/10]="material.quantity > material.reorderPoint"
+                       [class.text-emerald-600]="material.quantity > material.reorderPoint"
+                       [class.ring-emerald-500/20]="material.quantity > material.reorderPoint"
                        [class.bg-amber-500/10]="material.quantity <= material.reorderPoint"
-                       [class.text-amber-500]="material.quantity <= material.reorderPoint">
+                       [class.text-amber-600]="material.quantity <= material.reorderPoint"
+                       [class.ring-amber-500/20]="material.quantity <= material.reorderPoint">
                    {{ material.quantity > material.reorderPoint ? 'In Stock' : 'Low Stock' }}
                  </span>
                </div>
                
-               <div class="grid grid-cols-3 gap-4 mb-4">
-                 <div class="text-center p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
-                   <p class="text-[10px] text-slate-400 uppercase tracking-widest">Stock</p>
-                   <p class="text-lg font-black text-slate-900 dark:text-white">{{ material.quantity }}</p>
-                   <p class="text-[8px] text-slate-500">{{ material.unit }}</p>
+               <div class="grid grid-cols-3 gap-4 mb-8">
+                 <div class="text-center p-4 rounded-3xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 group-hover:bg-white dark:group-hover:bg-white/10 transition-colors duration-500">
+                   <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mb-1">Stock</p>
+                   <p class="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none">{{ material.quantity }}</p>
+                   <p class="text-[8px] text-slate-500 font-bold uppercase mt-1">{{ material.unit }}</p>
                  </div>
-                 <div class="text-center p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
-                   <p class="text-[10px] text-slate-400 uppercase tracking-widest">Price</p>
-                   <p class="text-lg font-black text-slate-900 dark:text-white">{{ material.unitPrice | currency }}</p>
+                 <div class="text-center p-4 rounded-3xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 group-hover:bg-white dark:group-hover:bg-white/10 transition-colors duration-500">
+                   <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mb-1">Price</p>
+                   <p class="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none">{{ material.unitPrice | currency:'USD':'symbol':'1.2-2' }}</p>
                  </div>
-                 <div class="text-center p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/50">
-                   <p class="text-[10px] text-slate-400 uppercase tracking-widest">Reorder</p>
-                   <p class="text-lg font-black text-slate-900 dark:text-white">{{ material.reorderPoint }}</p>
+                 <div class="text-center p-4 rounded-3xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 group-hover:bg-white dark:group-hover:bg-white/10 transition-colors duration-500">
+                   <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mb-1">Reorder</p>
+                   <p class="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none">{{ material.reorderPoint }}</p>
                  </div>
                </div>
                
-               <div class="flex space-x-2">
-                 <button class="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold text-xs uppercase hover:bg-violet-500 hover:text-white transition-all">
+               <div class="flex gap-3">
+                 <button class="flex-1 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-slate-400 font-black text-[10px] uppercase tracking-widest hover:bg-white dark:hover:bg-white/10 hover:text-violet-600 shadow-sm border border-slate-200 dark:border-white/5 transition-all duration-300">
                    Edit
                  </button>
-                 <button class="flex-1 py-3 rounded-xl bg-violet-500 text-white font-bold text-xs uppercase shadow-lg shadow-violet-500/20 hover:bg-violet-600 transition-all">
+                 <button class="flex-1 py-4 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-700 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-violet-500/20 hover:brightness-110 active:scale-95 transition-all duration-300">
                    Request
                  </button>
                </div>
@@ -133,106 +146,121 @@ interface MaterialRequest {
         }
 
         @if (activeTab === 'warehouses') {
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @for (warehouse of warehouses; track warehouse.id) {
-            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-6 hover:shadow-2xl hover:shadow-violet-500/10 transition-all duration-300">
-               <div class="flex items-start justify-between mb-4">
-                 <div class="flex items-center space-x-3">
-                   <div class="w-12 h-12 rounded-2xl bg-violet-500/10 flex items-center justify-center text-violet-500">
-                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            @for (warehouse of warehouses; track warehouse.id; let i = $index) {
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-2xl shadow-slate-200/50 dark:shadow-none p-8 hover:shadow-violet-500/10 transition-all duration-500 group animate-premium-fade"
+                 [style.animation-delay]="(i * 50 + 200) + 'ms'">
+               <div class="flex items-start justify-between mb-8">
+                 <div class="flex items-center space-x-5">
+                   <div class="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-violet-500/10 to-indigo-600/10 flex items-center justify-center text-violet-600 dark:text-violet-400 group-hover:scale-110 transition-transform duration-500 shadow-inner ring-1 ring-violet-500/10">
+                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                      </svg>
                    </div>
                    <div>
-                     <h3 class="font-bold text-slate-900 dark:text-white">{{ warehouse.name }}</h3>
-                     <p class="text-xs text-slate-500">{{ warehouse.location }}</p>
+                     <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none mb-2">{{ warehouse.name }}</h3>
+                     <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest opacity-60 italic">{{ warehouse.location }}</p>
                    </div>
                  </div>
                  @if (warehouse.isMain) {
-                   <span class="px-3 py-1 rounded-full bg-violet-500/10 text-violet-500 text-[10px] font-black uppercase">Main</span>
+                   <span class="px-4 py-2 rounded-xl bg-violet-600 text-white text-[9px] font-black uppercase tracking-widest shadow-lg shadow-violet-500/20 ring-1 ring-violet-400">Main</span>
                  }
                </div>
                
-               <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 mb-4">
+               <div class="p-6 rounded-3xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 group-hover:bg-white dark:group-hover:bg-white/10 transition-colors duration-500 mb-8">
                  <div class="flex justify-between items-center">
-                   <span class="text-xs text-slate-400 uppercase tracking-widest">Stock</span>
-                   <span class="text-xl font-black text-violet-500">{{ getWarehouseStock(warehouse.id) }}</span>
+                   <span class="text-[10px] text-slate-400 font-black uppercase tracking-widest">Total Stock</span>
+                   <span class="text-2xl font-black text-violet-600 group-hover:scale-110 transition-transform duration-500">{{ getWarehouseStock(warehouse.id) }}</span>
                  </div>
                </div>
                
-               <div class="flex space-x-2">
-                 <button class="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold text-xs uppercase hover:bg-violet-500 hover:text-white transition-all">
+               <div class="flex gap-3">
+                 <button class="flex-1 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-slate-400 font-black text-[10px] uppercase tracking-widest hover:bg-white dark:hover:bg-white/10 hover:text-violet-600 shadow-sm border border-slate-200 dark:border-white/5 transition-all duration-300">
                    Edit
                  </button>
-                 <button class="flex-1 py-3 rounded-xl bg-violet-500 text-white font-bold text-xs uppercase shadow-lg shadow-violet-500/20 hover:bg-violet-600 transition-all">
+                 <button class="flex-1 py-4 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-700 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-violet-500/20 hover:brightness-110 active:scale-95 transition-all duration-300">
                    View
                  </button>
                </div>
             </div>
             }
             
-            <div class="bg-slate-50 dark:bg-slate-900/50 rounded-[2.5rem] border-2 border-dashed border-slate-200 dark:border-slate-700 p-6 flex flex-col items-center justify-center cursor-pointer hover:border-violet-500 hover:bg-violet-500/5 transition-all group">
-              <div class="w-16 h-16 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center mb-4 group-hover:bg-violet-500 group-hover:text-white transition-all">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            <div (click)="openAddModal()" 
+                 class="bg-slate-50/50 dark:bg-white/[0.02] rounded-[2.5rem] border-2 border-dashed border-slate-200 dark:border-white/10 p-8 flex flex-col items-center justify-center cursor-pointer hover:border-violet-500/50 hover:bg-white dark:hover:bg-white/5 transition-all duration-500 group animate-premium-fade"
+                 [style.animation-delay]="(warehouses.length * 50 + 200) + 'ms'">
+              <div class="w-20 h-20 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center mb-6 group-hover:bg-violet-600 group-hover:text-white group-hover:scale-110 group-hover:rotate-90 transition-all duration-500 shadow-inner">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
                 </svg>
               </div>
-              <p class="font-bold text-slate-600 dark:text-slate-400">Add Warehouse</p>
+              <p class="font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-[10px] group-hover:text-violet-500 transition-colors">Add Warehouse</p>
             </div>
           </div>
         }
 
         @if (activeTab === 'requests') {
-          <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden">
+          <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-2xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all animate-premium-fade" style="animation-delay: 200ms">
+            <div class="p-8 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02]">
+              <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'inventory.tabs.requests' | translate }}</h2>
+            </div>
             <div class="overflow-x-auto">
               <table class="w-full">
-                <thead class="bg-slate-50 dark:bg-slate-950/50">
-                  <tr>
-                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Material</th>
-                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Requested By</th>
-                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Quantity</th>
-                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</th>
-                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-                    <th class="px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Actions</th>
+                <thead>
+                  <tr class="text-left text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest bg-slate-50 dark:bg-slate-950/50">
+                    <th class="px-8 py-6">{{ 'inventory.material' | translate }}</th>
+                    <th class="px-8 py-6">{{ 'inventory.requested_by' | translate }}</th>
+                    <th class="px-8 py-6">{{ 'inventory.quantity' | translate }}</th>
+                    <th class="px-8 py-6">{{ 'inventory.date' | translate }}</th>
+                    <th class="px-8 py-6">{{ 'inventory.status' | translate }}</th>
+                    <th class="px-8 py-6 text-right">{{ 'inventory.actions' | translate }}</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-                  @for (request of materialRequests; track request.id) {
-                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                    <td class="px-6 py-4">
-                      <p class="font-bold text-slate-900 dark:text-white">{{ request.materialName }}</p>
+                <tbody class="text-slate-600 dark:text-slate-300">
+                  @for (request of materialRequests; track request.id; let i = $index) {
+                  <tr class="border-b border-slate-100 dark:border-white/5 hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors group animate-premium-fade"
+                      [style.animation-delay]="(i * 30 + 400) + 'ms'">
+                    <td class="px-8 py-6">
+                      <p class="text-base font-black text-slate-900 dark:text-white tracking-tight">{{ request.materialName }}</p>
                     </td>
-                    <td class="px-6 py-4">
-                      <p class="text-sm text-slate-600 dark:text-slate-400">{{ request.requestedBy }}</p>
+                    <td class="px-8 py-6">
+                      <div class="flex items-center gap-3">
+                         <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-500 font-black text-sm border border-slate-200 dark:border-white/5">
+                            {{ request.requestedBy.charAt(0) }}
+                         </div>
+                         <p class="text-sm font-bold text-slate-600 dark:text-slate-400">{{ request.requestedBy }}</p>
+                      </div>
                     </td>
-                    <td class="px-6 py-4">
-                      <span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-sm">{{ request.quantity }}</span>
+                    <td class="px-8 py-6">
+                      <span class="px-4 py-2 rounded-xl bg-indigo-500/10 text-indigo-600 font-black text-sm shadow-sm ring-1 ring-indigo-500/20">{{ request.quantity }}</span>
                     </td>
-                    <td class="-4">
-                      <p class="px-6 pytext-sm text-slate-500">{{ request.requestDate }}</p>
+                    <td class="px-8 py-6">
+                      <p class="text-sm font-black text-slate-500 uppercase tracking-tighter">{{ request.requestDate | date:'mediumDate' }}</p>
                     </td>
-                    <td class="px-6 py-4">
-                      <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"
-                            [class.bg-amber-500/10]="request.status === 'Pending'"
-                            [class.text-amber-500]="request.status === 'Pending'"
-                            [class.bg-green-500/10]="request.status === 'Approved'"
-                            [class.text-green-500]="request.status === 'Approved'"
-                            [class.bg-red-500/10]="request.status === 'Rejected'"
-                            [class.text-red-500]="request.status === 'Rejected'">
-                        {{ request.status }}
+                    <td class="px-8 py-6">
+                      <span class="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-sm ring-1 ring-inset"
+                            [ngClass]="{
+                              'bg-amber-500/10 text-amber-600 ring-amber-500/20': request.status === 'Pending',
+                              'bg-emerald-500/10 text-emerald-600 ring-emerald-500/20': request.status === 'Approved',
+                              'bg-rose-500/10 text-rose-600 ring-rose-500/20': request.status === 'Rejected'
+                            }">
+                        {{ request.status | translate }}
                       </span>
                     </td>
-                    <td class="px-6 py-4 text-right">
-                      @if (request.status === 'Pending') {
-                        <button (click)="approveRequest(request)" class="px-4 py-2 rounded-xl bg-green-500 text-white font-bold text-xs uppercase shadow-lg shadow-green-500/20 hover:bg-green-600 transition-all mr-2">
-                          Approve
-                        </button>
-                        <button (click)="rejectRequest(request)" class="px-4 py-2 rounded-xl bg-red-500 text-white font-bold text-xs uppercase shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all">
-                          Reject
-                        </button>
-                      } @else {
-                        <span class="text-xs text-slate-400">Completed</span>
-                      }
+                    <td class="px-8 py-6 text-right">
+                      <div class="flex justify-end gap-2">
+                        @if (request.status === 'Pending') {
+                          <button (click)="approveRequest(request)" 
+                                  class="px-6 py-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 font-black uppercase text-[9px] tracking-widest hover:bg-emerald-500 hover:text-white transition-all shadow-sm">
+                            Approve
+                          </button>
+                          <button (click)="rejectRequest(request)" 
+                                  class="px-6 py-2.5 rounded-xl bg-rose-500/10 text-rose-600 font-black uppercase text-[9px] tracking-widest hover:bg-rose-500 hover:text-white transition-all shadow-sm">
+                            Reject
+                          </button>
+                        } @else {
+                          <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic opacity-60">Completed</span>
+                        }
+                      </div>
                     </td>
                   </tr>
                   }

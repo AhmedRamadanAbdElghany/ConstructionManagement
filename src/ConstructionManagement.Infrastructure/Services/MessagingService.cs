@@ -1367,4 +1367,34 @@ public class MessagingService : IMessagingService
 
         return await MapToConversationDto(conversation, initiatorId);
     }
+
+    /// <summary>
+    /// Get users that SuperAdmin can message (all company owners across all companies)
+    /// </summary>
+    public async Task<IEnumerable<MessagableUserDto>> GetMessagableUsersForSuperAdminAsync(int superAdminUserId, string? userType = null)
+    {
+        // Get all company owners across all companies
+        var query = _context.Users
+            .Where(u => u.UserType == UserType.CompanyOwner && u.CompanyId != null)
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(userType))
+        {
+            query = query.Where(u => u.UserType.ToString() == userType);
+        }
+
+        var users = await query
+            .Select(u => new MessagableUserDto
+            {
+                Id = u.Id,
+                Name = u.FullName ?? u.Username,
+                Email = u.Email,
+                Phone = u.Phone,
+                UserType = u.UserType.ToString(),
+                ProfilePicture = u.ProfileImageUrl
+            })
+            .ToListAsync();
+
+        return users;
+    }
 }

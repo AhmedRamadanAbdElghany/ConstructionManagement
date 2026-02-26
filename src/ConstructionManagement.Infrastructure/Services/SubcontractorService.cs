@@ -10,6 +10,7 @@ using DomainPaymentStatus = ConstructionManagement.Domain.Entities.Subcontractor
 using DomainPaymentType = ConstructionManagement.Domain.Entities.SubcontractorPaymentType;
 using DtoPaymentStatus = ConstructionManagement.Application.DTOs.SubcontractorPaymentStatus;
 using DtoPaymentType = ConstructionManagement.Application.DTOs.SubcontractorPaymentType;
+using ContractStatus = ConstructionManagement.Domain.Entities.SubcontractorContractStatus;
 
 namespace ConstructionManagement.Infrastructure.Services
 {

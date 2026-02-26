@@ -5,28 +5,28 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-    TaskManagementService,
-    ProjectItemTask,
-    TaskStatus,
-    TaskPriority
+  TaskManagementService,
+  ProjectItemTask,
+  TaskStatus,
+  TaskPriority
 } from '../../../core/services/task-management.service';
 import { DailyBoardService, DailyBoardSummary } from '../../../core/services/daily-board.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
 
 @Component({
-    selector: 'app-task-board',
-    standalone: true,
-    imports: [CommonModule, RouterModule, TranslateModule, FormsModule],
-    template: `
+  selector: 'app-task-board',
+  standalone: true,
+  imports: [CommonModule, RouterModule, TranslateModule, FormsModule],
+  template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center justify-between mb-8 animate-premium-fade">
           <div>
-            <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">
+            <h1 class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tight uppercase drop-shadow-sm">
               {{ 'tasks.board_title' | translate }}
             </h1>
-            <p class="text-slate-500 dark:text-slate-400 font-medium tracking-tight">
+            <p class="text-slate-500 dark:text-slate-400 font-medium tracking-tight italic opacity-80">
               {{ 'tasks.board_subtitle' | translate }}
             </p>
           </div>
@@ -45,39 +45,39 @@ import { I18nService } from '../../../core/i18n/i18n.service';
 
         <!-- Stats Cards -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-5 shadow-xl shadow-slate-200/50 dark:shadow-none">
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-6 shadow-xl shadow-slate-200/50 dark:shadow-none animate-premium-fade" style="animation-delay: 100ms">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">{{ 'tasks.total_tasks' | translate }}</p>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest opacity-60">{{ 'tasks.total_tasks' | translate }}</p>
                 <p class="text-3xl font-black text-slate-900 dark:text-white mt-1">{{ stats.total }}</p>
               </div>
-              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-500 to-slate-600 flex items-center justify-center shadow-lg shadow-slate-500/20">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                 </svg>
               </div>
             </div>
           </div>
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-5 shadow-xl shadow-slate-200/50 dark:shadow-none">
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-6 shadow-xl shadow-slate-200/50 dark:shadow-none animate-premium-fade" style="animation-delay: 200ms">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">{{ 'tasks.in_progress' | translate }}</p>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest opacity-60">{{ 'tasks.in_progress' | translate }}</p>
                 <p class="text-3xl font-black text-blue-600 mt-1">{{ stats.inProgress }}</p>
               </div>
-              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                 </svg>
               </div>
             </div>
           </div>
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-5 shadow-xl shadow-slate-200/50 dark:shadow-none">
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-6 shadow-xl shadow-slate-200/50 dark:shadow-none animate-premium-fade" style="animation-delay: 300ms">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">{{ 'tasks.ready_for_review' | translate }}</p>
-                <p class="text-3xl font-black text-yellow-600 mt-1">{{ stats.readyForReview }}</p>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest opacity-60">{{ 'tasks.ready_for_review' | translate }}</p>
+                <p class="text-3xl font-black text-amber-600 mt-1">{{ stats.readyForReview }}</p>
               </div>
-              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/20">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -85,13 +85,13 @@ import { I18nService } from '../../../core/i18n/i18n.service';
               </div>
             </div>
           </div>
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-5 shadow-xl shadow-slate-200/50 dark:shadow-none">
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-6 shadow-xl shadow-slate-200/50 dark:shadow-none animate-premium-fade" style="animation-delay: 400ms">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">{{ 'tasks.overdue' | translate }}</p>
-                <p class="text-3xl font-black text-red-600 mt-1">{{ stats.overdue }}</p>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest opacity-60">{{ 'tasks.overdue' | translate }}</p>
+                <p class="text-3xl font-black text-rose-600 mt-1">{{ stats.overdue }}</p>
               </div>
-              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-lg shadow-rose-500/20">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
@@ -147,25 +147,26 @@ import { I18nService } from '../../../core/i18n/i18n.service';
               <span class="px-2 py-1 rounded-lg bg-gray-200 dark:bg-slate-700 text-gray-600 dark:text-gray-400 text-xs font-bold">{{ getTasksByStatus(TaskStatus.Pending).length }}</span>
             </div>
             <div class="space-y-3">
-              <div *ngFor="let task of getTasksByStatus(TaskStatus.Pending)" 
+              <div *ngFor="let task of getTasksByStatus(TaskStatus.Pending); let i = $index" 
                 (click)="viewTask(task)"
-                class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all cursor-pointer border border-slate-200 dark:border-white/5 hover:border-cyan-500/50">
-                <div class="flex items-start justify-between mb-2">
-                  <span class="text-xs font-bold text-slate-500 dark:text-slate-400">{{ task.taskNumber }}</span>
-                  <span [class]="getPriorityClass(task.priority)" class="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase">
+                class="bg-white dark:bg-slate-800 rounded-3xl p-5 shadow-lg hover:shadow-2xl transition-all cursor-pointer border border-slate-200 dark:border-white/5 hover:border-indigo-500/50 group animate-premium-fade"
+                [style.animation-delay]="(i * 50 + 400) + 'ms'">
+                <div class="flex items-start justify-between mb-4">
+                  <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ task.taskNumber }}</span>
+                  <span [class]="getPriorityClass(task.priority)" class="px-3 py-1 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-sm">
                     {{ getPriorityLabel(task.priority) }}
                   </span>
                 </div>
-                <h4 class="font-bold text-slate-900 dark:text-white text-sm mb-2 line-clamp-2">{{ task.title }}</h4>
-                <p *ngIf="task.description" class="text-slate-500 dark:text-slate-400 text-xs mb-3 line-clamp-2">{{ task.description }}</p>
-                <div class="flex items-center justify-between">
-                  <div *ngIf="task.dueDate" class="flex items-center text-xs text-slate-500 dark:text-slate-400">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h4 class="font-black text-slate-900 dark:text-white text-sm mb-2 line-clamp-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{{ task.title }}</h4>
+                <p *ngIf="task.description" class="text-slate-500 dark:text-slate-400 text-xs mb-4 line-clamp-2 italic opacity-80">{{ task.description }}</p>
+                <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-white/5">
+                  <div *ngIf="task.dueDate" class="flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    <svg class="w-3.5 h-3.5 mr-1.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                     </svg>
                     {{ task.dueDate | date:'shortDate' }}
                   </div>
-                  <div *ngIf="task.assignedToUser" class="w-7 h-7 rounded-full bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">
+                  <div *ngIf="task.assignedToUser" class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white text-[10px] font-black shadow-lg shadow-indigo-500/20">
                     {{ getInitials(task.assignedToUser) }}
                   </div>
                 </div>
@@ -183,34 +184,35 @@ import { I18nService } from '../../../core/i18n/i18n.service';
               <span class="px-2 py-1 rounded-lg bg-blue-200 dark:bg-blue-800 text-blue-600 dark:text-blue-300 text-xs font-bold">{{ getTasksByStatus(TaskStatus.InProgress).length }}</span>
             </div>
             <div class="space-y-3">
-              <div *ngFor="let task of getTasksByStatus(TaskStatus.InProgress)" 
+              <div *ngFor="let task of getTasksByStatus(TaskStatus.InProgress); let i = $index" 
                 (click)="viewTask(task)"
-                class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all cursor-pointer border border-blue-200 dark:border-blue-500/20 hover:border-blue-500/50">
-                <div class="flex items-start justify-between mb-2">
-                  <span class="text-xs font-bold text-slate-500 dark:text-slate-400">{{ task.taskNumber }}</span>
-                  <span [class]="getPriorityClass(task.priority)" class="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase">
+                class="bg-white dark:bg-slate-800 rounded-3xl p-5 shadow-lg hover:shadow-2xl transition-all cursor-pointer border border-blue-200 dark:border-blue-500/20 hover:border-blue-500/50 group animate-premium-fade"
+                [style.animation-delay]="(i * 50 + 450) + 'ms'">
+                <div class="flex items-start justify-between mb-4">
+                  <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ task.taskNumber }}</span>
+                  <span [class]="getPriorityClass(task.priority)" class="px-3 py-1 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-sm">
                     {{ getPriorityLabel(task.priority) }}
                   </span>
                 </div>
-                <h4 class="font-bold text-slate-900 dark:text-white text-sm mb-2 line-clamp-2">{{ task.title }}</h4>
-                <p *ngIf="task.description" class="text-slate-500 dark:text-slate-400 text-xs mb-3 line-clamp-2">{{ task.description }}</p>
-                <div class="mb-3">
-                  <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
+                <h4 class="font-black text-slate-900 dark:text-white text-sm mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ task.title }}</h4>
+                <p *ngIf="task.description" class="text-slate-500 dark:text-slate-400 text-xs mb-4 line-clamp-2 italic opacity-80">{{ task.description }}</p>
+                <div class="mb-5">
+                  <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">
                     <span>{{ 'tasks.progress' | translate }}</span>
-                    <span>{{ task.progressPercentage }}%</span>
+                    <span class="text-blue-600">{{ task.progressPercentage }}%</span>
                   </div>
-                  <div class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full transition-all" [style.width.%]="task.progressPercentage"></div>
+                  <div class="w-full h-2 bg-slate-100 dark:bg-slate-700/50 rounded-full overflow-hidden shadow-inner">
+                    <div class="h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full transition-all duration-1000" [style.width.%]="task.progressPercentage"></div>
                   </div>
                 </div>
-                <div class="flex items-center justify-between">
-                  <div *ngIf="task.dueDate" class="flex items-center text-xs text-slate-500 dark:text-slate-400">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-white/5">
+                  <div *ngIf="task.dueDate" class="flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    <svg class="w-3.5 h-3.5 mr-1.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                     </svg>
                     {{ task.dueDate | date:'shortDate' }}
                   </div>
-                  <div *ngIf="task.assignedToUser" class="w-7 h-7 rounded-full bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">
+                  <div *ngIf="task.assignedToUser" class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-[10px] font-black shadow-lg shadow-blue-500/20">
                     {{ getInitials(task.assignedToUser) }}
                   </div>
                 </div>
@@ -228,25 +230,26 @@ import { I18nService } from '../../../core/i18n/i18n.service';
               <span class="px-2 py-1 rounded-lg bg-yellow-200 dark:bg-yellow-800 text-yellow-600 dark:text-yellow-300 text-xs font-bold">{{ getTasksByStatus(TaskStatus.ReadyForReview).length }}</span>
             </div>
             <div class="space-y-3">
-              <div *ngFor="let task of getTasksByStatus(TaskStatus.ReadyForReview)" 
+              <div *ngFor="let task of getTasksByStatus(TaskStatus.ReadyForReview); let i = $index" 
                 (click)="viewTask(task)"
-                class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all cursor-pointer border border-yellow-200 dark:border-yellow-500/20 hover:border-yellow-500/50">
-                <div class="flex items-start justify-between mb-2">
-                  <span class="text-xs font-bold text-slate-500 dark:text-slate-400">{{ task.taskNumber }}</span>
-                  <span [class]="getPriorityClass(task.priority)" class="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase">
+                class="bg-white dark:bg-slate-800 rounded-3xl p-5 shadow-lg hover:shadow-2xl transition-all cursor-pointer border border-yellow-200 dark:border-yellow-500/20 hover:border-yellow-500/50 group animate-premium-fade"
+                [style.animation-delay]="(i * 50 + 500) + 'ms'">
+                <div class="flex items-start justify-between mb-4">
+                  <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ task.taskNumber }}</span>
+                  <span [class]="getPriorityClass(task.priority)" class="px-3 py-1 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-sm">
                     {{ getPriorityLabel(task.priority) }}
                   </span>
                 </div>
-                <h4 class="font-bold text-slate-900 dark:text-white text-sm mb-2 line-clamp-2">{{ task.title }}</h4>
-                <p *ngIf="task.description" class="text-slate-500 dark:text-slate-400 text-xs mb-3 line-clamp-2">{{ task.description }}</p>
-                <div class="flex items-center justify-between">
-                  <div *ngIf="task.dueDate" class="flex items-center text-xs text-slate-500 dark:text-slate-400">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h4 class="font-black text-slate-900 dark:text-white text-sm mb-2 line-clamp-2 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">{{ task.title }}</h4>
+                <p *ngIf="task.description" class="text-slate-500 dark:text-slate-400 text-xs mb-4 line-clamp-2 italic opacity-80">{{ task.description }}</p>
+                <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-white/5">
+                  <div *ngIf="task.dueDate" class="flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    <svg class="w-3.5 h-3.5 mr-1.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                     </svg>
                     {{ task.dueDate | date:'shortDate' }}
                   </div>
-                  <div *ngIf="task.assignedToUser" class="w-7 h-7 rounded-full bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">
+                  <div *ngIf="task.assignedToUser" class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-[10px] font-black shadow-lg shadow-amber-500/20">
                     {{ getInitials(task.assignedToUser) }}
                   </div>
                 </div>
@@ -264,25 +267,26 @@ import { I18nService } from '../../../core/i18n/i18n.service';
               <span class="px-2 py-1 rounded-lg bg-green-200 dark:bg-green-800 text-green-600 dark:text-green-300 text-xs font-bold">{{ getTasksByStatus(TaskStatus.Approved).length }}</span>
             </div>
             <div class="space-y-3">
-              <div *ngFor="let task of getTasksByStatus(TaskStatus.Approved)" 
+              <div *ngFor="let task of getTasksByStatus(TaskStatus.Approved); let i = $index" 
                 (click)="viewTask(task)"
-                class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all cursor-pointer border border-green-200 dark:border-green-500/20 hover:border-green-500/50">
-                <div class="flex items-start justify-between mb-2">
-                  <span class="text-xs font-bold text-slate-500 dark:text-slate-400">{{ task.taskNumber }}</span>
-                  <span class="px-2 py-0.5 rounded-lg bg-green-100 dark:bg-green-800 text-green-600 dark:text-green-300 text-[10px] font-bold uppercase">
+                class="bg-white dark:bg-slate-800 rounded-3xl p-5 shadow-lg hover:shadow-2xl transition-all cursor-pointer border border-emerald-200 dark:border-emerald-500/20 hover:border-emerald-500/50 group animate-premium-fade"
+                [style.animation-delay]="(i * 50 + 550) + 'ms'">
+                <div class="flex items-start justify-between mb-4">
+                  <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ task.taskNumber }}</span>
+                  <span class="px-3 py-1 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-[9px] font-black uppercase tracking-widest shadow-sm">
                     {{ 'tasks.completed' | translate }}
                   </span>
                 </div>
-                <h4 class="font-bold text-slate-900 dark:text-white text-sm mb-2 line-clamp-2">{{ task.title }}</h4>
-                <p *ngIf="task.description" class="text-slate-500 dark:text-slate-400 text-xs mb-3 line-clamp-2">{{ task.description }}</p>
-                <div class="flex items-center justify-between">
-                  <div *ngIf="task.actualEndDate" class="flex items-center text-xs text-green-600 dark:text-green-400">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h4 class="font-black text-slate-900 dark:text-white text-sm mb-2 line-clamp-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{{ task.title }}</h4>
+                <p *ngIf="task.description" class="text-slate-500 dark:text-slate-400 text-xs mb-4 line-clamp-2 italic opacity-80">{{ task.description }}</p>
+                <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-white/5">
+                  <div *ngIf="task.actualEndDate" class="flex items-center text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                     {{ task.actualEndDate | date:'shortDate' }}
                   </div>
-                  <div *ngIf="task.assignedToUser" class="w-7 h-7 rounded-full bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">
+                  <div *ngIf="task.assignedToUser" class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-[10px] font-black shadow-lg shadow-emerald-500/20">
                     {{ getInitials(task.assignedToUser) }}
                   </div>
                 </div>
@@ -349,138 +353,138 @@ import { I18nService } from '../../../core/i18n/i18n.service';
   `
 })
 export class TaskBoardComponent implements OnInit {
-    private taskService = inject(TaskManagementService);
-    private router = inject(Router);
-    private destroyRef = inject(DestroyRef);
-    private i18nService = inject(I18nService);
+  private taskService = inject(TaskManagementService);
+  private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
+  private i18nService = inject(I18nService);
 
-    tasks: ProjectItemTask[] = [];
-    filteredTasks: ProjectItemTask[] = [];
-    searchTerm = '';
-    filterStatus: TaskStatus | null = null;
-    showCreateModal = false;
+  tasks: ProjectItemTask[] = [];
+  filteredTasks: ProjectItemTask[] = [];
+  searchTerm = '';
+  filterStatus: TaskStatus | null = null;
+  showCreateModal = false;
 
-    stats = {
-        total: 0,
-        inProgress: 0,
-        readyForReview: 0,
-        overdue: 0
-    };
+  stats = {
+    total: 0,
+    inProgress: 0,
+    readyForReview: 0,
+    overdue: 0
+  };
 
-    newTask = {
-        title: '',
-        description: '',
-        priority: TaskPriority.Normal,
-        dueDate: ''
-    };
+  newTask = {
+    title: '',
+    description: '',
+    priority: TaskPriority.Normal,
+    dueDate: ''
+  };
 
-    statusOptions = [
-        { value: TaskStatus.Pending, label: 'Pending' },
-        { value: TaskStatus.InProgress, label: 'In Progress' },
-        { value: TaskStatus.ReadyForReview, label: 'Review' },
-        { value: TaskStatus.Approved, label: 'Approved' }
-    ];
+  statusOptions = [
+    { value: TaskStatus.Pending, label: 'Pending' },
+    { value: TaskStatus.InProgress, label: 'In Progress' },
+    { value: TaskStatus.ReadyForReview, label: 'Review' },
+    { value: TaskStatus.Approved, label: 'Approved' }
+  ];
 
-    TaskStatus = TaskStatus;
-    TaskPriority = TaskPriority;
+  TaskStatus = TaskStatus;
+  TaskPriority = TaskPriority;
 
-    ngOnInit(): void {
-        this.loadTasks();
-    }
+  ngOnInit(): void {
+    this.loadTasks();
+  }
 
-    loadTasks(): void {
-        this.taskService.getMyTasks()
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe({
-                next: (tasks) => {
-                    this.tasks = tasks;
-                    this.applyFilters();
-                    this.calculateStats();
-                },
-                error: (error) => {
-                    console.error('Error loading tasks:', error);
-                }
-            });
-    }
-
-    applyFilters(): void {
-        let filtered = [...this.tasks];
-
-        if (this.searchTerm) {
-            const term = this.searchTerm.toLowerCase();
-            filtered = filtered.filter(t =>
-                t.title.toLowerCase().includes(term) ||
-                t.taskNumber.toLowerCase().includes(term) ||
-                (t.description?.toLowerCase().includes(term) ?? false)
-            );
+  loadTasks(): void {
+    this.taskService.getMyTasks()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (tasks) => {
+          this.tasks = tasks;
+          this.applyFilters();
+          this.calculateStats();
+        },
+        error: (error) => {
+          console.error('Error loading tasks:', error);
         }
+      });
+  }
 
-        if (this.filterStatus !== null) {
-            filtered = filtered.filter(t => t.status === this.filterStatus);
-        }
+  applyFilters(): void {
+    let filtered = [...this.tasks];
 
-        this.filteredTasks = filtered;
+    if (this.searchTerm) {
+      const term = this.searchTerm.toLowerCase();
+      filtered = filtered.filter(t =>
+        t.title.toLowerCase().includes(term) ||
+        t.taskNumber.toLowerCase().includes(term) ||
+        (t.description?.toLowerCase().includes(term) ?? false)
+      );
     }
 
-    calculateStats(): void {
-        this.stats.total = this.tasks.length;
-        this.stats.inProgress = this.tasks.filter(t => t.status === TaskStatus.InProgress).length;
-        this.stats.readyForReview = this.tasks.filter(t => t.status === TaskStatus.ReadyForReview).length;
-        this.stats.overdue = this.tasks.filter(t => {
-            if (!t.dueDate) return false;
-            return new Date(t.dueDate) < new Date() && t.status !== TaskStatus.Approved;
-        }).length;
+    if (this.filterStatus !== null) {
+      filtered = filtered.filter(t => t.status === this.filterStatus);
     }
 
-    getTasksByStatus(status: TaskStatus): ProjectItemTask[] {
-        return this.filteredTasks.filter(t => t.status === status);
-    }
+    this.filteredTasks = filtered;
+  }
 
-    onSearchChange(): void {
-        this.applyFilters();
-    }
+  calculateStats(): void {
+    this.stats.total = this.tasks.length;
+    this.stats.inProgress = this.tasks.filter(t => t.status === TaskStatus.InProgress).length;
+    this.stats.readyForReview = this.tasks.filter(t => t.status === TaskStatus.ReadyForReview).length;
+    this.stats.overdue = this.tasks.filter(t => {
+      if (!t.dueDate) return false;
+      return new Date(t.dueDate) < new Date() && t.status !== TaskStatus.Approved;
+    }).length;
+  }
 
-    getPriorityLabel(priority: TaskPriority): string {
-        return this.taskService.getPriorityLabel(priority);
-    }
+  getTasksByStatus(status: TaskStatus): ProjectItemTask[] {
+    return this.filteredTasks.filter(t => t.status === status);
+  }
 
-    getPriorityClass(priority: TaskPriority): string {
-        const classes = {
-            [TaskPriority.Low]: 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400',
-            [TaskPriority.Normal]: 'bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-400',
-            [TaskPriority.High]: 'bg-orange-100 dark:bg-orange-800 text-orange-600 dark:text-orange-400',
-            [TaskPriority.Critical]: 'bg-red-100 dark:bg-red-800 text-red-600 dark:text-red-400'
-        };
-        return classes[priority] || classes[TaskPriority.Normal];
-    }
+  onSearchChange(): void {
+    this.applyFilters();
+  }
 
-    getInitials(user: any): string {
-        if (!user) return '?';
-        const name = user.name || user.fullName || user.userName || '';
-        return name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
-    }
+  getPriorityLabel(priority: TaskPriority): string {
+    return this.taskService.getPriorityLabel(priority);
+  }
 
-    viewTask(task: ProjectItemTask): void {
-        this.router.navigate(['/tasks', task.id]);
-    }
+  getPriorityClass(priority: TaskPriority): string {
+    const classes = {
+      [TaskPriority.Low]: 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400',
+      [TaskPriority.Normal]: 'bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-400',
+      [TaskPriority.High]: 'bg-orange-100 dark:bg-orange-800 text-orange-600 dark:text-orange-400',
+      [TaskPriority.Critical]: 'bg-red-100 dark:bg-red-800 text-red-600 dark:text-red-400'
+    };
+    return classes[priority] || classes[TaskPriority.Normal];
+  }
 
-    openCreateTaskModal(): void {
-        this.showCreateModal = true;
-    }
+  getInitials(user: any): string {
+    if (!user) return '?';
+    const name = user.name || user.fullName || user.userName || '';
+    return name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
+  }
 
-    closeCreateModal(): void {
-        this.showCreateModal = false;
-        this.newTask = {
-            title: '',
-            description: '',
-            priority: TaskPriority.Normal,
-            dueDate: ''
-        };
-    }
+  viewTask(task: ProjectItemTask): void {
+    this.router.navigate(['/tasks', task.id]);
+  }
 
-    createTask(): void {
-        // This would need project context - for now just close modal
-        // In real implementation, you'd need to select a project
-        this.closeCreateModal();
-    }
+  openCreateTaskModal(): void {
+    this.showCreateModal = true;
+  }
+
+  closeCreateModal(): void {
+    this.showCreateModal = false;
+    this.newTask = {
+      title: '',
+      description: '',
+      priority: TaskPriority.Normal,
+      dueDate: ''
+    };
+  }
+
+  createTask(): void {
+    // This would need project context - for now just close modal
+    // In real implementation, you'd need to select a project
+    this.closeCreateModal();
+  }
 }

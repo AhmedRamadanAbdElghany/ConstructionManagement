@@ -14,10 +14,10 @@ import { I18nService } from '../../../core/i18n/i18n.service';
     template: `
         <div class="vendors-container p-6">
             <!-- Header -->
-            <div class="flex items-center justify-between mb-6">
-                <div>
-                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">{{ 'vendors.title' | translate }}</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400">{{ 'vendors.description' | translate }}</p>
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 animate-premium-fade">
+                <div class="space-y-1">
+                    <h2 class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tight uppercase drop-shadow-sm">{{ 'vendors.title' | translate }}</h2>
+                    <p class="text-slate-500 dark:text-slate-400 font-medium italic opacity-80">{{ 'vendors.description' | translate }}</p>
                 </div>
                 @if (canAddVendor) {
                     <button (click)="showCreateModal = true" 
@@ -31,30 +31,45 @@ import { I18nService } from '../../../core/i18n/i18n.service';
             </div>
 
             <!-- Tabs -->
-            <div class="flex gap-4 mb-6 border-b border-slate-200 dark:border-slate-700">
+            <div class="flex items-center gap-2 mb-10 p-1.5 bg-white dark:bg-slate-900 rounded-[1.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none w-fit animate-premium-fade" style="animation-delay: 100ms">
                 <button (click)="activeTab = 'vendors'"
-                        [class.border-cyan-500]="activeTab === 'vendors'"
-                        [class.text-cyan-600]="activeTab === 'vendors'"
-                        class="px-4 py-2 border-b-2 border-transparent font-medium text-sm transition-colors">
+                        [class.bg-gradient-to-r]="activeTab === 'vendors'"
+                        [class.from-indigo-600]="activeTab === 'vendors'"
+                        [class.to-blue-700]="activeTab === 'vendors'"
+                        [class.text-white]="activeTab === 'vendors'"
+                        [class.shadow-lg]="activeTab === 'vendors'"
+                        [class.shadow-indigo-500/20]="activeTab === 'vendors'"
+                        [class.text-slate-500]="activeTab !== 'vendors'"
+                        class="px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all">
                     {{ 'vendors.vendors_list' | translate }}
                 </button>
                 @if (canApproveInvoices) {
                     <button (click)="activeTab = 'pending'"
-                            [class.border-cyan-500]="activeTab === 'pending'"
-                            [class.text-cyan-600]="activeTab === 'pending'"
-                            class="px-4 py-2 border-b-2 border-transparent font-medium text-sm transition-colors flex items-center gap-2">
+                            [class.bg-gradient-to-r]="activeTab === 'pending'"
+                            [class.from-indigo-600]="activeTab === 'pending'"
+                            [class.to-blue-700]="activeTab === 'pending'"
+                            [class.text-white]="activeTab === 'pending'"
+                            [class.shadow-lg]="activeTab === 'pending'"
+                            [class.shadow-indigo-500/20]="activeTab === 'pending'"
+                            [class.text-slate-500]="activeTab !== 'pending'"
+                            class="px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center gap-3">
                         {{ 'vendors.pending_approvals' | translate }}
                         @if (pendingCount > 0) {
-                            <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-xs font-bold">
+                            <span class="px-2 py-0.5 rounded-lg bg-white/20 text-white text-[9px] font-black">
                                 {{ pendingCount }}
                             </span>
                         }
                     </button>
                 }
                 <button (click)="activeTab = 'summary'"
-                        [class.border-cyan-500]="activeTab === 'summary'"
-                        [class.text-cyan-600]="activeTab === 'summary'"
-                        class="px-4 py-2 border-b-2 border-transparent font-medium text-sm transition-colors">
+                        [class.bg-gradient-to-r]="activeTab === 'summary'"
+                        [class.from-indigo-600]="activeTab === 'summary'"
+                        [class.to-blue-700]="activeTab === 'summary'"
+                        [class.text-white]="activeTab === 'summary'"
+                        [class.shadow-lg]="activeTab === 'summary'"
+                        [class.shadow-indigo-500/20]="activeTab === 'summary'"
+                        [class.text-slate-500]="activeTab !== 'summary'"
+                        class="px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all">
                     {{ 'vendors.summary' | translate }}
                 </button>
             </div>
@@ -66,80 +81,69 @@ import { I18nService } from '../../../core/i18n/i18n.service';
             } @else {
                 <!-- Vendors List Tab -->
                 @if (activeTab === 'vendors') {
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        @for (vendor of vendors; track vendor.id) {
-                            <div class="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-700 hover:border-cyan-500/50 transition-colors">
-                                <div class="flex items-start justify-between mb-3">
-                                    <div>
-                                        <h3 class="font-bold text-slate-900 dark:text-white">{{ vendor.name }}</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        @for (vendor of vendors; track vendor.id; let i = $index) {
+                            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 hover:border-indigo-500/50 shadow-2xl shadow-slate-200/50 dark:shadow-none hover:scale-[1.02] transition-all group animate-premium-fade"
+                                 [style.animation-delay]="(i * 50 + 200) + 'ms'">
+                                <div class="flex items-start justify-between mb-6">
+                                    <div class="space-y-1">
+                                        <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tight group-hover:text-indigo-600 transition-colors">{{ vendor.name }}</h3>
                                         @if (vendor.vendorType) {
-                                            <span class="text-xs text-slate-500 dark:text-slate-400">{{ vendor.vendorType }}</span>
+                                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] opacity-60">{{ vendor.vendorType }}</span>
                                         }
                                     </div>
-                                    <span class="px-2 py-0.5 rounded text-xs font-medium"
-                                          [class.bg-emerald-100]="vendor.isActive"
-                                          [class.text-emerald-700]="vendor.isActive"
-                                          [class.dark:bg-emerald-900/30]="vendor.isActive"
-                                          [class.dark:text-emerald-400]="vendor.isActive">
+                                    <span class="px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-sm"
+                                          [class.bg-emerald-500]="vendor.isActive"
+                                          [class.text-white]="vendor.isActive"
+                                          [class.bg-slate-200]="!vendor.isActive"
+                                          [class.text-slate-500]="!vendor.isActive">
                                         {{ (vendor.isActive ? 'common.active' : 'common.inactive') | translate }}
                                     </span>
                                 </div>
                                 
-                                <div class="space-y-2 text-sm">
+                                <div class="space-y-4 text-sm mb-8">
                                     @if (vendor.phone) {
-                                        <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                                            </svg>
+                                        <div class="flex items-center gap-3 text-slate-600 dark:text-slate-400 font-bold tracking-tight">
+                                            <div class="w-8 h-8 rounded-xl bg-slate-50 dark:bg-white/5 flex items-center justify-center text-indigo-500">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                                </svg>
+                                            </div>
                                             <span>{{ vendor.phone }}</span>
                                         </div>
                                     }
                                     @if (vendor.email) {
-                                        <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                            </svg>
-                                            <span>{{ vendor.email }}</span>
-                                        </div>
-                                    }
-                                    @if (vendor.contactPerson) {
-                                        <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                            </svg>
-                                            <span>{{ vendor.contactPerson }}</span>
+                                        <div class="flex items-center gap-3 text-slate-600 dark:text-slate-400 font-bold tracking-tight">
+                                            <div class="w-8 h-8 rounded-xl bg-slate-50 dark:bg-white/5 flex items-center justify-center text-indigo-500">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                                </svg>
+                                            </div>
+                                            <span class="truncate">{{ vendor.email }}</span>
                                         </div>
                                     }
                                 </div>
-
-                                <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-                                    <div class="flex items-center justify-between text-sm">
-                                        <div class="flex flex-col">
-                                            <span class="text-slate-500 dark:text-slate-400 font-medium">{{ 'vendors.invoices_count' | translate }}: {{ vendor.totalInvoices || 0 }}</span>
-                                            @if (vendor.totalAmount) {
-                                                <div class="flex flex-col">
-                                                    <span class="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-1">{{ 'vendors.total_payments' | translate }}</span>
-                                                    <span class="text-cyan-600 dark:text-cyan-400 font-bold">{{ (vendor.totalAmount || 0) | currency }}</span>
-                                                </div>
-                                            }
-                                        </div>
-                                        <div class="flex flex-wrap gap-2 justify-end">
-                                            <button (click)="viewVendorInvoices(vendor)" 
-                                                    class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors uppercase tracking-wider">
-                                                {{ 'vendors.view_bills' | translate }}
-                                            </button>
-                                            <button (click)="viewVendorProjects(vendor)" 
-                                                    class="px-2 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-[10px] font-bold hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors uppercase tracking-wider">
-                                                {{ 'vendors.view_projects' | translate }}
-                                            </button>
-                                            @if (canAddVendor) {
-                                                <button (click)="showAddInvoice(vendor)" 
-                                                        class="px-2 py-1 rounded-lg bg-cyan-500 text-white text-[10px] font-bold hover:bg-cyan-600 transition-colors uppercase tracking-wider">
-                                                    {{ 'vendors.add_invoice' | translate }}
-                                                </button>
-                                            }
-                                        </div>
+                                
+                                <div class="grid grid-cols-2 gap-4 mb-8">
+                                    <div class="p-4 rounded-3xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+                                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ 'vendors.invoices_count' | translate }}</p>
+                                        <p class="text-lg font-black text-slate-900 dark:text-white">{{ vendor.totalInvoices || 0 }}</p>
                                     </div>
+                                    <div class="p-4 rounded-3xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20">
+                                        <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-1">{{ 'vendors.total_payments' | translate }}</p>
+                                        <p class="text-lg font-black text-indigo-600 dark:text-indigo-400">{{ (vendor.totalAmount || 0) | currency }}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex flex-wrap gap-2 pt-6 border-t border-slate-100 dark:border-white/5">
+                                    <button (click)="viewVendorInvoices(vendor)" 
+                                            class="flex-1 px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-black hover:bg-slate-200 transition-all uppercase tracking-widest">
+                                        {{ 'vendors.view_bills' | translate }}
+                                    </button>
+                                    <button (click)="viewVendorProjects(vendor)" 
+                                            class="flex-1 px-3 py-2.5 rounded-xl bg-indigo-500 dark:bg-indigo-600 text-white text-[10px] font-black hover:brightness-110 shadow-lg shadow-indigo-500/20 transition-all uppercase tracking-widest">
+                                        {{ 'vendors.view_projects' | translate }}
+                                    </button>
                                 </div>
                             </div>
                         }
@@ -156,43 +160,46 @@ import { I18nService } from '../../../core/i18n/i18n.service';
 
                 <!-- Pending Approvals Tab -->
                 @if (activeTab === 'pending') {
-                    <div class="space-y-4">
-                        @for (invoice of pendingInvoices; track invoice.id) {
-                            <div class="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
-                                <div class="flex items-start gap-4">
-                                    <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
-                                        <svg class="w-6 h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="space-y-6">
+                        @for (invoice of pendingInvoices; track invoice.id; let i = $index) {
+                            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 shadow-2xl shadow-slate-200/50 dark:shadow-none animate-premium-fade"
+                                 [style.animation-delay]="(i * 50 + 200) + 'ms'">
+                                <div class="flex flex-col md:flex-row md:items-center gap-8">
+                                    <div class="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-amber-500/20 to-orange-600/20 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0 shadow-inner">
+                                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                         </svg>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <div class="flex items-center gap-2 flex-wrap">
-                                            <span class="font-bold text-slate-900 dark:text-white">{{ invoice.invoiceNumber }}</span>
-                                            <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 text-xs font-bold uppercase">
+                                        <div class="flex items-center gap-3 flex-wrap mb-2">
+                                            <span class="text-2xl font-black text-slate-900 dark:text-white">{{ invoice.invoiceNumber }}</span>
+                                            <span class="px-4 py-1.5 rounded-xl bg-amber-500 text-white text-[9px] font-black uppercase tracking-widest shadow-lg shadow-amber-500/20">
                                                 {{ 'vendors.pending' | translate }}
                                             </span>
                                         </div>
-                                        <div class="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                                            <span>{{ invoice.vendorName }}</span>
-                                            <span class="mx-2">•</span>
-                                            <span>{{ invoice.amount | currency }}</span>
-                                            <span class="mx-2">•</span>
+                                        <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400 font-bold tracking-tight mb-4">
+                                            <span class="text-indigo-600 dark:text-indigo-400">{{ invoice.vendorName }}</span>
+                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                                            <span class="text-slate-900 dark:text-white">{{ invoice.amount | currency }}</span>
+                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
                                             <span>{{ invoice.invoiceDate | date:'mediumDate' }}</span>
                                         </div>
                                         @if (invoice.description) {
-                                            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">{{ invoice.description }}</p>
+                                            <p class="text-sm text-slate-500 dark:text-slate-400 italic opacity-80 mb-4 bg-slate-50 dark:bg-white/5 p-4 rounded-2xl border border-slate-100 dark:border-white/5">{{ invoice.description }}</p>
                                         }
-                                        <div class="mt-2 text-xs text-slate-500 dark:text-slate-400">
-                                            {{ 'vendors.submitted_by' | translate }}: {{ invoice.createdByUserName }} • {{ invoice.createdAt | date:'medium' }}
+                                        <div class="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                            👤 {{ 'vendors.submitted_by' | translate }}: <span class="text-slate-600 dark:text-slate-300">{{ invoice.createdByUserName }}</span> 
+                                            <span class="mx-1">•</span> 
+                                            📅 {{ invoice.createdAt | date:'medium' }}
                                         </div>
                                     </div>
-                                    <div class="flex gap-2">
+                                    <div class="flex flex-row md:flex-col gap-3">
                                         <button (click)="approveInvoice(invoice)" 
-                                                class="px-4 py-2 rounded-lg bg-emerald-500 text-white text-sm font-medium hover:bg-emerald-600 transition-colors">
+                                                class="flex-1 px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-[10px] uppercase tracking-widest hover:brightness-110 shadow-lg shadow-emerald-500/20 transition-all active:scale-95">
                                             {{ 'vendors.approve' | translate }}
                                         </button>
                                         <button (click)="showRejectModal(invoice)" 
-                                                class="px-4 py-2 rounded-lg bg-rose-500 text-white text-sm font-medium hover:bg-rose-600 transition-colors">
+                                                class="flex-1 px-8 py-4 rounded-2xl bg-white dark:bg-slate-800 text-rose-500 border-2 border-rose-100 dark:border-rose-500/20 font-black text-[10px] uppercase tracking-widest hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all active:scale-95">
                                             {{ 'vendors.reject' | translate }}
                                         </button>
                                     </div>
@@ -212,30 +219,29 @@ import { I18nService } from '../../../core/i18n/i18n.service';
 
                 <!-- Summary Tab -->
                 @if (activeTab === 'summary') {
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        @for (summary of vendorSummary; track summary.vendorId) {
-                            <div class="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
-                                <h3 class="font-bold text-slate-900 dark:text-white mb-3">{{ summary.vendorName }}</h3>
-                                <div class="space-y-2">
-                                    <div class="flex justify-between text-sm">
-                                        <span class="text-slate-500 dark:text-slate-400">{{ 'vendors.total_invoices' | translate }}</span>
-                                        <span class="font-medium text-slate-900 dark:text-white">{{ summary.totalInvoices }}</span>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        @for (summary of vendorSummary; track summary.vendorId; let i = $index) {
+                            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 shadow-2xl shadow-slate-200/50 dark:shadow-none animate-premium-fade"
+                                 [style.animation-delay]="(i * 50 + 200) + 'ms'">
+                                <h3 class="text-xl font-black text-slate-900 dark:text-white mb-6 uppercase tracking-tight">{{ summary.vendorName }}</h3>
+                                <div class="space-y-4">
+                                    <div class="flex justify-between items-center bg-slate-50 dark:bg-white/5 p-4 rounded-2xl border border-slate-100 dark:border-white/5">
+                                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'vendors.total_invoices' | translate }}</span>
+                                        <span class="text-lg font-black text-slate-900 dark:text-white">{{ summary.totalInvoices }}</span>
                                     </div>
-                                    <div class="flex justify-between text-sm">
-                                        <span class="text-slate-500 dark:text-slate-400">{{ 'vendors.total_amount' | translate }}</span>
-                                        <span class="font-medium text-emerald-600 dark:text-emerald-400">{{ summary.totalAmount | currency }}</span>
+                                    <div class="flex justify-between items-center bg-emerald-50 dark:bg-emerald-500/10 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-500/20">
+                                        <span class="text-[10px] font-black text-emerald-600/60 uppercase tracking-widest">{{ 'vendors.total_amount' | translate }}</span>
+                                        <span class="text-xl font-black text-emerald-600 dark:text-emerald-400">{{ summary.totalAmount | currency }}</span>
                                     </div>
-                                    <div class="flex justify-between text-sm">
-                                        <span class="text-slate-500 dark:text-slate-400">{{ 'vendors.pending' | translate }}</span>
-                                        <span class="font-medium text-amber-600">{{ summary.pendingApprovals }}</span>
-                                    </div>
-                                    <div class="flex justify-between text-sm">
-                                        <span class="text-slate-500 dark:text-slate-400">{{ 'vendors.approved' | translate }}</span>
-                                        <span class="font-medium text-emerald-600">{{ summary.approvedCount }}</span>
-                                    </div>
-                                    <div class="flex justify-between text-sm">
-                                        <span class="text-slate-500 dark:text-slate-400">{{ 'vendors.rejected' | translate }}</span>
-                                        <span class="font-medium text-rose-600">{{ summary.rejectedCount }}</span>
+                                    <div class="grid grid-cols-2 gap-3 mt-4">
+                                        <div class="text-center p-3 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20">
+                                            <p class="text-[8px] font-black text-amber-500 uppercase tracking-[0.2em] mb-1">Pending</p>
+                                            <p class="text-sm font-black text-amber-600">{{ summary.pendingApprovals }}</p>
+                                        </div>
+                                        <div class="text-center p-3 rounded-2xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20">
+                                            <p class="text-[8px] font-black text-rose-500 uppercase tracking-[0.2em] mb-1">Rejected</p>
+                                            <p class="text-sm font-black text-rose-600">{{ summary.rejectedCount }}</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

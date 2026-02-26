@@ -2734,6 +2734,75 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.ToTable("CompanySettings");
                 });
 
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ContractEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ContractStartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("HourlyRate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("MonthlySalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("TerminatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TerminationReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CompanyUsers");
+                });
+
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompetencyLevel", b =>
                 {
                     b.Property<int>("Id")
@@ -16361,7 +16430,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             UserId = 1,
                             RoleId = 1,
-                            AssignedAt = new DateTime(2026, 2, 25, 21, 38, 23, 103, DateTimeKind.Utc).AddTicks(6204)
+                            AssignedAt = new DateTime(2026, 2, 26, 22, 20, 53, 484, DateTimeKind.Utc).AddTicks(844)
                         });
                 });
 
@@ -18381,6 +18450,25 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyUser", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany("CompanyUsers")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "User")
+                        .WithMany("CompanyUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompetencyLevel", b =>
@@ -22457,6 +22545,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Company", b =>
                 {
+                    b.Navigation("CompanyUsers");
+
                     b.Navigation("DefaultDesignCategories");
 
                     b.Navigation("DefaultDesigns");
@@ -22962,6 +23052,8 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("ClosedDailyLogs");
 
                     b.Navigation("ClosedProjects");
+
+                    b.Navigation("CompanyUsers");
 
                     b.Navigation("CreatedDailyLogs");
 

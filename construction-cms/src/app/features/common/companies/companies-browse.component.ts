@@ -7,11 +7,12 @@ import { Subject, takeUntil } from 'rxjs';
 import { MessagingService, PublicCompanyDto, MessagingStatusDto } from '../../../core/services/messaging.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { RequestInspectionDialogComponent } from '../../client/client-inspections/request-inspection-dialog.component';
+import { CompanyAnnouncementsDialogComponent } from './company-announcements-dialog.component';
 
 @Component({
   selector: 'app-companies-browse',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, RequestInspectionDialogComponent],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, RequestInspectionDialogComponent, CompanyAnnouncementsDialogComponent],
   template: `
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
@@ -36,17 +37,22 @@ import { RequestInspectionDialogComponent } from '../../client/client-inspection
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
               </button>
             }
-            <div class="relative">
+            <div class="relative group">
               <input 
                 type="text" 
                 [(ngModel)]="searchQuery"
                 (ngModelChange)="onSearchChange()"
                 [placeholder]="'companies.search_placeholder' | translate"
-                class="w-64 px-4 py-3 pl-12 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                class="w-72 px-4 py-3 pl-12 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all shadow-sm group-hover:border-slate-300 dark:group-hover:border-white/10"
               />
-              <svg class="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 group-focus-within:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
               </svg>
+              @if (searchQuery && companies.length > 0) {
+                <span class="absolute -bottom-6 right-2 text-[10px] font-black text-slate-400 uppercase tracking-widest animate-in fade-in slide-in-from-top-1 duration-300">
+                  {{ companies.length }} {{ 'common.found' | translate | lowercase }}
+                </span>
+              }
             </div>
           </div>
         </div>
@@ -66,7 +72,8 @@ import { RequestInspectionDialogComponent } from '../../client/client-inspection
                 [routerLink]="['/companies', company.id]"
                 [class.ring-4]="selectedIds.has(company.id)"
                 [class.ring-amber-500/50]="selectedIds.has(company.id)"
-                class="group flex flex-col bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl hover:shadow-2xl transition-all cursor-pointer overflow-hidden relative">
+                class="group flex flex-col bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 cursor-pointer overflow-hidden relative animate-premium-fade"
+                [style.animation-delay]="($index * 100) + 'ms'">
                 
                 <!-- Selection Overlay -->
                 <div (click)="toggleSelection(company.id, $event)" 
@@ -117,6 +124,14 @@ import { RequestInspectionDialogComponent } from '../../client/client-inspection
                         </svg>
                       </button>
                     }
+                    <button 
+                      (click)="openAnnouncements(company, $event)"
+                      [title]="'browse_firms.view_announcements' | translate"
+                      class="p-2.5 rounded-xl bg-sky-500/80 backdrop-blur-md text-white hover:bg-sky-500 transition-all duration-300 transform active:scale-95">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
+                      </svg>
+                    </button>
                     <button 
                       (click)="openRequestInspection(company, $event)"
                       [title]="'inspections.request.title' | translate"
@@ -175,7 +190,7 @@ import { RequestInspectionDialogComponent } from '../../client/client-inspection
 
         <!-- Empty State -->
         @if (!isLoading && companies.length === 0) {
-          <div class="flex flex-col items-center justify-center py-20 text-center">
+          <div class="flex flex-col items-center justify-center py-20 text-center animate-premium-scale">
             <div class="w-24 h-24 mb-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center shadow-inner">
               <svg class="w-10 h-10 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
@@ -285,6 +300,15 @@ import { RequestInspectionDialogComponent } from '../../client/client-inspection
           (success)="onRequestSuccess()">
         </app-request-inspection-dialog>
       }
+
+      <!-- Announcements Dialog -->
+      @if (showAnnouncementsDialog && selectedCompany) {
+        <app-company-announcements-dialog
+          [companyId]="selectedCompany.id"
+          [companyName]="selectedCompany.name"
+          (close)="closeAnnouncements()">
+        </app-company-announcements-dialog>
+      }
   `
 })
 export class CompaniesBrowseComponent implements OnInit, OnDestroy {
@@ -313,6 +337,9 @@ export class CompaniesBrowseComponent implements OnInit, OnDestroy {
   // Inspection Request
   showRequestInspection = false;
   selectedIds: Set<number> = new Set();
+
+  // Announcements
+  showAnnouncementsDialog = false;
 
   ngOnInit() {
     this.loadMessagingStatus();
@@ -468,6 +495,19 @@ export class CompaniesBrowseComponent implements OnInit, OnDestroy {
   openBulkRequest() {
     this.selectedCompany = null;
     this.showRequestInspection = true;
+  }
+
+  openAnnouncements(company: PublicCompanyDto, event: Event) {
+    event.stopPropagation();
+    this.selectedCompany = company;
+    this.showAnnouncementsDialog = true;
+  }
+
+  closeAnnouncements() {
+    this.showAnnouncementsDialog = false;
+    if (!this.showMessageDialog && !this.showRequestInspection) {
+      this.selectedCompany = null;
+    }
   }
 
   toggleSelection(id: number, event: Event) {

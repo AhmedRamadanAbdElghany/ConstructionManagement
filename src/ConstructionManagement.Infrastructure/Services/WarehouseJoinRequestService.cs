@@ -16,6 +16,7 @@ public class WarehouseJoinRequestService : IWarehouseJoinRequestService
     private readonly IRepository<UserRole> _userRoleRepository;
     private readonly INotificationService _notificationService;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ICompanyUserRepository _companyUserRepository;
 
     public WarehouseJoinRequestService(
         IRepository<WarehouseJoinRequest> requestRepository,
@@ -24,7 +25,8 @@ public class WarehouseJoinRequestService : IWarehouseJoinRequestService
         IRepository<Role> roleRepository,
         IRepository<UserRole> userRoleRepository,
         INotificationService notificationService,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        ICompanyUserRepository companyUserRepository)
     {
         _requestRepository = requestRepository;
         _userRepository = userRepository;
@@ -33,6 +35,7 @@ public class WarehouseJoinRequestService : IWarehouseJoinRequestService
         _userRoleRepository = userRoleRepository;
         _notificationService = notificationService;
         _unitOfWork = unitOfWork;
+        _companyUserRepository = companyUserRepository;
     }
 
     public async Task<WarehouseJoinRequestDto> CreateRequestAsync(int userId, CreateWarehouseJoinRequestDto dto)
@@ -47,8 +50,9 @@ public class WarehouseJoinRequestService : IWarehouseJoinRequestService
         if (company == null || !company.IsActive)
             throw new KeyNotFoundException("Company not found or inactive.");
 
-        // Check if user already has a company
-        if (user.CompanyId.HasValue)
+        // Check if user already has an active membership with this company (using CompanyUser)
+        var existingMemberships = await _companyUserRepository.GetActiveByUserIdAsync(userId);
+        if (existingMemberships.Any(cu => cu.CompanyId == dto.CompanyId))
             throw new InvalidOperationException("User already belongs to a company.");
 
         // Check if there's already a pending request
@@ -176,8 +180,23 @@ public class WarehouseJoinRequestService : IWarehouseJoinRequestService
             request.ReviewedByUserId = reviewerUserId;
             request.ReviewedAt = DateTime.UtcNow;
 
-            // Update user's company
+            // Update user's company via CompanyUser table
             var user = request.User;
+            
+            // Create CompanyUser record
+            var companyUser = new CompanyUser
+            {
+                UserId = user.Id,
+                CompanyId = request.CompanyId,
+                Role = request.Role?.Name ?? "User",
+                ContractStartDate = DateTime.UtcNow,
+                Status = ContractStatus.Active,
+                IsPrimary = true,
+                JoinedAt = DateTime.UtcNow
+            };
+            await _companyUserRepository.AddAsync(companyUser);
+            
+            // Also set legacy CompanyId for backward compatibility
             user.CompanyId = request.CompanyId;
 
             // Assign role if provided
@@ -259,22 +278,11 @@ public class WarehouseJoinRequestService : IWarehouseJoinRequestService
         if (user == null)
             throw new UnauthorizedAccessException();
 
-        // Check if user is company owner, inventory owner, or company admin
-        bool hasAccess = false;
-
-        if (user.CompanyId == companyId && 
-            (user.UserType == UserType.CompanyOwner || user.UserType == UserType.InventoryOwner))
-        {
-            hasAccess = true;
-        }
-        else if (user.CompanyId == companyId)
-        {
-            // Check if user is CompanyAdmin
-            hasAccess = await _userRoleRepository.AsQueryable()
-                .AnyAsync(ur => ur.UserId == userId && ur.CompanyId == companyId && ur.Role.Name == "CompanyAdmin");
-        }
-
-        if (!hasAccess)
+        // Check if user has active membership with this company via CompanyUser
+        var companyUsers = await _companyUserRepository.GetActiveByUserIdAsync(userId);
+        var hasMembership = companyUsers.Any(cu => cu.CompanyId == companyId);
+        
+        if (!hasMembership)
             throw new UnauthorizedAccessException("You don't have access to this company's requests.");
     }
 

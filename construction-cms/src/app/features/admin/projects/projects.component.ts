@@ -19,7 +19,7 @@ import { map } from 'rxjs/operators';
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center justify-between mb-12">
           <div>
             <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ 'projects.title' | translate }}</h1>
             <p class="text-slate-500 dark:text-slate-400 font-medium tracking-tight">{{ 'projects.subtitle' | translate }}</p>
@@ -32,6 +32,54 @@ import { map } from 'rxjs/operators';
             </div>
             {{ 'projects.establish_project' | translate }}
           </button>
+        </div>
+
+        <!-- Quick Stats Strip -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div class="p-6 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none animate-premium-fade" style="animation-delay: 100ms">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+              </div>
+              <div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'projects.all_inventory' | translate }}</p>
+                <p class="text-2xl font-black text-slate-900 dark:text-white">{{ projects.length }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-6 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none animate-premium-fade" style="animation-delay: 200ms">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+              </div>
+              <div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'projects.delivered' | translate }}</p>
+                <p class="text-2xl font-black text-slate-900 dark:text-white">{{ getCompletedCount() }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-6 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none animate-premium-fade" style="animation-delay: 300ms">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/20">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </div>
+              <div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'projects.active_ops' | translate }}</p>
+                <p class="text-2xl font-black text-slate-900 dark:text-white">{{ getActiveCount() }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-6 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none animate-premium-fade" style="animation-delay: 400ms">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white shadow-lg shadow-rose-500/20">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+              </div>
+              <div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'projects.delayed_alerts' | translate }}</p>
+                <p class="text-2xl font-black text-slate-900 dark:text-white">{{ getDelayedCount() }}</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Filters -->
@@ -118,7 +166,8 @@ import { map } from 'rxjs/operators';
         @if (viewMode === 'grid') {
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @for (project of filteredProjects; track project.id) {
-              <div class="group bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none hover:border-cyan-500/30 transition-all duration-300 overflow-hidden relative">
+              <div class="group bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none hover:border-cyan-500/30 transition-all duration-300 overflow-hidden relative animate-premium-fade"
+                   [style.animation-delay]="($index * 100) + 'ms'">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/15 transition-colors"></div>
                 
                 <div class="p-8">
@@ -786,6 +835,18 @@ export class ProjectsComponent implements OnInit {
     this.settingsService.getCompanyPackages().subscribe(packages => {
       this.availablePackages = packages;
     });
+  }
+
+  getCompletedCount(): number {
+    return this.projects.filter(p => p.status === 'Completed').length;
+  }
+
+  getActiveCount(): number {
+    return this.projects.filter(p => p.status === 'Active').length;
+  }
+
+  getDelayedCount(): number {
+    return this.projects.filter(p => p.status === 'Delayed').length;
   }
 
   openCreateModal() {

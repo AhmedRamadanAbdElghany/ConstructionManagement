@@ -2085,6 +2085,47 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CompanyUsers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    CompanyId = table.Column<int>(type: "int", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ContractStartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ContractEndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    HourlyRate = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    MonthlySalary = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsPrimary = table.Column<bool>(type: "bit", nullable: false),
+                    JoinedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TerminatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    TerminationReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CompanyUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CompanyUsers_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CompanyUsers_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CurrencyConversionLogs",
                 columns: table => new
                 {
@@ -9962,7 +10003,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "RoleId", "UserId", "AssignedAt", "CompanyId" },
-                values: new object[] { 1, 1, new DateTime(2026, 2, 25, 21, 38, 23, 103, DateTimeKind.Utc).AddTicks(6204), null });
+                values: new object[] { 1, 1, new DateTime(2026, 2, 26, 22, 20, 53, 484, DateTimeKind.Utc).AddTicks(844), null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ActivityLogs_CompanyId",
@@ -10439,6 +10480,16 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 column: "CompanyId",
                 unique: true,
                 filter: "[CompanyId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CompanyUsers_CompanyId",
+                table: "CompanyUsers",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CompanyUsers_UserId",
+                table: "CompanyUsers",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CompetencyLevels_CompanyId",
@@ -13507,6 +13558,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "CompanySettings");
+
+            migrationBuilder.DropTable(
+                name: "CompanyUsers");
 
             migrationBuilder.DropTable(
                 name: "CostEstimateItems");

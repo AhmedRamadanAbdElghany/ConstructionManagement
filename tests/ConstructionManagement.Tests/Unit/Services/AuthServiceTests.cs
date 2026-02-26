@@ -25,6 +25,7 @@ public class AuthServiceTests
     private readonly Mock<IRepository<Role>> _roleRepoMock = new();
     private readonly Mock<IRepository<UserRole>> _userRoleRepoMock = new();
     private readonly Mock<ILocalizationService> _localizationServiceMock = new();
+    private readonly Mock<ICompanyUserRepository> _companyUserRepoMock = new();
 
     public AuthServiceTests()
     {
@@ -48,7 +49,8 @@ public class AuthServiceTests
             _vendorRepoMock.Object,
             _roleRepoMock.Object,
             _userRoleRepoMock.Object,
-            _localizationServiceMock.Object
+            _localizationServiceMock.Object,
+            _companyUserRepoMock.Object
         );
     }
 
@@ -183,7 +185,8 @@ public class AuthServiceTests
             _vendorRepoMock.Object,
             _roleRepoMock.Object,
             _userRoleRepoMock.Object,
-            _localizationServiceMock.Object
+            _localizationServiceMock.Object,
+            _companyUserRepoMock.Object
         );
 
         var request = new LoginRequest(user.Email, "Test@123");

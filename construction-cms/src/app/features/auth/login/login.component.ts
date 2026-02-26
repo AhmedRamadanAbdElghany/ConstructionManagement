@@ -23,33 +23,33 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
       <div class="auth-box">
         <!-- Visual Side -->
         <div class="visual-side">
-          <div class="site-overlay" [style.backgroundImage]="'url(' + ('auth.bg_image' | translate) + ')'"></div>
-          <div class="visual-content">
-            <div class="branding">
-              <div class="logo-circle">
-                <svg class="w-12 h-12 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div class="site-overlay bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900" [style.backgroundImage]="'url(' + ('auth.bg_image' | translate) + ')'"></div>
+          <div class="visual-content relative z-10">
+            <div class="branding animate-premium-fade" style="animation-delay: 100ms">
+              <div class="logo-circle bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
+                <svg class="w-12 h-12 text-amber-500 filter drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-7h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               </div>
-              <h1 class="logo-text">Str<span class="text-amber-500">uct</span></h1>
+              <h1 class="logo-text text-white">Str<span class="text-amber-500">uct</span></h1>
             </div>
             
-            <div class="hero-quote">
-              <h2 class="quote-title">{{ 'auth.hero_title' | translate }} <br><span class="highlight">{{ 'auth.hero_highlight' | translate }}</span></h2>
-              <p class="quote-desc">{{ 'auth.hero_description' | translate }}</p>
+            <div class="hero-quote animate-premium-fade" style="animation-delay: 300ms">
+              <h2 class="quote-title text-white">{{ 'auth.hero_title' | translate }} <br><span class="highlight text-amber-500">{{ 'auth.hero_highlight' | translate }}</span></h2>
+              <p class="quote-desc text-slate-400 font-medium">{{ 'auth.hero_description' | translate }}</p>
             </div>
-
-            <div class="stats-grid">
-              <div class="stat-item">
-                <span class="stat-num">500+</span>
+ 
+            <div class="stats-grid animate-premium-fade" style="animation-delay: 500ms">
+              <div class="stat-item group">
+                <span class="stat-num group-hover:scale-110 transition-transform">500+</span>
                 <span class="stat-label">{{ 'auth.stat_projects' | translate }}</span>
               </div>
-              <div class="stat-item">
-                <span class="stat-num">12k</span>
+              <div class="stat-item group">
+                <span class="stat-num group-hover:scale-110 transition-transform">12k</span>
                 <span class="stat-label">{{ 'auth.stat_users' | translate }}</span>
               </div>
-              <div class="stat-item">
-                <span class="stat-num">99%</span>
+              <div class="stat-item group">
+                <span class="stat-num group-hover:scale-110 transition-transform">99%</span>
                 <span class="stat-label">{{ 'auth.stat_uptime' | translate }}</span>
               </div>
             </div>
@@ -59,42 +59,42 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
         <!-- Form Side -->
         <div class="form-side">
           <div class="form-container">
-            <div class="mobile-logo md:hidden">
+            <div class="mobile-logo md:hidden animate-premium-fade">
               <div class="logo-icon">
                 <svg class="w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-7h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               </div>
-              <span class="logo-name">STRUCT</span>
+              <span class="logo-name uppercase tracking-widest font-black">STRUCT</span>
             </div>
-
-            <header class="form-header">
+ 
+            <header class="form-header animate-premium-fade" style="animation-delay: 100ms">
               <h2 class="welcome-msg">{{ 'login.title' | translate }}</h2>
               <p class="instruction">{{ 'login.subtitle' | translate }}</p>
             </header>
-
+ 
             <form (ngSubmit)="onSubmit()" class="login-form">
-              <div class="input-group">
+              <div class="input-group animate-premium-fade" style="animation-delay: 200ms">
                 <label class="input-label">{{ 'login.email_label' | translate }}</label>
-                <div class="input-wrapper">
-                  <div class="input-icon">
+                <div class="input-wrapper group">
+                  <div class="input-icon group-focus-within:text-indigo-500 transition-colors">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206" /></svg>
                   </div>
-                  <input type="email" [(ngModel)]="email" name="email" class="premium-input" placeholder="name@company.com" required (blur)="emailTouched = true">
+                  <input type="email" [(ngModel)]="email" name="email" class="premium-input bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-white/5 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10" placeholder="name@company.com" required (blur)="emailTouched = true">
                 </div>
                 <div *ngIf="emailTouched && !email" class="field-error">{{ 'login.error_required' | translate }}</div>
               </div>
-
-              <div class="input-group">
+ 
+              <div class="input-group animate-premium-fade" style="animation-delay: 300ms">
                 <div class="label-row">
                   <label class="input-label">{{ 'login.password_label' | translate }}</label>
-                  <a routerLink="/auth/forgot-password" class="forgot-link">{{ 'login.forgot_password' | translate }}</a>
+                  <a routerLink="/auth/forgot-password" class="forgot-link hover:underline">{{ 'login.forgot_password' | translate }}</a>
                 </div>
-                <div class="input-wrapper">
-                  <div class="input-icon">
+                <div class="input-wrapper group">
+                  <div class="input-icon group-focus-within:text-indigo-500 transition-colors">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                   </div>
-                  <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" class="premium-input" placeholder="••••••••" required (blur)="passwordTouched = true">
+                  <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" class="premium-input bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-white/5 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10" placeholder="••••••••" required (blur)="passwordTouched = true">
                   <button type="button" class="visibility-toggle" (click)="showPassword = !showPassword">
                     <svg *ngIf="!showPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                     <svg *ngIf="showPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.025 10.025 0 014.132-5.413m1.854-1.423A9.92 9.92 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.413m-1.854 1.423a3 3 0 00-4.243-4.243m4.243 4.243L3 3" /></svg>
@@ -102,28 +102,28 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
                 </div>
                 <div *ngIf="passwordTouched && !password" class="field-error">{{ 'login.error_required' | translate }}</div>
               </div>
-
-              <div class="options">
-                <label class="remember-me">
-                  <input type="checkbox" [(ngModel)]="rememberMe" name="rememberMe">
-                  <span>{{ 'login.remember_me' | translate }}</span>
+ 
+              <div class="options animate-premium-fade" style="animation-delay: 400ms">
+                <label class="remember-me group">
+                  <input type="checkbox" [(ngModel)]="rememberMe" name="rememberMe" class="rounded-md border-slate-300 text-indigo-600 focus:ring-indigo-500 transition-all group-hover:scale-110">
+                  <span class="font-bold text-slate-500 group-hover:text-slate-700 transition-colors">{{ 'login.remember_me' | translate }}</span>
                 </label>
               </div>
-
-              <div *ngIf="errorMessage" class="error-toast slide-in">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                <span>{{ errorMessage }}</span>
+ 
+              <div *ngIf="errorMessage" class="error-toast slide-in animate-premium-fade" style="animation-delay: 50ms">
+                <svg class="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                <span class="font-black italic uppercase text-[10px] tracking-widest">{{ errorMessage }}</span>
               </div>
-
-              <button type="submit" class="auth-button" [disabled]="isLoading">
+ 
+              <button type="submit" class="auth-button animate-premium-fade bg-gradient-to-r from-indigo-600 to-blue-700 shadow-xl shadow-indigo-500/20 active:scale-95" [disabled]="isLoading" style="animation-delay: 500ms">
                 <div *ngIf="isLoading" class="button-loader"></div>
-                <span>{{ isLoading ? ('login.signing_in' | translate) : ('login.submit' | translate) }}</span>
-                <svg *ngIf="!isLoading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                <span class="font-black uppercase tracking-widest text-sm">{{ isLoading ? ('login.signing_in' | translate) : ('login.submit' | translate) }}</span>
+                <svg *ngIf="!isLoading" class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </button>
             </form>
-
-            <footer class="form-footer">
-              <p>{{ 'login.no_account' | translate }} <a routerLink="/auth/register" class="register-link">{{ 'login.register_link' | translate }}</a></p>
+ 
+            <footer class="form-footer animate-premium-fade" style="animation-delay: 600ms">
+              <p class="font-medium text-slate-400">{{ 'login.no_account' | translate }} <a routerLink="/auth/register" class="register-link text-indigo-600 font-black uppercase tracking-wider hover:text-indigo-700 transition-colors">{{ 'login.register_link' | translate }}</a></p>
             </footer>
           </div>
         </div>
