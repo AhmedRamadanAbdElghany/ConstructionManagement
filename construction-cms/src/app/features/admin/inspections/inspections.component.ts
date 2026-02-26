@@ -73,37 +73,33 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
   <!-- ===== KPI STRIP ===== -->
   @if (view() === 'list') {
     <div class="kpi-strip">
-      <div class="kpi-card glass-morph">
-        <div class="kpi-icon total">
-          <i class="fas fa-list-ul"></i>
-        </div>
+      <!-- Total -->
+      <div class="kpi-card total glass-morph">
+        <div class="kpi-icon"><i class="fas fa-list-ul"></i></div>
         <div class="kpi-data">
           <span class="kpi-value">{{ totalCount() }}</span>
           <span class="kpi-label">{{ 'inspections.kpi.total' | translate }}</span>
         </div>
       </div>
-      <div class="kpi-card glass-morph pending">
-        <div class="kpi-icon warning">
-          <i class="fas fa-clock"></i>
-        </div>
+      <!-- Pending -->
+      <div class="kpi-card pending glass-morph">
+        <div class="kpi-icon"><i class="fas fa-clock"></i></div>
         <div class="kpi-data">
           <span class="kpi-value">{{ pendingCount() }}</span>
           <span class="kpi-label">{{ 'inspections.kpi.pending' | translate }}</span>
         </div>
       </div>
-      <div class="kpi-card glass-morph active">
-        <div class="kpi-icon processing">
-          <i class="fas fa-sync-alt fa-spin"></i>
-        </div>
+      <!-- In Progress -->
+      <div class="kpi-card active glass-morph">
+        <div class="kpi-icon"><i class="fas fa-sync-alt"></i></div>
         <div class="kpi-data">
           <span class="kpi-value">{{ activeCount() }}</span>
           <span class="kpi-label">{{ 'inspections.kpi.active' | translate }}</span>
         </div>
       </div>
-      <div class="kpi-card glass-morph complete">
-        <div class="kpi-icon success">
-          <i class="fas fa-check-double"></i>
-        </div>
+      <!-- Completed -->
+      <div class="kpi-card complete glass-morph">
+        <div class="kpi-icon"><i class="fas fa-check-double"></i></div>
         <div class="kpi-data">
           <span class="kpi-value">{{ completedCount() }}</span>
           <span class="kpi-label">{{ 'inspections.kpi.completed' | translate }}</span>
@@ -562,6 +558,253 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
       background: var(--app-bg);
       color: var(--app-text);
     }
+
+    /* Page Header */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.5rem;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .header-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--app-text);
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--muted-text);
+      margin: 0.25rem 0 0;
+      font-weight: 500;
+    }
+    .header-actions { display: flex; gap: 0.75rem; }
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.25rem;
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      background: var(--glass-bg);
+      color: var(--muted-text);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover {
+      background: var(--input-bg);
+      color: var(--app-text);
+      border-color: var(--accent-blue);
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      align-items: center;
+    }
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 250px;
+    }
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted-text);
+      pointer-events: none;
+    }
+    .search-input {
+      width: 100%;
+      padding: 0.875rem 1rem 0.875rem 2.75rem;
+      background: var(--input-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      color: var(--app-text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .search-input:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    .search-input::placeholder { color: var(--muted-text); opacity: 0.7; }
+    .filter-select {
+      padding: 0.875rem 1rem;
+      background: var(--input-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      color: var(--app-text);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+      min-width: 160px;
+      transition: all 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
+    }
+    .filter-select:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    /* Loading State */
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 5rem 2rem;
+      color: var(--muted-text);
+      gap: 1.5rem;
+    }
+    .loading-state p { margin: 0; font-size: 0.9rem; font-weight: 600; }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--glass-border);
+      border-top-color: var(--accent-blue);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Empty State */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 5rem 2rem;
+      text-align: center;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+    }
+    .empty-state.small { padding: 3rem 2rem; background: transparent; border: none; }
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.6;
+    }
+    .empty-state h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--app-text);
+      margin: 0 0 0.5rem;
+    }
+    .empty-state p {
+      font-size: 0.9rem;
+      color: var(--muted-text);
+      margin: 0;
+    }
+    .empty-msg {
+      font-size: 0.9rem;
+      color: var(--muted-text);
+      font-style: italic;
+    }
+
+    /* Session */
+    .session-card {
+      background: var(--input-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .session-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--glass-border);
+      font-size: 0.95rem;
+    }
+    .session-row:last-child { border-bottom: none; }
+    .session-row span:first-child { color: var(--muted-text); font-weight: 600; }
+    .session-row span:last-child { color: var(--app-text); font-weight: 700; }
+
+    /* Icon Button */
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      background: transparent;
+      transition: all 0.2s;
+    }
+    .icon-btn.danger { color: #ef4444; }
+    .icon-btn.danger:hover { background: rgba(239, 68, 68, 0.1); }
+    .btn-sm { padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: 10px; }
+
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .kpi-card {
+      padding: 1.5rem;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      transition: transform 0.3s;
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+    }
+    .kpi-card:hover { transform: translateY(-4px); }
+    .kpi-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+    .kpi-data { display: flex; flex-direction: column; }
+    .kpi-value { font-size: 1.5rem; font-weight: 800; line-height: 1; }
+    .kpi-label { font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.4rem; }
+    
+    .kpi-card.total .kpi-icon { color: #38bdf8; background: rgba(56, 189, 248, 0.1); }
+    .kpi-card.pending .kpi-icon { color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+    .kpi-card.active .kpi-icon { color: #8b5cf6; background: rgba(139, 92, 246, 0.1); }
+    .kpi-card.complete .kpi-icon { color: #10b981; background: rgba(16, 185, 129, 0.1); }
 
     .glass-morph {
       background: var(--glass-bg);

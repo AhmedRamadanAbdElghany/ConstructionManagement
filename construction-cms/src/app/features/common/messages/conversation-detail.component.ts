@@ -4,14 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import {
-  MessagingService,
-  ConversationDetailDto,
-  CompanyMessageDto,
-  SendMessageRequest,
-  CanSendMessageResult
-} from '../../../core/services/messaging.service';
+import { MessagingService, ConversationDetailDto, CompanyMessageDto, SendMessageRequest, CanSendMessageResult } from '../../../core/services/messaging.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-conversation-detail',
@@ -247,6 +242,7 @@ export class ConversationDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private messagingService = inject(MessagingService);
   private i18nService = inject(I18nService);
+  private authService = inject(AuthService);
 
   conversation: ConversationDetailDto | null = null;
   isLoading = false;
@@ -299,12 +295,23 @@ export class ConversationDetailComponent implements OnInit, OnDestroy {
   }
 
   checkCanSend(conversationId: number) {
+    const isSuperAdmin = this.authService.getCurrentUser()?.roles?.includes('SuperAdmin');
+
     this.messagingService.canSendMessage(conversationId).subscribe({
       next: (result) => {
+        // SuperAdmin can ALWAYS send messages unless the conversation is blocked by a more severe reason
+        if (isSuperAdmin && !result.canSend && result.reason?.toLowerCase().includes('participant')) {
+          this.canSend = { canSend: true };
+          return;
+        }
         this.canSend = result;
       },
       error: (error) => {
         console.error('Error checking can send:', error);
+        if (isSuperAdmin) {
+          this.canSend = { canSend: true };
+          return;
+        }
         this.canSend = { canSend: false, reason: 'Unable to determine send permission' };
       }
     });

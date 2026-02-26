@@ -95,12 +95,18 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
             @for (tab of availableTabs; track tab.key) {
               <button
                 (click)="setActiveTab(tab.key)"
-                class="px-4 py-2 rounded-xl text-sm font-bold transition-all"
+                class="px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2"
                 [ngClass]="{
                   'bg-indigo-600 text-white': activeTab === tab.key,
                   'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700': activeTab !== tab.key
                 }">
                 {{ tab.label | translate }}
+                @if (tab.unreadCount > 0) {
+                  <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black"
+                        [ngClass]="activeTab === tab.key ? 'bg-white text-indigo-600' : 'bg-indigo-600 text-white'">
+                    {{ tab.unreadCount }}
+                  </span>
+                }
               </button>
             }
           </div>
@@ -487,7 +493,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
   // Tab state
   activeTab: string = 'all';
-  availableTabs: { key: string; label: string }[] = [];
+  availableTabs: { key: string; label: string; unreadCount: number }[] = [];
 
   // Messagable users for company owners
   messagableUsers: MessagableUserDto[] = [];
@@ -540,10 +546,13 @@ export class MessagesComponent implements OnInit, OnDestroy {
         this.isRestricted = status.isRestricted;
         this.superAdminCompanyId = status.superAdminCompanyId ?? null;
         this.isStatusLoading = false;
+        // Re-update tabs now that we have the superAdminCompanyId
+        this.updateAvailableTabs();
       },
       error: (error) => {
         console.error('Error loading messaging status:', error);
         this.isStatusLoading = false;
+        this.updateAvailableTabs();
       }
     });
   }
@@ -572,51 +581,99 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
     // SuperAdmin sees all tabs
     if (isSuperAdmin) {
-      this.availableTabs.push({ key: 'all', label: 'messages.tabs.all' });
-      this.availableTabs.push({ key: 'Company', label: 'messages.tabs.companies' });
-      this.availableTabs.push({ key: 'Worker', label: 'messages.tabs.workers' });
-      this.availableTabs.push({ key: 'Client', label: 'messages.tabs.clients' });
-      this.availableTabs.push({ key: 'SuperAdmin', label: 'messages.tabs.superadmin' });
+      this.availableTabs.push({
+        key: 'all',
+        label: 'messages.tabs.all',
+        unreadCount: this.conversations.reduce((acc, c) => acc + c.unreadCount, 0)
+      });
+      this.availableTabs.push({
+        key: 'Company',
+        label: 'messages.tabs.companies',
+        unreadCount: this.conversations.filter(c => c.conversationType === 'Company').reduce((acc, c) => acc + c.unreadCount, 0)
+      });
+      this.availableTabs.push({
+        key: 'Worker',
+        label: 'messages.tabs.workers',
+        unreadCount: this.conversations.filter(c => c.conversationType === 'Worker').reduce((acc, c) => acc + c.unreadCount, 0)
+      });
+      this.availableTabs.push({
+        key: 'Client',
+        label: 'messages.tabs.clients',
+        unreadCount: this.conversations.filter(c => c.conversationType === 'Client').reduce((acc, c) => acc + c.unreadCount, 0)
+      });
+      this.availableTabs.push({
+        key: 'SuperAdmin',
+        label: 'messages.tabs.superadmin',
+        unreadCount: this.conversations.filter(c => c.conversationType === 'SuperAdmin' || c.companyId === this.superAdminCompanyId).reduce((acc, c) => acc + c.unreadCount, 0)
+      });
       return;
     }
 
-    // Always show "All" tab if there are conversations
-    if (this.conversations.length > 0) {
-      this.availableTabs.push({ key: 'all', label: 'messages.tabs.all' });
-    }
+    // Always show "All" tab if there are any conversations
+    this.availableTabs.push({
+      key: 'all',
+      label: 'messages.tabs.all',
+      unreadCount: this.conversations.reduce((acc, c) => acc + c.unreadCount, 0)
+    });
 
     // Check which conversation types exist
     const hasCompanyConversations = this.conversations.some(c => c.conversationType === 'Company');
     const hasWorkerConversations = this.conversations.some(c => c.conversationType === 'Worker');
     const hasClientConversations = this.conversations.some(c => c.conversationType === 'Client');
-    const hasSuperAdminConversations = this.conversations.some(c => c.conversationType === 'SuperAdmin');
+    const hasSuperAdminConversations = this.conversations.some(c =>
+      c.conversationType === 'SuperAdmin' ||
+      (this.superAdminCompanyId && c.companyId === this.superAdminCompanyId) ||
+      c.initiatorName?.toLowerCase().includes('admin') ||
+      c.companyName?.toLowerCase().includes('support') ||
+      c.companyName?.toLowerCase().includes('admin')
+    );
 
-    // Add tabs based on conversation types and user permissions
+    // Add specific filter tabs if relevant
     if (hasCompanyConversations) {
-      this.availableTabs.push({ key: 'Company', label: 'messages.tabs.companies' });
+      this.availableTabs.push({
+        key: 'Company',
+        label: 'messages.tabs.companies',
+        unreadCount: this.conversations.filter(c => c.conversationType === 'Company').reduce((acc, c) => acc + c.unreadCount, 0)
+      });
     }
 
-    // Workers tab - visible for company owners who can message workers
     if (hasWorkerConversations || (this.isCompanyOwner && !this.isRestricted)) {
-      this.availableTabs.push({ key: 'Worker', label: 'messages.tabs.workers' });
+      this.availableTabs.push({
+        key: 'Worker',
+        label: 'messages.tabs.workers',
+        unreadCount: this.conversations.filter(c => c.conversationType === 'Worker').reduce((acc, c) => acc + c.unreadCount, 0)
+      });
     }
 
-    // Clients tab - visible for company owners who can message clients
     if (hasClientConversations || (this.isCompanyOwner && !this.isRestricted)) {
-      this.availableTabs.push({ key: 'Client', label: 'messages.tabs.clients' });
+      this.availableTabs.push({
+        key: 'Client',
+        label: 'messages.tabs.clients',
+        unreadCount: this.conversations.filter(c => c.conversationType === 'Client').reduce((acc, c) => acc + c.unreadCount, 0)
+      });
     }
 
-    // SuperAdmin tab - always visible if there are SuperAdmin conversations or user is restricted or they are a company owner
+    // Platform Support/SuperAdmin tab
     if (hasSuperAdminConversations || this.isRestricted || this.isCompanyOwner) {
       const label = (this.isCompanyOwner && !isSuperAdmin) ? 'messages.tabs.support' : 'messages.tabs.superadmin';
-      this.availableTabs.push({ key: 'SuperAdmin', label });
+      this.availableTabs.push({
+        key: 'SuperAdmin',
+        label,
+        unreadCount: this.conversations.filter(c =>
+          c.conversationType === 'SuperAdmin' ||
+          (this.superAdminCompanyId && c.companyId === this.superAdminCompanyId) ||
+          c.initiatorName?.toLowerCase().includes('admin') ||
+          c.companyName?.toLowerCase().includes('support') ||
+          c.companyName?.toLowerCase().includes('admin')
+        ).reduce((acc, c) => acc + c.unreadCount, 0)
+      });
     }
 
-    // Set default tab based on user type
-    if (this.isRestricted && hasSuperAdminConversations) {
+    // Default tab selection
+    if (this.activeTab === 'all' && this.conversations.length === 0 && this.isRestricted) {
       this.activeTab = 'SuperAdmin';
-    } else if (this.availableTabs.length > 0 && !this.availableTabs.find(t => t.key === this.activeTab)) {
-      this.activeTab = this.availableTabs[0].key;
+    } else if (!this.availableTabs.find(t => t.key === this.activeTab)) {
+      this.activeTab = 'all';
     }
   }
 
@@ -624,6 +681,18 @@ export class MessagesComponent implements OnInit, OnDestroy {
     if (this.activeTab === 'all') {
       return this.conversations;
     }
+
+    // For Platform Support tab, also include conversations with the SuperAdmin company ID
+    if (this.activeTab === 'SuperAdmin') {
+      return this.conversations.filter(c =>
+        c.conversationType === 'SuperAdmin' ||
+        (this.superAdminCompanyId && c.companyId === this.superAdminCompanyId) ||
+        c.initiatorName?.toLowerCase().includes('admin') ||
+        c.companyName?.toLowerCase().includes('support') ||
+        c.companyName?.toLowerCase().includes('admin')
+      );
+    }
+
     return this.conversations.filter(c => c.conversationType === this.activeTab);
   }
 
