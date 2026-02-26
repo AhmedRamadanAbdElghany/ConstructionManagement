@@ -2474,7 +2474,8 @@
       "companies": "Companies",
       "workers": "Workers",
       "clients": "Clients",
-      "superadmin": "SuperAdmin"
+      "superadmin": "SuperAdmin",
+      "support": "Platform Support"
     }
   },
   "safety": {

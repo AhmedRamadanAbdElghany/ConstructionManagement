@@ -38,6 +38,15 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
                 </svg>
                 {{ 'messages.message_user' | translate }}
               </button>
+
+              <button 
+                (click)="openStartConversationModal()"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold uppercase tracking-wider hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/20">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+                {{ 'messages.contact_admin' | translate }}
+              </button>
             }
             
             <!-- Unread Count -->
@@ -597,9 +606,10 @@ export class MessagesComponent implements OnInit, OnDestroy {
       this.availableTabs.push({ key: 'Client', label: 'messages.tabs.clients' });
     }
 
-    // SuperAdmin tab - always visible if there are SuperAdmin conversations or user is restricted
-    if (hasSuperAdminConversations || this.isRestricted) {
-      this.availableTabs.push({ key: 'SuperAdmin', label: 'messages.tabs.superadmin' });
+    // SuperAdmin tab - always visible if there are SuperAdmin conversations or user is restricted or they are a company owner
+    if (hasSuperAdminConversations || this.isRestricted || this.isCompanyOwner) {
+      const label = (this.isCompanyOwner && !isSuperAdmin) ? 'messages.tabs.support' : 'messages.tabs.superadmin';
+      this.availableTabs.push({ key: 'SuperAdmin', label });
     }
 
     // Set default tab based on user type
