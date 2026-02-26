@@ -6,41 +6,41 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 interface ProductCategory {
-    id: number;
-    name: string;
-    nameAr: string;
-    icon: string | null;
-    productCount: number;
+  id: number;
+  name: string;
+  nameAr: string;
+  icon: string | null;
+  productCount: number;
 }
 
 interface Product {
-    id: number;
-    name: string;
-    price: number;
-    unit: string | null;
-    imageUrl: string | null;
-    description: string | null;
-    vendorName: string;
-    vendorId: number;
-    categoryName: string;
-    quantityInStock: number;
+  id: number;
+  name: string;
+  price: number;
+  unit: string | null;
+  imageUrl: string | null;
+  description: string | null;
+  vendorName: string;
+  vendorId: number;
+  categoryName: string;
+  quantityInStock: number;
 }
 
 interface ProductsResponse {
-    products: Product[];
-    pagination: {
-        currentPage: number;
-        pageSize: number;
-        totalCount: number;
-        totalPages: number;
-    };
+  products: Product[];
+  pagination: {
+    currentPage: number;
+    pageSize: number;
+    totalCount: number;
+    totalPages: number;
+  };
 }
 
 @Component({
-    selector: 'app-marketplace-products',
-    standalone: true,
-    imports: [CommonModule, RouterModule, FormsModule, TranslateModule],
-    template: `
+  selector: 'app-marketplace-products',
+  standalone: true,
+  imports: [CommonModule, RouterModule, FormsModule, TranslateModule],
+  template: `
     <div class="products-page">
       <!-- Header -->
       <div class="page-header">
@@ -199,98 +199,113 @@ interface ProductsResponse {
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     .products-page {
       min-height: 100vh;
-      background: #f9fafb;
+      background: var(--app-bg);
+      color: var(--app-text);
+      transition: all 0.3s ease;
     }
 
     .page-header {
-      background: white;
-      padding: 1.5rem 2rem;
-      border-bottom: 1px solid #e5e7eb;
+      background: var(--card-bg);
+      padding: 2rem;
+      border-bottom: 1px solid var(--glass-border);
     }
 
     .page-header h1 {
       margin: 0 0 0.5rem;
-      color: #1e3a5f;
+      color: var(--app-text);
+      font-weight: 850;
     }
 
     .breadcrumb {
       display: flex;
       gap: 0.5rem;
       font-size: 0.875rem;
-      color: #6b7280;
+      color: var(--muted-text);
+      font-weight: 600;
     }
 
     .breadcrumb a {
-      color: #f59e0b;
+      color: var(--accent-blue);
       text-decoration: none;
     }
 
     .content-layout {
       display: grid;
       grid-template-columns: 280px 1fr;
-      gap: 2rem;
-      padding: 2rem;
+      gap: 2.5rem;
+      padding: 2.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
     }
 
     .filters-sidebar {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 1.75rem;
       height: fit-content;
       position: sticky;
       top: 1rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
     }
 
     .filter-section {
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
     }
 
     .filter-section h3 {
-      font-size: 0.875rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      color: #1e3a5f;
+      font-size: 0.8rem;
+      font-weight: 850;
+      margin-bottom: 1.25rem;
+      color: var(--app-text);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
     }
 
     .category-list {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.6rem;
     }
 
     .category-btn {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.75rem 1rem;
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
+      padding: 0.85rem 1.15rem;
+      background: var(--input-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       text-align: left;
       width: 100%;
+      color: var(--app-text);
+      font-weight: 600;
     }
 
     .category-btn:hover {
-      background: #f0f9ff;
-      border-color: #1e3a5f;
+      background: var(--glass-bg);
+      border-color: var(--accent-blue);
+      transform: translateX(4px);
     }
 
     .category-btn.active {
-      background: #1e3a5f;
+      background: var(--accent-blue);
       color: white;
-      border-color: #1e3a5f;
+      border-color: var(--accent-blue);
+      box-shadow: 0 8px 16px rgba(14, 165, 233, 0.2);
     }
 
     .category-btn .count {
       font-size: 0.75rem;
-      background: rgba(0,0,0,0.1);
-      padding: 0.125rem 0.5rem;
-      border-radius: 12px;
+      background: var(--glass-border);
+      padding: 0.125rem 0.6rem;
+      border-radius: 10px;
+      font-weight: 800;
     }
 
     .category-btn.active .count {
@@ -300,34 +315,48 @@ interface ProductsResponse {
     .price-inputs {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.75rem;
     }
 
     .price-inputs input {
       flex: 1;
-      padding: 0.5rem;
-      border: 1px solid #e5e7eb;
-      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
       width: 100%;
+      background: var(--input-bg);
+      color: var(--app-text);
+      font-weight: 600;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .price-inputs input:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
     }
 
     .clear-filters {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
+      gap: 0.75rem;
       width: 100%;
-      padding: 0.75rem;
+      padding: 0.85rem;
       background: transparent;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      color: #6b7280;
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      color: var(--muted-text);
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s;
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
     }
 
     .clear-filters:hover {
-      background: #fee2e2;
+      background: rgba(239, 68, 68, 0.05);
       border-color: #ef4444;
       color: #ef4444;
     }
@@ -338,44 +367,70 @@ interface ProductsResponse {
 
     .toolbar {
       display: flex;
-      gap: 1rem;
-      margin-bottom: 1rem;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
     }
 
     .search-box {
       flex: 1;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      background: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      padding: 0 1rem;
+      gap: 1rem;
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 0 1.25rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      transition: all 0.3s ease;
+    }
+
+    .search-box:focus-within {
+      border-color: var(--accent-blue);
+      box-shadow: 0 8px 24px rgba(14, 165, 233, 0.1);
     }
 
     .search-box i {
-      color: #9ca3af;
+      color: var(--muted-text);
+      font-size: 1.1rem;
     }
 
     .search-box input {
       flex: 1;
-      padding: 0.75rem 0;
+      padding: 0.9rem 0;
       border: none;
       outline: none;
+      background: transparent;
+      color: var(--app-text);
+      font-weight: 600;
+      font-size: 1rem;
     }
 
     .sort-select select {
-      padding: 0.75rem 2rem 0.75rem 1rem;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      background: white;
+      padding: 0.9rem 2.5rem 0.9rem 1.25rem;
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      background: var(--card-bg);
+      color: var(--app-text);
       cursor: pointer;
+      font-weight: 600;
+      outline: none;
+      transition: all 0.3s ease;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1rem;
+    }
+
+    .sort-select select:focus {
+      border-color: var(--accent-blue);
     }
 
     .results-info {
-      margin-bottom: 1rem;
-      font-size: 0.875rem;
-      color: #6b7280;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      color: var(--muted-text);
+      font-weight: 600;
     }
 
     .loading-state, .empty-state {
@@ -383,163 +438,221 @@ interface ProductsResponse {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 4rem 2rem;
-      background: white;
-      border-radius: 12px;
+      padding: 6rem 2rem;
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
     }
 
     .loading-state i, .empty-state i {
-      font-size: 3rem;
-      color: #9ca3af;
-      margin-bottom: 1rem;
-    }
-
-    .empty-state h3 {
-      margin-bottom: 0.5rem;
-    }
-
-    .empty-state p {
-      color: #6b7280;
+      font-size: 3.5rem;
+      color: var(--accent-blue);
       margin-bottom: 1.5rem;
     }
 
+    .empty-state h3 {
+      margin-bottom: 0.75rem;
+      font-weight: 900;
+      color: var(--app-text);
+    }
+
+    .empty-state p {
+      color: var(--muted-text);
+      margin-bottom: 2rem;
+      font-weight: 500;
+    }
+
     .empty-state button {
-      padding: 0.75rem 1.5rem;
-      background: #1e3a5f;
+      padding: 0.9rem 2rem;
+      background: var(--accent-blue);
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 14px;
       cursor: pointer;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.3s ease;
+    }
+
+    .empty-state button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3);
     }
 
     .products-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 2rem;
     }
 
     .product-card {
-      background: white;
-      border-radius: 12px;
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       cursor: pointer;
-      transition: transform 0.3s, box-shadow 0.3s;
+      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     }
 
     .product-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+      border-color: var(--accent-blue);
     }
 
     .product-image {
-      height: 160px;
-      background: #f3f4f6;
+      height: 200px;
+      background: var(--input-bg);
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
+      overflow: hidden;
     }
 
     .product-image img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .product-card:hover .product-image img {
+      transform: scale(1.1);
     }
 
     .placeholder-image i {
-      font-size: 3rem;
-      color: #9ca3af;
+      font-size: 3.5rem;
+      color: var(--muted-text);
+      opacity: 0.4;
     }
 
     .low-stock {
       position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
+      top: 0.75rem;
+      right: 0.75rem;
       background: #ef4444;
       color: white;
       font-size: 0.7rem;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
+      font-weight: 900;
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
     }
 
     .product-info {
-      padding: 1rem;
+      padding: 1.5rem;
     }
 
     .category-tag {
-      font-size: 0.75rem;
-      color: #f59e0b;
-      background: #fffbeb;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 850;
+      color: var(--accent-blue);
+      background: rgba(14, 165, 233, 0.1);
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
     .product-info h3 {
-      font-size: 1rem;
-      margin: 0.5rem 0 0.25rem;
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin: 1rem 0 0.4rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      color: var(--app-text);
+      letter-spacing: -0.01em;
     }
 
     .vendor-name {
-      font-size: 0.85rem;
-      color: #6b7280;
-      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--muted-text);
+      margin-bottom: 1.25rem;
+      font-weight: 600;
     }
 
     .price-row {
       display: flex;
       align-items: baseline;
-      gap: 0.25rem;
+      gap: 0.35rem;
     }
 
     .price {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #1e3a5f;
+      font-size: 1.4rem;
+      font-weight: 950;
+      color: var(--app-text);
+      letter-spacing: -0.02em;
     }
 
     .unit {
-      font-size: 0.85rem;
-      color: #6b7280;
+      font-size: 0.9rem;
+      color: var(--muted-text);
+      font-weight: 600;
     }
 
     .pagination {
       display: flex;
       justify-content: center;
-      gap: 0.5rem;
-      margin-top: 2rem;
+      gap: 0.6rem;
+      margin-top: 3.5rem;
     }
 
     .page-btn {
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s ease;
+      color: var(--app-text);
+      font-weight: 700;
     }
 
     .page-btn:hover:not(:disabled) {
-      background: #f0f9ff;
-      border-color: #1e3a5f;
+      background: var(--input-bg);
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
     }
 
     .page-btn.active {
-      background: #1e3a5f;
+      background: var(--accent-blue);
       color: white;
-      border-color: #1e3a5f;
+      border-color: var(--accent-blue);
+      box-shadow: 0 8px 16px rgba(14, 165, 233, 0.2);
     }
 
     .page-btn:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
+    }
+
+    @media (max-width: 1024px) {
+      .content-layout {
+        grid-template-columns: 240px 1fr;
+        gap: 1.5rem;
+        padding: 1.5rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .content-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .filters-sidebar {
+        position: static;
+        width: 100%;
+      }
     }
 
     @media (max-width: 768px) {
@@ -554,131 +667,131 @@ interface ProductsResponse {
   `]
 })
 export class MarketplaceProductsComponent implements OnInit {
-    private http = inject(HttpClient);
-    private route = inject(ActivatedRoute);
-    private router = inject(Router);
-    protected translate = inject(TranslateService);
+  private http = inject(HttpClient);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  protected translate = inject(TranslateService);
 
-    categories: ProductCategory[] = [];
+  categories: ProductCategory[] = [];
 
-    searchTerm = '';
-    minPrice: number | null = null;
-    maxPrice: number | null = null;
-    sortBy = 'relevance';
+  searchTerm = '';
+  minPrice: number | null = null;
+  maxPrice: number | null = null;
+  sortBy = 'relevance';
 
-    selectedCategoryId = signal<number | null>(null);
-    currentPage = signal(1);
-    pageSize = 20;
+  selectedCategoryId = signal<number | null>(null);
+  currentPage = signal(1);
+  pageSize = 20;
 
-    loading = signal(true);
-    products = signal<Product[]>([]);
-    productsResponse = signal<ProductsResponse | null>(null);
-    totalPages = signal(1);
+  loading = signal(true);
+  products = signal<Product[]>([]);
+  productsResponse = signal<ProductsResponse | null>(null);
+  totalPages = signal(1);
 
-    private get apiUrl(): string {
-        return (window as any).__API_URL__ || 'https://localhost:7001/api';
+  private get apiUrl(): string {
+    return (window as any).__API_URL__ || 'https://localhost:7001/api';
+  }
+
+  ngOnInit(): void {
+    this.loadCategories();
+    this.route.queryParams.subscribe(params => {
+      if (params['categoryId']) {
+        this.selectedCategoryId.set(+params['categoryId']);
+      }
+      if (params['search']) {
+        this.searchTerm = params['search'];
+      }
+      this.loadProducts();
+    });
+  }
+
+  private loadCategories(): void {
+    this.http.get<any[]>(`${this.apiUrl}/marketplace/categories`).subscribe({
+      next: (data) => {
+        this.categories = data;
+      },
+      error: (error) => console.error('Error loading categories:', error)
+    });
+  }
+
+  private loadProducts(): void {
+    this.loading.set(true);
+
+    let url = `${this.apiUrl}/marketplace/products?page=${this.currentPage()}&pageSize=${this.pageSize}`;
+
+    if (this.selectedCategoryId()) {
+      url += `&categoryId=${this.selectedCategoryId()}`;
+    }
+    if (this.searchTerm) {
+      url += `&searchTerm=${encodeURIComponent(this.searchTerm)}`;
+    }
+    if (this.minPrice) {
+      url += `&minPrice=${this.minPrice}`;
+    }
+    if (this.maxPrice) {
+      url += `&maxPrice=${this.maxPrice}`;
+    }
+    if (this.sortBy) {
+      url += `&sortBy=${this.sortBy}`;
     }
 
-    ngOnInit(): void {
-        this.loadCategories();
-        this.route.queryParams.subscribe(params => {
-            if (params['categoryId']) {
-                this.selectedCategoryId.set(+params['categoryId']);
-            }
-            if (params['search']) {
-                this.searchTerm = params['search'];
-            }
-            this.loadProducts();
-        });
+    this.http.get<ProductsResponse>(url).subscribe({
+      next: (response) => {
+        this.products.set(response.products || []);
+        this.productsResponse.set(response);
+        this.totalPages.set(response.pagination?.totalPages || 1);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        console.error('Error loading products:', error);
+        this.loading.set(false);
+      }
+    });
+  }
+
+  selectCategory(categoryId: number): void {
+    if (this.selectedCategoryId() === categoryId) {
+      this.selectedCategoryId.set(null);
+    } else {
+      this.selectedCategoryId.set(categoryId);
+    }
+    this.currentPage.set(1);
+    this.loadProducts();
+  }
+
+  applyFilters(): void {
+    this.currentPage.set(1);
+    this.loadProducts();
+  }
+
+  clearFilters(): void {
+    this.selectedCategoryId.set(null);
+    this.searchTerm = '';
+    this.minPrice = null;
+    this.maxPrice = null;
+    this.sortBy = 'relevance';
+    this.currentPage.set(1);
+    this.router.navigate(['/marketplace/products']);
+  }
+
+  goToPage(page: number): void {
+    this.currentPage.set(page);
+    this.loadProducts();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const current = this.currentPage();
+    const total = this.totalPages();
+
+    let start = Math.max(1, current - 2);
+    let end = Math.min(total, current + 2);
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
     }
 
-    private loadCategories(): void {
-        this.http.get<any[]>(`${this.apiUrl}/marketplace/categories`).subscribe({
-            next: (data) => {
-                this.categories = data;
-            },
-            error: (error) => console.error('Error loading categories:', error)
-        });
-    }
-
-    private loadProducts(): void {
-        this.loading.set(true);
-
-        let url = `${this.apiUrl}/marketplace/products?page=${this.currentPage()}&pageSize=${this.pageSize}`;
-
-        if (this.selectedCategoryId()) {
-            url += `&categoryId=${this.selectedCategoryId()}`;
-        }
-        if (this.searchTerm) {
-            url += `&searchTerm=${encodeURIComponent(this.searchTerm)}`;
-        }
-        if (this.minPrice) {
-            url += `&minPrice=${this.minPrice}`;
-        }
-        if (this.maxPrice) {
-            url += `&maxPrice=${this.maxPrice}`;
-        }
-        if (this.sortBy) {
-            url += `&sortBy=${this.sortBy}`;
-        }
-
-        this.http.get<ProductsResponse>(url).subscribe({
-            next: (response) => {
-                this.products.set(response.products || []);
-                this.productsResponse.set(response);
-                this.totalPages.set(response.pagination?.totalPages || 1);
-                this.loading.set(false);
-            },
-            error: (error) => {
-                console.error('Error loading products:', error);
-                this.loading.set(false);
-            }
-        });
-    }
-
-    selectCategory(categoryId: number): void {
-        if (this.selectedCategoryId() === categoryId) {
-            this.selectedCategoryId.set(null);
-        } else {
-            this.selectedCategoryId.set(categoryId);
-        }
-        this.currentPage.set(1);
-        this.loadProducts();
-    }
-
-    applyFilters(): void {
-        this.currentPage.set(1);
-        this.loadProducts();
-    }
-
-    clearFilters(): void {
-        this.selectedCategoryId.set(null);
-        this.searchTerm = '';
-        this.minPrice = null;
-        this.maxPrice = null;
-        this.sortBy = 'relevance';
-        this.currentPage.set(1);
-        this.router.navigate(['/marketplace/products']);
-    }
-
-    goToPage(page: number): void {
-        this.currentPage.set(page);
-        this.loadProducts();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    getPageNumbers(): number[] {
-        const pages: number[] = [];
-        const current = this.currentPage();
-        const total = this.totalPages();
-
-        let start = Math.max(1, current - 2);
-        let end = Math.min(total, current + 2);
-
-        for (let i = start; i <= end; i++) {
-            pages.push(i);
-        }
-
-        return pages;
-    }
+    return pages;
+  }
 }

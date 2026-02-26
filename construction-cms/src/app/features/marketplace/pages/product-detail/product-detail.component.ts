@@ -6,40 +6,40 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 interface Product {
-    id: number;
-    name: string;
-    price: number;
-    unit: string | null;
-    imageUrl: string | null;
-    description: string | null;
-    vendorName: string;
-    vendorId: number;
-    categoryName: string;
-    quantityInStock: number;
-    sku: string | null;
-    averageRating: number | null;
-    totalReviews: number;
+  id: number;
+  name: string;
+  price: number;
+  unit: string | null;
+  imageUrl: string | null;
+  description: string | null;
+  vendorName: string;
+  vendorId: number;
+  categoryName: string;
+  quantityInStock: number;
+  sku: string | null;
+  averageRating: number | null;
+  totalReviews: number;
 }
 
 interface Vendor {
-    id: number;
-    name: string;
-    address: string | null;
-    averageRating: number;
-    totalOrders: number;
-    productCount: number;
+  id: number;
+  name: string;
+  address: string | null;
+  averageRating: number;
+  totalOrders: number;
+  productCount: number;
 }
 
 interface CartItem {
-    productId: number;
-    quantity: number;
+  productId: number;
+  quantity: number;
 }
 
 @Component({
-    selector: 'app-product-detail',
-    standalone: true,
-    imports: [CommonModule, RouterModule, FormsModule, TranslateModule],
-    template: `
+  selector: 'app-product-detail',
+  standalone: true,
+  imports: [CommonModule, RouterModule, FormsModule, TranslateModule],
+  template: `
     <div class="product-detail-page">
       <!-- Loading State -->
       @if (loading()) {
@@ -203,11 +203,13 @@ interface CartItem {
       }
     </div>
   `,
-    styles: [`
+  styles: [`
     .product-detail-page {
       min-height: 100vh;
-      background: #f9fafb;
-      padding: 2rem;
+      background: var(--app-bg);
+      color: var(--app-text);
+      padding: 3rem 2rem;
+      transition: all 0.3s ease;
     }
 
     .loading-state, .not-found {
@@ -219,213 +221,275 @@ interface CartItem {
     }
 
     .loading-state i, .not-found i {
-      font-size: 3rem;
-      color: #9ca3af;
-      margin-bottom: 1rem;
+      font-size: 4rem;
+      color: var(--accent-amber);
+      margin-bottom: 2rem;
     }
 
     .not-found h2 {
-      margin-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      font-weight: 900;
     }
 
     .not-found p {
-      color: #6b7280;
-      margin-bottom: 1.5rem;
+      color: var(--muted-text);
+      margin-bottom: 2.5rem;
+      font-weight: 500;
     }
 
     .back-btn {
-      padding: 0.75rem 1.5rem;
-      background: #1e3a5f;
+      padding: 1rem 2.5rem;
+      background: var(--accent-blue);
       color: white;
       text-decoration: none;
-      border-radius: 8px;
+      border-radius: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px rgba(14, 165, 233, 0.2);
     }
 
     .breadcrumb {
       display: flex;
-      gap: 0.5rem;
-      font-size: 0.875rem;
-      color: #6b7280;
-      margin-bottom: 1.5rem;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+      color: var(--muted-text);
+      margin-bottom: 2.5rem;
+      font-weight: 600;
     }
 
     .breadcrumb a {
-      color: #f59e0b;
+      color: var(--accent-amber);
       text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .breadcrumb a:hover {
+       color: var(--app-text);
     }
 
     .product-main {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      background: white;
-      border-radius: 16px;
-      padding: 2rem;
-      margin-bottom: 2rem;
+      gap: 4rem;
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 32px;
+      padding: 3rem;
+      margin-bottom: 3rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.03);
     }
 
     .product-image-section {
       position: sticky;
-      top: 1rem;
+      top: 2rem;
     }
 
     .main-image {
       aspect-ratio: 1;
-      background: #f3f4f6;
-      border-radius: 12px;
+      background: var(--input-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
     }
 
     .main-image img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .main-image:hover img {
+       transform: scale(1.05);
     }
 
     .placeholder-image i {
-      font-size: 5rem;
-      color: #9ca3af;
+      font-size: 6rem;
+      color: var(--muted-text);
+      opacity: 0.3;
     }
 
     .product-info-section h1 {
-      font-size: 1.75rem;
-      margin: 0.5rem 0;
-      color: #1e3a5f;
+      font-size: 2.75rem;
+      font-weight: 950;
+      margin: 1rem 0;
+      color: var(--app-text);
+      letter-spacing: -0.04em;
+      line-height: 1.1;
     }
 
     .category-tag {
       font-size: 0.75rem;
-      color: #f59e0b;
-      background: #fffbeb;
-      padding: 0.25rem 0.75rem;
-      border-radius: 4px;
+      font-weight: 850;
+      color: var(--accent-amber);
+      background: rgba(245, 158, 11, 0.1);
+      padding: 0.4rem 1rem;
+      border-radius: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
     }
 
     .vendor-info {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: #f0f9ff;
-      border-radius: 8px;
+      gap: 0.75rem;
+      padding: 0.75rem 1.25rem;
+      background: var(--input-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
       cursor: pointer;
-      margin: 1rem 0;
-      color: #1e3a5f;
+      margin: 1.5rem 0;
+      color: var(--app-text);
+      font-weight: 700;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .vendor-info:hover {
-      background: #e0f2fe;
+      background: var(--card-bg);
+      border-color: var(--accent-amber);
+      transform: translateX(8px);
+      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.1);
     }
+
+    .vendor-info i { color: var(--accent-amber); }
 
     .rating {
       display: flex;
       align-items: center;
-      gap: 0.25rem;
-      margin-bottom: 1rem;
+      gap: 0.35rem;
+      margin-bottom: 2rem;
     }
 
     .rating i {
       color: #fbbf24;
+      font-size: 1.15rem;
+      filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.2));
     }
 
     .rating i:not(.filled) {
-      color: #d1d5db;
+      color: var(--glass-border);
+      filter: none;
     }
 
     .rating-text {
-      margin-left: 0.5rem;
-      color: #6b7280;
-      font-size: 0.875rem;
+      margin-left: 0.75rem;
+      color: var(--muted-text);
+      font-size: 0.95rem;
+      font-weight: 600;
     }
 
     .price-section {
-      margin-bottom: 1rem;
+      margin-bottom: 2.5rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
     }
 
     .price {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #1e3a5f;
+      font-size: 3rem;
+      font-weight: 950;
+      color: var(--app-text);
+      letter-spacing: -0.04em;
     }
 
     .unit {
-      font-size: 1rem;
-      color: #6b7280;
+      font-size: 1.25rem;
+      color: var(--muted-text);
+      font-weight: 700;
     }
 
     .stock-status {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      margin-bottom: 1rem;
+      gap: 0.6rem;
+      padding: 0.6rem 1.25rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      font-weight: 850;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
     }
 
     .stock-status.in-stock {
-      background: #d1fae5;
-      color: #059669;
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
     }
 
     .stock-status.low-stock {
-      background: #fef3c7;
-      color: #d97706;
+      background: rgba(245, 158, 11, 0.1);
+      color: #f59e0b;
     }
 
     .stock-status.out-of-stock {
-      background: #fee2e2;
-      color: #dc2626;
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
     }
 
     .sku {
-      font-size: 0.875rem;
-      color: #6b7280;
-      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      color: var(--muted-text);
+      margin-bottom: 2.5rem;
+      font-weight: 600;
+      opacity: 0.8;
     }
 
     .add-to-cart-section {
       display: flex;
-      gap: 1rem;
-      margin-bottom: 2rem;
+      gap: 1.5rem;
+      margin-bottom: 3rem;
     }
 
     .quantity-selector {
       display: flex;
       align-items: center;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
+      background: var(--input-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
       overflow: hidden;
+      padding: 4px;
     }
 
     .quantity-selector button {
-      width: 44px;
-      height: 44px;
-      background: #f9fafb;
-      border: none;
+      width: 48px;
+      height: 48px;
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: all 0.3s ease;
+      color: var(--app-text);
     }
 
     .quantity-selector button:hover:not(:disabled) {
-      background: #e5e7eb;
+      background: var(--accent-amber);
+      color: white;
+      border-color: transparent;
     }
 
     .quantity-selector button:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
     }
 
     .quantity-selector input {
-      width: 60px;
-      height: 44px;
+      width: 70px;
+      background: transparent;
       border: none;
       text-align: center;
-      font-size: 1rem;
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: var(--app-text);
+      outline: none;
     }
 
     .quantity-selector input::-webkit-outer-spin-button,
@@ -439,78 +503,111 @@ interface CartItem {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
-      padding: 0 2rem;
-      background: #f59e0b;
+      gap: 1rem;
+      padding: 0 3rem;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
       color: white;
       border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
+      border-radius: 18px;
+      font-size: 1.1rem;
+      font-weight: 950;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      box-shadow: 0 15px 30px rgba(245, 158, 11, 0.3);
     }
 
     .add-to-cart-btn:hover:not(:disabled) {
-      background: #d97706;
+      transform: translateY(-5px);
+      box-shadow: 0 25px 50px rgba(245, 158, 11, 0.4);
+      filter: brightness(1.1);
     }
 
     .add-to-cart-btn:disabled {
-      background: #9ca3af;
+      background: var(--muted-text);
+      opacity: 0.5;
       cursor: not-allowed;
+      box-shadow: none;
     }
 
     .description-section h3 {
-      font-size: 1rem;
-      margin-bottom: 0.5rem;
-      color: #1e3a5f;
+      font-size: 1.25rem;
+      font-weight: 900;
+      margin-bottom: 1rem;
+      color: var(--app-text);
+      letter-spacing: -0.01em;
     }
 
     .description-section p {
-      color: #6b7280;
-      line-height: 1.6;
+      color: var(--app-text);
+      line-height: 1.8;
+      font-size: 1.05rem;
+      font-weight: 500;
+      opacity: 0.9;
     }
 
     .vendor-section {
-      background: white;
-      border-radius: 16px;
-      padding: 2rem;
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 32px;
+      padding: 3rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.02);
     }
 
     .vendor-section h2 {
-      font-size: 1.25rem;
-      margin-bottom: 1rem;
-      color: #1e3a5f;
+      font-size: 1.5rem;
+      font-weight: 900;
+      margin-bottom: 2rem;
+      color: var(--app-text);
+      letter-spacing: -0.02em;
     }
 
     .vendor-card {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      padding: 1rem;
-      background: #f9fafb;
-      border-radius: 12px;
+      gap: 2rem;
+      padding: 2rem;
+      background: var(--input-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
     .vendor-card:hover {
-      background: #f0f9ff;
+      background: var(--card-bg);
+      border-color: var(--accent-amber);
+      transform: scale(1.02);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.05);
     }
 
     .vendor-avatar {
-      width: 60px;
-      height: 60px;
-      background: #e0f2fe;
-      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .vendor-card:hover .vendor-avatar {
+       background: var(--accent-amber);
+       color: white;
+       border-color: transparent;
+       transform: rotate(-5deg);
     }
 
     .vendor-avatar i {
-      font-size: 1.5rem;
-      color: #1e3a5f;
+      font-size: 2.5rem;
+      color: var(--accent-amber);
+    }
+
+    .vendor-card:hover .vendor-avatar i {
+       color: white;
     }
 
     .vendor-details {
@@ -518,30 +615,58 @@ interface CartItem {
     }
 
     .vendor-details h3 {
-      margin-bottom: 0.25rem;
+      font-size: 1.5rem;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+      color: var(--app-text);
     }
 
     .vendor-details .address {
-      font-size: 0.875rem;
-      color: #6b7280;
-      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      color: var(--muted-text);
+      margin-bottom: 1rem;
+      font-weight: 600;
     }
 
     .vendor-stats {
       display: flex;
-      gap: 1rem;
+      gap: 2rem;
     }
 
     .stat {
       display: flex;
       align-items: center;
-      gap: 0.25rem;
-      font-size: 0.875rem;
-      color: #6b7280;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--app-text);
+      font-weight: 700;
     }
 
     .stat i {
-      color: #f59e0b;
+      color: var(--accent-amber);
+      font-size: 1rem;
+    }
+
+    @media (max-width: 1024px) {
+       .product-main { gap: 2rem; padding: 2rem; }
+       .product-info-section h1 { font-size: 2.25rem; }
+    }
+
+    @media (max-width: 768px) {
+      .product-main {
+        grid-template-columns: 1fr;
+      }
+
+      .product-image-section {
+        position: static;
+      }
+
+      .add-to-cart-section {
+        flex-direction: column;
+      }
+
+      .vendor-card { flex-direction: column; text-align: center; }
+      .vendor-stats { justify-content: center; flex-wrap: wrap; }
     }
 
     @media (max-width: 768px) {
@@ -560,96 +685,96 @@ interface CartItem {
   `]
 })
 export class ProductDetailComponent implements OnInit {
-    private http = inject(HttpClient);
-    private route = inject(ActivatedRoute);
-    private router = inject(Router);
-    protected translate = inject(TranslateService);
+  private http = inject(HttpClient);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  protected translate = inject(TranslateService);
 
-    loading = signal(true);
-    product = signal<Product | null>(null);
-    vendor = signal<Vendor | null>(null);
-    quantity = signal(1);
+  loading = signal(true);
+  product = signal<Product | null>(null);
+  vendor = signal<Vendor | null>(null);
+  quantity = signal(1);
 
-    private get apiUrl(): string {
-        return (window as any).__API_URL__ || 'https://localhost:7001/api';
-    }
+  private get apiUrl(): string {
+    return (window as any).__API_URL__ || 'https://localhost:7001/api';
+  }
 
-    ngOnInit(): void {
-        this.route.params.subscribe(params => {
-            const productId = params['id'];
-            if (productId) {
-                this.loadProduct(+productId);
-            }
-        });
-    }
+  ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      const productId = params['id'];
+      if (productId) {
+        this.loadProduct(+productId);
+      }
+    });
+  }
 
-    private loadProduct(productId: number): void {
-        this.loading.set(true);
+  private loadProduct(productId: number): void {
+    this.loading.set(true);
 
-        this.http.get<Product>(`${this.apiUrl}/marketplace/products/${productId}`).subscribe({
-            next: (product) => {
-                this.product.set(product);
-                if (product.vendorId) {
-                    this.loadVendor(product.vendorId);
-                }
-                this.loading.set(false);
-            },
-            error: (error) => {
-                console.error('Error loading product:', error);
-                this.loading.set(false);
-            }
-        });
-    }
-
-    private loadVendor(vendorId: number): void {
-        this.http.get<Vendor>(`${this.apiUrl}/marketplace/vendors/${vendorId}`).subscribe({
-            next: (vendor) => {
-                this.vendor.set(vendor);
-            },
-            error: (error) => console.error('Error loading vendor:', error)
-        });
-    }
-
-    goToVendor(vendorId: number): void {
-        this.router.navigate(['/marketplace/vendors', vendorId]);
-    }
-
-    incrementQuantity(): void {
-        const max = this.product()?.quantityInStock || 999;
-        if (this.quantity() < max) {
-            this.quantity.update(q => q + 1);
+    this.http.get<Product>(`${this.apiUrl}/marketplace/products/${productId}`).subscribe({
+      next: (product) => {
+        this.product.set(product);
+        if (product.vendorId) {
+          this.loadVendor(product.vendorId);
         }
+        this.loading.set(false);
+      },
+      error: (error) => {
+        console.error('Error loading product:', error);
+        this.loading.set(false);
+      }
+    });
+  }
+
+  private loadVendor(vendorId: number): void {
+    this.http.get<Vendor>(`${this.apiUrl}/marketplace/vendors/${vendorId}`).subscribe({
+      next: (vendor) => {
+        this.vendor.set(vendor);
+      },
+      error: (error) => console.error('Error loading vendor:', error)
+    });
+  }
+
+  goToVendor(vendorId: number): void {
+    this.router.navigate(['/marketplace/vendors', vendorId]);
+  }
+
+  incrementQuantity(): void {
+    const max = this.product()?.quantityInStock || 999;
+    if (this.quantity() < max) {
+      this.quantity.update(q => q + 1);
+    }
+  }
+
+  decrementQuantity(): void {
+    if (this.quantity() > 1) {
+      this.quantity.update(q => q - 1);
+    }
+  }
+
+  addToCart(): void {
+    const product = this.product();
+    if (!product) return;
+
+    // Get current cart from localStorage
+    const cartJson = localStorage.getItem('marketplace_cart');
+    let cart: CartItem[] = cartJson ? JSON.parse(cartJson) : [];
+
+    // Check if product already in cart
+    const existingIndex = cart.findIndex(item => item.productId === product.id);
+    if (existingIndex >= 0) {
+      cart[existingIndex].quantity += this.quantity();
+    } else {
+      cart.push({
+        productId: product.id,
+        quantity: this.quantity()
+      });
     }
 
-    decrementQuantity(): void {
-        if (this.quantity() > 1) {
-            this.quantity.update(q => q - 1);
-        }
-    }
+    // Save cart
+    localStorage.setItem('marketplace_cart', JSON.stringify(cart));
 
-    addToCart(): void {
-        const product = this.product();
-        if (!product) return;
-
-        // Get current cart from localStorage
-        const cartJson = localStorage.getItem('marketplace_cart');
-        let cart: CartItem[] = cartJson ? JSON.parse(cartJson) : [];
-
-        // Check if product already in cart
-        const existingIndex = cart.findIndex(item => item.productId === product.id);
-        if (existingIndex >= 0) {
-            cart[existingIndex].quantity += this.quantity();
-        } else {
-            cart.push({
-                productId: product.id,
-                quantity: this.quantity()
-            });
-        }
-
-        // Save cart
-        localStorage.setItem('marketplace_cart', JSON.stringify(cart));
-
-        // Navigate to cart
-        this.router.navigate(['/marketplace/cart']);
-    }
+    // Navigate to cart
+    this.router.navigate(['/marketplace/cart']);
+  }
 }

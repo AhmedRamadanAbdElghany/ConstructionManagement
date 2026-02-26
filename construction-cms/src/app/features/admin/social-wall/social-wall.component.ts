@@ -86,6 +86,8 @@ import {
                              [class.linkedin]="post.platform === 'LinkedIn'"
                              [class.instagram]="post.platform === 'Instagram'">
                             
+                            <div class="platform-accent"></div>
+                            
                             <!-- Platform Badge -->
                             <div class="platform-badge">
                                 <i [class]="getPlatformIcon(post.platform)"></i>
@@ -170,7 +172,10 @@ import {
                 <!-- Empty State -->
                 @if (posts().length === 0) {
                     <div class="empty-state">
-                        <i class="fas fa-newspaper"></i>
+                        <div class="empty-image-container">
+                            <img src="assets/images/social-wall-empty.png" alt="No posts" class="empty-premium-image">
+                            <div class="empty-glow"></div>
+                        </div>
                         <h3>{{ 'socialWall.noPosts' | translate }}</h3>
                         <p>{{ 'socialWall.noPostsMessage' | translate }}</p>
                     </div>
@@ -179,13 +184,15 @@ import {
                 <!-- Pagination -->
                 @if (totalPages() > 1) {
                     <div class="pagination">
-                        <button [disabled]="currentPage() === 1" (click)="previousPage()">
+                        <button [disabled]="currentPage() === 1" (click)="previousPage()" class="page-action">
                             <i class="fas fa-chevron-left"></i>
                         </button>
-                        <span class="page-info">
-                            {{ 'socialWall.page' | translate: {current: currentPage(), total: totalPages()} }}
-                        </span>
-                        <button [disabled]="currentPage() === totalPages()" (click)="nextPage()">
+                        <div class="page-numbers">
+                            <span class="page-info">
+                                {{ 'socialWall.page' | translate: {current: currentPage(), total: totalPages()} }}
+                            </span>
+                        </div>
+                        <button [disabled]="currentPage() === totalPages()" (click)="nextPage()" class="page-action">
                             <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
@@ -195,31 +202,41 @@ import {
             <!-- Admin Section -->
             @if (isAdmin()) {
                 <div class="admin-section">
-                    <h2>{{ 'socialWall.admin.sources' | translate }}</h2>
+                    <div class="admin-header">
+                        <h2>{{ 'socialWall.admin.sources' | translate }}</h2>
+                    </div>
                     
                     <div class="sources-list">
                         @for (source of sources(); track source.id) {
-                            <div class="source-item" [class.inactive]="!source.isActive">
+                            <div class="source-item card-glass" [class.inactive]="!source.isActive">
                                 <div class="source-info">
-                                    <i [class]="getPlatformIcon(source.platform)"></i>
-                                    <div>
+                                    <div class="source-icon-wrapper" [class]="source.platform.toLowerCase()">
+                                        <i [class]="getPlatformIcon(source.platform)"></i>
+                                    </div>
+                                    <div class="source-text">
                                         <strong>{{ source.displayName || source.sourceValue }}</strong>
-                                        <span class="source-type">{{ getSourceTypeLabel(source.sourceType) }}</span>
+                                        <div class="source-meta">
+                                            <span class="source-type-tag">{{ getSourceTypeLabel(source.sourceType) }}</span>
+                                            <span class="last-fetch">
+                                                <i class="far fa-clock"></i>
+                                                {{ source.lastFetchedAt | date:'short' }}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="source-stats">
-                                    <span>{{ 'socialWall.admin.postsCollected' | translate: {count: source.postsCollected} }}</span>
-                                    <span>{{ 'socialWall.admin.lastFetch' | translate: {time: source.lastFetchedAt | date:'short'} }}</span>
+                                <div class="stat-pill">
+                                    <span class="stat-value">{{ source.postsCollected }}</span>
+                                    <span class="stat-label">Posts</span>
                                 </div>
                                 <div class="source-actions">
                                     <button class="fetch-btn" (click)="fetchFromSource(source.id)" 
-                                            [disabled]="fetchingSourceId() === source.id">
+                                            [disabled]="fetchingSourceId() === source.id" title="Fetch Now">
                                         <i class="fas fa-download" [class.spinning]="fetchingSourceId() === source.id"></i>
                                     </button>
-                                    <button class="edit-btn" (click)="editSource(source)">
+                                    <button class="edit-btn" (click)="editSource(source)" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="delete-btn" (click)="deleteSource(source.id)">
+                                    <button class="delete-btn" (click)="deleteSource(source.id)" title="Delete">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -250,43 +267,47 @@ import {
                     <div class="modal-content" (click)="$event.stopPropagation()">
                         <h3>{{ 'socialWall.admin.addSource' | translate }}</h3>
                         
-                        <div class="form-group">
-                            <label>{{ 'socialWall.admin.platform' | translate }}</label>
-                            <select [(ngModel)]="newSource.platform">
-                                <option [ngValue]="platforms.Facebook">Facebook</option>
-                                <option [ngValue]="platforms.Twitter">Twitter / X</option>
-                                <option [ngValue]="platforms.LinkedIn">LinkedIn</option>
-                                <option [ngValue]="platforms.Instagram">Instagram</option>
-                            </select>
-                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>{{ 'socialWall.admin.platform' | translate }}</label>
+                                <select [(ngModel)]="newSource.platform">
+                                    <option [ngValue]="platforms.Facebook">Facebook</option>
+                                    <option [ngValue]="platforms.Twitter">Twitter / X</option>
+                                    <option [ngValue]="platforms.LinkedIn">LinkedIn</option>
+                                    <option [ngValue]="platforms.Instagram">Instagram</option>
+                                </select>
+                            </div>
 
-                        <div class="form-group">
-                            <label>{{ 'socialWall.admin.sourceType' | translate }}</label>
-                            <select [(ngModel)]="newSource.sourceType">
-                                <option [ngValue]="sourceTypes.Account">{{ 'socialWall.admin.account' | translate }}</option>
-                                <option [ngValue]="sourceTypes.Hashtag">{{ 'socialWall.admin.hashtag' | translate }}</option>
-                                <option [ngValue]="sourceTypes.Keyword">{{ 'socialWall.admin.keyword' | translate }}</option>
-                            </select>
-                        </div>
+                            <div class="form-group">
+                                <label>{{ 'socialWall.admin.sourceType' | translate }}</label>
+                                <select [(ngModel)]="newSource.sourceType">
+                                    <option [ngValue]="sourceTypes.Account">{{ 'socialWall.admin.account' | translate }}</option>
+                                    <option [ngValue]="sourceTypes.Hashtag">{{ 'socialWall.admin.hashtag' | translate }}</option>
+                                    <option [ngValue]="sourceTypes.Keyword">{{ 'socialWall.admin.keyword' | translate }}</option>
+                                </select>
+                            </div>
 
-                        <div class="form-group">
-                            <label>{{ 'socialWall.admin.sourceValue' | translate }}</label>
-                            <input type="text" [(ngModel)]="newSource.sourceValue" 
-                                   [placeholder]="'socialWall.admin.sourceValuePlaceholder' | translate">
-                        </div>
+                            <div class="form-group full-width">
+                                <label>{{ 'socialWall.admin.sourceValue' | translate }}</label>
+                                <input type="text" [(ngModel)]="newSource.sourceValue" 
+                                       [placeholder]="'socialWall.admin.sourceValuePlaceholder' | translate">
+                            </div>
 
-                        <div class="form-group">
-                            <label>{{ 'socialWall.admin.displayName' | translate }}</label>
-                            <input type="text" [(ngModel)]="newSource.displayName" 
-                                   [placeholder]="'socialWall.admin.displayNamePlaceholder' | translate">
+                            <div class="form-group full-width">
+                                <label>{{ 'socialWall.admin.displayName' | translate }}</label>
+                                <input type="text" [(ngModel)]="newSource.displayName" 
+                                       [placeholder]="'socialWall.admin.displayNamePlaceholder' | translate">
+                            </div>
                         </div>
 
                         <div class="modal-actions">
                             <button class="cancel-btn" (click)="showAddSourceModal = false">
                                 {{ 'common.cancel' | translate }}
                             </button>
-                            <button class="save-btn" (click)="createSource()" [disabled]="!newSource.sourceValue">
-                                {{ 'common.save' | translate }}
+                            <button class="save-btn" (click)="createSource()" 
+                                    [disabled]="!newSource.sourceValue || !newSource.displayName">
+                                <i class="fas fa-plus"></i>
+                                {{ 'socialWall.admin.addSource' | translate }}
                             </button>
                         </div>
                     </div>
@@ -296,67 +317,102 @@ import {
     `,
     styles: [`
         .social-wall-container {
-            padding: 20px;
+            padding: 40px 20px;
             max-width: 1400px;
             margin: 0 auto;
+            min-height: 100vh;
         }
 
         .wall-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             
             h1 {
-                font-size: 2rem;
-                color: #1a365d;
-                margin-bottom: 8px;
+                font-size: 2.5rem;
+                font-weight: 800;
+                background: linear-gradient(135deg, #f8fafc 0%, #cbd5e1 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin-bottom: 12px;
+                letter-spacing: -0.02em;
             }
             
             .subtitle {
-                color: #718096;
-                font-size: 1rem;
+                color: #94a3b8;
+                font-size: 1.1rem;
+                font-weight: 400;
             }
         }
 
         .filters-section {
             display: flex;
-            gap: 16px;
+            gap: 20px;
             align-items: flex-end;
-            margin-bottom: 24px;
+            margin-bottom: 40px;
             flex-wrap: wrap;
+            padding: 24px;
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
             
             .filter-group {
                 display: flex;
                 flex-direction: column;
-                gap: 6px;
+                gap: 8px;
+                flex: 1;
+                min-width: 200px;
                 
                 label {
-                    font-size: 0.85rem;
-                    color: #4a5568;
-                    font-weight: 500;
+                    font-size: 0.8rem;
+                    color: #94a3b8;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
                 }
                 
                 select, input {
-                    padding: 8px 12px;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 6px;
-                    font-size: 0.9rem;
-                    min-width: 150px;
+                    padding: 12px 16px;
+                    background: rgba(15, 23, 42, 0.6);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 12px;
+                    font-size: 0.95rem;
+                    color: white;
+                    width: 100%;
+                    outline: none;
+                    transition: all 0.2s;
+                    
+                    &:focus {
+                        border-color: #38bdf8;
+                        background: rgba(15, 23, 42, 0.8);
+                        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1);
+                    }
+                    
+                    option {
+                        background: #1e293b;
+                        color: white;
+                    }
                 }
             }
             
             .refresh-btn {
-                padding: 8px 16px;
-                background: #3182ce;
+                padding: 12px 24px;
+                background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
                 color: white;
                 border: none;
-                border-radius: 6px;
+                border-radius: 12px;
+                font-weight: 600;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
-                gap: 8px;
+                gap: 10px;
+                transition: all 0.2s;
+                height: 48px;
                 
                 &:hover:not(:disabled) {
-                    background: #2c5282;
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
                 }
                 
                 &:disabled {
@@ -367,18 +423,31 @@ import {
         }
 
         .todays-banner {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
             color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            margin-bottom: 24px;
+            padding: 16px 24px;
+            border-radius: 16px;
+            margin-bottom: 32px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+            animation: pulse-glow 2s infinite ease-in-out;
             
             i {
-                font-size: 1.2rem;
+                font-size: 1.4rem;
             }
+            
+            span {
+                font-weight: 600;
+                letter-spacing: 0.01em;
+            }
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
         }
 
         .loading-container {
@@ -386,83 +455,100 @@ import {
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 60px;
+            padding: 100px 0;
             
             .spinner {
-                width: 40px;
-                height: 40px;
-                border: 3px solid #e2e8f0;
-                border-top-color: #3182ce;
+                width: 60px;
+                height: 60px;
+                border: 4px solid rgba(255, 255, 255, 0.1);
+                border-top-color: #38bdf8;
                 border-radius: 50%;
-                animation: spin 1s linear infinite;
+                animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
             }
             
             p {
-                margin-top: 16px;
-                color: #718096;
+                margin-top: 24px;
+                color: #94a3b8;
+                font-size: 1.1rem;
+                font-weight: 500;
             }
         }
 
         .posts-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 24px;
         }
 
         .post-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
             overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
             
             &:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+                transform: translateY(-8px);
+                border-color: rgba(255, 255, 255, 0.15);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                background: rgba(30, 41, 59, 0.6);
             }
             
-            &.facebook { border-top: 4px solid #1877f2; }
-            &.twitter { border-top: 4px solid #1da1f2; }
-            &.linkedin { border-top: 4px solid #0077b5; }
-            &.instagram { border-top: 4px solid #e4405f; }
+            &.facebook { .platform-accent { background: #1877f2; } }
+            &.twitter { .platform-accent { background: #1da1f2; } }
+            &.linkedin { .platform-accent { background: #0077b5; } }
+            &.instagram { .platform-accent { background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); } }
+        }
+
+        .platform-accent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
         }
 
         .platform-badge {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 4px 10px;
-            font-size: 0.75rem;
-            font-weight: 600;
+            gap: 8px;
+            padding: 6px 14px;
+            font-size: 0.7rem;
+            font-weight: 700;
             text-transform: uppercase;
-            margin: 12px;
-            border-radius: 4px;
-            background: #f7fafc;
-            color: #4a5568;
+            margin: 20px 20px 12px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+            letter-spacing: 0.05em;
+            width: fit-content;
         }
 
         .author-info {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 0 16px 12px;
+            gap: 14px;
+            padding: 0 20px 20px;
             
             .avatar {
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
+                width: 48px;
+                height: 48px;
+                border-radius: 14px;
                 object-fit: cover;
+                border: 2px solid rgba(255, 255, 255, 0.1);
             }
             
             .avatar-placeholder {
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                background: #e2e8f0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #a0aec0;
+                width: 48px;
+                height: 48px;
+                border-radius: 14px;
+                background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+                display: flex; align-items: center; justify-content: center;
+                color: #64748b; border: 2px solid rgba(255, 255, 255, 0.1);
             }
             
             .author-details {
@@ -470,123 +556,148 @@ import {
                 flex-direction: column;
                 
                 .author-name {
-                    font-weight: 600;
-                    color: #2d3748;
+                    font-weight: 700;
+                    color: #f1f5f9;
+                    font-size: 1rem;
                 }
                 
                 .author-handle {
                     font-size: 0.85rem;
-                    color: #718096;
+                    color: #94a3b8;
+                    margin-top: 1px;
                 }
             }
         }
 
         .post-content {
-            padding: 0 16px 12px;
+            padding: 0 20px 20px;
+            flex-grow: 1;
             
             p {
-                color: #2d3748;
-                line-height: 1.6;
+                color: #cbd5e1;
+                line-height: 1.7;
                 margin: 0;
                 white-space: pre-wrap;
+                font-size: 1rem;
             }
             
             .translate-btn {
-                margin-top: 8px;
-                padding: 4px 10px;
-                background: #edf2f7;
-                border: none;
-                border-radius: 4px;
-                color: #4a5568;
-                font-size: 0.8rem;
+                margin-top: 16px;
+                padding: 8px 16px;
+                background: rgba(56, 189, 248, 0.1);
+                border: 1px solid rgba(56, 189, 248, 0.2);
+                border-radius: 10px;
+                color: #38bdf8;
+                font-size: 0.85rem;
+                font-weight: 600;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
-                gap: 4px;
+                gap: 8px;
+                transition: all 0.2s;
                 
                 &:hover {
-                    background: #e2e8f0;
+                    background: rgba(56, 189, 248, 0.2);
+                    transform: scale(1.02);
                 }
             }
         }
 
         .post-media {
-            padding: 0 16px 12px;
+            padding: 0 20px 20px;
+            position: relative;
             
             img {
                 width: 100%;
-                border-radius: 8px;
+                border-radius: 16px;
                 cursor: pointer;
-                transition: opacity 0.2s;
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 
                 &:hover {
-                    opacity: 0.9;
+                    transform: scale(1.02);
                 }
             }
             
             &.multiple {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
-                gap: 4px;
+                gap: 8px;
                 
                 img {
-                    height: 120px;
+                    height: 160px;
                     object-fit: cover;
                 }
             }
             
             .more-images {
                 position: absolute;
-                bottom: 8px;
-                right: 8px;
-                background: rgba(0,0,0,0.7);
+                bottom: 28px;
+                right: 28px;
+                background: rgba(0, 0, 0, 0.8);
+                backdrop-filter: blur(4px);
                 color: white;
-                padding: 4px 8px;
-                border-radius: 4px;
-                font-size: 0.8rem;
+                padding: 6px 12px;
+                border-radius: 10px;
+                font-size: 0.9rem;
+                font-weight: 700;
+                border: 1px solid rgba(255, 255, 255, 0.1);
             }
         }
 
         .post-stats {
             display: flex;
-            gap: 16px;
-            padding: 12px 16px;
-            border-top: 1px solid #f0f0f0;
-            color: #718096;
-            font-size: 0.85rem;
+            gap: 24px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
             
             span {
                 display: flex;
                 align-items: center;
-                gap: 4px;
+                gap: 6px;
+                transition: color 0.2s;
+                
+                &:hover {
+                    color: #f1f5f9;
+                }
             }
             
             i {
-                color: #a0aec0;
+                font-size: 0.9rem;
+                opacity: 0.7;
             }
+            
+            .fa-heart { color: #f43f5e; }
+            .fa-comment { color: #38bdf8; }
+            .fa-share { color: #10b981; }
         }
 
         .post-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 16px;
-            border-top: 1px solid #f0f0f0;
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
             
             .post-date {
-                font-size: 0.8rem;
-                color: #a0aec0;
+                font-size: 0.85rem;
+                color: #64748b;
+                font-weight: 500;
             }
             
             .view-original {
                 font-size: 0.85rem;
-                color: #3182ce;
+                color: #38bdf8;
                 text-decoration: none;
                 display: flex;
                 align-items: center;
-                gap: 4px;
+                gap: 6px;
+                font-weight: 600;
                 
                 &:hover {
+                    color: #7dd3fc;
                     text-decoration: underline;
                 }
             }
@@ -595,33 +706,65 @@ import {
         .keywords {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
-            padding: 8px 16px;
-            border-top: 1px solid #f0f0f0;
+            gap: 8px;
+            padding: 0 20px 20px;
             
             .keyword-tag {
-                padding: 2px 8px;
-                background: #edf2f7;
-                border-radius: 12px;
+                padding: 4px 12px;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 8px;
                 font-size: 0.75rem;
-                color: #4a5568;
+                color: #94a3b8;
+                font-weight: 600;
             }
         }
 
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
-            color: #718096;
+            padding: 80px 20px;
+            color: #94a3b8;
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 30px;
+            border: 2px dashed rgba(255, 255, 255, 0.05);
             
-            i {
-                font-size: 3rem;
-                margin-bottom: 16px;
-                color: #cbd5e0;
+            .empty-image-container {
+                position: relative;
+                width: 300px;
+                margin: 0 auto 32px;
+                
+                .empty-premium-image {
+                    width: 100%;
+                    height: auto;
+                    border-radius: 20px;
+                    position: relative;
+                    z-index: 2;
+                }
+                
+                .empty-glow {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 120%;
+                    height: 120%;
+                    background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, rgba(56, 189, 248, 0) 70%);
+                    z-index: 1;
+                }
             }
             
             h3 {
-                margin-bottom: 8px;
-                color: #4a5568;
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: #f1f5f9;
+                margin-bottom: 12px;
+            }
+            
+            p {
+                font-size: 1.1rem;
+                max-width: 500px;
+                margin: 0 auto;
+                line-height: 1.6;
             }
         }
 
@@ -629,125 +772,212 @@ import {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 16px;
-            margin-top: 32px;
+            gap: 32px;
+            margin-top: 60px;
             
-            button {
-                padding: 8px 16px;
-                background: white;
-                border: 1px solid #e2e8f0;
-                border-radius: 6px;
+            .page-action {
+                width: 50px;
+                height: 50px;
+                border-radius: 14px;
+                background: rgba(30, 41, 59, 0.6);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 cursor: pointer;
+                transition: all 0.2s;
                 
                 &:hover:not(:disabled) {
-                    background: #f7fafc;
+                    background: #38bdf8;
+                    border-color: #38bdf8;
+                    transform: scale(1.05);
                 }
                 
                 &:disabled {
-                    opacity: 0.5;
+                    opacity: 0.3;
                     cursor: not-allowed;
                 }
+                
+                i { font-size: 1rem; }
             }
             
-            .page-info {
-                color: #4a5568;
+            .page-numbers {
+                .page-info {
+                    font-size: 1.1rem;
+                    color: #94a3b8;
+                    font-weight: 600;
+                    letter-spacing: 0.05em;
+                }
             }
         }
 
         .admin-section {
-            margin-top: 48px;
-            padding-top: 32px;
-            border-top: 2px solid #e2e8f0;
+            margin-top: 80px;
+            padding: 40px;
+            background: rgba(30, 41, 59, 0.3);
+            backdrop-filter: blur(12px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             
-            h2 {
-                color: #2d3748;
-                margin-bottom: 20px;
+            .admin-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 32px;
+                
+                h2 {
+                    font-size: 1.8rem;
+                    font-weight: 800;
+                    color: #f1f5f9;
+                }
             }
         }
 
         .sources-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
         }
 
         .source-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px;
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
+            padding: 24px;
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s;
             
-            &.inactive {
-                opacity: 0.6;
+            &:hover {
+                background: rgba(15, 23, 42, 0.6);
+                border-color: rgba(255, 255, 255, 0.1);
+                transform: translateX(4px);
             }
+            
+            &.inactive { opacity: 0.5; grayscale: 1; }
             
             .source-info {
                 display: flex;
                 align-items: center;
-                gap: 12px;
+                gap: 16px;
                 
-                i {
+                .source-icon-wrapper {
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                     font-size: 1.5rem;
-                    width: 24px;
-                    text-align: center;
+                    background: rgba(255, 255, 255, 0.05);
+                    
+                    &.facebook { color: #1877f2; background: rgba(24, 119, 242, 0.1); }
+                    &.twitter { color: #1da1f2; background: rgba(29, 161, 242, 0.1); }
+                    &.linkedin { color: #0077b5; background: rgba(0, 119, 181, 0.1); }
+                    &.instagram { color: #e4405f; background: rgba(228, 64, 95, 0.1); }
                 }
                 
-                .source-type {
-                    font-size: 0.8rem;
-                    color: #718096;
-                    margin-left: 8px;
+                .source-text {
+                    strong {
+                        display: block;
+                        font-size: 1.05rem;
+                        color: #f1f5f9;
+                        margin-bottom: 4px;
+                    }
+                    
+                    .source-meta {
+                        display: flex;
+                        gap: 12px;
+                        align-items: center;
+                        
+                        .source-type-tag {
+                            font-size: 0.7rem;
+                            font-weight: 700;
+                            text-transform: uppercase;
+                            color: #64748b;
+                            background: rgba(0,0,0,0.2);
+                            padding: 2px 8px;
+                            border-radius: 4px;
+                        }
+                        
+                        .last-fetch {
+                            font-size: 0.75rem;
+                            color: #475569;
+                        }
+                    }
                 }
             }
             
-            .source-stats {
-                display: flex;
-                gap: 20px;
-                font-size: 0.85rem;
-                color: #718096;
+            .stat-pill {
+                text-align: right;
+                .stat-value {
+                    display: block;
+                    font-size: 1.2rem;
+                    font-weight: 800;
+                    color: #38bdf8;
+                }
+                .stat-label {
+                    font-size: 0.7rem;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    color: #64748b;
+                }
             }
             
             .source-actions {
                 display: flex;
                 gap: 8px;
+                margin-left: 20px;
                 
                 button {
-                    padding: 6px 10px;
+                    width: 36px;
+                    height: 36px;
                     border: none;
-                    border-radius: 4px;
+                    border-radius: 10px;
                     cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 0.9rem;
+                    transition: all 0.2s;
                     
-                    &.fetch-btn { background: #c6f6d5; color: #276749; }
-                    &.edit-btn { background: #bee3f8; color: #2b6cb0; }
-                    &.delete-btn { background: #fed7d7; color: #c53030; }
+                    &.fetch-btn { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+                    &.edit-btn { background: rgba(56, 189, 248, 0.1); color: #38bdf8; }
+                    &.delete-btn { background: rgba(244, 63, 94, 0.1); color: #f43f5e; }
                     
-                    &:hover { opacity: 0.8; }
+                    &:hover { transform: scale(1.1); filter: brightness(1.2); }
                 }
             }
         }
 
         .admin-actions {
             display: flex;
-            gap: 12px;
+            gap: 16px;
             
             button {
-                padding: 10px 20px;
+                padding: 14px 28px;
                 border: none;
-                border-radius: 6px;
+                border-radius: 14px;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
-                gap: 8px;
+                gap: 10px;
+                font-weight: 700;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 
-                &.add-source-btn { background: #48bb78; color: white; }
-                &.fetch-all-btn { background: #4299e1; color: white; }
-                &.translate-all-btn { background: #9f7aea; color: white; }
+                &.add-source-btn { background: #10b981; color: white; }
+                &.fetch-all-btn { background: #38bdf8; color: white; }
+                &.translate-all-btn { background: #8b5cf6; color: white; }
                 
-                &:hover { opacity: 0.9; }
-                &:disabled { opacity: 0.6; cursor: not-allowed; }
+                &:hover {
+                    transform: translateY(-4px);
+                    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+                    filter: brightness(1.1);
+                }
+                &:disabled { opacity: 0.5; transform: none; cursor: not-allowed; }
             }
         }
 
@@ -757,59 +987,102 @@ import {
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
+            animation: fadeIn 0.3s ease;
         }
 
         .modal-content {
-            background: white;
-            padding: 24px;
-            border-radius: 12px;
+            background: #1e293b;
+            padding: 40px;
+            border-radius: 30px;
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
             
             h3 {
-                margin-bottom: 20px;
-                color: #2d3748;
+                font-size: 2rem;
+                font-weight: 800;
+                color: white;
+                margin-bottom: 32px;
+                text-align: center;
             }
             
-            .form-group {
-                margin-bottom: 16px;
+            .form-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
                 
-                label {
-                    display: block;
-                    margin-bottom: 6px;
-                    font-weight: 500;
-                    color: #4a5568;
-                }
-                
-                select, input {
-                    width: 100%;
-                    padding: 10px;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 6px;
+                .form-group {
+                    &.full-width { grid-column: span 2; }
+                    
+                    label {
+                        display: block;
+                        margin-bottom: 10px;
+                        font-weight: 600;
+                        color: #94a3b8;
+                        font-size: 0.85rem;
+                        text-transform: uppercase;
+                        letter-spacing: 0.05em;
+                    }
+                    
+                    select, input {
+                        width: 100%;
+                        padding: 14px 18px;
+                        background: rgba(15, 23, 42, 0.6);
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                        border-radius: 12px;
+                        color: white;
+                        font-size: 1rem;
+                        outline: none;
+                        transition: all 0.2s;
+                        
+                        &:focus {
+                            border-color: #38bdf8;
+                            background: rgba(15, 23, 42, 0.8);
+                        }
+                    }
                 }
             }
             
             .modal-actions {
                 display: flex;
                 justify-content: flex-end;
-                gap: 12px;
-                margin-top: 24px;
+                gap: 16px;
+                margin-top: 40px;
                 
                 button {
-                    padding: 10px 20px;
-                    border: none;
-                    border-radius: 6px;
+                    padding: 14px 28px;
+                    border-radius: 14px;
                     cursor: pointer;
+                    font-weight: 700;
+                    font-size: 1rem;
+                    transition: all 0.2s;
+                    border: none;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
                     
-                    &.cancel-btn { background: #edf2f7; color: #4a5568; }
-                    &.save-btn { background: #3182ce; color: white; }
+                    &.cancel-btn { 
+                        background: rgba(255, 255, 255, 0.05); 
+                        color: #94a3b8;
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                        &:hover { background: rgba(255, 255, 255, 0.1); color: white; }
+                    }
                     
-                    &:disabled { opacity: 0.6; cursor: not-allowed; }
+                    &.save-btn { 
+                        background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
+                        color: white;
+                        box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+                        &:hover { transform: translateY(-2px); filter: brightness(1.1); }
+                    }
+                    
+                    &:disabled { opacity: 0.5; transform: none !important; cursor: not-allowed; }
                 }
             }
         }

@@ -73,21 +73,41 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
   <!-- ===== KPI STRIP ===== -->
   @if (view() === 'list') {
     <div class="kpi-strip">
-      <div class="kpi-card">
-        <span class="kpi-value">{{ totalCount() }}</span>
-        <span class="kpi-label">{{ 'inspections.kpi.total' | translate }}</span>
+      <div class="kpi-card glass-morph">
+        <div class="kpi-icon total">
+          <i class="fas fa-list-ul"></i>
+        </div>
+        <div class="kpi-data">
+          <span class="kpi-value">{{ totalCount() }}</span>
+          <span class="kpi-label">{{ 'inspections.kpi.total' | translate }}</span>
+        </div>
       </div>
-      <div class="kpi-card pending">
-        <span class="kpi-value">{{ pendingCount() }}</span>
-        <span class="kpi-label">{{ 'inspections.kpi.pending' | translate }}</span>
+      <div class="kpi-card glass-morph pending">
+        <div class="kpi-icon warning">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="kpi-data">
+          <span class="kpi-value">{{ pendingCount() }}</span>
+          <span class="kpi-label">{{ 'inspections.kpi.pending' | translate }}</span>
+        </div>
       </div>
-      <div class="kpi-card active">
-        <span class="kpi-value">{{ activeCount() }}</span>
-        <span class="kpi-label">{{ 'inspections.kpi.active' | translate }}</span>
+      <div class="kpi-card glass-morph active">
+        <div class="kpi-icon processing">
+          <i class="fas fa-sync-alt fa-spin"></i>
+        </div>
+        <div class="kpi-data">
+          <span class="kpi-value">{{ activeCount() }}</span>
+          <span class="kpi-label">{{ 'inspections.kpi.active' | translate }}</span>
+        </div>
       </div>
-      <div class="kpi-card complete">
-        <span class="kpi-value">{{ completedCount() }}</span>
-        <span class="kpi-label">{{ 'inspections.kpi.completed' | translate }}</span>
+      <div class="kpi-card glass-morph complete">
+        <div class="kpi-icon success">
+          <i class="fas fa-check-double"></i>
+        </div>
+        <div class="kpi-data">
+          <span class="kpi-value">{{ completedCount() }}</span>
+          <span class="kpi-label">{{ 'inspections.kpi.completed' | translate }}</span>
+        </div>
       </div>
     </div>
   }
@@ -131,31 +151,34 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
     } @else {
       <div class="inspection-grid">
         @for (insp of inspections(); track insp.id) {
-          <div class="inspection-card" (click)="openDetail(insp.id)">
+          <div class="inspection-card-premium glass-morph" (click)="openDetail(insp.id)">
+            <div class="card-glow"></div>
             <div class="card-header">
-              <div class="prop-badge">{{ propertyLabel(insp.propertyType) | translate }}</div>
-              <span class="status-pill" [style.background]="statusBg(insp.status)" [style.color]="statusColor(insp.status)">
+              <div class="prop-badge-premium">{{ propertyLabel(insp.propertyType) | translate }}</div>
+              <span class="status-pill-premium" [style.background]="statusBg(insp.status)" [style.color]="statusColor(insp.status)">
+                <span class="status-dot" [style.background]="statusColor(insp.status)"></span>
                 {{ statusLabel(insp.status) | translate }}
               </span>
             </div>
             <h3 class="card-title">{{ insp.title }}</h3>
-            <p class="card-client">
-              <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0M12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-              </svg>
-              {{ insp.clientName }}
-            </p>
-            <p class="card-address">
-              <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-              </svg>
-              {{ insp.address }}
-            </p>
+            <div class="card-meta">
+              <p class="card-client">
+                <i class="fas fa-user-circle"></i>
+                {{ insp.clientName }}
+              </p>
+              <p class="card-address">
+                <i class="fas fa-map-marker-alt"></i>
+                {{ insp.address }}
+              </p>
+            </div>
             <div class="card-footer">
               @if (insp.inspectionFee) {
-                <span class="fee-badge">\${{ insp.inspectionFee | number:'1.0-0' }}</span>
+                <span class="fee-badge-premium">\${{ insp.inspectionFee | number:'1.0-0' }}</span>
               }
-              <span class="date-label">{{ insp.createdAt | date:'mediumDate' }}</span>
+              <span class="date-label-premium">
+                <i class="far fa-calendar-alt"></i>
+                {{ insp.createdAt | date:'mediumDate' }}
+              </span>
             </div>
           </div>
         }
@@ -164,11 +187,17 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
       <!-- Pagination -->
       @if (totalPages() > 1) {
         <div class="pagination">
-          <button class="page-btn" [disabled]="currentPage() === 1" (click)="changePage(currentPage() - 1)">‹</button>
-          @for (p of pageRange(); track p) {
-            <button class="page-btn" [class.active]="p === currentPage()" (click)="changePage(p)">{{ p }}</button>
-          }
-          <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="changePage(currentPage() + 1)">›</button>
+          <button class="page-action glass-morph" [disabled]="currentPage() === 1" (click)="changePage(currentPage() - 1)">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <div class="page-numbers">
+            @for (p of pageRange(); track p) {
+              <button class="page-number glass-morph" [class.active]="p === currentPage()" (click)="changePage(p)">{{ p }}</button>
+            }
+          </div>
+          <button class="page-action glass-morph" [disabled]="currentPage() === totalPages()" (click)="changePage(currentPage() + 1)">
+            <i class="fas fa-chevron-right"></i>
+          </button>
         </div>
       }
     }
@@ -179,43 +208,62 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
     <div class="detail-layout">
       <!-- Left: Info Panel -->
       <div class="detail-sidebar">
-        <div class="info-card">
+        <div class="info-card glass-morph">
           <div class="info-header">
-            <span class="status-pill large" [style.background]="statusBg(selectedInspection()!.status)" [style.color]="statusColor(selectedInspection()!.status)">
+            <span class="status-pill-premium large" [style.background]="statusBg(selectedInspection()!.status)" [style.color]="statusColor(selectedInspection()!.status)">
+              <span class="status-dot" [style.background]="statusColor(selectedInspection()!.status)"></span>
               {{ statusLabel(selectedInspection()!.status) | translate }}
             </span>
-            <span class="prop-badge">{{ propertyLabel(selectedInspection()!.propertyType) | translate }}</span>
+            <span class="prop-badge-premium">{{ propertyLabel(selectedInspection()!.propertyType) | translate }}</span>
           </div>
           <h2 class="detail-title">{{ selectedInspection()!.title }}</h2>
 
           <div class="info-rows">
             <div class="info-row">
               <span class="info-label">{{ 'inspections.client' | translate }}</span>
-              <span class="info-value">{{ selectedInspection()!.clientName }}</span>
+              <span class="info-value">
+                <i class="fas fa-user-circle"></i>
+                {{ selectedInspection()!.clientName }}
+              </span>
             </div>
             <div class="info-row">
               <span class="info-label">{{ 'inspections.address' | translate }}</span>
-              <span class="info-value">{{ selectedInspection()!.address }}</span>
+              <span class="info-value">
+                <i class="fas fa-map-marker-alt"></i>
+                {{ selectedInspection()!.address }}
+              </span>
             </div>
             <div class="info-row">
               <span class="info-label">{{ 'inspections.area' | translate }}</span>
-              <span class="info-value">{{ selectedInspection()!.approximateArea }} m²</span>
+              <span class="info-value">
+                <i class="fas fa-expand-arrows-alt"></i>
+                {{ selectedInspection()!.approximateArea }} m²
+              </span>
             </div>
             @if (selectedInspection()!.inspectionFee) {
               <div class="info-row">
                 <span class="info-label">{{ 'inspections.fee' | translate }}</span>
-                <span class="info-value fee">\${{ selectedInspection()!.inspectionFee | number:'1.2-2' }}</span>
+                <span class="info-value fee">
+                  <i class="fas fa-money-bill-wave"></i>
+                  \${{ selectedInspection()!.inspectionFee | number:'1.2-2' }}
+                </span>
               </div>
             }
             @if (selectedInspection()!.scheduledDate) {
               <div class="info-row">
                 <span class="info-label">{{ 'inspections.scheduled' | translate }}</span>
-                <span class="info-value">{{ selectedInspection()!.scheduledDate | date:'medium' }}</span>
+                <span class="info-value">
+                  <i class="far fa-calendar-check"></i>
+                  {{ selectedInspection()!.scheduledDate | date:'medium' }}
+                </span>
               </div>
             }
             <div class="info-row">
               <span class="info-label">{{ 'inspections.created' | translate }}</span>
-              <span class="info-value">{{ selectedInspection()!.createdAt | date:'mediumDate' }}</span>
+              <span class="info-value">
+                <i class="far fa-clock"></i>
+                {{ selectedInspection()!.createdAt | date:'mediumDate' }}
+              </span>
             </div>
           </div>
 
@@ -268,13 +316,14 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
       </div>
 
       <!-- Right: Tabs -->
-      <div class="detail-main">
+      <div class="detail-main glass-morph">
         <div class="tab-bar">
           @for (tab of detailTabs(); track tab.id) {
             <button class="tab-btn" [class.active]="activeDetailTab === tab.id" (click)="activeDetailTab = tab.id">
+              <i [class]="tabIcon(tab.id)"></i>
               {{ tab.label | translate }}
               @if (tab.badge) {
-                <span class="tab-badge">{{ tab.badge }}</span>
+                <span class="tab-badge-premium">{{ tab.badge }}</span>
               }
             </button>
           }
@@ -505,270 +554,321 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
     :host { display: block; }
 
     .inspections-shell {
-      padding: 1.5rem;
+      padding: 2rem;
       max-width: 1400px;
       margin: 0 auto;
       font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      background: var(--app-bg);
+      color: var(--app-text);
     }
 
-    /* Header */
-    .page-header {
+    .glass-morph {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    /* List View Styles */
+    .inspection-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .inspection-card-premium {
+      border-radius: 24px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      
+      &:hover {
+        transform: translateY(-8px);
+        background: var(--glass-bg);
+        border-color: rgba(56, 189, 248, 0.3);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        
+        .card-glow { opacity: 1; }
+      }
+    }
+
+    .card-glow {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.1), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+    }
+
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+
+    .prop-badge-premium {
+      background: rgba(56, 189, 248, 0.1);
+      color: #38bdf8;
+      padding: 0.4rem 0.8rem;
+      border-radius: 10px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .status-pill-premium {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      &.large { padding: 0.6rem 1rem; font-size: 0.85rem; }
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--app-text);
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .card-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      
+      p {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.9rem;
+        color: var(--muted-text);
+        i { color: var(--muted-text); opacity: 0.6; width: 16px; }
+      }
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .fee-badge-premium {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #a78bfa;
+    }
+
+    .date-label-premium {
+      font-size: 0.8rem;
+      color: #64748b;
+      font-weight: 600;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-    }
-    .header-left { display: flex; align-items: center; gap: 1rem; }
-    .header-icon {
-      width: 46px; height: 46px; border-radius: 12px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      display: flex; align-items: center; justify-content: center; color: white;
-    }
-    h1 { font-size: 1.5rem; font-weight: 700; color: #1e1b4b; margin: 0; }
-    .subtitle { color: #6b7280; font-size: 0.875rem; margin: 0.2rem 0 0; }
-
-    /* KPI Strip */
-    .kpi-strip {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem;
-    }
-    .kpi-card {
-      background: white; border-radius: 12px; padding: 1.25rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,.08); display: flex; flex-direction: column; gap: 0.25rem;
-      border-left: 4px solid #e5e7eb;
-    }
-    .kpi-card.pending   { border-left-color: #f59e0b; }
-    .kpi-card.active    { border-left-color: #3b82f6; }
-    .kpi-card.complete  { border-left-color: #22c55e; }
-    .kpi-value { font-size: 2rem; font-weight: 800; color: #1e1b4b; }
-    .kpi-label { font-size: 0.75rem; color: #6b7280; text-transform: uppercase; letter-spacing: .05em; }
-
-    /* Filter Bar */
-    .filter-bar {
-      display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;
-    }
-    .search-wrap { position: relative; flex: 1; min-width: 200px; }
-    .search-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #9ca3af; }
-    .search-input {
-      width: 100%; padding: 0.6rem 0.75rem 0.6rem 2.25rem;
-      border: 1px solid #e5e7eb; border-radius: 8px; font-size: 0.875rem;
-      outline: none; transition: border-color .2s;
-    }
-    .search-input:focus { border-color: #667eea; }
-    .filter-select {
-      padding: 0.6rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px;
-      font-size: 0.875rem; background: white; outline: none; cursor: pointer;
-    }
-
-    /* Cards Grid */
-    .inspection-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 1rem;
-    }
-    .inspection-card {
-      background: white; border-radius: 14px; padding: 1.25rem;
-      box-shadow: 0 1px 4px rgba(0,0,0,.08); cursor: pointer;
-      transition: transform .2s, box-shadow .2s; border: 1px solid #f3f4f6;
-    }
-    .inspection-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.12); }
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
-    .card-title { font-size: 1rem; font-weight: 600; color: #1e1b4b; margin: 0 0 0.5rem; }
-    .card-client, .card-address {
-      display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: #6b7280; margin: 0.25rem 0;
-    }
-    .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid #f3f4f6; }
-    .fee-badge { background: #ede9fe; color: #7c3aed; padding: 0.25rem 0.6rem; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
-    .date-label { font-size: 0.75rem; color: #9ca3af; }
-
-    /* Status / Property Badges */
-    .status-pill {
-      padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.72rem; font-weight: 600;
-      text-transform: uppercase; letter-spacing: .04em;
-    }
-    .status-pill.large { font-size: 0.8rem; padding: 0.35rem 0.9rem; }
-    .prop-badge {
-      background: #f3f4f6; color: #374151; padding: 0.2rem 0.6rem;
-      border-radius: 6px; font-size: 0.72rem; font-weight: 500;
+      gap: 0.5rem;
     }
 
     /* Detail Layout */
-    .detail-layout { display: grid; grid-template-columns: 320px 1fr; gap: 1.5rem; }
-    .detail-sidebar { display: flex; flex-direction: column; gap: 1rem; }
+    .detail-layout { display: grid; grid-template-columns: 350px 1fr; gap: 2rem; margin-top: 1rem; }
+    .detail-sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
 
     .info-card {
-      background: white; border-radius: 14px; padding: 1.5rem;
-      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      border-radius: 20px; padding: 2rem;
     }
-    .info-header { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
-    .detail-title { font-size: 1.2rem; font-weight: 700; color: #1e1b4b; margin: 0 0 1.25rem; }
-    .info-rows { display: flex; flex-direction: column; gap: 0.75rem; }
-    .info-row { display: flex; flex-direction: column; gap: 0.125rem; }
-    .info-label { font-size: 0.72rem; color: #9ca3af; text-transform: uppercase; letter-spacing: .05em; }
-    .info-value { font-size: 0.875rem; color: #374151; font-weight: 500; }
-    .info-value.fee { color: #7c3aed; font-weight: 700; }
-    .description-block { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid #f3f4f6; }
-    .desc-label { font-size: 0.72rem; color: #9ca3af; text-transform: uppercase; margin-bottom: 0.375rem; }
-    .desc-text { font-size: 0.875rem; color: #374151; line-height: 1.5; }
-    .action-stack { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1.25rem; }
+    .info-header { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .detail-title { font-size: 1.5rem; font-weight: 800; color: var(--app-text); margin: 0 0 1.5rem; letter-spacing: -0.01em; }
+    .info-rows { display: flex; flex-direction: column; gap: 1rem; }
+    .info-row { display: flex; flex-direction: column; gap: 0.25rem; }
+    .info-label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; }
+    .info-value { display: flex; align-items: center; gap: 0.75rem; font-size: 0.95rem; color: var(--app-text); font-weight: 500; }
+    .info-value i { color: var(--muted-text); opacity: 0.6; width: 16px; }
+    .info-value.fee { color: #a78bfa; font-weight: 700; font-size: 1.1rem; }
+    .description-block { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+    .desc-label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; margin-bottom: 0.5rem; font-weight: 700; }
+    .desc-text { font-size: 0.95rem; color: #94a3b8; line-height: 1.6; }
+    .action-stack { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; }
 
     .qr-panel {
-      background: white; border-radius: 14px; padding: 1.5rem; text-align: center;
-      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      background: var(--input-bg); border-radius: 20px; padding: 1.5rem; text-align: center;
+      border: 1px solid var(--glass-border);
     }
-    .qr-label { font-size: 0.875rem; color: #374151; margin-bottom: 1rem; }
+    .qr-label { font-size: 0.9rem; color: #94a3b8; margin-bottom: 1rem; }
     .qr-box {
-      font-family: monospace; font-size: 1.1rem; font-weight: 700;
-      background: #f8f7ff; border: 2px dashed #a78bfa; border-radius: 10px;
-      padding: 1.5rem; letter-spacing: .15em; color: #7c3aed;
+      font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 800;
+      background: rgba(139, 92, 246, 0.05); border: 2px dashed #a78bfa; border-radius: 12px;
+      padding: 1.5rem; letter-spacing: .2em; color: #a78bfa;
     }
-    .qr-expires { font-size: 0.75rem; color: #9ca3af; margin-top: 0.75rem; }
+    .qr-expires { font-size: 0.75rem; color: #475569; margin-top: 0.75rem; }
 
     /* Detail Main */
-    .detail-main { background: white; border-radius: 14px; box-shadow: 0 1px 4px rgba(0,0,0,.08); overflow: hidden; }
-    .tab-bar { display: flex; border-bottom: 1px solid #f3f4f6; }
+    .detail-main { border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; }
+    .tab-bar { display: flex; background: var(--input-bg); padding: 0.5rem 0.5rem 0; border-bottom: 1px solid var(--glass-border); }
     .tab-btn {
-      padding: 0.9rem 1.25rem; border: none; background: transparent; font-size: 0.875rem;
-      color: #6b7280; cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s;
-      display: flex; align-items: center; gap: 0.4rem;
+      padding: 1rem 1.5rem; border: none; background: transparent; font-size: 0.9rem;
+      color: #94a3b8; cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s;
+      display: flex; align-items: center; gap: 0.75rem; font-weight: 600;
     }
-    .tab-btn.active { color: #667eea; border-bottom-color: #667eea; font-weight: 600; }
-    .tab-badge {
-      background: #667eea; color: white; font-size: 0.65rem;
-      padding: 0.125rem 0.4rem; border-radius: 10px;
+    .tab-btn i { font-size: 1rem; opacity: 0.7; }
+    .tab-btn:hover { color: var(--app-text); background: var(--glass-bg); }
+    .tab-btn.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); i { opacity: 1; } }
+    .tab-badge-premium {
+      background: #38bdf8; color: #0f172a; font-size: 0.65rem; font-weight: 800;
+      padding: 0.15rem 0.4rem; border-radius: 12px;
     }
-    .tab-content { padding: 1.5rem; }
+    .tab-content { padding: 2rem; flex: 1; }
 
     /* Time Slots */
-    .time-slots-section, .team-section { margin-bottom: 2rem; }
-    .time-slots-section h4, .team-section h4 { font-size: 0.9rem; font-weight: 600; color: #374151; margin: 0 0 0.75rem; }
-    .slots-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .time-slots-section, .team-section { margin-bottom: 2.5rem; }
+    .time-slots-section h4, .team-section h4 { font-size: 1rem; font-weight: 700; color: #f1f5f9; margin: 0 0 1rem; }
+    .slots-list { display: flex; flex-direction: column; gap: 0.75rem; }
     .slot-item {
-      display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem;
-      border: 1px solid #f3f4f6; border-radius: 8px; font-size: 0.875rem;
+      display: flex; align-items: center; gap: 1rem; padding: 1.25rem;
+      background: var(--input-bg); border: 1px solid var(--glass-border);
+      border-radius: 12px; font-size: 0.95rem; transition: all 0.2s;
     }
-    .slot-item.selected { border-color: #667eea; background: #f8f7ff; }
-    .slot-date { font-weight: 500; color: #374151; }
-    .slot-time { color: #6b7280; }
-    .slot-by { color: #9ca3af; font-size: 0.75rem; margin-left: auto; }
-    .selected-badge { color: #22c55e; font-weight: 700; }
+    .slot-item:hover { border-color: var(--accent-blue); background: var(--glass-bg); }
+    .slot-item.selected { border-color: #38bdf8; background: rgba(56, 189, 248, 0.05); }
+    .slot-date { font-weight: 700; color: #f1f5f9; }
+    .slot-time { color: #94a3b8; }
+    .slot-by { color: #64748b; font-size: 0.8rem; font-weight: 600; margin-left: auto; text-transform: uppercase; letter-spacing: 0.02em; }
+    .selected-badge { color: #22c55e; font-weight: 800; font-size: 1.1rem; margin-left: 1rem; }
 
     /* Team */
-    .team-list { display: flex; flex-direction: column; gap: 0.5rem; }
-    .team-member { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-radius: 8px; background: #f9fafb; }
-    .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.875rem; }
-    .member-name { font-size: 0.875rem; font-weight: 500; margin: 0; }
-    .member-role { font-size: 0.75rem; color: #9ca3af; margin: 0; }
-    .primary-badge { margin-left: auto; background: #fef3c7; color: #92400e; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 10px; }
+    .team-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+    .team-member { display: flex; align-items: center; gap: 1rem; padding: 1rem; border-radius: 14px; background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.05); }
+    .avatar { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #38bdf8, #2563eb); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+    .member-name { font-size: 0.95rem; font-weight: 700; color: #f1f5f9; margin: 0; }
+    .member-role { font-size: 0.8rem; color: #64748b; margin: 0; }
+    .primary-badge { margin-left: auto; background: rgba(245, 158, 11, 0.1); color: #f59e0b; font-size: 0.65rem; padding: 0.25rem 0.6rem; border-radius: 8px; font-weight: 800; text-transform: uppercase; }
 
     /* Documents */
-    .docs-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-    .docs-header h4 { margin: 0; font-size: 0.9rem; font-weight: 600; color: #374151; }
-    .docs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.75rem; }
+    .docs-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .docs-header h4 { margin: 0; font-size: 1rem; font-weight: 700; color: #f1f5f9; }
+    .docs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
     .doc-card {
-      display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem;
-      border: 1px solid #f3f4f6; border-radius: 10px; transition: border-color .2s;
+      display: flex; align-items: center; gap: 1rem; padding: 1rem;
+      background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px; transition: all 0.2s;
     }
-    .doc-card:hover { border-color: #667eea; }
-    .doc-icon { font-size: 1.5rem; }
+    .doc-card:hover { border-color: #38bdf8; background: rgba(56, 189, 248, 0.02); }
+    .doc-icon { font-size: 1.75rem; background: rgba(255, 255, 255, 0.03); width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; }
     .doc-info { flex: 1; overflow: hidden; }
-    .doc-name { font-size: 0.8rem; font-weight: 500; color: #374151; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .doc-meta { font-size: 0.72rem; color: #9ca3af; margin: 0; }
+    .doc-name { font-size: 0.9rem; font-weight: 700; color: #f1f5f9; margin: 0 0 0.125rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .doc-meta { font-size: 0.75rem; color: #64748b; margin: 0; }
 
     /* Quotes */
-    .quote-form { background: #f9fafb; border-radius: 10px; padding: 1.25rem; margin-bottom: 1.5rem; }
-    .quote-form h4 { margin: 0 0 1rem; font-size: 0.9rem; color: #374151; }
-    .quotes-list { display: flex; flex-direction: column; gap: 0.75rem; }
-    .quote-item { border: 1px solid #f3f4f6; border-radius: 10px; padding: 1rem; }
-    .quote-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
-    .quote-amount { font-size: 1.25rem; font-weight: 700; color: #7c3aed; }
-    .quote-terms { font-size: 0.8rem; color: #6b7280; margin: 0.5rem 0; }
-    .quote-meta { font-size: 0.75rem; color: #9ca3af; margin: 0; }
-
-    /* Session */
-    .session-card { background: #f9fafb; border-radius: 10px; padding: 1.25rem; }
-    .session-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6; font-size: 0.875rem; }
+    .quote-form { background: rgba(15, 23, 42, 0.3); border-radius: 20px; padding: 2rem; margin-bottom: 2rem; border: 1px solid rgba(255, 255, 255, 0.05); }
+    .quote-form h4 { margin: 0 0 1.5rem; font-size: 1.1rem; color: #f1f5f9; font-weight: 700; }
+    .quotes-list { display: flex; flex-direction: column; gap: 1rem; }
+    .quote-item { background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 1.5rem; }
+    .quote-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+    .quote-amount { font-size: 1.5rem; font-weight: 800; color: #a78bfa; }
+    .quote-terms { font-size: 0.9rem; color: #94a3b8; margin: 1rem 0; line-height: 1.5; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 10px; }
+    .quote-meta { font-size: 0.8rem; color: #64748b; margin: 0; font-weight: 600; }
 
     /* Chat */
-    .chat-tab { display: flex; flex-direction: column; height: 420px; }
-    .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; padding-bottom: 0.75rem; }
+    .chat-tab { display: flex; flex-direction: column; height: 500px; }
+    .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; padding-bottom: 1rem; padding-right: 0.5rem; }
+    .chat-messages::-webkit-scrollbar { width: 6px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
     .chat-msg { display: flex; }
     .chat-msg.mine { justify-content: flex-end; }
-    .msg-bubble { background: #f3f4f6; border-radius: 12px; padding: 0.75rem 1rem; max-width: 70%; }
-    .chat-msg.mine .msg-bubble { background: #ede9fe; }
-    .msg-bubble p { margin: 0; font-size: 0.875rem; color: #374151; }
-    .msg-time { font-size: 0.7rem; color: #9ca3af; display: block; text-align: right; margin-top: 0.25rem; }
-    .chat-input-row { display: flex; gap: 0.5rem; padding-top: 0.75rem; border-top: 1px solid #f3f4f6; }
-    .chat-input { flex: 1; padding: 0.6rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 0.875rem; outline: none; }
+    .msg-bubble { background: var(--input-bg); border: 1px solid var(--glass-border); border-radius: 18px 18px 18px 4px; padding: 1rem 1.25rem; max-width: 80%; }
+    .chat-msg.mine .msg-bubble { background: rgba(139, 92, 246, 0.15); border-color: rgba(139, 92, 246, 0.2); border-radius: 18px 18px 4px 18px; color: var(--app-text); }
+    .msg-bubble p { margin: 0; font-size: 0.95rem; line-height: 1.5; }
+    .msg-time { font-size: 0.7rem; color: var(--muted-text); display: block; text-align: right; margin-top: 0.5rem; font-weight: 600; }
+    .chat-input-row { display: flex; gap: 0.75rem; padding-top: 1.5rem; border-top: 1px solid var(--glass-border); }
+    .chat-input { flex: 1; padding: 0.875rem 1.25rem; background: var(--input-bg); border: 1px solid var(--glass-border); border-radius: 12px; color: var(--app-text); font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
+    .chat-input:focus { border-color: var(--accent-blue); }
 
     /* Payment */
-    .payment-card { text-align: center; padding: 2rem; }
-    .payment-amount { font-size: 2.5rem; font-weight: 800; color: #7c3aed; margin-bottom: 1rem; }
-    .payment-meta { display: flex; justify-content: center; gap: 1rem; align-items: center; margin-bottom: 1.5rem; }
+    .payment-card { text-align: center; padding: 3rem 2rem; background: rgba(56, 189, 248, 0.02); border-radius: 24px; border: 1px dashed rgba(56, 189, 248, 0.1); }
+    .payment-amount { font-size: 3rem; font-weight: 800; color: var(--app-text); margin-bottom: 1.5rem; letter-spacing: -0.02em; }
+    .payment-meta { display: flex; justify-content: center; gap: 1.5rem; align-items: center; margin-bottom: 2rem; color: var(--muted-text); font-weight: 600; }
 
     /* Form */
-    .form-row { margin-bottom: 1rem; }
-    .form-row label { display: block; font-size: 0.72rem; color: #9ca3af; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 0.375rem; }
-    .form-input { width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 0.875rem; font-family: inherit; outline: none; }
-    .form-input:focus { border-color: #667eea; }
+    .form-row { margin-bottom: 1.5rem; }
+    .form-row label { display: block; font-size: 0.75rem; color: var(--muted-text); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 0.6rem; font-weight: 700; }
+    .form-input { width: 100%; padding: 0.875rem 1rem; background: var(--input-bg); border: 1px solid var(--glass-border); border-radius: 10px; color: var(--app-text); font-size: 0.95rem; outline: none; transition: all 0.2s; }
+    .form-input:focus { border-color: var(--accent-blue); background: var(--glass-bg); }
 
     /* Buttons */
     .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
-      padding: 0.625rem 1.25rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600;
-      border: none; cursor: pointer; transition: all .2s; text-decoration: none;
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
+      padding: 0.875rem 1.75rem; border-radius: 12px; font-size: 0.95rem; font-weight: 700;
+      border: none; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative; overflow: hidden;
     }
-    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-primary { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
-    .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(102,126,234,.4); }
-    .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: white; }
-    .btn-success:hover:not(:disabled) { transform: translateY(-1px); }
-    .btn-secondary { background: #f3f4f6; color: #374151; }
-    .btn-secondary:hover { background: #e5e7eb; }
-    .btn-danger { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
-    .btn-ghost { background: transparent; color: #6b7280; padding: 0.5rem 0.75rem; }
-    .btn-ghost:hover { background: #f3f4f6; }
-    .btn-sm { padding: 0.4rem 0.875rem; font-size: 0.8rem; }
-    .btn-xs { padding: 0.25rem 0.6rem; font-size: 0.72rem; border-radius: 6px; background: #ede9fe; color: #7c3aed; border: none; cursor: pointer; }
-    .icon-btn { background: transparent; border: none; cursor: pointer; font-size: 1rem; padding: 0.25rem; border-radius: 4px; transition: background .15s; }
-    .icon-btn.danger:hover { background: #fef2f2; }
-    .upload-btn { cursor: pointer; }
-
-    /* States */
-    .loading-state { display: flex; flex-direction: column; align-items: center; padding: 4rem; gap: 1rem; color: #9ca3af; }
-    .spinner { width: 36px; height: 36px; border: 3px solid #f3f4f6; border-top-color: #667eea; border-radius: 50%; animation: spin .7s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .empty-state { display: flex; flex-direction: column; align-items: center; padding: 4rem; gap: 0.75rem; }
-    .empty-state.small { padding: 2rem; }
-    .empty-icon { font-size: 2.5rem; }
-    .empty-state h3 { font-size: 1rem; color: #374151; margin: 0; }
-    .empty-state p, .empty-msg { font-size: 0.875rem; color: #9ca3af; margin: 0; }
+    .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    .btn:active:not(:disabled) { transform: translateY(0); }
+    .btn-primary { background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%); color: white; }
+    .btn-success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
+    .btn-secondary { background: rgba(255, 255, 255, 0.05); color: #f1f5f9; border: 1px solid rgba(255, 255, 255, 0.1); }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
+    .btn-danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+    .btn-danger:hover { background: rgba(239, 68, 68, 0.2); }
+    .btn-xs { padding: 0.4rem 0.8rem; font-size: 0.75rem; border-radius: 8px; }
 
     /* Pagination */
-    .pagination { display: flex; justify-content: center; gap: 0.4rem; margin-top: 1.5rem; }
-    .page-btn {
-      width: 36px; height: 36px; border: 1px solid #e5e7eb; border-radius: 8px;
-      background: white; cursor: pointer; font-size: 0.875rem; transition: all .15s;
+    .pagination { display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 3rem; }
+    .page-action {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; font-size: 1rem;
+      color: #94a3b8; transition: all 0.2s; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .page-btn:hover:not(:disabled) { border-color: #667eea; color: #667eea; }
-    .page-btn.active { background: #667eea; color: white; border-color: #667eea; }
-    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .page-action:hover:not(:disabled) { background: #38bdf8; color: #010101; border-color: #38bdf8; }
+    .page-action:disabled { opacity: 0.3; cursor: not-allowed; }
+    
+    .page-numbers { display: flex; gap: 0.5rem; }
+    .page-number {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; font-size: 1rem;
+      color: #94a3b8; transition: all 0.2s; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.1); font-weight: 700;
+    }
+    .page-number:hover { border-color: #38bdf8; color: #38bdf8; }
+    .page-number.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
 
     /* Toast */
     .toast {
-      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999;
-      background: #22c55e; color: white; padding: 0.875rem 1.5rem;
-      border-radius: 10px; font-size: 0.875rem; font-weight: 500;
-      box-shadow: 0 4px 20px rgba(0,0,0,.15); animation: slideIn .3s ease;
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 10000;
+      background: #10b981; color: white; padding: 1.25rem 2rem;
+      border-radius: 16px; font-size: 0.95rem; font-weight: 700;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3); animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex; align-items: center; gap: 1rem; border: 1px solid rgba(255, 255, 255, 0.1);
     }
     .toast.error { background: #ef4444; }
-    @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes slideIn { from { transform: translateX(100%) scale(0.9); opacity: 0; } to { transform: translateX(0) scale(1); opacity: 1; } }
 
-    @media (max-width: 900px) {
-      .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 1100px) {
       .detail-layout { grid-template-columns: 1fr; }
     }
     @media (max-width: 600px) {
       .inspections-shell { padding: 1rem; }
-      .kpi-strip { grid-template-columns: repeat(2, 1fr); }
-      .inspection-grid { grid-template-columns: 1fr; }
+      .detail-layout { grid-template-columns: 1fr; }
+      .tab-bar { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .tab-btn { white-space: nowrap; padding: 0.75rem 1rem; }
+      h1 { font-size: 1.75rem; }
     }
   `]
 })
@@ -980,6 +1080,18 @@ export class InspectionsComponent implements OnInit, OnDestroy {
 
   // Helpers
   statusLabel(s: number): string { return STATUS_MAP[s]?.label ?? 'Unknown'; }
+  tabIcon(tabId: string): string {
+    const icons: Record<string, string> = {
+      'overview': 'fas fa-info-circle',
+      'documents': 'fas fa-file-alt',
+      'quotes': 'fas fa-file-invoice-dollar',
+      'session': 'fas fa-clipboard-check',
+      'chat': 'fas fa-comments',
+      'payment': 'fas fa-credit-card'
+    };
+    return icons[tabId] || 'fas fa-folder';
+  }
+
   statusColor(s: number): string { return STATUS_MAP[s]?.color ?? '#6b7280'; }
   statusBg(s: number): string { return STATUS_MAP[s]?.color ? STATUS_MAP[s].color + '22' : '#f3f4f6'; }
   propertyLabel(t: number): string { return PROPERTY_TYPE_MAP[t] ?? 'Other'; }

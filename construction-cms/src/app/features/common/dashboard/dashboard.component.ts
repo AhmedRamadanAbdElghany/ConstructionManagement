@@ -6,6 +6,7 @@ import { Project, WorkerPerformance } from '../../../shared/interfaces';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { ClientPortalService, ClientDashboard } from '../../../core/services/client-portal.service';
+import { InspectionService, InspectionAnalytics } from '../../../core/services/inspection.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -976,6 +977,25 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                 <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{{ 'dashboard.total_revenue' | translate }}</p>
               </div>
             </div>
+
+            <!-- Inspections (New Card) -->
+            <div routerLink="/admin/inspections" class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-white/5 group hover:border-amber-500/30 transition-all duration-300 shadow-xl shadow-slate-200/50 dark:shadow-none cursor-pointer">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 dark:bg-amber-500/10 rounded-full blur-3xl group-hover:bg-amber-500/15 transition-colors"></div>
+              <div class="relative">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                    </svg>
+                  </div>
+                  @if (inspectionStats.pendingInspections > 0) {
+                    <span class="px-2 py-1 rounded-lg bg-amber-500 text-white text-[10px] font-black uppercase tracking-widest animate-pulse">{{ inspectionStats.pendingInspections }} {{ 'common.pending' | translate }}</span>
+                  }
+                </div>
+                <p class="text-4xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ inspectionStats.totalInspections }}</p>
+                <p class="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{{ 'inspections.title' | translate }}</p>
+              </div>
+            </div>
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -1139,6 +1159,12 @@ export class DashboardComponent implements OnInit {
   workerProjectStats: any;
   hasApprovedCompany = signal<boolean>(false);
   clientDashboard?: ClientDashboard;
+  inspectionStats = {
+    totalInspections: 0,
+    completedInspections: 0,
+    pendingInspections: 0,
+    cancelledInspections: 0
+  };
 
   // Standard Admin Stats
   stats = {
@@ -1225,6 +1251,7 @@ export class DashboardComponent implements OnInit {
   saActivities: SuperAdminActivity[] = [];
 
   private clientPortalService = inject(ClientPortalService);
+  private inspectionService = inject(InspectionService);
   private translate = inject(TranslateService);
   private i18nService = inject(I18nService);
 
@@ -1398,6 +1425,16 @@ export class DashboardComponent implements OnInit {
     });
     this.dashboardService.getRecentActivities().subscribe(activities => {
       this.recentActivities = activities;
+    });
+    this.inspectionService.getAnalytics().subscribe(resp => {
+      if (resp.success && resp.data) {
+        this.inspectionStats = {
+          totalInspections: resp.data.totalInspections,
+          completedInspections: resp.data.completedInspections,
+          pendingInspections: resp.data.pendingInspections,
+          cancelledInspections: resp.data.cancelledInspections
+        };
+      }
     });
   }
 }

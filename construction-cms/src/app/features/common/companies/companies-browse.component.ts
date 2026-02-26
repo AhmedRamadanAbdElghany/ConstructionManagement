@@ -367,7 +367,12 @@ export class CompaniesBrowseComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.messagingService.getCompanies(this.searchQuery).subscribe({
       next: (companies) => {
-        this.companies = companies;
+        // Filter out the virtual 'System Administration' company from real users browse list
+        // We use both name check and ID check if available for robustness
+        this.companies = companies.filter(c =>
+          c.name !== 'System Administration' &&
+          c.id !== this.superAdminCompanyId
+        );
         this.isLoading = false;
       },
       error: (error) => {

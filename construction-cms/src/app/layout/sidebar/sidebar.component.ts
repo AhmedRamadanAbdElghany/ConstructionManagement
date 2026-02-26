@@ -122,31 +122,19 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
         }
 
         @if (isAdmin) {
-          @if (currentRole === 'SuperAdmin') {
-            <a routerLink="/admin/companies" 
-               routerLinkActive="nav-active"
-               class="nav-item group">
-              <div class="nav-icon-box">
-                <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                </svg>
-              </div>
-              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.companies' | translate }}</span>
-            </a>
-          }
 
           @if (currentRole !== 'SuperAdmin') {
             @if (settings?.allowHR) {
-            <a routerLink="/admin/hr" 
-               routerLinkActive="nav-active"
-               class="nav-item group">
-              <div class="nav-icon-box">
-                <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                </svg>
-              </div>
-              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.hr_settings' | translate }}</span>
-            </a>
+              <a routerLink="/admin/hr" 
+                 routerLinkActive="nav-active"
+                 class="nav-item group">
+                <div class="nav-icon-box">
+                  <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                  </svg>
+                </div>
+                <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.hr_settings' | translate }}</span>
+              </a>
             }
 
             <a routerLink="/admin/projects" 
@@ -160,7 +148,17 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
               <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.projects' | translate }}</span>
             </a>
 
-
+            <!-- Inspections -->
+            <a routerLink="/admin/inspections" 
+               routerLinkActive="nav-active"
+               class="nav-item group">
+              <div class="nav-icon-box">
+                <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                </svg>
+              </div>
+              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.inspections' | translate }}</span>
+            </a>
           }
 
           @if (currentRole !== 'SuperAdmin') {
@@ -294,16 +292,6 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
               <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.finance' | translate }}</span>
             </a>
 
-            <a routerLink="/admin/inspections"
-               routerLinkActive="nav-active"
-               class="nav-item group">
-              <div class="nav-icon-box">
-                <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                </svg>
-              </div>
-              <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.inspections' | translate }}</span>
-            </a>
 
             <a routerLink="/admin/location-tracking"
                routerLinkActive="nav-active"
@@ -396,7 +384,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
         }
       }
 
-        @if (!isClient && !isInventoryOwner && !isPending && (!isWorker || hasApprovedCompany())) {
+        @if (!isSuperAdmin && !isClient && !isInventoryOwner && !isPending && (!isWorker || hasApprovedCompany())) {
         <p class="px-4 py-6 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
            [class.opacity-0]="isCollapsed()">{{ 'sidebar.operations' | translate }}</p>
 
@@ -851,6 +839,10 @@ export class SidebarComponent {
       return user.roles[0];
     }
     return 'NormalUser';
+  }
+
+  get isSuperAdmin(): boolean {
+    return this.currentRole === 'SuperAdmin';
   }
 
   get isAdmin(): boolean {

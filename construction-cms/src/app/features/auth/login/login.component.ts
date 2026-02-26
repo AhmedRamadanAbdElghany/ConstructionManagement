@@ -137,7 +137,13 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
       --text-main: #1e293b;
       --text-muted: #64748b;
       --border: #e2e8f0;
-      --bg-visual: #0f172a;
+    }
+
+    :host-context(.dark) {
+      --primary: #f8fafc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.1);
     }
 
     .auth-wrapper {
@@ -145,21 +151,22 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #f8fafc;
+      background: var(--app-bg);
+      transition: background 0.5s ease;
     }
 
     .auth-box {
       width: 100%;
       height: 100vh;
       display: flex;
-      background: #fff;
+      background: var(--card-bg);
       overflow: hidden;
     }
 
     /* Visual Side */
     .visual-side {
       flex: 1.2;
-      background: var(--bg-visual);
+      background: #0f172a;
       position: relative;
       display: flex;
       align-items: center;
@@ -262,7 +269,7 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
     /* Form Side */
     .form-side {
       flex: 1;
-      background: #fff;
+      background: var(--card-bg);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -286,7 +293,8 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
     .logo-icon {
       width: 40px;
       height: 40px;
-      background: #fdf2f2;
+      background: var(--input-bg);
+      border: 1px solid var(--glass-border);
       border-radius: 10px;
       display: flex;
       align-items: center;
@@ -360,21 +368,21 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
     .premium-input {
       width: 100%;
       height: 56px;
-      background: #f1f5f9;
-      border: 2px solid transparent;
+      background: var(--input-bg);
+      border: 2px solid var(--glass-border);
       border-radius: 14px;
       padding: 0 48px;
       font-size: 15px;
       font-weight: 600;
-      color: var(--primary);
+      color: var(--app-text);
       transition: all 0.2s;
     }
 
     .premium-input:focus {
       outline: none;
-      background: #fff;
-      border-color: var(--accent);
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
+      background: var(--card-bg);
+      border-color: var(--accent-blue);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
     }
 
     .input-icon {
@@ -398,7 +406,7 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
       display: flex;
     }
 
-    .visibility-toggle:hover { color: var(--accent); background: rgba(0,0,0,0.05); }
+    .visibility-toggle:hover { color: var(--accent-blue); background: rgba(0,0,0,0.05); }
     .visibility-toggle svg { width: 20px; height: 20px; }
 
     .options {
@@ -420,13 +428,13 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
       height: 18px;
       border: 2px solid var(--border);
       border-radius: 6px;
-      accent-color: var(--accent);
+      accent-color: var(--accent-blue);
     }
 
     .auth-button {
       width: 100%;
       height: 60px;
-      background: var(--primary);
+      background: var(--accent-blue);
       color: #fff;
       border: none;
       border-radius: 16px;
@@ -442,9 +450,10 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
     }
 
     .auth-button:hover:not(:disabled) {
-      background: #1e293b;
+      background: var(--accent-blue);
+      filter: brightness(1.1);
       transform: translateY(-2px);
-      box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.3);
+      box-shadow: 0 12px 24px -6px rgba(59, 130, 246, 0.3);
     }
 
     .auth-button:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -482,7 +491,7 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
     }
 
     .register-link {
-      color: var(--accent);
+      color: var(--accent-blue);
       font-weight: 700;
       text-decoration: none;
       margin-left: 6px;
@@ -490,7 +499,7 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
       transition: all 0.2s;
     }
 
-    .register-link:hover { border-bottom-color: var(--accent); }
+    .register-link:hover { border-bottom-color: var(--accent-blue); }
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }

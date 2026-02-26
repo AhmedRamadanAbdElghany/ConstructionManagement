@@ -18,15 +18,51 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--muted-text);
+  opacity: 0.3;
   border-radius: 20px;
-  border: 2px solid transparent;
+  border: 3px solid transparent;
   background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--accent-blue);
   background-clip: content-box;
+}
+
+:root {
+  --app-bg: #f8fafc;
+  --app-text: #0f172a;
+  --card-bg: #ffffff;
+  --card-border: rgba(0, 0, 0, 0.05);
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  --card-hover-shadow: 0 20px 50px rgba(0, 0, 0, 0.06);
+  --header-bg: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-blur: blur(20px);
+  --input-bg: #ffffff;
+  --input-text: #1e293b;
+  --muted-text: #64748b;
+  --accent-cyan: #06b6d4;
+  --accent-blue: #3b82f6;
+  --accent-amber: #f59e0b;
+}
+
+:root.dark {
+  --app-bg: #0f172a;
+  --app-text: #f8fafc;
+  --card-bg: #1e293b;
+  --card-border: rgba(255, 255, 255, 0.05);
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  --card-hover-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  --header-bg: #1e293b;
+  --glass-bg: rgba(30, 41, 59, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: blur(25px);
+  --input-bg: rgba(15, 23, 42, 0.6);
+  --input-text: #f1f5f9;
+  --muted-text: #94a3b8;
 }
 
 /* Global Styles */
@@ -36,8 +72,9 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-  background-color: #0f172a;
-  color: #f8fafc;
+  background-color: var(--app-bg);
+  color: var(--app-text);
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 /* RTL Support */
@@ -107,40 +144,50 @@ button {
   transition-duration: 200ms;
 }
 
-/* Global Form Elements Fixes */
+/* Global Form Elements */
 input,
 select,
 textarea {
-  color: #1e293b;
-  /* slate-800 default for light */
-}
-
-.dark input,
-.dark select,
-.dark textarea {
-  color: #f1f5f9 !important;
-  /* slate-100 for dark */
+  color: var(--input-text);
+  background-color: var(--input-bg);
+  border: 1px solid var(--glass-border);
+  transition: all 0.3s ease;
 }
 
 /* Ensure dropdown options are ALWAYS visible */
 select option {
-  background-color: white;
-  color: #1e293b;
-}
-
-.dark select option {
-  background-color: #0f172a;
-  color: #f1f5f9;
+  background-color: var(--card-bg);
+  color: var(--app-text);
 }
 
 /* Focus visible styles */
 *:focus-visible {
-  outline: 2px solid #06b6d4;
+  outline: 2px solid var(--accent-cyan);
   outline-offset: 2px;
 }
 
 /* Selection */
 ::selection {
-  background-color: #06b6d4;
+  background-color: var(--accent-cyan);
   color: white;
+}
+
+/* Glassmorphism Utility */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+}
+
+/* Card Utility */
+.premium-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+
+  &:hover {
+    box-shadow: var(--card-hover-shadow);
+    transform: translateY(-5px);
+  }
 }

@@ -165,26 +165,34 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
       --border: #e2e8f0;
     }
 
+    :host-context(.dark) {
+      --primary: #f8fafc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.1);
+    }
+
     .auth-wrapper {
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #f8fafc;
+      background: var(--app-bg);
+      transition: background 0.5s ease;
     }
 
     .auth-box {
       width: 100%;
       height: 100vh;
       display: flex;
-      background: #fff;
+      background: var(--card-bg);
       overflow: hidden;
     }
 
     /* Visual Side */
     .visual-side {
       flex: 1.2;
-      background: var(--primary);
+      background: #0f172a;
       position: relative;
       display: flex;
       align-items: center;
@@ -278,7 +286,7 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
     /* Form Side */
     .form-side {
       flex: 1;
-      background: #fff;
+      background: var(--card-bg);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -342,21 +350,21 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
     .modern-input {
       width: 100%;
       height: 54px;
-      background: #f1f5f9;
-      border: 2px solid transparent;
+      background: var(--input-bg);
+      border: 2px solid var(--glass-border);
       border-radius: 14px;
       padding: 0 16px;
       font-size: 15px;
       font-weight: 600;
-      color: var(--primary);
+      color: var(--app-text);
       transition: all 0.2s;
     }
 
     .modern-input:focus {
       outline: none;
-      background: #fff;
-      border-color: var(--accent);
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
+      background: var(--card-bg);
+      border-color: var(--accent-blue);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
     }
 
     .input-action {
@@ -377,7 +385,7 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
       display: flex;
     }
 
-    .action-toggle:hover { color: var(--accent); background: rgba(0,0,0,0.05); }
+    .action-toggle:hover { color: var(--accent-blue); background: rgba(0,0,0,0.05); }
     .action-toggle svg { width: 20px; height: 20px; }
 
     .strength-indicator {
@@ -386,10 +394,11 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
 
     .strength-track {
       height: 6px;
-      background: #e2e8f0;
+      background: var(--app-bg);
       border-radius: 3px;
       overflow: hidden;
       margin-bottom: 8px;
+      border: 1px solid var(--glass-border);
     }
 
     .strength-fill {
@@ -411,7 +420,7 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
     .strength-labels span {
       font-size: 11px;
       font-weight: 700;
-      color: #94a3b8;
+      color: var(--text-muted);
       display: flex;
       align-items: center;
       gap: 4px;
@@ -424,7 +433,7 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
     .primary-button {
       width: 100%;
       height: 60px;
-      background: var(--primary);
+      background: var(--accent-blue);
       color: #fff;
       border: none;
       border-radius: 16px;
@@ -440,9 +449,10 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
     }
 
     .primary-button:hover:not(:disabled) {
-      background: #1e293b;
+      background: var(--accent-blue);
+      filter: brightness(1.1);
       transform: translateY(-2px);
-      box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.3);
+      box-shadow: 0 12px 24px -6px rgba(59, 130, 246, 0.3);
     }
 
     .primary-button:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -480,7 +490,7 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
     }
 
     .login-link {
-      color: var(--accent);
+      color: var(--accent-blue);
       font-weight: 700;
       text-decoration: none;
       margin-left: 6px;
@@ -488,7 +498,7 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
       transition: all 0.2s;
     }
 
-    .login-link:hover { border-bottom-color: var(--accent); }
+    .login-link:hover { border-bottom-color: var(--accent-blue); }
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes spin { to { transform: rotate(360deg); } }
