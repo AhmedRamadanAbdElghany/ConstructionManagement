@@ -5,6 +5,7 @@ import { RouterLink, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { MessagingService, PublicCompanyDto, MessagingStatusDto } from '../../../core/services/messaging.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { RequestInspectionDialogComponent } from '../../client/client-inspections/request-inspection-dialog.component';
 import { CompanyAnnouncementsDialogComponent } from './company-announcements-dialog.component';
@@ -316,6 +317,7 @@ export class CompaniesBrowseComponent implements OnInit, OnDestroy {
   private messagingService = inject(MessagingService);
   private i18nService = inject(I18nService);
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   companies: PublicCompanyDto[] = [];
   isLoading = false;
@@ -394,11 +396,16 @@ export class CompaniesBrowseComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.messagingService.getCompanies(this.searchQuery).subscribe({
       next: (companies) => {
-        // Filter out the virtual 'System Administration' company from real users browse list
+        // Get user's current company ID to filter out
+        const userCompany = this.authService.getSelectedCompany();
+        const userCompanyId = userCompany?.companyId;
+
+        // Filter out the virtual 'System Administration' company and user's own company
         // We use both name check and ID check if available for robustness
         this.companies = companies.filter(c =>
           c.name !== 'System Administration' &&
-          c.id !== this.superAdminCompanyId
+          c.id !== this.superAdminCompanyId &&
+          c.id !== userCompanyId
         );
         this.isLoading = false;
       },

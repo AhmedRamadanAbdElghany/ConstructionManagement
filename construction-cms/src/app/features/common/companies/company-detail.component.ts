@@ -11,6 +11,7 @@ import {
   StartConversationRequest,
   MessagingStatusDto
 } from '../../../core/services/messaging.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { RequestInspectionDialogComponent } from '../../client/client-inspections/request-inspection-dialog.component';
 import { CompanyAnnouncementsDialogComponent } from './company-announcements-dialog.component';
@@ -69,17 +70,19 @@ import { CompanyAnnouncementsDialogComponent } from './company-announcements-dia
                 }
               </div>
               <div class="flex items-center gap-3">
-                <!-- Request Inspection Button -->
-                <button 
-                  (click)="showRequestInspection = true"
-                  class="px-6 py-3 rounded-xl bg-amber-500 text-white text-sm font-bold hover:bg-amber-600 transition-colors flex items-center gap-2 shadow-lg shadow-amber-500/20">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                  </svg>
-                  {{ 'inspections.request.title' | translate }}
-                </button>
+                <!-- Request Inspection Button - Hide for own company -->
+                @if (!isOwnCompany) {
+                  <button 
+                    (click)="showRequestInspection = true"
+                    class="px-6 py-3 rounded-xl bg-amber-500 text-white text-sm font-bold hover:bg-amber-600 transition-colors flex items-center gap-2 shadow-lg shadow-amber-500/20">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                    </svg>
+                    {{ 'inspections.request.title' | translate }}
+                  </button>
+                }
 
-                <!-- Announcements Button -->
+                <!-- Announcements Button - Show for all companies -->
                 <button 
                   (click)="openAnnouncements()"
                   class="px-6 py-3 rounded-xl bg-sky-500 text-white text-sm font-bold hover:bg-sky-600 transition-colors flex items-center gap-2 shadow-lg shadow-sky-500/20">
@@ -89,23 +92,25 @@ import { CompanyAnnouncementsDialogComponent } from './company-announcements-dia
                   {{ 'browse_firms.view_announcements' | translate }}
                 </button>
 
-                <!-- Follow Button -->
-                @if (company.isFollowedByCurrentUser) {
-                  <button 
-                    (click)="unfollowCompany()"
-                    class="px-6 py-3 rounded-xl bg-white/10 backdrop-blur-sm text-white text-sm font-bold hover:bg-white/20 transition-colors">
-                    {{ 'companies.unfollow' | translate }}
-                  </button>
-                } @else {
-                  <button 
-                    (click)="followCompany()"
-                    class="px-6 py-3 rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-colors">
-                    {{ 'companies.follow' | translate }}
-                  </button>
+                <!-- Follow Button - Hide for own company -->
+                @if (!isOwnCompany) {
+                  @if (company.isFollowedByCurrentUser) {
+                    <button 
+                      (click)="unfollowCompany()"
+                      class="px-6 py-3 rounded-xl bg-white/10 backdrop-blur-sm text-white text-sm font-bold hover:bg-white/20 transition-colors">
+                      {{ 'companies.unfollow' | translate }}
+                    </button>
+                  } @else {
+                    <button 
+                      (click)="followCompany()"
+                      class="px-6 py-3 rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-colors">
+                      {{ 'companies.follow' | translate }}
+                    </button>
+                  }
                 }
                 
-                <!-- Message Button -->
-                @if (canMessage) {
+                <!-- Message Button - Hide for own company -->
+                @if (!isOwnCompany && canMessage) {
                   <button 
                     (click)="openMessageDialog()"
                     class="px-6 py-3 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-colors flex items-center gap-2">
@@ -316,10 +321,12 @@ export class CompanyDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private messagingService = inject(MessagingService);
   private i18nService = inject(I18nService);
+  private authService = inject(AuthService);
 
   company: PublicCompanyDetailDto | null = null;
   isLoading = false;
   selectedCategory: number | null = null;
+  isOwnCompany = false;
 
   // Message dialog
   showMessageDialog = false;
@@ -411,6 +418,9 @@ export class CompanyDetailComponent implements OnInit, OnDestroy {
     this.messagingService.getCompanyDetail(companyId).subscribe({
       next: (company) => {
         this.company = company;
+        // Check if this is the user's own company
+        const userCompany = this.authService.getSelectedCompany();
+        this.isOwnCompany = userCompany?.companyId === company.id;
         this.isLoading = false;
       },
       error: (error) => {
@@ -451,6 +461,10 @@ export class CompanyDetailComponent implements OnInit, OnDestroy {
   }
 
   openMessageDialog() {
+    // Prevent opening message dialog for own company
+    if (this.isOwnCompany) {
+      return;
+    }
     this.showMessageDialog = true;
     this.messageContent = '';
     this.selectedFiles = [];
