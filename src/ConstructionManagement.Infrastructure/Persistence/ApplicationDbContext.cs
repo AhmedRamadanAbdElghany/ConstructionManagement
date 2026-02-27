@@ -2283,6 +2283,10 @@ public class ApplicationDbContext : DbContext
             new Permission { Id = 95, Name = "Ops.EquipmentTracking", Description = "Manage equipment assignments", CreatedAt = fixedDate },
             new Permission { Id = 96, Name = "Ops.SafetyInspection", Description = "Perform and log safety checks", CreatedAt = fixedDate },
             new Permission { Id = 97, Name = "Ops.QualityControl", Description = "Manage inspections and defects", CreatedAt = fixedDate },
+            
+            // Location & Geofencing (98-99)
+            new Permission { Id = 98, Name = "Location.Submit", Description = "Submit location check-in/check-out", CreatedAt = fixedDate },
+            new Permission { Id = 99, Name = "Location.Manage", Description = "Manage geofence zones and monitor employees", CreatedAt = fixedDate },
 
             // Human Resources (121-140)
             new Permission { Id = 121, Name = "HR.ManageWorkers", Description = "Track site worker attendance and contacts", CreatedAt = fixedDate },

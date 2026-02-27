@@ -17,10 +17,12 @@ namespace ConstructionManagement.WebApi.Controllers;
 public class GeofenceController : BaseApiController
 {
     private readonly IGeofenceService _geofenceService;
+    private readonly ICurrentUserService _currentUserService;
 
-    public GeofenceController(IGeofenceService geofenceService)
+    public GeofenceController(IGeofenceService geofenceService, ICurrentUserService currentUserService)
     {
         _geofenceService = geofenceService;
+        _currentUserService = currentUserService;
     }
 
     #region Zone Management
@@ -166,9 +168,17 @@ public class GeofenceController : BaseApiController
     /// Gets zones assigned to the current worker
     /// </summary>
     [HttpGet("my-zones")]
-    [Authorize(Policy = "RequireWorker")]
     public async Task<ActionResult<List<WorkerAssignedZoneDto>>> GetMyZones()
     {
+        // Allow if user has Worker role OR Location.Submit permission
+        var isWorker = _currentUserService.IsInRole("Worker");
+        var hasLocationPermission = User.Claims.Any(c => c.Type == "permission" && c.Value == "Location.Submit");
+        
+        if (!isWorker && !hasLocationPermission)
+        {
+            return Forbid("Only workers or users with Location.Submit permission can access their zone assignments");
+        }
+
         // Get current user ID from claims
         var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
         if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
@@ -274,9 +284,17 @@ public class GeofenceController : BaseApiController
     /// Gets the current worker's zone status
     /// </summary>
     [HttpGet("my-status")]
-    [Authorize(Policy = "RequireWorker")]
     public async Task<ActionResult<WorkerZoneStatusDto>> GetMyZoneStatus()
     {
+        // Allow if user has Worker role OR Location.Submit permission
+        var isWorker = _currentUserService.IsInRole("Worker");
+        var hasLocationPermission = User.Claims.Any(c => c.Type == "permission" && c.Value == "Location.Submit");
+        
+        if (!isWorker && !hasLocationPermission)
+        {
+            return Forbid("Only workers or users with Location.Submit permission can access their zone status");
+        }
+
         var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
         if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
         {
