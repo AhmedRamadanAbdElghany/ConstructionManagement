@@ -336,12 +336,12 @@ namespace ConstructionManagement.Infrastructure.Services
             };
         }
 
-        public async Task<List<ExchangeRateDto>> FetchLatestRatesAsync(int baseCurrencyId, string? source = null)
+        public Task<List<ExchangeRateDto>> FetchLatestRatesAsync(int baseCurrencyId, string? source = null)
         {
             // This would integrate with external APIs like Open Exchange Rates, Fixer.io, etc.
             // For now, return empty list as this requires API configuration
             _logger.LogInformation("FetchLatestRatesAsync called for base currency {BaseCurrencyId}", baseCurrencyId);
-            return new List<ExchangeRateDto>();
+            return Task.FromResult(new List<ExchangeRateDto>());
         }
 
         #endregion

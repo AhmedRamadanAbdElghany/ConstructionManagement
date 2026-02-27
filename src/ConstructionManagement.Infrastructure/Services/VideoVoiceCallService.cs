@@ -680,17 +680,17 @@ namespace ConstructionManagement.Infrastructure.Services
 
         #region Group Call Settings
 
-        public async Task<GroupCallSettingsDto> UpdateGroupCallSettingsAsync(int callSessionId, GroupCallSettingsDto settings)
+        public Task<GroupCallSettingsDto> UpdateGroupCallSettingsAsync(int callSessionId, GroupCallSettingsDto settings)
         {
             // Store settings in cache or database
             // For now, just return the settings
-            return settings;
+            return Task.FromResult(settings);
         }
 
-        public async Task<GroupCallSettingsDto> GetGroupCallSettingsAsync(int callSessionId)
+        public Task<GroupCallSettingsDto> GetGroupCallSettingsAsync(int callSessionId)
         {
             // Return default settings
-            return new GroupCallSettingsDto();
+            return Task.FromResult(new GroupCallSettingsDto());
         }
 
         #endregion

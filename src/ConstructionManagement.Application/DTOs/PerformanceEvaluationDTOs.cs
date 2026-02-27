@@ -70,10 +70,10 @@ namespace ConstructionManagement.Application.DTOs
         public string Name { get; set; } = string.Empty;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public string Type { get; set; }
+        public string Type { get; set; } = string.Empty;
         public DateTime SelfAssessmentDue { get; set; }
         public DateTime ManagerAssessmentDue { get; set; }
-        public string Status { get; set; }
+        public string Status { get; set; } = string.Empty;
     }
 
     #endregion
@@ -218,7 +218,7 @@ namespace ConstructionManagement.Application.DTOs
     {
         public string Description { get; set; } = string.Empty;
         public DateTime TargetDate { get; set; }
-        public string Status { get; set; }
+        public string Status { get; set; } = string.Empty;
         public int Progress { get; set; }
         public string? Comments { get; set; }
     }

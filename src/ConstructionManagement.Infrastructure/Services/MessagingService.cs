@@ -1088,7 +1088,7 @@ public class MessagingService : IMessagingService
                                                join ur in _context.UserRoles on u.Id equals ur.UserId
                                                join r in _context.Roles on ur.RoleId equals r.Id
                                                where r.Name == "SuperAdmin" && u.CompanyId.HasValue
-                                               select u.CompanyId.Value)
+                                               select u.CompanyId!.Value)
                 .FirstOrDefaultAsync();
 
             if (companyWithSuperAdmin > 0)

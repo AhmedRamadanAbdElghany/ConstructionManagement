@@ -186,7 +186,7 @@ public class WarehouseOrderService : IWarehouseOrderService
                 Quantity = item.Quantity,
                 UnitPrice = unitPrice,
                 TotalPrice = totalPrice,
-                Unit = product.Unit
+                Unit = product.Unit ?? string.Empty
             });
 
             // Update stock
@@ -223,7 +223,7 @@ public class WarehouseOrderService : IWarehouseOrderService
         await _orderRepository.AddAsync(order);
         await _unitOfWork.SaveChangesAsync();
 
-        return await MapToMarketplaceOrderDto(order, vendor, customer);
+        return MapToMarketplaceOrderDto(order, vendor, customer);
     }
 
     public async Task<IEnumerable<MarketplaceOrderDto>> GetCustomerOrdersAsync(int customerId, string? status = null)
@@ -244,7 +244,7 @@ public class WarehouseOrderService : IWarehouseOrderService
         var orders = await query.OrderByDescending(o => o.CreatedAt).ToListAsync();
         var customer = await _userRepository.GetByIdAsync(customerId);
 
-        return orders.Select(o => MapToMarketplaceOrderDto(o, o.Vendor, customer).Result);
+        return orders.Select(o => MapToMarketplaceOrderDto(o, o.Vendor, customer));
     }
 
     public async Task<IEnumerable<MarketplaceOrderDto>> GetVendorOrdersAsync(int vendorCompanyId, string? status = null)
@@ -270,11 +270,11 @@ public class WarehouseOrderService : IWarehouseOrderService
 
         var orders = await query.OrderByDescending(o => o.CreatedAt).ToListAsync();
 
-        return orders.Select(async o =>
+        return orders.Select(o =>
         {
-            var customer = await _userRepository.GetByIdAsync(o.CustomerId);
-            return await MapToMarketplaceOrderDto(o, o.Vendor, customer);
-        }).Select(t => t.Result);
+            var customer = _userRepository.GetByIdAsync(o.CustomerId).Result;
+            return MapToMarketplaceOrderDto(o, o.Vendor, customer);
+        });
     }
 
     public async Task<MarketplaceOrderDto> UpdateOrderStatusAsync(int orderId, int vendorCompanyId, string status, string? notes = null)
@@ -309,7 +309,7 @@ public class WarehouseOrderService : IWarehouseOrderService
         await _unitOfWork.SaveChangesAsync();
 
         var customer = await _userRepository.GetByIdAsync(order.CustomerId);
-        return await MapToMarketplaceOrderDto(order, order.Vendor, customer);
+        return MapToMarketplaceOrderDto(order, order.Vendor, customer);
     }
 
     public async Task<MarketplaceOrderDto> CancelOrderAsync(int orderId, int customerId, string? reason = null)
@@ -346,7 +346,7 @@ public class WarehouseOrderService : IWarehouseOrderService
         await _unitOfWork.SaveChangesAsync();
 
         var customer = await _userRepository.GetByIdAsync(order.CustomerId);
-        return await MapToMarketplaceOrderDto(order, order.Vendor, customer);
+        return MapToMarketplaceOrderDto(order, order.Vendor, customer);
     }
 
     public async Task<MarketplaceOrderDto> ConfirmDeliveryAsync(int orderId, int customerId)
@@ -372,10 +372,10 @@ public class WarehouseOrderService : IWarehouseOrderService
         await _unitOfWork.SaveChangesAsync();
 
         var customer = await _userRepository.GetByIdAsync(order.CustomerId);
-        return await MapToMarketplaceOrderDto(order, order.Vendor, customer);
+        return MapToMarketplaceOrderDto(order, order.Vendor, customer);
     }
 
-    private async Task<MarketplaceOrderDto> MapToMarketplaceOrderDto(InventoryOrder order, Vendor? vendor, User? customer)
+    private MarketplaceOrderDto MapToMarketplaceOrderDto(InventoryOrder order, Vendor? vendor, User? customer)
     {
         return new MarketplaceOrderDto
         {

@@ -791,7 +791,7 @@ namespace ConstructionManagement.Infrastructure.Services
             // Get the order from InventoryOrder table
             var order = await _context.InventoryOrders
                 .Include(o => o.Vendor)
-                .ThenInclude(v => v.Company)
+                .ThenInclude(v => v!.Company)
                 .Include(o => o.Items)
                 .FirstOrDefaultAsync(o => o.Id == orderId && o.CustomerId == userId);
 
@@ -934,8 +934,8 @@ namespace ConstructionManagement.Infrastructure.Services
         {
             var payment = await _context.MarketplacePayments
                 .Include(p => p.Order)
-                .ThenInclude(o => o.Vendor)
-                .FirstOrDefaultAsync(p => p.OrderId == orderId && p.Order.CustomerId == userId);
+                .ThenInclude(o => o!.Vendor)
+                .FirstOrDefaultAsync(p => p.OrderId == orderId && p.Order!.CustomerId == userId);
 
             if (payment == null)
             {
@@ -1020,7 +1020,7 @@ namespace ConstructionManagement.Infrastructure.Services
         {
             var payment = await _context.MarketplacePayments
                 .Include(p => p.Order)
-                .ThenInclude(o => o.Vendor)
+                .ThenInclude(o => o!.Vendor)
                 .FirstOrDefaultAsync(p => p.PaymentId == paymentId);
 
             if (payment == null)

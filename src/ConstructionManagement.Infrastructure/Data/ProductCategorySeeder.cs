@@ -13,7 +13,7 @@ public static class ProductCategorySeeder
     /// <summary>
     /// Default product categories for construction materials
     /// </summary>
-    public static readonly (string Name, string NameAr, string? Description, string? Icon, (string Name, string NameAr)[] SubCategories)[] DefaultCategories = new[]
+    public static readonly (string Name, string NameAr, string? Description, string? Icon, (string Name, string NameAr)[] SubCategories)[] DefaultCategories = new (string Name, string NameAr, string? Description, string? Icon, (string Name, string NameAr)[] SubCategories)[]
     {
         // مواد البناء الأساسية
         ("Building Materials", "مواد البناء", "Basic construction materials", "building", new[]

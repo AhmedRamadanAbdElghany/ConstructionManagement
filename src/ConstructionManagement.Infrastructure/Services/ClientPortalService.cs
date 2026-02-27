@@ -506,7 +506,7 @@ namespace ConstructionManagement.Infrastructure.Services
                 InvoiceDate = p.PaymentDate,
                 DueDate = p.DueDate ?? p.PaymentDate.AddDays(30),
                 Status = p.IsConfirmed ? "Paid" : "Pending",
-                PaymentMethod = null
+                PaymentMethod = ""
             }).ToList();
         }
 

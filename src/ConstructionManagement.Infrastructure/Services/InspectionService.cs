@@ -163,7 +163,7 @@ namespace ConstructionManagement.Infrastructure.Services
                 .Include(r => r.Payment)
                 .Include(r => r.WorkRequest)
                 .Include(r => r.Review)
-                .Include(r => r.CostEstimate).ThenInclude(c => c.Items)
+                .Include(r => r.CostEstimate).ThenInclude(c => c!.Items)
                 .Include(r => r.TeamMembers).ThenInclude(t => t.User)
                 .FirstOrDefaultAsync(r => r.Id == id);
 
@@ -1909,7 +1909,7 @@ namespace ConstructionManagement.Infrastructure.Services
                 FilePath = n.FilePath,
                 DurationSeconds = n.DurationSeconds,
                 Transcription = n.Transcription,
-                RecordedByName = n.RecordedByUser.FullName,
+                RecordedByName = n.RecordedByUser?.FullName ?? "",
                 RecordedAt = n.RecordedAt
             }).ToList();
         }
@@ -1924,7 +1924,7 @@ namespace ConstructionManagement.Infrastructure.Services
                 .Include(r => r.Company)
                 .Include(r => r.ClientUser)
                 .Include(r => r.Documents)
-                .Include(r => r.CostEstimate).ThenInclude(c => c.Items)
+                .Include(r => r.CostEstimate).ThenInclude(c => c!.Items)
                 .Include(r => r.ChecklistResponses).ThenInclude(c => c.ChecklistItem)
                 .FirstOrDefaultAsync(r => r.Id == inspectionId);
 

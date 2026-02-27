@@ -152,7 +152,7 @@ namespace ConstructionManagement.Infrastructure.Services
                 {
                     Date = t.TransactionDate,
                     Category = t.Type.ToString(),
-                    Description = t.Description,
+                    Description = t.Description ?? string.Empty,
                     ProjectName = t.Project?.Name,
                     Amount = t.Amount,
                     Vendor = t.SupplierName,
@@ -165,8 +165,7 @@ namespace ConstructionManagement.Infrastructure.Services
             decimal runningBalance = 0;
 
             var allItems = transactions
-                .Where(t => t.Status == TransactionStatus.Approved)
-                .Select(t => new { Date = t.TransactionDate, Type = "Outflow", Amount = t.Amount, Description = t.Description })
+                .Select(t => new { Date = t.TransactionDate, Type = "Outflow", Amount = t.Amount, Description = t.Description ?? string.Empty })
                 .Union(clientPayments
                     .Where(p => p.Status == ClientPaymentStatus.Confirmed)
                     .Select(p => new { Date = p.PaymentDate, Type = "Inflow", Amount = p.Amount, Description = p.Notes ?? "Client Payment" }))
@@ -262,7 +261,7 @@ namespace ConstructionManagement.Infrastructure.Services
                 {
                     Date = t.TransactionDate,
                     Type = t.Type.ToString(),
-                    Description = t.Description,
+                    Description = t.Description ?? string.Empty,
                     ItemName = t.ProjectItem?.ItemName,
                     Amount = t.Amount,
                     Status = t.Status.ToString(),
@@ -434,7 +433,7 @@ namespace ConstructionManagement.Infrastructure.Services
                     period.Details.Add(new CashFlowDetail
                     {
                         Date = transaction.TransactionDate,
-                        Description = transaction.Description,
+                        Description = transaction.Description ?? string.Empty,
                         Type = "Outflow",
                         Amount = transaction.Amount
                     });
@@ -576,7 +575,7 @@ namespace ConstructionManagement.Infrastructure.Services
             };
         }
 
-        private async Task<ExportResult> ExportToExcelAsync<T>(T data, string fileName)
+        private Task<ExportResult> ExportToExcelAsync<T>(T data, string fileName)
         {
             try
             {
@@ -584,22 +583,22 @@ namespace ConstructionManagement.Infrastructure.Services
                 var csvContent = GenerateCsvContent(data);
                 var bytes = Encoding.UTF8.GetBytes(csvContent);
 
-                return new ExportResult
+                return Task.FromResult(new ExportResult
                 {
                     Success = true,
                     FileName = $"{fileName}_{DateTime.UtcNow:yyyyMMdd_HHmmss}.csv",
                     ContentType = "text/csv",
                     FileContent = bytes
-                };
+                });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error exporting to Excel");
-                return new ExportResult { Success = false, ErrorMessage = ex.Message };
+                return Task.FromResult(new ExportResult { Success = false, ErrorMessage = ex.Message });
             }
         }
 
-        private async Task<ExportResult> ExportToPdfAsync<T>(T data, string fileName, string? language)
+        private Task<ExportResult> ExportToPdfAsync<T>(T data, string fileName, string? language)
         {
             try
             {
@@ -609,18 +608,18 @@ namespace ConstructionManagement.Infrastructure.Services
 
                 // Note: In production, use a PDF library like iTextSharp, Puppeteer, or similar
                 // For now, returning HTML that can be converted to PDF
-                return new ExportResult
+                return Task.FromResult(new ExportResult
                 {
                     Success = true,
                     FileName = $"{fileName}_{DateTime.UtcNow:yyyyMMdd_HHmmss}.html",
                     ContentType = "text/html",
                     FileContent = bytes
-                };
+                });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error exporting to PDF");
-                return new ExportResult { Success = false, ErrorMessage = ex.Message };
+                return Task.FromResult(new ExportResult { Success = false, ErrorMessage = ex.Message });
             }
         }
 
