@@ -2848,6 +2848,7 @@
     "total_users": "Total Users",
     "working": "Working",
     "absent": "Absent",
+    "na": "N/A",
     "total_payroll": "Total Monthly Payroll",
     "team_members": "Team Members",
     "attendance": "Attendance Tracking",

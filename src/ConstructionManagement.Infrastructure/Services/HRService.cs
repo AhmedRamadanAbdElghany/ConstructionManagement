@@ -60,6 +60,11 @@ public class HRService : IHRService
             {
                 status = "Client";
             }
+            else if (primaryRole == "SuperAdmin" || primaryRole == "CompanyAdmin")
+            {
+                // Admins don't have attendance status - show as not applicable
+                status = "N/A";
+            }
             else if (attendance != null && attendance.Status == AttendanceStatus.Present)
             {
                 status = "Working";

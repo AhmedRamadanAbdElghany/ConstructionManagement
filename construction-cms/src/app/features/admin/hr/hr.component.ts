@@ -222,7 +222,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                                   [ngClass]="{
                                     'bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.6)]': user.status === 'Working',
                                     'bg-rose-500 shadow-[0_0_12px_rgba(244,63,94,0.6)]': user.status === 'Absent',
-                                    'bg-slate-400': user.status === 'Client'
+                                    'bg-slate-400': user.status === 'Client' || user.status === 'N/A'
                                   }">
                             </span>
                           </div>
@@ -230,9 +230,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                                 [ngClass]="{
                                   'text-emerald-600': user.status === 'Working',
                                   'text-rose-600': user.status === 'Absent',
-                                  'text-slate-500': user.status === 'Client'
+                                  'text-slate-500': user.status === 'Client' || user.status === 'N/A'
                                 }">
-                            {{ (user.status === 'Working' ? 'hr.working' : user.status === 'Absent' ? 'hr.absent' : 'sidebar.role_client') | translate }}
+                            {{ (user.status === 'Working' ? 'hr.working' : user.status === 'Absent' ? 'hr.absent' : user.status === 'N/A' ? 'hr.na' : 'sidebar.role_client') | translate }}
                           </span>
                         </div>
                       </td>
