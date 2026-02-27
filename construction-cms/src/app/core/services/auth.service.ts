@@ -20,6 +20,7 @@ export interface User {
     email: string;
     role: string; // Singular role for UI checks
     roles: string[]; // Role array from backend
+    permissions?: string[]; // Permissions from backend
     createdAt: Date;
     userType: number;
     companyId?: number; // Currently selected company (for backward compatibility)
@@ -301,10 +302,23 @@ export class AuthService {
     hasPermission(permission: string): boolean {
         const user = this.getCurrentUser();
         if (!user) return false;
+
+        // SuperAdmin has all permissions
         if (user.role === 'SuperAdmin') return true;
-        // In this implementation, we map roles to permissions roughly
-        // This is a placeholder for a more robust permission system
-        if (user.role === 'CompanyAdmin') return true;
+
+        // Check if user has the permission directly
+        if (user.permissions && user.permissions.includes(permission)) {
+            return true;
+        }
+
+        // CompanyAdmin has all location management permissions
+        if (user.role === 'CompanyAdmin') {
+            if (permission.startsWith('Location.')) {
+                return true;
+            }
+            return true; // CompanyAdmin has all permissions
+        }
+
         return false;
     }
 

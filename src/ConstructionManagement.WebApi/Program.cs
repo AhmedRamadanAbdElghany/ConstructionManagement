@@ -280,6 +280,21 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("SuperAdminOnly", policy => policy.RequireRole("SuperAdmin"));
     options.AddPolicy("CanManageUsers", policy => policy.RequireRole("SuperAdmin", "CompanyAdmin"));
+    options.AddPolicy("RequireCompanyOwner", policy => policy.RequireAssertion(context =>
+        context.User.IsInRole("SuperAdmin") || 
+        context.User.IsInRole("CompanyAdmin") ||
+        context.User.HasClaim(c => c.Type == "permission" && (c.Value == "Location.View" || c.Value == "Geofence.Manage" || c.Value == "Location.Manage"))));
+    
+    // Location permissions
+    options.AddPolicy("CanViewLocation", policy => policy.RequireAssertion(context =>
+        context.User.IsInRole("SuperAdmin") || 
+        context.User.IsInRole("CompanyAdmin") ||
+        context.User.HasClaim(c => c.Type == "permission" && c.Value == "Location.View")));
+    
+    options.AddPolicy("CanManageGeofence", policy => policy.RequireAssertion(context =>
+        context.User.IsInRole("SuperAdmin") || 
+        context.User.IsInRole("CompanyAdmin") ||
+        context.User.HasClaim(c => c.Type == "permission" && c.Value == "Geofence.Manage")));
 
     // Project-specific permissions
     options.AddPolicy("CanViewProject", policy => policy.AddRequirements(new ProjectRoleRequirement("Project.View")));

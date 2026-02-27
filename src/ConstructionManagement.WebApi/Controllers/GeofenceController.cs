@@ -31,7 +31,7 @@ public class GeofenceController : BaseApiController
     /// Gets all geofence zones for the company
     /// </summary>
     [HttpGet("zones")]
-    [Authorize(Policy = "RequireCompanyUser")]
+    [Authorize(Policy = "CanManageGeofence")]
     public async Task<ActionResult<List<GeofenceZoneDto>>> GetZones([FromQuery] bool? activeOnly = null)
     {
         var zones = await _geofenceService.GetZonesAsync(activeOnly);
@@ -42,7 +42,7 @@ public class GeofenceController : BaseApiController
     /// Gets a specific geofence zone
     /// </summary>
     [HttpGet("zones/{zoneId}")]
-    [Authorize(Policy = "RequireCompanyUser")]
+    [Authorize(Policy = "CanManageGeofence")]
     public async Task<ActionResult<GeofenceZoneDto>> GetZone(int zoneId)
     {
         var zone = await _geofenceService.GetZoneAsync(zoneId);
@@ -57,7 +57,7 @@ public class GeofenceController : BaseApiController
     /// Creates a new geofence zone
     /// </summary>
     [HttpPost("zones")]
-    [Authorize(Policy = "RequireAdmin")]
+    [Authorize(Policy = "CanManageGeofence")]
     public async Task<ActionResult<GeofenceZoneDto>> CreateZone([FromBody] CreateGeofenceZoneRequest request)
     {
         try
@@ -79,7 +79,7 @@ public class GeofenceController : BaseApiController
     /// Updates a geofence zone
     /// </summary>
     [HttpPut("zones/{zoneId}")]
-    [Authorize(Policy = "RequireAdmin")]
+    [Authorize(Policy = "CanManageGeofence")]
     public async Task<ActionResult<GeofenceZoneDto>> UpdateZone(int zoneId, [FromBody] UpdateGeofenceZoneRequest request)
     {
         try
@@ -101,7 +101,7 @@ public class GeofenceController : BaseApiController
     /// Deletes a geofence zone
     /// </summary>
     [HttpDelete("zones/{zoneId}")]
-    [Authorize(Policy = "RequireAdmin")]
+    [Authorize(Policy = "CanManageGeofence")]
     public async Task<ActionResult> DeleteZone(int zoneId)
     {
         var deleted = await _geofenceService.DeleteZoneAsync(zoneId);
@@ -120,7 +120,7 @@ public class GeofenceController : BaseApiController
     /// Assigns workers to a zone
     /// </summary>
     [HttpPost("zones/{zoneId}/workers")]
-    [Authorize(Policy = "RequireAdmin")]
+    [Authorize(Policy = "CanManageGeofence")]
     public async Task<ActionResult<List<WorkerZoneAssignmentDto>>> AssignWorkers(int zoneId, [FromBody] AssignWorkersToZoneRequest request)
     {
         try
@@ -142,7 +142,7 @@ public class GeofenceController : BaseApiController
     /// Removes a worker from a zone
     /// </summary>
     [HttpDelete("zones/{zoneId}/workers/{userId}")]
-    [Authorize(Policy = "RequireAdmin")]
+    [Authorize(Policy = "CanManageGeofence")]
     public async Task<ActionResult> RemoveWorker(int zoneId, int userId)
     {
         var removed = await _geofenceService.RemoveWorkerAsync(zoneId, userId);
@@ -157,7 +157,7 @@ public class GeofenceController : BaseApiController
     /// Gets workers assigned to a zone
     /// </summary>
     [HttpGet("zones/{zoneId}/workers")]
-    [Authorize(Policy = "RequireCompanyUser")]
+    [Authorize(Policy = "CanManageGeofence")]
     public async Task<ActionResult<List<WorkerZoneAssignmentDto>>> GetZoneWorkers(int zoneId)
     {
         var workers = await _geofenceService.GetZoneWorkersAsync(zoneId);
@@ -170,13 +170,12 @@ public class GeofenceController : BaseApiController
     [HttpGet("my-zones")]
     public async Task<ActionResult<List<WorkerAssignedZoneDto>>> GetMyZones()
     {
-        // Allow if user has Worker role OR Location.Submit permission
-        var isWorker = _currentUserService.IsInRole("Worker");
+        // Only users with Location.Submit permission can access their zone assignments
         var hasLocationPermission = User.Claims.Any(c => c.Type == "permission" && c.Value == "Location.Submit");
         
-        if (!isWorker && !hasLocationPermission)
+        if (!hasLocationPermission)
         {
-            return Forbid("Only workers or users with Location.Submit permission can access their zone assignments");
+            return Forbid("Only users with Location.Submit permission can access their zone assignments");
         }
 
         // Get current user ID from claims
@@ -201,7 +200,7 @@ public class GeofenceController : BaseApiController
     /// Gets zones assigned to a specific worker (admin view)
     /// </summary>
     [HttpGet("workers/{userId}/zones")]
-    [Authorize(Policy = "RequireAdmin")]
+    [Authorize(Policy = "CanManageGeofence")]
     public async Task<ActionResult<List<WorkerAssignedZoneDto>>> GetWorkerZones(int userId)
     {
         try
@@ -223,7 +222,7 @@ public class GeofenceController : BaseApiController
     /// Gets geofence events history
     /// </summary>
     [HttpGet("events")]
-    [Authorize(Policy = "RequireCompanyUser")]
+    [Authorize(Policy = "CanManageGeofence")]
     public async Task<ActionResult<GeofenceEventHistoryDto>> GetEvents(
         [FromQuery] int? zoneId = null,
         [FromQuery] int? userId = null,
@@ -240,7 +239,7 @@ public class GeofenceController : BaseApiController
     /// Gets today's geofence events
     /// </summary>
     [HttpGet("events/today")]
-    [Authorize(Policy = "RequireCompanyUser")]
+    [Authorize(Policy = "CanManageGeofence")]
     public async Task<ActionResult<List<GeofenceEventDto>>> GetTodayEvents([FromQuery] int? zoneId = null)
     {
         var events = await _geofenceService.GetTodayEventsAsync(zoneId);
@@ -255,7 +254,7 @@ public class GeofenceController : BaseApiController
     /// Gets all workers' zone status
     /// </summary>
     [HttpGet("workers/status")]
-    [Authorize(Policy = "RequireCompanyUser")]
+    [Authorize(Policy = "CanManageGeofence")]
     public async Task<ActionResult<WorkersZoneSummaryDto>> GetWorkersZoneStatus()
     {
         var status = await _geofenceService.GetWorkersZoneStatusAsync();
@@ -266,7 +265,7 @@ public class GeofenceController : BaseApiController
     /// Gets a specific worker's zone status
     /// </summary>
     [HttpGet("workers/{userId}/status")]
-    [Authorize(Policy = "RequireCompanyUser")]
+    [Authorize(Policy = "CanManageGeofence")]
     public async Task<ActionResult<WorkerZoneStatusDto>> GetWorkerZoneStatus(int userId)
     {
         try
@@ -286,13 +285,12 @@ public class GeofenceController : BaseApiController
     [HttpGet("my-status")]
     public async Task<ActionResult<WorkerZoneStatusDto>> GetMyZoneStatus()
     {
-        // Allow if user has Worker role OR Location.Submit permission
-        var isWorker = _currentUserService.IsInRole("Worker");
+        // Only users with Location.Submit permission can access their zone status
         var hasLocationPermission = User.Claims.Any(c => c.Type == "permission" && c.Value == "Location.Submit");
         
-        if (!isWorker && !hasLocationPermission)
+        if (!hasLocationPermission)
         {
-            return Forbid("Only workers or users with Location.Submit permission can access their zone status");
+            return Forbid("Only users with Location.Submit permission can access their zone status");
         }
 
         var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);

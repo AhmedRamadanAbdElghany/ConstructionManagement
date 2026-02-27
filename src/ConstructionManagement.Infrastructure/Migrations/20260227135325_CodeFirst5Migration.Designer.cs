@@ -4,6 +4,7 @@ using ConstructionManagement.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ConstructionManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260227135325_CodeFirst5Migration")]
+    partial class CodeFirst5Migration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -10483,23 +10486,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             Id = 99,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Create and manage geofence zones",
-                            IsDeleted = false,
-                            Name = "Geofence.Manage"
-                        },
-                        new
-                        {
-                            Id = 100,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "View location tracking reports and worker status",
-                            IsDeleted = false,
-                            Name = "Location.View"
-                        },
-                        new
-                        {
-                            Id = 101,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Manage location settings and requests",
+                            Description = "Manage geofence zones and monitor employees",
                             IsDeleted = false,
                             Name = "Location.Manage"
                         },
@@ -16462,7 +16449,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             UserId = 1,
                             RoleId = 1,
-                            AssignedAt = new DateTime(2026, 2, 27, 15, 5, 8, 761, DateTimeKind.Utc).AddTicks(9595)
+                            AssignedAt = new DateTime(2026, 2, 27, 13, 53, 20, 580, DateTimeKind.Utc).AddTicks(3330)
                         });
                 });
 

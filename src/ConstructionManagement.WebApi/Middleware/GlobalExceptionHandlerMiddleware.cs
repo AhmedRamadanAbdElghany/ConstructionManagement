@@ -7,6 +7,7 @@ namespace ConstructionManagement.WebApi.Middleware;
 public class GlobalExceptionHandlerMiddleware
 {
     private readonly RequestDelegate _next;
+    
     private readonly IHostEnvironment _env; // عشان نعرف إذا Development أو Production
 
     public GlobalExceptionHandlerMiddleware(RequestDelegate next, IHostEnvironment env)

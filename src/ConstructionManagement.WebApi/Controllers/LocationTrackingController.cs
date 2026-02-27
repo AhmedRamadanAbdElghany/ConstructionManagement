@@ -30,7 +30,7 @@ public class LocationTrackingController : BaseApiController
     /// Gets the location tracking settings for the current company
     /// </summary>
     [HttpGet("settings")]
-    [Authorize(Policy = "RequireCompanyOwner")]
+    [Authorize(Policy = "CanViewLocation")]
     public async Task<ActionResult<CompanyLocationSettingsDto>> GetSettings()
     {
         var settings = await _locationTrackingService.GetSettingsAsync();
@@ -41,7 +41,7 @@ public class LocationTrackingController : BaseApiController
     /// Updates the location tracking settings for the current company
     /// </summary>
     [HttpPut("settings")]
-    [Authorize(Policy = "RequireCompanyOwner")]
+    [Authorize(Policy = "CanViewLocation")]
     public async Task<ActionResult<CompanyLocationSettingsDto>> UpdateSettings([FromBody] UpdateLocationSettingsRequest request)
     {
         var settings = await _locationTrackingService.UpdateSettingsAsync(request);
@@ -94,7 +94,7 @@ public class LocationTrackingController : BaseApiController
     /// Creates an on-demand location request for specified workers
     /// </summary>
     [HttpPost("request")]
-    [Authorize(Policy = "RequireCompanyOwner")]
+    [Authorize(Policy = "CanViewLocation")]
     public async Task<ActionResult<LocationRequestDto>> CreateLocationRequest([FromBody] RequestLocationRequest request)
     {
         var locationRequest = await _locationTrackingService.CreateLocationRequestAsync(request);
@@ -105,7 +105,7 @@ public class LocationTrackingController : BaseApiController
     /// Gets all location requests for the company
     /// </summary>
     [HttpGet("requests")]
-    [Authorize(Policy = "RequireCompanyOwner")]
+    [Authorize(Policy = "CanViewLocation")]
     public async Task<ActionResult<List<LocationRequestDto>>> GetLocationRequests(
         [FromQuery] DateTime? fromDate,
         [FromQuery] DateTime? toDate,
@@ -119,7 +119,7 @@ public class LocationTrackingController : BaseApiController
     /// Cancels a location request
     /// </summary>
     [HttpPut("requests/{id}/cancel")]
-    [Authorize(Policy = "RequireCompanyOwner")]
+    [Authorize(Policy = "CanViewLocation")]
     public async Task<ActionResult> CancelLocationRequest(int id)
     {
         var result = await _locationTrackingService.CancelLocationRequestAsync(id);
@@ -134,7 +134,7 @@ public class LocationTrackingController : BaseApiController
     /// Gets location status for all workers today
     /// </summary>
     [HttpGet("today")]
-    [Authorize(Policy = "RequireCompanyOwner")]
+    [Authorize(Policy = "CanViewLocation")]
     public async Task<ActionResult<TodayLocationSummaryDto>> GetTodaySummary()
     {
         var summary = await _locationTrackingService.GetTodaySummaryAsync();
@@ -145,7 +145,7 @@ public class LocationTrackingController : BaseApiController
     /// Gets location history for a specific worker
     /// </summary>
     [HttpGet("workers/{userId}/history")]
-    [Authorize(Policy = "RequireCompanyOwner")]
+    [Authorize(Policy = "CanViewLocation")]
     public async Task<ActionResult<WorkerLocationHistoryDto>> GetWorkerHistory(
         int userId,
         [FromQuery] DateTime? fromDate,
@@ -161,7 +161,7 @@ public class LocationTrackingController : BaseApiController
     /// Gets location status for a specific worker
     /// </summary>
     [HttpGet("workers/{userId}/status")]
-    [Authorize(Policy = "RequireCompanyOwner")]
+    [Authorize(Policy = "CanViewLocation")]
     public async Task<ActionResult<WorkerLocationStatusDto>> GetWorkerStatus(int userId)
     {
         var status = await _locationTrackingService.GetWorkerStatusAsync(userId);
