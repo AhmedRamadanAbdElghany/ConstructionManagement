@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -33,6 +33,63 @@ import { Subject, takeUntil } from 'rxjs';
 
       <!-- Right Side -->
       <div class="flex items-center gap-4">
+        <!-- Company Switcher -->
+        @if (authService.getActiveCompanies(authService.getCurrentUser()).length > 1) {
+          <div class="relative">
+            <button 
+              (click)="toggleCompanySelector()"
+              class="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 hover:border-cyan-500/30 transition-all active:scale-95 shadow-lg group">
+              <div class="w-8 h-8 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-500 group-hover:scale-110 transition-transform">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-7h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+              </div>
+              <div class="hidden lg:block ltr:text-left rtl:text-right max-w-[150px]">
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none mb-1">{{ 'topbar.current_company' | translate }}</p>
+                <p class="text-xs font-black text-slate-900 dark:text-white truncate">{{ authService.selectedCompany$()?.name || '---' }}</p>
+              </div>
+              <svg class="w-4 h-4 text-slate-400 group-hover:text-cyan-500 transition-colors" [class.rotate-180]="showCompanySelector" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+
+            @if (showCompanySelector) {
+              <div class="absolute ltr:left-0 rtl:right-0 top-[calc(100%+12px)] w-64 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-3xl border border-slate-200 dark:border-white/10 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+                <div class="p-6 pb-2">
+                  <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">{{ 'topbar.switch_company' | translate }}</h3>
+                </div>
+                <div class="p-2 space-y-1 max-h-64 overflow-y-auto custom-scrollbar">
+                  @for (company of authService.getActiveCompanies(authService.getCurrentUser()); track company.companyId) {
+                    <button 
+                      (click)="selectCompany(company)"
+                      class="w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all group/item"
+                      [class.bg-cyan-500/5]="company.companyId === authService.selectedCompany$()?.companyId"
+                      [class.hover:bg-slate-50]="company.companyId !== authService.selectedCompany$()?.companyId"
+                      [class.dark:hover:bg-white/[0.03]]="company.companyId !== authService.selectedCompany$()?.companyId">
+                      <div class="w-10 h-10 rounded-xl flex items-center justify-center font-black"
+                           [ngClass]="company.companyId === authService.selectedCompany$()?.companyId ? 'bg-cyan-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 group-hover/item:text-cyan-500'">
+                        {{ company.name.charAt(0) }}
+                      </div>
+                      <div class="flex-1 ltr:text-left rtl:text-right min-w-0">
+                        <p class="text-sm font-bold truncate transition-colors"
+                           [class.text-cyan-600]="company.companyId === authService.selectedCompany$()?.companyId"
+                           [class.text-slate-700]="company.companyId !== authService.selectedCompany$()?.companyId"
+                           [class.dark:text-slate-300]="company.companyId !== authService.selectedCompany$()?.companyId">
+                          {{ company.name }}
+                        </p>
+                        <p class="text-[10px] text-slate-400 font-medium lowercase italic">{{ company.role }}</p>
+                      </div>
+                      @if (company.companyId === authService.selectedCompany$()?.companyId) {
+                        <div class="w-2 h-2 rounded-full bg-cyan-500 shadow-lg shadow-cyan-500/50"></div>
+                      }
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+
         <!-- Theme Toggle -->
         <button 
           (click)="themeService.toggleTheme()"
@@ -219,7 +276,7 @@ import { Subject, takeUntil } from 'rxjs';
     }
 
     <!-- Overlay to close dropdowns -->
-    @if (showNotifications || showProfile) {
+    @if (showNotifications || showProfile || showCompanySelector) {
       <div 
         class="fixed inset-0 z-40 bg-slate-950/20 backdrop-blur-sm transition-all animate-in fade-in duration-300"
         (click)="closeDropdowns()">
@@ -241,6 +298,7 @@ import { Subject, takeUntil } from 'rxjs';
 export class TopbarComponent implements OnInit, OnDestroy {
   showNotifications = false;
   showProfile = false;
+  showCompanySelector = false;
   showLogoutConfirmation = false;
   notifications: NotificationDto[] = [];
   private destroy$ = new Subject<void>();
@@ -298,6 +356,20 @@ export class TopbarComponent implements OnInit, OnDestroy {
   closeDropdowns() {
     this.showNotifications = false;
     this.showProfile = false;
+    this.showCompanySelector = false;
+  }
+
+  toggleCompanySelector() {
+    this.showCompanySelector = !this.showCompanySelector;
+    this.showNotifications = false;
+    this.showProfile = false;
+  }
+
+  selectCompany(company: any) {
+    this.authService.selectCompany(company);
+    this.showCompanySelector = false;
+    // Force reload to ensure all components refresh with the new X-Company-ID context
+    window.location.reload();
   }
 
   markAllRead() {

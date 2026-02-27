@@ -244,6 +244,8 @@
     "profile": "الملف الشخصي",
     "settings": "الإعدادات",
     "logout": "تسجيل الخروج",
+    "switch_company": "تبديل الشركة",
+    "current_company": "الشركة النشطة",
     "current_password": "كلمة المرور الحالية",
     "new_password": "كلمة المرور الجديدة",
     "confirm_password": "تأكيد كلمة المرور"
