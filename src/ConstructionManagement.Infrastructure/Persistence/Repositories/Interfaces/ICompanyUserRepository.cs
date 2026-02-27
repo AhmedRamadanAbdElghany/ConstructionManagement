@@ -53,4 +53,24 @@ public interface ICompanyUserRepository : IRepository<CompanyUser>
     /// Update contract status
     /// </summary>
     Task UpdateStatusAsync(int id, ContractStatusEnum status, string? terminationReason = null);
+
+    /// <summary>
+    /// Get all company-user relationships for a user including Draft status
+    /// </summary>
+    Task<IEnumerable<CompanyUser>> GetAllByUserIdAsync(int userId);
+
+    /// <summary>
+    /// Get all company-user relationships for a company including Draft status
+    /// </summary>
+    Task<IEnumerable<CompanyUser>> GetAllByCompanyIdAsync(int companyId);
+
+    /// <summary>
+    /// Get Draft company-user relationships for a user
+    /// </summary>
+    Task<IEnumerable<CompanyUser>> GetDraftByUserIdAsync(int userId);
+
+    /// <summary>
+    /// Get Draft company-user relationships for a company
+    /// </summary>
+    Task<IEnumerable<CompanyUser>> GetDraftByCompanyIdAsync(int companyId);
 }

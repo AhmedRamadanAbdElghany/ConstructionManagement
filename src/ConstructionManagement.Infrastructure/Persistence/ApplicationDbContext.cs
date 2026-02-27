@@ -342,23 +342,6 @@ public class ApplicationDbContext : DbContext
     public DbSet<SkillRequirement> SkillRequirements => Set<SkillRequirement>();
     public DbSet<SkillGapAnalysis> SkillGapAnalyses => Set<SkillGapAnalysis>();
 
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        foreach (var entry in ChangeTracker.Entries<ICompanyEntity>())
-        {
-            if (entry.State == EntityState.Added)
-            {
-                // Prioritize the context's CompanyId (from header/JWT) 
-                // but fall back to existing value if explicitly set and context is null
-                if (_companyContext.CompanyId.HasValue)
-                {
-                    entry.Entity.CompanyId = _companyContext.CompanyId.Value;
-                }
-            }
-        }
-
-        return await base.SaveChangesAsync(cancellationToken);
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -2413,10 +2396,24 @@ public class ApplicationDbContext : DbContext
         return base.SaveChanges();
     }
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         UpdateAuditFields();
-        return base.SaveChangesAsync(cancellationToken);
+        
+        foreach (var entry in ChangeTracker.Entries<ICompanyEntity>())
+        {
+            if (entry.State == EntityState.Added)
+            {
+                // Prioritize the context's CompanyId (from header/JWT) 
+                // but fall back to existing value if explicitly set and context is null
+                if (_companyContext.CompanyId.HasValue)
+                {
+                    entry.Entity.CompanyId = _companyContext.CompanyId.Value;
+                }
+            }
+        }
+        
+        return await base.SaveChangesAsync(cancellationToken);
     }
 
     private void UpdateAuditFields()

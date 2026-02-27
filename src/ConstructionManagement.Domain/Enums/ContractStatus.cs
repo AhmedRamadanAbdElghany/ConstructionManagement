@@ -23,5 +23,10 @@ public enum ContractStatus
     /// <summary>
     /// Contract is suspended temporarily
     /// </summary>
-    Suspended = 3
+    Suspended = 3,
+
+    /// <summary>
+    /// Contract is in draft state (e.g. user removed from company but not system)
+    /// </summary>
+    Draft = 4
 }

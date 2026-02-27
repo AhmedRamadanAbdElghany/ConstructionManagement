@@ -4,6 +4,7 @@ import { Observable, BehaviorSubject, of, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 
 export interface CompanyAssociation {
+    id?: number; // CompanyUser ID for API calls
     companyId: number;
     companyName: string;
     role: string;
@@ -112,7 +113,7 @@ export class AuthService {
 
     private restoreSelectedCompany(user: User): void {
         const savedCompanyId = localStorage.getItem('selectedCompanyId');
-        const activeCompanies = this.getActiveCompanies(user);
+        const activeCompanies = this.getActiveCompanies();
         if (savedCompanyId && activeCompanies.length > 0) {
             const found = activeCompanies.find(c => c.companyId === parseInt(savedCompanyId));
             if (found) {
@@ -127,10 +128,10 @@ export class AuthService {
         }
     }
 
-    getActiveCompanies(user?: User | null): CompanyAssociation[] {
-        const u = user || this.getCurrentUser();
-        if (!u?.companies) return [];
-        return u.companies.filter(c => c.status === 'Active');
+    getActiveCompanies(): CompanyAssociation[] {
+        const user = this.getCurrentUser();
+        if (!user?.companies) return [];
+        return user.companies.filter(c => c.status === 'Active');
     }
 
     getSelectedCompany(): CompanyAssociation | null {
@@ -316,6 +317,54 @@ export class AuthService {
         return user.role === 'CompanyAdmin';
     }
 
+    /**
+     * Get all companies including Draft status
+     */
+    getAllCompanies(): CompanyAssociation[] {
+        const user = this.getCurrentUser();
+        if (!user?.companies) return [];
+        return user.companies;
+    }
+
+    /**
+     * Get only Draft companies
+     */
+    getDraftCompanies(): CompanyAssociation[] {
+        const user = this.getCurrentUser();
+        if (!user?.companies) return [];
+        return user.companies.filter(c => c.status === 'Draft');
+    }
+
+    /**
+     * Toggle company draft status
+     */
+    toggleCompanyDraftStatus(companyUserId: number, isDraft: boolean): Observable<{ message: string }> {
+        return this.http.put<{ message: string }>(`/api/company-users/${companyUserId}/status`, { status: isDraft ? 'Draft' : 'Active' });
+    }
+
+    /**
+     * Refresh user's company associations from backend
+     */
+    refreshCompanyAssociations(): Observable<any> {
+        return this.http.get<any>('/api/company-users/me/companies').pipe(
+            tap((response: any[]) => {
+                const user = this.getCurrentUser();
+                if (user) {
+                    user.companies = response.map((c: any) => ({
+                        id: c.id,
+                        companyId: c.companyId,
+                        companyName: c.companyName,
+                        role: c.role,
+                        status: c.status,
+                        contractStartDate: c.contractStartDate,
+                        contractEndDate: c.contractEndDate
+                    }));
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    this.currentUserSubject.next({ ...user });
+                }
+            })
+        );
+    }
 
     logout(): void {
         localStorage.removeItem('authToken');

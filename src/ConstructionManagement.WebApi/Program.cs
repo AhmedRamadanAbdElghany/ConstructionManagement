@@ -140,6 +140,7 @@ builder.Services.AddScoped<IRepository<ProjectTeamRole>, Repository<ProjectTeamR
 builder.Services.AddScoped<IRepository<ProjectItemExecutedDelta>, Repository<ProjectItemExecutedDelta>>();
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<ICompanyRequestRepository, CompanyRequestRepository>();
+builder.Services.AddScoped<ICompanyUserRepository, CompanyUserRepository>();
 builder.Services.AddScoped<IJoinRequestRepository, JoinRequestRepository>();
 builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
 builder.Services.AddScoped<IMaterialCategoryRepository, MaterialCategoryRepository>();
@@ -155,6 +156,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICompanyUserService, CompanyUserService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IProjectTeamService, ProjectTeamService>();
 builder.Services.AddScoped<IProjectItemService, ProjectItemService>();

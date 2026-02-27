@@ -16,4 +16,5 @@ public interface IAuthService
     Task<int?> GetCurrentUserIdAsync();
     Task<bool> UpdateProfileAsync(int userId, UpdateProfileRequest request);
     Task<bool> ChangePasswordAsync(int userId, ChangePasswordRequest request);
+    Task<AuthResponse> SwitchActiveCompanyAsync(int userId, int companyId);
 }

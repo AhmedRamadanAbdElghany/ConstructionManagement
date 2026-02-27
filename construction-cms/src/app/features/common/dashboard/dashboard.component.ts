@@ -1207,7 +1207,7 @@ export class DashboardComponent implements OnInit {
   }
 
   get isPending(): boolean {
-    return this.currentUser?.userType === 2 && this.authService.getActiveCompanies(this.currentUser).length === 0 && !this.currentUser?.companyId;
+    return this.currentUser?.userType === 2 && this.authService.getActiveCompanies().length === 0 && !this.currentUser?.companyId;
   }
 
   get isUnassignedClient(): boolean {

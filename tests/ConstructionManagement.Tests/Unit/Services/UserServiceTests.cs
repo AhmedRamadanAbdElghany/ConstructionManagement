@@ -13,6 +13,7 @@ public class UserServiceTests
     private readonly Mock<IRepository<User>> _userRepo = new();
     private readonly Mock<IRepository<Role>> _roleRepo = new();
     private readonly Mock<IRepository<UserRole>> _userRoleRepo = new();
+    private readonly Mock<ICompanyUserRepository> _companyUserRepo = new();
     private readonly Mock<IUnitOfWork> _unitOfWork = new(); // إضافة الموك
 
     private UserService CreateService()
@@ -21,6 +22,7 @@ public class UserServiceTests
             _userRepo.Object,
             _roleRepo.Object,
             _userRoleRepo.Object,
+            _companyUserRepo.Object,
             _unitOfWork.Object); // تمرير الموك للخدمة
     }
 

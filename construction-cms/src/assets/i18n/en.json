@@ -253,6 +253,16 @@
     "switch_company": "Switch Company",
     "current_company": "Active Firm"
   },
+  "company": {
+    "hide_from_list": "Hide from list",
+    "restore": "Restore"
+  },
+  "common": {
+    "active": "Active",
+    "hidden": "Hidden",
+    "draft": "Draft",
+    "restore": "Restore"
+  },
   "logout_confirm": {
     "title": "Are you sure?",
     "subtitle": "You are about to log out from your account. You will need to log in again to access your projects.",

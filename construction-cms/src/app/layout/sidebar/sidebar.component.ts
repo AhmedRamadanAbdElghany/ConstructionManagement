@@ -805,7 +805,7 @@ export class SidebarComponent {
   ) {
     const user = this.authService.getCurrentUser();
     const isSuperAdmin = user?.roles?.includes('SuperAdmin');
-    const activeCompanies = this.authService.getActiveCompanies(user);
+    const activeCompanies = this.authService.getActiveCompanies();
 
     if (!isSuperAdmin && activeCompanies.length > 0) {
       this.settingsService.getCompanySettings().subscribe(s => this.settings = s);
@@ -871,7 +871,7 @@ export class SidebarComponent {
   get isPending(): boolean {
     const user = this.authService.getCurrentUser();
     // User type 2 (CompanyOwner) who has no company associations yet is considered pending approval
-    const activeCompanies = this.authService.getActiveCompanies(user);
+    const activeCompanies = this.authService.getActiveCompanies();
     return user?.userType === 2 && activeCompanies.length === 0 && !user?.companyId;
   }
 

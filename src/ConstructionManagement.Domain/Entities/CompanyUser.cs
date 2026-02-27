@@ -65,6 +65,11 @@ public class CompanyUser : BaseEntity
     public DateTime JoinedAt { get; set; }
 
     /// <summary>
+    /// Indicates if this is the user's primary company association
+    /// </summary>
+    public bool IsPrimary { get; set; }
+
+    /// <summary>
     /// Date when the contract was terminated (if applicable)
     /// </summary>
     public DateTime? TerminatedAt { get; set; }

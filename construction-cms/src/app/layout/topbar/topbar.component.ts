@@ -34,7 +34,7 @@ import { Subject, takeUntil } from 'rxjs';
       <!-- Right Side -->
       <div class="flex items-center gap-4">
         <!-- Company Switcher -->
-        @if (authService.getActiveCompanies(authService.getCurrentUser()).length > 1) {
+        @if (authService.getAllCompanies().length > 0) {
           <div class="relative">
             <button 
               (click)="toggleCompanySelector()"
@@ -46,7 +46,7 @@ import { Subject, takeUntil } from 'rxjs';
               </div>
               <div class="hidden lg:block ltr:text-left rtl:text-right max-w-[150px]">
                 <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none mb-1">{{ 'topbar.current_company' | translate }}</p>
-                <p class="text-xs font-black text-slate-900 dark:text-white truncate">{{ authService.selectedCompany$()?.name || '---' }}</p>
+                <p class="text-xs font-black text-slate-900 dark:text-white truncate">{{ authService.getSelectedCompany()?.companyName || '---' }}</p>
               </div>
               <svg class="w-4 h-4 text-slate-400 group-hover:text-cyan-500 transition-colors" [class.rotate-180]="showCompanySelector" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path>
@@ -54,37 +54,83 @@ import { Subject, takeUntil } from 'rxjs';
             </button>
 
             @if (showCompanySelector) {
-              <div class="absolute ltr:left-0 rtl:right-0 top-[calc(100%+12px)] w-64 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-3xl border border-slate-200 dark:border-white/10 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+              <div class="absolute ltr:left-0 rtl:right-0 top-[calc(100%+12px)] w-80 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-3xl border border-slate-200 dark:border-white/10 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
                 <div class="p-6 pb-2">
                   <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">{{ 'topbar.switch_company' | translate }}</h3>
                 </div>
-                <div class="p-2 space-y-1 max-h-64 overflow-y-auto custom-scrollbar">
-                  @for (company of authService.getActiveCompanies(authService.getCurrentUser()); track company.companyId) {
-                    <button 
-                      (click)="selectCompany(company)"
-                      class="w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all group/item"
-                      [class.bg-cyan-500/5]="company.companyId === authService.selectedCompany$()?.companyId"
-                      [class.hover:bg-slate-50]="company.companyId !== authService.selectedCompany$()?.companyId"
-                      [class.dark:hover:bg-white/[0.03]]="company.companyId !== authService.selectedCompany$()?.companyId">
-                      <div class="w-10 h-10 rounded-xl flex items-center justify-center font-black"
-                           [ngClass]="company.companyId === authService.selectedCompany$()?.companyId ? 'bg-cyan-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 group-hover/item:text-cyan-500'">
-                        {{ company.name.charAt(0) }}
-                      </div>
-                      <div class="flex-1 ltr:text-left rtl:text-right min-w-0">
-                        <p class="text-sm font-bold truncate transition-colors"
-                           [class.text-cyan-600]="company.companyId === authService.selectedCompany$()?.companyId"
-                           [class.text-slate-700]="company.companyId !== authService.selectedCompany$()?.companyId"
-                           [class.dark:text-slate-300]="company.companyId !== authService.selectedCompany$()?.companyId">
-                          {{ company.name }}
-                        </p>
-                        <p class="text-[10px] text-slate-400 font-medium lowercase italic">{{ company.role }}</p>
-                      </div>
-                      @if (company.companyId === authService.selectedCompany$()?.companyId) {
-                        <div class="w-2 h-2 rounded-full bg-cyan-500 shadow-lg shadow-cyan-500/50"></div>
-                      }
-                    </button>
-                  }
-                </div>
+                
+                <!-- Active Companies -->
+                @if (authService.getActiveCompanies().length > 0) {
+                  <div class="px-4 pt-2 pb-1">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ 'common.active' | translate }}</p>
+                  </div>
+                  <div class="p-2 space-y-1 max-h-40 overflow-y-auto custom-scrollbar">
+                    @for (company of authService.getActiveCompanies(); track company.companyId) {
+                      <button 
+                        (click)="selectCompany(company)"
+                        class="w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all group/item relative"
+                        [class.bg-cyan-500/5]="company.companyId === authService.getSelectedCompany()?.companyId"
+                        [class.hover:bg-slate-50]="company.companyId !== authService.getSelectedCompany()?.companyId"
+                        [class.dark:hover:bg-white/[0.03]]="company.companyId !== authService.getSelectedCompany()?.companyId">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center font-black"
+                             [ngClass]="company.companyId === authService.getSelectedCompany()?.companyId ? 'bg-cyan-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 group-hover/item:text-cyan-500'">
+                          {{ company.companyName.charAt(0) }}
+                        </div>
+                        <div class="flex-1 ltr:text-left rtl:text-right min-w-0">
+                          <p class="text-sm font-bold truncate transition-colors"
+                             [class.text-cyan-600]="company.companyId === authService.getSelectedCompany()?.companyId"
+                             [class.text-slate-700]="company.companyId !== authService.getSelectedCompany()?.companyId"
+                             [class.dark:text-slate-300]="company.companyId !== authService.getSelectedCompany()?.companyId">
+                            {{ company.companyName }}
+                          </p>
+                          <p class="text-[10px] text-slate-400 font-medium lowercase italic">{{ company.role }}</p>
+                        </div>
+                        @if (company.companyId === authService.getSelectedCompany()?.companyId) {
+                          <div class="w-2 h-2 rounded-full bg-cyan-500 shadow-lg shadow-cyan-500/50"></div>
+                        }
+                        <!-- Hide from list button -->
+                        <button 
+                          (click)="toggleCompanyDraftStatus($event, company)"
+                          class="absolute ltr:right-2 rtl:left-2 w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-opacity hover:bg-amber-500/20"
+                          [title]="'company.hide_from_list' | translate">
+                          <svg class="w-3 h-3 text-slate-400 hover:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                          </svg>
+                        </button>
+                      </button>
+                    }
+                  </div>
+                }
+                
+                <!-- Draft Companies -->
+                @if (authService.getDraftCompanies().length > 0) {
+                  <div class="px-4 pt-3 pb-1 border-t border-slate-100 dark:border-white/5 mt-2">
+                    <p class="text-[10px] font-bold text-amber-500 uppercase tracking-wider">{{ 'common.hidden' | translate }}</p>
+                  </div>
+                  <div class="p-2 space-y-1 max-h-32 overflow-y-auto custom-scrollbar">
+                    @for (company of authService.getDraftCompanies(); track company.companyId) {
+                      <button 
+                        (click)="restoreCompanyFromDraft($event, company)"
+                        class="w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all group/item bg-amber-500/5 hover:bg-amber-500/10">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center font-black bg-amber-100 dark:bg-amber-900/30 text-amber-500">
+                          {{ company.companyName.charAt(0) }}
+                        </div>
+                        <div class="flex-1 ltr:text-left rtl:text-right min-w-0">
+                          <p class="text-sm font-bold truncate text-amber-700 dark:text-amber-400">
+                            {{ company.companyName }}
+                          </p>
+                          <p class="text-[10px] text-amber-500/70 font-medium">{{ company.role }}</p>
+                        </div>
+                        <!-- Restore button -->
+                        <div class="w-6 h-6 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center" [title]="'company.restore' | translate">
+                          <svg class="w-3 h-3 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                          </svg>
+                        </div>
+                      </button>
+                    }
+                  </div>
+                }
               </div>
             }
           </div>
@@ -370,6 +416,36 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.showCompanySelector = false;
     // Force reload to ensure all components refresh with the new X-Company-ID context
     window.location.reload();
+  }
+
+  toggleCompanyDraftStatus(event: Event, company: any) {
+    event.stopPropagation();
+    const companyUserId = company.id || company.companyId;
+    this.authService.toggleCompanyDraftStatus(companyUserId, true).subscribe({
+      next: () => {
+        this.authService.refreshCompanyAssociations().subscribe();
+        // Close dropdown and reload
+        this.showCompanySelector = false;
+      },
+      error: (err) => {
+        console.error('Failed to hide company:', err);
+      }
+    });
+  }
+
+  restoreCompanyFromDraft(event: Event, company: any) {
+    event.stopPropagation();
+    const companyUserId = company.id || company.companyId;
+    this.authService.toggleCompanyDraftStatus(companyUserId, false).subscribe({
+      next: () => {
+        this.authService.refreshCompanyAssociations().subscribe();
+        // Close dropdown and reload
+        this.showCompanySelector = false;
+      },
+      error: (err) => {
+        console.error('Failed to restore company:', err);
+      }
+    });
   }
 
   markAllRead() {

@@ -245,10 +245,17 @@
     "settings": "الإعدادات",
     "logout": "تسجيل الخروج",
     "switch_company": "تبديل الشركة",
-    "current_company": "الشركة النشطة",
-    "current_password": "كلمة المرور الحالية",
-    "new_password": "كلمة المرور الجديدة",
-    "confirm_password": "تأكيد كلمة المرور"
+    "current_company": "الشركة النشطة"
+  },
+  "company": {
+    "hide_from_list": "إخفاء من القائمة",
+    "restore": "استعادة"
+  },
+  "common": {
+    "active": "نشط",
+    "hidden": "مخفي",
+    "draft": "مسودة",
+    "restore": "استعادة"
   },
   "profile": {
     "subtitle": "عرض وإدارة معلومات حسابك",

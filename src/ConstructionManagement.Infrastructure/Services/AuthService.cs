@@ -93,6 +93,7 @@ public class AuthService : IAuthService
                 companyDetails.GetValueOrDefault(cu.CompanyId, "Unknown"),
                 cu.Role,
                 cu.Status.ToString(),
+                cu.IsPrimary,
                 cu.ContractStartDate,
                 cu.ContractEndDate
             )).ToList();
@@ -483,6 +484,50 @@ public class AuthService : IAuthService
         {
             return false;
         }
+    }
+
+    public async Task<AuthResponse> SwitchActiveCompanyAsync(int userId, int companyId)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
+            return new AuthResponse(false, _localizationService["User.NotFound"], null, null);
+
+        var companyUsers = await _companyUserRepository.GetActiveByUserIdAsync(user.Id);
+        var companyUser = companyUsers.FirstOrDefault(cu => cu.CompanyId == companyId);
+        if (companyUser == null)
+            return new AuthResponse(false, _localizationService["Auth.CompanyAccessDenied"], null, null);
+
+        var roles = user.UserRoles?.Select(ur => ur.Role.Name).ToList() ?? new List<string>();
+        
+        // Get all company associations
+        var companyIds = companyUsers.Select(cu => cu.CompanyId).ToList();
+        var companyDetails = await _context.Companies
+            .Where(c => companyIds.Contains(c.Id))
+            .ToDictionaryAsync(c => c.Id, c => c.Name);
+        
+        var companies = companyUsers.Select(cu => new CompanyAssociationDto(
+            cu.CompanyId,
+            companyDetails.GetValueOrDefault(cu.CompanyId, "Unknown"),
+            cu.Role,
+            cu.Status.ToString(),
+            cu.IsPrimary,
+            cu.ContractStartDate,
+            cu.ContractEndDate
+        )).ToList();
+
+        var userDto = new UserDto(
+            user.Id,
+            user.FullName,
+            user.Email,
+            roles,
+            user.CreatedAt,
+            user.UserType,
+            companyId, // Use the new active company ID
+            user.RequiresPasswordChange,
+            companies
+        );
+
+        return new AuthResponse(true, _localizationService["Auth.CompanySwitched"], null, userDto);
     }
 
     public async Task<User?> GetCurrentUserAsync()

@@ -96,6 +96,40 @@ public class AuthController : ControllerBase
         return Ok(new { message = response.Message });
     }
 
+    [HttpPost("switch-company")]
+    public async Task<IActionResult> SwitchCompany([FromBody] SwitchCompanyRequest request)
+    {
+        var userId = _authService.GetCurrentUserId();
+        if (!userId.HasValue)
+        {
+            return Unauthorized(new { message = "User not authenticated" });
+        }
+
+        var response = await _authService.SwitchActiveCompanyAsync(userId.Value, request.CompanyId);
+
+        if (!response.Success)
+        {
+            return BadRequest(new { message = response.Message });
+        }
+
+        return Ok(new
+        {
+            success = true,
+            message = response.Message,
+            user = response.User != null ? new
+            {
+                userId = response.User.UserID,
+                fullName = response.User.FullName,
+                email = response.User.Email,
+                roles = response.User.Roles,
+                createdAt = response.User.CreatedAt,
+                userType = (int)response.User.CurrentUserType,
+                companyId = response.User.CompanyId,
+                companies = response.User.Companies
+            } : null
+        });
+    }
+
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
     {

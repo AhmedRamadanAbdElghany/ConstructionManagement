@@ -103,4 +103,42 @@ public class CompanyUserRepository : Repository<CompanyUser>, ICompanyUserReposi
             await _context.SaveChangesAsync();
         }
     }
+
+    public async Task<IEnumerable<CompanyUser>> GetAllByUserIdAsync(int userId)
+    {
+        return await _dbSet
+            .Include(cu => cu.Company)
+            .Where(cu => cu.UserId == userId && !cu.IsDeleted)
+            .OrderBy(cu => cu.CreatedAt)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<CompanyUser>> GetAllByCompanyIdAsync(int companyId)
+    {
+        return await _dbSet
+            .Include(cu => cu.User)
+            .Where(cu => cu.CompanyId == companyId && !cu.IsDeleted)
+            .OrderBy(cu => cu.User != null ? cu.User.LastName : null)
+            .ThenBy(cu => cu.User != null ? cu.User.FirstName : null)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<CompanyUser>> GetDraftByUserIdAsync(int userId)
+    {
+        return await _dbSet
+            .Include(cu => cu.Company)
+            .Where(cu => cu.UserId == userId && cu.Status == ContractStatusEnum.Draft && !cu.IsDeleted)
+            .OrderBy(cu => cu.Company != null ? cu.Company.Name : null)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<CompanyUser>> GetDraftByCompanyIdAsync(int companyId)
+    {
+        return await _dbSet
+            .Include(cu => cu.User)
+            .Where(cu => cu.CompanyId == companyId && cu.Status == ContractStatusEnum.Draft && !cu.IsDeleted)
+            .OrderBy(cu => cu.User != null ? cu.User.LastName : null)
+            .ThenBy(cu => cu.User != null ? cu.User.FirstName : null)
+            .ToListAsync();
+    }
 }

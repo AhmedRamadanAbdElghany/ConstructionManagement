@@ -8,6 +8,7 @@ public record CompanyAssociationDto(
     string CompanyName,
     string Role,
     string Status,
+    bool IsPrimary,
     DateTime ContractStartDate,
     DateTime? ContractEndDate
 );
