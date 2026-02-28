@@ -14,239 +14,285 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule, TranslateModule, LoadingSpinnerComponent],
   template: `
-    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
-      <div class="max-w-7xl mx-auto">
+    <div class="min-h-screen bg-[#f8fafc]/50 dark:bg-slate-950 p-4 md:p-8 transition-colors duration-500">
+      <div class="max-w-6xl mx-auto">
         <!-- Header -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-12">
           <div>
-            <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight uppercase">
-              {{ 'messages.title' | translate }}
-            </h1>
-            <p class="text-slate-500 dark:text-slate-400 font-medium tracking-tight">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-xl shadow-indigo-500/20">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                </svg>
+              </div>
+              <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight uppercase" style="letter-spacing: -0.025em;">
+                {{ 'messages.title' | translate }}
+              </h1>
+            </div>
+            <p class="text-slate-500 dark:text-slate-400 font-medium max-w-xl leading-relaxed">
               {{ 'messages.subtitle' | translate }}
             </p>
           </div>
           
-          <div class="flex items-center gap-3">
+          <div class="flex flex-wrap items-center gap-3">
             <!-- Message User Button (Company Owners Only) -->
             @if (isCompanyOwner && !isRestricted) {
               <button 
                 (click)="openUserSearchModal()"
-                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold uppercase tracking-wider hover:bg-emerald-700 transition-all">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                </svg>
+                class="group flex items-center gap-2 px-5 py-3 rounded-2xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs font-black uppercase tracking-widest border border-slate-200 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm">
+                <div class="w-6 h-6 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+                  </svg>
+                </div>
                 {{ 'messages.message_user' | translate }}
               </button>
 
               <button 
                 (click)="openStartConversationModal()"
-                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold uppercase tracking-wider hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/20">
+                class="flex items-center gap-2 px-6 py-3 rounded-2xl bg-indigo-600 text-white text-xs font-black uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/20 active:scale-95">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
                 {{ 'messages.contact_admin' | translate }}
               </button>
             }
-            
-            <!-- Unread Count -->
-            @if (unreadCount > 0) {
-              <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                </svg>
-                <span class="font-bold">{{ unreadCount }} {{ 'messages.unread' | translate }}</span>
-              </div>
-            }
           </div>
         </div>
 
-        <!-- Restriction Notice for Unverified Owners -->
+        <!-- Search Bar -->
+        <div class="mb-10 group">
+          <div class="relative max-w-2xl mx-auto shadow-2xl shadow-indigo-500/5 rounded-[2rem]">
+            <svg class="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <input 
+              type="text"
+              [(ngModel)]="conversationSearchQuery"
+              [placeholder]="'messages.search_placeholder' | translate"
+              class="w-full pl-14 pr-6 py-5 rounded-[2rem] bg-white dark:bg-slate-900 border-none focus:ring-4 focus:ring-indigo-500/10 text-slate-900 dark:text-white placeholder-slate-400 text-sm font-bold shadow-sm transition-all outline-none"
+            />
+          </div>
+        </div>
+
+        <!-- Restriction Notice -->
         @if (isRestricted) {
-          <div class="mb-6 p-4 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-500/30">
-            <div class="flex items-start gap-3">
-              <svg class="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-              </svg>
-              <div class="flex-1">
-                <h4 class="font-bold text-amber-700 dark:text-amber-400">{{ 'messages.restricted_title' | translate }}</h4>
-                <p class="text-sm text-amber-600 dark:text-amber-300">{{ 'messages.restricted_desc' | translate }}</p>
-                <button 
-                  (click)="openStartConversationModal()"
-                  class="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 text-white text-xs font-bold uppercase tracking-wider hover:bg-amber-600 transition-all">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                  </svg>
-                  {{ 'messages.start_conversation_admin' | translate }}
-                </button>
+          <div class="mb-12 p-8 rounded-[2.5rem] bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/10 border border-amber-200 dark:border-amber-500/20 shadow-xl shadow-amber-500/5">
+            <div class="flex flex-col md:flex-row md:items-center gap-6">
+              <div class="w-16 h-16 rounded-3xl bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center text-amber-600 flex-shrink-0 animate-bounce transition-all">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
               </div>
+              <div class="flex-1">
+                <h4 class="text-xl font-black text-amber-900 dark:text-amber-200 mb-1 tracking-tight">{{ 'messages.restricted_title' | translate }}</h4>
+                <p class="text-base text-amber-700/80 dark:text-amber-400 font-medium leading-relaxed">{{ 'messages.restricted_desc' | translate }}</p>
+              </div>
+              <button 
+                (click)="openStartConversationModal()"
+                class="flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-amber-600 text-white text-xs font-black uppercase tracking-widest hover:bg-amber-700 transition-all shadow-xl shadow-amber-600/20 whitespace-nowrap">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+                {{ 'messages.start_conversation_admin' | translate }}
+              </button>
             </div>
           </div>
         }
 
         <!-- Loading State -->
         @if (isLoading || isStatusLoading) {
-          <app-loading-spinner containerClass="py-20"></app-loading-spinner>
-        }
-
-        <!-- Tabs -->
-        @if (!isLoading && !isStatusLoading && availableTabs.length > 1) {
-          <div class="mb-6 flex flex-wrap gap-2">
-            @for (tab of availableTabs; track tab.key) {
-              <button
-                (click)="setActiveTab(tab.key)"
-                class="px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2"
-                [ngClass]="{
-                  'bg-indigo-600 text-white': activeTab === tab.key,
-                  'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700': activeTab !== tab.key
-                }">
-                {{ tab.label | translate }}
-                @if (tab.unreadCount > 0) {
-                  <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black"
-                        [ngClass]="activeTab === tab.key ? 'bg-white text-indigo-600' : 'bg-indigo-600 text-white'">
-                    {{ tab.unreadCount }}
-                  </span>
-                }
-              </button>
-            }
+          <div class="flex flex-col items-center justify-center py-20 animate-premium-fade">
+            <app-loading-spinner [label]="'messages.loading_conversations' | translate"></app-loading-spinner>
+          </div>
+          <div class="space-y-6 opacity-40 grayscale blur-[2px] pointer-events-none">
+             @for (i of [1,2,3,4]; track i) {
+                <div class="h-40 rounded-[3rem] skeleton-base"></div>
+             }
           </div>
         }
 
-        <!-- Conversations List -->
-        @if (!isLoading && !isStatusLoading && filteredConversations.length > 0) {
-          <div class="space-y-4">
-            @for (conversation of filteredConversations; track conversation.id) {
-              <a 
-                [routerLink]="['/messages', conversation.id]"
-                class="block group bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl hover:shadow-2xl transition-all animate-premium-fade"
-                [style.animation-delay]="($index * 50) + 'ms'">
-                
-                <div class="p-6">
-                  <div class="flex items-start gap-4">
-                    <!-- Avatar -->
-                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xl font-black flex-shrink-0">
+        <!-- Content -->
+        @if (!isLoading && !isStatusLoading) {
+          <!-- Tabs -->
+          @if (availableTabs.length > 1) {
+            <div class="mb-10 flex flex-wrap gap-2 p-2 rounded-[2rem] bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 w-fit shadow-sm">
+              @for (tab of availableTabs; track tab.key) {
+                <button
+                  (click)="setActiveTab(tab.key)"
+                  class="relative px-6 py-3 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest transition-all flex items-center gap-3 overflow-hidden"
+                  [ngClass]="{
+                    'bg-indigo-600 text-white shadow-xl shadow-indigo-500/20': activeTab === tab.key,
+                    'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800': activeTab !== tab.key
+                  }">
+                  {{ tab.label | translate }}
+                  @if (tab.unreadCount > 0) {
+                    <span class="px-2 py-0.5 rounded-lg text-[10px] font-black min-w-5 h-5 flex items-center justify-center transition-colors"
+                          [ngClass]="activeTab === tab.key ? 'bg-white/20 text-white' : 'bg-indigo-600 text-white'">
+                      {{ tab.unreadCount }}
+                    </span>
+                  }
+                </button>
+              }
+            </div>
+          }
+
+          <!-- Empty Search State -->
+          @if (filteredConversations.length === 0 && conversations.length > 0) {
+            <div class="py-32 text-center animate-premium-fade">
+              <div class="w-24 h-24 rounded-[2.5rem] bg-slate-100 dark:bg-slate-900 flex items-center justify-center mx-auto mb-8 text-slate-300 dark:text-slate-700 border border-slate-200 dark:border-white/5">
+                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-3 tracking-tight">No results for "{{ conversationSearchQuery }}"</h3>
+              <p class="text-slate-500 dark:text-slate-400 text-lg">Try searching for a different name or message content.</p>
+              <button (click)="conversationSearchQuery = ''" class="mt-8 text-indigo-600 dark:text-indigo-400 font-black uppercase tracking-widest text-xs hover:underline">Clear current search</button>
+            </div>
+          }
+
+          <!-- Conversations List -->
+          @if (filteredConversations.length > 0) {
+            <div class="grid grid-cols-1 gap-8">
+              @for (conversation of filteredConversations; track conversation.id) {
+                <a 
+                  [routerLink]="['/messages', conversation.id]"
+                  class="group relative flex flex-col md:flex-row md:items-center gap-8 p-8 md:p-10 bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-2xl shadow-indigo-500/[0.02] hover:shadow-indigo-500/[0.1] hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-all duration-700 animate-premium-fade"
+                  [style.animation-delay]="($index * 100) + 'ms'">
+                  
+                  <!-- Left: Icon/Avatar -->
+                  <div class="relative flex-shrink-0 mx-auto md:mx-0">
+                    <div class="w-24 h-24 rounded-[2.5rem] bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-600 flex items-center justify-center text-white text-4xl font-black shadow-2xl shadow-indigo-500/30 group-hover:scale-105 group-hover:rotate-3 transition-all duration-700">
                       @if (conversation.isCompanyOwner) {
                         {{ conversation.initiatorName.charAt(0) }}
                       } @else {
                         {{ conversation.companyName.charAt(0) }}
                       }
                     </div>
-                    
-                    <!-- Content -->
-                    <div class="flex-1 min-w-0">
-                      <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center gap-2">
-                          <h3 class="text-lg font-black text-slate-900 dark:text-white truncate">
-                            @if (conversation.isCompanyOwner) {
-                              {{ conversation.initiatorName }}
-                            } @else {
-                              {{ conversation.companyName }}
-                            }
-                          </h3>
-                          
-                          <!-- Status Badge -->
-                          <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider"
-                                [ngClass]="{
-                                  'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400': conversation.status === 'Pending',
-                                  'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400': conversation.status === 'Approved',
-                                  'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400': conversation.status === 'Blocked'
-                                }">
-                            {{ conversation.status }}
-                          </span>
-                        </div>
-                        
-                        <span class="text-xs text-slate-400">
-                          {{ conversation.lastMessageAt ? formatDateTime(conversation.lastMessageAt) : formatDateTime(conversation.createdAt) }}
-                        </span>
-                      </div>
+                    @if (conversation.unreadCount > 0) {
+                      <div class="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-red-500 border-4 border-white dark:border-slate-900 animate-pulse shadow-lg"></div>
+                    }
+                  </div>
+                  
+                  <!-- Middle: Content -->
+                  <div class="flex-1 min-w-0 text-center md:text-left">
+                    <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-3">
+                       <h3 class="text-2xl font-black text-slate-900 dark:text-white tracking-tighter truncate max-w-full md:max-w-md group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                        @if (conversation.isCompanyOwner) {
+                          {{ conversation.initiatorName }}
+                        } @else {
+                          {{ conversation.companyName }}
+                        }
+                      </h3>
                       
-                      <!-- Last Message Preview -->
-                      @if (conversation.lastMessage) {
-                        <p class="text-sm text-slate-500 dark:text-slate-400 truncate mb-2">
-                          @if (conversation.lastMessage.isFromCompany) {
-                            <span class="text-indigo-600 dark:text-indigo-400 font-medium">{{ 'messages.company_reply' | translate }}:</span>
-                          }
-                          {{ conversation.lastMessage.content }}
-                        </p>
+                      <span class="px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest border"
+                            [ngClass]="{
+                              'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 border-orange-100 dark:border-orange-500/20': conversation.status === 'Pending',
+                              'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-500/20': conversation.status === 'Approved',
+                              'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-100 dark:border-red-500/20': conversation.status === 'Blocked'
+                            }">
+                        {{ conversation.status }}
+                      </span>
+                    </div>
+
+                    @if (conversation.lastMessage) {
+                      <p class="text-slate-500 dark:text-slate-400 text-base font-medium line-clamp-2 mb-6 leading-relaxed group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
+                        @if (conversation.lastMessage.isFromCompany) {
+                          <span class="text-indigo-500 font-black uppercase text-[11px] tracking-widest mr-2 underline decoration-2 underline-offset-4">{{ 'messages.company_reply' | translate }}:</span>
+                        }
+                        {{ conversation.lastMessage.content }}
+                      </p>
+                    }
+
+                    <div class="flex flex-wrap items-center justify-center md:justify-start gap-6">
+                      <!-- Meta -->
+                      @if (!conversation.isCompanyOwner) {
+                        <div class="flex items-center gap-2 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
+                          <svg class="w-4 h-4 text-indigo-500/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                          </svg>
+                          {{ conversation.companyName }}
+                        </div>
                       }
                       
-                      <!-- Meta Info -->
-                      <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-3 text-xs text-slate-400">
-                          @if (!conversation.isCompanyOwner) {
-                            <span class="flex items-center gap-1">
-                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                              </svg>
-                              {{ conversation.companyName }}
-                            </span>
-                          }
-                          
-                          @if (conversation.lastMessage; as msg) {
-                            @if (msg.attachments && msg.attachments.length > 0) {
-                              <span class="flex items-center gap-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
-                                </svg>
-                                {{ msg.attachments.length }}
-                              </span>
-                            }
-                          }
+                      @if (conversation.lastMessage?.attachments?.length) {
+                        <div class="flex items-center gap-2 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] group-hover:text-indigo-500 transition-colors">
+                          <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                          </svg>
+                          {{ conversation.lastMessage?.attachments?.length }} Materials
                         </div>
-                        
-                        <!-- Unread Badge -->
-                        @if (conversation.unreadCount > 0) {
-                          <span class="px-2 py-1 rounded-full bg-indigo-600 text-white text-xs font-bold">
-                            {{ conversation.unreadCount }}
-                          </span>
-                        }
-                      </div>
+                      }
                     </div>
                   </div>
-                </div>
-              </a>
-            }
-          </div>
-        }
-
-        <!-- Empty State -->
-        @if (!isLoading && !isStatusLoading && filteredConversations.length === 0 && conversations.length === 0) {
-          <div class="flex flex-col items-center justify-center py-20 text-center animate-premium-scale">
-            <div class="w-24 h-24 mb-6 rounded-3xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-lg shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-white/5">
-              <svg class="w-10 h-10 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">
-              {{ 'messages.no_messages' | translate }}
-            </h3>
-            <p class="text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed mb-8">
-              @if (isRestricted) {
-                {{ 'messages.restricted_empty_desc' | translate }}
-              } @else {
-                {{ 'messages.no_messages_desc' | translate }}
+                  
+                  <!-- Right: Stats -->
+                  <div class="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center gap-6 border-t md:border-t-0 md:border-l border-slate-100 dark:border-white/5 pt-8 md:pt-0 md:pl-10">
+                    <div class="text-[11px] font-black uppercase tracking-[0.3em] text-slate-300 dark:text-slate-600 group-hover:text-indigo-500 transition-colors whitespace-nowrap">
+                      {{ conversation.lastMessageAt ? formatDateTime(conversation.lastMessageAt) : formatDateTime(conversation.createdAt) }}
+                    </div>
+                    
+                    @if (conversation.unreadCount > 0) {
+                      <div class="w-12 h-12 rounded-[1.25rem] bg-indigo-600 text-white flex items-center justify-center text-lg font-black shadow-2xl shadow-indigo-600/40 group-hover:scale-110 transition-transform">
+                        {{ conversation.unreadCount }}
+                      </div>
+                    } @else {
+                      <div class="w-12 h-12 rounded-[1.25rem] bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center text-slate-300 dark:text-slate-700 group-hover:bg-indigo-600 group-hover:text-white group-hover:shadow-xl group-hover:shadow-indigo-600/30 transition-all duration-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                        </svg>
+                      </div>
+                    }
+                  </div>
+                </a>
               }
-            </p>
-            @if (isRestricted) {
-              <div class="flex flex-col sm:flex-row gap-3">
-                <button 
-                  (click)="openStartConversationModal()"
-                  class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-indigo-600 text-white text-xs font-black uppercase tracking-widest shadow-lg shadow-indigo-500/30 hover:bg-indigo-700 hover:scale-105 transition-all">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+            </div>
+          }
+
+          <!-- Global Empty State -->
+          @if (filteredConversations.length === 0 && conversations.length === 0) {
+            <div class="flex flex-col items-center justify-center py-40 text-center animate-premium-scale">
+              <div class="relative mb-16">
+                <div class="w-40 h-40 rounded-[3rem] bg-white dark:bg-slate-900 flex items-center justify-center border-2 border-dashed border-slate-200 dark:border-white/10 shadow-2xl shadow-black/[0.02]">
+                  <svg class="w-20 h-20 text-slate-200 dark:text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                   </svg>
-                  {{ 'messages.start_conversation_admin' | translate }}
-                </button>
+                </div>
+                <div class="absolute -bottom-4 -right-4 w-14 h-14 rounded-3xl bg-indigo-600 flex items-center justify-center text-white shadow-2xl shadow-indigo-600/40 animate-pulse">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path>
+                  </svg>
+                </div>
               </div>
-            } @else {
-              <a routerLink="/companies" class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-indigo-600 text-white text-xs font-black uppercase tracking-widest shadow-lg shadow-indigo-500/30 hover:bg-indigo-700 hover:scale-105 transition-all">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                </svg>
-                {{ 'messages.browse_companies' | translate }}
-              </a>
-            }
-          </div>
+              
+              <h3 class="text-4xl font-black text-slate-900 dark:text-white mb-4 tracking-tighter uppercase" style="letter-spacing: -0.05em;">
+                Zero Messages
+              </h3>
+              <p class="text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed mb-12 text-lg font-medium">
+                @if (isRestricted) {
+                  {{ 'messages.restricted_empty_desc' | translate }}
+                } @else {
+                  {{ 'messages.no_messages_desc' | translate }}
+                }
+              </p>
+              
+              <div class="flex flex-col sm:flex-row gap-6">
+                @if (isRestricted || isCompanyOwner) {
+                  <button 
+                    (click)="openStartConversationModal()"
+                    class="px-10 py-5 rounded-2xl bg-indigo-600 text-white text-xs font-black uppercase tracking-widest shadow-2xl shadow-indigo-600/40 hover:bg-indigo-700 hover:-translate-y-2 active:translate-y-0 transition-all">
+                    {{ 'messages.start_conversation_admin' | translate }}
+                  </button>
+                }
+                
+                @if (!isRestricted) {
+                  <a routerLink="/companies" class="px-10 py-5 rounded-2xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200 dark:border-white/5 text-xs font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-800 shadow-2xl shadow-black/[0.02] hover:-translate-y-2 transition-all">
+                    {{ 'messages.browse_companies' | translate }}
+                  </a>
+                }
+              </div>
+            </div>
+          }
         }
       </div>
     </div>
@@ -318,7 +364,8 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
       </div>
     }
 
-    <!-- User Search Modal (Company Owners Only) -->
+
+    <!-- User Search Modal -->
     @if (showUserSearchModal) {
       <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
         <div class="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 max-h-[90vh] overflow-hidden flex flex-col">
@@ -476,6 +523,7 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
     }
   `
 })
+
 export class MessagesComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private messagingService = inject(MessagingService);
@@ -492,8 +540,9 @@ export class MessagesComponent implements OnInit, OnDestroy {
   superAdminCompanyId: number | null = null;
   isCompanyOwner = false;
 
-  // Tab state
+  // Tab & Search state
   activeTab: string = 'all';
+  conversationSearchQuery: string = '';
   availableTabs: { key: string; label: string; unreadCount: number }[] = [];
 
   // Messagable users for company owners
@@ -679,22 +728,32 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   get filteredConversations(): ConversationDto[] {
-    if (this.activeTab === 'all') {
-      return this.conversations;
-    }
+    let filtered = this.conversations;
 
-    // For Platform Support tab, also include conversations with the SuperAdmin company ID
+    // Filter by tab
     if (this.activeTab === 'SuperAdmin') {
-      return this.conversations.filter(c =>
+      filtered = filtered.filter(c =>
         c.conversationType === 'SuperAdmin' ||
         (this.superAdminCompanyId && c.companyId === this.superAdminCompanyId) ||
         c.initiatorName?.toLowerCase().includes('admin') ||
         c.companyName?.toLowerCase().includes('support') ||
         c.companyName?.toLowerCase().includes('admin')
       );
+    } else if (this.activeTab !== 'all') {
+      filtered = filtered.filter(c => c.conversationType === this.activeTab);
     }
 
-    return this.conversations.filter(c => c.conversationType === this.activeTab);
+    // Filter by search query
+    if (this.conversationSearchQuery.trim()) {
+      const query = this.conversationSearchQuery.toLowerCase().trim();
+      filtered = filtered.filter(c =>
+        c.companyName?.toLowerCase().includes(query) ||
+        c.initiatorName?.toLowerCase().includes(query) ||
+        c.lastMessage?.content?.toLowerCase().includes(query)
+      );
+    }
+
+    return filtered;
   }
 
   setActiveTab(tabKey: string) {

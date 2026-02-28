@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, of } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { CompanySettings, ProjectSettings, CompanyPackage } from '../../shared/interfaces';
 import { AuthService } from './auth.service';
 
@@ -25,6 +26,25 @@ export interface UpdateCompanySettingsRequest {
     enableAccessControl?: boolean;
     enableHRManagement?: boolean;
     enableVendorManagement?: boolean;
+
+    // Location & Geofencing Feature Flags
+    enableLocationTracking?: boolean;
+    enableGeofenceManagement?: boolean;
+    enableLocationSubmit?: boolean;
+
+    // Additional Feature Flags (default to false for security)
+    enableInspections?: boolean;
+    enableLeaveManagement?: boolean;
+    enablePerformanceEvaluation?: boolean;
+    enableTrainingTracking?: boolean;
+    enableTasks?: boolean;
+    enableEscalations?: boolean;
+    enableMessaging?: boolean;
+    enableSocialWall?: boolean;
+    enableCurrencies?: boolean;
+    enablePaymentGateway?: boolean;
+    enableMarketplace?: boolean;
+    enableInventoryOwner?: boolean;
 
     enableDelayNotification?: boolean;
     delayNotificationIsOneTimeOnly?: boolean;
@@ -143,6 +163,9 @@ export class SettingsService {
     private apiUrl = 'api';
     private authService = inject(AuthService);
 
+    // Cache for company settings to enable feature flag checks
+    private cachedSettings: CompanySettings | null = null;
+
     constructor(private http: HttpClient) { }
 
     // --- Company Settings ---
@@ -153,7 +176,7 @@ export class SettingsService {
 
         if (isSuperAdmin || !user?.companyId) {
             // Return default settings for SuperAdmins or users without a company
-            return of({
+            const defaultSettings = {
                 allowHR: true,
                 allowLocations: true,
                 enableInventoryManagement: true,
@@ -166,15 +189,35 @@ export class SettingsService {
                 allowMeasured: true,
                 allowSupervision: true,
                 allowPackages: true,
-                defaultSupervisionPercentage: 10
-            } as CompanySettings);
+                defaultSupervisionPercentage: 10,
+                // New feature flags default to true for SuperAdmin
+                enableInspections: true,
+                enableTasks: true,
+                enableEscalations: true,
+                enableMessaging: true,
+                enableLeaveManagement: true,
+                enableLocationTracking: true,
+                enableSocialWall: true
+            } as CompanySettings;
+            this.cachedSettings = defaultSettings;
+            return of(defaultSettings);
         }
 
-        return this.http.get<CompanySettings>(`${this.apiUrl}/company-settings`);
+        return this.http.get<CompanySettings>(`${this.apiUrl}/company-settings`).pipe(
+            tap(settings => {
+                // Cache settings for feature flag checks
+                this.cachedSettings = settings;
+            })
+        );
     }
 
     updateCompanySettings(request: UpdateCompanySettingsRequest): Observable<CompanySettings> {
-        return this.http.put<CompanySettings>(`${this.apiUrl}/company-settings`, request);
+        return this.http.put<CompanySettings>(`${this.apiUrl}/company-settings`, request).pipe(
+            tap(settings => {
+                // Update cache when settings are changed
+                this.cachedSettings = settings;
+            })
+        );
     }
 
     // --- Project Settings ---
@@ -185,6 +228,84 @@ export class SettingsService {
 
     updateProjectSettings(projectId: number, request: UpdateProjectSettingsRequest): Observable<ProjectSettings> {
         return this.http.put<ProjectSettings>(`${this.apiUrl}/projects/${projectId}/settings`, request);
+    }
+
+    // --- Feature Flag Helpers ---
+
+    /**
+     * Check if a specific feature is enabled for the current company
+     * Uses cached settings to avoid repeated API calls
+     * @param featureName The feature flag name (e.g., 'enableInspections', 'enableTasks')
+     */
+    isFeatureEnabled(featureName: string): boolean {
+        if (!this.cachedSettings) {
+            // Settings not loaded yet - assume enabled for backward compatibility
+            // The actual check will happen after settings are loaded
+            return true;
+        }
+
+        // Map camelCase to the property name in settings
+        const settingsKey = featureName.charAt(0).toUpperCase() + featureName.slice(1);
+        const propertyName = 'enable' + settingsKey.replace('enable', '');
+
+        // Check if the property exists on settings
+        const settings = this.cachedSettings as any;
+        if (settings && typeof settings[featureName] === 'boolean') {
+            return settings[featureName];
+        }
+
+        // Default to true for backward compatibility if property not found
+        // This ensures existing functionality isn't broken
+        return true;
+    }
+
+    /**
+     * Check if Inspections feature is enabled
+     */
+    isInspectionsEnabled(): boolean {
+        return this.isFeatureEnabled('enableInspections');
+    }
+
+    /**
+     * Check if Tasks feature is enabled
+     */
+    isTasksEnabled(): boolean {
+        return this.isFeatureEnabled('enableTasks');
+    }
+
+    /**
+     * Check if Escalations feature is enabled
+     */
+    isEscalationsEnabled(): boolean {
+        return this.isFeatureEnabled('enableEscalations');
+    }
+
+    /**
+     * Check if Messaging feature is enabled
+     */
+    isMessagingEnabled(): boolean {
+        return this.isFeatureEnabled('enableMessaging');
+    }
+
+    /**
+     * Check if Leave Management feature is enabled
+     */
+    isLeaveManagementEnabled(): boolean {
+        return this.isFeatureEnabled('enableLeaveManagement');
+    }
+
+    /**
+     * Check if Location Tracking feature is enabled
+     */
+    isLocationTrackingEnabled(): boolean {
+        return this.isFeatureEnabled('enableLocationTracking');
+    }
+
+    /**
+     * Check if Social Wall feature is enabled
+     */
+    isSocialWallEnabled(): boolean {
+        return this.isFeatureEnabled('enableSocialWall');
     }
 
     // --- Company Packages ---

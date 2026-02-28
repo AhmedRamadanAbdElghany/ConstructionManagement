@@ -9,16 +9,22 @@ import { ClientPortalService, ClientDashboard } from '../../../core/services/cli
 import { InspectionService, InspectionAnalytics } from '../../../core/services/inspection.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule],
+  imports: [CommonModule, RouterModule, TranslateModule, LoadingSpinnerComponent],
   template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
-        <!-- Header -->
-        @if (!isPending) {
+        @if (isLoading()) {
+          <div class="flex flex-col items-center justify-center py-40 animate-premium-fade">
+            <app-loading-spinner [centered]="true" [label]="'dashboard.loading_insights' | translate"></app-loading-spinner>
+          </div>
+        } @else {
+          <!-- Header -->
+          @if (!isPending) {
         <div class="mb-8 text-nowrap overflow-hidden">
           <div class="flex items-center space-x-2 mb-2">
             <span class="px-3 py-1 rounded-full bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-xs font-bold flex items-center border border-indigo-500/20">
@@ -1121,6 +1127,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
             </div>
           </div>
         }
+        }
       </div>
     </div>
   `,
@@ -1160,6 +1167,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   `]
 })
 export class DashboardComponent implements OnInit {
+  isLoading = signal<boolean>(true);
   currentUser: any;
   projects: Project[] = [];
   workerPerformance: WorkerPerformance[] = [];
@@ -1342,6 +1350,7 @@ export class DashboardComponent implements OnInit {
     });
     this.dashboardService.getSuperAdminActivities().subscribe(activities => {
       this.saActivities = activities;
+      this.isLoading.set(false);
     });
   }
 
@@ -1351,6 +1360,7 @@ export class DashboardComponent implements OnInit {
     });
     this.dashboardService.getRecentActivities().subscribe(activities => {
       this.recentActivities = activities;
+      this.isLoading.set(false);
     });
   }
 
@@ -1379,11 +1389,13 @@ export class DashboardComponent implements OnInit {
             done: true
           }))
         };
+        this.isLoading.set(false);
       }
     });
 
     this.dashboardService.getRecentActivities().subscribe(activities => {
       this.recentActivities = activities;
+      this.isLoading.set(false);
     });
   }
 
@@ -1433,6 +1445,7 @@ export class DashboardComponent implements OnInit {
     });
     this.dashboardService.getRecentActivities().subscribe(activities => {
       this.recentActivities = activities;
+      this.isLoading.set(false);
     });
     this.inspectionService.getAnalytics().subscribe(resp => {
       if (resp.success && resp.data) {
@@ -1443,6 +1456,7 @@ export class DashboardComponent implements OnInit {
           cancelledInspections: resp.data.cancelledInspections
         };
       }
+      this.isLoading.set(false);
     });
   }
 }

@@ -6,6 +6,7 @@ using ConstructionManagement.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 
 namespace ConstructionManagement.Infrastructure.Services;
 
@@ -18,6 +19,10 @@ public class MessagingService : IMessagingService
     private readonly IFileStorageService _fileStorage;
     private readonly ILogger<MessagingService> _logger;
 
+    // Static cache for SuperAdmin company IDs to avoid N+1 queries
+    private static readonly ConcurrentDictionary<string, (DateTime Timestamp, HashSet<int> CompanyIds)> _superAdminCompanyCache = new();
+    private static readonly TimeSpan SuperAdminCacheDuration = TimeSpan.FromMinutes(5);
+
     public MessagingService(
         ApplicationDbContext context,
         IFileStorageService fileStorage,
@@ -26,6 +31,35 @@ public class MessagingService : IMessagingService
         _context = context;
         _fileStorage = fileStorage;
         _logger = logger;
+    }
+
+    /// <summary>
+    /// Get cached SuperAdmin company IDs
+    /// </summary>
+    private async Task<HashSet<int>> GetSuperAdminCompanyIdsAsync()
+    {
+        var cacheKey = "SuperAdminCompanyIds";
+        
+        if (_superAdminCompanyCache.TryGetValue(cacheKey, out var cached) && 
+            DateTime.UtcNow - cached.Timestamp < SuperAdminCacheDuration)
+        {
+            return cached.CompanyIds;
+        }
+
+        // Query database for companies with SuperAdmin users
+        var companyIds = await _context.Users
+            .Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
+            .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "SuperAdmin"))
+            .Select(u => u.CompanyId)
+            .Distinct()
+            .ToListAsync();
+
+        var result = new HashSet<int>(companyIds.Where(id => id.HasValue).Select(id => id!.Value));
+        
+        _superAdminCompanyCache[cacheKey] = (DateTime.UtcNow, result);
+        
+        return result;
     }
 
     // ── Conversation Management ──────────────────────────────────────────────────
@@ -142,8 +176,7 @@ public class MessagingService : IMessagingService
             .Include(c => c.Company)
             .Include(c => c.InitiatorUser)
             .Include(c => c.LastMessage)
-            .Where(c => c.InitiatorUserId == userId || 
-                        (c.InitiatedBy == "Company" && c.InitiatorUserId == userId))
+            .Where(c => c.InitiatorUserId == userId || c.TargetUserId == userId)
             .OrderByDescending(c => c.LastMessageAt ?? c.CreatedAt)
             .ToListAsync();
 
@@ -156,7 +189,7 @@ public class MessagingService : IMessagingService
         return result;
     }
 
-    public async Task<IEnumerable<ConversationDto>> GetCompanyConversationsAsync(int companyId)
+    public async Task<IEnumerable<ConversationDto>> GetCompanyConversationsAsync(int companyId, int requestingUserId)
     {
         var conversations = await _context.CompanyConversations
             .Include(c => c.Company)
@@ -169,13 +202,7 @@ public class MessagingService : IMessagingService
         var result = new List<ConversationDto>();
         foreach (var conv in conversations)
         {
-            // For company owner view, we need to get the company owner's ID
-            var companyOwner = await _context.Users
-                .Where(u => u.CompanyId == companyId && u.UserType == Domain.Enums.UserType.CompanyOwner)
-                .FirstOrDefaultAsync();
-            
-            var userId = companyOwner?.Id ?? 0;
-            result.Add(await MapToConversationDto(conv, userId, isCompanyOwner: true));
+            result.Add(await MapToConversationDto(conv, requestingUserId, isCompanyOwner: true));
         }
 
         return result;
@@ -413,14 +440,8 @@ public class MessagingService : IMessagingService
         var conversation = await _context.CompanyConversations.FindAsync(conversationId);
         if (conversation == null) return;
 
-        // Determine which messages to mark as read
-        // If user is company owner, mark messages from initiator as read
-        // If user is initiator, mark messages from company as read
-        var isCompanyOwner = user.CompanyId == conversation.CompanyId;
-
         var messagesToUpdate = await _context.CompanyMessages
-            .Where(m => m.ConversationId == conversationId && !m.IsRead)
-            .Where(m => isCompanyOwner ? !m.IsFromCompany : m.IsFromCompany)
+            .Where(m => m.ConversationId == conversationId && !m.IsRead && m.SenderUserId != userId)
             .ToListAsync();
 
         foreach (var message in messagesToUpdate)
@@ -437,22 +458,15 @@ public class MessagingService : IMessagingService
         var user = await _context.Users.FindAsync(userId);
         if (user == null) return 0;
 
-        if (user.CompanyId.HasValue)
-        {
-            // Company owner - count unread messages from initiators
-            return await _context.CompanyMessages
-                .Include(m => m.Conversation)
-                .Where(m => m.Conversation.CompanyId == user.CompanyId && !m.IsRead && !m.IsFromCompany)
-                .CountAsync();
-        }
-        else
-        {
-            // Regular user - count unread messages from companies
-            return await _context.CompanyMessages
-                .Include(m => m.Conversation)
-                .Where(m => m.Conversation.InitiatorUserId == userId && !m.IsRead && m.IsFromCompany)
-                .CountAsync();
-        }
+        // Count unread messages not sent by this user in conversations they are part of
+        return await _context.CompanyMessages
+            .Include(m => m.Conversation)
+            .Where(m => !m.IsRead && m.SenderUserId != userId)
+            .Where(m => m.Conversation != null && 
+                        (m.Conversation.InitiatorUserId == userId || 
+                         m.Conversation.TargetUserId == userId || 
+                         m.Conversation.CompanyId == user.CompanyId))
+            .CountAsync();
     }
 
     // ── Approval/Blocking ────────────────────────────────────────────────────────
@@ -829,14 +843,13 @@ public class MessagingService : IMessagingService
     private async Task<ConversationDto> MapToConversationDto(CompanyConversation conversation, int userId, bool isCompanyOwner = false)
     {
         var unreadCount = await _context.CompanyMessages
-            .Where(m => m.ConversationId == conversation.Id && !m.IsRead)
-            .Where(m => isCompanyOwner ? !m.IsFromCompany : m.IsFromCompany)
+            .Where(m => m.ConversationId == conversation.Id && !m.IsRead && m.SenderUserId != userId)
             .CountAsync();
 
         var canSend = await CanUserSendMessageAsync(conversation.Id, userId);
 
         // Determine conversation type
-        var (conversationType, targetUserType) = DetermineConversationTypeAsync(conversation, isCompanyOwner);
+        var (conversationType, targetUserType) = await DetermineConversationTypeAsync(conversation, isCompanyOwner);
 
         return new ConversationDto
         {
@@ -863,7 +876,7 @@ public class MessagingService : IMessagingService
     /// <summary>
     /// Determines the conversation type for tabbed interface filtering
     /// </summary>
-    private (string conversationType, string? targetUserType) DetermineConversationTypeAsync(CompanyConversation conversation, bool isCompanyOwner)
+    private async Task<(string conversationType, string? targetUserType)> DetermineConversationTypeAsync(CompanyConversation conversation, bool isCompanyOwner)
     {
         var company = conversation.Company;
 
@@ -871,9 +884,17 @@ public class MessagingService : IMessagingService
         if (!isCompanyOwner)
         {
             // Check if talking to SuperAdmin by BusinessId
+            // Strategy 1: Check by BusinessId
             bool isSuperAdminCompany = company?.BusinessId == "SUPER-ADMIN-001" || 
                                      company?.BusinessId == "SYSTEM-ADMIN" || 
                                      company?.BusinessId == "STRUCT-ADMIN";
+
+            // Strategy 2: Check cached SuperAdmin company IDs (avoids N+1 query)
+            if (!isSuperAdminCompany && company != null)
+            {
+                var superAdminCompanyIds = await GetSuperAdminCompanyIdsAsync();
+                isSuperAdminCompany = superAdminCompanyIds.Contains(company.Id);
+            }
 
             if (isSuperAdminCompany)
             {
@@ -1042,7 +1063,8 @@ public class MessagingService : IMessagingService
             IsUnverifiedCompanyOwner = isUnverifiedOwner,
             IsWorker = isWorker,
             UserCompanyId = user.CompanyId,
-            IsRestricted = isUnverifiedOwner || isWorker
+            IsRestricted = isUnverifiedOwner || isWorker,
+            SuperAdminCompanyId = await GetSuperAdminCompanyIdAsync()
         };
 
         if (status.IsRestricted)
@@ -1050,7 +1072,6 @@ public class MessagingService : IMessagingService
             if (isUnverifiedOwner)
             {
                 status.RestrictionReason = "Your company is pending approval. You can only message SuperAdmin.";
-                status.SuperAdminCompanyId = await GetSuperAdminCompanyIdAsync();
             }
             else if (isWorker)
             {

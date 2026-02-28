@@ -15,7 +15,6 @@ public class CompanyFeatureSettings : BaseEntity, ICompanyEntity
     [System.Text.Json.Serialization.JsonIgnore]
     public virtual Company Company { get; set; } = null!;
 
-
     /// <summary>
     /// Master switch for Inventory Management module
     /// Only Super Admin can enable/disable this
@@ -84,6 +83,26 @@ public class CompanySettings : BaseEntity, ICompanyEntity
     public bool EnableAccessControl { get; set; } = true;
     public bool EnableHRManagement { get; set; } = false;
     public bool EnableVendorManagement { get; set; } = false;
+
+    // Additional Feature Flags (default to false for security - must be explicitly enabled)
+    public bool EnableInspections { get; set; } = false;
+    public bool EnableLeaveManagement { get; set; } = false;
+    public bool EnablePerformanceEvaluation { get; set; } = false;
+    public bool EnableTrainingTracking { get; set; } = false;
+    public bool EnableTasks { get; set; } = false;
+    public bool EnableEscalations { get; set; } = false;
+    public bool EnableMessaging { get; set; } = false;
+    public bool EnableSocialWall { get; set; } = false;
+    public bool EnableCurrencies { get; set; } = false;
+    public bool EnablePaymentGateway { get; set; } = false;
+    public bool EnableMarketplace { get; set; } = false;
+    public bool EnableInventoryOwner { get; set; } = false;
+    public bool EnableVideoCalls { get; set; } = false;
+
+    // Location & Geofencing Feature Flags (default to false for security)
+    public bool EnableLocationTracking { get; set; } = false;
+    public bool EnableGeofenceManagement { get; set; } = false;
+    public bool EnableLocationSubmit { get; set; } = false;
 
     // All the same settings as ProjectSettings
     public bool EnableDelayNotification { get; set; } = true;

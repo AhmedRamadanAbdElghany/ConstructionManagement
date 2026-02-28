@@ -183,8 +183,12 @@ export interface WorkerPerformance {
 }
 
 export interface CompanySettings {
+  [key: string]: any;
   id: number;
   name?: string;
+  companyName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
   address?: string;
   logoUrl?: string;
   // Master Switches
@@ -312,6 +316,20 @@ export interface CompanySettings {
   enableVideoCalls?: boolean;
   enableMultiCurrency?: boolean;
   enablePaymentGateway?: boolean;
+
+  // Additional Feature Flags (default to false for security)
+  enableInspections?: boolean;
+  enableTasks?: boolean;
+  enableEscalations?: boolean;
+  enableMessaging?: boolean;
+  enableSocialWall?: boolean;
+  enableMarketplace?: boolean;
+  enableInventoryOwner?: boolean;
+
+  // Location & Geofencing Feature Flags (default to false for security)
+  enableLocationTracking?: boolean;
+  enableGeofenceManagement?: boolean;
+  enableLocationSubmit?: boolean;
 }
 
 

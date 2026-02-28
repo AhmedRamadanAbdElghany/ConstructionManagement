@@ -1,5 +1,6 @@
 using ConstructionManagement.Application.Constants;
 using ConstructionManagement.Application.DTOs;
+using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -14,6 +15,15 @@ namespace ConstructionManagement.WebApi.Controllers;
 [ApiController]
 public abstract class BaseApiController : ControllerBase
 {
+    protected readonly ICompanyFeatureService? _featureService;
+
+    /// <summary>
+    /// Optional constructor for controllers that need feature flag checks.
+    /// </summary>
+    protected BaseApiController(ICompanyFeatureService? featureService = null)
+    {
+        _featureService = featureService;
+    }
     /// <summary>
     /// Returns a successful response with data.
     /// </summary>
@@ -237,5 +247,31 @@ public abstract class BaseApiController : ControllerBase
             .Where(s => int.TryParse(s.Trim(), out _))
             .Select(s => int.Parse(s.Trim()))
             .ToList();
+    }
+
+    /// <summary>
+    /// Check if a feature is enabled for the current company.
+    /// Returns true if the feature service is not available (for backward compatibility).
+    /// </summary>
+    protected async Task<bool> IsFeatureEnabledAsync(string featureName)
+    {
+        if (_featureService == null)
+            return true; // Backward compatibility - allow if service not injected
+        
+        return await _featureService.IsFeatureEnabledAsync(featureName);
+    }
+
+    /// <summary>
+    /// Returns a feature disabled response (403 Forbidden).
+    /// </summary>
+    protected ActionResult<T> FeatureDisabled<T>(string featureName)
+    {
+        var error = new LocalizedMessage
+        {
+            En = $"This feature ({featureName}) is not enabled for your company.",
+            Ar = $"هذه الميزة ({featureName}) غير مفعلة لشركتك."
+        };
+        var response = ApiResponse<T>.ForbiddenResponse(error);
+        return StatusCode(403, response);
     }
 }

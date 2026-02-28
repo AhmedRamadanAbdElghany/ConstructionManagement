@@ -30,6 +30,26 @@ public class UpdateCompanySettingsRequest
     public bool? EnableHRManagement { get; set; }
     public bool? EnableVendorManagement { get; set; }
 
+    // Location & Geofencing Feature Flags
+    public bool? EnableLocationTracking { get; set; }
+    public bool? EnableGeofenceManagement { get; set; }
+    public bool? EnableLocationSubmit { get; set; }
+
+    // Additional Feature Flags
+    public bool? EnableInspections { get; set; }
+    public bool? EnableLeaveManagement { get; set; }
+    public bool? EnablePerformanceEvaluation { get; set; }
+    public bool? EnableTrainingTracking { get; set; }
+    public bool? EnableTasks { get; set; }
+    public bool? EnableEscalations { get; set; }
+    public bool? EnableMessaging { get; set; }
+    public bool? EnableSocialWall { get; set; }
+    public bool? EnableCurrencies { get; set; }
+    public bool? EnablePaymentGateway { get; set; }
+    public bool? EnableMarketplace { get; set; }
+    public bool? EnableInventoryOwner { get; set; }
+    public bool? EnableVideoCalls { get; set; }
+
     public bool? EnableDelayNotification { get; set; }
     public bool? DelayNotificationIsOneTimeOnly { get; set; }
     public int? DelayNotificationIntervalDays { get; set; }

@@ -26,8 +26,9 @@ public class MessagingController : BaseApiController
     public MessagingController(
         IMessagingService messagingService,
         ICompanyContext companyContext,
+        ICompanyFeatureService featureService,
         ApplicationDbContext dbContext,
-        ILogger<MessagingController> logger)
+        ILogger<MessagingController> logger) : base(featureService)
     {
         _messagingService = messagingService;
         _companyContext = companyContext;
@@ -43,6 +44,12 @@ public class MessagingController : BaseApiController
     [HttpPost("conversations")]
     public async Task<ActionResult<ConversationDto>> StartConversation([FromForm] StartConversationRequest request)
     {
+        // Check if messaging feature is enabled
+        if (!await IsFeatureEnabledAsync("EnableMessaging"))
+        {
+            return FeatureDisabled<ConversationDto>("Messaging");
+        }
+
         try
         {
             var userId = GetUserId();
@@ -121,7 +128,7 @@ public class MessagingController : BaseApiController
                 if (companyIdToFetch.HasValue && companyIdToFetch.Value > 0)
                 {
                     _logger.LogInformation("Getting company conversations for CompanyId: {CompanyId}", companyIdToFetch.Value);
-                    var companyConversations = await _messagingService.GetCompanyConversationsAsync(companyIdToFetch.Value);
+                    var companyConversations = await _messagingService.GetCompanyConversationsAsync(companyIdToFetch.Value, userId);
                     _logger.LogInformation("Found {Count} company conversations", companyConversations.Count());
                     
                     foreach (var c in companyConversations)

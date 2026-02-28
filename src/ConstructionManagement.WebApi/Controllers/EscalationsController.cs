@@ -12,14 +12,15 @@ namespace ConstructionManagement.WebApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class EscalationsController : ControllerBase
+public class EscalationsController : BaseApiController
 {
     private readonly IEscalationService _escalationService;
     private readonly ILogger<EscalationsController> _logger;
 
     public EscalationsController(
         IEscalationService escalationService,
-        ILogger<EscalationsController> logger)
+        ICompanyFeatureService featureService,
+        ILogger<EscalationsController> logger) : base(featureService)
     {
         _escalationService = escalationService;
         _logger = logger;
@@ -33,10 +34,16 @@ public class EscalationsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ProjectItemEscalation>> CreateEscalation([FromBody] CreateEscalationRequest request)
     {
+        // Check if escalations feature is enabled
+        if (!await IsFeatureEnabledAsync("EnableEscalations"))
+        {
+            return FeatureDisabled<ProjectItemEscalation>("Escalations");
+        }
+
         try
         {
-            var userId = GetCurrentUserId();
-            var companyId = GetCurrentCompanyId();
+            var userId = GetUserId();
+            var companyId = GetCompanyId() ?? 0;
 
             var escalation = await _escalationService.CreateEscalationAsync(
                 companyId,
@@ -370,14 +377,12 @@ public class EscalationsController : ControllerBase
 
     private int GetCurrentUserId()
     {
-        var userIdClaim = User.FindFirst("sub")?.Value ?? User.FindFirst("id")?.Value;
-        return int.TryParse(userIdClaim, out var userId) ? userId : 0;
+        return GetUserId();
     }
 
     private int GetCurrentCompanyId()
     {
-        var companyIdClaim = User.FindFirst("companyId")?.Value;
-        return int.TryParse(companyIdClaim, out var companyId) ? companyId : 0;
+        return GetCompanyId() ?? 0;
     }
 }
 

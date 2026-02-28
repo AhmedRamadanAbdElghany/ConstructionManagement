@@ -43,6 +43,27 @@ public class CreateCompanyRequest
     public bool EnableAccessControl { get; set; } = true;
     public bool EnableHRManagement { get; set; } = false;
     public bool EnableVendorManagement { get; set; } = false;
+    
+    // Location & Geofencing Feature Flags (default to false for security)
+    public bool EnableLocationTracking { get; set; } = false;
+    public bool EnableGeofenceManagement { get; set; } = false;
+    public bool EnableLocationSubmit { get; set; } = false;
+
+    // Additional Feature Flags (default to false for security)
+    public bool EnableInspections { get; set; } = false;
+    public bool EnableLeaveManagement { get; set; } = false;
+    public bool EnablePerformanceEvaluation { get; set; } = false;
+    public bool EnableTrainingTracking { get; set; } = false;
+    public bool EnableTasks { get; set; } = false;
+    public bool EnableEscalations { get; set; } = false;
+    public bool EnableMessaging { get; set; } = false;
+    public bool EnableSocialWall { get; set; } = false;
+    public bool EnableCurrencies { get; set; } = false;
+    public bool EnablePaymentGateway { get; set; } = false;
+    public bool EnableMarketplace { get; set; } = false;
+    public bool EnableInventoryOwner { get; set; } = false;
+    public bool EnableVideoCalls { get; set; } = false;
+
     public bool EnableInvoiceReview { get; set; } = true;
 
     // Financial Governance
@@ -118,6 +139,28 @@ public class UpdateCompanyRequest
     public bool EnableAccessControl { get; set; }
     public bool EnableHRManagement { get; set; }
     public bool EnableVendorManagement { get; set; }
+
+    // Location & Geofencing Feature Flags
+    public bool EnableLocationTracking { get; set; }
+    public bool EnableGeofenceManagement { get; set; }
+    public bool EnableLocationSubmit { get; set; }
+
+    // Additional Feature Flags
+    public bool EnableInspections { get; set; }
+    public bool EnableLeaveManagement { get; set; }
+    public bool EnablePerformanceEvaluation { get; set; }
+    public bool EnableTrainingTracking { get; set; }
+    public bool EnableTasks { get; set; }
+    public bool EnableEscalations { get; set; }
+    public bool EnableMessaging { get; set; }
+    public bool EnableSocialWall { get; set; }
+    public bool EnableCurrencies { get; set; }
+    public bool EnablePaymentGateway { get; set; }
+    public bool EnableMarketplace { get; set; }
+    public bool EnableInventoryOwner { get; set; }
+
+    // Video Calls
+    public bool EnableVideoCalls { get; set; }
 
     // Financial Governance
     public bool EnableVendorInvoiceUpload { get; set; }

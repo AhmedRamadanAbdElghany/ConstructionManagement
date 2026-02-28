@@ -25,9 +25,9 @@ public interface IMessagingService
     Task<IEnumerable<ConversationDto>> GetUserConversationsAsync(int userId);
     
     /// <summary>
-    /// Get all conversations for a company (as company owner)
+    /// Get all conversations for a company (as company owner/admin)
     /// </summary>
-    Task<IEnumerable<ConversationDto>> GetCompanyConversationsAsync(int companyId);
+    Task<IEnumerable<ConversationDto>> GetCompanyConversationsAsync(int companyId, int requestingUserId);
     
     /// <summary>
     /// Get a specific conversation with all messages

@@ -12,14 +12,15 @@ namespace ConstructionManagement.WebApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class TasksController : ControllerBase
+public class TasksController : BaseApiController
 {
     private readonly ITaskManagementService _taskService;
     private readonly ILogger<TasksController> _logger;
 
     public TasksController(
         ITaskManagementService taskService,
-        ILogger<TasksController> logger)
+        ICompanyFeatureService featureService,
+        ILogger<TasksController> logger) : base(featureService)
     {
         _taskService = taskService;
         _logger = logger;
@@ -33,6 +34,12 @@ public class TasksController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ProjectItemTask>> CreateTask([FromBody] CreateTaskRequest request)
     {
+        // Check if tasks feature is enabled
+        if (!await IsFeatureEnabledAsync("EnableTasks"))
+        {
+            return FeatureDisabled<ProjectItemTask>("Tasks");
+        }
+
         try
         {
             var userId = GetCurrentUserId();
@@ -534,8 +541,8 @@ public class TasksController : ControllerBase
 
     private int GetCurrentCompanyId()
     {
-        var companyIdClaim = User.FindFirst("companyId")?.Value;
-        return int.TryParse(companyIdClaim, out var companyId) ? companyId : 0;
+        var companyId = GetCompanyId();
+        return companyId ?? 0;
     }
 }
 

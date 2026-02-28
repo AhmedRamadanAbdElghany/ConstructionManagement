@@ -238,7 +238,24 @@ builder.Services.AddScoped<IEscalationService, EscalationService>();
 builder.Services.AddScoped<IWorkflowConfigurationService, WorkflowConfigurationService>();
 builder.Services.AddScoped<IDailyTaskBoardService, DailyTaskBoardService>();
 builder.Services.AddScoped<IWorkflowBackgroundJobService, WorkflowBackgroundJobService>();
-// builder.Services.AddHttpClient<PushNotificationService>(); // Redundant and redundant
+
+// Feature Flag Service
+builder.Services.AddScoped<ICompanyFeatureService, CompanyFeatureService>();
+
+// IMPORTANT CACHE NOTES:
+// The CompanyFeatureService uses IMemoryCache which is per-instance and does NOT work
+// correctly in multi-server/load-balanced deployments. Each server instance will have
+// its own cache, potentially leading to inconsistent feature access across requests.
+//
+// For production deployments with multiple servers, consider one of these options:
+// 1. Use IDistributedCache with Redis:
+//    - Add: builder.Services.AddStackExchangeRedisCache(...);
+//    - Modify CompanyFeatureService to use IDistributedCache instead of IMemoryCache
+// 2. Use sticky sessions on your load balancer
+// 3. Disable caching entirely (set CacheDuration to TimeSpan.Zero)
+//
+// Current cache duration: 5 minutes (1 minute for fallback results when CompanySettings is null)
+// The cache is automatically invalidated when company settings are updated via InvalidateCache()
 
 
 

@@ -17,14 +17,15 @@ namespace ConstructionManagement.WebApi.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-    public class InspectionsController : ControllerBase
+    public class InspectionsController : BaseApiController
     {
         private readonly IInspectionService _inspectionService;
         private readonly ILogger<InspectionsController> _logger;
 
         public InspectionsController(
             IInspectionService inspectionService,
-            ILogger<InspectionsController> logger)
+            ICompanyFeatureService featureService,
+            ILogger<InspectionsController> logger) : base(featureService)
         {
             _inspectionService = inspectionService;
             _logger = logger;
@@ -53,6 +54,12 @@ namespace ConstructionManagement.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<InspectionRequestDto>> CreateRequest([FromBody] CreateInspectionRequestDto dto)
         {
+            // Check if inspections feature is enabled
+            if (!await IsFeatureEnabledAsync("EnableInspections"))
+            {
+                return FeatureDisabled<InspectionRequestDto>("Inspections");
+            }
+
             try
             {
                 var userId = GetCurrentUserId();

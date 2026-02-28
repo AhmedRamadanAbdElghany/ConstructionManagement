@@ -285,3 +285,117 @@ select option {
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
+
+/* ===== SHARED PREMIUM UTILITIES ===== */
+
+.premium-heading {
+  @apply text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tighter mb-4;
+}
+
+.premium-subheading {
+  @apply text-slate-500 dark:text-slate-400 font-medium text-lg max-w-2xl mb-8;
+}
+
+.premium-section-title {
+  @apply text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-8;
+}
+
+.premium-card-stack {
+  @apply bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none p-8;
+}
+
+.premium-input {
+  @apply w-full p-4 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-indigo-500/50 rounded-2xl outline-none font-black text-sm text-slate-950 dark:text-white appearance-none transition-all;
+}
+
+.premium-button-primary {
+  @apply px-8 py-4 rounded-2xl bg-gradient-to-br from-indigo-600 to-blue-700 text-white text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-indigo-500/20 active:scale-95 disabled:opacity-50;
+}
+
+.premium-button-ghost {
+  @apply px-6 py-3 rounded-2xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 text-[11px] font-black uppercase tracking-widest transition-all duration-300;
+}
+
+.premium-badge {
+  @apply px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Twin Rectangles Loader */
+.twin-rectangles {
+  position: relative;
+  width: 48px;
+  height: 48px;
+}
+
+.twin-rect-1,
+.twin-rect-2 {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+}
+
+.twin-rect-1 {
+  background: linear-gradient(135deg, #4f46e5, #3b82f6);
+  box-shadow: 0 8px 16px -4px rgba(79, 70, 229, 0.4);
+  animation: twin-orbit-1 2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.twin-rect-2 {
+  background: linear-gradient(135deg, #06b6d4, #22d3ee);
+  box-shadow: 0 8px 16px -4px rgba(6, 182, 212, 0.4);
+  animation: twin-orbit-2 2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+@keyframes twin-orbit-1 {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  25% {
+    transform: translate(28px, 0) rotate(90deg);
+  }
+
+  50% {
+    transform: translate(28px, 28px) rotate(180deg);
+  }
+
+  75% {
+    transform: translate(0, 28px) rotate(270deg);
+  }
+
+  100% {
+    transform: translate(0, 0) rotate(360deg);
+  }
+}
+
+@keyframes twin-orbit-2 {
+  0% {
+    transform: translate(28px, 28px) rotate(0deg);
+  }
+
+  25% {
+    transform: translate(0, 28px) rotate(90deg);
+  }
+
+  50% {
+    transform: translate(0, 0) rotate(180deg);
+  }
+
+  75% {
+    transform: translate(28px, 0) rotate(270deg);
+  }
+
+  100% {
+    transform: translate(28px, 28px) rotate(360deg);
+  }
+}

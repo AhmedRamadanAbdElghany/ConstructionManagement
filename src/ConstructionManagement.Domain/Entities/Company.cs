@@ -39,7 +39,7 @@ public class Company : BaseEntity
     // 1:1 settings
     public virtual CompanySettings? Settings { get; set; }
 
-    // Feature Toggles
+    // Feature Toggles (legacy fallback defaults - CompanySettings is authoritative)
     public bool EnableUserManagement { get; set; } = true;
     public bool EnableProjectManagement { get; set; } = true;
     public bool EnableProjectItemsManagement { get; set; } = true;
@@ -59,4 +59,24 @@ public class Company : BaseEntity
     public bool EnableAccessControl { get; set; } = true;
     public bool EnableHRManagement { get; set; } = false;
     public bool EnableVendorManagement { get; set; } = false;
+    
+    // Location & Geofencing Feature Flags (used when CompanySettings doesn't exist)
+    public bool EnableLocationTracking { get; set; } = false;
+    public bool EnableGeofenceManagement { get; set; } = false;
+    public bool EnableLocationSubmit { get; set; } = false;
+
+    // Additional Feature Flags (used when CompanySettings doesn't exist)
+    public bool EnableInspections { get; set; } = false;
+    public bool EnableLeaveManagement { get; set; } = false;
+    public bool EnablePerformanceEvaluation { get; set; } = false;
+    public bool EnableTrainingTracking { get; set; } = false;
+    public bool EnableTasks { get; set; } = false;
+    public bool EnableEscalations { get; set; } = false;
+    public bool EnableMessaging { get; set; } = false;
+    public bool EnableSocialWall { get; set; } = false;
+    public bool EnableCurrencies { get; set; } = false;
+    public bool EnablePaymentGateway { get; set; } = false;
+    public bool EnableMarketplace { get; set; } = false;
+    public bool EnableInventoryOwner { get; set; } = false;
+    public bool EnableVideoCalls { get; set; } = false;
 }

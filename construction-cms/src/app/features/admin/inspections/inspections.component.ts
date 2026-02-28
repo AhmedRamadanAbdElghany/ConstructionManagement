@@ -42,71 +42,51 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule],
   template: `
-<div class="inspections-shell">
+  <div class="max-w-7xl mx-auto animate-premium-fade">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+      <div class="header-left">
+        <div class="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-indigo-500 to-blue-600 text-white flex items-center justify-center text-2xl shadow-xl shadow-blue-500/20">
+          🔍
+        </div>
+        <div class="ml-6">
+          <h1 class="premium-heading mb-2">{{ 'inspections.title' | translate }}</h1>
+          <p class="premium-subheading mb-0">{{ 'inspections.subtitle' | translate }}</p>
+        </div>
+      </div>
+      <div class="flex gap-4">
+        @if (view() === 'detail') {
+          <button class="premium-button-ghost bg-white dark:bg-slate-900 shadow-sm border border-slate-200 dark:border-white/5" (click)="goToList()">
+            <span class="mr-2">←</span> {{ 'common.back' | translate }}
+          </button>
+        }
+      </div>
+    </div>
 
-  <!-- ===== HEADER ===== -->
-  <div class="page-header">
-    <div class="header-left">
-      <div class="header-icon">
-        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-        </svg>
+    <!-- KPI STRIP -->
+    @if (view() === 'list') {
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        @for (kpi of [
+          {label: 'inspections.kpi.total', value: totalCount(), icon: '📋', color: 'indigo'},
+          {label: 'inspections.kpi.pending', value: pendingCount(), icon: '⏳', color: 'amber'},
+          {label: 'inspections.kpi.active', value: activeCount(), icon: '🔄', color: 'cyan'},
+          {label: 'inspections.kpi.completed', value: completedCount(), icon: '✅', color: 'emerald'}
+        ]; track kpi.label; let i = $index) {
+          <div class="premium-card-stack group hover:scale-[1.02] transition-all duration-500 overflow-hidden relative cursor-default" [style.animation-delay]="(i * 100) + 'ms'">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-{{kpi.color}}-500/5 rounded-full blur-3xl group-hover:bg-{{kpi.color}}-500/10 transition-colors"></div>
+            <div class="flex items-center gap-6">
+              <div class="w-14 h-14 rounded-2xl bg-{{kpi.color}}-500/10 text-{{kpi.color}}-600 flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 transition-transform">
+                {{ kpi.icon }}
+              </div>
+              <div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{{ kpi.label | translate }}</p>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{{ kpi.value }}</h3>
+              </div>
+            </div>
+          </div>
+        }
       </div>
-      <div>
-        <h1>{{ 'inspections.title' | translate }}</h1>
-        <p class="subtitle">{{ 'inspections.subtitle' | translate }}</p>
-      </div>
-    </div>
-    <div class="header-actions">
-      @if (view() === 'detail') {
-        <button class="btn btn-ghost" (click)="goToList()">
-          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-          </svg>
-          {{ 'common.back' | translate }}
-        </button>
-      }
-    </div>
-  </div>
-
-  <!-- ===== KPI STRIP ===== -->
-  @if (view() === 'list') {
-    <div class="kpi-strip">
-      <!-- Total -->
-      <div class="kpi-card total glass-morph">
-        <div class="kpi-icon"><i class="fas fa-list-ul"></i></div>
-        <div class="kpi-data">
-          <span class="kpi-value">{{ totalCount() }}</span>
-          <span class="kpi-label">{{ 'inspections.kpi.total' | translate }}</span>
-        </div>
-      </div>
-      <!-- Pending -->
-      <div class="kpi-card pending glass-morph">
-        <div class="kpi-icon"><i class="fas fa-clock"></i></div>
-        <div class="kpi-data">
-          <span class="kpi-value">{{ pendingCount() }}</span>
-          <span class="kpi-label">{{ 'inspections.kpi.pending' | translate }}</span>
-        </div>
-      </div>
-      <!-- In Progress -->
-      <div class="kpi-card active glass-morph">
-        <div class="kpi-icon"><i class="fas fa-sync-alt"></i></div>
-        <div class="kpi-data">
-          <span class="kpi-value">{{ activeCount() }}</span>
-          <span class="kpi-label">{{ 'inspections.kpi.active' | translate }}</span>
-        </div>
-      </div>
-      <!-- Completed -->
-      <div class="kpi-card complete glass-morph">
-        <div class="kpi-icon"><i class="fas fa-check-double"></i></div>
-        <div class="kpi-data">
-          <span class="kpi-value">{{ completedCount() }}</span>
-          <span class="kpi-label">{{ 'inspections.kpi.completed' | translate }}</span>
-        </div>
-      </div>
-    </div>
-  }
+    }
 
   <!-- ===== LIST VIEW ===== -->
   @if (view() === 'list') {

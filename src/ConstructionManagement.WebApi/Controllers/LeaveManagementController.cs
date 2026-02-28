@@ -16,7 +16,9 @@ namespace ConstructionManagement.WebApi.Controllers
     {
         private readonly ILeaveManagementService _leaveService;
 
-        public LeaveManagementController(ILeaveManagementService leaveService)
+        public LeaveManagementController(
+            ILeaveManagementService leaveService,
+            ICompanyFeatureService featureService) : base(featureService)
         {
             _leaveService = leaveService;
         }
@@ -26,6 +28,12 @@ namespace ConstructionManagement.WebApi.Controllers
         [HttpGet("types")]
         public async Task<ActionResult<List<LeaveTypeDto>>> GetLeaveTypes([FromQuery] int? companyId)
         {
+            // Check if leave management feature is enabled
+            if (!await IsFeatureEnabledAsync("EnableLeaveManagement"))
+            {
+                return FeatureDisabled<List<LeaveTypeDto>>("Leave Management");
+            }
+
             // Company isolation: use user's company if not SuperAdmin
             var userCompanyId = GetCompanyId();
             if (!User.IsInRole("SuperAdmin") && userCompanyId.HasValue)

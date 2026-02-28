@@ -56,7 +56,6 @@ declare const L: any;
              <div #mapContainer id="map" class="h-[550px] w-full transition-all duration-700 grayscale-[0.3] hover:grayscale-0 contrast-[1.1]"></div>
           </div>
 
-          <!-- Project List -->
           <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none flex flex-col">
             <h2 class="text-xl font-black text-slate-900 dark:text-white mb-8 uppercase tracking-tight">{{ 'locations.project_list' | translate }}</h2>
             <div class="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-1">
@@ -66,12 +65,12 @@ declare const L: any;
                   class="p-5 rounded-2xl cursor-pointer transition-all group border border-transparent hover:border-slate-200 dark:hover:border-white/10 hover:bg-slate-50 dark:hover:bg-white/[0.03]"
                   [class.bg-slate-100]="selectedProject?.id === project.id"
                   [class.dark:bg-slate-800]="selectedProject?.id === project.id"
-                  [class.border-cyan-500/50]="selectedProject?.id === project.id">
+                  [class.border-indigo-500/50]="selectedProject?.id === project.id">
                   <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-slate-900 dark:text-white font-black group-hover:text-cyan-500 transition-colors uppercase tracking-tight text-sm">{{ project.name }}</h3>
+                    <h3 class="text-slate-900 dark:text-white font-black group-hover:text-indigo-600 transition-colors uppercase tracking-tight text-sm">{{ project.name }}</h3>
                     <span class="w-2.5 h-2.5 rounded-full shadow-lg"
                           [ngClass]="{
-                            'bg-cyan-500 shadow-cyan-500/50': project.status === 'Active',
+                            'bg-indigo-500 shadow-indigo-500/50': project.status === 'Active',
                             'bg-emerald-500 shadow-emerald-500/50': project.status === 'Completed',
                             'bg-rose-500 shadow-rose-500/50': project.status === 'Delayed'
                           }">
@@ -86,10 +85,10 @@ declare const L: any;
                   <div class="space-y-2">
                     <div class="flex items-center justify-between text-xs font-black uppercase tracking-widest">
                       <span class="text-slate-500 dark:text-slate-400">{{ 'locations.progress' | translate }}</span>
-                      <span class="text-cyan-600 dark:text-cyan-400 font-black">{{ project.progress }}%</span>
+                      <span class="text-indigo-600 dark:text-indigo-400 font-black">{{ project.progress }}%</span>
                     </div>
                     <div class="h-1.5 bg-slate-100 dark:bg-slate-950 rounded-full overflow-hidden shadow-inner p-0.5 border border-slate-200 dark:border-white/5">
-                      <div class="h-full bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(34,211,238,0.3)]"
+                      <div class="h-full bg-gradient-to-r from-indigo-500 to-blue-600 rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(99,102,241,0.3)]"
                            [style.width.%]="project.progress">
                       </div>
                     </div>
@@ -98,7 +97,6 @@ declare const L: any;
               }
             </div>
           </div>
-        </div>
 
         <!-- Worker Tracking Section -->
         <div class="mt-8 bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none transition-all">

@@ -7,7 +7,9 @@
       @if (isNavigating) {
       <div
         class="absolute inset-0 z-50 flex items-center justify-center bg-white/60 dark:bg-slate-950/60 backdrop-blur-[2px] transition-all duration-300">
-        <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin shadow-lg">
+        <div class="twin-rectangles">
+          <div class="twin-rect-1"></div>
+          <div class="twin-rect-2"></div>
         </div>
       </div>
       }
@@ -19,7 +21,10 @@
 @if (isNavigating) {
 <div
   class="fixed inset-0 z-[9999] flex items-center justify-center bg-white/60 dark:bg-slate-950/60 backdrop-blur-[2px] transition-all duration-300">
-  <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+  <div class="twin-rectangles">
+    <div class="twin-rect-1"></div>
+    <div class="twin-rect-2"></div>
+  </div>
 </div>
 }
 <router-outlet></router-outlet>

@@ -24,187 +24,143 @@ interface BillingInvoice {
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule],
   template: `
-    <div class="finance-container">
-      <!-- Header -->
-      <div class="page-header">
-        <div class="header-content">
-          <h1>{{ 'finance.title' | translate }}</h1>
-          <p class="subtitle">{{ 'finance.subtitle' | translate }}</p>
+    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 md:p-8 transition-colors duration-500">
+      <div class="max-w-7xl mx-auto animate-premium-fade">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+          <div>
+            <h1 class="premium-heading mb-4">{{ 'finance.title' | translate }}</h1>
+            <p class="premium-subheading mb-0">{{ 'finance.subtitle' | translate }}</p>
+          </div>
+          <div class="flex gap-4">
+            <button class="premium-button-ghost bg-white dark:bg-slate-900 shadow-sm border border-slate-200 dark:border-white/5" (click)="refreshData()">
+              <span class="mr-2">↺</span> {{ 'common.refresh' | translate }}
+            </button>
+            <button class="premium-button-primary" (click)="exportReport()">
+              <span class="mr-2">↓</span> {{ 'common.export' | translate }}
+            </button>
+          </div>
         </div>
-        <div class="header-actions">
-          <button class="btn btn-primary" (click)="refreshData()">
-            <span class="icon">&#8635;</span> {{ 'common.refresh' | translate }}
-          </button>
-          <button class="btn btn-secondary" (click)="exportReport()">
-            <span class="icon">&#8595;</span> {{ 'common.export' | translate }}
-          </button>
-        </div>
-      </div>
 
-      <!-- Loading State -->
-      @if (isLoading()) {
-        <div class="loading-overlay">
-          <div class="spinner"></div>
-          <p>{{ 'common.loading' | translate }}</p>
-        </div>
-      }
-
-      <!-- Financial Summary -->
-      @if (!isLoading()) {
         <!-- Metric Cards -->
-        <div class="metrics-grid">
-          <div class="metric-card cash-vouchers">
-            <div class="metric-icon">&#128176;</div>
-            <div class="metric-content">
-              <span class="metric-title">{{ 'finance.stats.cash_vouchers' | translate }}</span>
-              <span class="metric-value">{{ cashVoucherSummary()?.totalVouchers || 0 }}</span>
-              <span class="metric-subtitle">
-                {{ cashVoucherSummary()?.pendingVouchers || 0 }} {{ 'common.pending' | translate }}
-              </span>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-12">
+          @for (metric of [
+            {key: 'vouchers', label: 'finance.stats.cash_vouchers', value: cashVoucherSummary()?.totalVouchers || 0, amount: cashVoucherSummary()?.totalAmount || 0, color: 'blue', icon: '💰'},
+            {key: 'expenses', label: 'finance.stats.misc_expenses', value: miscExpenseSummary()?.totalExpenses || 0, amount: miscExpenseSummary()?.totalAmount || 0, color: 'amber', icon: '💳'},
+            {key: 'transactions', label: 'finance.stats.transactions', value: transactions().length, amount: totalTransactionAmount(), color: 'emerald', icon: '💸'},
+            {key: 'invoices', label: 'finance.stats.invoices', value: invoices().length, amount: totalInvoiceAmount(), color: 'indigo', icon: '📄'},
+            {key: 'vendors', label: 'finance.stats.vendor_bills', value: vendorDashboard()?.totalVendors || 0, amount: vendorDashboard()?.pendingApprovals || 0, color: 'rose', icon: '🏢'}
+          ]; track metric.key; let i = $index) {
+            <div class="premium-card-stack group hover:scale-[1.02] transition-all duration-500 overflow-hidden relative cursor-default" [style.animation-delay]="(i * 100) + 'ms'">
+              <div class="absolute -top-10 -right-10 w-32 h-32 bg-{{metric.color}}-500/5 rounded-full blur-3xl group-hover:bg-{{metric.color}}-500/10 transition-colors"></div>
+              <div class="flex items-start justify-between mb-8">
+                <div class="w-12 h-12 rounded-2xl bg-{{metric.color}}-500/10 text-{{metric.color}}-600 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">
+                  {{ metric.icon }}
+                </div>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ metric.value }} Items</span>
+              </div>
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">{{ metric.label | translate }}</p>
+              <h3 class="text-2xl font-black text-slate-900 dark:text-white tracking-tghter mb-1">
+                {{ metric.amount | currency:'USD':'symbol':'1.0-0' }}
+              </h3>
+              <div class="w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full mt-4 overflow-hidden shadow-inner">
+                <div class="h-full bg-{{metric.color}}-500 rounded-full transition-all duration-1000 scale-x-0 group-hover:scale-x-100 origin-left" style="width: 70%"></div>
+              </div>
             </div>
-            <div class="metric-amount">
-              {{ cashVoucherSummary()?.totalAmount || 0 | currency:'USD':'symbol':'1.0-0' }}
-            </div>
-          </div>
-
-          <div class="metric-card misc-expenses">
-            <div class="metric-icon">&#128179;</div>
-            <div class="metric-content">
-              <span class="metric-title">{{ 'finance.stats.misc_expenses' | translate }}</span>
-              <span class="metric-value">{{ miscExpenseSummary()?.totalExpenses || 0 }}</span>
-              <span class="metric-subtitle">
-                {{ miscExpenseSummary()?.pendingExpenses || 0 }} {{ 'common.pending' | translate }}
-              </span>
-            </div>
-            <div class="metric-amount">
-              {{ miscExpenseSummary()?.totalAmount || 0 | currency:'USD':'symbol':'1.0-0' }}
-            </div>
-          </div>
-
-          <div class="metric-card transactions">
-            <div class="metric-icon">&#128181;</div>
-            <div class="metric-content">
-              <span class="metric-title">{{ 'finance.stats.transactions' | translate }}</span>
-              <span class="metric-value">{{ transactions().length }}</span>
-              <span class="metric-subtitle">
-                {{ pendingTransactions() }} {{ 'common.pending' | translate }}
-              </span>
-            </div>
-            <div class="metric-amount">
-              {{ totalTransactionAmount() | currency:'USD':'symbol':'1.0-0' }}
-            </div>
-          </div>
-
-          <div class="metric-card invoices">
-            <div class="metric-icon">&#128190;</div>
-            <div class="metric-content">
-              <span class="metric-title">{{ 'finance.stats.invoices' | translate }}</span>
-              <span class="metric-value">{{ invoices().length }}</span>
-              <span class="metric-subtitle">
-                {{ pendingInvoices() }} {{ 'common.pending' | translate }}
-              </span>
-            </div>
-            <div class="metric-amount">
-              {{ totalInvoiceAmount() | currency:'USD':'symbol':'1.0-0' }}
-            </div>
-          </div>
-
-          <div class="metric-card vendor-bills">
-            <div class="metric-icon">&#128188;</div>
-            <div class="metric-content">
-              <span class="metric-title">{{ 'finance.stats.vendor_bills' | translate }}</span>
-              <span class="metric-value">{{ vendorDashboard()?.pendingApprovals || 0 | currency:'USD':'symbol':'1.0-0' }}</span>
-              <span class="metric-subtitle">
-                {{ 'finance.stats.unpaid_liabilities' | translate }}
-              </span>
-            </div>
-            <div class="metric-amount warning">
-              {{ vendorDashboard()?.pendingApprovals || 0 | currency:'USD':'symbol':'1.0-0' }}
-            </div>
-          </div>
+          }
         </div>
 
-        <!-- Tabs -->
-        <div class="tabs-container">
-          <button class="tab-btn" [class.active]="activeTab === 'vouchers'" (click)="activeTab = 'vouchers'">
-            <span class="icon">&#128176;</span> {{ 'finance.tabs.vouchers' | translate }}
-          </button>
-          <button class="tab-btn" [class.active]="activeTab === 'expenses'" (click)="activeTab = 'expenses'">
-            <span class="icon">&#128179;</span> {{ 'finance.tabs.expenses' | translate }}
-          </button>
-          <button class="tab-btn" [class.active]="activeTab === 'transactions'" (click)="activeTab = 'transactions'">
-            <span class="icon">&#128181;</span> {{ 'finance.tabs.transactions' | translate }}
-          </button>
-          <button class="tab-btn" [class.active]="activeTab === 'invoices'" (click)="activeTab = 'invoices'">
-            <span class="icon">&#128190;</span> {{ 'finance.tabs.invoices' | translate }}
-          </button>
-          <button class="tab-btn" [class.active]="activeTab === 'billing'" (click)="activeTab = 'billing'">
-            <span class="icon">&#128179;</span> {{ 'finance.tabs.billing' | translate }}
-          </button>
-          <button class="tab-btn" [class.active]="activeTab === 'vendors'" (click)="activeTab = 'vendors'">
-            <span class="icon">&#128188;</span> {{ 'finance.tabs.vendors' | translate }}
-          </button>
-          <button class="tab-btn" [class.active]="activeTab === 'ledger'" (click)="activeTab = 'ledger'">
-            <span class="icon">&#128221;</span> {{ 'finance.tabs.ledger' | translate }}
-          </button>
+        <!-- Navigation Hub (Tabs) -->
+        <div class="flex items-center gap-2 p-1.5 bg-white dark:bg-slate-900/50 rounded-[2rem] shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-white/5 w-fit overflow-x-auto no-scrollbar mb-12">
+          @for (tab of [
+            {id: 'vouchers', label: 'finance.tabs.vouchers', icon: '💰'},
+            {id: 'expenses', label: 'finance.tabs.expenses', icon: '💳'},
+            {id: 'transactions', label: 'finance.tabs.transactions', icon: '💸'},
+            {id: 'invoices', label: 'finance.tabs.invoices', icon: '📄'},
+            {id: 'billing', label: 'finance.tabs.billing', icon: '⚡'},
+            {id: 'vendors', label: 'finance.tabs.vendors', icon: '🏢'},
+            {id: 'ledger', label: 'finance.tabs.ledger', icon: '📝'}
+          ]; track tab.id) {
+            <button (click)="setActiveTab(tab.id)" 
+                    [class]="activeTab === tab.id ? 
+                      'bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-lg shadow-slate-900/20 dark:shadow-white/10' : 
+                      'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'"
+                    class="px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all duration-300 whitespace-nowrap flex items-center gap-3">
+                <span class="grayscale group-hover:grayscale-0">{{ tab.icon }}</span>
+                {{ tab.label | translate }}
+            </button>
+          }
         </div>
 
         <!-- Tab Content -->
         <div class="tab-content">
           @switch (activeTab) {
             @case ('vouchers') {
-              <div class="vouchers-section">
-                <div class="section-header">
-                  <h2>{{ 'finance.tabs.vouchers' | translate }}</h2>
-                  <button class="btn btn-primary" (click)="createVoucher()">
-                    <span class="icon">&#43;</span> {{ 'finance.voucher.new' | translate }}
+              <div class="animate-premium-fade">
+                <div class="flex items-center justify-between mb-8">
+                  <h2 class="premium-section-title mb-0">{{ 'finance.tabs.vouchers' | translate }}</h2>
+                  <button class="premium-button-primary !py-3 !px-6" (click)="createVoucher()">
+                    <span class="mr-2">+</span> {{ 'finance.voucher.new' | translate }}
                   </button>
                 </div>
-                <div class="data-table">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>{{ 'finance.voucher.number' | translate }}</th>
-                        <th>{{ 'finance.voucher.project' | translate }}</th>
-                        <th>{{ 'finance.voucher.amount' | translate }}</th>
-                        <th>{{ 'finance.voucher.date' | translate }}</th>
-                        <th>{{ 'common.status' | translate }}</th>
-                        <th>{{ 'common.actions' | translate }}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @for (voucher of cashVouchers(); track voucher.id) {
-                        <tr [class.pending]="voucher.status === 'Pending'" [class.approved]="voucher.status === 'Approved'" [class.rejected]="voucher.status === 'Rejected'">
-                          <td>{{ voucher.voucherNumber }}</td>
-                          <td>{{ voucher.projectName || '-' }}</td>
-                          <td>{{ voucher.amount | currency:'USD':'symbol':'1.0-0' }}</td>
-                          <td>{{ voucher.createdAt | date:'shortDate' }}</td>
-                          <td>
-                            <span class="status-badge" [class.pending]="voucher.status === 'Pending'" [class.approved]="voucher.status === 'Approved'" [class.rejected]="voucher.status === 'Rejected'">
-                              {{ voucher.status }}
-                            </span>
-                          </td>
-                          <td>
-                            <button class="btn-icon" (click)="viewVoucher(voucher)" title="{{ 'common.view' | translate }}">
-                              <span>&#128065;</span>
-                            </button>
-                            @if (voucher.status === 'Pending') {
-                              <button class="btn-icon" (click)="approveVoucher(voucher)" title="{{ 'common.approve' | translate }}">
-                                <span>&#10004;</span>
-                              </button>
-                              <button class="btn-icon" (click)="rejectVoucher(voucher)" title="{{ 'common.reject' | translate }}">
-                                <span>&#10006;</span>
-                              </button>
-                            }
-                          </td>
+                <div class="premium-card-stack !p-0 overflow-hidden">
+                  <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                      <thead>
+                        <tr class="bg-slate-50 dark:bg-white/[0.02] border-b border-slate-200 dark:border-white/5">
+                          <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'finance.voucher.number' | translate }}</th>
+                          <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'finance.voucher.project' | translate }}</th>
+                          <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'finance.voucher.amount' | translate }}</th>
+                          <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'finance.voucher.date' | translate }}</th>
+                          <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'common.status' | translate }}</th>
+                          <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">{{ 'common.actions' | translate }}</th>
                         </tr>
-                      } @empty {
-                        <tr>
-                          <td colspan="6" class="no-data">{{ 'finance.no_vouchers' | translate }}</td>
-                        </tr>
-                      }
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody class="divide-y divide-slate-200 dark:divide-white/5">
+                        @for (voucher of cashVouchers(); track voucher.id) {
+                          <tr class="hover:bg-slate-50 dark:hover:bg-white/[0.01] transition-colors group">
+                            <td class="px-8 py-6 font-black text-sm text-slate-900 dark:text-white uppercase tracking-tighter">{{ voucher.voucherNumber }}</td>
+                            <td class="px-8 py-6">
+                              <span class="text-sm font-medium text-slate-600 dark:text-slate-400">{{ voucher.projectName || '-' }}</span>
+                            </td>
+                            <td class="px-8 py-6 font-black text-sm text-slate-900 dark:text-white">{{ voucher.amount | currency:'USD':'symbol':'1.0-0' }}</td>
+                            <td class="px-8 py-6 text-sm text-slate-500">{{ voucher.createdAt | date:'mediumDate' }}</td>
+                            <td class="px-8 py-6">
+                              <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest"
+                                    [ngClass]="{
+                                      'bg-amber-500/10 text-amber-600': voucher.status === 'Pending',
+                                      'bg-emerald-500/10 text-emerald-600': voucher.status === 'Approved',
+                                      'bg-rose-500/10 text-rose-600': voucher.status === 'Rejected'
+                                    }">
+                                {{ voucher.status }}
+                              </span>
+                            </td>
+                            <td class="px-8 py-6 text-right">
+                              <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-500 hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-950 transition-all" (click)="viewVoucher(voucher)">
+                                  👁
+                                </button>
+                                @if (voucher.status === 'Pending') {
+                                  <button class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all" (click)="approveVoucher(voucher)">
+                                    ✓
+                                  </button>
+                                  <button class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-600 hover:bg-rose-500 hover:text-white transition-all" (click)="rejectVoucher(voucher)">
+                                    ✕
+                                  </button>
+                                }
+                              </div>
+                            </td>
+                          </tr>
+                        } @empty {
+                          <tr>
+                            <td colspan="6" class="px-8 py-20 text-center text-slate-400 font-bold uppercase tracking-widest opacity-40">
+                              {{ 'finance.no_vouchers' | translate }}
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             }
@@ -587,7 +543,6 @@ interface BillingInvoice {
             }
           }
         </div>
-      }
     </div>
 
     <!-- Vendor Detail Modal -->
@@ -1502,5 +1457,9 @@ export class FinanceComponent implements OnInit, OnDestroy {
   viewLedgerEntry(entry: VendorInvoice): void {
     console.log('Viewing ledger entry:', entry);
     // You could open a shared "Invoice View" modal here
+  }
+
+  setActiveTab(tab: any): void {
+    this.activeTab = tab;
   }
 }

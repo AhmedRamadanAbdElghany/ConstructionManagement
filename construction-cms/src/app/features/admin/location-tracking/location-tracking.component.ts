@@ -10,226 +10,238 @@ import { AuthService } from '../../../core/services/auth.service';
     standalone: true,
     imports: [CommonModule, FormsModule, TranslateModule],
     template: `
-    <div class="p-6">
-        <h1 class="text-2xl font-bold mb-6">{{ 'LOCATION_TRACKING.TITLE' | translate }}</h1>
-
-        <!-- Settings Section -->
-        <div class="bg-white rounded-lg shadow p-6 mb-6">
-            <h2 class="text-lg font-semibold mb-4">{{ 'LOCATION_TRACKING.SETTINGS' | translate }}</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="flex items-center">
-                    <input type="checkbox" id="enabled" [(ngModel)]="settings.isLocationTrackingEnabled"
-                        class="h-4 w-4 text-blue-600 rounded border-gray-300">
-                    <label for="enabled" class="ml-2 block text-sm text-gray-900">
-                        {{ 'LOCATION_TRACKING.ENABLE_TRACKING' | translate }}
-                    </label>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ 'LOCATION_TRACKING.TRACKING_MODE' | translate }}
-                    </label>
-                    <select [(ngModel)]="settings.trackingMode" class="w-full border rounded px-3 py-2">
-                        <option [value]="0">{{ 'LOCATION_TRACKING.MODE_START_END' | translate }}</option>
-                        <option [value]="1">{{ 'LOCATION_TRACKING.MODE_RANDOM' | translate }}</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ 'LOCATION_TRACKING.WORKING_HOURS_START' | translate }}
-                    </label>
-                    <input type="time" [(ngModel)]="settings.workingHoursStart" class="w-full border rounded px-3 py-2">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ 'LOCATION_TRACKING.WORKING_HOURS_END' | translate }}
-                    </label>
-                    <input type="time" [(ngModel)]="settings.workingHoursEnd" class="w-full border rounded px-3 py-2">
-                </div>
-
-                <div *ngIf="settings.trackingMode === 1">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ 'LOCATION_TRACKING.RANDOM_CHECKS_COUNT' | translate }}
-                    </label>
-                    <input type="number" [(ngModel)]="settings.randomCheckCount" min="1" max="10"
-                        class="w-full border rounded px-3 py-2">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ 'LOCATION_TRACKING.EXPIRATION_MINUTES' | translate }}
-                    </label>
-                    <input type="number" [(ngModel)]="settings.requestExpirationMinutes" min="5" max="120"
-                        class="w-full border rounded px-3 py-2">
-                </div>
-
-                <div class="flex items-center">
-                    <input type="checkbox" id="reminders" [(ngModel)]="settings.sendReminders"
-                        class="h-4 w-4 text-blue-600 rounded border-gray-300">
-                    <label for="reminders" class="ml-2 block text-sm text-gray-900">
-                        {{ 'LOCATION_TRACKING.SEND_REMINDERS' | translate }}
-                    </label>
-                </div>
-
-                <div *ngIf="settings.sendReminders">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ 'LOCATION_TRACKING.REMINDER_DELAY' | translate }}
-                    </label>
-                    <input type="number" [(ngModel)]="settings.reminderDelayMinutes" min="1" max="60"
-                        class="w-full border rounded px-3 py-2">
-                </div>
-            </div>
-
-            <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    {{ 'LOCATION_TRACKING.WORKING_DAYS' | translate }}
-                </label>
-                <div class="flex flex-wrap gap-2">
-                    <ng-container *ngFor="let day of daysOfWeek; let i = index">
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" [checked]="settings.workingDays.includes(i + 1)"
-                                (change)="toggleWorkingDay(i + 1)" class="h-4 w-4 text-blue-600 rounded border-gray-300">
-                            <span class="ml-2 text-sm">{{ day }}</span>
-                        </label>
-                    </ng-container>
-                </div>
-            </div>
-
-            <div class="mt-6">
-                <button (click)="saveSettings()" [disabled]="saving"
-                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50">
-                    <span *ngIf="saving">{{ 'COMMON.SAVING' | translate }}</span>
-                    <span *ngIf="!saving">{{ 'COMMON.SAVE' | translate }}</span>
-                </button>
-            </div>
+    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 md:p-8 transition-colors duration-500 pb-32">
+      <div class="max-w-7xl mx-auto animate-premium-fade">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+          <div class="header-left">
+            <h1 class="premium-heading mb-4">{{ 'LOCATION_TRACKING.TITLE' | translate }}</h1>
+            <p class="premium-subheading mb-0">{{ 'LOCATION_TRACKING.SUBTITLE' | translate }}</p>
+          </div>
+          <div class="flex gap-4">
+             <button class="premium-button-ghost bg-white dark:bg-slate-900 shadow-sm border border-slate-200 dark:border-white/5" (click)="refreshSummary()">
+              <span class="mr-2">↺</span> {{ 'COMMON.REFRESH' | translate }}
+            </button>
+            <button class="premium-button-primary" (click)="saveSettings()" [disabled]="saving">
+              @if (saving) {
+                <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+              }
+              {{ 'COMMON.SAVE' | translate }}
+            </button>
+          </div>
         </div>
 
-        <!-- Today's Summary -->
-        <div class="bg-white rounded-lg shadow p-6 mb-6">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-lg font-semibold">{{ 'LOCATION_TRACKING.TODAY_SUMMARY' | translate }}</h2>
-                <button (click)="refreshSummary()" class="text-blue-600 hover:text-blue-800">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                    </svg>
-                </button>
-            </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <!-- Main Settings -->
+          <div class="lg:col-span-2 space-y-12">
+            <!-- Global Toggle -->
+            <section class="animate-premium-fade delay-100">
+              <div class="premium-card-stack group hover:border-indigo-500/30 transition-all border-2 border-transparent">
+                <div class="flex items-center justify-between p-4">
+                  <div class="flex items-center gap-6">
+                    <div class="w-16 h-16 rounded-[2rem] bg-indigo-500/10 text-indigo-600 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">
+                      📍
+                    </div>
+                    <div>
+                      <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{{ 'LOCATION_TRACKING.ENABLE_TRACKING' | translate }}</h2>
+                      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Master Control for Worker Location Services</p>
+                    </div>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" [(ngModel)]="settings.isLocationTrackingEnabled" class="sr-only peer">
+                    <div class="w-16 h-8 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-indigo-500 shadow-inner"></div>
+                  </label>
+                </div>
+              </div>
+            </section>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div class="bg-blue-50 rounded-lg p-4 text-center">
-                    <div class="text-3xl font-bold text-blue-600">{{ summary?.totalWorkers || 0 }}</div>
-                    <div class="text-sm text-gray-600">{{ 'LOCATION_TRACKING.TOTAL_WORKERS' | translate }}</div>
-                </div>
-                <div class="bg-green-50 rounded-lg p-4 text-center">
-                    <div class="text-3xl font-bold text-green-600">{{ summary?.workersWithStartLocation || 0 }}</div>
-                    <div class="text-sm text-gray-600">{{ 'LOCATION_TRACKING.STARTED_WORK' | translate }}</div>
-                </div>
-                <div class="bg-yellow-50 rounded-lg p-4 text-center">
-                    <div class="text-3xl font-bold text-yellow-600">{{ summary?.workersWithEndLocation || 0 }}</div>
-                    <div class="text-sm text-gray-600">{{ 'LOCATION_TRACKING.ENDED_WORK' | translate }}</div>
-                </div>
-                <div class="bg-red-50 rounded-lg p-4 text-center">
-                    <div class="text-3xl font-bold text-red-600">{{ summary?.workersPendingStart || 0 }}</div>
-                    <div class="text-sm text-gray-600">{{ 'LOCATION_TRACKING.PENDING_START' | translate }}</div>
-                </div>
-            </div>
-
-            <!-- Workers List -->
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                {{ 'LOCATION_TRACKING.WORKER' | translate }}
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                {{ 'LOCATION_TRACKING.START_LOCATION' | translate }}
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                {{ 'LOCATION_TRACKING.END_LOCATION' | translate }}
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                {{ 'LOCATION_TRACKING.RANDOM_CHECKS' | translate }}
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                {{ 'LOCATION_TRACKING.LAST_LOCATION' | translate }}
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                {{ 'LOCATION_TRACKING.ACTIONS' | translate }}
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        <tr *ngFor="let worker of summary?.workers || []">
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <div class="font-medium text-gray-900">{{ worker.userName }}</div>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <span *ngIf="worker.hasSubmittedStartLocation" class="text-green-600">✓</span>
-                                <span *ngIf="!worker.hasSubmittedStartLocation" class="text-gray-400">-</span>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <span *ngIf="worker.hasSubmittedEndLocation" class="text-green-600">✓</span>
-                                <span *ngIf="!worker.hasSubmittedEndLocation" class="text-gray-400">-</span>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                {{ worker.randomChecksCompleted }} / {{ worker.randomChecksExpected }}
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                                <span *ngIf="worker.lastLocationTime">
-                                    {{ worker.lastLocationTime | date:'short' }}
-                                </span>
-                                <span *ngIf="!worker.lastLocationTime">-</span>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <button (click)="requestLocation(worker.userId)" 
-                                    class="text-blue-600 hover:text-blue-800 text-sm">
-                                    {{ 'LOCATION_TRACKING.REQUEST_LOCATION' | translate }}
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Request Location Modal -->
-        <div *ngIf="showRequestModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white rounded-lg p-6 w-full max-w-md">
-                <h3 class="text-lg font-semibold mb-4">{{ 'LOCATION_TRACKING.REQUEST_LOCATION_TITLE' | translate }}</h3>
-                
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ 'LOCATION_TRACKING.EXPIRES_IN' | translate }}
-                    </label>
-                    <input type="number" [(ngModel)]="requestExpiresIn" min="5" max="120"
-                        class="w-full border rounded px-3 py-2">
-                    <span class="text-sm text-gray-500">{{ 'LOCATION_TRACKING.MINUTES' | translate }}</span>
+            <!-- Operational hours & Modes -->
+            <section class="animate-premium-fade delay-200">
+               <div class="flex items-center gap-4 mb-8">
+                <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center text-lg font-black shadow-inner">⏰</div>
+                <h2 class="premium-section-title mb-0">{{ 'LOCATION_TRACKING.WORKING_HOURS' | translate }}</h2>
+              </div>
+              
+              <div class="premium-card-stack">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                  <div class="space-y-4">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ 'LOCATION_TRACKING.WORKING_HOURS_START' | translate }}</label>
+                    <input type="time" [(ngModel)]="settings.workingHoursStart" class="premium-input">
+                  </div>
+                  <div class="space-y-4">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ 'LOCATION_TRACKING.WORKING_HOURS_END' | translate }}</label>
+                    <input type="time" [(ngModel)]="settings.workingHoursEnd" class="premium-input">
+                  </div>
                 </div>
 
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ 'LOCATION_TRACKING.NOTES' | translate }}
-                    </label>
-                    <textarea [(ngModel)]="requestNotes" rows="3"
-                        class="w-full border rounded px-3 py-2"></textarea>
-                </div>
+                <div class="mt-12 p-8 rounded-[2rem] bg-slate-50 dark:bg-white/[0.02] border border-slate-100 dark:border-white/5">
+                   <div class="flex items-center justify-between mb-8">
+                     <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{{ 'LOCATION_TRACKING.TRACKING_MODE' | translate }}</h3>
+                     <span class="premium-badge">{{ settings.trackingMode === 0 ? 'START/END' : 'RANDOM' }} Mode</span>
+                   </div>
+                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     <div (click)="settings.trackingMode = 0" 
+                          [class]="settings.trackingMode === 0 ? 'border-indigo-500 bg-indigo-500/5' : 'border-slate-200 dark:border-white/5'"
+                          class="p-6 rounded-3xl border-2 cursor-pointer transition-all hover:scale-[1.02] group">
+                        <div class="flex items-center gap-4 mb-4">
+                           <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-lg group-hover:scale-110 transition-transform">🏁</div>
+                           <p class="text-xs font-black uppercase tracking-widest">{{ 'LOCATION_TRACKING.MODE_START_END' | translate }}</p>
+                        </div>
+                        <p class="text-[10px] text-slate-400 font-medium leading-relaxed">Workers submit location ONLY when starting and ending their shifts.</p>
+                     </div>
+                     <div (click)="settings.trackingMode = 1" 
+                          [class]="settings.trackingMode === 1 ? 'border-indigo-500 bg-indigo-500/5' : 'border-slate-200 dark:border-white/5'"
+                          class="p-6 rounded-3xl border-2 cursor-pointer transition-all hover:scale-[1.02] group">
+                        <div class="flex items-center gap-4 mb-4">
+                           <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-lg group-hover:scale-110 transition-transform">🎲</div>
+                           <p class="text-xs font-black uppercase tracking-widest">{{ 'LOCATION_TRACKING.MODE_RANDOM' | translate }}</p>
+                        </div>
+                        <p class="text-[10px] text-slate-400 font-medium leading-relaxed">System requests periodic location checks throughout the day at random intervals.</p>
+                     </div>
+                   </div>
 
-                <div class="flex justify-end gap-2">
-                    <button (click)="closeRequestModal()" 
-                        class="px-4 py-2 border rounded hover:bg-gray-50">
-                        {{ 'COMMON.CANCEL' | translate }}
+                   @if (settings.trackingMode === 1) {
+                     <div class="mt-8 space-y-4 animate-premium-fade">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ 'LOCATION_TRACKING.RANDOM_CHECKS_COUNT' | translate }}</label>
+                        <input type="number" [(ngModel)]="settings.randomCheckCount" min="1" max="10" class="premium-input" placeholder="3">
+                     </div>
+                   }
+                </div>
+              </div>
+            </section>
+
+            <!-- Working Days -->
+            <section class="animate-premium-fade delay-300">
+               <div class="flex items-center gap-4 mb-8">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-lg font-black shadow-inner">📅</div>
+                <h2 class="premium-section-title mb-0">{{ 'LOCATION_TRACKING.WORKING_DAYS' | translate }}</h2>
+              </div>
+              <div class="premium-card-stack">
+                <div class="flex flex-wrap gap-3">
+                  @for (day of daysOfWeek; let i = $index; track day) {
+                    <button (click)="toggleWorkingDay(i + 1)"
+                            [class]="settings.workingDays.includes(i + 1) ? 'bg-indigo-600 text-white border-transparent shadow-lg' : 'bg-slate-50 dark:bg-white/5 text-slate-400 border-slate-100 dark:border-white/5'"
+                            class="px-6 py-4 rounded-2xl border-2 text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95">
+                      {{ day }}
                     </button>
-                    <button (click)="sendLocationRequest()" [disabled]="sendingRequest"
-                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50">
-                        {{ 'LOCATION_TRACKING.SEND_REQUEST' | translate }}
-                    </button>
+                  }
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- Sidebar: Summary -->
+          <div class="space-y-8">
+            <div class="premium-card-stack h-full relative overflow-hidden">
+               <div class="absolute -top-10 -right-10 w-40 h-40 bg-indigo-500/5 rounded-full blur-3xl"></div>
+               <div class="flex items-center justify-between mb-8 relative z-10">
+                 <h3 class="premium-section-title mb-0">{{ 'LOCATION_TRACKING.TODAY_SUMMARY' | translate }}</h3>
+                 <button (click)="refreshSummary()" class="w-10 h-10 rounded-xl bg-slate-50 dark:bg-white/5 flex items-center justify-center text-slate-400 hover:text-indigo-500 transition-colors">↺</button>
+               </div>
+
+               <div class="grid grid-cols-2 gap-4 mb-10 relative z-10">
+                 <div class="p-6 rounded-[2rem] bg-blue-500/5 border border-blue-500/10 transition-all hover:scale-105">
+                    <p class="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-1">{{ 'LOCATION_TRACKING.TOTAL_WORKERS' | translate }}</p>
+                    <p class="text-3xl font-black text-blue-600 tracking-tighter">{{ summary?.totalWorkers || 0 }}</p>
+                 </div>
+                 <div class="p-6 rounded-[2rem] bg-emerald-500/5 border border-emerald-500/10 transition-all hover:scale-105">
+                    <p class="text-[9px] font-black text-emerald-400 uppercase tracking-widest mb-1">Active Now</p>
+                    <p class="text-3xl font-black text-emerald-600 tracking-tighter">{{ summary?.workersWithStartLocation || 0 }}</p>
+                 </div>
+               </div>
+
+                <div class="space-y-4 relative z-10">
+                  @for (worker of summary?.workers || []; track worker.userId; let i = $index) {
+                    <div class="flex flex-col p-6 rounded-[2rem] bg-white dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 group hover:border-indigo-500/30 transition-all shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 animate-premium-fade" [style.animation-delay]="(i * 100) + 'ms'">
+                       <div class="flex items-center justify-between mb-6">
+                         <div class="flex items-center gap-4">
+                           <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white font-black text-lg shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform">
+                             {{ worker.userName.charAt(0) }}
+                           </div>
+                           <div>
+                              <p class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight leading-none mb-1">{{ worker.userName }}</p>
+                              <span class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Field Personnel</span>
+                           </div>
+                         </div>
+                         <div class="flex gap-2">
+                            <button (click)="requestLocation(worker.userId)" 
+                                    class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center hover:bg-indigo-500 hover:text-white transition-all group/btn"
+                                    title="Request Live Location">
+                              <span class="group-hover/btn:scale-110 transition-transform">📡</span>
+                            </button>
+                         </div>
+                       </div>
+
+                       <div class="grid grid-cols-2 gap-4">
+                          <div class="p-3 rounded-xl bg-slate-50 dark:bg-white/[0.03] border border-slate-100 dark:border-white/5">
+                             <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2">Shift Status</p>
+                             <div class="flex items-center gap-2">
+                               <div [class]="worker.hasSubmittedStartLocation ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]' : 'bg-slate-300 dark:bg-slate-700'" class="w-2 h-2 rounded-full"></div>
+                               <span class="text-[9px] font-black text-slate-600 dark:text-slate-400 uppercase">{{ worker.hasSubmittedStartLocation ? 'Started' : 'Pending' }}</span>
+                               <div [class]="worker.hasSubmittedEndLocation ? 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.4)]' : 'bg-slate-300 dark:bg-slate-700'" class="w-2 h-2 rounded-full ml-2"></div>
+                               <span class="text-[9px] font-black text-slate-600 dark:text-slate-400 uppercase">{{ worker.hasSubmittedEndLocation ? 'Ended' : '' }}</span>
+                             </div>
+                          </div>
+                          <div class="p-3 rounded-xl bg-slate-50 dark:bg-white/[0.03] border border-slate-100 dark:border-white/5">
+                             <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2">Random Checks</p>
+                             <div class="flex items-center justify-between">
+                               <span class="text-xs font-black text-slate-900 dark:text-white">{{ worker.randomChecksCompleted }}/{{ worker.randomChecksExpected }}</span>
+                               <div class="flex-1 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full mx-2 overflow-hidden">
+                                  <div class="h-full bg-indigo-500 rounded-full transition-all duration-1000" [style.width.%]="(worker.randomChecksCompleted / (worker.randomChecksExpected || 1)) * 100"></div>
+                               </div>
+                             </div>
+                          </div>
+                       </div>
+
+                       @if (worker.lastLocationTime) {
+                         <div class="mt-4 pt-4 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
+                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Last Check-in</span>
+                            <span class="text-[9px] font-black text-indigo-500 dark:text-indigo-400 uppercase">{{ worker.lastLocationTime | date:'shortTime' }}</span>
+                         </div>
+                       }
+                    </div>
+                  } @empty {
+                    <div class="py-12 text-center opacity-40">
+                       <p class="text-[10px] font-black uppercase tracking-widest">No active workers today</p>
+                    </div>
+                  }
                 </div>
             </div>
+          </div>
         </div>
+      </div>
+
+      <!-- Request Modal -->
+      @if (showRequestModal) {
+        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[200] p-6 animate-premium-fade">
+           <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[3rem] shadow-2xl p-10 relative overflow-hidden">
+              <div class="absolute -top-20 -right-20 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl"></div>
+              
+              <h2 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-8">{{ 'LOCATION_TRACKING.REQUEST_LOCATION_TITLE' | translate }}</h2>
+              
+              <div class="space-y-8 mb-10">
+                <div class="space-y-3">
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ 'LOCATION_TRACKING.EXPIRES_IN' | translate }} (Min)</label>
+                  <input type="number" [(ngModel)]="requestExpiresIn" min="5" max="120" class="premium-input">
+                </div>
+                <div class="space-y-3">
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ 'LOCATION_TRACKING.NOTES' | translate }}</label>
+                  <textarea [(ngModel)]="requestNotes" rows="3" class="premium-input resize-none" placeholder="Enter reason for location verification..."></textarea>
+                </div>
+              </div>
+
+              <div class="flex gap-4">
+                <button (click)="closeRequestModal()" class="flex-1 py-4 rounded-2xl text-slate-500 font-black text-xs uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+                  {{ 'COMMON.CANCEL' | translate }}
+                </button>
+                <button (click)="sendLocationRequest()" [disabled]="sendingRequest" 
+                        class="flex-[2] py-4 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black text-xs uppercase tracking-widest shadow-xl active:scale-95 disabled:opacity-50 transition-all">
+                  {{ 'LOCATION_TRACKING.SEND_REQUEST' | translate }}
+                </button>
+              </div>
+           </div>
+        </div>
+      }
     </div>
     `,
     styles: []

@@ -21,85 +21,56 @@ import { AnnouncementService } from '../../../core/services/announcement.service
    standalone: true,
    imports: [CommonModule, FormsModule, TranslateModule, ProjectHierarchyComponent, CompanyDesignSettingsComponent, CompanyPortfolioComponent, CompanyAnnouncementsManagerComponent],
    template: `
-    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 pb-32 transition-colors duration-500 font-['Outfit']">
-      <div class="max-w-7xl mx-auto">
+    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 md:p-8 pb-32 transition-colors duration-500">
+      <div class="max-w-7xl mx-auto animate-premium-fade">
         <!-- Header -->
-        <div class="mb-12">
-          <h1 class="text-4xl font-bold text-slate-900 dark:text-white mb-8 tracking-tight">{{ 'companySettings.title' | translate }}</h1>
+        <div class="mb-10 md:mb-16">
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+            <div>
+              <h1 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tighter mb-4">
+                {{ 'companySettings.title' | translate }}
+              </h1>
+              <p class="text-slate-500 dark:text-slate-400 font-medium text-lg max-w-2xl">
+                Manage your business identity, platform features, and operational configurations from one central command center.
+              </p>
+            </div>
+          </div>
           
-          <div class="bg-white dark:bg-slate-900 p-2 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-white/5 inline-flex flex-wrap gap-1">
-            <button (click)="activeTab = 'settings'" 
-                    [class.bg-slate-900]="activeTab === 'settings'" 
-                    [class.text-white]="activeTab === 'settings'"
-                    [class.dark:bg-white]="activeTab === 'settings'"
-                    [class.dark:text-slate-950]="activeTab === 'settings'"
-                    [class.text-slate-500]="activeTab !== 'settings'"
-                    class="px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 hover:bg-slate-100 dark:hover:bg-slate-800">
-                {{ 'companySettings.settings' | translate }}
-            </button>
-            <button (click)="activeTab = 'roles'" 
-                    [class.bg-slate-900]="activeTab === 'roles'" 
-                    [class.text-white]="activeTab === 'roles'"
-                    [class.dark:bg-white]="activeTab === 'roles'"
-                    [class.dark:text-slate-950]="activeTab === 'roles'"
-                    [class.text-slate-500]="activeTab !== 'roles'"
-                    class="px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 hover:bg-slate-100 dark:hover:bg-slate-800">
-                {{ 'companySettings.rolesPermissions' | translate }}
-            </button>
-            <button (click)="activeTab = 'hierarchy'" 
-                    [class.bg-slate-900]="activeTab === 'hierarchy'" 
-                    [class.text-white]="activeTab === 'hierarchy'"
-                    [class.dark:bg-white]="activeTab === 'hierarchy'"
-                    [class.dark:text-slate-950]="activeTab === 'hierarchy'"
-                    [class.text-slate-500]="activeTab !== 'hierarchy'"
-                    class="px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 hover:bg-slate-100 dark:hover:bg-slate-800">
-                {{ 'companySettings.phases' | translate }}
-            </button>
-            <button (click)="activeTab = 'designs'" 
-                    [class.bg-slate-900]="activeTab === 'designs'" 
-                    [class.text-white]="activeTab === 'designs'"
-                    [class.dark:bg-white]="activeTab === 'designs'"
-                    [class.dark:text-slate-950]="activeTab === 'designs'"
-                    [class.text-slate-500]="activeTab !== 'designs'"
-                    class="px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 hover:bg-slate-100 dark:hover:bg-slate-800">
-                {{ 'companySettings.designs' | translate }}
-            </button>
-            <button (click)="activeTab = 'portfolio'" 
-                    [class.bg-slate-900]="activeTab === 'portfolio'" 
-                    [class.text-white]="activeTab === 'portfolio'"
-                    [class.dark:bg-white]="activeTab === 'portfolio'"
-                    [class.dark:text-slate-950]="activeTab === 'portfolio'"
-                    [class.text-slate-500]="activeTab !== 'portfolio'"
-                    class="px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 hover:bg-slate-100 dark:hover:bg-slate-800">
-                {{ 'companySettings.portfolio' | translate }}
-            </button>
-            <button (click)="activeTab = 'announcements'" 
-                    [class.bg-slate-900]="activeTab === 'announcements'" 
-                    [class.text-white]="activeTab === 'announcements'"
-                    [class.dark:bg-white]="activeTab === 'announcements'"
-                    [class.dark:text-slate-950]="activeTab === 'announcements'"
-                    [class.text-slate-500]="activeTab !== 'announcements'"
-                    class="px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 hover:bg-slate-100 dark:hover:bg-slate-800">
-                {{ 'companySettings.announcements' | translate }}
-            </button>
+          <div class="flex items-center gap-2 p-1.5 bg-white dark:bg-slate-900/50 rounded-[2rem] shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-white/5 w-fit overflow-x-auto no-scrollbar">
+            @for (tab of [
+              {key: 'settings', label: 'companySettings.settings'},
+              {key: 'roles', label: 'companySettings.rolesPermissions'},
+              {key: 'hierarchy', label: 'companySettings.phases'},
+              {key: 'designs', label: 'companySettings.designs'},
+              {key: 'portfolio', label: 'companySettings.portfolio'},
+              {key: 'announcements', label: 'companySettings.announcements'}
+            ]; track tab.key) {
+              <button (click)="setActiveTab(tab.key)" 
+                      [class]="activeTab === tab.key ? 
+                        'bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-lg shadow-slate-900/20 dark:shadow-white/10' : 
+                        'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'"
+                      class="px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all duration-300 whitespace-nowrap">
+                  {{ tab.label | translate }}
+              </button>
+            }
           </div>
         </div>
 
         <!-- Sticky Bottom Bar for Save -->
         @if (activeTab === 'settings' && isDirty) {
-          <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] w-fit animate-in fade-in slide-in-from-bottom-8 duration-500">
-            <div class="bg-slate-900/90 dark:bg-white/90 backdrop-blur-xl px-8 py-4 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/10 dark:border-slate-200 flex items-center gap-8">
+          <div class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] w-full max-w-2xl px-6 animate-premium-fade">
+            <div class="bg-slate-900/90 dark:bg-white/90 backdrop-blur-2xl px-8 py-5 rounded-[3rem] shadow-[0_30px_60px_rgba(0,0,0,0.4)] border border-white/10 dark:border-slate-200 flex items-center justify-between gap-8">
               <div class="hidden md:block">
-                <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-400 dark:text-cyan-600 mb-0.5">Unsaved Changes</p>
-                <p class="text-xs text-white/60 dark:text-slate-600 font-medium">You have modified your business profile.</p>
+                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400 dark:text-cyan-600 mb-1">Unsaved Changes</p>
+                <p class="text-xs text-white/70 dark:text-slate-600 font-bold">Business profile was modified.</p>
               </div>
-              <div class="flex items-center gap-3">
-                <button (click)="loadSettings()" class="px-6 py-3 rounded-xl text-white/50 dark:text-slate-400 text-[11px] font-bold uppercase tracking-widest hover:text-white dark:hover:text-slate-950 transition-colors">
+              <div class="flex items-center gap-4">
+                <button (click)="loadSettings()" class="px-6 py-3 rounded-2xl text-white/50 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest hover:text-white dark:hover:text-slate-950 transition-colors">
                   Discard
                 </button>
                 <button (click)="saveSettings()" 
                         [disabled]="loading"
-                        class="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-[11px] uppercase tracking-[0.2em] shadow-xl shadow-cyan-500/20 hover:scale-105 active:scale-95 transition-all flex items-center">
+                        class="px-8 py-3.5 rounded-[1.5rem] bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black text-[11px] uppercase tracking-[0.2em] shadow-xl shadow-cyan-500/25 hover:scale-105 hover:shadow-cyan-500/40 active:scale-95 transition-all flex items-center">
                   @if (loading) {
                     <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                   }
@@ -1054,55 +1025,79 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                <app-company-design-settings [companyId]="authService.getCurrentUser()?.companyId || 1"></app-company-design-settings>
             </div>
          }
-      </div>
 
       <!-- Package Modal (Shared Logic) -->
       @if (showPackageModal) {
       <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-         <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl p-8 relative overflow-hidden">
-            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">
-               {{ (selectedPackage ? 'editPackage' : 'addPackage') | translate }}
-            </h2>
+         <div class="space-y-12">
+          @if (activeTab === 'settings' && settings) {
+            <!-- Company Identity -->
+            <section class="animate-premium-fade delay-100">
+              <div class="flex items-center gap-4 mb-8">
+                <div class="w-12 h-12 rounded-[1.25rem] bg-indigo-500/10 text-indigo-600 flex items-center justify-center text-xl font-black shadow-inner">ID</div>
+                <h2 class="premium-section-title mb-0">{{ 'companySettings.identity.title' | translate }}</h2>
+              </div>
+              
+              <div class="premium-card-stack">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                  <div class="space-y-4">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ 'companySettings.identity.name' | translate }}</label>
+                    <input type="text" [(ngModel)]="settings.companyName" (ngModelChange)="onModelChange()" class="premium-input" placeholder="Acme Construction Inc.">
+                  </div>
+                  <div class="space-y-4">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ 'companySettings.identity.email' | translate }}</label>
+                    <input type="email" [(ngModel)]="settings.contactEmail" (ngModelChange)="onModelChange()" class="premium-input" placeholder="contact@acme.com">
+                  </div>
+                  <div class="space-y-4">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ 'companySettings.identity.phone' | translate }}</label>
+                    <input type="text" [(ngModel)]="settings.contactPhone" (ngModelChange)="onModelChange()" class="premium-input" placeholder="+1 (555) 000-0000">
+                  </div>
+                  <div class="md:col-span-2 lg:col-span-3 space-y-4">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{{ 'companySettings.identity.address' | translate }}</label>
+                    <textarea [(ngModel)]="settings.address" row="2" (ngModelChange)="onModelChange()" class="premium-input resize-none" placeholder="123 Builder Lane, Construct City"></textarea>
+                  </div>
+                </div>
+              </div>
+            </section>
 
-            <div class="space-y-4">
-               <div>
-                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'packageName' | translate }}</label>
-                  <input type="text" [(ngModel)]="packageForm.name" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold">
-               </div>
-               <div>
-                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'packagePrice' | translate }}</label>
-                  <input type="number" [(ngModel)]="packageForm.price" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold">
-               </div>
-               <div>
-                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'packageDesc' | translate }}</label>
-                  <textarea [(ngModel)]="packageForm.description" rows="3" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-medium"></textarea>
-               </div>
-               <div>
-                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'variationCalc' | translate }}</label>
-                  <select [(ngModel)]="packageForm.variationCalculation" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border-none outline-none font-bold text-slate-900 dark:text-white appearance-none">
-                     <option value="AddFullCost">Add Full Cost</option>
-                     <option value="Differential">Add Difference</option>
-                  </select>
-               </div>
-            </div>
+            <!-- Platform Modules -->
+            @if (isSuperAdmin) {
+              <section class="animate-premium-fade delay-200">
+                <div class="flex items-center gap-4 mb-8">
+                  <div class="w-12 h-12 rounded-[1.25rem] bg-cyan-500/10 text-cyan-500 flex items-center justify-center text-xl font-black shadow-inner">M</div>
+                  <div>
+                    <h2 class="premium-section-title mb-0">{{ 'companySettings.modules.title' | translate }}</h2>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1 opacity-60">ADMINISTRATOR CONTROL PANEL</p>
+                  </div>
+                </div>
 
-            <div class="flex space-x-4 mt-8">
-               <button (click)="showPackageModal = false" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 font-bold text-xs uppercase tracking-widest">
-                  {{ 'common.cancel' | translate }}
-               </button>
-               <button (click)="savePackage()" [disabled]="!packageForm.name || isSavingPackage" class="flex-[2] py-4 rounded-2xl bg-amber-500 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-3 transition-all hover:scale-105 active:scale-95 disabled:opacity-50">
-                  @if (isSavingPackage) {
-                     <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                     </svg>
-                     <span>Processing...</span>
-                  } @else {
-                     <span>{{ 'common.save' | translate }}</span>
-                  }
-               </button>
-            </div>
-         </div>
+                <div class="premium-card-stack bg-slate-900 dark:bg-slate-950 border-cyan-500/20 shadow-cyan-500/5">
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    @for (module of [
+                      {key: 'inventory', icon: '📦', label: 'companySettings.modules.inventory'},
+                      {key: 'equipment', icon: '🚜', label: 'companySettings.modules.equipment'},
+                      {key: 'safety', icon: '🦺', label: 'companySettings.modules.safety'},
+                      {key: 'subcontractor', icon: '🤝', label: 'companySettings.modules.subcontractor'},
+                      {key: 'qualityControl', icon: '✅', label: 'companySettings.modules.qc'},
+                      {key: 'inspectionRequests', icon: '🔍', label: 'companySettings.modules.inspections'}
+                    ]; track module.key) {
+                      <div class="flex items-center justify-between p-6 rounded-3xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] transition-all group">
+                        <div class="flex items-center gap-4">
+                          <span class="text-2xl grayscale group-hover:grayscale-0 transition-all duration-500 scale-90 group-hover:scale-110">{{ module.icon }}</span>
+                          <span class="text-xs font-black text-white/80 uppercase tracking-widest">{{ module.label | translate }}</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" [(ngModel)]="settings[module.key]" (ngModelChange)="onModelChange()" class="sr-only peer">
+                          <div class="w-12 h-6 bg-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500 shadow-inner"></div>
+                        </label>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </section>
+            }
+          }
+</div>
       </div>
       }
 
@@ -1769,5 +1764,11 @@ export class CompanySettingsComponent implements OnInit {
             error: () => this.isDeletingCatalogId = null
          });
       }
+   }
+
+   onModelChange() { }
+
+   setActiveTab(tab: any): void {
+      this.activeTab = tab;
    }
 }

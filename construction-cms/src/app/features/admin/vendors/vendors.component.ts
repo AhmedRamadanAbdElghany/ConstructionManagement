@@ -7,10 +7,12 @@ import { VendorService, Vendor, VendorInvoice, VendorInvoiceSummary, CreateVendo
 import { AuthService } from '../../../core/services/auth.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
 
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+
 @Component({
     selector: 'app-vendors',
     standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
+    imports: [CommonModule, FormsModule, TranslateModule, LoadingSpinnerComponent],
     template: `
         <div class="p-6 transition-all duration-500 font-['Outfit']">
             <!-- Header -->
@@ -76,10 +78,7 @@ import { I18nService } from '../../../core/i18n/i18n.service';
             </div>
 
             @if (loading) {
-                <div class="flex flex-col items-center justify-center py-24 animate-premium-fade">
-                    <div class="w-20 h-20 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin shadow-xl"></div>
-                    <p class="mt-6 text-slate-400 font-black uppercase tracking-[0.25em] text-[10px] animate-premium-pulse">Orchestrating Vendor Intelligence...</p>
-                </div>
+                <app-loading-spinner [label]="'vendors.loading_vendors' | translate"></app-loading-spinner>
             } @else {
                 <!-- Vendors List Tab -->
                 @if (activeTab === 'vendors') {
