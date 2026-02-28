@@ -5,11 +5,13 @@ import { TopbarComponent } from './layout/topbar/topbar.component';
 import { ThemeService } from './core/theme/theme.service';
 import { I18nService } from './core/i18n/i18n.service';
 import { CommonModule } from '@angular/common';
+import { LoadingSpinnerComponent } from './shared/components/loading-spinner/loading-spinner.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, SidebarComponent, TopbarComponent, CommonModule],
+  imports: [RouterOutlet, SidebarComponent, TopbarComponent, CommonModule, LoadingSpinnerComponent, TranslateModule],
   templateUrl: './app.html',
   styleUrls: ['./app.scss']
 })

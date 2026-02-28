@@ -4,11 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { QualityService } from '../../../core/services/quality.service';
 import { QualityDefect } from '../../../shared/interfaces';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+
 
 @Component({
     selector: 'app-quality-defects',
     standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
+    imports: [CommonModule, FormsModule, TranslateModule, LoadingSpinnerComponent],
     template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
@@ -35,7 +37,7 @@ import { QualityDefect } from '../../../shared/interfaces';
         <!-- Loading State -->
         @if (isLoading) {
           <div class="flex items-center justify-center py-20">
-            <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            <app-loading-spinner [centered]="true"></app-loading-spinner>
           </div>
         }
 

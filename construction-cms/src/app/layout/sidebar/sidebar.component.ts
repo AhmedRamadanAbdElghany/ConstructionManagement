@@ -292,7 +292,6 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
               <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.finance' | translate }}</span>
             </a>
 
-
             <a routerLink="/admin/location-tracking"
                routerLinkActive="nav-active"
                class="nav-item group"
@@ -414,7 +413,6 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
             </a>
             }
         }
-
 
         @if (currentRole !== 'SuperAdmin' && !isInventoryOwner && !isPending) {
           @if ((isWorker && hasApprovedCompany()) || isAdmin) {
@@ -703,7 +701,6 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
           </a>
         }
       </nav>
-
 
 
       <!-- User Profile -->

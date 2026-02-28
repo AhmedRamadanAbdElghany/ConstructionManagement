@@ -6,11 +6,13 @@ import { Subject, takeUntil } from 'rxjs';
 import { VendorService, VendorSpendReport, VendorSpendItem, SpendByDateItem } from '../../../core/services/vendor.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { format } from 'date-fns';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+
 
 @Component({
   selector: 'app-vendor-analytics',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, LoadingSpinnerComponent],
   template: `
     <div class="p-6 max-w-7xl mx-auto space-y-8">
       <!-- Header -->
@@ -42,7 +44,7 @@ import { format } from 'date-fns';
 
       @if (loading) {
         <div class="flex flex-col items-center justify-center py-20 space-y-4">
-          <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+          <app-loading-spinner [centered]="true"></app-loading-spinner>
           <p class="text-slate-400 font-medium animate-pulse">{{ 'common.loading_reports' | translate }}...</p>
         </div>
       } @else if (report) {

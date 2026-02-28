@@ -5,6 +5,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DesignService } from '../../../../core/services/design.service';
 import { Design, DesignCategory, CreateCategoryRequest, CreateDesignRequest } from '../../../../shared/interfaces';
 import { AuthService } from '../../../../core/services/auth.service';
+import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
+
 
 interface DesignGroup {
     latestDesign: Design;
@@ -15,7 +17,7 @@ interface DesignGroup {
 @Component({
     selector: 'app-designs-tab',
     standalone: true,
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, LoadingSpinnerComponent],
     template: `
         <div class="min-h-screen bg-transparent transition-colors duration-500 pb-20">
             <!-- Breadcrumbs / Navigation -->
@@ -58,7 +60,7 @@ interface DesignGroup {
 
             @if (loading) {
                 <div class="py-24 flex flex-col items-center justify-center space-y-4">
-                    <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                    <app-loading-spinner [centered]="true"></app-loading-spinner>
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] animate-pulse">Loading Explorer...</p>
                 </div>
             } @else {
@@ -215,7 +217,6 @@ interface DesignGroup {
                         <textarea [(ngModel)]="newCategory.description" rows="3" class="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 font-medium transition-all"></textarea>
                     </div>
 
-
                 </div>
                 <div class="p-8 border-t border-slate-100 dark:border-white/5 flex items-center gap-4 bg-slate-50/50 dark:bg-white/5">
                     <button (click)="showCreateCategoryModal = false" class="flex-1 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 transition-all text-slate-600 dark:text-slate-400">{{ 'common.cancel' | translate }}</button>
@@ -266,7 +267,7 @@ interface DesignGroup {
                 <div class="p-8 space-y-4 max-h-80 overflow-y-auto">
                     @if (templatesLoading) {
                         <div class="py-12 text-center flex flex-col items-center justify-center gap-3">
-                            <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                            <app-loading-spinner [centered]="true"></app-loading-spinner>
                             <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest animate-pulse">Loading templates...</p>
                         </div>
                     } @else if (companyTemplates.length === 0) {

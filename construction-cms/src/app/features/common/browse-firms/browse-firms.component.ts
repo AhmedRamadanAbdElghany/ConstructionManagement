@@ -8,11 +8,13 @@ import { AuthService } from '../../../core/services/auth.service';
 import { AnnouncementService } from '../../../core/services/announcement.service';
 import { CompanyAnnouncement } from '../../../core/models/announcement.model';
 import { CompanyPortfolioComponent } from '../../admin/company-settings/company-portfolio/company-portfolio.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+
 
 @Component({
   selector: 'app-browse-firms',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, CompanyPortfolioComponent],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, CompanyPortfolioComponent, LoadingSpinnerComponent],
   template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
@@ -192,7 +194,7 @@ import { CompanyPortfolioComponent } from '../../admin/company-settings/company-
 
         @if (loading) {
           <div class="text-center py-20">
-            <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            <app-loading-spinner [centered]="true"></app-loading-spinner>
             <p class="text-slate-400 font-black uppercase tracking-widest text-sm">{{ 'common.loading' | translate }}...</p>
           </div>
         }
@@ -300,7 +302,7 @@ import { CompanyPortfolioComponent } from '../../admin/company-settings/company-
             <div class="p-8 overflow-y-auto custom-scrollbar flex-grow bg-slate-50/50 dark:bg-slate-950/30">
                @if (announcementsLoading) {
                  <div class="flex flex-col items-center justify-center h-full py-20">
-                    <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                    <app-loading-spinner [centered]="true"></app-loading-spinner>
                     <p class="text-slate-400 font-black uppercase tracking-widest text-xs">{{ 'browse_firms.fetching_announcements' | translate }}</p>
                  </div>
                } @else if (announcements.length === 0) {

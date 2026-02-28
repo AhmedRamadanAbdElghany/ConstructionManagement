@@ -5,11 +5,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { AnalyticsService, FinancialAnalytics, ProjectFinancialSummary } from '../../../core/services/analytics.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
     selector: 'app-profitability-dashboard',
     standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
+    imports: [CommonModule, FormsModule, TranslateModule, LoadingSpinnerComponent],
     templateUrl: './profitability-dashboard.component.html',
     styleUrls: ['./profitability-dashboard.component.scss']
 })

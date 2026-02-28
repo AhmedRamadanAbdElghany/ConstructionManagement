@@ -5,9 +5,7 @@ import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-
 import { LanguageSwitcherComponent } from '../../../layout/language-switcher/language-switcher.component';
-
 
 @Component({
   selector: 'app-login',

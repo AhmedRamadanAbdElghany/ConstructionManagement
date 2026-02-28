@@ -332,7 +332,6 @@ export interface CompanySettings {
   enableLocationSubmit?: boolean;
 }
 
-
 export interface ProjectSettings {
   enableDelayNotification: boolean | null;
   delayNotificationIsOneTimeOnly: boolean | null;

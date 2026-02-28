@@ -366,7 +366,6 @@ export class WorkerLocationComponent implements OnInit {
                 this.cdr.detectChanges();
                 this.loadGeofenceStatus(); // Refresh status after submission
 
-
                 // Clear success message after 3 seconds
                 setTimeout(() => {
                     this.successMessage = '';

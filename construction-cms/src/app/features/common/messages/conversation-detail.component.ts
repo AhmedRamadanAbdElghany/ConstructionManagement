@@ -7,17 +7,19 @@ import { Subject, takeUntil } from 'rxjs';
 import { MessagingService, ConversationDetailDto, CompanyMessageDto, SendMessageRequest, CanSendMessageResult } from '../../../core/services/messaging.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+
 
 @Component({
   selector: 'app-conversation-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, LoadingSpinnerComponent],
   template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
       <!-- Loading State -->
       @if (isLoading) {
         <div class="flex items-center justify-center py-20">
-          <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+          <app-loading-spinner [centered]="true"></app-loading-spinner>
         </div>
       }
 

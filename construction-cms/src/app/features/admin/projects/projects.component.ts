@@ -400,7 +400,6 @@ import { map } from 'rxjs/operators';
                                 <label class="absolute left-7 top-7 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-7 peer-focus:top-3 peer-focus:text-[9px] peer-focus:text-cyan-500 pointer-events-none">{{ 'projects.project_title' | translate }}</label>
                              </div>
 
-
                             <div class="grid grid-cols-2 gap-5">
                                <div class="relative group/field">
                                   <input type="date" [(ngModel)]="createForm.startDate"
@@ -742,7 +741,6 @@ export class ProjectsComponent implements OnInit {
     if (!f.name || !f.startDate || !f.endDate) return false;
 
 
-
     // Calculation Method
     if (f.calculationMethod === 'Measured' && (!f.totalContractValue || f.totalContractValue <= 0)) return false;
     if (f.calculationMethod === 'Packages' && !f.packageId) return false;
@@ -764,7 +762,6 @@ export class ProjectsComponent implements OnInit {
     if (!f.endDate) errors.push(this.translate.instant('projects.target_end_date'));
 
 
-
     if (f.calculationMethod === 'Measured' && (!f.totalContractValue || f.totalContractValue <= 0)) {
       errors.push(this.translate.instant('projects.total_project_cost'));
     }
@@ -778,7 +775,6 @@ export class ProjectsComponent implements OnInit {
 
     return errors;
   }
-
 
 
   private i18nService = inject(I18nService);
@@ -869,7 +865,6 @@ export class ProjectsComponent implements OnInit {
     };
     this.showCreateModal = true;
   }
-
 
 
   isCreatingProject = false;

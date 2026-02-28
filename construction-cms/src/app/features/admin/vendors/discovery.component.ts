@@ -8,11 +8,13 @@ import { ProjectService } from '../../../core/services/project.service';
 import { Project } from '../../../shared/interfaces';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import * as L from 'leaflet';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+
 
 @Component({
   selector: 'app-vendor-discovery',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, LoadingSpinnerComponent],
   template: `
     <div class="flex flex-col h-screen bg-slate-50 dark:bg-slate-950 overflow-hidden">
       <!-- Search Bar -->
@@ -187,7 +189,7 @@ import * as L from 'leaflet';
               <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
                 @if (loading) {
                   <div class="flex flex-col items-center justify-center py-12 space-y-3">
-                    <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                    <app-loading-spinner [centered]="true"></app-loading-spinner>
                     <p class="text-slate-400 text-sm animate-pulse">{{ 'common.loading' | translate }}...</p>
                   </div>
                 } @else {

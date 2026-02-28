@@ -966,7 +966,6 @@ export class CompanyDetailComponent implements OnInit {
     { id: 'perms', label: 'Platform Capabilities' }
   ];
 
-
   users: any[] = [];
 
   roles: any[] = [];

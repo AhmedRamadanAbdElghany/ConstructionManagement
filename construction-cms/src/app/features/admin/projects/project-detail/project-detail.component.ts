@@ -163,7 +163,6 @@ import { map } from 'rxjs/operators';
             }
           </div>
 
-
           <!-- Designs Tab -->
           @if (activeTab === 'designs' && project) {
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden transition-all animate-in fade-in duration-500">
@@ -1148,7 +1147,6 @@ import { map } from 'rxjs/operators';
                            </div>
                         </div>
 
-
                      </div>
 
                       <!-- 2. Financial Config -->
@@ -1738,7 +1736,6 @@ export class ProjectDetailComponent implements OnInit {
 
    // Daily Log View Logic (at the end of template context conceptually, but physically before properties)
 
-
    setActiveTab(key: any) {
       this.activeTab = key;
    }
@@ -2029,7 +2026,6 @@ export class ProjectDetailComponent implements OnInit {
       window.history.back();
    }
 
-
    openRoleModal(user: any) {
       this.userToEdit = user;
       this.showRoleModal = true;
@@ -2202,7 +2198,6 @@ export class ProjectDetailComponent implements OnInit {
          reader.readAsDataURL(file);
       }
    }
-
 
 
    calculateDuration(): number {

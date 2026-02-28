@@ -419,8 +419,6 @@ import { TranslateModule } from '@ngx-translate/core';
                   </div>
                 </section>
 
-
-
                <!-- Daily Log Policy -->
                <section class="pt-6">
                  <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
@@ -685,7 +683,6 @@ export class CompaniesComponent implements OnInit {
     });
   }
 
-
   ngOnInit() {
     this.loadData();
   }
@@ -770,7 +767,6 @@ export class CompaniesComponent implements OnInit {
       clientCanSeeMedia: true,
       clientCanSeeProjectItems: true
     });
-
 
     this.companyForm.get('adminName')?.setValidators([Validators.required, Validators.minLength(3)]);
     this.companyForm.get('adminEmail')?.setValidators([Validators.required, Validators.email]);

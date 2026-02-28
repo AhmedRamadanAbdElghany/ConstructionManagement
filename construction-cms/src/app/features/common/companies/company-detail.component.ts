@@ -15,17 +15,19 @@ import { AuthService } from '../../../core/services/auth.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { RequestInspectionDialogComponent } from '../../client/client-inspections/request-inspection-dialog.component';
 import { CompanyAnnouncementsDialogComponent } from './company-announcements-dialog.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+
 
 @Component({
   selector: 'app-company-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, RequestInspectionDialogComponent, CompanyAnnouncementsDialogComponent],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, RequestInspectionDialogComponent, CompanyAnnouncementsDialogComponent, LoadingSpinnerComponent],
   template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
       <!-- Loading State -->
       @if (isLoading) {
         <div class="flex items-center justify-center py-20">
-          <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+          <app-loading-spinner [centered]="true"></app-loading-spinner>
         </div>
       }
 

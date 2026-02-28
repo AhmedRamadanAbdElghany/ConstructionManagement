@@ -4,11 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { AnnouncementService } from '../../../../core/services/announcement.service';
 import { CompanyAnnouncement, AnnouncementType } from '../../../../core/models/announcement.model';
 import { AuthService } from '../../../../core/services/auth.service';
+import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
+
 
 @Component({
     selector: 'app-company-announcements-manager',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, LoadingSpinnerComponent],
     template: `
     <div class="space-y-8">
       <!-- Header Actions -->
@@ -27,7 +29,7 @@ import { AuthService } from '../../../../core/services/auth.service';
       <!-- Announcements Grid -->
       @if (loading) {
         <div class="flex flex-col items-center justify-center py-20">
-          <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+          <app-loading-spinner [centered]="true"></app-loading-spinner>
           <p class="text-slate-400 font-black uppercase tracking-widest text-xs">Loading Announcements...</p>
         </div>
       } @else if (announcements.length === 0) {

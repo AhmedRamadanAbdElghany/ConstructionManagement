@@ -887,7 +887,6 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                    </div>
                 </div>
 
-
                <!-- Package Management -->
                @if (settings.allowPackages) {
                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">

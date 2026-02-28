@@ -277,7 +277,6 @@ export class MockDataService {
     ]);
   }
 
-
   getDelayedProjectsStats(): Observable<{ managerName: string, count: number }[]> {
     const delayedProjects = this.projects.filter(p => p.status === 'Delayed');
     const stats = new Map<string, number>();

@@ -240,6 +240,7 @@ builder.Services.AddScoped<IDailyTaskBoardService, DailyTaskBoardService>();
 builder.Services.AddScoped<IWorkflowBackgroundJobService, WorkflowBackgroundJobService>();
 
 // Feature Flag Service
+builder.Services.AddMemoryCache();
 builder.Services.AddScoped<ICompanyFeatureService, CompanyFeatureService>();
 
 // IMPORTANT CACHE NOTES:

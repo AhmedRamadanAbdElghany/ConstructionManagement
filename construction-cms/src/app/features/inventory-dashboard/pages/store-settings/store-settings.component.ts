@@ -3,18 +3,20 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { VendorService, Vendor, CreateVendorRequest } from '../../../../core/services/vendor.service';
+import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
+
 
 @Component({
   selector: 'app-store-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, LoadingSpinnerComponent],
   template: `
     <div class="p-6">
       <h1 class="text-2xl font-bold mb-6">{{ 'inventory_dashboard.store_settings' | translate }}</h1>
       
       <!-- Loading State -->
       <div *ngIf="loading" class="flex justify-center items-center h-48">
-        <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+        <app-loading-spinner [centered]="true"></app-loading-spinner>
       </div>
       
       <!-- Error State -->

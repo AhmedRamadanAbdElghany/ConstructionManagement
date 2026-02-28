@@ -5,11 +5,13 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { SubcontractorService, SubcontractorRating, CreateRatingRequest, RatingSummaryDto } from '../../../../core/services/subcontractor.service';
 import { I18nService } from '../../../../core/i18n/i18n.service';
+import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
+
 
 @Component({
   selector: 'app-subcontractor-ratings',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, LoadingSpinnerComponent],
   template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
@@ -151,7 +153,7 @@ import { I18nService } from '../../../../core/i18n/i18n.service';
         <!-- Ratings List -->
         <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
           <div *ngIf="isLoading" class="flex items-center justify-center py-20">
-            <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            <app-loading-spinner [centered]="true"></app-loading-spinner>
           </div>
           <div *ngIf="!isLoading && filteredRatings.length === 0" class="text-center py-20">
             <svg class="w-16 h-16 mx-auto text-slate-300 dark:text-slate-700 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

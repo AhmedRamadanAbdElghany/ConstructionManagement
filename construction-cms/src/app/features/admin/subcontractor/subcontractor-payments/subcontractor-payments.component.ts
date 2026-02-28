@@ -5,11 +5,13 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { SubcontractorService, SubcontractorPayment, CreatePaymentRequest, UpdatePaymentStatusRequest } from '../../../../core/services/subcontractor.service';
 import { I18nService } from '../../../../core/i18n/i18n.service';
+import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
+
 
 @Component({
   selector: 'app-subcontractor-payments',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, LoadingSpinnerComponent],
   template: `
     <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
@@ -166,7 +168,7 @@ import { I18nService } from '../../../../core/i18n/i18n.service';
         <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
           @if (isLoading) {
             <div class="flex items-center justify-center py-20">
-              <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+              <app-loading-spinner [centered]="true"></app-loading-spinner>
             </div>
           } @else if (filteredPayments.length === 0) {
             <div class="text-center py-20">

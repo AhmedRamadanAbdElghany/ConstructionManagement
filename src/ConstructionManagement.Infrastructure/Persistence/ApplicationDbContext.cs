@@ -359,6 +359,11 @@ public class ApplicationDbContext : DbContext
             }
         }
 
+        // ── Fix Global Query Filter Warnings ───────────────────────────────────
+        // Add query filters to child entities that reference parent entities with query filters
+        // This ensures consistent filtering when navigating from child to parent
+        ConfigureChildEntityQueryFilters(modelBuilder);
+
 
         // 1. Composite / Junction Table Keys
         modelBuilder.Entity<UserRole>().HasKey(ur => new { ur.UserId, ur.RoleId });
@@ -2631,5 +2636,153 @@ public class ApplicationDbContext : DbContext
             _companyContext.CompanyId == null || 
             e.CompanyId == null ||
             e.CompanyId == _companyContext.CompanyId);
+    }
+
+    // ── Query Filters for Child Entities ───────────────────────────────────────
+    // These filters ensure that child entities (without CompanyId) are filtered
+    // based on their parent entity's CompanyId when navigating relationships.
+    // This fixes EF Core warnings about global query filters on required ends of relationships.
+    private void ConfigureChildEntityQueryFilters(ModelBuilder modelBuilder)
+    {
+        // DeliveryCostTier -> VendorProduct (VendorProduct has query filter)
+        modelBuilder.Entity<DeliveryCostTier>().HasQueryFilter(e =>
+            e.VendorProduct == null ||
+            e.VendorProduct.CompanyId == null ||
+            _companyContext.CompanyId == null ||
+            e.VendorProduct.CompanyId == _companyContext.CompanyId);
+
+        // DisciplinaryAppeal -> DisciplinaryAction -> Company (Company has query filter via ICompanyEntity)
+        modelBuilder.Entity<DisciplinaryAppeal>().HasQueryFilter(e =>
+            e.Action == null ||
+            e.Action.CompanyId == null ||
+            _companyContext.CompanyId == null ||
+            e.Action.CompanyId == _companyContext.CompanyId);
+
+        // EmployeeDocumentVersion -> EmployeeDocument -> Company
+        modelBuilder.Entity<EmployeeDocumentVersion>().HasQueryFilter(e =>
+            e.Document == null ||
+            e.Document.CompanyId == null ||
+            _companyContext.CompanyId == null ||
+            e.Document.CompanyId == _companyContext.CompanyId);
+
+        // EquipmentCostBreakdown -> Equipment -> Company
+        modelBuilder.Entity<EquipmentCostBreakdown>().HasQueryFilter(e =>
+            e.Equipment == null ||
+            e.Equipment.CompanyId == null ||
+            _companyContext.CompanyId == null ||
+            e.Equipment.CompanyId == _companyContext.CompanyId);
+
+        // InspectionChatMessage -> InspectionRequest -> Company
+        modelBuilder.Entity<InspectionChatMessage>().HasQueryFilter(e =>
+            e.InspectionRequest == null ||
+            e.InspectionRequest.CompanyId == null ||
+            _companyContext.CompanyId == null ||
+            e.InspectionRequest.CompanyId == _companyContext.CompanyId);
+
+        // InspectionChecklistResponse -> InspectionRequest -> Company
+        modelBuilder.Entity<InspectionChecklistResponse>().HasQueryFilter(e =>
+            e.InspectionRequest == null ||
+            e.InspectionRequest.CompanyId == null ||
+            _companyContext.CompanyId == null ||
+            e.InspectionRequest.CompanyId == _companyContext.CompanyId);
+
+        // InspectionChecklistItem -> InspectionChecklistTemplate -> Company
+        modelBuilder.Entity<InspectionChecklistItem>().HasQueryFilter(e =>
+            e.Template == null ||
+            e.Template.CompanyId == null ||
+            _companyContext.CompanyId == null ||
+            e.Template.CompanyId == _companyContext.CompanyId);
+
+        // InspectionCustomFieldValue -> InspectionRequest -> Company
+        modelBuilder.Entity<InspectionCustomFieldValue>().HasQueryFilter(e =>
+            e.InspectionRequest == null ||
+            e.InspectionRequest.CompanyId == null ||
+            _companyContext.CompanyId == null ||
+            e.InspectionRequest.CompanyId == _companyContext.CompanyId);
+
+        // InspectionAudioNote -> InspectionRequest -> Company
+        modelBuilder.Entity<InspectionAudioNote>().HasQueryFilter(e =>
+            e.InspectionRequest == null ||
+            e.InspectionRequest.CompanyId == null ||
+            _companyContext.CompanyId == null ||
+            e.InspectionRequest.CompanyId == _companyContext.CompanyId);
+
+        // InvoiceImage -> ItemInvoice (via Invoice navigation)
+        modelBuilder.Entity<InvoiceImage>().HasQueryFilter(e =>
+            e.Invoice == null ||
+            e.Invoice.CompanyId == null ||
+            _companyContext.CompanyId == null ||
+            e.Invoice.CompanyId == _companyContext.CompanyId);
+
+        // LocationRequestTarget -> LocationRequest -> Company
+        modelBuilder.Entity<LocationRequestTarget>().HasQueryFilter(e =>
+            e.Request == null ||
+            e.Request.CompanyId == null ||
+            _companyContext.CompanyId == null ||
+            e.Request.CompanyId == _companyContext.CompanyId);
+
+        // OnboardingTask -> OnboardingProcess -> Company
+        modelBuilder.Entity<OnboardingTask>().HasQueryFilter(e =>
+            e.Process == null ||
+            e.Process.CompanyId == null ||
+            _companyContext.CompanyId == null ||
+            e.Process.CompanyId == _companyContext.CompanyId);
+
+        // OnboardingTaskTemplate -> OnboardingTemplate -> Company
+        modelBuilder.Entity<OnboardingTaskTemplate>().HasQueryFilter(e =>
+            e.Template == null ||
+            e.Template.CompanyId == null ||
+            _companyContext.CompanyId == null ||
+            e.Template.CompanyId == _companyContext.CompanyId);
+
+        // ProjectCurrencyBudget -> Project -> Company
+        modelBuilder.Entity<ProjectCurrencyBudget>().HasQueryFilter(e =>
+            e.Project == null ||
+            e.Project.CompanyId == null ||
+            _companyContext.CompanyId == null ||
+            e.Project.CompanyId == _companyContext.CompanyId);
+
+        // ── User Entity Relationship Filters ─────────────────────────────────────
+        // Entities that reference User (which has query filter) need their own filters
+
+        // CallParticipant -> User
+        modelBuilder.Entity<CallParticipant>().HasQueryFilter(e =>
+            e.User == null ||
+            e.User.CompanyId == null ||
+            _companyContext.CompanyId == null ||
+            e.User.CompanyId == _companyContext.CompanyId);
+
+        // CallSession -> User (Initiator)
+        modelBuilder.Entity<CallSession>().HasQueryFilter(e =>
+            e.Initiator == null ||
+            e.Initiator.CompanyId == null ||
+            _companyContext.CompanyId == null ||
+            e.Initiator.CompanyId == _companyContext.CompanyId);
+
+        // CallSignal -> User (Sender)
+        modelBuilder.Entity<CallSignal>().HasQueryFilter(e =>
+            e.Sender == null ||
+            e.Sender.CompanyId == null ||
+            _companyContext.CompanyId == null ||
+            e.Sender.CompanyId == _companyContext.CompanyId);
+
+        // CategoryRequest -> User
+        modelBuilder.Entity<CategoryRequest>().HasQueryFilter(e =>
+            e.User == null ||
+            e.User.CompanyId == null ||
+            _companyContext.CompanyId == null ||
+            e.User.CompanyId == _companyContext.CompanyId);
+
+        // CompanyUser -> User (has its own CompanyId, filter by both)
+        modelBuilder.Entity<CompanyUser>().HasQueryFilter(e =>
+            _companyContext.CompanyId == null ||
+            e.CompanyId == _companyContext.CompanyId);
+
+        // CurrencyConversionLog -> User (ConvertedByUser)
+        modelBuilder.Entity<CurrencyConversionLog>().HasQueryFilter(e =>
+            e.ConvertedByUser == null ||
+            e.ConvertedByUser.CompanyId == null ||
+            _companyContext.CompanyId == null ||
+            e.ConvertedByUser.CompanyId == _companyContext.CompanyId);
     }
 }

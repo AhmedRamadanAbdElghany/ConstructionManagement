@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { InspectionService, InspectionRequestList, InspectionRequest, InspectionQuote, InspectionMessage, InspectionPayment } from '../../../core/services/inspection.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+
 
 type DetailTab = 'overview' | 'quotes' | 'session' | 'chat' | 'payment';
 
@@ -32,7 +34,7 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
 @Component({
     selector: 'app-client-inspections',
     standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
+    imports: [CommonModule, FormsModule, TranslateModule, LoadingSpinnerComponent],
     template: `
 <div class="inspections-shell min-h-screen bg-slate-50 dark:bg-slate-950 p-6">
   
@@ -75,7 +77,7 @@ const PROPERTY_TYPE_MAP: Record<number, string> = {
 
     @if (isLoading()) {
       <div class="flex items-center justify-center py-24">
-        <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+        <app-loading-spinner [centered]="true"></app-loading-spinner>
       </div>
     } @else if (inspections().length === 0) {
       <div class="flex flex-col items-center justify-center py-24 bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-xl">
