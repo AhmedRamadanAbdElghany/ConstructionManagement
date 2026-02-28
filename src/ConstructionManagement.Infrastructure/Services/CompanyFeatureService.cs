@@ -295,7 +295,7 @@ public class CompanyFeatureService : ICompanyFeatureService
 
     public Task<bool> IsPaymentGatewayEnabledAsync() => IsFeatureEnabledAsync("EnablePaymentGateway");
 
-    public Task<bool> IsMarketplaceEnabledAsync() => IsFeatureEnabledAsync("EnableMarketplace");
+    public Task<bool> IsMarketplaceEnabledAsync() => Task.FromResult(true);
 
     public Task<bool> IsVideoCallsEnabledAsync() => IsFeatureEnabledAsync("EnableVideoCalls");
 
@@ -303,9 +303,9 @@ public class CompanyFeatureService : ICompanyFeatureService
 
     public Task<bool> IsTasksEnabledAsync() => IsFeatureEnabledAsync("EnableTasks");
 
-    public Task<bool> IsMessagingEnabledAsync() => IsFeatureEnabledAsync("EnableMessaging");
+    public Task<bool> IsMessagingEnabledAsync() => Task.FromResult(true);
 
-    public Task<bool> IsSocialWallEnabledAsync() => IsFeatureEnabledAsync("EnableSocialWall");
+    public Task<bool> IsSocialWallEnabledAsync() => Task.FromResult(true);
 
     /// <summary>
     /// Invalidates the feature flag cache for a specific company.

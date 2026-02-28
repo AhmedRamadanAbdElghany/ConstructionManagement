@@ -939,7 +939,7 @@ export class NearbyVendorsComponent implements OnInit {
   radiusOptions = [1, 5, 10, 25, 50];
 
   private get apiUrl(): string {
-    return (window as any).__API_URL__ || 'https://localhost:7001/api';
+    return (window as any).__API_URL__ || '/api';
   }
 
   ngOnInit(): void {

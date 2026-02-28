@@ -110,7 +110,7 @@ export enum SourceType {
     providedIn: 'root'
 })
 export class SocialMediaService {
-    private baseUrl = '/api/social-media';
+    private baseUrl = '/api/SocialMedia';
 
     constructor(private http: HttpClient) { }
 

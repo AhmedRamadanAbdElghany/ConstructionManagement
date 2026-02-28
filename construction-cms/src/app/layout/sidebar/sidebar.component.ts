@@ -122,7 +122,6 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
         }
 
         @if (isAdmin) {
-
           @if (currentRole !== 'SuperAdmin') {
             @if (settings?.allowHR) {
               <a routerLink="/admin/hr" 

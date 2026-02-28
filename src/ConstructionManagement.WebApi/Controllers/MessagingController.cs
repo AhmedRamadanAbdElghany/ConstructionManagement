@@ -44,11 +44,8 @@ public class MessagingController : BaseApiController
     [HttpPost("conversations")]
     public async Task<ActionResult<ConversationDto>> StartConversation([FromForm] StartConversationRequest request)
     {
-        // Check if messaging feature is enabled
-        if (!await IsFeatureEnabledAsync("EnableMessaging"))
-        {
-            return FeatureDisabled<ConversationDto>("Messaging");
-        }
+        // Messaging is a general feature available to all users (including unverified company owners)
+        // Feature check removed as per requirement
 
         try
         {

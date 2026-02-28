@@ -284,7 +284,7 @@ export class SettingsService {
      * Check if Messaging feature is enabled
      */
     isMessagingEnabled(): boolean {
-        return this.isFeatureEnabled('enableMessaging');
+        return true; // Messaging is available to all users
     }
 
     /**
@@ -305,7 +305,7 @@ export class SettingsService {
      * Check if Social Wall feature is enabled
      */
     isSocialWallEnabled(): boolean {
-        return this.isFeatureEnabled('enableSocialWall');
+        return true; // Social wall is available to all users
     }
 
     // --- Company Packages ---

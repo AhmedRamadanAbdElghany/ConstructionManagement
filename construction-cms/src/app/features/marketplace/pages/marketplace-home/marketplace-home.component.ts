@@ -986,7 +986,7 @@ export class MarketplaceHomeComponent implements OnInit {
   featuredVendors: FeaturedVendor[] = [];
 
   private get apiUrl(): string {
-    return (window as any).__API_URL__ || 'https://localhost:7001/api';
+    return (window as any).__API_URL__ || '/api';
   }
 
   ngOnInit(): void {

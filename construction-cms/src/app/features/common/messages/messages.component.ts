@@ -653,7 +653,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
       this.availableTabs.push({
         key: 'SuperAdmin',
         label: 'messages.tabs.superadmin',
-        unreadCount: this.conversations.filter(c => c.conversationType === 'SuperAdmin' || c.companyId === this.superAdminCompanyId).reduce((acc, c) => acc + c.unreadCount, 0)
+        unreadCount: this.conversations.filter(c => c.conversationType === 'SuperAdmin').reduce((acc, c) => acc + c.unreadCount, 0)
       });
       return;
     }
@@ -669,13 +669,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
     const hasCompanyConversations = this.conversations.some(c => c.conversationType === 'Company');
     const hasWorkerConversations = this.conversations.some(c => c.conversationType === 'Worker');
     const hasClientConversations = this.conversations.some(c => c.conversationType === 'Client');
-    const hasSuperAdminConversations = this.conversations.some(c =>
-      c.conversationType === 'SuperAdmin' ||
-      (this.superAdminCompanyId && c.companyId === this.superAdminCompanyId) ||
-      c.initiatorName?.toLowerCase().includes('admin') ||
-      c.companyName?.toLowerCase().includes('support') ||
-      c.companyName?.toLowerCase().includes('admin')
-    );
+    const hasSuperAdminConversations = this.conversations.some(c => c.conversationType === 'SuperAdmin');
 
     // Add specific filter tabs if relevant
     if (hasCompanyConversations) {
@@ -709,11 +703,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
         key: 'SuperAdmin',
         label,
         unreadCount: this.conversations.filter(c =>
-          c.conversationType === 'SuperAdmin' ||
-          (this.superAdminCompanyId && c.companyId === this.superAdminCompanyId) ||
-          c.initiatorName?.toLowerCase().includes('admin') ||
-          c.companyName?.toLowerCase().includes('support') ||
-          c.companyName?.toLowerCase().includes('admin')
+          c.conversationType === 'SuperAdmin'
         ).reduce((acc, c) => acc + c.unreadCount, 0)
       });
     }
@@ -732,11 +722,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
     // Filter by tab
     if (this.activeTab === 'SuperAdmin') {
       filtered = filtered.filter(c =>
-        c.conversationType === 'SuperAdmin' ||
-        (this.superAdminCompanyId && c.companyId === this.superAdminCompanyId) ||
-        c.initiatorName?.toLowerCase().includes('admin') ||
-        c.companyName?.toLowerCase().includes('support') ||
-        c.companyName?.toLowerCase().includes('admin')
+        c.conversationType === 'SuperAdmin'
       );
     } else if (this.activeTab !== 'all') {
       filtered = filtered.filter(c => c.conversationType === this.activeTab);
