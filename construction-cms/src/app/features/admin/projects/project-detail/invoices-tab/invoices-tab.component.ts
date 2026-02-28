@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { InvoicesService, InvoiceListItemDto, InvoiceStatisticsDto } from '../../../../../core/services/invoices.service';
 import { ProjectItem } from '../../../../../shared/interfaces';
+import { LoadingSpinnerComponent } from '../../../../../shared/components/loading-spinner/loading-spinner.component';
 
 export type ViewMode = 'items' | 'phases';
 
@@ -32,7 +33,7 @@ export interface PhaseInput {
 @Component({
     selector: 'app-invoices-tab',
     standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
+    imports: [CommonModule, FormsModule, TranslateModule, LoadingSpinnerComponent],
     template: `
         <div class="invoices-tab">
             <!-- Header with Stats and View Toggle -->
@@ -96,9 +97,7 @@ export interface PhaseInput {
 
             <!-- Loading State -->
             @if (isLoading) {
-                <div class="flex items-center justify-center py-12">
-                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500"></div>
-                </div>
+                <app-loading-spinner [centered]="true"></app-loading-spinner>
             }
 
             <!-- Items View -->

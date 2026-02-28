@@ -641,6 +641,7 @@ export class RegisterComponent {
       fullName: this.fullName,
       email: this.email,
       password: this.password,
+      confirmPassword: this.confirmPassword,
       phone: this.phone || undefined,
       userType: this.userType!
     }).subscribe({

@@ -4,11 +4,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { LocationTrackingService, WorkersZoneSummaryDto, WorkerZoneStatusDto } from '../../../../core/services/location-tracking.service';
+import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
    selector: 'app-worker-zone-status',
    standalone: true,
-   imports: [CommonModule, TranslateModule, FormsModule, RouterModule],
+   imports: [CommonModule, TranslateModule, FormsModule, RouterModule, LoadingSpinnerComponent],
    template: `
     <div class="p-6 pb-24 min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
       <div class="max-w-7xl mx-auto space-y-6">
@@ -33,9 +34,7 @@ import { LocationTrackingService, WorkersZoneSummaryDto, WorkerZoneStatusDto } f
         </div>
 
         @if (isLoading && !summary) {
-          <div class="h-64 flex items-center justify-center">
-             <div class="w-8 h-8 rounded-full border-4 border-slate-200 border-t-cyan-500 animate-spin"></div>
-          </div>
+          <app-loading-spinner [centered]="true"></app-loading-spinner>
         } @else if (summary) {
            <!-- Summary Cards -->
            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">

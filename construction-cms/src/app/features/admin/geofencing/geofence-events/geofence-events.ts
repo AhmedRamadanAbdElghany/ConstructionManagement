@@ -4,11 +4,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { LocationTrackingService, GeofenceEventDto, GeofenceEventHistoryDto, ZoneType, GeofenceEventType } from '../../../../core/services/location-tracking.service';
+import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-geofence-events',
   standalone: true,
-  imports: [CommonModule, TranslateModule, FormsModule, RouterModule],
+  imports: [CommonModule, TranslateModule, FormsModule, RouterModule, LoadingSpinnerComponent],
   template: `
     <div class="p-6 pb-24 min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
       <div class="max-w-7xl mx-auto space-y-6">
@@ -63,9 +64,7 @@ import { LocationTrackingService, GeofenceEventDto, GeofenceEventHistoryDto, Zon
         <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-6 sm:p-8 border border-slate-200 dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden relative">
           
           @if (isLoading) {
-             <div class="h-64 flex items-center justify-center">
-                 <div class="w-8 h-8 rounded-full border-4 border-slate-200 border-t-cyan-500 animate-spin"></div>
-             </div>
+             <app-loading-spinner [centered]="true"></app-loading-spinner>
           } @else if (!history || history.events.length === 0) {
              <div class="py-16 text-center">
                  <div class="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">

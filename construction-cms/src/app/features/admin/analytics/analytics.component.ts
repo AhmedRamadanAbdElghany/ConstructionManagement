@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { AnalyticsService, DashboardSummary, FinancialAnalytics, ResourceAnalytics, KPIDashboard, ChartData } from '../../../core/services/analytics.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-analytics',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LoadingSpinnerComponent],
   template: `
     <div class="analytics-container">
       <!-- Header -->
@@ -35,10 +36,7 @@ import { I18nService } from '../../../core/i18n/i18n.service';
 
       <!-- Loading State -->
       @if (isLoading()) {
-        <div class="loading-overlay">
-          <div class="spinner"></div>
-          <p>Loading analytics data...</p>
-        </div>
+        <app-loading-spinner [centered]="true" label="Loading analytics data..."></app-loading-spinner>
       }
 
       <!-- Dashboard Summary -->

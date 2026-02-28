@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { DashboardService, DashboardStats, SuperAdminStats, CompanySubscription, RecentActivity, SuperAdminActivity } from '../../../core/services/dashboard.service';
 import { Project, WorkerPerformance } from '../../../shared/interfaces';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -1303,7 +1304,10 @@ export class DashboardComponent implements OnInit {
     // Initialize chart data with translated month names
     this.updateChartData();
 
-    if (this.isPending) return;
+    if (this.isPending) {
+      this.isLoading.set(false);
+      return;
+    }
 
     if (this.isClient || this.isWorker) {
       this.clientPortalService.getMyCompanies().subscribe(companies => {
@@ -1338,63 +1342,74 @@ export class DashboardComponent implements OnInit {
   }
 
   loadSuperAdminView() {
-    this.dashboardService.getSuperAdminStats().subscribe(stats => {
-      this.saStats = stats;
-    });
-    this.dashboardService.getDashboardStats().subscribe(stats => {
-      this.stats = stats;
-    });
-    this.dashboardService.getCompanySubscriptions().subscribe(subs => {
-      this.subscriptions = subs;
-    });
-    this.dashboardService.getSuperAdminActivities().subscribe(activities => {
-      this.saActivities = activities;
-      this.isLoading.set(false);
+    forkJoin({
+      stats: this.dashboardService.getSuperAdminStats(),
+      dashboardStats: this.dashboardService.getDashboardStats(),
+      subs: this.dashboardService.getCompanySubscriptions(),
+      activities: this.dashboardService.getSuperAdminActivities()
+    }).subscribe({
+      next: (result) => {
+        this.saStats = result.stats;
+        this.stats = result.dashboardStats;
+        this.subscriptions = result.subs;
+        this.saActivities = result.activities;
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.isLoading.set(false);
+      }
     });
   }
 
   loadWorkerView() {
-    this.dashboardService.getDashboardStats().subscribe(stats => {
-      this.stats = stats;
-    });
-    this.dashboardService.getRecentActivities().subscribe(activities => {
-      this.recentActivities = activities;
-      this.isLoading.set(false);
+    forkJoin({
+      stats: this.dashboardService.getDashboardStats(),
+      activities: this.dashboardService.getRecentActivities()
+    }).subscribe({
+      next: (result) => {
+        this.stats = result.stats;
+        this.recentActivities = result.activities;
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.isLoading.set(false);
+      }
     });
   }
 
   loadClientView() {
-    this.clientPortalService.getClientDashboard().subscribe(data => {
-      if (data) {
-        this.clientDashboard = data;
-
-        // Update stats for unassigned check
-        this.stats = {
-          activeProjects: data.projects?.length || 0,
-          completedProjects: data.projects?.filter(p => p.status === 'Completed').length || 0,
-          delayedProjects: data.projects?.filter(p => p.status === 'Delayed').length || 0,
-          totalRevenue: data.paymentSummary?.totalPaid || 0
-        };
-
-        this.clientStats = {
-          totalContract: data.paymentSummary.totalInvoiced,
-          totalPaid: data.paymentSummary.totalPaid,
-          projectProgress: data.projects[0]?.progressPercentage || 0,
-          currentStatusNote: data.projects[0]?.status ? `Current Status: ${data.projects[0].status}` : 'No active projects',
-          milestones: data.recentActivities.slice(0, 4).map(act => ({
-            label: act.activityType,
-            date: new Date(act.createdAt).toLocaleDateString(),
-            desc: act.description,
-            done: true
-          }))
-        };
+    forkJoin({
+      dashboard: this.clientPortalService.getClientDashboard(),
+      activities: this.dashboardService.getRecentActivities()
+    }).subscribe({
+      next: (result) => {
+        if (result.dashboard) {
+          this.clientDashboard = result.dashboard;
+          this.stats = {
+            activeProjects: result.dashboard.projects?.length || 0,
+            completedProjects: result.dashboard.projects?.filter(p => p.status === 'Completed').length || 0,
+            delayedProjects: result.dashboard.projects?.filter(p => p.status === 'Delayed').length || 0,
+            totalRevenue: result.dashboard.paymentSummary?.totalPaid || 0
+          };
+          this.clientStats = {
+            totalContract: result.dashboard.paymentSummary.totalInvoiced,
+            totalPaid: result.dashboard.paymentSummary.totalPaid,
+            projectProgress: result.dashboard.projects[0]?.progressPercentage || 0,
+            currentStatusNote: result.dashboard.projects[0]?.status ? `Current Status: ${result.dashboard.projects[0].status}` : 'No active projects',
+            milestones: result.dashboard.recentActivities.slice(0, 4).map(act => ({
+              label: act.activityType,
+              date: new Date(act.createdAt).toLocaleDateString(),
+              desc: act.description,
+              done: true
+            }))
+          };
+        }
+        this.recentActivities = result.activities;
+        this.isLoading.set(false);
+      },
+      error: () => {
         this.isLoading.set(false);
       }
-    });
-
-    this.dashboardService.getRecentActivities().subscribe(activities => {
-      this.recentActivities = activities;
-      this.isLoading.set(false);
     });
   }
 
@@ -1439,23 +1454,27 @@ export class DashboardComponent implements OnInit {
   }
 
   loadStandardView() {
-    this.dashboardService.getDashboardStats().subscribe(stats => {
-      this.stats = stats;
-    });
-    this.dashboardService.getRecentActivities().subscribe(activities => {
-      this.recentActivities = activities;
-      this.isLoading.set(false);
-    });
-    this.inspectionService.getAnalytics().subscribe(resp => {
-      if (resp.success && resp.data) {
-        this.inspectionStats = {
-          totalInspections: resp.data.totalInspections,
-          completedInspections: resp.data.completedInspections,
-          pendingInspections: resp.data.pendingInspections,
-          cancelledInspections: resp.data.cancelledInspections
-        };
+    forkJoin({
+      stats: this.dashboardService.getDashboardStats(),
+      activities: this.dashboardService.getRecentActivities(),
+      inspectionAnalytics: this.inspectionService.getAnalytics()
+    }).subscribe({
+      next: (result) => {
+        this.stats = result.stats;
+        this.recentActivities = result.activities;
+        if (result.inspectionAnalytics.success && result.inspectionAnalytics.data) {
+          this.inspectionStats = {
+            totalInspections: result.inspectionAnalytics.data.totalInspections,
+            completedInspections: result.inspectionAnalytics.data.completedInspections,
+            pendingInspections: result.inspectionAnalytics.data.pendingInspections,
+            cancelledInspections: result.inspectionAnalytics.data.cancelledInspections
+          };
+        }
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.isLoading.set(false);
       }
-      this.isLoading.set(false);
     });
   }
 }

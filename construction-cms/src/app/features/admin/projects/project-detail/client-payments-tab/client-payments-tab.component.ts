@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { ClientPaymentsService, ClientPaymentListItem, ProjectFinancialSummary, CreateClientPaymentRequest, PaymentType, PaymentMethod } from '../../../../../core/services/client-payments.service';
+import { LoadingSpinnerComponent } from '../../../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
     selector: 'app-client-payments-tab',
     standalone: true,
-    imports: [CommonModule, FormsModule, TranslateModule],
+    imports: [CommonModule, FormsModule, TranslateModule, LoadingSpinnerComponent],
     template: `
         <div class="client-payments-tab">
             <!-- Financial Summary Card -->
@@ -104,9 +105,7 @@ import { ClientPaymentsService, ClientPaymentListItem, ProjectFinancialSummary, 
 
             <!-- Loading State -->
             @if (isLoading) {
-                <div class="flex items-center justify-center py-12">
-                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
-                </div>
+                <app-loading-spinner [centered]="true"></app-loading-spinner>
             }
 
             <!-- Payments List -->
