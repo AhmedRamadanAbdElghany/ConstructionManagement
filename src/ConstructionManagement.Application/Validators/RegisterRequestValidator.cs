@@ -23,6 +23,10 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
             .Matches("[0-9]").WithMessage("يجب أن تحتوي على رقم واحد على الأقل")
             .Matches("[!@#$%^&*]").WithMessage("يجب أن تحتوي على رمز خاص واحد على الأقل");
 
+        RuleFor(x => x.ConfirmPassword)
+            .NotEmpty().WithMessage("تأكيد كلمة المرور مطلوب")
+            .Equal(x => x.Password).WithMessage("كلمة المرور وتأكيدها غير متطابقتين");
+
         RuleFor(x => x.Phone)
             .MaximumLength(15).When(x => !string.IsNullOrEmpty(x.Phone))
             .Matches(@"^(\+20|0)1[0-2,5]\d{8}$").When(x => !string.IsNullOrEmpty(x.Phone))
