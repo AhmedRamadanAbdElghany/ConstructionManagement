@@ -24,31 +24,48 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
           <div class="site-overlay bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900" [style.backgroundImage]="'url(' + ('auth.bg_image' | translate) + ')'"></div>
           <div class="visual-inner relative z-10">
             <div class="brand-header animate-premium-fade" style="animation-delay: 100ms">
-              <div class="logo-box bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
-                <svg class="w-12 h-12 text-amber-500 filter drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-7h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              <div class="logo-container bg-white/10 backdrop-blur-2xl border border-white/20 shadow-2xl rounded-2xl p-4">
+                <svg class="w-12 h-12 text-indigo-400" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M50 5L95 27.5V72.5L50 95L5 72.5V27.5L50 5Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+                  <path d="M50 5V95M5 27.5L95 72.5M95 27.5L5 72.5" stroke="currentColor" stroke-width="1" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+                  <rect x="35" y="35" width="30" height="30" rx="4" fill="currentColor" fill-opacity="0.2" stroke="currentColor" stroke-width="2"/>
+                  <path d="M45 50H55M50 45V55" stroke="white" stroke-width="3" stroke-linecap="round"/>
                 </svg>
               </div>
-              <span class="brand-name text-white">Str<span class="text-amber-500">uct</span> CMS</span>
+              <div class="logo-text-wrapper ml-4 text-left">
+                <h1 class="logo-text text-white text-4xl tracking-tighter font-black flex items-center">
+                  STRUCT <span class="text-indigo-500 ml-2">CMS</span>
+                </h1>
+                <p class="text-[10px] uppercase tracking-[0.3em] font-bold text-indigo-400/80">Enterprise Logic</p>
+              </div>
+            </div>
+            
+            <div class="branding-hero animate-premium-fade" style="animation-delay: 300ms text-left">
+              <h1 class="hero-title text-white text-5xl font-black leading-tight tracking-tight">
+                {{ 'auth.register_hero_title' | translate }} <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">{{ 'auth.register_hero_highlight' | translate }}</span>
+              </h1>
+              <p class="hero-subtext text-slate-400 text-lg mt-6 max-w-md font-medium leading-relaxed">{{ 'auth.register_hero_desc' | translate }}</p>
             </div>
  
-            <div class="branding-hero animate-premium-fade" style="animation-delay: 300ms">
-              <h1 class="hero-title text-white">{{ 'auth.register_hero_title' | translate }} <span class="highlight text-amber-500">{{ 'auth.register_hero_highlight' | translate }}</span></h1>
-              <p class="hero-subtext text-slate-400 font-medium">{{ 'auth.register_hero_desc' | translate }}</p>
-            </div>
- 
-            <div class="feature-pills animate-premium-fade" style="animation-delay: 500ms">
-              <div class="pill group hover:translate-x-2 transition-transform">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                <span class="font-bold">{{ 'auth.feature_security' | translate }}</span>
+            <div class="feature-pills animate-premium-fade mt-10" style="animation-delay: 500ms">
+              <div class="pill group flex items-center bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-xl mb-4 hover:translate-x-2 transition-transform">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400 mr-4">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                </div>
+                <span class="font-bold text-white uppercase tracking-wider text-xs">{{ 'auth.feature_security' | translate }}</span>
               </div>
-              <div class="pill group hover:translate-x-2 transition-transform">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                <span class="font-bold">{{ 'auth.feature_sync' | translate }}</span>
+              <div class="pill group flex items-center bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-xl mb-4 hover:translate-x-2 transition-transform">
+                <div class="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center text-cyan-400 mr-4">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                </div>
+                <span class="font-bold text-white uppercase tracking-wider text-xs">{{ 'auth.feature_sync' | translate }}</span>
               </div>
-              <div class="pill group hover:translate-x-2 transition-transform">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                <span class="font-bold">{{ 'auth.feature_insights' | translate }}</span>
+              <div class="pill group flex items-center bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-xl mb-4 hover:translate-x-2 transition-transform">
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 mr-4">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                </div>
+                <span class="font-bold text-white uppercase tracking-wider text-xs">{{ 'auth.feature_insights' | translate }}</span>
               </div>
             </div>
           </div>
@@ -56,95 +73,115 @@ import { LanguageSwitcherComponent } from '../../../layout/language-switcher/lan
 
         <!-- Form Side -->
         <div class="form-side">
-          <div class="form-content">
-            <header class="form-header animate-premium-fade">
-              <h2 class="form-title">{{ 'register.title' | translate }}</h2>
-              <p class="form-subtitle">{{ 'register.subtitle' | translate }}</p>
+          <div class="form-content max-w-2xl mx-auto py-12 px-8">
+            <header class="form-header animate-premium-fade mb-10">
+              <h2 class="form-title text-3xl font-black text-slate-900 dark:text-white tracking-tight">{{ 'register.title' | translate }}</h2>
+              <p class="form-subtitle text-slate-500 mt-2 font-medium">{{ 'register.subtitle' | translate }}</p>
             </header>
  
-            <form (ngSubmit)="onSubmit()" class="register-layout">
-              <div class="form-row animate-premium-fade" style="animation-delay: 100ms">
+            <form (ngSubmit)="onSubmit()" class="register-layout space-y-6">
+              <div class="form-row grid grid-cols-1 md:grid-cols-2 gap-6 animate-premium-fade" style="animation-delay: 100ms">
                 <div class="form-field">
-                  <label class="field-label">{{ 'register.full_name' | translate }}</label>
-                  <input type="text" [(ngModel)]="fullName" name="fullName" class="modern-input bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-white/5 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10" [attr.placeholder]="'register.full_name_placeholder' | translate" required (blur)="fullNameTouched = true">
-                  <div *ngIf="fullNameTouched && !fullName" class="error-tip">{{ 'register.error_required' | translate }}</div>
+                  <label class="field-label text-xs uppercase tracking-widest font-black text-slate-400 mb-2 block">{{ 'register.full_name' | translate }}</label>
+                  <input type="text" [(ngModel)]="fullName" name="fullName" class="modern-input w-full px-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 focus:ring-4 focus:ring-indigo-500/10 placeholder-slate-400 outline-none transition-all font-medium" [attr.placeholder]="'register.full_name_placeholder' | translate" required (blur)="fullNameTouched = true">
+                  <div *ngIf="fullNameTouched && !fullName" class="error-tip text-rose-500 text-[10px] font-black uppercase tracking-widest mt-2 px-1">{{ 'register.error_required' | translate }}</div>
                 </div>
  
                 <div class="form-field">
-                  <label class="field-label">{{ 'register.email_label' | translate }}</label>
-                  <input type="email" [(ngModel)]="email" name="email" class="modern-input bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-white/5 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10" [attr.placeholder]="'register.email_placeholder' | translate" required email (blur)="emailTouched = true">
-                  <div *ngIf="emailTouched && !isEmailValid" class="error-tip">{{ 'register.error_required' | translate }}</div>
+                  <label class="field-label text-xs uppercase tracking-widest font-black text-slate-400 mb-2 block">{{ 'register.email_label' | translate }}</label>
+                  <input type="email" [(ngModel)]="email" name="email" class="modern-input w-full px-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 focus:ring-4 focus:ring-indigo-500/10 placeholder-slate-400 outline-none transition-all font-medium" [attr.placeholder]="'register.email_placeholder' | translate" required email (blur)="emailTouched = true">
+                  <div *ngIf="emailTouched && !isEmailValid" class="error-tip text-rose-500 text-[10px] font-black uppercase tracking-widest mt-2 px-1">{{ 'register.error_required' | translate }}</div>
                 </div>
               </div>
  
-              <div class="form-row animate-premium-fade" style="animation-delay: 200ms">
+              <div class="form-row grid grid-cols-1 md:grid-cols-2 gap-6 animate-premium-fade" style="animation-delay: 200ms">
                 <div class="form-field">
-                  <label class="field-label">{{ 'register.phone' | translate }}</label>
-                  <input type="tel" [(ngModel)]="phone" name="phone" class="modern-input bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-white/5 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10" [attr.placeholder]="'register.phone_placeholder' | translate">
+                  <label class="field-label text-xs uppercase tracking-widest font-black text-slate-400 mb-2 block">{{ 'register.phone' | translate }}</label>
+                  <input type="tel" [(ngModel)]="phone" name="phone" class="modern-input w-full px-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 focus:ring-4 focus:ring-indigo-500/10 placeholder-slate-400 outline-none transition-all font-medium" [attr.placeholder]="'register.phone_placeholder' | translate">
                 </div>
  
                 <div class="form-field">
-                  <label class="field-label">{{ 'register.professional_role' | translate }}</label>
-                  <div class="select-box">
-                    <select [(ngModel)]="userType" name="userType" class="modern-input modern-select bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-white/5 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10" required>
+                  <label class="field-label text-xs uppercase tracking-widest font-black text-slate-400 mb-2 block">{{ 'register.professional_role' | translate }}</label>
+                  <div class="select-box relative">
+                    <select [(ngModel)]="userType" name="userType" class="modern-input w-full px-4 py-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 focus:ring-4 focus:ring-indigo-500/10 placeholder-slate-400 outline-none transition-all font-bold appearance-none cursor-pointer" required>
                       <option [value]="0">{{ 'register.role_stakeholder' | translate }}</option>
                       <option [value]="1">{{ 'register.role_engineer' | translate }}</option>
                       <option [value]="2">{{ 'register.role_owner' | translate }}</option>
                       <option [value]="3">{{ 'register.role_inventory' | translate }}</option>
                     </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg>
+                    </div>
                   </div>
                 </div>
               </div>
  
               <div class="form-field animate-premium-fade" style="animation-delay: 300ms">
-                <label class="field-label">{{ 'register.password_label' | translate }}</label>
-                <div class="input-action group">
-                  <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" class="modern-input bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-white/5 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10" [attr.placeholder]="'register.password_hint' | translate" required (input)="checkPasswordStrength()" (blur)="passwordTouched = true">
-                  <button type="button" class="action-toggle group-focus-within:text-indigo-500" (click)="showPassword = !showPassword">
-                    <svg *ngIf="!showPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                    <svg *ngIf="showPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.025 10.025 0 014.132-5.413m1.854-1.423A9.92 9.92 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.413m-1.854 1.423a3 3 0 00-4.243-4.243m4.243 4.243L3 3" /></svg>
+                <label class="field-label text-xs uppercase tracking-widest font-black text-slate-400 mb-2 block">{{ 'register.password_label' | translate }}</label>
+                <div class="input-action group relative">
+                  <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" class="modern-input w-full pl-4 pr-12 py-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 focus:ring-4 focus:ring-indigo-500/10 placeholder-slate-400 outline-none transition-all font-medium" [attr.placeholder]="'register.password_hint' | translate" required (input)="checkPasswordStrength()" (blur)="passwordTouched = true">
+                  <button type="button" class="action-toggle absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 transition-colors" (click)="showPassword = !showPassword">
+                    <svg *ngIf="!showPassword" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                    <svg *ngIf="showPassword" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.025 10.025 0 014.132-5.413m1.854-1.423A9.92 9.92 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.413m-1.854 1.423a3 3 0 00-4.243-4.243m4.243 4.243L3 3" /></svg>
                   </button>
                 </div>
                 
-                <div class="strength-indicator" *ngIf="password">
-                  <div class="strength-track bg-slate-100 dark:bg-slate-800"><div class="strength-fill" [style.width.%]="passwordStrengthPercent" [class]="passwordStrengthClass"></div></div>
-                  <div class="strength-labels">
-                    <span [class.met]="hasLowerCase" class="font-bold">{{ 'register.strength_lowercase' | translate }}</span>
-                    <span [class.met]="hasUpperCase" class="font-bold">{{ 'register.strength_uppercase' | translate }}</span>
-                    <span [class.met]="hasNumber" class="font-bold">{{ 'register.strength_number' | translate }}</span>
-                    <span [class.met]="hasSpecialChar" class="font-bold">{{ 'register.strength_symbol' | translate }}</span>
-                    <span [class.met]="hasMinLength" class="font-bold">{{ 'register.strength_min_length' | translate }}</span>
+                <div class="strength-indicator mt-4" *ngIf="password">
+                  <div class="strength-track h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div class="strength-fill h-full transition-all duration-500" [style.width.%]="passwordStrengthPercent" [class]="passwordStrengthClass"></div>
+                  </div>
+                  <div class="strength-labels flex flex-wrap gap-x-4 gap-y-2 mt-3">
+                    <div class="flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400 transition-colors" [class.text-emerald-500]="hasLowerCase">
+                      <div class="w-1.5 h-1.5 rounded-full bg-current mr-1.5"></div>
+                      {{ 'register.strength_lowercase' | translate }}
+                    </div>
+                    <div class="flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400 transition-colors" [class.text-emerald-500]="hasUpperCase">
+                      <div class="w-1.5 h-1.5 rounded-full bg-current mr-1.5"></div>
+                      {{ 'register.strength_uppercase' | translate }}
+                    </div>
+                    <div class="flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400 transition-colors" [class.text-emerald-500]="hasNumber">
+                      <div class="w-1.5 h-1.5 rounded-full bg-current mr-1.5"></div>
+                      {{ 'register.strength_number' | translate }}
+                    </div>
+                    <div class="flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400 transition-colors" [class.text-emerald-500]="hasSpecialChar">
+                      <div class="w-1.5 h-1.5 rounded-full bg-current mr-1.5"></div>
+                      {{ 'register.strength_symbol' | translate }}
+                    </div>
+                    <div class="flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400 transition-colors" [class.text-emerald-500]="hasMinLength">
+                      <div class="w-1.5 h-1.5 rounded-full bg-current mr-1.5"></div>
+                      {{ 'register.strength_min_length' | translate }}
+                    </div>
                   </div>
                 </div>
               </div>
  
               <div class="form-field animate-premium-fade" style="animation-delay: 400ms">
-                <label class="field-label">{{ 'register.confirm_password' | translate }}</label>
-                <div class="input-action group">
-                  <input [type]="showConfirmPassword ? 'text' : 'password'" [(ngModel)]="confirmPassword" name="confirmPassword" class="modern-input bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-white/5 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10" [attr.placeholder]="'register.password_repeat' | translate" required (blur)="confirmPasswordTouched = true">
-                  <button type="button" class="action-toggle group-focus-within:text-indigo-500" (click)="showConfirmPassword = !showConfirmPassword">
-                    <svg *ngIf="!showConfirmPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                    <svg *ngIf="showConfirmPassword" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.025 10.025 0 014.132-5.413m1.854-1.423A9.92 9.92 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.413m-1.854 1.423a3 3 0 00-4.243-4.243m4.243 4.243L3 3" /></svg>
+                <label class="field-label text-xs uppercase tracking-widest font-black text-slate-400 mb-2 block">{{ 'register.confirm_password' | translate }}</label>
+                <div class="input-action group relative">
+                  <input [type]="showConfirmPassword ? 'text' : 'password'" [(ngModel)]="confirmPassword" name="confirmPassword" class="modern-input w-full pl-4 pr-12 py-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 focus:ring-4 focus:ring-indigo-500/10 placeholder-slate-400 outline-none transition-all font-medium" [attr.placeholder]="'register.password_repeat' | translate" required (blur)="confirmPasswordTouched = true">
+                  <button type="button" class="action-toggle absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 transition-colors" (click)="showConfirmPassword = !showConfirmPassword">
+                    <svg *ngIf="!showConfirmPassword" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                    <svg *ngIf="showConfirmPassword" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.025 10.025 0 014.132-5.413m1.854-1.423A9.92 9.92 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.413m-1.854 1.423a3 3 0 00-4.243-4.243m4.243 4.243L3 3" /></svg>
                   </button>
                 </div>
-                <div *ngIf="confirmPasswordTouched && password !== confirmPassword" class="error-tip">{{ 'register.password_mismatch' | translate }}</div>
+                <div *ngIf="confirmPasswordTouched && password !== confirmPassword" class="error-tip text-rose-500 text-[10px] font-black uppercase tracking-widest mt-2 px-1">{{ 'register.password_mismatch' | translate }}</div>
               </div>
  
               <div class="alert-area animate-premium-fade" style="animation-delay: 450ms">
-                <div *ngIf="errorMessage" class="toast error-toast slide-in">
-                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                  <span class="font-black italic uppercase text-[10px] tracking-widest">{{ errorMessage }}</span>
+                <div *ngIf="errorMessage" class="toast flex items-center bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-500/20 p-4 rounded-xl mt-6 animate-premium-fade">
+                  <svg class="w-5 h-5 text-rose-500 mr-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                  <span class="text-rose-600 dark:text-rose-400 font-bold text-sm">{{ errorMessage }}</span>
                 </div>
-                <div *ngIf="successMessage" class="toast success-toast slide-in">
-                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                  <span class="font-black italic uppercase text-[10px] tracking-widest">{{ successMessage }}</span>
+                <div *ngIf="successMessage" class="toast flex items-center bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-500/20 p-4 rounded-xl mt-6 animate-premium-fade">
+                  <svg class="w-5 h-5 text-emerald-500 mr-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <span class="text-emerald-600 dark:text-emerald-400 font-bold text-sm">{{ successMessage }}</span>
                 </div>
               </div>
  
-              <button type="submit" class="primary-button animate-premium-fade bg-gradient-to-r from-indigo-600 to-blue-700 shadow-xl shadow-indigo-500/20 active:scale-95" [disabled]="isLoading || !isFormValid" style="animation-delay: 500ms">
-                <div *ngIf="isLoading" class="btn-loader"></div>
-                <span class="font-black uppercase tracking-widest text-sm">{{ isLoading ? ('register.creating' | translate) : ('register.submit' | translate) }}</span>
-                <svg *ngIf="!isLoading" class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+              <button type="submit" class="primary-button w-full py-4 bg-gradient-to-r from-indigo-600 to-indigo-800 hover:from-indigo-700 hover:to-indigo-900 text-white rounded-xl shadow-xl shadow-indigo-500/20 flex items-center justify-center group transition-all active:scale-95 animate-premium-fade disabled:opacity-70 disabled:pointer-events-none" [disabled]="isLoading || !isFormValid" style="animation-delay: 500ms">
+                <div *ngIf="isLoading" class="btn-loader w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3"></div>
+                <span class="font-black uppercase tracking-[0.2em] text-sm">{{ isLoading ? ('register.creating' | translate) : ('register.submit' | translate) }}</span>
+                <svg *ngIf="!isLoading" class="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
               </button>
             </form>
  

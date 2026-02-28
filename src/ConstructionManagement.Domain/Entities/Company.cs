@@ -45,38 +45,38 @@ public class Company : BaseEntity
     public bool EnableProjectItemsManagement { get; set; } = true;
     public bool EnableDailyLogs { get; set; } = true;
     public bool EnableSiteMedia { get; set; } = true;
-    public bool EnableEquipmentManagement { get; set; } = false;
-    public bool EnableInventoryManagement { get; set; } = false;
-    public bool EnableQualityControl { get; set; } = false;
-    public bool EnableSafetyManagement { get; set; } = false;
-    public bool EnableSubcontractorManagement { get; set; } = false;
+    public bool EnableEquipmentManagement { get; set; } = true;
+    public bool EnableInventoryManagement { get; set; } = true;
+    public bool EnableQualityControl { get; set; } = true;
+    public bool EnableSafetyManagement { get; set; } = true;
+    public bool EnableSubcontractorManagement { get; set; } = true;
     public bool EnableFinancialManagement { get; set; } = true;
     public bool EnableAnalytics { get; set; } = true;
     public bool EnableNotifications { get; set; } = true;
-    public bool EnableDocumentManagement { get; set; } = false;
-    public bool EnableDesignManagement { get; set; } = false;
-    public bool EnableClientPortal { get; set; } = false;
+    public bool EnableDocumentManagement { get; set; } = true;
+    public bool EnableDesignManagement { get; set; } = true;
+    public bool EnableClientPortal { get; set; } = true;
     public bool EnableAccessControl { get; set; } = true;
-    public bool EnableHRManagement { get; set; } = false;
-    public bool EnableVendorManagement { get; set; } = false;
+    public bool EnableHRManagement { get; set; } = true;
+    public bool EnableVendorManagement { get; set; } = true;
     
     // Location & Geofencing Feature Flags (used when CompanySettings doesn't exist)
-    public bool EnableLocationTracking { get; set; } = false;
-    public bool EnableGeofenceManagement { get; set; } = false;
-    public bool EnableLocationSubmit { get; set; } = false;
+    public bool EnableLocationTracking { get; set; } = true;
+    public bool EnableGeofenceManagement { get; set; } = true;
+    public bool EnableLocationSubmit { get; set; } = true;
 
     // Additional Feature Flags (used when CompanySettings doesn't exist)
-    public bool EnableInspections { get; set; } = false;
-    public bool EnableLeaveManagement { get; set; } = false;
-    public bool EnablePerformanceEvaluation { get; set; } = false;
-    public bool EnableTrainingTracking { get; set; } = false;
-    public bool EnableTasks { get; set; } = false;
-    public bool EnableEscalations { get; set; } = false;
-    public bool EnableMessaging { get; set; } = false;
-    public bool EnableSocialWall { get; set; } = false;
-    public bool EnableCurrencies { get; set; } = false;
-    public bool EnablePaymentGateway { get; set; } = false;
-    public bool EnableMarketplace { get; set; } = false;
-    public bool EnableInventoryOwner { get; set; } = false;
-    public bool EnableVideoCalls { get; set; } = false;
+    public bool EnableInspections { get; set; } = true;
+    public bool EnableLeaveManagement { get; set; } = true;
+    public bool EnablePerformanceEvaluation { get; set; } = true;
+    public bool EnableTrainingTracking { get; set; } = true;
+    public bool EnableTasks { get; set; } = true;
+    public bool EnableEscalations { get; set; } = true;
+    public bool EnableMessaging { get; set; } = true;
+    public bool EnableSocialWall { get; set; } = true;
+    public bool EnableCurrencies { get; set; } = true;
+    public bool EnablePaymentGateway { get; set; } = true;
+    public bool EnableMarketplace { get; set; } = true;
+    public bool EnableInventoryOwner { get; set; } = true;
+    public bool EnableVideoCalls { get; set; } = true;
 }
