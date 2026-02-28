@@ -542,7 +542,7 @@ public class AuthService : IAuthService
 
     private async Task<string> GenerateJwtToken(User user)
     {
-        var secretKey = _configuration["JwtSettings:Key"];
+        var secretKey = _configuration["Jwt:Key"] ?? _configuration["JwtSettings:Key"];
         if (string.IsNullOrEmpty(secretKey))
             throw new InvalidOperationException("JWT Key is missing in configuration.");
 
@@ -586,8 +586,8 @@ public class AuthService : IAuthService
         {
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddDays(7),
-            Issuer = _configuration["JwtSettings:Issuer"],
-            Audience = _configuration["JwtSettings:Audience"],
+            Issuer = _configuration["Jwt:Issuer"] ?? _configuration["JwtSettings:Issuer"],
+            Audience = _configuration["Jwt:Audience"] ?? _configuration["JwtSettings:Audience"],
             SigningCredentials = creds
         };
 
