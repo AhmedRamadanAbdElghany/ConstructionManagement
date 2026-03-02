@@ -1288,38 +1288,46 @@ export class MarketplaceHomeComponent implements OnInit {
     };
     return iconMap[icon || 'building'] || 'pi pi-box';
   }
-
   getCategoryImage(name: string, nameAr?: string): string | null {
     const termStr = `${name} ${nameAr || ''}`.toLowerCase();
 
-    // Check known categories for specific images
-    if (termStr.includes('أبواب') || termStr.includes('door')) {
-      if (termStr.includes('خشب') || termStr.includes('wood')) return 'https://images.unsplash.com/photo-1541123437800-1c0c0e29b1be?auto=format&fit=crop&q=80&w=800';
-      if (termStr.includes('ألومنيوم') || termStr.includes('aluminum')) return 'https://images.unsplash.com/photo-1510006851064-e6056cd0e3a8?auto=format&fit=crop&q=80&w=800';
-      return 'https://images.unsplash.com/photo-1534066072460-a2d981da4fc6?auto=format&fit=crop&q=80&w=800';
+    // Default high-quality placeholder we will return ONLY if no match found
+    const defaultImage = 'https://images.unsplash.com/photo-1541888087405-eb81f8f3c7ea?auto=format&fit=crop&q=80&w=800'; // General construction
+
+    if (termStr.includes('أدوات حمامات') || termStr.includes('حمامات') || termStr.includes('bath') || termStr.includes('plumb')) {
+      return 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800'; // Bathroom fixtures
     }
 
-    if (termStr.includes('حمامات') || termStr.includes('bath') || termStr.includes('plumb')) {
-      return 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800';
+    if (termStr.includes('مواد بناء') || termStr.includes('مواد البناء') || termStr.includes('building')) {
+      return 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=800'; // Bricks/Materials
     }
 
-    if (termStr.includes('مواد البناء') || termStr.includes('building') || termStr.includes('أسمنت') || termStr.includes('cement')) {
-      return 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=800';
+    if (termStr.includes('أسمنت') || termStr.includes('cement')) {
+      return 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=800'; // Concrete/Cement
     }
 
     if (termStr.includes('سيراميك') || termStr.includes('بلاط') || termStr.includes('ceramic') || termStr.includes('tile')) {
-      return 'https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&q=80&w=800';
+      return 'https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&q=80&w=800'; // Tiles
+    }
+
+    if (termStr.includes('مواسير') || termStr.includes('pipe') || termStr.includes('سباكة')) {
+      return 'https://images.unsplash.com/photo-1585611488585-6fec520023f2?auto=format&fit=crop&q=80&w=800'; // Pipes
     }
 
     if (termStr.includes('أسلاك') || termStr.includes('كابلات') || termStr.includes('wire') || termStr.includes('cable') || termStr.includes('elect')) {
-      return 'https://images.unsplash.com/photo-1517504734587-2890819debab?auto=format&fit=crop&q=80&w=800';
+      return 'https://images.unsplash.com/photo-1517504734587-2890819debab?auto=format&fit=crop&q=80&w=800'; // Wires
     }
 
-    if (termStr.includes('مواسير') || termStr.includes('pipe')) {
-      return 'https://images.unsplash.com/photo-1585611488585-6fec520023f2?auto=format&fit=crop&q=80&w=800';
+    if (termStr.includes('أبواب') || termStr.includes('door') || termStr.includes('باب')) {
+      if (termStr.includes('خشب') || termStr.includes('wood')) return 'https://images.unsplash.com/photo-1541123437800-1c0c0e29b1be?auto=format&fit=crop&q=80&w=800'; // Wooden doors
+      if (termStr.includes('ألومنيوم') || termStr.includes('aluminum')) return 'https://images.unsplash.com/photo-1510006851064-e6056cd0e3a8?auto=format&fit=crop&q=80&w=800'; // Aluminum frames/doors
+      return 'https://images.unsplash.com/photo-1534066072460-a2d981da4fc6?auto=format&fit=crop&q=80&w=800'; // Generic doors
     }
 
-    // Default high-quality construction materials image if no match
-    return 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=800';
+    if (termStr.includes('الوان') || termStr.includes('دهانات') || termStr.includes('paint')) {
+      return 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&q=80&w=800'; // Painting
+    }
+
+    return defaultImage;
   }
 }
