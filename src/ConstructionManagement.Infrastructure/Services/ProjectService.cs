@@ -207,7 +207,7 @@ public class ProjectService : IProjectService
         // System-level admin check
         var isSystemAdmin = await _userRoleRepository.AsQueryable()
             .AnyAsync(ur => ur.UserId == userId &&
-                           (ur.Role.Name == "SuperAdmin" || ur.Role.Name == "CompanyAdmin"));
+                           (ur.Role.Name == "SystemAdmin" || ur.Role.Name == "CompanyAdmin"));
 
         if (isSystemAdmin) return true;
 
@@ -237,3 +237,4 @@ public class ProjectService : IProjectService
     );
 
 }
+

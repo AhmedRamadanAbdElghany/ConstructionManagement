@@ -38,7 +38,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get payment transaction by ID
         /// </summary>
         [HttpGet("{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<PaymentTransactionDto>> GetTransaction(int id)
         {
             var companyId = GetCompanyId();
@@ -48,8 +48,8 @@ namespace ConstructionManagement.WebApi.Controllers
                 return NotFound();
             }
             
-            // Company isolation: Only SuperAdmin can view any transaction, CompanyAdmin can only view their company's
-            if (!User.IsInRole("SuperAdmin") && transaction.CompanyId != companyId)
+            // Company isolation: Only SystemAdmin can view any transaction, CompanyAdmin can only view their company's
+            if (!User.IsInRole("SystemAdmin") && transaction.CompanyId != companyId)
             {
                 return Forbid();
             }
@@ -61,7 +61,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get payment history for company
         /// </summary>
         [HttpGet("history")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<PaymentHistoryDto>> GetPaymentHistory(
             [FromQuery] int? projectId = null,
             [FromQuery] int page = 1,
@@ -81,7 +81,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get payment summary for dashboard
         /// </summary>
         [HttpGet("summary")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<PaymentSummaryDto>> GetPaymentSummary()
         {
             var companyId = GetCompanyId();
@@ -98,11 +98,11 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get payments for a specific project
         /// </summary>
         [HttpGet("project/{projectId}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<System.Collections.Generic.List<PaymentTransactionDto>>> GetProjectPayments(int projectId)
         {
             var companyId = GetCompanyId();
-            var payments = await _paymentService.GetProjectPaymentsAsync(projectId, companyId, User.IsInRole("SuperAdmin"));
+            var payments = await _paymentService.GetProjectPaymentsAsync(projectId, companyId, User.IsInRole("SystemAdmin"));
             return Ok(payments);
         }
 
@@ -110,7 +110,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Initiate online payment (Client or Company Admin)
         /// </summary>
         [HttpPost("initiate")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin,CompanyOwner,Client")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin,CompanyOwner,Client")]
         [EnableRateLimiting("PaymentRateLimit")]
         public async Task<ActionResult<PaymentResultDto>> InitiatePayment([FromBody] CreateOnlinePaymentRequest request)
         {
@@ -129,7 +129,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Confirm online payment after gateway processing
         /// </summary>
         [HttpPost("{transactionId}/confirm")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin,CompanyOwner,Client")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin,CompanyOwner,Client")]
         [EnableRateLimiting("PaymentRateLimit")]
         public async Task<ActionResult<PaymentResultDto>> ConfirmPayment(int transactionId, [FromBody] GatewayConfirmPaymentRequest request)
         {
@@ -147,7 +147,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Record offline payment (Company Admin)
         /// </summary>
         [HttpPost("record-offline")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<PaymentTransactionDto>> RecordOfflinePayment([FromBody] RecordOfflinePaymentRequest request)
         {
             var userId = GetUserId();
@@ -166,7 +166,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Update payment status
         /// </summary>
         [HttpPut("{id}/status")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<PaymentTransactionDto>> UpdateStatus(int id, [FromBody] UpdateStatusRequest request)
         {
             try
@@ -184,7 +184,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Refund a payment
         /// </summary>
         [HttpPost("{id}/refund")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<PaymentResultDto>> RefundPayment(int id, [FromBody] RefundPaymentRequest request)
         {
             request.TransactionId = id;
@@ -203,7 +203,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get payment settings
         /// </summary>
         [HttpGet("settings")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<PaymentSettingsDto>> GetPaymentSettings()
         {
             var companyId = GetCompanyId();
@@ -220,7 +220,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Update payment settings
         /// </summary>
         [HttpPut("settings")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<PaymentSettingsDto>> UpdatePaymentSettings([FromBody] UpdatePaymentSettingsRequest request)
         {
             var companyId = GetCompanyId();
@@ -237,7 +237,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get client payment history (for client portal)
         /// </summary>
         [HttpGet("client-history")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin,Client")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin,Client")]
         public async Task<ActionResult<PaymentHistoryDto>> GetClientPaymentHistory()
         {
             var userId = GetUserId();
@@ -498,7 +498,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Refund marketplace payment
         /// </summary>
         [HttpPost("marketplace/refund")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<MarketplaceRefundResponse>> RefundMarketplacePayment([FromBody] MarketplaceRefundRequest request)
         {
             try
@@ -899,3 +899,4 @@ namespace ConstructionManagement.WebApi.Controllers
         public string? Notes { get; set; }
     }
 }
+

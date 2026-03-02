@@ -29,7 +29,7 @@ public class UserServiceTests
     private void SetupAdminPermission(int adminId, bool hasPermission)
     {
         var userRolesList = hasPermission
-            ? new List<UserRole> { new UserRole { UserId = adminId, Role = new Role { Name = "SuperAdmin" } } }
+            ? new List<UserRole> { new UserRole { UserId = adminId, Role = new Role { Name = "SystemAdmin" } } }
             : new List<UserRole>();
 
         _userRoleRepo.Setup(r => r.AsQueryable()).Returns(userRolesList.BuildMock());

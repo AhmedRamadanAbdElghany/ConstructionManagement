@@ -66,7 +66,7 @@ public class PhasesController : ControllerBase
     // --- Company Default Phases (Templates) ---
 
     [HttpGet("api/companies/{companyId}/default-phases")]
-    [Authorize(Policy = "CanManageUsers")] // Assuming CompanyAdmin/SuperAdmin can manage settings
+    [Authorize(Policy = "CanManageUsers")] // Assuming CompanyAdmin/SystemAdmin can manage settings
     public async Task<IActionResult> GetDefaultPhases(int companyId)
     {
         var phases = await _phaseService.GetDefaultPhasesAsync(companyId);
@@ -121,3 +121,4 @@ public class PhasesController : ControllerBase
         return Ok();
     }
 }
+

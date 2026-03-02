@@ -2,7 +2,7 @@
 
 ## Overview
 
-This plan outlines the implementation of messaging restrictions for unverified company owners. These are users who have registered as company owners but their company has not yet been approved by a SuperAdmin.
+This plan outlines the implementation of messaging restrictions for unverified company owners. These are users who have registered as company owners but their company has not yet been approved by a SystemAdmin.
 
 ## Current Behavior
 
@@ -15,7 +15,7 @@ This plan outlines the implementation of messaging restrictions for unverified c
 
 Unverified company owners should:
 - ✅ Be able to access the Messages page
-- ✅ Be able to send and receive messages **ONLY from SuperAdmin**
+- ✅ Be able to send and receive messages **ONLY from SystemAdmin**
 - ❌ NOT be able to message any other companies until their company is approved
 
 ## Architecture
@@ -35,7 +35,7 @@ flowchart TD
     D -->|No| E[Allow: Normal user flow]
     D -->|Yes| F{Is Company Approved?}
     F -->|Yes| G[Allow: Full messaging access]
-    F -->|No| H{Is Recipient SuperAdmin?}
+    F -->|No| H{Is Recipient SystemAdmin?}
     H -->|Yes| I[Allow: Restricted messaging]
     H -->|No| J[Reject: Company not approved]
 ```
@@ -77,13 +77,13 @@ private async Task<bool> CanMessageRecipientAsync(int senderId, int recipientCom
     if (!await IsUnverifiedCompanyOwnerAsync(senderId))
         return true;
     
-    // Unverified owners can ONLY message SuperAdmin
-    // Check if any SuperAdmin is associated with this company
-    var hasSuperAdmin = await _context.Users
+    // Unverified owners can ONLY message SystemAdmin
+    // Check if any SystemAdmin is associated with this company
+    var hasSystemAdmin = await _context.Users
         .AnyAsync(u => u.CompanyId == recipientCompanyId && 
-                       u.UserRoles.Any(ur => ur.Role.Name == "SuperAdmin"));
+                       u.UserRoles.Any(ur => ur.Role.Name == "SystemAdmin"));
     
-    return hasSuperAdmin;
+    return hasSystemAdmin;
 }
 ```
 
@@ -98,7 +98,7 @@ public async Task<ConversationDto> StartConversationAsync(int userId, StartConve
     if (!await CanMessageRecipientAsync(userId, request.CompanyId))
     {
         throw new InvalidOperationException(
-            "Your company is pending approval. You can only message SuperAdmin until your company is approved.");
+            "Your company is pending approval. You can only message SystemAdmin until your company is approved.");
     }
     
     // ... rest of existing implementation
@@ -120,7 +120,7 @@ public async Task<CompanyMessageDto> SendMessageAsync(int conversationId, int us
     if (!await CanMessageRecipientAsync(userId, conversation.CompanyId))
     {
         throw new InvalidOperationException(
-            "Your company is pending approval. You can only message SuperAdmin until your company is approved.");
+            "Your company is pending approval. You can only message SystemAdmin until your company is approved.");
     }
     
     // ... rest of existing implementation
@@ -172,9 +172,9 @@ public class MessagingStatusDto
     public string? RestrictionReason { get; set; }
     
     /// <summary>
-    /// Company ID of SuperAdmin if restricted (the only allowed recipient)
+    /// Company ID of SystemAdmin if restricted (the only allowed recipient)
     /// </summary>
-    public int? SuperAdminCompanyId { get; set; }
+    public int? SystemAdminCompanyId { get; set; }
     
     /// <summary>
     /// Whether the user is an unverified company owner
@@ -209,7 +209,7 @@ getMessagingStatus(): Observable<MessagingStatusDto> {
 export interface MessagingStatusDto {
     isRestricted: boolean;
     restrictionReason?: string;
-    superAdminCompanyId?: number;
+    SystemAdminCompanyId?: number;
     isUnverifiedCompanyOwner: boolean;
 }
 ```
@@ -278,8 +278,8 @@ canMessageCompany(company: any): boolean {
     // If not restricted, can message anyone
     if (!this.messagingStatus?.isRestricted) return true;
     
-    // If restricted, can only message SuperAdmin company
-    return this.messagingStatus.superAdminCompanyId === company.id;
+    // If restricted, can only message SystemAdmin company
+    return this.messagingStatus.SystemAdminCompanyId === company.id;
 }
 ```
 
@@ -315,7 +315,7 @@ Update template:
 {
   "messages": {
     "restricted_title": "Messaging Restricted",
-    "restricted_desc": "Your company is pending approval. You can only message SuperAdmin until your company is approved.",
+    "restricted_desc": "Your company is pending approval. You can only message SystemAdmin until your company is approved.",
     "approval_required": "Approval Required",
     "approval_required_tooltip": "Your company must be approved before you can message this company",
     "message_company": "Message Company"
@@ -343,20 +343,20 @@ No database schema changes required. The implementation uses existing entities:
 - `User` - to check UserType and CompanyId
 - `Company` - to check company details
 - `CompanyRequest` - to check approval status
-- `UserRole` - to check for SuperAdmin role
+- `UserRole` - to check for SystemAdmin role
 
 ## Security Considerations
 
 1. **Backend Validation**: All validation MUST happen on the backend. Frontend restrictions are for UX only.
 2. **Authorization**: Ensure the user is authenticated before any messaging operation.
 3. **Error Messages**: Provide clear but not overly informative error messages.
-4. **SuperAdmin Check**: Verify SuperAdmin role through the UserRole table, not just UserType.
+4. **SystemAdmin Check**: Verify SystemAdmin role through the UserRole table, not just UserType.
 
 ## Testing Checklist
 
 - [ ] Unverified company owner cannot start conversation with regular company
-- [ ] Unverified company owner CAN start conversation with SuperAdmin
-- [ ] Unverified company owner CAN reply to SuperAdmin messages
+- [ ] Unverified company owner CAN start conversation with SystemAdmin
+- [ ] Unverified company owner CAN reply to SystemAdmin messages
 - [ ] Verified company owner has full messaging access
 - [ ] Regular users are not affected by restrictions
 - [ ] Frontend shows appropriate restriction notice

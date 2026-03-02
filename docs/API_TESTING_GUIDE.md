@@ -168,7 +168,7 @@ Authorization: Bearer <token>
 
 ### 2. Authorization Testing
 Test role-based access:
-- SuperAdmin: Full access
+- SystemAdmin: Full access
 - CompanyAdmin: Company-level access
 - User: Limited access based on permissions
 

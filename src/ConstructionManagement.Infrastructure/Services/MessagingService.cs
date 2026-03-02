@@ -19,9 +19,9 @@ public class MessagingService : IMessagingService
     private readonly IFileStorageService _fileStorage;
     private readonly ILogger<MessagingService> _logger;
 
-    // Static cache for SuperAdmin company IDs to avoid N+1 queries
-    private static readonly ConcurrentDictionary<string, (DateTime Timestamp, HashSet<int> CompanyIds)> _superAdminCompanyCache = new();
-    private static readonly TimeSpan SuperAdminCacheDuration = TimeSpan.FromMinutes(5);
+    // Static cache for SystemAdmin company IDs to avoid N+1 queries
+    private static readonly ConcurrentDictionary<string, (DateTime Timestamp, HashSet<int> CompanyIds)> _systemAdminCompanyCache = new();
+    private static readonly TimeSpan SystemAdminCacheDuration = TimeSpan.FromMinutes(5);
 
     public MessagingService(
         ApplicationDbContext context,
@@ -34,30 +34,30 @@ public class MessagingService : IMessagingService
     }
 
     /// <summary>
-    /// Get cached SuperAdmin company IDs
+    /// Get cached SystemAdmin company IDs
     /// </summary>
-    private async Task<HashSet<int>> GetSuperAdminCompanyIdsAsync()
+    private async Task<HashSet<int>> GetSystemAdminCompanyIdsAsync()
     {
-        var cacheKey = "SuperAdminCompanyIds";
+        var cacheKey = "SystemAdminCompanyIds";
         
-        if (_superAdminCompanyCache.TryGetValue(cacheKey, out var cached) && 
-            DateTime.UtcNow - cached.Timestamp < SuperAdminCacheDuration)
+        if (_systemAdminCompanyCache.TryGetValue(cacheKey, out var cached) && 
+            DateTime.UtcNow - cached.Timestamp < SystemAdminCacheDuration)
         {
             return cached.CompanyIds;
         }
 
-        // Query database for companies with SuperAdmin users
+        // Query database for companies with SystemAdmin users
         var companyIds = await _context.Users
             .Include(u => u.UserRoles)
             .ThenInclude(ur => ur.Role)
-            .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "SuperAdmin"))
+            .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "SystemAdmin"))
             .Select(u => u.CompanyId)
             .Distinct()
             .ToListAsync();
 
         var result = new HashSet<int>(companyIds.Where(id => id.HasValue).Select(id => id!.Value));
         
-        _superAdminCompanyCache[cacheKey] = (DateTime.UtcNow, result);
+        _systemAdminCompanyCache[cacheKey] = (DateTime.UtcNow, result);
         
         return result;
     }
@@ -66,115 +66,133 @@ public class MessagingService : IMessagingService
 
     public async Task<ConversationDto> StartConversationAsync(int userId, StartConversationRequest request, List<IFormFile>? attachments = null)
     {
-        // Check if user can message this company (restriction for unverified owners)
-        if (!await CanMessageRecipientAsync(userId, request.CompanyId))
+        // Validate
+        if (request.RecipientUserId <= 0)
         {
-            throw new InvalidOperationException(
-                "Your company is pending approval. You can only message SuperAdmin until your company is approved.");
+            throw new ArgumentException("RecipientUserId is required.");
         }
-
-        // Check if user is blocked
-        var isBlocked = await IsUserBlockedAsync(request.CompanyId, userId);
-        if (isBlocked)
+        
+        // Get sender and recipient info
+        var sender = await _context.Users.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).FirstOrDefaultAsync(u => u.Id == userId);
+        var recipient = await _context.Users.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).FirstOrDefaultAsync(u => u.Id == request.RecipientUserId);
+            
+        if (sender == null || recipient == null)
         {
-            throw new InvalidOperationException("You are blocked from messaging this company.");
+            throw new ArgumentException("Sender or Recipient not found.");
         }
-
-        // Check if there's already an existing conversation
-        var existingConversation = await _context.CompanyConversations
-            .FirstOrDefaultAsync(c => c.CompanyId == request.CompanyId && c.InitiatorUserId == userId);
-
+        
+        // Check for existing conversation (Any direction)
+        var existingConversation = await _context.Conversations
+            .FirstOrDefaultAsync(c => 
+                (c.InitiatorUserId == userId && c.TargetUserId == request.RecipientUserId) ||
+                (c.InitiatorUserId == request.RecipientUserId && c.TargetUserId == userId));
+        
         if (existingConversation != null)
         {
-            throw new InvalidOperationException("You already have a conversation with this company. Please continue in the existing conversation.");
-        }
-
-        // Get company to set CompanyId properly
-        var company = await _context.Companies.FindAsync(request.CompanyId);
-        if (company == null)
-        {
-            throw new InvalidOperationException("Company not found.");
-        }
-
-        // Check if user belongs to this company (auto-approve for own company)
-        var user = await _context.Users.FindAsync(userId);
-        var isOwnCompany = user != null && user.CompanyId == request.CompanyId;
-        
-        // Check if this is a SuperAdmin company (auto-approve for SuperAdmin)
-        var isSuperAdminCompany = await _context.Users
-            .Include(u => u.UserRoles)
-            .ThenInclude(ur => ur.Role)
-            .AnyAsync(u => u.CompanyId == request.CompanyId &&
-                           u.UserRoles.Any(ur => ur.Role.Name == "SuperAdmin"));
-        
-        // Also check if this is the System Administration company
-        if (!isSuperAdminCompany)
-        {
-            isSuperAdminCompany = await _context.Companies
-                .AnyAsync(c => c.Id == request.CompanyId && c.BusinessId == "SYSTEM-ADMIN");
+            // If exists, use SendMessage instead
+            var messageDto = await SendMessageAsync(existingConversation.Id, userId, new SendMessageRequest { Content = request.Message }, attachments);
+            return await MapToConversationDto(existingConversation, userId);
         }
         
-        // Create conversation - auto-approve if:
-        // 1. User is messaging their own company
-        // 2. User is messaging SuperAdmin
-        var shouldAutoApprove = isOwnCompany || isSuperAdminCompany;
+        // Determine if this should be auto-approved based on the new rules
+        var shouldAutoApprove = await ShouldAutoApproveNewConversationAsync(sender, recipient);
         
-        var conversation = new CompanyConversation
+        // Create the conversation
+        var conversation = new Conversation
         {
-            CompanyId = request.CompanyId,
+            TargetUserId = request.RecipientUserId,
             InitiatorUserId = userId,
             Status = shouldAutoApprove ? "Approved" : "Pending",
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            CompanyId = recipient.CompanyId // Keep for context
         };
 
-        _context.CompanyConversations.Add(conversation);
+        _context.Conversations.Add(conversation);
         await _context.SaveChangesAsync();
 
         // Create initial message
-        var message = new CompanyMessage
+        var message = new Message
         {
-            CompanyId = request.CompanyId,
             ConversationId = conversation.Id,
             SenderUserId = userId,
             Content = request.Message,
-            IsFromCompany = false,
             IsRead = false,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            CompanyId = recipient.CompanyId // Keep for context
         };
 
-        _context.CompanyMessages.Add(message);
-        await _context.SaveChangesAsync(); // Save message first to get the ID
+        _context.Messages.Add(message);
+        await _context.SaveChangesAsync();
 
         // Handle attachments
         if (attachments != null && attachments.Count > 0)
         {
             foreach (var file in attachments)
             {
-                var attachment = await SaveAttachmentAsync(file, message, request.CompanyId);
+                var attachment = await SaveAttachmentAsync(file, message, recipient.CompanyId);
                 _context.MessageFileAttachments.Add(attachment);
             }
-            await _context.SaveChangesAsync(); // Save attachments
+            await _context.SaveChangesAsync();
         }
 
         // Update conversation with last message info
         conversation.LastMessageId = message.Id;
         conversation.LastMessageAt = message.CreatedAt;
-
         await _context.SaveChangesAsync();
-
-        _logger.LogInformation("User {UserId} started conversation {ConversationId} with company {CompanyId}", 
-            userId, conversation.Id, request.CompanyId);
 
         return await MapToConversationDto(conversation, userId);
     }
 
+    private async Task<bool> ShouldAutoApproveNewConversationAsync(User sender, User recipient)
+    {
+        // Rule: Every user can send message to himself
+        if (sender.Id == recipient.Id) return true;
+
+        // Rule: User sends message to their own company
+        if (sender.CompanyId.HasValue && sender.CompanyId == recipient.CompanyId) return true;
+
+        // Rule: Company owner selects a user (client/worker) from their company
+        // Check if sender is owner and recipient is in same company
+        if ((sender.UserType == UserType.CompanyOwner || sender.UserType == UserType.InventoryOwner) && 
+            sender.CompanyId.HasValue && sender.CompanyId == recipient.CompanyId) return true;
+
+        // Rule: Unverified Owner -> SystemAdmin
+        var isSystemAdmin = recipient.UserRoles.Any(ur => ur.Role.Name == "SystemAdmin") || recipient.UserType == UserType.SystemAdmin;
+        if (sender.UserType == UserType.CompanyOwner && isSystemAdmin) return true;
+
+        // Rule: Worker to SystemAdmin
+        if (sender.UserType == UserType.Worker && isSystemAdmin) return true;
+
+        // Rule: Worker to other worker in same company
+        if (sender.UserType == UserType.Worker && recipient.UserType == UserType.Worker && 
+            sender.CompanyId.HasValue && sender.CompanyId == recipient.CompanyId) return true;
+
+        // Default: User to Company (different company) or other cases -> Pending
+        return false;
+    }
+
+
+    /// <summary>
+    /// Check if user is blocked by another user
+    /// </summary>
+    private async Task<bool> IsUserBlockedByUserAsync(int blockerUserId, int blockedUserId)
+    {
+        // Check if there's a block relationship (implement if you have such a table)
+        // For now, return false (not implemented)
+        return false;
+    }
+
+    /// <summary>
+    /// Get conversations for a user
+    /// </summary>
     public async Task<IEnumerable<ConversationDto>> GetUserConversationsAsync(int userId)
     {
         // Get conversations where user is the initiator (User → Company)
         // OR where user is the target (Company → User)
-        var conversations = await _context.CompanyConversations
+        var conversations = await _context.Conversations
             .Include(c => c.Company)
             .Include(c => c.InitiatorUser)
+            .Include(c => c.TargetUser)
             .Include(c => c.LastMessage)
             .Where(c => c.InitiatorUserId == userId || c.TargetUserId == userId)
             .OrderByDescending(c => c.LastMessageAt ?? c.CreatedAt)
@@ -189,9 +207,9 @@ public class MessagingService : IMessagingService
         return result;
     }
 
-    public async Task<IEnumerable<ConversationDto>> GetCompanyConversationsAsync(int companyId, int requestingUserId)
+    public async Task<IEnumerable<ConversationDto>> GetConversationsAsync(int companyId, int requestingUserId)
     {
-        var conversations = await _context.CompanyConversations
+        var conversations = await _context.Conversations
             .Include(c => c.Company)
             .Include(c => c.InitiatorUser)
             .Include(c => c.LastMessage)
@@ -208,9 +226,18 @@ public class MessagingService : IMessagingService
         return result;
     }
 
+    /// <summary>
+    /// Get all conversations for a company (as company owner/admin)
+    /// Alias for GetConversationsAsync to match interface
+    /// </summary>
+    public async Task<IEnumerable<ConversationDto>> GetCompanyConversationsAsync(int companyId, int requestingUserId)
+    {
+        return await GetConversationsAsync(companyId, requestingUserId);
+    }
+
     public async Task<ConversationDetailDto> GetConversationAsync(int conversationId, int userId)
     {
-        var conversation = await _context.CompanyConversations
+        var conversation = await _context.Conversations
             .Include(c => c.Company)
             .Include(c => c.InitiatorUser)
             .Include(c => c.Messages)
@@ -224,39 +251,39 @@ public class MessagingService : IMessagingService
             throw new InvalidOperationException("Conversation not found.");
         }
 
-        // Check access - user must be either initiator, company owner, or SuperAdmin
+        // Check access - user must be either initiator, company owner, or SystemAdmin
         var isInitiator = conversation.InitiatorUserId == userId;
         var user = await _context.Users.FindAsync(userId);
         var isCompanyOwner = user != null && user.CompanyId == conversation.CompanyId;
         
-        // Check if user is SuperAdmin - SuperAdmin can access ANY conversation
-        var isSuperAdmin = await _context.UserRoles
+        // Check if user is SystemAdmin - SystemAdmin can access ANY conversation
+        var isSystemAdmin = await _context.UserRoles
             .Include(ur => ur.Role)
-            .AnyAsync(ur => ur.UserId == userId && ur.Role.Name == "SuperAdmin");
+            .AnyAsync(ur => ur.UserId == userId && ur.Role.Name == "SystemAdmin");
 
-        if (!isInitiator && !isCompanyOwner && !isSuperAdmin)
+        if (!isInitiator && !isCompanyOwner && !isSystemAdmin)
         {
             throw new UnauthorizedAccessException("You do not have access to this conversation.");
         }
 
-        // Auto-approve conversation if SuperAdmin opens it for the first time and it's pending
+        // Auto-approve conversation if SystemAdmin opens it for the first time and it's pending
         // This handles conversations created before auto-approval was implemented
-        if (isSuperAdmin && conversation.Status == "Pending")
+        if (isSystemAdmin && conversation.Status == "Pending")
         {
-            // Check if this conversation is with SuperAdmin's company
-            var isSuperAdminCompany = await _context.Users
+            // Check if this conversation is with SystemAdmin's company
+            var isSystemAdminCompany = await _context.Users
                 .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
                 .AnyAsync(u => u.CompanyId == conversation.CompanyId &&
-                               u.UserRoles.Any(ur => ur.Role.Name == "SuperAdmin"));
+                               u.UserRoles.Any(ur => ur.Role.Name == "SystemAdmin"));
             
-            if (!isSuperAdminCompany)
+            if (!isSystemAdminCompany)
             {
-                isSuperAdminCompany = await _context.Companies
+                isSystemAdminCompany = await _context.Companies
                     .AnyAsync(c => c.Id == conversation.CompanyId && c.BusinessId == "SYSTEM-ADMIN");
             }
 
-            if (isSuperAdminCompany)
+            if (isSystemAdminCompany)
             {
                 // Auto-approve the conversation
                 conversation.Status = "Approved";
@@ -264,7 +291,7 @@ public class MessagingService : IMessagingService
                 conversation.ApprovedByUserId = userId;
                 await _context.SaveChangesAsync();
                 
-                _logger.LogInformation("Conversation {ConversationId} auto-approved by SuperAdmin {UserId}", 
+                _logger.LogInformation("Conversation {ConversationId} auto-approved by SystemAdmin {UserId}", 
                     conversationId, userId);
             }
         }
@@ -272,14 +299,14 @@ public class MessagingService : IMessagingService
         // Mark messages as read
         await MarkMessagesAsReadAsync(conversationId, userId);
 
-        return await MapToConversationDetailDto(conversation, userId, isCompanyOwner || isSuperAdmin);
+        return await MapToConversationDetailDto(conversation, userId, isCompanyOwner || isSystemAdmin);
     }
 
     // ── Messaging ────────────────────────────────────────────────────────────────
 
     public async Task<CompanyMessageDto> SendMessageAsync(int conversationId, int senderId, SendMessageRequest request, List<IFormFile>? attachments = null)
     {
-        var conversation = await _context.CompanyConversations
+        var conversation = await _context.Conversations
             .Include(c => c.Company)
             .FirstOrDefaultAsync(c => c.Id == conversationId);
 
@@ -292,7 +319,7 @@ public class MessagingService : IMessagingService
         if (!await CanMessageRecipientAsync(senderId, conversation.CompanyId ?? 0))
         {
             throw new InvalidOperationException(
-                "Your company is pending approval. You can only message SuperAdmin until your company is approved.");
+                "Your company is pending approval. You can only message SystemAdmin until your company is approved.");
         }
 
         // Check if user can send message
@@ -306,7 +333,7 @@ public class MessagingService : IMessagingService
         var sender = await _context.Users.FindAsync(senderId);
         var isFromCompany = sender != null && sender.CompanyId == conversation.CompanyId;
 
-        var message = new CompanyMessage
+        var message = new Message
         {
             CompanyId = conversation.CompanyId,
             ConversationId = conversationId,
@@ -317,7 +344,7 @@ public class MessagingService : IMessagingService
             CreatedAt = DateTime.UtcNow
         };
 
-        _context.CompanyMessages.Add(message);
+        _context.Messages.Add(message);
         await _context.SaveChangesAsync();
 
         // Handle attachments
@@ -339,97 +366,76 @@ public class MessagingService : IMessagingService
         _logger.LogInformation("User {UserId} sent message {MessageId} in conversation {ConversationId}", 
             senderId, message.Id, conversationId);
 
-        return MapToMessageDto(message);
+        return MapToCompanyMessageDto(message);
     }
 
     public async Task<CanSendMessageResult> CanUserSendMessageAsync(int conversationId, int userId)
     {
-        var conversation = await _context.CompanyConversations.FindAsync(conversationId);
+        var conversation = await _context.Conversations
+            .Include(c => c.InitiatorUser)
+            .Include(c => c.TargetUser)
+            .FirstOrDefaultAsync(c => c.Id == conversationId);
+
         if (conversation == null)
         {
             return new CanSendMessageResult { CanSend = false, Reason = "Conversation not found." };
         }
 
-        // Check if user is participant
-        var user = await _context.Users.FindAsync(userId);
-        var isInitiator = conversation.InitiatorUserId == userId;
-        var isCompanyOwner = user != null && user.CompanyId == conversation.CompanyId;
-
-        if (!isInitiator && !isCompanyOwner)
+        // Participant check
+        if (conversation.InitiatorUserId != userId && conversation.TargetUserId != userId)
         {
-            return new CanSendMessageResult { CanSend = false, Reason = "You are not a participant in this conversation." };
+            return new CanSendMessageResult { CanSend = false, Reason = "You are not a participant." };
         }
 
-        // Check if conversation is blocked
+        // Self messaging always allowed
+        if (conversation.InitiatorUserId == conversation.TargetUserId && conversation.InitiatorUserId == userId)
+        {
+            return new CanSendMessageResult { CanSend = true, Status = "Approved" };
+        }
+
         if (conversation.Status == "Blocked")
         {
-            return new CanSendMessageResult { CanSend = false, Reason = "This conversation has been blocked.", Status = "Blocked" };
+            return new CanSendMessageResult { CanSend = false, Reason = "Conversation blocked.", Status = "Blocked" };
         }
 
-        // Check if user is blocked at company level
-        if (await IsUserBlockedAsync(conversation.CompanyId ?? 0, userId))
+        if (conversation.Status == "Approved")
         {
-            return new CanSendMessageResult { CanSend = false, Reason = "You are blocked from messaging this company." };
+            return new CanSendMessageResult { CanSend = true, Status = "Approved" };
         }
 
-        // Company owner can always send messages
-        if (isCompanyOwner)
-        {
-            return new CanSendMessageResult { CanSend = true };
-        }
-
-        // Check if user is messaging their own company - always allow
-        if (isInitiator && user != null && user.CompanyId == conversation.CompanyId)
-        {
-            return new CanSendMessageResult { CanSend = true, Status = conversation.Status };
-        }
-
-        // Check if messaging SuperAdmin company - always allow
-        var isSuperAdminCompany = await _context.Users
-            .Include(u => u.UserRoles)
-            .ThenInclude(ur => ur.Role)
-            .AnyAsync(u => u.CompanyId == conversation.CompanyId &&
-                           u.UserRoles.Any(ur => ur.Role.Name == "SuperAdmin"));
-        
-        if (!isSuperAdminCompany)
-        {
-            isSuperAdminCompany = await _context.Companies
-                .AnyAsync(c => c.Id == conversation.CompanyId && c.BusinessId == "SYSTEM-ADMIN");
-        }
-        
-        if (isSuperAdminCompany)
-        {
-            return new CanSendMessageResult { CanSend = true, Status = conversation.Status };
-        }
-
-        // 3. Worker restriction: Can ONLY message their own company
-        if (user?.UserType == UserType.Worker && user.CompanyId != conversation.CompanyId)
-        {
-            return new CanSendMessageResult { CanSend = false, Reason = "As a worker, you can only message your own company workers and owner." };
-        }
-
-        // Check if conversation is approved 
+        // Pending state: check if user is the initiator and how many messages sent
         if (conversation.Status == "Pending")
         {
-            // Unverified companies or companies the user doesn't belong to: only one message allowed
-            var messageCount = await _context.CompanyMessages
-                .CountAsync(m => m.ConversationId == conversationId && !m.IsFromCompany);
-
-            if (messageCount == 0)
+            // If sender is the one being messaged (e.g. Company Owner), they can reply (which should probably approve it or they can explicitly approve)
+            // But per rules, initiator can only send 1.
+            if (userId == conversation.InitiatorUserId)
             {
+                var messageCount = await _context.Messages
+                    .CountAsync(m => m.ConversationId == conversationId && m.SenderUserId == userId);
+
+                if (messageCount == 0)
+                {
+                    return new CanSendMessageResult { CanSend = true, Status = "Pending" };
+                }
+
+                return new CanSendMessageResult 
+                { 
+                    CanSend = false, 
+                    Reason = "Wait for approval to send more messages.",
+                    Status = "Pending"
+                };
+            }
+            else
+            {
+                // Recipient can reply once even if pending? 
+                // Rules say: "User cannot send more messages until approved".
+                // Usually replying implies approval or just a one-off.
+                // Let's allow recipient to send messages (which usually works as an approval if they want).
                 return new CanSendMessageResult { CanSend = true, Status = "Pending" };
             }
-
-            return new CanSendMessageResult 
-            { 
-                CanSend = false, 
-                Reason = "You have already sent an initial message. Please wait for the company to approve the conversation before sending more messages.",
-                Status = "Pending"
-            };
         }
 
-        // Approved conversation
-        return new CanSendMessageResult { CanSend = true, Status = "Approved" };
+        return new CanSendMessageResult { CanSend = false, Reason = "Invalid conversation state." };
     }
 
     public async Task MarkMessagesAsReadAsync(int conversationId, int userId)
@@ -437,10 +443,10 @@ public class MessagingService : IMessagingService
         var user = await _context.Users.FindAsync(userId);
         if (user == null) return;
 
-        var conversation = await _context.CompanyConversations.FindAsync(conversationId);
+        var conversation = await _context.Conversations.FindAsync(conversationId);
         if (conversation == null) return;
 
-        var messagesToUpdate = await _context.CompanyMessages
+        var messagesToUpdate = await _context.Messages
             .Where(m => m.ConversationId == conversationId && !m.IsRead && m.SenderUserId != userId)
             .ToListAsync();
 
@@ -458,14 +464,12 @@ public class MessagingService : IMessagingService
         var user = await _context.Users.FindAsync(userId);
         if (user == null) return 0;
 
-        // Count unread messages not sent by this user in conversations they are part of
-        return await _context.CompanyMessages
+        return await _context.Messages
             .Include(m => m.Conversation)
             .Where(m => !m.IsRead && m.SenderUserId != userId)
             .Where(m => m.Conversation != null && 
                         (m.Conversation.InitiatorUserId == userId || 
-                         m.Conversation.TargetUserId == userId || 
-                         m.Conversation.CompanyId == user.CompanyId))
+                         m.Conversation.TargetUserId == userId))
             .CountAsync();
     }
 
@@ -473,17 +477,16 @@ public class MessagingService : IMessagingService
 
     public async Task ApproveConversationAsync(int conversationId, int approverId, string? notes = null)
     {
-        var conversation = await _context.CompanyConversations.FindAsync(conversationId);
+        var conversation = await _context.Conversations.FindAsync(conversationId);
         if (conversation == null)
         {
             throw new InvalidOperationException("Conversation not found.");
         }
 
-        // Verify approver is company owner
-        var approver = await _context.Users.FindAsync(approverId);
-        if (approver == null || approver.CompanyId != conversation.CompanyId)
+        // Only the target of the original request can approve
+        if (conversation.TargetUserId != approverId)
         {
-            throw new UnauthorizedAccessException("Only company owners can approve conversations.");
+            throw new UnauthorizedAccessException("Only the recipient can approve this conversation.");
         }
 
         conversation.Status = "Approved";
@@ -491,14 +494,11 @@ public class MessagingService : IMessagingService
         conversation.ApprovedByUserId = approverId;
 
         await _context.SaveChangesAsync();
-
-        _logger.LogInformation("Conversation {ConversationId} approved by user {ApproverId}", 
-            conversationId, approverId);
     }
 
     public async Task BlockConversationAsync(int conversationId, int blockerId, string? reason = null)
     {
-        var conversation = await _context.CompanyConversations.FindAsync(conversationId);
+        var conversation = await _context.Conversations.FindAsync(conversationId);
         if (conversation == null)
         {
             throw new InvalidOperationException("Conversation not found.");
@@ -523,7 +523,7 @@ public class MessagingService : IMessagingService
 
     public async Task UnblockConversationAsync(int conversationId, int unblockerId)
     {
-        var conversation = await _context.CompanyConversations.FindAsync(conversationId);
+        var conversation = await _context.Conversations.FindAsync(conversationId);
         if (conversation == null)
         {
             throw new InvalidOperationException("Conversation not found.");
@@ -583,7 +583,7 @@ public class MessagingService : IMessagingService
         _context.UserMessagingBlocks.Add(block);
 
         // Also block all existing conversations with this user
-        var conversations = await _context.CompanyConversations
+        var conversations = await _context.Conversations
             .Where(c => c.CompanyId == companyId && c.InitiatorUserId == userId && c.Status != "Blocked")
             .ToListAsync();
 
@@ -662,7 +662,7 @@ public class MessagingService : IMessagingService
         if (user == null)
             return Enumerable.Empty<MessageSearchResultDto>();
 
-        var query = _context.CompanyMessages
+        var query = _context.Messages
             .Include(m => m.Conversation)
             .Include(m => m.SenderUser)
             .Include(m => m.Attachments)
@@ -671,9 +671,9 @@ public class MessagingService : IMessagingService
         return await ExecuteSearchAsync(query, request);
     }
 
-    public async Task<IEnumerable<MessageSearchResultDto>> SearchCompanyMessagesAsync(int companyId, MessageSearchRequest request)
+    public async Task<IEnumerable<MessageSearchResultDto>> SearchMessagesAsync(int companyId, MessageSearchRequest request)
     {
-        var query = _context.CompanyMessages
+        var query = _context.Messages
             .Include(m => m.Conversation)
             .Include(m => m.SenderUser)
             .Include(m => m.Attachments)
@@ -685,7 +685,7 @@ public class MessagingService : IMessagingService
     public async Task<IEnumerable<MessageSearchResultDto>> SearchConversationMessagesAsync(int conversationId, int userId, string searchTerm)
     {
         var user = await _context.Users.FindAsync(userId);
-        var conversation = await _context.CompanyConversations.FindAsync(conversationId);
+        var conversation = await _context.Conversations.FindAsync(conversationId);
 
         if (user == null || conversation == null)
             return Enumerable.Empty<MessageSearchResultDto>();
@@ -703,7 +703,7 @@ public class MessagingService : IMessagingService
             ConversationId = conversationId
         };
 
-        var query = _context.CompanyMessages
+        var query = _context.Messages
             .Include(m => m.Conversation)
             .Include(m => m.SenderUser)
             .Include(m => m.Attachments)
@@ -712,8 +712,22 @@ public class MessagingService : IMessagingService
         return await ExecuteSearchAsync(query, request);
     }
 
+    /// <summary>
+    /// Search messages for a company (in company conversations)
+    /// </summary>
+    public async Task<IEnumerable<MessageSearchResultDto>> SearchCompanyMessagesAsync(int companyId, MessageSearchRequest request)
+    {
+        var query = _context.Messages
+            .Include(m => m.Conversation)
+            .Include(m => m.SenderUser)
+            .Include(m => m.Attachments)
+            .Where(m => m.Conversation.CompanyId == companyId);
+
+        return await ExecuteSearchAsync(query, request);
+    }
+
     private async Task<IEnumerable<MessageSearchResultDto>> ExecuteSearchAsync(
-        IQueryable<CompanyMessage> query, 
+        IQueryable<Message> query, 
         MessageSearchRequest request)
     {
         // Apply search term filter
@@ -822,7 +836,7 @@ public class MessagingService : IMessagingService
 
     // ── Private Helper Methods ────────────────────────────────────────────────────
 
-    private async Task<MessageFileAttachment> SaveAttachmentAsync(IFormFile file, CompanyMessage message, int? companyId)
+    private async Task<MessageFileAttachment> SaveAttachmentAsync(IFormFile file, Message message, int? companyId)
     {
         var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
         var result = await _fileStorage.SaveFileAsync(file, "message-attachments");
@@ -840,33 +854,50 @@ public class MessagingService : IMessagingService
         };
     }
 
-    private async Task<ConversationDto> MapToConversationDto(CompanyConversation conversation, int userId, bool isCompanyOwner = false)
+    private async Task<ConversationDto> MapToConversationDto(Conversation conversation, int userId, bool isCompanyOwner = false)
     {
-        var unreadCount = await _context.CompanyMessages
+        var unreadCount = await _context.Messages
             .Where(m => m.ConversationId == conversation.Id && !m.IsRead && m.SenderUserId != userId)
             .CountAsync();
 
         var canSend = await CanUserSendMessageAsync(conversation.Id, userId);
 
-        // Determine conversation type
-        var (conversationType, targetUserType) = await DetermineConversationTypeAsync(conversation, isCompanyOwner);
+        // Determine Name of the "Other Party"
+        var isInitiator = conversation.InitiatorUserId == userId;
+        var otherUserId = isInitiator ? conversation.TargetUserId : conversation.InitiatorUserId;
+        var otherUser = isInitiator ? conversation.TargetUser : conversation.InitiatorUser;
+
+        // If otherUser is null (not loaded), fetch it
+        if (otherUser == null && otherUserId.HasValue)
+        {
+            otherUser = await _context.Users.FindAsync(otherUserId.Value);
+        }
+
+        var otherPartyName = otherUser?.FullName ?? otherUser?.Email ?? "Unknown";
+        
+        // Contextual names for the UI
+        var displayedName = otherPartyName;
+        if (conversation.InitiatorUserId == conversation.TargetUserId) 
+        {
+            displayedName = "Me (Self)";
+        }
 
         return new ConversationDto
         {
             Id = conversation.Id,
             CompanyId = conversation.CompanyId ?? 0,
-            CompanyName = conversation.Company?.Name ?? "Unknown Company",
-            CompanyLogo = conversation.Company?.LogoUrl,
+            CompanyName = displayedName,
+            CompanyLogo = null,
             InitiatorUserId = conversation.InitiatorUserId,
-            InitiatorName = conversation.InitiatorUser?.FullName ?? conversation.InitiatorUser?.Email ?? "Unknown",
-            InitiatorAvatar = null, // User doesn't have profile picture property
+            InitiatorName = conversation.InitiatorUser?.FullName ?? "User",
+            TargetUserId = conversation.TargetUserId,
+            TargetUserName = otherPartyName,
             InitiatedBy = conversation.InitiatedBy ?? "User",
-            ConversationType = conversationType,
-            TargetUserType = targetUserType,
+            ConversationType = "User", // Simplified to User-to-User
             Status = conversation.Status,
             CreatedAt = conversation.CreatedAt,
             LastMessageAt = conversation.LastMessageAt,
-            LastMessage = conversation.LastMessage != null ? MapToMessageDto(conversation.LastMessage) : null,
+            LastMessage = conversation.LastMessage != null ? MapToCompanyMessageDto(conversation.LastMessage) : null,
             UnreadCount = unreadCount,
             CanSendMessage = canSend.CanSend,
             IsCompanyOwner = isCompanyOwner
@@ -876,35 +907,35 @@ public class MessagingService : IMessagingService
     /// <summary>
     /// Determines the conversation type for tabbed interface filtering
     /// </summary>
-    private async Task<(string conversationType, string? targetUserType)> DetermineConversationTypeAsync(CompanyConversation conversation, bool isCompanyOwner)
+    private async Task<(string conversationType, string? targetUserType)> DetermineConversationTypeAsync(Conversation conversation, bool isCompanyOwner)
     {
         var company = conversation.Company;
 
-        // If the viewer is NOT the company owner, they are the initiator (User viewing a Company/SuperAdmin)
+        // If the viewer is NOT the company owner, they are the initiator (User viewing a Company/SystemAdmin)
         if (!isCompanyOwner)
         {
-            // Check if talking to SuperAdmin by BusinessId
+            // Check if talking to SystemAdmin by BusinessId or special CompanyId = 0
             // Strategy 1: Check by BusinessId
-            bool isSuperAdminCompany = company?.BusinessId == "SUPER-ADMIN-001" || 
-                                     company?.BusinessId == "SYSTEM-ADMIN" || 
-                                     company?.BusinessId == "STRUCT-ADMIN";
+            bool isSystemAdminCompany = company?.BusinessId == "SUPER-ADMIN-001" || 
+                                      company?.BusinessId == "STRUCT-ADMIN" ||
+                                      conversation.CompanyId == 0; // Special ID 0 for SystemAdmin
 
-            // Strategy 2: Check cached SuperAdmin company IDs (avoids N+1 query)
-            if (!isSuperAdminCompany && company != null)
+            // Strategy 2: Check cached SystemAdmin company IDs (avoids N+1 query)
+            if (!isSystemAdminCompany && company != null)
             {
-                var superAdminCompanyIds = await GetSuperAdminCompanyIdsAsync();
-                isSuperAdminCompany = superAdminCompanyIds.Contains(company.Id);
+                var systemAdminCompanyIds = await GetSystemAdminCompanyIdsAsync();
+                isSystemAdminCompany = systemAdminCompanyIds.Contains(company.Id);
             }
 
-            if (isSuperAdminCompany)
+            if (isSystemAdminCompany)
             {
-                return ("SuperAdmin", null);
+                return ("SystemAdmin", null);
             }
 
             return ("Company", null);
         }
 
-        // The viewer IS the company owner (SuperAdmin or regular company admin viewing Initiator)
+        // The viewer IS the company owner (SystemAdmin or regular company admin viewing Initiator)
         // Categorize by the OTHER party (InitiatorUser)
         var initiator = conversation.InitiatorUser;
         if (initiator != null)
@@ -926,13 +957,13 @@ public class MessagingService : IMessagingService
         return ("Client", "Client");
     }
 
-    private async Task<ConversationDetailDto> MapToConversationDetailDto(CompanyConversation conversation, int userId, bool isCompanyOwner = false)
+    private async Task<ConversationDetailDto> MapToConversationDetailDto(Conversation conversation, int userId, bool isCompanyOwner = false)
     {
         var baseDto = await MapToConversationDto(conversation, userId, isCompanyOwner);
         
         var messages = conversation.Messages
             .OrderBy(m => m.CreatedAt)
-            .Select(MapToMessageDto)
+            .Select(MapToCompanyMessageDto)
             .ToList();
 
         return new ConversationDetailDto
@@ -958,7 +989,7 @@ public class MessagingService : IMessagingService
         };
     }
 
-    private CompanyMessageDto MapToMessageDto(CompanyMessage message)
+    private CompanyMessageDto MapToCompanyMessageDto(Message message)
     {
         return new CompanyMessageDto
         {
@@ -1014,37 +1045,60 @@ public class MessagingService : IMessagingService
     /// </summary>
     private async Task<bool> CanMessageRecipientAsync(int senderId, int recipientCompanyId)
     {
-        var user = await _context.Users.FindAsync(senderId);
+        var user = await _context.Users
+            .Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
+            .FirstOrDefaultAsync(u => u.Id == senderId);
+        
         if (user == null) return false;
 
-        // 1. Worker Restriction: Can ONLY message their own company
-        if (user.UserType == UserType.Worker)
+        // 1. Check if sender is SystemAdmin (by UserType) - they can message anyone
+        // SystemAdmin is the user who manages the system, not associated with any company
+        if (user.UserType == UserType.SystemAdmin)
         {
+            return true;
+        }
+
+        // 2. Check if recipient is System Admin company - allow users to message
+        if (await IsSystemAdminCompanyAsync(recipientCompanyId))
+        {
+            return true;
+        }
+
+        // 3. Worker/Engineer Restriction: Can ONLY message their own company or System Admin
+        if (user.UserType == UserType.Worker || user.UserType == UserType.Engineer)
+        {
+            // Workers can message their own company or System Admin
             return user.CompanyId == recipientCompanyId;
         }
 
-        // 2. Unverified Owner Restriction: Can ONLY message SuperAdmin
-        if (await IsUnverifiedCompanyOwnerAsync(senderId))
+        // 4. NormalUser Restriction: Cannot message anyone
+        if (user.UserType == UserType.NormalUser)
         {
-            // Check if any SuperAdmin is associated with this company
-            var hasSuperAdmin = await _context.Users
-                .Include(u => u.UserRoles)
-                .ThenInclude(ur => ur.Role)
-                .AnyAsync(u => u.CompanyId == recipientCompanyId &&
-                               u.UserRoles.Any(ur => ur.Role.Name == "SuperAdmin"));
-
-            if (hasSuperAdmin)
-                return true;
-
-            // Also check if this is the System Administration company
-            var isSystemCompany = await _context.Companies
-                .AnyAsync(c => c.Id == recipientCompanyId && c.BusinessId == "SYSTEM-ADMIN");
-
-            return isSystemCompany;
+            return false;
         }
 
-        // Other users (Clients, Verified Owners, Admins) are allowed to initiate
+        // 5. Unverified Owner Restriction: Can ONLY message SystemAdmin/System Admin
+        if (await IsUnverifiedCompanyOwnerAsync(senderId))
+        {
+            return await IsSystemAdminCompanyAsync(recipientCompanyId);
+        }
+
+        // Other users (CompanyOwner, InventoryOwner, Subcontractor) are allowed to message
         return true;
+    }
+
+    /// <summary>
+    /// Check if a company is the System Admin company
+    /// </summary>
+    private async Task<bool> IsSystemAdminCompanyAsync(int companyId)
+    {
+        var company = await _context.Companies.FindAsync(companyId);
+        if (company == null) return false;
+        
+        // Check by BusinessId or known System Admin company ID
+        return company.BusinessId == "SYSTEM-ADMIN" || 
+               company.Name.Contains("System", StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>
@@ -1064,14 +1118,15 @@ public class MessagingService : IMessagingService
             IsWorker = isWorker,
             UserCompanyId = user.CompanyId,
             IsRestricted = isUnverifiedOwner || isWorker,
-            SuperAdminCompanyId = await GetSuperAdminCompanyIdAsync()
+            SystemAdminCompanyId = await GetSystemAdminCompanyIdAsync(),
+            SystemAdminUserId = await GetSystemAdminUserIdAsync()
         };
 
         if (status.IsRestricted)
         {
             if (isUnverifiedOwner)
             {
-                status.RestrictionReason = "Your company is pending approval. You can only message SuperAdmin.";
+                status.RestrictionReason = "Your company is pending approval. You can only message SystemAdmin.";
             }
             else if (isWorker)
             {
@@ -1084,43 +1139,43 @@ public class MessagingService : IMessagingService
         return status;
     }
 
-    private async Task<int?> GetSuperAdminCompanyIdAsync()
+    private async Task<int?> GetSystemAdminCompanyIdAsync()
     {
-        int? superAdminCompanyId = null;
+        int? SystemAdminCompanyId = null;
 
-        // Strategy 1: Find a SuperAdmin user with a company assigned
-        var superAdminWithCompany = await _context.Users
+        // Strategy 1: Find a SystemAdmin user with a company assigned
+        var SystemAdminWithCompany = await _context.Users
             .Include(u => u.UserRoles)
             .ThenInclude(ur => ur.Role)
-            .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "SuperAdmin") && u.CompanyId.HasValue)
+            .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "SystemAdmin") && u.CompanyId.HasValue)
             .Select(u => u.CompanyId)
             .FirstOrDefaultAsync();
 
-        if (superAdminWithCompany.HasValue && superAdminWithCompany.Value > 0)
+        if (SystemAdminWithCompany.HasValue && SystemAdminWithCompany.Value > 0)
         {
-            superAdminCompanyId = superAdminWithCompany;
-            _logger.LogInformation("Found SuperAdmin company via user with CompanyId: {CompanyId}", superAdminCompanyId);
+            SystemAdminCompanyId = SystemAdminWithCompany;
+            _logger.LogInformation("Found SystemAdmin company via user with CompanyId: {CompanyId}", SystemAdminCompanyId);
         }
 
-        // Strategy 2: Find any company that has SuperAdmin users assigned to it
-        if (!superAdminCompanyId.HasValue || superAdminCompanyId.Value == 0)
+        // Strategy 2: Find any company that has SystemAdmin users assigned to it
+        if (!SystemAdminCompanyId.HasValue || SystemAdminCompanyId.Value == 0)
         {
-            var companyWithSuperAdmin = await (from u in _context.Users
+            var companyWithSystemAdmin = await (from u in _context.Users
                                                join ur in _context.UserRoles on u.Id equals ur.UserId
                                                join r in _context.Roles on ur.RoleId equals r.Id
-                                               where r.Name == "SuperAdmin" && u.CompanyId.HasValue
+                                               where r.Name == "SystemAdmin" && u.CompanyId.HasValue
                                                select u.CompanyId!.Value)
                 .FirstOrDefaultAsync();
 
-            if (companyWithSuperAdmin > 0)
+            if (companyWithSystemAdmin > 0)
             {
-                superAdminCompanyId = companyWithSuperAdmin;
-                _logger.LogInformation("Found company with SuperAdmin users: {CompanyId}", superAdminCompanyId);
+                SystemAdminCompanyId = companyWithSystemAdmin;
+                _logger.LogInformation("Found company with SystemAdmin users: {CompanyId}", SystemAdminCompanyId);
             }
         }
 
         // Strategy 3: Get the first company that exists in the system
-        if (!superAdminCompanyId.HasValue || superAdminCompanyId.Value == 0)
+        if (!SystemAdminCompanyId.HasValue || SystemAdminCompanyId.Value == 0)
         {
             var firstCompany = await _context.Companies
                 .OrderBy(c => c.Id)
@@ -1128,31 +1183,36 @@ public class MessagingService : IMessagingService
 
             if (firstCompany != null)
             {
-                superAdminCompanyId = firstCompany.Id;
-                _logger.LogInformation("Using first company as fallback: {CompanyId}", superAdminCompanyId);
+                SystemAdminCompanyId = firstCompany.Id;
+                _logger.LogInformation("Using first company as fallback: {CompanyId}", SystemAdminCompanyId);
             }
         }
 
-        // Strategy 4: Create a system company if none exists
-        if (!superAdminCompanyId.HasValue || superAdminCompanyId.Value == 0)
+        // Strategy 4: Return 0 as special SystemAdmin company ID (virtual, not in database)
+        // This allows SystemAdmin messaging without an actual company
+        if (!SystemAdminCompanyId.HasValue || SystemAdminCompanyId.Value == 0)
         {
-            _logger.LogWarning("No companies found. Creating a system company for SuperAdmin messaging.");
-            
-            var systemCompany = new Company
-            {
-                Name = "System Administration",
-                BusinessId = "SYSTEM-ADMIN",
-                CreatedAt = DateTime.UtcNow,
-                IsActive = true
-            };
-            
-            _context.Companies.Add(systemCompany);
-            await _context.SaveChangesAsync();
-            
-            superAdminCompanyId = systemCompany.Id;
-            _logger.LogInformation("Created system company with ID: {CompanyId}", superAdminCompanyId);
+            _logger.LogInformation("No company found for SystemAdmin - using special ID 0 for SystemAdmin messaging.");
+            return 0; // Special ID 0 represents SystemAdmin in messaging
         }
-        return superAdminCompanyId;
+        return SystemAdminCompanyId;
+    }
+
+    /// <summary>
+    /// Get the SystemAdmin user ID for direct messaging
+    /// </summary>
+    private async Task<int?> GetSystemAdminUserIdAsync()
+    {
+        // Find a SystemAdmin user (they don't have a company)
+        var SystemAdmin = await _context.Users
+            .Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
+            .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "SystemAdmin"))
+            .OrderBy(u => u.Id)  // Get the first/primary SystemAdmin
+            .Select(u => u.Id)
+            .FirstOrDefaultAsync();
+
+        return SystemAdmin > 0 ? SystemAdmin : null;
     }
 
     // ── Company to User Messaging ─────────────────────────────────────────────────
@@ -1189,7 +1249,7 @@ public class MessagingService : IMessagingService
         }
 
         // Check if there's already an existing conversation
-        var existingConversation = await _context.CompanyConversations
+        var existingConversation = await _context.Conversations
             .FirstOrDefaultAsync(c => c.CompanyId == companyOwner.CompanyId && 
                                       c.InitiatorUserId == request.TargetUserId &&
                                       c.InitiatedBy == "Company");
@@ -1200,7 +1260,7 @@ public class MessagingService : IMessagingService
         }
 
         // Also check for user-initiated conversation with this company
-        var userInitiatedConversation = await _context.CompanyConversations
+        var userInitiatedConversation = await _context.Conversations
             .FirstOrDefaultAsync(c => c.CompanyId == companyOwner.CompanyId && 
                                       c.InitiatorUserId == request.TargetUserId &&
                                       c.InitiatedBy == "User");
@@ -1211,7 +1271,7 @@ public class MessagingService : IMessagingService
         }
 
         // Create conversation - company initiated, so it's auto-approved
-        var conversation = new CompanyConversation
+        var conversation = new Conversation
         {
             CompanyId = companyOwner.CompanyId.Value,
             InitiatorUserId = request.TargetUserId, // The user being messaged
@@ -1222,11 +1282,11 @@ public class MessagingService : IMessagingService
             ApprovedByUserId = companyOwnerId
         };
 
-        _context.CompanyConversations.Add(conversation);
+        _context.Conversations.Add(conversation);
         await _context.SaveChangesAsync();
 
         // Create initial message from company
-        var message = new CompanyMessage
+        var message = new Message
         {
             CompanyId = companyOwner.CompanyId.Value,
             ConversationId = conversation.Id,
@@ -1237,7 +1297,7 @@ public class MessagingService : IMessagingService
             CreatedAt = DateTime.UtcNow
         };
 
-        _context.CompanyMessages.Add(message);
+        _context.Messages.Add(message);
 
         // Handle attachments
         if (attachments != null && attachments.Count > 0)
@@ -1291,7 +1351,7 @@ public class MessagingService : IMessagingService
             .ToListAsync();
 
         // Get existing conversations for this company
-        var existingConversations = await _context.CompanyConversations
+        var existingConversations = await _context.Conversations
             .Where(c => c.CompanyId == companyId)
             .ToDictionaryAsync(c => c.InitiatorUserId, c => (int?)c.Id);
 
@@ -1330,7 +1390,7 @@ public class MessagingService : IMessagingService
             throw new InvalidOperationException("You can only message workers within your own company.");
 
         // Check for existing worker-to-worker conversation
-        var existingConversation = await _context.CompanyConversations
+        var existingConversation = await _context.Conversations
             .FirstOrDefaultAsync(c => c.CompanyId == initiator.CompanyId && 
                                       ((c.InitiatorUserId == initiatorId && c.TargetUserId == request.TargetWorkerId) ||
                                        (c.InitiatorUserId == request.TargetWorkerId && c.TargetUserId == initiatorId)) &&
@@ -1344,7 +1404,7 @@ public class MessagingService : IMessagingService
         }
 
         // Create new internal conversation
-        var conversation = new CompanyConversation
+        var conversation = new Conversation
         {
             CompanyId = initiator.CompanyId,
             InitiatorUserId = initiatorId,
@@ -1354,11 +1414,11 @@ public class MessagingService : IMessagingService
             CreatedAt = DateTime.UtcNow
         };
 
-        _context.CompanyConversations.Add(conversation);
+        _context.Conversations.Add(conversation);
         await _context.SaveChangesAsync();
 
         // Create initial message
-        var message = new CompanyMessage
+        var message = new Message
         {
             CompanyId = initiator.CompanyId,
             ConversationId = conversation.Id,
@@ -1369,7 +1429,7 @@ public class MessagingService : IMessagingService
             CreatedAt = DateTime.UtcNow
         };
 
-        _context.CompanyMessages.Add(message);
+        _context.Messages.Add(message);
         await _context.SaveChangesAsync();
 
         if (attachments != null && attachments.Count > 0)
@@ -1390,13 +1450,16 @@ public class MessagingService : IMessagingService
     }
 
     /// <summary>
-    /// Get users that SuperAdmin can message (all company owners across all companies)
+    /// Get users that SystemAdmin can message (all company owners and other SystemAdmins)
     /// </summary>
-    public async Task<IEnumerable<MessagableUserDto>> GetMessagableUsersForSuperAdminAsync(int superAdminUserId, string? userType = null)
+    public async Task<IEnumerable<MessagableUserDto>> GetMessagableUsersForSystemAdminAsync(int systemAdminUserId, string? userType = null)
     {
-        // Get all company owners across all companies
+        // Get all company owners AND all SystemAdmins
         var query = _context.Users
-            .Where(u => u.UserType == UserType.CompanyOwner && u.CompanyId != null)
+            .Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
+            .Where(u => (u.UserType == UserType.CompanyOwner && u.CompanyId != null) 
+                        || u.UserRoles.Any(ur => ur.Role.Name == "SystemAdmin"))
             .AsQueryable();
 
         if (!string.IsNullOrEmpty(userType))
@@ -1419,3 +1482,4 @@ public class MessagingService : IMessagingService
         return users;
     }
 }
+

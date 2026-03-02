@@ -28,9 +28,9 @@ public class ProjectRoleHandler : AuthorizationHandler<ProjectRoleRequirement>
         if (userIdClaim == null) return;
         var userId = int.Parse(userIdClaim.Value);
 
-        // 2. SuperAdmin Bypass
-        // If the user is a SuperAdmin, grant full access regardless of project membership
-        if (context.User.IsInRole("SuperAdmin"))
+        // 2. SystemAdmin Bypass
+        // If the user is a SystemAdmin, grant full access regardless of project membership
+        if (context.User.IsInRole("SystemAdmin"))
         {
             context.Succeed(requirement);
             return;
@@ -123,3 +123,4 @@ public class ProjectRoleHandler : AuthorizationHandler<ProjectRoleRequirement>
         }
     }
 }
+

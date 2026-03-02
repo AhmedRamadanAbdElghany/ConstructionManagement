@@ -25,10 +25,10 @@ public class DashboardController : BaseApiController
     }
 
     [HttpGet("super-admin/stats")]
-    [Authorize(Policy = "SuperAdminOnly")]
-    public async Task<ActionResult<SuperAdminStats>> GetSuperAdminStats()
+    [Authorize(Policy = "SystemAdminOnly")]
+    public async Task<ActionResult<SystemAdminStats>> GetSystemAdminStats()
     {
-        var stats = await _dashboardStatisticsService.GetSuperAdminStatsAsync();
+        var stats = await _dashboardStatisticsService.GetSystemAdminStatsAsync();
         return Ok(stats);
     }
 
@@ -55,10 +55,10 @@ public class DashboardController : BaseApiController
     }
 
     [HttpGet("super-admin-activities")]
-    [Authorize(Policy = "SuperAdminOnly")]
-    public async Task<ActionResult<List<SuperAdminActivity>>> GetSuperAdminActivities([FromQuery] int? limit = null)
+    [Authorize(Policy = "SystemAdminOnly")]
+    public async Task<ActionResult<List<SystemAdminActivity>>> GetSystemAdminActivities([FromQuery] int? limit = null)
     {
-        var activities = await _dashboardStatisticsService.GetSuperAdminActivitiesAsync(limit);
+        var activities = await _dashboardStatisticsService.GetSystemAdminActivitiesAsync(limit);
         return Ok(activities);
     }
 }

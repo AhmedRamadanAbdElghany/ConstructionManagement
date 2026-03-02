@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -9972,14 +9972,14 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 columns: new[] { "Id", "CreatedAt", "DeletedAt", "Description", "Icon", "IsApproved", "IsDeleted", "IsSystemCategory", "Name", "NameAr", "ParentCategoryId", "SortOrder", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "building", true, false, true, "Building Materials", "مواد البناء", null, 1, null },
-                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "paint", true, false, true, "Finishing Materials", "مواد التشطيب", null, 2, null },
-                    { 3, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "door", true, false, true, "Doors & Windows", "أبواب وشبابيك", null, 3, null },
-                    { 4, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "bath", true, false, true, "Sanitary Ware", "أدوات صحية", null, 4, null },
-                    { 5, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "bolt", true, false, true, "Electrical", "كهربائيات", null, 5, null },
-                    { 6, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "plumbing", true, false, true, "Plumbing", "سباكة", null, 6, null },
-                    { 7, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "tools", true, false, true, "Tools & Equipment", "أدوات ومعدات", null, 7, null },
-                    { 8, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "safety", true, false, true, "Safety Equipment", "معدات السلامة", null, 8, null }
+                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "building", true, false, true, "Building Materials", "???? ??????", null, 1, null },
+                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "paint", true, false, true, "Finishing Materials", "???? ???????", null, 2, null },
+                    { 3, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "door", true, false, true, "Doors & Windows", "????? ???????", null, 3, null },
+                    { 4, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "bath", true, false, true, "Sanitary Ware", "????? ????", null, 4, null },
+                    { 5, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "bolt", true, false, true, "Electrical", "?????????", null, 5, null },
+                    { 6, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "plumbing", true, false, true, "Plumbing", "?????", null, 6, null },
+                    { 7, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "tools", true, false, true, "Tools & Equipment", "????? ??????", null, 7, null },
+                    { 8, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "safety", true, false, true, "Safety Equipment", "????? ???????", null, 8, null }
                 });
 
             migrationBuilder.InsertData(
@@ -9987,7 +9987,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 columns: new[] { "Id", "CompanyId", "CreatedAt", "DeletedAt", "Description", "IsDeleted", "Name", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Platform-level system administrator", false, "SuperAdmin", null },
+                    { 1, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Platform-level system administrator", false, "SystemAdmin", null },
                     { 2, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Organization administrator", false, "CompanyAdmin", null },
                     { 3, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Default authenticated user", false, "User", null },
                     { 4, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Standard company staff/worker", false, "CompanyUser", null },
@@ -10004,31 +10004,31 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 columns: new[] { "Id", "CreatedAt", "DeletedAt", "Description", "Icon", "IsApproved", "IsDeleted", "IsSystemCategory", "Name", "NameAr", "ParentCategoryId", "SortOrder", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 101, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "cement", true, false, true, "Cement", "أسمنت", 1, 1, null },
-                    { 102, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "sand", true, false, true, "Sand & Gravel", "رمل وزلط", 1, 2, null },
-                    { 103, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "steel", true, false, true, "Steel Rebar", "حديد تسليح", 1, 3, null },
-                    { 104, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "brick", true, false, true, "Bricks & Blocks", "طوب وبلوك", 1, 4, null },
-                    { 105, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "concrete", true, false, true, "Ready-mix Concrete", "خرسانة جاهزة", 1, 5, null },
-                    { 201, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "tile", true, false, true, "Ceramics & Tiles", "سيراميك وبلاط", 2, 1, null },
-                    { 202, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "paint", true, false, true, "Paints & Coatings", "دهان وطلاء", 2, 2, null },
-                    { 203, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "floor", true, false, true, "Flooring", "أرضيات", 2, 3, null },
-                    { 204, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "ceiling", true, false, true, "False Ceilings", "أسقف معلقة", 2, 4, null },
-                    { 205, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "wallpaper", true, false, true, "Wallpaper & Decor", "ورق حائط وديكور", 2, 5, null },
-                    { 301, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "door-wood", true, false, true, "Wooden Doors", "أبواب خشب", 3, 1, null },
-                    { 302, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "door-alu", true, false, true, "Aluminum Doors", "أبواب ألومنيوم", 3, 2, null },
-                    { 303, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "window-pvc", true, false, true, "PVC Windows", "شبابيك PVC", 3, 3, null },
-                    { 304, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "window-alu", true, false, true, "Aluminum Windows", "شبابيك ألومنيوم", 3, 4, null },
-                    { 305, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "hardware", true, false, true, "Door Hardware", "أدوات أبواب", 3, 5, null },
-                    { 401, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "bath", true, false, true, "Bathroom Fixtures", "أدوات حمامات", 4, 1, null },
-                    { 402, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "kitchen", true, false, true, "Kitchen Fixtures", "أدوات مطابخ", 4, 2, null },
-                    { 403, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "faucet", true, false, true, "Faucets & Mixers", "خلاطات", 4, 3, null },
-                    { 501, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "cable", true, false, true, "Wires & Cables", "أسلاك وكابلات", 5, 1, null },
-                    { 502, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "panel", true, false, true, "Electrical Panels", "لوحات كهربائية", 5, 2, null },
-                    { 503, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "light", true, false, true, "Lighting", "إضاءة", 5, 3, null },
-                    { 504, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "switch", true, false, true, "Switches & Sockets", "مفاتيح ومآخذ", 5, 4, null },
-                    { 601, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "pipe", true, false, true, "Pipes", "مواسير", 6, 1, null },
-                    { 602, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "valve", true, false, true, "Fittings & Valves", "وصلات ومحابس", 6, 2, null },
-                    { 603, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "heater", true, false, true, "Water Heaters", "سخانات مياه", 6, 3, null }
+                    { 101, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "cement", true, false, true, "Cement", "?????", 1, 1, null },
+                    { 102, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "sand", true, false, true, "Sand & Gravel", "??? ????", 1, 2, null },
+                    { 103, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "steel", true, false, true, "Steel Rebar", "???? ?????", 1, 3, null },
+                    { 104, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "brick", true, false, true, "Bricks & Blocks", "??? ?????", 1, 4, null },
+                    { 105, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "concrete", true, false, true, "Ready-mix Concrete", "?????? ?????", 1, 5, null },
+                    { 201, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "tile", true, false, true, "Ceramics & Tiles", "??????? ?????", 2, 1, null },
+                    { 202, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "paint", true, false, true, "Paints & Coatings", "???? ?????", 2, 2, null },
+                    { 203, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "floor", true, false, true, "Flooring", "??????", 2, 3, null },
+                    { 204, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "ceiling", true, false, true, "False Ceilings", "???? ?????", 2, 4, null },
+                    { 205, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "wallpaper", true, false, true, "Wallpaper & Decor", "??? ???? ??????", 2, 5, null },
+                    { 301, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "door-wood", true, false, true, "Wooden Doors", "????? ???", 3, 1, null },
+                    { 302, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "door-alu", true, false, true, "Aluminum Doors", "????? ????????", 3, 2, null },
+                    { 303, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "window-pvc", true, false, true, "PVC Windows", "?????? PVC", 3, 3, null },
+                    { 304, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "window-alu", true, false, true, "Aluminum Windows", "?????? ????????", 3, 4, null },
+                    { 305, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "hardware", true, false, true, "Door Hardware", "????? ?????", 3, 5, null },
+                    { 401, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "bath", true, false, true, "Bathroom Fixtures", "????? ??????", 4, 1, null },
+                    { 402, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "kitchen", true, false, true, "Kitchen Fixtures", "????? ?????", 4, 2, null },
+                    { 403, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "faucet", true, false, true, "Faucets & Mixers", "??????", 4, 3, null },
+                    { 501, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "cable", true, false, true, "Wires & Cables", "????? ???????", 5, 1, null },
+                    { 502, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "panel", true, false, true, "Electrical Panels", "????? ????????", 5, 2, null },
+                    { 503, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "light", true, false, true, "Lighting", "?????", 5, 3, null },
+                    { 504, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "switch", true, false, true, "Switches & Sockets", "?????? ?????", 5, 4, null },
+                    { 601, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "pipe", true, false, true, "Pipes", "??????", 6, 1, null },
+                    { 602, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "valve", true, false, true, "Fittings & Valves", "????? ??????", 6, 2, null },
+                    { 603, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, null, "heater", true, false, true, "Water Heaters", "?????? ????", 6, 3, null }
                 });
 
             migrationBuilder.InsertData(
@@ -10039,7 +10039,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "RoleId", "UserId", "AssignedAt", "CompanyId" },
-                values: new object[] { 1, 1, new DateTime(2026, 2, 28, 14, 2, 42, 757, DateTimeKind.Utc).AddTicks(4942), null });
+                values: new object[] { 1, 1, new DateTime(2026, 3, 1, 0, 32, 48, 692, DateTimeKind.Utc).AddTicks(9642), null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ActivityLogs_CompanyId",
@@ -14242,3 +14242,4 @@ namespace ConstructionManagement.Infrastructure.Migrations
         }
     }
 }
+

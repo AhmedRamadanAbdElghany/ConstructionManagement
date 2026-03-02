@@ -18,7 +18,7 @@ public class MessageFileAttachment : BaseEntity, ICompanyEntity
     public int MessageId { get; set; }
     [ForeignKey(nameof(MessageId))]
     [System.Text.Json.Serialization.JsonIgnore]
-    public virtual CompanyMessage Message { get; set; } = null!;
+    public virtual Message Message { get; set; } = null!;
     
     /// <summary>
     /// Generated file name (GUID-based for storage)

@@ -1,4 +1,4 @@
-export type UserRole = 'SuperAdmin' | 'CompanyAdmin' | 'CompanyUser' | 'NormalUser';
+export type UserRole = 'SystemAdmin' | 'CompanyAdmin' | 'CompanyUser' | 'NormalUser';
 
 export type UserType = 0 | 1 | 2 | 3; // ConstructionClient=0, ConstructionWorker=1, ContractorOwner=2, MaterialsSupplier=3
 

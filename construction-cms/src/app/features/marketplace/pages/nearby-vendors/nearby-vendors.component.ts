@@ -132,13 +132,34 @@ interface NearbyVendor {
 
         <!-- Results Section -->
         @if (!loading() && !error() && vendors().length > 0) {
-          <div class="results-meta">
-            <span class="count-pill">
-              <strong>{{ vendors().length }}</strong> {{ 'MARKETPLACE.VENDORS_FOUND' | translate }}
-            </span>
-            <span class="range-pill">
-              {{ 'MARKETPLACE.WITHIN' | translate }} <strong>{{ selectedRadius() }}</strong> km
-            </span>
+          <div class="results-stats-hub animate-fade-in-up">
+            <div class="stat-card">
+              <div class="stat-icon-glow text-blue-500">
+                <i class="pi pi-building"></i>
+              </div>
+              <div class="stat-details">
+                <span class="stat-label">{{ 'MARKETPLACE.VENDORS_FOUND' | translate }}</span>
+                <span class="stat-value">{{ vendors().length }}</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-glow text-emerald-500">
+                <i class="pi pi-map"></i>
+              </div>
+              <div class="stat-details">
+                <span class="stat-label">{{ 'MARKETPLACE.WITHIN' | translate }} {{ selectedRadius() }}km</span>
+                <span class="stat-value">{{ vendors()[0].distance | number:'1.1-1' }}km</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-glow text-amber-500">
+                <i class="pi pi-star-fill"></i>
+              </div>
+              <div class="stat-details">
+                <span class="stat-label">{{ 'MARKETPLACE.RATING' | translate }} (Avg)</span>
+                <span class="stat-value">{{ calculateAverageRating() | number:'1.1-1' }}</span>
+              </div>
+            </div>
           </div>
 
           <div class="vendors-grid-premium">
@@ -620,6 +641,45 @@ interface NearbyVendor {
 
     .count-pill strong, .range-pill strong { color: var(--app-text); font-weight: 900; }
 
+    /* Stats Hub */
+    .results-stats-hub {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .stat-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      padding: 1.25rem 1.5rem;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-icon-glow {
+      width: 48px;
+      height: 48px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+
+    .stat-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-label { font-size: 0.7rem; font-weight: 850; text-transform: uppercase; color: var(--muted-text); letter-spacing: 0.05em; margin-bottom: 2px; }
+    .stat-value { font-size: 1.25rem; font-weight: 950; color: var(--app-text); }
+
     /* Vendors Grid */
     .vendors-grid-premium {
       display: grid;
@@ -1066,5 +1126,10 @@ export class NearbyVendorsComponent implements OnInit {
         '_blank'
       );
     }
+  }
+  calculateAverageRating(): number {
+    if (this.vendors().length === 0) return 0;
+    const sum = this.vendors().reduce((acc, v) => acc + (v.averageRating || 0), 0);
+    return sum / this.vendors().length;
   }
 }

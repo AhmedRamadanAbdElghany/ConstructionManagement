@@ -116,9 +116,9 @@ public abstract class ApiTestBase : IAsyncDisposable
         }
         
         // Seed default roles if not exist (check by name, not by empty table)
-        if (!Context.Roles.IgnoreQueryFilters().Any(r => r.Name == "SuperAdmin"))
+        if (!Context.Roles.IgnoreQueryFilters().Any(r => r.Name == "SystemAdmin"))
         {
-            Context.Roles.Add(new Role { Name = "SuperAdmin", Description = "Super Administrator", CompanyId = null });
+            Context.Roles.Add(new Role { Name = "SystemAdmin", Description = "Super Administrator", CompanyId = null });
         }
         if (!Context.Roles.IgnoreQueryFilters().Any(r => r.Name == "Admin"))
         {

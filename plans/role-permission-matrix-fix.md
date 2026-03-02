@@ -27,7 +27,7 @@
 <th>{{ 'sidebar.role_client' | translate }}</th>
 ```
 
-**Problem**: Shows only hardcoded system roles (SuperAdmin, Admin, Worker, Client). User wants to see **company-specific roles created by the admin**.
+**Problem**: Shows only hardcoded system roles (SystemAdmin, Admin, Worker, Client). User wants to see **company-specific roles created by the admin**.
 
 ### 3. Hardcoded Permission Matrix
 **Location**: `construction-cms/src/app/features/admin/hr/hr.component.ts` lines 352-361
@@ -35,8 +35,8 @@
 **Current Code**:
 ```typescript
 permissions = [
-  { name: 'Manage Users', superAdmin: true, companyAdmin: true, companyUser: false, normalUser: false },
-  { name: 'View All Projects', superAdmin: true, companyAdmin: true, companyUser: true, normalUser: false },
+  { name: 'Manage Users', SystemAdmin: true, companyAdmin: true, companyUser: false, normalUser: false },
+  { name: 'View All Projects', SystemAdmin: true, companyAdmin: true, companyUser: true, normalUser: false },
   // ... hardcoded data
 ];
 ```

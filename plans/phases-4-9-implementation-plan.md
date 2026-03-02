@@ -729,19 +729,19 @@ graph TB
     path: 'admin/profitability',
     loadComponent: () => import('./features/admin/analytics/profitability-dashboard.component').then(m => m.ProfitabilityDashboardComponent),
     canActivate: [roleGuard],
-    data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+    data: { roles: ['SystemAdmin', 'CompanyAdmin'] }
 },
 {
     path: 'admin/reports-generation',
     loadComponent: () => import('./features/admin/analytics/reports-generation.component').then(m => m.ReportsGenerationComponent),
     canActivate: [roleGuard],
-    data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+    data: { roles: ['SystemAdmin', 'CompanyAdmin'] }
 },
 {
     path: 'admin/advanced-analytics',
     loadComponent: () => import('./features/admin/analytics/advanced-analytics.component').then(m => m.AdvancedAnalyticsComponent),
     canActivate: [roleGuard],
-    data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+    data: { roles: ['SystemAdmin', 'CompanyAdmin'] }
 },
 
 // Equipment Routes
@@ -749,13 +749,13 @@ graph TB
     path: 'admin/equipment/:id',
     loadComponent: () => import('./features/admin/equipment/equipment-detail.component').then(m => m.EquipmentDetailComponent),
     canActivate: [roleGuard],
-    data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+    data: { roles: ['SystemAdmin', 'CompanyAdmin'] }
 },
 {
     path: 'admin/equipment/assignments',
     loadComponent: () => import('./features/admin/equipment/equipment-assignments.component').then(m => m.EquipmentAssignmentsComponent),
     canActivate: [roleGuard],
-    data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+    data: { roles: ['SystemAdmin', 'CompanyAdmin'] }
 },
 
 // Inventory Routes
@@ -763,7 +763,7 @@ graph TB
     path: 'admin/inventory/transactions',
     loadComponent: () => import('./features/admin/inventory/inventory-transactions.component').then(m => m.InventoryTransactionsComponent),
     canActivate: [roleGuard],
-    data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+    data: { roles: ['SystemAdmin', 'CompanyAdmin'] }
 },
 
 // Quality Routes
@@ -771,19 +771,19 @@ graph TB
     path: 'admin/quality/inspections',
     loadComponent: () => import('./features/admin/quality/quality-inspections.component').then(m => m.QualityInspectionsComponent),
     canActivate: [roleGuard],
-    data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+    data: { roles: ['SystemAdmin', 'CompanyAdmin'] }
 },
 {
     path: 'admin/quality/defects',
     loadComponent: () => import('./features/admin/quality/quality-defects.component').then(m => m.QualityDefectsComponent),
     canActivate: [roleGuard],
-    data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+    data: { roles: ['SystemAdmin', 'CompanyAdmin'] }
 },
 {
     path: 'admin/quality/punchlist',
     loadComponent: () => import('./features/admin/quality/quality-punchlist.component').then(m => m.QualityPunchlistComponent),
     canActivate: [roleGuard],
-    data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+    data: { roles: ['SystemAdmin', 'CompanyAdmin'] }
 },
 
 // Safety Routes
@@ -791,19 +791,19 @@ graph TB
     path: 'admin/safety/inspections',
     loadComponent: () => import('./features/admin/safety/safety-inspections.component').then(m => m.SafetyInspectionsComponent),
     canActivate: [roleGuard],
-    data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+    data: { roles: ['SystemAdmin', 'CompanyAdmin'] }
 },
 {
     path: 'admin/safety/incidents',
     loadComponent: () => import('./features/admin/safety/safety-incidents.component').then(m => m.SafetyIncidentsComponent),
     canActivate: [roleGuard],
-    data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+    data: { roles: ['SystemAdmin', 'CompanyAdmin'] }
 },
 {
     path: 'admin/safety/training',
     loadComponent: () => import('./features/admin/safety/safety-training.component').then(m => m.SafetyTrainingComponent),
     canActivate: [roleGuard],
-    data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+    data: { roles: ['SystemAdmin', 'CompanyAdmin'] }
 },
 
 // Subcontractor Routes
@@ -811,25 +811,25 @@ graph TB
     path: 'admin/subcontractors/:id',
     loadComponent: () => import('./features/admin/subcontractor/subcontractor-detail.component').then(m => m.SubcontractorDetailComponent),
     canActivate: [roleGuard],
-    data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+    data: { roles: ['SystemAdmin', 'CompanyAdmin'] }
 },
 {
     path: 'admin/subcontractors/contracts',
     loadComponent: () => import('./features/admin/subcontractor/subcontractor-contracts.component').then(m => m.SubcontractorContractsComponent),
     canActivate: [roleGuard],
-    data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+    data: { roles: ['SystemAdmin', 'CompanyAdmin'] }
 },
 {
     path: 'admin/subcontractors/payments',
     loadComponent: () => import('./features/admin/subcontractor/subcontractor-payments.component').then(m => m.SubcontractorPaymentsComponent),
     canActivate: [roleGuard],
-    data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+    data: { roles: ['SystemAdmin', 'CompanyAdmin'] }
 },
 {
     path: 'admin/subcontractors/ratings',
     loadComponent: () => import('./features/admin/subcontractor/subcontractor-ratings.component').then(m => m.SubcontractorRatingsComponent),
     canActivate: [roleGuard],
-    data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+    data: { roles: ['SystemAdmin', 'CompanyAdmin'] }
 }
 ```
 

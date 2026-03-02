@@ -350,14 +350,14 @@ public class NotificationService : INotificationService
         );
     }
 
-    public async Task NotifyNewCompanyRequestAsync(int superAdminUserId, string companyName, int requestId)
+    public async Task NotifyNewCompanyRequestAsync(int SystemAdminUserId, string companyName, int requestId)
     {
         var title = _localizationService?.GetNotificationTitle(NotificationType.Escalation) ?? "Escalation";
         var message = _localizationService?.GetNotificationMessage("NewCompanyRequest", companyName) 
             ?? $"New company registration request: {companyName}";
         
         await CreateAndSendAsync(
-            userId: superAdminUserId,
+            userId: SystemAdminUserId,
             title: title,
             message: message,
             link: $"/admin/company-requests/{requestId}",

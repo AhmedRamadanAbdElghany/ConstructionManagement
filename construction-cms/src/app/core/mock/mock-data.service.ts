@@ -9,7 +9,7 @@ export class MockDataService {
     { id: 2, fullName: 'Maria Hassan', email: 'maria@company.com', role: 'CompanyUser', status: 'Working', salary: 3500, notes: 'Site Engineer - Assigned to Dubai Tower project' },
     { id: 3, fullName: 'John Doe', email: 'john@client.com', role: 'NormalUser', status: 'Client', salary: 0, notes: 'Client for Residential Tower Dubai' },
     { id: 4, fullName: 'Omar Khalil', email: 'omar@company.com', role: 'CompanyUser', status: 'Working', salary: 3200, notes: 'Field Supervisor - Excellent performance' },
-    { id: 5, fullName: 'Super Admin', email: 'admin@saas.com', role: 'SuperAdmin', status: 'Working', salary: 0, notes: 'SaaS Administrator' },
+    { id: 5, fullName: 'System Admin', email: 'admin@saas.com', role: 'SystemAdmin', status: 'Working', salary: 0, notes: 'SaaS Administrator' },
     { id: 6, fullName: 'Sara Ibrahim', email: 'sara@company.com', role: 'CompanyUser', status: 'Absent', salary: 2800, notes: 'Junior Engineer - On annual leave' },
     { id: 7, fullName: 'Mohamed Farid', email: 'mohamed@company.com', role: 'CompanyUser', status: 'Working', salary: 4000, notes: 'Senior Site Engineer' },
     { id: 8, fullName: 'Client Two', email: 'client2@email.com', role: 'NormalUser', status: 'Client', salary: 0, notes: 'Client for Commercial Mall project' }
@@ -252,8 +252,8 @@ export class MockDataService {
   markAllNotificationsRead(): Observable<boolean> {
     this.notifications.forEach(n => n.read = true);
     return of(true);
-  }  // SuperAdmin specialized stats
-  getSuperAdminStats(): Observable<{
+  }  // SystemAdmin specialized stats
+  getSystemAdminStats(): Observable<{
     totalCompanies: number;
     activeSubscriptions: number;
     monthlyRecurringRevenue: number;
@@ -630,3 +630,4 @@ export class MockDataService {
     return of(Array.from(latestVersions.values()));
   }
 }
+

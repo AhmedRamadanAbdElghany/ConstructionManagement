@@ -10,14 +10,14 @@ This document defines the messaging rules for different user types in the Constr
 **Definition**: A user with `UserType.CompanyOwner` who has registered but their company request has NOT been approved yet.
 
 **Messaging Capabilities**:
-- ✅ Can ONLY message SuperAdmin
+- ✅ Can ONLY message SystemAdmin
 - ❌ Cannot browse companies
 - ❌ Cannot view company profiles
 - ❌ Cannot message any other company
 
 **UI Behavior**:
 - Shows restriction notice on Messages page
-- Shows "Start Conversation with SuperAdmin" button
+- Shows "Start Conversation with SystemAdmin" button
 - Hides "Browse Companies" button
 - Hides "Message User" button
 - Hides "View Company Profile" link
@@ -30,7 +30,7 @@ This document defines the messaging rules for different user types in the Constr
 **Messaging Capabilities**:
 - ✅ Can message their own company's users (clients associated with the company)
 - ✅ Can message their own company's workers
-- ✅ Can message SuperAdmin
+- ✅ Can message SystemAdmin
 - ✅ Can browse other companies
 - ✅ Can message other companies (requires approval from those companies)
 
@@ -47,7 +47,7 @@ This document defines the messaging rules for different user types in the Constr
 **Messaging Capabilities**:
 - ✅ Can message their own companies freely (unlimited messages, no approval needed)
 - ✅ Can message other companies (one initial message, then requires approval)
-- ✅ Can message SuperAdmin
+- ✅ Can message SystemAdmin
 - ❌ Cannot initiate conversations with users (only companies can initiate with users)
 
 **UI Behavior**:
@@ -62,7 +62,7 @@ This document defines the messaging rules for different user types in the Constr
 **Messaging Capabilities**:
 - ✅ Can message their own companies freely (unlimited messages, no approval needed)
 - ✅ Can message other companies (one initial message, then requires approval)
-- ✅ Can message SuperAdmin
+- ✅ Can message SystemAdmin
 - ✅ Can message other workers in the same company
 
 **UI Behavior**:
@@ -90,11 +90,11 @@ This document defines the messaging rules for different user types in the Constr
 2. Conversation is auto-approved (status = "Approved")
 3. Both parties can exchange messages immediately
 
-### Unverified Owner → SuperAdmin Flow
-1. Unverified owner can only see "Start Conversation with SuperAdmin" option
-2. Sends message to SuperAdmin's company
+### Unverified Owner → SystemAdmin Flow
+1. Unverified owner can only see "Start Conversation with SystemAdmin" option
+2. Sends message to SystemAdmin's company
 3. Conversation is auto-approved
-4. Can exchange messages with SuperAdmin
+4. Can exchange messages with SystemAdmin
 
 ---
 

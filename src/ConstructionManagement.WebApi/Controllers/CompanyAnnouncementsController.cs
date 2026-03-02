@@ -64,7 +64,7 @@ public class CompanyAnnouncementsController : ControllerBase
     // ── Company Admin: manage announcements ─────────────────────────────────
     
     [HttpPost]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult<int>> Create([FromForm] CreateAnnouncementRequest request)
     {
         var id = await _service.CreateAnnouncementAsync(request);
@@ -72,7 +72,7 @@ public class CompanyAnnouncementsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult> Update(int id, [FromForm] UpdateAnnouncementRequest request)
     {
         await _service.UpdateAnnouncementAsync(id, request);
@@ -80,10 +80,11 @@ public class CompanyAnnouncementsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult> Delete(int id)
     {
         await _service.DeleteAnnouncementAsync(id);
         return NoContent();
     }
 }
+

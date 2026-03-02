@@ -230,8 +230,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<CompanyFollower> CompanyFollowers => Set<CompanyFollower>();
 
     // Company Messaging System
-    public DbSet<CompanyConversation> CompanyConversations => Set<CompanyConversation>();
-    public DbSet<CompanyMessage> CompanyMessages => Set<CompanyMessage>();
+    public DbSet<Conversation> Conversations => Set<Conversation>();
+    public DbSet<Message> Messages => Set<Message>();
     public DbSet<MessageFileAttachment> MessageFileAttachments => Set<MessageFileAttachment>();
     public DbSet<UserMessagingBlock> UserMessagingBlocks => Set<UserMessagingBlock>();
 
@@ -592,8 +592,8 @@ public class ApplicationDbContext : DbContext
 
     private void ConfigureMessagingEntities(ModelBuilder modelBuilder)
     {
-        // CompanyConversation configuration
-        modelBuilder.Entity<CompanyConversation>(entity =>
+        // Conversation configuration
+        modelBuilder.Entity<Conversation>(entity =>
         {
             entity.HasOne(c => c.Company)
                 .WithMany()
@@ -610,7 +610,7 @@ public class ApplicationDbContext : DbContext
                 .HasForeignKey(c => c.ApprovedByUserId)
                 .OnDelete(DeleteBehavior.NoAction);
             
-            // LastMessage relationship - one-to-one with CompanyMessage
+            // LastMessage relationship - one-to-one with Message
             entity.HasOne(c => c.LastMessage)
                 .WithMany()
                 .HasForeignKey(c => c.LastMessageId)
@@ -621,8 +621,8 @@ public class ApplicationDbContext : DbContext
             entity.HasIndex(c => c.Status);
         });
         
-        // CompanyMessage configuration
-        modelBuilder.Entity<CompanyMessage>(entity =>
+        // Message configuration
+        modelBuilder.Entity<Message>(entity =>
         {
             entity.HasOne(m => m.Conversation)
                 .WithMany(c => c.Messages)
@@ -2245,7 +2245,7 @@ public class ApplicationDbContext : DbContext
                 Username = "admin", 
                 PasswordHash = passwordHash, 
                 CreatedAt = fixedDate, 
-                CompanyId = null // Super Admin is global
+                CompanyId = null // System Admin is global
             }
         );
 
@@ -2309,7 +2309,7 @@ public class ApplicationDbContext : DbContext
         // Company-internal roles (ProjectManager, SiteEngineer, etc.) are
         // created at runtime per-company by the Company Admin.
         modelBuilder.Entity<Role>().HasData(
-            new Role { Id = 1, Name = "SuperAdmin", Description = "Platform-level system administrator", CreatedAt = fixedDate, CompanyId = null },
+            new Role { Id = 1, Name = "SystemAdmin", Description = "Platform-level system administrator", CreatedAt = fixedDate, CompanyId = null },
             new Role { Id = 2, Name = "CompanyAdmin", Description = "Organization administrator", CreatedAt = fixedDate, CompanyId = null },
             new Role { Id = 3, Name = "User", Description = "Default authenticated user", CreatedAt = fixedDate, CompanyId = null },
             new Role { Id = 4, Name = "CompanyUser", Description = "Standard company staff/worker", CreatedAt = fixedDate, CompanyId = null },
@@ -2326,7 +2326,7 @@ public class ApplicationDbContext : DbContext
         // --- Role-Permission Mapping ---
         var rolePermissions = new List<RolePermission>();
 
-        // 1. SuperAdmin (Role 1) -> ONLY role to get the "All" wildcard
+        // 1. SystemAdmin (Role 1) -> ONLY role to get the "All" wildcard
         // This grants absolute access to every corner of the system.
         rolePermissions.Add(new RolePermission { RoleId = 1, PermissionId = 1 });
 
@@ -2339,7 +2339,7 @@ public class ApplicationDbContext : DbContext
 
         // --- Global User Assignments ---
         modelBuilder.Entity<UserRole>().HasData(
-            new UserRole { UserId = 1, RoleId = 1 } // Admin -> SuperAdmin
+            new UserRole { UserId = 1, RoleId = 1 } // Admin -> SystemAdmin
         );
 
         // --- Base Packages ---

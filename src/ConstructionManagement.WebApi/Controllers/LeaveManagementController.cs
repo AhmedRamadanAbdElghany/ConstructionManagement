@@ -34,9 +34,9 @@ namespace ConstructionManagement.WebApi.Controllers
                 return FeatureDisabled<List<LeaveTypeDto>>("Leave Management");
             }
 
-            // Company isolation: use user's company if not SuperAdmin
+            // Company isolation: use user's company if not SystemAdmin
             var userCompanyId = GetCompanyId();
-            if (!User.IsInRole("SuperAdmin") && userCompanyId.HasValue)
+            if (!User.IsInRole("SystemAdmin") && userCompanyId.HasValue)
             {
                 companyId = userCompanyId.Value;
             }
@@ -53,12 +53,12 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("types")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<LeaveTypeDto>> CreateLeaveType([FromBody] CreateLeaveTypeRequest request, [FromQuery] int? companyId)
         {
-            // Company isolation: use user's company if not SuperAdmin
+            // Company isolation: use user's company if not SystemAdmin
             var userCompanyId = GetCompanyId();
-            if (!User.IsInRole("SuperAdmin"))
+            if (!User.IsInRole("SystemAdmin"))
             {
                 if (!userCompanyId.HasValue)
                 {
@@ -72,7 +72,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPut("types/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<LeaveTypeDto>> UpdateLeaveType(int id, [FromBody] UpdateLeaveTypeRequest request)
         {
             var type = await _leaveService.UpdateLeaveTypeAsync(id, request);
@@ -80,7 +80,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("types/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult> DeleteLeaveType(int id)
         {
             await _leaveService.DeleteLeaveTypeAsync(id);
@@ -92,7 +92,7 @@ namespace ConstructionManagement.WebApi.Controllers
         #region Leave Balances
 
         [HttpGet("balances/user/{userId}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<List<LeaveBalanceDto>>> GetUserLeaveBalances(int userId, [FromQuery] int? year)
         {
             var balances = await _leaveService.GetUserLeaveBalancesAsync(userId, year);
@@ -100,7 +100,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpGet("balances/summary/{userId}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<UserLeaveSummaryDto>> GetUserLeaveSummary(int userId, [FromQuery] int? year)
         {
             var summary = await _leaveService.GetUserLeaveSummaryAsync(userId, year);
@@ -108,12 +108,12 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpGet("balances/team")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<List<LeaveBalanceDto>>> GetTeamLeaveBalances([FromQuery] int companyId, [FromQuery] int? year)
         {
-            // Company isolation: use user's company if not SuperAdmin
+            // Company isolation: use user's company if not SystemAdmin
             var userCompanyId = GetCompanyId();
-            if (!User.IsInRole("SuperAdmin"))
+            if (!User.IsInRole("SystemAdmin"))
             {
                 if (!userCompanyId.HasValue)
                 {
@@ -130,7 +130,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("balances/adjust")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<LeaveBalanceDto>> AdjustLeaveBalance([FromBody] AdjustLeaveBalanceRequest request)
         {
             var balance = await _leaveService.AdjustLeaveBalanceAsync(request);
@@ -138,12 +138,12 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("balances/initialize")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult> InitializeYearBalances([FromQuery] int companyId, [FromQuery] int year)
         {
-            // Company isolation: use user's company if not SuperAdmin
+            // Company isolation: use user's company if not SystemAdmin
             var userCompanyId = GetCompanyId();
-            if (!User.IsInRole("SuperAdmin"))
+            if (!User.IsInRole("SystemAdmin"))
             {
                 if (!userCompanyId.HasValue)
                 {
@@ -166,8 +166,8 @@ namespace ConstructionManagement.WebApi.Controllers
         [HttpGet("requests")]
         public async Task<ActionResult<List<LeaveRequestDto>>> GetLeaveRequests([FromQuery] LeaveRequestFilter filter)
         {
-            // Company isolation: enforce user's companies if not SuperAdmin
-            if (!User.IsInRole("SuperAdmin"))
+            // Company isolation: enforce user's companies if not SystemAdmin
+            if (!User.IsInRole("SystemAdmin"))
             {
                 if (filter.CompanyId.HasValue)
                 {
@@ -204,12 +204,12 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpGet("requests/pending")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<List<LeaveRequestDto>>> GetPendingLeaveRequests([FromQuery] int companyId)
         {
-            // Company isolation: use user's company if not SuperAdmin
+            // Company isolation: use user's company if not SystemAdmin
             var userCompanyId = GetCompanyId();
-            if (!User.IsInRole("SuperAdmin"))
+            if (!User.IsInRole("SystemAdmin"))
             {
                 if (!userCompanyId.HasValue)
                 {
@@ -234,7 +234,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPut("requests/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<LeaveRequestDto>> UpdateLeaveRequest(int id, [FromBody] UpdateLeaveRequestRequest request)
         {
             var leaveRequest = await _leaveService.UpdateLeaveRequestAsync(id, request);
@@ -242,7 +242,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("requests/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult> DeleteLeaveRequest(int id)
         {
             await _leaveService.DeleteLeaveRequestAsync(id);
@@ -258,7 +258,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("requests/{id}/approve")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<LeaveRequestDto>> ApproveLeaveRequest(int id, [FromBody] ApproveLeaveRequestRequest request)
         {
             var approverId = GetUserId();
@@ -267,7 +267,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("requests/{id}/reject")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<LeaveRequestDto>> RejectLeaveRequest(int id, [FromBody] RejectLeaveRequestRequest request)
         {
             var approverId = GetUserId();
@@ -287,7 +287,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("holidays")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<HolidayDto>> CreateHoliday([FromBody] CreateHolidayRequest request, [FromQuery] int? companyId)
         {
             var holiday = await _leaveService.CreateHolidayAsync(request, companyId);
@@ -295,7 +295,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPut("holidays/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<HolidayDto>> UpdateHoliday(int id, [FromBody] UpdateHolidayRequest request)
         {
             var holiday = await _leaveService.UpdateHolidayAsync(id, request);
@@ -303,7 +303,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("holidays/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult> DeleteHoliday(int id)
         {
             await _leaveService.DeleteHolidayAsync(id);
@@ -325,7 +325,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpGet("report")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<LeaveReportDto>> GetLeaveReport(
             [FromQuery] int companyId,
             [FromQuery] int? year,
@@ -372,3 +372,4 @@ namespace ConstructionManagement.WebApi.Controllers
 
     }
 }
+

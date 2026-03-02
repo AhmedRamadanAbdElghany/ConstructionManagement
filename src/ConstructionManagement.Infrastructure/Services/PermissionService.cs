@@ -39,8 +39,8 @@ namespace ConstructionManagement.Infrastructure.Services
 
         public async Task<int> CreatePermissionAsync(CreatePermissionRequest request, int userId)
         {
-            if (!await IsSuperAdmin(userId))
-                throw new UnauthorizedAccessException("Only SuperAdmin can create permissions.");
+            if (!await IsSystemAdmin(userId))
+                throw new UnauthorizedAccessException("Only SystemAdmin can create permissions.");
 
             var exists = await _permissionRepository.AsQueryable().AnyAsync(p => p.Name == request.Name);
             if (exists) throw new InvalidOperationException("Permission already exists.");
@@ -59,8 +59,8 @@ namespace ConstructionManagement.Infrastructure.Services
 
         public async Task<bool> DeletePermissionAsync(int permissionId, int userId)
         {
-            if (!await IsSuperAdmin(userId))
-                throw new UnauthorizedAccessException("Only SuperAdmin can delete permissions.");
+            if (!await IsSystemAdmin(userId))
+                throw new UnauthorizedAccessException("Only SystemAdmin can delete permissions.");
 
             var permission = await _permissionRepository.GetByIdAsync(permissionId);
             if (permission == null) return false;
@@ -71,10 +71,11 @@ namespace ConstructionManagement.Infrastructure.Services
             return true;
         }
 
-        private async Task<bool> IsSuperAdmin(int userId)
+        private async Task<bool> IsSystemAdmin(int userId)
         {
             return await _userRoleRepository.AsQueryable()
-                .AnyAsync(ur => ur.UserId == userId && ur.Role.Name == "SuperAdmin");
+                .AnyAsync(ur => ur.UserId == userId && ur.Role.Name == "SystemAdmin");
         }
     }
 }
+

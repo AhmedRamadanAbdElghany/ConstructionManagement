@@ -142,8 +142,8 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                </div>
             </section>
             
-            <!-- SECTION 1: PLATFORM MODULES (Super Admin View ONLY) -->
-            @if (isSuperAdmin) {
+            <!-- SECTION 1: PLATFORM MODULES (System Admin View ONLY) -->
+            @if (isSystemAdmin) {
             <section class="space-y-8">
               <!-- Modules Card -->
               <div class="space-y-6">
@@ -322,7 +322,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                   </div>
                </div>
 
-               <!-- Daily Log Settings (Super Admin) -->
+               <!-- Daily Log Settings (System Admin) -->
                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8">
                   <h2 class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tight mb-8">{{ 'companySettings.dailyLogSettings' | translate }}</h2>
                   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -356,7 +356,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                   </div>
               </div>
 
-                <!-- SECTION: Master Setup (Super Admin ONLY) -->
+                <!-- SECTION: Master Setup (System Admin ONLY) -->
                 <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
                    <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
                     <div class="flex items-center justify-between mb-8 relative z-10">
@@ -433,7 +433,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
              }
 
             <!-- Inventory Settings Section -->
-             @if (isSuperAdmin || settings.enableInventoryManagement) {
+             @if (isSystemAdmin || settings.enableInventoryManagement) {
              <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-violet-500/5 rounded-full blur-3xl pointer-events-none"></div>
                 <!-- Header -->
@@ -454,7 +454,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                    }
                 </div>
 
-                @if (isSuperAdmin) {
+                @if (isSystemAdmin) {
                 <div class="flex items-center justify-between p-4 rounded-2xl bg-violet-50 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/20 mb-6">
                    <div>
                       <span class="text-xs font-bold text-violet-700 dark:text-violet-300 uppercase block">{{ 'companySettings.enableInventoryModule' | translate }}</span>
@@ -497,7 +497,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
              }
 
             <!-- Equipment Management Settings Section -->
-             @if (isSuperAdmin || settings.enableEquipmentManagement) {
+             @if (isSystemAdmin || settings.enableEquipmentManagement) {
              <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
                 <div class="flex items-center justify-between mb-8 relative z-10">
@@ -517,7 +517,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                    }
                 </div>
 
-                @if (isSuperAdmin) {
+                @if (isSystemAdmin) {
                 <div class="flex items-center justify-between p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 mb-6">
                    <div>
                       <span class="text-xs font-bold text-emerald-700 dark:text-emerald-300 uppercase block">{{ 'companySettings.enableEquipmentModule' | translate }}</span>
@@ -575,7 +575,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
              }
 
             <!-- Safety Management Settings Section -->
-            @if (isSuperAdmin || settings.enableSafetyManagement) {
+            @if (isSystemAdmin || settings.enableSafetyManagement) {
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
                <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
                <div class="flex items-center justify-between mb-8 relative z-10">
@@ -592,7 +592,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                   </div>
                </div>
 
-               @if (isSuperAdmin) {
+               @if (isSystemAdmin) {
                <div class="flex items-center justify-between p-4 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 mb-4">
                   <div>
                      <span class="text-xs font-bold text-amber-700 dark:text-amber-300 uppercase block">{{ 'companySettings.enableSafetyModule' | translate }}</span>
@@ -629,7 +629,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
             }
 
             <!-- Subcontractor Management Settings Section -->
-            @if (isSuperAdmin || settings.enableSubcontractorManagement) {
+            @if (isSystemAdmin || settings.enableSubcontractorManagement) {
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
                <div class="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full blur-3xl pointer-events-none"></div>
                <div class="flex items-center justify-between mb-8 relative z-10">
@@ -646,7 +646,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                   </div>
                </div>
 
-               @if (isSuperAdmin) {
+               @if (isSystemAdmin) {
                <div class="flex items-center justify-between p-4 rounded-2xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 mb-4">
                   <div>
                      <span class="text-xs font-bold text-rose-700 dark:text-rose-300 uppercase block">{{ 'companySettings.enableSubcontractorModule' | translate }}</span>
@@ -683,7 +683,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
             }
 
             <!-- Quality Control Settings Section -->
-            @if (isSuperAdmin || settings.enableQualityControl) {
+            @if (isSystemAdmin || settings.enableQualityControl) {
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl p-8 relative overflow-hidden group">
                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
                <div class="flex items-center justify-between mb-8 relative z-10">
@@ -700,7 +700,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                   </div>
                </div>
 
-               @if (isSuperAdmin) {
+               @if (isSystemAdmin) {
                <div class="flex items-center justify-between p-4 rounded-2xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 mb-4">
                   <div>
                      <span class="text-xs font-bold text-blue-700 dark:text-blue-300 uppercase block">{{ 'companySettings.enableQualityModule' | translate }}</span>
@@ -776,8 +776,8 @@ import { AnnouncementService } from '../../../core/services/announcement.service
                   </div>
 
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <!-- Analytics Master Switch (Super Admin ONLY) -->
-                      @if (isSuperAdmin) {
+                      <!-- Analytics Master Switch (System Admin ONLY) -->
+                      @if (isSystemAdmin) {
                       <div class="flex items-center justify-between p-6 rounded-3xl bg-indigo-500/5 border border-indigo-200/50 dark:border-indigo-500/20 transition-all shadow-sm">
                          <div class="flex items-center space-x-4">
                             <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
@@ -1060,7 +1060,7 @@ import { AnnouncementService } from '../../../core/services/announcement.service
             </section>
 
             <!-- Platform Modules -->
-            @if (isSuperAdmin) {
+            @if (isSystemAdmin) {
               <section class="animate-premium-fade delay-200">
                 <div class="flex items-center gap-4 mb-8">
                   <div class="w-12 h-12 rounded-[1.25rem] bg-cyan-500/10 text-cyan-500 flex items-center justify-center text-xl font-black shadow-inner">M</div>
@@ -1399,13 +1399,13 @@ export class CompanySettingsComponent implements OnInit {
       public authService: AuthService
    ) { }
 
-   get isSuperAdmin(): boolean {
-      return this.authService.getCurrentUser()?.role === 'SuperAdmin';
+   get isSystemAdmin(): boolean {
+      return this.authService.getCurrentUser()?.role === 'SystemAdmin';
    }
 
    get isCompanyAdmin(): boolean {
       const role = this.authService.getCurrentUser()?.role;
-      return role === 'CompanyAdmin' || role === 'SuperAdmin';
+      return role === 'CompanyAdmin' || role === 'SystemAdmin';
    }
 
    get isOnlyCompanyAdmin(): boolean {
@@ -1671,8 +1671,8 @@ export class CompanySettingsComponent implements OnInit {
    get availablePermissionsForLinking(): Permission[] {
       let perms = this.companyPermissions;
 
-      // Filter out System.* permissions for non-SuperAdmins
-      if (!this.isSuperAdmin) {
+      // Filter out System.* permissions for non-SystemAdmins
+      if (!this.isSystemAdmin) {
          perms = perms.filter(p => !p.name.startsWith('System.'));
       }
 
@@ -1771,3 +1771,4 @@ export class CompanySettingsComponent implements OnInit {
       this.activeTab = tab;
    }
 }
+

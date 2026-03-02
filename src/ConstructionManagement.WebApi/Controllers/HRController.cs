@@ -21,7 +21,7 @@ public class HRController : ControllerBase
 
     // Team Members
     [HttpGet("team-members")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult<IEnumerable<TeamMemberDto>>> GetTeamMembers()
     {
         return Ok(await _hrService.GetTeamMembersAsync());
@@ -29,7 +29,7 @@ public class HRController : ControllerBase
 
     // Attendance
     [HttpGet("attendance")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult<IEnumerable<AttendanceDto>>> GetAttendances([FromQuery] DateTime? date, [FromQuery] int? userId)
     {
         return Ok(await _hrService.GetAttendancesAsync(date, userId));
@@ -80,7 +80,7 @@ public class HRController : ControllerBase
     public async Task<ActionResult<IEnumerable<LeaveRequestDto>>> GetLeaveRequests([FromQuery] int? userId)
     {
         // If not admin, can only see own requests
-        if (!User.IsInRole("CompanyAdmin") && !User.IsInRole("SuperAdmin"))
+        if (!User.IsInRole("CompanyAdmin") && !User.IsInRole("SystemAdmin"))
         {
             // Enforce current user ID for non-admin users
             userId = _companyContext.CurrentUserId;
@@ -95,7 +95,7 @@ public class HRController : ControllerBase
     }
 
     [HttpPut("leave-requests/{id}/review")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult> ReviewLeaveRequest(int id, ReviewLeaveRequest review)
     {
         await _hrService.ReviewLeaveRequestAsync(id, review);
@@ -107,7 +107,7 @@ public class HRController : ControllerBase
     public async Task<ActionResult<IEnumerable<CertificationDto>>> GetCertifications([FromQuery] int? userId)
     {
         // If not admin, can only see own certifications
-        if (!User.IsInRole("CompanyAdmin") && !User.IsInRole("SuperAdmin"))
+        if (!User.IsInRole("CompanyAdmin") && !User.IsInRole("SystemAdmin"))
         {
             userId = _companyContext.CurrentUserId;
         }
@@ -135,7 +135,7 @@ public class HRController : ControllerBase
 
     // Payroll
     [HttpGet("payroll")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult<IEnumerable<PayrollDto>>> GetPayrolls([FromQuery] int month, [FromQuery] int year)
     {
         return Ok(await _hrService.GetPayrollsAsync(month, year));
@@ -156,7 +156,7 @@ public class HRController : ControllerBase
     }
 
     [HttpPost("payroll/process")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult> ProcessPayroll(GeneratePayrollRequest request)
     {
         await _hrService.ProcessMonthlyPayrollAsync(request.Month, request.Year);
@@ -164,7 +164,7 @@ public class HRController : ControllerBase
     }
 
     [HttpPost("payroll/{id}/pay")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult> MarkAsPaid(int id)
     {
         var success = await _hrService.MarkAsPaidAsync(id);
@@ -172,3 +172,4 @@ public class HRController : ControllerBase
         return Ok(new { message = "Payment confirmed successfully." });
     }
 }
+

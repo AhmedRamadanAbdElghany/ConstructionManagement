@@ -2,7 +2,7 @@
 
 ## Overview
 This plan outlines implementing a company-based permission system where:
-1. **SuperAdmin** assigns specific permissions to each company when approving/configuring
+1. **SystemAdmin** assigns specific permissions to each company when approving/configuring
 2. **Company Admin** can see available permissions for their company
 3. **Company Admin** can create custom roles and assign permissions to those roles
 
@@ -15,11 +15,11 @@ This plan outlines implementing a company-based permission system where:
 
 ### 1. Company-Specific Permissions
 - Permissions are assigned per company (not global)
-- When SuperAdmin approves a company, they select which permissions that company can use
+- When SystemAdmin approves a company, they select which permissions that company can use
 - Each company has its own set of allowed permissions
 
 ### 2. Permission Management for Companies
-- Add UI for SuperAdmin to configure company permissions
+- Add UI for SystemAdmin to configure company permissions
 - Add fields to Company entity to store allowed permissions
 - Add interface for Company Admin to view available permissions
 
@@ -35,12 +35,12 @@ This plan outlines implementing a company-based permission system where:
 - Existing permissions can be used as a reference
 
 #### Backend Changes
-- Add endpoints to manage company permissions (SuperAdmin)
+- Add endpoints to manage company permissions (SystemAdmin)
 - Add endpoints to manage roles within a company (CompanyAdmin)
 - Update authorization to check company-specific permissions
 
 #### Frontend Changes
-- Add company permission configuration page (SuperAdmin)
+- Add company permission configuration page (SystemAdmin)
 - Add role management page (CompanyAdmin)
 - Update sidebar to check company-specific permissions
 
@@ -79,7 +79,7 @@ This plan outlines implementing a company-based permission system where:
 
 ## User Flow
 
-### SuperAdmin Flow
+### SystemAdmin Flow
 1. Create or approve a new company
 2. Configure which features/permissions the company can access
 3. Save company configuration
@@ -103,7 +103,7 @@ This plan outlines implementing a company-based permission system where:
 
 ### Step 2: Update Authorization
 - Check both user role AND company-enabled features
-- SuperAdmin bypasses feature checks
+- SystemAdmin bypasses feature checks
 
 ### Step 3: Create Role Management UI
 - Company Admin can create/edit/delete roles
@@ -122,7 +122,7 @@ This plan outlines implementing a company-based permission system where:
 - Authorization handlers - check company features
 
 ### Frontend
-- Company configuration page (SuperAdmin)
+- Company configuration page (SystemAdmin)
 - Role management page (CompanyAdmin)
 - Sidebar - check company features
 
@@ -130,4 +130,4 @@ This plan outlines implementing a company-based permission system where:
 1. Add feature flags to company
 2. Update sidebar to check company features
 3. Add role management for CompanyAdmin
-4. Add SuperAdmin company configuration
+4. Add SystemAdmin company configuration

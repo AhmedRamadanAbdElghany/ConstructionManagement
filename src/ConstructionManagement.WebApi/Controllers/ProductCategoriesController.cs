@@ -81,7 +81,7 @@ public class ProductCategoriesController : ControllerBase
     /// Create a new category (Admin only)
     /// </summary>
     [HttpPost]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = "SystemAdminOnly")]
     public async Task<ActionResult<ProductCategoryDto>> CreateCategory([FromBody] CreateProductCategoryRequest request)
     {
         try
@@ -99,7 +99,7 @@ public class ProductCategoriesController : ControllerBase
     /// Update a category (Admin only)
     /// </summary>
     [HttpPut("{id}")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = "SystemAdminOnly")]
     public async Task<ActionResult<ProductCategoryDto>> UpdateCategory(int id, [FromBody] UpdateProductCategoryRequest request)
     {
         try
@@ -121,7 +121,7 @@ public class ProductCategoriesController : ControllerBase
     /// Delete a category (Admin only)
     /// </summary>
     [HttpDelete("{id}")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = "SystemAdminOnly")]
     public async Task<ActionResult> DeleteCategory(int id)
     {
         try
@@ -168,7 +168,7 @@ public class ProductCategoriesController : ControllerBase
     /// Get all category requests (Admin only)
     /// </summary>
     [HttpGet("requests")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = "SystemAdminOnly")]
     public async Task<ActionResult<IEnumerable<CategoryRequestDto>>> GetCategoryRequests([FromQuery] string? status = null)
     {
         var requests = await _categoryService.GetCategoryRequestsAsync(status);
@@ -179,7 +179,7 @@ public class ProductCategoriesController : ControllerBase
     /// Get category request by ID (Admin only)
     /// </summary>
     [HttpGet("requests/{id}")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = "SystemAdminOnly")]
     public async Task<ActionResult<CategoryRequestDto>> GetCategoryRequest(int id)
     {
         var request = await _categoryService.GetCategoryRequestByIdAsync(id);
@@ -193,7 +193,7 @@ public class ProductCategoriesController : ControllerBase
     /// Review a category request - approve or reject (Admin only)
     /// </summary>
     [HttpPut("requests/{id}/review")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = "SystemAdminOnly")]
     public async Task<ActionResult<CategoryRequestDto>> ReviewCategoryRequest(int id, [FromBody] ReviewCategoryRequestRequest request)
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

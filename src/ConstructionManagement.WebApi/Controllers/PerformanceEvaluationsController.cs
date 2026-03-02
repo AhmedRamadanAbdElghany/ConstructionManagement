@@ -26,9 +26,9 @@ namespace ConstructionManagement.WebApi.Controllers
         [HttpGet("criteria")]
         public async Task<ActionResult<List<EvaluationCriteriaDto>>> GetCriteria([FromQuery] int? companyId)
         {
-            // Company isolation: use user's company if not SuperAdmin
+            // Company isolation: use user's company if not SystemAdmin
             var userCompanyId = GetCompanyId();
-            if (!User.IsInRole("SuperAdmin") && userCompanyId.HasValue)
+            if (!User.IsInRole("SystemAdmin") && userCompanyId.HasValue)
             {
                 companyId = userCompanyId.Value;
             }
@@ -38,12 +38,12 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("criteria")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<EvaluationCriteriaDto>> CreateCriteria([FromBody] CreateEvaluationCriteriaRequest request, [FromQuery] int? companyId)
         {
-            // Company isolation: use user's company if not SuperAdmin
+            // Company isolation: use user's company if not SystemAdmin
             var userCompanyId = GetCompanyId();
-            if (!User.IsInRole("SuperAdmin"))
+            if (!User.IsInRole("SystemAdmin"))
             {
                 if (!userCompanyId.HasValue)
                 {
@@ -57,7 +57,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPut("criteria/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<EvaluationCriteriaDto>> UpdateCriteria(int id, [FromBody] UpdateEvaluationCriteriaRequest request)
         {
             var criteria = await _service.UpdateEvaluationCriteriaAsync(id, request);
@@ -65,7 +65,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("criteria/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult> DeleteCriteria(int id)
         {
             await _service.DeleteEvaluationCriteriaAsync(id);
@@ -79,9 +79,9 @@ namespace ConstructionManagement.WebApi.Controllers
         [HttpGet("periods")]
         public async Task<ActionResult<List<EvaluationPeriodDto>>> GetPeriods([FromQuery] int? companyId)
         {
-            // Company isolation: use user's company if not SuperAdmin
+            // Company isolation: use user's company if not SystemAdmin
             var userCompanyId = GetCompanyId();
-            if (!User.IsInRole("SuperAdmin") && userCompanyId.HasValue)
+            if (!User.IsInRole("SystemAdmin") && userCompanyId.HasValue)
             {
                 companyId = userCompanyId.Value;
             }
@@ -98,12 +98,12 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("periods")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<EvaluationPeriodDto>> CreatePeriod([FromBody] CreateEvaluationPeriodRequest request, [FromQuery] int? companyId)
         {
-            // Company isolation: use user's company if not SuperAdmin
+            // Company isolation: use user's company if not SystemAdmin
             var userCompanyId = GetCompanyId();
-            if (!User.IsInRole("SuperAdmin"))
+            if (!User.IsInRole("SystemAdmin"))
             {
                 if (!userCompanyId.HasValue)
                 {
@@ -117,7 +117,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPut("periods/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<EvaluationPeriodDto>> UpdatePeriod(int id, [FromBody] UpdateEvaluationPeriodRequest request)
         {
             var period = await _service.UpdateEvaluationPeriodAsync(id, request);
@@ -125,7 +125,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("periods/{id}/activate")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult> ActivatePeriod(int id)
         {
             await _service.ActivateEvaluationPeriodAsync(id);
@@ -133,7 +133,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("periods/{id}/close")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult> ClosePeriod(int id)
         {
             await _service.CloseEvaluationPeriodAsync(id);
@@ -163,7 +163,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<PerformanceEvaluationDto>> CreateEvaluation([FromBody] CreatePerformanceEvaluationRequest request)
         {
             var evaluation = await _service.CreateEvaluationAsync(request);
@@ -203,7 +203,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult> DeleteEvaluation(int id)
         {
             await _service.DeleteEvaluationAsync(id);
@@ -215,7 +215,7 @@ namespace ConstructionManagement.WebApi.Controllers
         #region Goals
 
         [HttpPost("goals")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<EvaluationGoalDto>> AddGoal([FromBody] CreateGoalRequest request)
         {
             var goal = await _service.AddGoalAsync(request);
@@ -223,7 +223,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPut("goals/{goalId}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<EvaluationGoalDto>> UpdateGoal(int goalId, [FromBody] UpdateGoalRequest request)
         {
             var goal = await _service.UpdateGoalAsync(goalId, request);
@@ -231,7 +231,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("goals/{goalId}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult> DeleteGoal(int goalId)
         {
             await _service.DeleteGoalAsync(goalId);
@@ -262,7 +262,7 @@ namespace ConstructionManagement.WebApi.Controllers
         #region Reports
 
         [HttpGet("reports/{periodId}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<PerformanceReportDto>> GetReport(int periodId)
         {
             var report = await _service.GetPerformanceReportAsync(periodId);
@@ -270,7 +270,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpGet("history/{employeeId}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<EmployeePerformanceHistoryDto>> GetEmployeeHistory(int employeeId, [FromQuery] int? count)
         {
             var history = await _service.GetEmployeePerformanceHistoryAsync(employeeId, count);
@@ -311,3 +311,4 @@ namespace ConstructionManagement.WebApi.Controllers
         #endregion
     }
 }
+

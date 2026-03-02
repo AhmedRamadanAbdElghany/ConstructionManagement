@@ -98,7 +98,7 @@ Modify `CompaniesController.Create` to:
 
 ### Step 4: Create API Controller
 - Add endpoints for getting/updating defaults
-- Add authorization: `[Authorize(Roles = "SuperAdmin")]`
+- Add authorization: `[Authorize(Roles = "SystemAdmin")]`
 
 ### Step 5: Migration
 - Add migration for new table

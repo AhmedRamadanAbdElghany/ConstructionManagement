@@ -28,7 +28,7 @@ import { TranslateService } from '@ngx-translate/core';
 
         <!-- Navigation Hub -->
         <div class="flex items-center space-x-2 bg-slate-200/50 dark:bg-white/5 rounded-[2rem] p-2 mb-10 w-fit backdrop-blur-md">
-          @if (isSuperAdmin()) {
+          @if (isSystemAdmin()) {
             <button (click)="activeTab = 'companies'"
                     [class.bg-white]="activeTab === 'companies'"
                     [class.dark:bg-slate-800]="activeTab === 'companies'"
@@ -396,7 +396,7 @@ export class PendingRequestsComponent implements OnInit {
   fb = inject(FormBuilder);
   packagesService = inject(PackagesService);
 
-  isSuperAdmin = computed(() => this.authService.hasRole('SuperAdmin'));
+  isSystemAdmin = computed(() => this.authService.hasRole('SystemAdmin'));
   isCompanyAdmin = computed(() => this.authService.hasRole('CompanyAdmin'));
 
   activeTab: 'companies' | 'joins' = 'companies';
@@ -558,7 +558,7 @@ export class PendingRequestsComponent implements OnInit {
   }
 
   loadData() {
-    if (this.isSuperAdmin()) {
+    if (this.isSystemAdmin()) {
       this.activeTab = 'companies';
       this.service.getPendingCompanyRequests().subscribe(reqs => this.companyRequests.set(reqs));
     }
@@ -672,3 +672,4 @@ export class PendingRequestsComponent implements OnInit {
     setTimeout(() => this.showSuccess.set(false), 4000);
   }
 }
+

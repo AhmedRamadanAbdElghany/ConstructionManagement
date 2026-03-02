@@ -48,7 +48,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Roles = "SystemAdmin")]
         public async Task<ActionResult<CurrencyDto>> CreateCurrency([FromBody] CreateCurrencyRequest request)
         {
             var currency = await _service.CreateCurrencyAsync(request);
@@ -56,7 +56,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Roles = "SystemAdmin")]
         public async Task<ActionResult<CurrencyDto>> UpdateCurrency(int id, [FromBody] UpdateCurrencyRequest request)
         {
             var currency = await _service.UpdateCurrencyAsync(id, request);
@@ -64,7 +64,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Roles = "SystemAdmin")]
         public async Task<ActionResult> DeleteCurrency(int id)
         {
             await _service.DeleteCurrencyAsync(id);
@@ -72,7 +72,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("{id}/set-default")]
-        [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Roles = "SystemAdmin")]
         public async Task<ActionResult> SetDefaultCurrency(int id)
         {
             await _service.SetDefaultCurrencyAsync(id);
@@ -108,7 +108,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("rates")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<ExchangeRateDto>> SetExchangeRate([FromBody] CreateExchangeRateRequest request)
         {
             var rate = await _service.SetExchangeRateAsync(request);
@@ -116,7 +116,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("rates/bulk")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<List<ExchangeRateDto>>> BulkSetExchangeRates([FromBody] BulkExchangeRateRequest request)
         {
             var rates = await _service.BulkSetExchangeRatesAsync(request);
@@ -124,7 +124,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPut("rates/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<ExchangeRateDto>> UpdateExchangeRate(int id, [FromBody] UpdateExchangeRateRequest request)
         {
             var rate = await _service.UpdateExchangeRateAsync(id, request);
@@ -132,7 +132,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("rates/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult> DeleteExchangeRate(int id)
         {
             await _service.DeleteExchangeRateAsync(id);
@@ -151,7 +151,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("rates/fetch/{baseCurrencyId}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<List<ExchangeRateDto>>> FetchLatestRates(int baseCurrencyId, [FromQuery] string? source)
         {
             var rates = await _service.FetchLatestRatesAsync(baseCurrencyId, source);
@@ -197,7 +197,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPut("company/{companyId}/settings")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<CompanyCurrencySettingsDto>> UpdateCompanySettings(
             int companyId,
             [FromBody] UpdateCompanyCurrencySettingsRequest request)
@@ -207,7 +207,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("company/{companyId}/enable")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<CompanyCurrencySettingsDto>> EnableMultiCurrency(int companyId, [FromQuery] int baseCurrencyId)
         {
             var settings = await _service.EnableMultiCurrencyAsync(companyId, baseCurrencyId);
@@ -226,7 +226,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("project/budgets")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<ProjectCurrencyBudgetDto>> CreateProjectBudget([FromBody] CreateProjectCurrencyBudgetRequest request)
         {
             var budget = await _service.CreateProjectBudgetAsync(request);
@@ -234,7 +234,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPut("project/budgets/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<ProjectCurrencyBudgetDto>> UpdateProjectBudget(int id, [FromBody] UpdateProjectCurrencyBudgetRequest request)
         {
             var budget = await _service.UpdateProjectBudgetAsync(id, request);
@@ -242,7 +242,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("project/budgets/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult> DeleteProjectBudget(int id)
         {
             await _service.DeleteProjectBudgetAsync(id);
@@ -276,3 +276,4 @@ namespace ConstructionManagement.WebApi.Controllers
         #endregion
     }
 }
+

@@ -12,7 +12,7 @@ using System.Security.Cryptography;
 
 namespace ConstructionManagement.WebApi.Controllers;
 
-[Authorize(Roles = "SuperAdmin")]
+[Authorize(Roles = "SystemAdmin")]
 [ApiController]
 [Route("api/admin/companies")]
 public class CompaniesController : ControllerBase
@@ -425,3 +425,4 @@ public class CompaniesController : ControllerBase
         return new string(chars);
     }
 }
+

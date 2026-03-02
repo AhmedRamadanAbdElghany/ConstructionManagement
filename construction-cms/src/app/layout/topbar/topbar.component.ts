@@ -6,6 +6,7 @@ import { LanguageSwitcherComponent } from '../language-switcher/language-switche
 import { TranslateModule } from '@ngx-translate/core';
 import { ThemeService } from '../../core/theme/theme.service';
 import { NotificationsService, NotificationDto } from '../../core/services/notifications.service';
+import { MessagingService, ConversationDto } from '../../core/services/messaging.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -174,7 +175,7 @@ import { Subject, takeUntil } from 'rxjs';
 
           <!-- Notifications Dropdown -->
           @if (showNotifications) {
-            <div class="absolute ltr:left-1/2 rtl:right-1/2 ltr:-translate-x-[85%] rtl:translate-x-[85%] top-[calc(100%+16px)] w-[400px] bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-3xl border border-slate-200 dark:border-white/10 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+            <div class="absolute ltr:right-0 rtl:left-0 top-[calc(100%+16px)] w-[400px] bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-3xl border border-slate-200 dark:border-white/10 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
               <div class="p-8 pb-4 flex items-center justify-between">
                 <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">{{ 'topbar.notifications' | translate }}</h3>
                 <button (click)="markAllRead()" class="px-4 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-[10px] font-black text-cyan-500 dark:text-cyan-400 uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
@@ -224,6 +225,87 @@ import { Subject, takeUntil } from 'rxjs';
           }
         </div>
 
+        <!-- Messages -->
+        <div class="relative">
+          <button 
+            (click)="toggleMessages()"
+            class="group relative w-12 h-12 rounded-2xl transition-all active:scale-90 shadow-lg border flex items-center justify-center transition-all duration-300"
+            [ngClass]="{
+              'bg-white dark:bg-slate-800 text-indigo-600 border-white dark:border-slate-700 shadow-xl shadow-indigo-500/10': showMessages,
+              'bg-white dark:bg-slate-900/50 border-slate-200 dark:border-white/5 text-slate-500 dark:text-slate-400 hover:text-indigo-600': !showMessages
+            }">
+            <svg class="w-6 h-6 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+            </svg>
+            @if (unreadMessagesCount > 0) {
+              <span class="absolute -top-1 ltr:-right-1 rtl:-left-1 w-5 h-5 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 text-white text-[10px] font-black flex items-center justify-center shadow-lg shadow-rose-500/25 ring-2 ring-white dark:ring-slate-950">
+                {{ unreadMessagesCount > 9 ? '9+' : unreadMessagesCount }}
+              </span>
+            }
+          </button>
+
+          <!-- Messages Dropdown -->
+          @if (showMessages) {
+            <div class="absolute ltr:right-0 rtl:left-0 top-[calc(100%+16px)] w-[400px] bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-3xl border border-slate-200 dark:border-white/10 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+              <div class="p-8 pb-4 flex items-center justify-between">
+                <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">{{ 'sidebar.messages' | translate }}</h3>
+                <a routerLink="/messages" (click)="showMessages = false" class="text-[10px] font-black text-indigo-500 dark:text-indigo-400 uppercase tracking-widest hover:underline transition-all">
+                  {{ 'topbar.view_all_messages' | translate }}
+                </a>
+              </div>
+              <div class="max-h-[360px] overflow-y-auto px-4 space-y-2 mb-4 custom-scrollbar">
+                @if (conversations.length === 0) {
+                  <div class="p-10 text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4 text-slate-400">
+                      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                      </svg>
+                    </div>
+                    <p class="text-sm font-bold text-slate-500 dark:text-slate-400">No recent messages</p>
+                  </div>
+                } @else {
+                  @for (conv of conversations; track conv.id) {
+                    <div 
+                      (click)="goToConversation(conv.id)"
+                      class="group p-5 rounded-[1.5rem] transition-all cursor-pointer border border-transparent hover:bg-slate-50 dark:hover:bg-white/[0.03]"
+                      [class.bg-indigo-500/5]="conv.unreadCount > 0">
+                      <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-[1rem] flex items-center justify-center flex-shrink-0 shadow-inner bg-indigo-500/10 text-indigo-600 font-black text-lg">
+                          @if (conv.companyLogo || conv.initiatorAvatar) {
+                            <img [src]="conv.companyLogo || conv.initiatorAvatar" class="w-full h-full rounded-[1rem] object-cover">
+                          } @else {
+                            {{ (conv.companyName || conv.initiatorName).charAt(0) }}
+                          }
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <div class="flex items-center justify-between mb-1">
+                             <p class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate" [class.font-black]="conv.unreadCount > 0">
+                               {{ conv.companyName || conv.initiatorName }}
+                             </p>
+                             @if (conv.unreadCount > 0) { <span class="w-2 h-2 rounded-full bg-indigo-500"></span> }
+                          </div>
+                          <p class="text-xs text-slate-500 dark:text-slate-400 truncate mb-1" [class.font-bold]="conv.unreadCount > 0">
+                            {{ conv.lastMessage?.content || 'Started a conversation' }}
+                          </p>
+                          <p class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest">{{ getTimeAgo(conv.lastMessageAt || conv.createdAt) }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                }
+              </div>
+              <div class="p-6 bg-slate-50 dark:bg-slate-950/50 border-t border-slate-200 dark:border-white/5">
+                <a routerLink="/messages" 
+                   (click)="showMessages = false"
+                   class="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-700 transition-all">
+                  <span>{{ 'topbar.view_all_messages' | translate }}</span>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5-5 5"></path></svg>
+                </a>
+              </div>
+            </div>
+          }
+        </div>
+
         <!-- Divider -->
         <div class="w-px h-8 bg-slate-200 dark:bg-white/5"></div>
 
@@ -238,7 +320,7 @@ import { Subject, takeUntil } from 'rxjs';
             <div class="hidden md:block ltr:text-left rtl:text-right min-w-max">
               <p class="text-sm font-black text-slate-900 dark:text-white tracking-tight leading-none mb-1">{{ authService.getCurrentUser()?.fullName || '' }}</p>
               <p class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest leading-none">
-                {{ (isPending ? 'sidebar.role_owner' : isInventoryOwner ? 'sidebar.role_inventory_owner' : 'sidebar.role_' + (authService.getCurrentUser()?.role === 'SuperAdmin' ? 'super' :
+                {{ (isPending ? 'sidebar.role_owner' : isInventoryOwner ? 'sidebar.role_inventory_owner' : 'sidebar.role_' + (authService.getCurrentUser()?.role === 'SystemAdmin' ? 'super' :
                    authService.getCurrentUser()?.role === 'CompanyAdmin' ? 'admin' :
                    authService.getCurrentUser()?.role === 'CompanyUser' ? 'worker' : 'client')) | translate }}
               </p>
@@ -322,7 +404,7 @@ import { Subject, takeUntil } from 'rxjs';
     }
 
     <!-- Overlay to close dropdowns -->
-    @if (showNotifications || showProfile || showCompanySelector) {
+    @if (showNotifications || showProfile || showCompanySelector || showMessages) {
       <div 
         class="fixed inset-0 z-40 bg-slate-950/20 backdrop-blur-sm transition-all animate-in fade-in duration-300"
         (click)="closeDropdowns()">
@@ -346,14 +428,20 @@ export class TopbarComponent implements OnInit, OnDestroy {
   showProfile = false;
   showCompanySelector = false;
   showLogoutConfirmation = false;
+  showMessages = false;
   notifications: NotificationDto[] = [];
+  conversations: ConversationDto[] = [];
   private destroy$ = new Subject<void>();
 
   private router = inject(Router);
   public authService = inject(AuthService);
   public themeService = inject(ThemeService);
   public notificationsService = inject(NotificationsService);
+  public messagingService = inject(MessagingService);
   private translateService = inject(TranslateService);
+
+  // Messages unread count
+  unreadMessagesCount = 0;
 
   get isInventoryOwner(): boolean {
     return this.authService.getCurrentUser()?.userType === 3;
@@ -366,6 +454,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadNotifications();
+    this.loadUnreadMessagesCount();
 
     // Reload notifications when language changes to get localized messages
     this.translateService.onLangChange
@@ -373,6 +462,18 @@ export class TopbarComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.loadNotifications();
       });
+  }
+
+  loadUnreadMessagesCount() {
+    this.messagingService.getUnreadCount().subscribe({
+      next: (result: any) => {
+        this.unreadMessagesCount = result.count ?? 0;
+      },
+      error: (error) => {
+        console.error('Error loading unread messages count:', error);
+        this.unreadMessagesCount = 0;
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -403,6 +504,31 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.showNotifications = false;
     this.showProfile = false;
     this.showCompanySelector = false;
+    this.showMessages = false;
+  }
+
+  toggleMessages() {
+    this.showMessages = !this.showMessages;
+    this.showNotifications = false;
+    this.showProfile = false;
+    this.showCompanySelector = false;
+    if (this.showMessages) {
+      this.loadRecentConversations();
+    }
+  }
+
+  loadRecentConversations() {
+    this.messagingService.getConversations().subscribe({
+      next: (data) => {
+        this.conversations = data.slice(0, 5);
+      },
+      error: (err) => console.error('Failed to load conversations', err)
+    });
+  }
+
+  goToConversation(conversationId: number) {
+    this.showMessages = false;
+    this.router.navigate(['/messages', conversationId]);
   }
 
   toggleCompanySelector() {
@@ -490,3 +616,4 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.router.navigate(['/auth/login']);
   }
 }
+

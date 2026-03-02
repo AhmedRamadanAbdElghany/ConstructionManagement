@@ -26,17 +26,17 @@ namespace ConstructionManagement.Application.Interfaces
         Task<CurrencyDto?> GetCurrencyByCodeAsync(string code);
 
         /// <summary>
-        /// Create a new currency (SuperAdmin only)
+        /// Create a new currency (SystemAdmin only)
         /// </summary>
         Task<CurrencyDto> CreateCurrencyAsync(CreateCurrencyRequest request);
 
         /// <summary>
-        /// Update a currency (SuperAdmin only)
+        /// Update a currency (SystemAdmin only)
         /// </summary>
         Task<CurrencyDto> UpdateCurrencyAsync(int id, UpdateCurrencyRequest request);
 
         /// <summary>
-        /// Delete a currency (SuperAdmin only)
+        /// Delete a currency (SystemAdmin only)
         /// </summary>
         Task DeleteCurrencyAsync(int id);
 
@@ -178,3 +178,4 @@ namespace ConstructionManagement.Application.Interfaces
         #endregion
     }
 }
+

@@ -3,23 +3,31 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ConstructionManagement.Domain.Entities;
 
 /// <summary>
-/// Represents a message in a company conversation.
-/// Messages can be sent by either the conversation initiator (user) or company representatives.
+/// Represents a message in a conversation.
+/// Messages can be sent between users or between a user and a company.
 /// </summary>
-public class CompanyMessage : BaseEntity, ICompanyEntity
+public class Message : BaseEntity
 {
+    /// <summary>
+    /// The company this message belongs to (for company-level messages)
+    /// </summary>
     public int? CompanyId { get; set; }
     [ForeignKey(nameof(CompanyId))]
     [System.Text.Json.Serialization.JsonIgnore]
     public virtual Company? Company { get; set; }
-    
+
+    /// <summary>
+    /// Whether the message was sent by the company (true) or by a user (false)
+    /// </summary>
+    public bool IsFromCompany { get; set; }
+
     /// <summary>
     /// The conversation this message belongs to
     /// </summary>
     public int ConversationId { get; set; }
     [ForeignKey(nameof(ConversationId))]
     [System.Text.Json.Serialization.JsonIgnore]
-    public virtual CompanyConversation Conversation { get; set; } = null!;
+    public virtual Conversation Conversation { get; set; } = null!;
     
     /// <summary>
     /// The user who sent this message
@@ -33,11 +41,6 @@ public class CompanyMessage : BaseEntity, ICompanyEntity
     /// The message content (text)
     /// </summary>
     public string Content { get; set; } = string.Empty;
-    
-    /// <summary>
-    /// True if sent by company owner/admin, false if sent by conversation initiator
-    /// </summary>
-    public bool IsFromCompany { get; set; }
     
     /// <summary>
     /// Whether the message has been read by the recipient

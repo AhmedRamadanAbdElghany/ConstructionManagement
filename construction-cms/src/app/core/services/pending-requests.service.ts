@@ -141,7 +141,7 @@ export class PendingRequestsService {
 
     // Refresh the pending count from server
     refreshPendingCount() {
-        if (this.authService.hasRole('SuperAdmin')) {
+        if (this.authService.hasRole('SystemAdmin')) {
             this.getPendingCompanyRequestsCount().subscribe({
                 next: (res) => this.pendingRequests.set(res.pendingCount),
                 error: (err) => console.error('Failed to refresh pending count:', err)
@@ -161,3 +161,4 @@ export class PendingRequestsService {
         return this.pendingRequests();
     }
 }
+

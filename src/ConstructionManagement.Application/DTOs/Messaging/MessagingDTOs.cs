@@ -3,11 +3,25 @@ using Microsoft.AspNetCore.Http;
 namespace ConstructionManagement.Application.DTOs.Messaging;
 
 /// <summary>
-/// Request to start a new conversation with a company
+/// Request to start a new conversation
 /// </summary>
 public class StartConversationRequest
 {
-    public int CompanyId { get; set; }
+    /// <summary>
+    /// The company the sender belongs to (can be null if sender has no company, e.g., SystemAdmin)
+    /// </summary>
+    public int? SenderCompanyId { get; set; }
+    
+    /// <summary>
+    /// The company the recipient belongs to (can be null if recipient has no company)
+    /// </summary>
+    public int? RecipientCompanyId { get; set; }
+    
+    /// <summary>
+    /// The recipient's user ID (required)
+    /// </summary>
+    public int RecipientUserId { get; set; }
+    
     public string Message { get; set; } = string.Empty;
 }
 
@@ -30,7 +44,7 @@ public class StartConversationRequest
         public string InitiatedBy { get; set; } = "User";
         
         /// <summary>
-        /// Type of conversation: "Company", "Worker", "Client", "SuperAdmin"
+        /// Type of conversation: "Company", "Worker", "Client", "SystemAdmin"
         /// Used for tabbed interface filtering
         /// </summary>
         public string ConversationType { get; set; } = "Company";
@@ -278,9 +292,14 @@ public class MessagingStatusDto
     public string? RestrictionReason { get; set; }
     
     /// <summary>
-    /// Company ID of SuperAdmin if restricted (the only allowed recipient)
+    /// Company ID of SystemAdmin if restricted (the only allowed recipient)
     /// </summary>
-    public int? SuperAdminCompanyId { get; set; }
+    public int? SystemAdminCompanyId { get; set; }
+    
+    /// <summary>
+    /// User ID of SystemAdmin (for direct messaging)
+    /// </summary>
+    public int? SystemAdminUserId { get; set; }
     
     /// <summary>
     /// Whether the user is an unverified company owner

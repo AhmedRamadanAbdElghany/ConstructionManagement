@@ -128,9 +128,9 @@ public class UserService : IUserService
         var admin = await _userRepository.GetByIdAsync(adminId);
         if (admin == null) return false;
 
-        bool isSuperAdmin = await _userRoleRepository.AsQueryable().AnyAsync(ur => ur.UserId == adminId && ur.Role.Name == "SuperAdmin");
+        bool isSystemAdmin = await _userRoleRepository.AsQueryable().AnyAsync(ur => ur.UserId == adminId && ur.Role.Name == "SystemAdmin");
 
-        if (isSuperAdmin)
+        if (isSystemAdmin)
         {
             await _userRepository.DeleteAsync(user);
         }
@@ -214,6 +214,7 @@ public class UserService : IUserService
     private async Task<bool> IsAuthorizedAdminAsync(int userId)
     {
         return await _userRoleRepository.AsQueryable()
-            .AnyAsync(ur => ur.UserId == userId && (ur.Role.Name == "SuperAdmin" || ur.Role.Name == "CompanyAdmin"));
+            .AnyAsync(ur => ur.UserId == userId && (ur.Role.Name == "SystemAdmin" || ur.Role.Name == "CompanyAdmin"));
     }
 }
+

@@ -26,6 +26,11 @@ public enum UserType
     InventoryOwner = 3,
 
     /// <summary>
+    /// System administrator who manages the platform (not associated with any company)
+    /// </summary>
+    SystemAdmin = 4,
+
+    /// <summary>
     /// Engineer (civil, architectural, etc.)
     /// </summary>
     Engineer = 5,

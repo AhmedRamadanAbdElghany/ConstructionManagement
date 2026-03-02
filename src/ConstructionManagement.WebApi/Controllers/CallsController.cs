@@ -59,7 +59,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<CallSessionDto>> GetCallSession(int id)
         {
             var call = await _callService.GetCallSessionAsync(id);
@@ -284,3 +284,4 @@ namespace ConstructionManagement.WebApi.Controllers
         #endregion
     }
 }
+

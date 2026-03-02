@@ -33,7 +33,7 @@
     "change_orders": "Change Orders",
     "bills": "Bills",
     "settings": "Settings",
-    "role_super": "Super Admin",
+    "role_super": "System Admin",
     "role_admin": "Admin",
     "role_worker": "Worker",
     "role_client": "Client",

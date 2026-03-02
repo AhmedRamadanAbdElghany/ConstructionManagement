@@ -33,10 +33,10 @@ public class CompanyRequestsController : ControllerBase
     }
 
     /// <summary>
-    /// Get all company requests (Super Admin only)
+    /// Get all company requests (System Admin only)
     /// </summary>
     [HttpGet]
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize(Roles = "SystemAdmin")]
     public async Task<IActionResult> GetAllRequests()
     {
         var requests = await _companyRequestService.GetAllRequestsAsync();
@@ -44,10 +44,10 @@ public class CompanyRequestsController : ControllerBase
     }
 
     /// <summary>
-    /// Get pending company requests (Super Admin only)
+    /// Get pending company requests (System Admin only)
     /// </summary>
     [HttpGet("pending")]
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize(Roles = "SystemAdmin")]
     public async Task<IActionResult> GetPendingRequests()
     {
         var requests = await _companyRequestService.GetPendingRequestsAsync();
@@ -80,10 +80,10 @@ public class CompanyRequestsController : ControllerBase
     }
 
     /// <summary>
-    /// Approve a company request (Super Admin only)
+    /// Approve a company request (System Admin only)
     /// </summary>
     [HttpPost("{id}/approve")]
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize(Roles = "SystemAdmin")]
     public async Task<IActionResult> ApproveRequest(int id, [FromBody] ApproveCompanyRequestDto? dto = null)
     {
         var reviewedByUserId = _authService.GetCurrentUserId();
@@ -92,10 +92,10 @@ public class CompanyRequestsController : ControllerBase
     }
 
     /// <summary>
-    /// Reject a company request (Super Admin only)
+    /// Reject a company request (System Admin only)
     /// </summary>
     [HttpPost("{id}/reject")]
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize(Roles = "SystemAdmin")]
     public async Task<IActionResult> RejectRequest(int id, [FromBody] RejectCompanyRequestDto dto)
     {
         dto.ReviewedByUserId = _authService.GetCurrentUserId();
@@ -117,13 +117,14 @@ public class CompanyRequestsController : ControllerBase
     }
 
     /// <summary>
-    /// Get pending requests count (Super Admin only)
+    /// Get pending requests count (System Admin only)
     /// </summary>
     [HttpGet("count")]
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize(Roles = "SystemAdmin")]
     public async Task<IActionResult> GetPendingCount()
     {
         var count = await _companyRequestService.GetPendingCountAsync();
         return Ok(new { pendingCount = count });
     }
 }
+

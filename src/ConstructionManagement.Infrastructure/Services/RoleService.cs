@@ -53,7 +53,7 @@ namespace ConstructionManagement.Infrastructure.Services
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null) throw new UnauthorizedAccessException();
 
-            bool isSuper = await IsSuperAdmin(userId);
+            bool isSuper = await IsSystemAdmin(userId);
             bool isCompanyAdmin = await IsCompanyAdmin(userId, user.CompanyId);
             bool isCompanyOwner = user.UserType == Domain.Enums.UserType.CompanyOwner;
             bool isInventoryOwner = user.UserType == Domain.Enums.UserType.InventoryOwner;
@@ -71,11 +71,11 @@ namespace ConstructionManagement.Infrastructure.Services
             
             if (targetCompanyId.HasValue)
             {
-                rolesQuery = rolesQuery.Where(r => r.CompanyId == targetCompanyId.Value && r.Name != "CompanyAdmin" && r.Name != "SuperAdmin");
+                rolesQuery = rolesQuery.Where(r => r.CompanyId == targetCompanyId.Value && r.Name != "CompanyAdmin" && r.Name != "SystemAdmin");
             }
             else if (isSuper)
             {
-                // SuperAdmin can see global roles if no company specified
+                // SystemAdmin can see global roles if no company specified
                 rolesQuery = rolesQuery.Where(r => r.CompanyId == null);
             }
             else
@@ -106,7 +106,7 @@ namespace ConstructionManagement.Infrastructure.Services
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null) throw new UnauthorizedAccessException();
 
-            bool isSuper = await IsSuperAdmin(userId);
+            bool isSuper = await IsSystemAdmin(userId);
             bool isCompanyAdmin = await IsCompanyAdmin(userId, user.CompanyId);
             bool isCompanyOwner = user.UserType == Domain.Enums.UserType.CompanyOwner;
             bool isInventoryOwner = user.UserType == Domain.Enums.UserType.InventoryOwner;
@@ -141,7 +141,7 @@ namespace ConstructionManagement.Infrastructure.Services
             var role = await _roleRepository.GetByIdAsync(roleId);
             if (role == null) return false;
 
-            bool isSuper = await IsSuperAdmin(userId);
+            bool isSuper = await IsSystemAdmin(userId);
             bool isCompanyAdmin = await IsCompanyAdmin(userId, user.CompanyId);
             bool isCompanyOwner = user.UserType == Domain.Enums.UserType.CompanyOwner;
             bool isInventoryOwner = user.UserType == Domain.Enums.UserType.InventoryOwner;
@@ -149,7 +149,7 @@ namespace ConstructionManagement.Infrastructure.Services
             if (!isSuper && ((!isCompanyAdmin && !isCompanyOwner && !isInventoryOwner) || role.CompanyId != user.CompanyId))
                 throw new UnauthorizedAccessException("Not authorized to delete this role.");
 
-            if (role.Name == "SuperAdmin" || role.Name == "CompanyAdmin")
+            if (role.Name == "SystemAdmin" || role.Name == "CompanyAdmin")
                 throw new InvalidOperationException("Cannot delete system roles.");
 
             await _roleRepository.DeleteAsync(role);
@@ -166,7 +166,7 @@ namespace ConstructionManagement.Infrastructure.Services
             var role = await _roleRepository.GetByIdAsync(roleId);
             if (role == null) return false;
 
-            bool isSuper = await IsSuperAdmin(userId);
+            bool isSuper = await IsSystemAdmin(userId);
             bool isCompanyAdmin = await IsCompanyAdmin(userId, user.CompanyId);
             bool isCompanyOwner = user.UserType == Domain.Enums.UserType.CompanyOwner;
             bool isInventoryOwner = user.UserType == Domain.Enums.UserType.InventoryOwner;
@@ -194,7 +194,7 @@ namespace ConstructionManagement.Infrastructure.Services
             
             if (role == null) return false;
 
-            bool isSuper = await IsSuperAdmin(userId);
+            bool isSuper = await IsSystemAdmin(userId);
             bool isCompanyAdmin = await IsCompanyAdmin(userId, user.CompanyId);
             bool isCompanyOwner = user.UserType == Domain.Enums.UserType.CompanyOwner;
             bool isInventoryOwner = user.UserType == Domain.Enums.UserType.InventoryOwner;
@@ -227,10 +227,10 @@ namespace ConstructionManagement.Infrastructure.Services
             return true;
         }
 
-        private async Task<bool> IsSuperAdmin(int userId)
+        private async Task<bool> IsSystemAdmin(int userId)
         {
             return await _userRoleRepository.AsQueryable()
-                .AnyAsync(ur => ur.UserId == userId && ur.Role.Name == "SuperAdmin");
+                .AnyAsync(ur => ur.UserId == userId && ur.Role.Name == "SystemAdmin");
         }
 
         private async Task<bool> IsCompanyAdmin(int userId, int? companyId)
@@ -241,3 +241,4 @@ namespace ConstructionManagement.Infrastructure.Services
         }
     }
 }
+

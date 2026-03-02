@@ -37,7 +37,7 @@ public class PackagesController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize(Roles = "SystemAdmin")]
     public async Task<IActionResult> Create([FromBody] Package pkg)
     {
         await _repo.AddAsync(pkg);
@@ -46,7 +46,7 @@ public class PackagesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize(Roles = "SystemAdmin")]
     public async Task<IActionResult> Update(int id, [FromBody] Package pkg)
     {
         if (id != pkg.Id) return BadRequest();
@@ -57,7 +57,7 @@ public class PackagesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize(Roles = "SystemAdmin")]
     public async Task<IActionResult> Delete(int id)
     {
         var pkg = await _repo.GetByIdAsync(id);
@@ -68,3 +68,4 @@ public class PackagesController : ControllerBase
         return NoContent();
     }
 }
+

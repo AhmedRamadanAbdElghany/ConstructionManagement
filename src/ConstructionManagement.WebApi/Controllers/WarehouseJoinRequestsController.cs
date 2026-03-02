@@ -72,9 +72,9 @@ public class WarehouseJoinRequestsController : ControllerBase
         
         if (request.UserId != userId && request.CompanyId != companyId)
         {
-            // Check if user is SuperAdmin
+            // Check if user is SystemAdmin
             var userRoles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
-            if (!userRoles.Contains("SuperAdmin"))
+            if (!userRoles.Contains("SystemAdmin"))
             {
                 return Forbid();
             }
@@ -233,3 +233,4 @@ public class RejectWarehouseJoinRequestDto
 {
     public string? RejectionReason { get; set; }
 }
+

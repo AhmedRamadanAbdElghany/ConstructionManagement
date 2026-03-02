@@ -87,9 +87,9 @@ public class CompanyRequestService : ICompanyRequestService
 
         await _companyRequestRepository.AddAsync(request);
 
-        // Find Super Admin to notify
-        var superAdmins = await _userRepository.GetUsersByRoleAsync("SuperAdmin");
-        foreach (var admin in superAdmins)
+        // Find System Admin to notify
+        var SystemAdmins = await _userRepository.GetUsersByRoleAsync("SystemAdmin");
+        foreach (var admin in SystemAdmins)
         {
             await _notificationService.NotifyNewCompanyRequestAsync(admin.Id, dto.CompanyName, request.Id);
         }
@@ -270,7 +270,7 @@ public class CompanyRequestService : ICompanyRequestService
             user.CompanyId = company.Id;
 
             // IMPORTANT: Do NOT call user.UserRoles.Clear() — that wipes ALL existing roles
-            // (including SuperAdmin, roles from other companies, etc.).
+            // (including SystemAdmin, roles from other companies, etc.).
             // Instead, only add the new CompanyAdmin role for this company.
             var adminRole = await _roleRepository.AsQueryable()
                 .FirstOrDefaultAsync(r => r.CompanyId == company.Id && r.Name == "CompanyAdmin");
@@ -458,3 +458,4 @@ public class CompanyRequestService : ICompanyRequestService
         };
     }
 }
+

@@ -1,6 +1,7 @@
 using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Domain.Enums;
 using ConstructionManagement.Infrastructure.Persistence;
 using ConstructionManagement.Infrastructure.Persistence.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -63,7 +64,8 @@ public class PublicCompaniesController : ControllerBase
                 ContactPhone = c.ContactPhone,
                 FollowerCount = _db.CompanyFollowers.Count(f => f.CompanyId == c.Id),
                 PortfolioItemCount = _db.PortfolioItems.Count(p => p.CompanyId == c.Id),
-                IsFollowedByCurrentUser = _db.CompanyFollowers.Any(f => f.CompanyId == c.Id && f.UserId == currentUserId)
+                IsFollowedByCurrentUser = _db.CompanyFollowers.Any(f => f.CompanyId == c.Id && f.UserId == currentUserId),
+                OwnerUserId = _db.Users.Where(u => u.CompanyId == c.Id && (u.UserType == UserType.CompanyOwner || u.UserType == UserType.InventoryOwner)).Select(u => u.Id).FirstOrDefault()
             })
             .OrderBy(c => c.Name)
             .ToListAsync();
@@ -94,6 +96,7 @@ public class PublicCompaniesController : ControllerBase
                 FollowerCount = _db.CompanyFollowers.Count(f => f.CompanyId == c.Id),
                 PortfolioItemCount = _db.PortfolioItems.Count(p => p.CompanyId == c.Id),
                 IsFollowedByCurrentUser = _db.CompanyFollowers.Any(f => f.CompanyId == c.Id && f.UserId == currentUserId),
+                OwnerUserId = _db.Users.Where(u => u.CompanyId == c.Id && (u.UserType == UserType.CompanyOwner || u.UserType == UserType.InventoryOwner)).Select(u => u.Id).FirstOrDefault(),
                 PortfolioCategories = _db.PortfolioCategories
                     .Where(cat => cat.CompanyId == c.Id)
                     .Select(cat => new PortfolioCategorySummaryDto
@@ -244,6 +247,7 @@ public class PublicCompaniesController : ControllerBase
                 FollowerCount = _db.CompanyFollowers.Count(ff => ff.CompanyId == f.CompanyId),
                 PortfolioItemCount = _db.PortfolioItems.Count(p => p.CompanyId == f.CompanyId),
                 IsFollowedByCurrentUser = true,
+                OwnerUserId = _db.Users.Where(u => u.CompanyId == f.CompanyId && (u.UserType == UserType.CompanyOwner || u.UserType == UserType.InventoryOwner)).Select(u => (int?)u.Id).FirstOrDefault()
             })
             .OrderBy(c => c.Name)
             .ToListAsync();
@@ -255,7 +259,7 @@ public class PublicCompaniesController : ControllerBase
     /// Upload or update a company's logo. Only accessible to CompanyAdmin of that company.
     /// </summary>
     [HttpPost("{companyId}/logo")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<IActionResult> UploadLogo(int companyId, IFormFile logo)
     {
         var company = await _db.Companies.FindAsync(companyId);
@@ -263,7 +267,7 @@ public class PublicCompaniesController : ControllerBase
 
         // Validate it's the correct company admin
         var userCompanyId = _companyContext.CompanyId;
-        if (userCompanyId != companyId && !User.IsInRole("SuperAdmin"))
+        if (userCompanyId != companyId && !User.IsInRole("SystemAdmin"))
             return Forbid();
 
         // Validate File
@@ -300,3 +304,4 @@ public class PublicCompaniesController : ControllerBase
         return userId;
     }
 }
+

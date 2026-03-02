@@ -686,15 +686,15 @@ namespace ConstructionManagement.Infrastructure.Services
             };
         }
 
-        public async Task<List<PaymentTransactionDto>> GetProjectPaymentsAsync(int projectId, int? companyId = null, bool isSuperAdmin = false)
+        public async Task<List<PaymentTransactionDto>> GetProjectPaymentsAsync(int projectId, int? companyId = null, bool isSystemAdmin = false)
         {
             var query = _context.PaymentTransactions
                 .Include(p => p.Company)
                 .Include(p => p.Recorder)
                 .Where(p => p.ProjectId == projectId);
 
-            // Company isolation: filter by company unless SuperAdmin
-            if (!isSuperAdmin && companyId.HasValue)
+            // Company isolation: filter by company unless SystemAdmin
+            if (!isSystemAdmin && companyId.HasValue)
             {
                 query = query.Where(p => p.CompanyId == companyId.Value);
             }
@@ -1099,3 +1099,4 @@ namespace ConstructionManagement.Infrastructure.Services
         #endregion
     }
 }
+

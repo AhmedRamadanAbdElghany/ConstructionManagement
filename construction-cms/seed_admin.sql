@@ -18,7 +18,7 @@ VALUES (
     0
 );
 
--- Add SuperAdmin role to the user
+-- Add SystemAdmin role to the user
 INSERT INTO UserRoles (UserId, RoleId, CreatedAt)
 VALUES (1, 1, GETUTCDATE());
 

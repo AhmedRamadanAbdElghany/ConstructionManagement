@@ -656,11 +656,11 @@ export class VendorsComponent implements OnInit, OnDestroy {
     };
 
     get canAddVendor(): boolean {
-        return this.authService.hasRole(['SuperAdmin', 'CompanyAdmin']) || this.authService.hasProjectPermission('Vendor.Add');
+        return this.authService.hasRole(['SystemAdmin', 'CompanyAdmin']) || this.authService.hasProjectPermission('Vendor.Add');
     }
 
     get canApproveInvoices(): boolean {
-        return this.authService.hasRole(['SuperAdmin', 'CompanyAdmin']) || this.authService.hasProjectPermission('VendorInvoice.Approve');
+        return this.authService.hasRole(['SystemAdmin', 'CompanyAdmin']) || this.authService.hasProjectPermission('VendorInvoice.Approve');
     }
 
     constructor(
@@ -859,3 +859,4 @@ export class VendorsComponent implements OnInit, OnDestroy {
         }
     }
 }
+

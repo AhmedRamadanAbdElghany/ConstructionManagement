@@ -172,10 +172,10 @@ export class SettingsService {
 
     getCompanySettings(): Observable<CompanySettings> {
         const user = this.authService.getCurrentUser();
-        const isSuperAdmin = user?.roles?.includes('SuperAdmin');
+        const isSystemAdmin = user?.roles?.includes('SystemAdmin');
 
-        if (isSuperAdmin || !user?.companyId) {
-            // Return default settings for SuperAdmins or users without a company
+        if (isSystemAdmin || !user?.companyId) {
+            // Return default settings for SystemAdmins or users without a company
             const defaultSettings = {
                 allowHR: true,
                 allowLocations: true,
@@ -190,7 +190,7 @@ export class SettingsService {
                 allowSupervision: true,
                 allowPackages: true,
                 defaultSupervisionPercentage: 10,
-                // New feature flags default to true for SuperAdmin
+                // New feature flags default to true for SystemAdmin
                 enableInspections: true,
                 enableTasks: true,
                 enableEscalations: true,
@@ -315,3 +315,4 @@ export class SettingsService {
         return this.http.get<CompanyPackage[]>(`${this.apiUrl}/companies/packages`);
     }
 }
+

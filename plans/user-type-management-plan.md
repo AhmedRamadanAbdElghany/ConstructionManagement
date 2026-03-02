@@ -281,7 +281,7 @@ Update to fetch and display notifications from previous user types. Show a badge
 - Affects view permissions
 
 **Role**:
-- System permissions (SuperAdmin, CompanyAdmin, CompanyUser)
+- System permissions (SystemAdmin, CompanyAdmin, CompanyUser)
 - Assigned by admins
 - Determines what actions the user can perform
 - Affects API authorization

@@ -9,7 +9,7 @@ export interface DashboardStats {
     totalRevenue: number;
 }
 
-export interface SuperAdminStats {
+export interface SystemAdminStats {
     totalCompanies: number;
     activeSubscriptions: number;
     monthlyRecurringRevenue: number;
@@ -35,7 +35,7 @@ export interface RecentActivity {
     timestamp: string;
 }
 
-export interface SuperAdminActivity {
+export interface SystemAdminActivity {
     id: number;
     company: string;
     action: string;
@@ -58,8 +58,8 @@ export class DashboardService {
     }
 
     // GET: api/dashboard/super-admin/stats
-    getSuperAdminStats(): Observable<SuperAdminStats> {
-        return this.http.get<SuperAdminStats>(`${this.apiUrl}/super-admin/stats`);
+    getSystemAdminStats(): Observable<SystemAdminStats> {
+        return this.http.get<SystemAdminStats>(`${this.apiUrl}/super-admin/stats`);
     }
 
     // GET: api/dashboard/subscriptions
@@ -85,11 +85,12 @@ export class DashboardService {
     }
 
     // GET: api/dashboard/super-admin-activities
-    getSuperAdminActivities(limit?: number): Observable<SuperAdminActivity[]> {
+    getSystemAdminActivities(limit?: number): Observable<SystemAdminActivity[]> {
         let url = `${this.apiUrl}/super-admin-activities`;
         if (limit !== undefined) {
             url += `?limit=${limit}`;
         }
-        return this.http.get<SuperAdminActivity[]>(url);
+        return this.http.get<SystemAdminActivity[]>(url);
     }
 }
+

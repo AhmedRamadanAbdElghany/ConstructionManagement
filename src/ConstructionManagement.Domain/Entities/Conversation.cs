@@ -3,18 +3,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ConstructionManagement.Domain.Entities;
 
 /// <summary>
-/// Represents a conversation between a user and a company.
-/// Supports bidirectional messaging:
-/// - User → Company: User initiates, company approves
-/// - Company → User: Company initiates (for clients/workers), auto-approved
+/// Represents a conversation between users or between a user and a company.
 /// </summary>
-public class CompanyConversation : BaseEntity, ICompanyEntity
+public class Conversation : BaseEntity
 {
+    /// <summary>
+    /// The company involved in this conversation (for company-level conversations)
+    /// </summary>
     public int? CompanyId { get; set; }
     [ForeignKey(nameof(CompanyId))]
     [System.Text.Json.Serialization.JsonIgnore]
     public virtual Company? Company { get; set; }
-    
+
     /// <summary>
     /// The user who initiated the conversation (always the sender of the first message)
     /// </summary>
@@ -24,7 +24,7 @@ public class CompanyConversation : BaseEntity, ICompanyEntity
     public virtual User InitiatorUser { get; set; } = null!;
 
     /// <summary>
-    /// Optional target user for 1-on-1 messaging (e.g. Worker to Worker)
+    /// Optional target user for 1-on-1 messaging (e.g., SystemAdmin to SystemAdmin)
     /// If null, the conversation is with the Company as a whole.
     /// </summary>
     public int? TargetUserId { get; set; }
@@ -34,27 +34,23 @@ public class CompanyConversation : BaseEntity, ICompanyEntity
     
     /// <summary>
     /// Indicates who initiated the conversation:
-    /// - "User": A client or worker initiated contact with a company
+    /// - "User": A user initiated contact with a company or another user
     /// - "Company": The company initiated contact with a user
-    /// - "Worker": Internal worker-to-worker messaging
     /// </summary>
     public string InitiatedBy { get; set; } = "User";
     
     /// <summary>
     /// Status: Pending, Approved, Blocked
-    /// - Pending: User sent initial message, waiting for company approval
-    /// - Approved: Company approved (or company initiated), both can send messages
-    /// - Blocked: Conversation blocked
     /// </summary>
     public string Status { get; set; } = "Pending";
     
     /// <summary>
-    /// When the company approved this conversation
+    /// When the conversation was approved
     /// </summary>
     public DateTime? ApprovedAt { get; set; }
     
     /// <summary>
-    /// Which company admin approved the conversation
+    /// Which user approved the conversation
     /// </summary>
     public int? ApprovedByUserId { get; set; }
     [ForeignKey(nameof(ApprovedByUserId))]
@@ -82,7 +78,7 @@ public class CompanyConversation : BaseEntity, ICompanyEntity
     public int? LastMessageId { get; set; }
     [ForeignKey(nameof(LastMessageId))]
     [System.Text.Json.Serialization.JsonIgnore]
-    public virtual CompanyMessage? LastMessage { get; set; }
+    public virtual Message? LastMessage { get; set; }
     
-    public virtual ICollection<CompanyMessage> Messages { get; set; } = new List<CompanyMessage>();
+    public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
 }

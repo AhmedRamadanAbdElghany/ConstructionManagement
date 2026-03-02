@@ -37,16 +37,16 @@ public class JoinRequestsController : ControllerBase
     /// Get all join requests (Company Admin only)
     /// </summary>
     [HttpGet]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<IActionResult> GetAllRequests()
     {
         var userId = _authService.GetCurrentUserId();
         var user = await _authService.GetCurrentUserAsync();
         
-        // SuperAdmin can see all, CompanyAdmin sees only their company
+        // SystemAdmin can see all, CompanyAdmin sees only their company
         IEnumerable<JoinRequestDto> requests;
-        var isSuperAdmin = user?.UserRoles?.Any(ur => ur.Role?.Name == "SuperAdmin") == true;
-        if (isSuperAdmin)
+        var isSystemAdmin = user?.UserRoles?.Any(ur => ur.Role?.Name == "SystemAdmin") == true;
+        if (isSystemAdmin)
         {
             requests = await _joinRequestService.GetAllRequestsAsync();
         }
@@ -135,3 +135,4 @@ public class JoinRequestsController : ControllerBase
         return Ok(new { pendingCount = count });
     }
 }
+

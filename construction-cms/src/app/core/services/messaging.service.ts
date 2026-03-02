@@ -14,6 +14,7 @@ export interface PublicCompanyDto {
     followerCount: number;
     portfolioItemCount: number;
     isFollowedByCurrentUser: boolean;
+    ownerUserId?: number;
 }
 
 export interface PublicCompanyDetailDto extends PublicCompanyDto {
@@ -52,7 +53,7 @@ export interface ConversationDto {
     initiatorName: string;
     initiatorAvatar?: string;
     initiatedBy: string; // 'User' | 'Company'
-    conversationType: string; // 'Company' | 'Worker' | 'Client' | 'SuperAdmin'
+    conversationType: string; // 'Company' | 'Worker' | 'Client' | 'SystemAdmin'
     targetUserType?: string; // User type for company-initiated conversations
     status: string; // 'Pending' | 'Approved' | 'Blocked'
     createdAt: string;
@@ -109,7 +110,7 @@ export interface BlockedUserDto {
 }
 
 export interface StartConversationRequest {
-    companyId: number;
+    recipientUserId: number;
     message: string;
 }
 
@@ -161,7 +162,8 @@ export interface MessageSearchResultDto {
 export interface MessagingStatusDto {
     isRestricted: boolean;
     restrictionReason?: string;
-    superAdminCompanyId?: number;
+    SystemAdminCompanyId?: number;
+    SystemAdminUserId?: number;
     isUnverifiedCompanyOwner: boolean;
     isWorker?: boolean;
     userCompanyId?: number;
@@ -252,7 +254,7 @@ export class MessagingService {
      */
     startConversation(request: StartConversationRequest, attachments?: File[]): Observable<ConversationDto> {
         const formData = new FormData();
-        formData.append('companyId', request.companyId.toString());
+        formData.append('recipientUserId', request.recipientUserId.toString());
         formData.append('message', request.message);
 
         if (attachments) {
@@ -410,3 +412,4 @@ export class MessagingService {
         return this.http.get<MessagableUserDto[]>(url);
     }
 }
+

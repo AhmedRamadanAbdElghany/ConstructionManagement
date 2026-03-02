@@ -24,12 +24,12 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Generate a comprehensive financial report for a company
         /// </summary>
         [HttpPost("financial")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<IActionResult> GenerateFinancialReport([FromBody] FinancialReportRequest request)
         {
             // Company isolation: ensure user can only access their own company's reports
             var userCompanyId = GetCompanyId();
-            if (!User.IsInRole("SuperAdmin") && request.CompanyId != userCompanyId)
+            if (!User.IsInRole("SystemAdmin") && request.CompanyId != userCompanyId)
             {
                 return Forbid();
             }
@@ -46,7 +46,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get financial report data for preview (without export)
         /// </summary>
         [HttpPost("financial/preview")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<FinancialReportData>> GetFinancialReportPreview([FromBody] FinancialReportRequest request)
         {
             var data = await _reportService.GetFinancialReportDataAsync(request);
@@ -57,7 +57,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Generate a detailed financial report for a specific project
         /// </summary>
         [HttpPost("project")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<IActionResult> GenerateProjectFinancialReport([FromBody] ProjectFinancialReportRequest request)
         {
             var result = await _reportService.GenerateProjectFinancialReportAsync(request);
@@ -72,7 +72,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get project financial report data for preview
         /// </summary>
         [HttpPost("project/preview")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<ProjectFinancialReportData>> GetProjectFinancialReportPreview([FromBody] ProjectFinancialReportRequest request)
         {
             var data = await _reportService.GetProjectFinancialReportDataAsync(request);
@@ -83,7 +83,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Generate a cash flow report
         /// </summary>
         [HttpPost("cash-flow")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<IActionResult> GenerateCashFlowReport([FromBody] CashFlowReportRequest request)
         {
             var result = await _reportService.GenerateCashFlowReportAsync(request);
@@ -98,7 +98,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get cash flow report data for preview
         /// </summary>
         [HttpPost("cash-flow/preview")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<CashFlowReportData>> GetCashFlowReportPreview([FromBody] CashFlowReportRequest request)
         {
             var data = await _reportService.GetCashFlowReportDataAsync(request);
@@ -109,7 +109,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Generate a profit and loss statement
         /// </summary>
         [HttpPost("profit-loss")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<IActionResult> GenerateProfitLossReport([FromBody] ProfitLossReportRequest request)
         {
             var result = await _reportService.GenerateProfitLossReportAsync(request);
@@ -124,7 +124,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get profit and loss report data for preview
         /// </summary>
         [HttpPost("profit-loss/preview")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<ProfitLossReportData>> GetProfitLossReportPreview([FromBody] ProfitLossReportRequest request)
         {
             var data = await _reportService.GetProfitLossReportDataAsync(request);
@@ -135,12 +135,12 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Generate a tax report
         /// </summary>
         [HttpPost("tax")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<IActionResult> GenerateTaxReport([FromBody] TaxReportRequest request)
         {
             // Company isolation: ensure user can only access their own company's reports
             var userCompanyId = GetCompanyId();
-            if (!User.IsInRole("SuperAdmin") && request.CompanyId != userCompanyId)
+            if (!User.IsInRole("SystemAdmin") && request.CompanyId != userCompanyId)
             {
                 return Forbid();
             }
@@ -164,3 +164,4 @@ namespace ConstructionManagement.WebApi.Controllers
         }
     }
 }
+

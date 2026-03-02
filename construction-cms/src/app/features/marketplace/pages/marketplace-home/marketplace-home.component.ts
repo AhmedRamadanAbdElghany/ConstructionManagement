@@ -40,16 +40,20 @@ interface FeaturedVendor {
   imports: [CommonModule, RouterModule, FormsModule, TranslateModule],
   template: `
     <div class="marketplace-home-premium">
-      <!-- Hero Section with Futuristic Background -->
-      <section class="hero-section-premium">
+      <!-- Hero Section -->
+      <section class="hero-section-premium animate-fade-in">
+        <div class="hero-bg-accent"></div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
-          <div class="badge-premium">{{ 'MARKETPLACE.TITLE' | translate }}</div>
-          <h1>{{ 'MARKETPLACE.HOME' | translate }}</h1>
-          <p>{{ 'MARKETPLACE.SUBTITLE' | translate }}</p>
+          <div class="badge-premium slide-up-1">
+            <span class="pulse-dot"></span>
+            {{ 'MARKETPLACE.TITLE' | translate }}
+          </div>
+          <h1 class="slide-up-2">{{ 'MARKETPLACE.HOME' | translate }}</h1>
+          <p class="slide-up-3">{{ 'MARKETPLACE.SUBTITLE' | translate }}</p>
           
           <!-- Modern Search Bar -->
-          <div class="search-wrapper">
+          <div class="search-wrapper slide-up-4">
             <div class="search-container-glass">
               <i class="pi pi-search search-icon"></i>
               <input type="text" 
@@ -63,12 +67,47 @@ interface FeaturedVendor {
             </div>
           </div>
         </div>
+        
+        <!-- Animated Background Elements -->
+        <div class="bg-shape shape-1"></div>
+        <div class="bg-shape shape-2"></div>
       </section>
 
       <div class="content-shell">
+        <!-- Stats/Trends Hub -->
+        <section class="trends-hub animate-fade-in-up" *ngIf="totalCategories > 0 || totalProducts > 0 || totalWarehouses > 0">
+           <div class="trend-card">
+              <div class="trend-icon-box bg-cyan-500/10 text-cyan-500">
+                <i class="pi pi-th-large"></i>
+              </div>
+              <div class="trend-data">
+                <span class="trend-label">{{ 'MARKETPLACE.CATEGORIES' | translate }}</span>
+                <span class="trend-value">{{ totalCategories }}</span>
+              </div>
+           </div>
+           <div class="trend-card">
+              <div class="trend-icon-box bg-amber-500/10 text-amber-500">
+                <i class="pi pi-box"></i>
+              </div>
+              <div class="trend-data">
+                <span class="trend-label">{{ 'MARKETPLACE.PRODUCTS_FOUND' | translate }}</span>
+                <span class="trend-value">{{ totalProducts }}+</span>
+              </div>
+           </div>
+           <div class="trend-card">
+              <div class="trend-icon-box bg-indigo-500/10 text-indigo-500">
+                <i class="pi pi-users"></i>
+              </div>
+              <div class="trend-data">
+                <span class="trend-label">{{ 'MARKETPLACE.ACTIVE_SUPPLIERS' | translate }}</span>
+                <span class="trend-value">{{ totalWarehouses > 0 ? totalWarehouses : '...' }}</span>
+              </div>
+           </div>
+        </section>
+
         <!-- Categories Section -->
         <section class="categories-section-premium">
-          <div class="section-header">
+          <div class="section-header animate-reveal">
             <div class="header-title">
               <h2>{{ 'MARKETPLACE.CATEGORIES' | translate }}</h2>
               <div class="title-underline"></div>
@@ -78,13 +117,24 @@ interface FeaturedVendor {
             @for (category of categories; track category.id) {
               <a [routerLink]="['/marketplace/products']" 
                  [queryParams]="{categoryId: category.id}"
-                 class="category-card-glass group">
-                <div class="category-icon-wrapper">
-                  <div class="icon-glow"></div>
-                  <i [class]="getCategoryIcon(category.icon)"></i>
-                </div>
+                 class="category-card-glass group animate-entrance"
+                 [style.animation-delay]="($index * 100) + 'ms'">
+                
+                @if (getCategoryImage(category.name, category.nameAr)) {
+                  <div class="category-img-wrapper">
+                    <img [src]="getCategoryImage(category.name, category.nameAr)" [alt]="category.name" class="category-image" loading="lazy">
+                    <div class="img-overlay"></div>
+                  </div>
+                } @else {
+                  <div class="category-icon-wrapper">
+                    <div class="icon-glow"></div>
+                    <i [class]="getCategoryIcon(category.icon)"></i>
+                  </div>
+                }
+
                 <h3>{{ translate.currentLang === 'ar' ? category.nameAr : category.name }}</h3>
                 <span class="product-count">{{ category.productCount }} {{ 'MARKETPLACE.PRODUCTS' | translate }}</span>
+                <div class="hover-indicator"></div>
               </a>
             }
           </div>
@@ -92,7 +142,7 @@ interface FeaturedVendor {
 
         <!-- Featured Products Section -->
         <section class="featured-section-premium">
-          <div class="section-header">
+          <div class="section-header animate-reveal">
             <div class="header-title">
               <h2>{{ 'MARKETPLACE.FEATURED_PRODUCTS' | translate }}</h2>
               <div class="title-underline"></div>
@@ -106,15 +156,20 @@ interface FeaturedVendor {
           </div>
           <div class="products-grid-premium">
             @for (product of featuredProducts; track product.id) {
-              <div class="product-card-premium" [routerLink]="['/marketplace/products', product.id]">
+              <div class="product-card-premium animate-entrance" 
+                   [routerLink]="['/marketplace/products', product.id]"
+                   [style.animation-delay]="($index * 150) + 'ms'">
                 <div class="product-image-wrapper">
                   @if (product.imageUrl) {
-                    <img [src]="product.imageUrl" [alt]="product.name">
+                    <img [src]="product.imageUrl" [alt]="product.name" loading="lazy">
                   } @else {
                     <div class="placeholder-image-premium">
                       <i class="pi pi-box"></i>
                     </div>
                   }
+                  <div class="price-badge-floating">
+                    {{ product.price | currency:'EGP':'symbol':'1.0-2' }}
+                  </div>
                   <div class="image-overlay">
                     <button class="quick-view-btn">
                       <i class="pi pi-eye"></i>
@@ -122,14 +177,17 @@ interface FeaturedVendor {
                   </div>
                 </div>
                 <div class="product-card-body">
-                  <span class="category-tag-premium">{{ product.categoryName }}</span>
+                  <div class="flex-between">
+                    <span class="category-tag-premium">{{ product.categoryName }}</span>
+                    <div class="rating-stars"><i class="pi pi-star-fill"></i> 4.5</div>
+                  </div>
                   <h3>{{ product.name }}</h3>
                   <div class="vendor-info-row">
                     <i class="pi pi-building"></i>
                     <span>{{ product.vendorName }}</span>
                   </div>
                   <div class="price-footer">
-                    <div class="price-box">
+                   <div class="flex items-baseline gap-1">
                       <span class="price-amount">{{ product.price | currency:'EGP':'symbol':'1.0-2' }}</span>
                       @if (product.unit) {
                         <span class="price-unit">/ {{ product.unit }}</span>
@@ -147,7 +205,7 @@ interface FeaturedVendor {
 
         <!-- Nearby Vendors Section -->
         <section class="vendors-section-premium">
-          <div class="section-header">
+          <div class="section-header animate-reveal">
             <div class="header-title">
               <h2>{{ 'MARKETPLACE.NEARBY_VENDORS' | translate }}</h2>
               <div class="title-underline"></div>
@@ -161,7 +219,9 @@ interface FeaturedVendor {
           </div>
           <div class="vendors-grid-premium">
             @for (vendor of featuredVendors; track vendor.id) {
-              <div class="vendor-card-premium" [routerLink]="['/marketplace/vendors', vendor.id]">
+              <div class="vendor-card-premium animate-entrance" 
+                   [routerLink]="['/marketplace/vendors', vendor.id]"
+                   [style.animation-delay]="($index * 200) + 'ms'">
                 <div class="vendor-glow"></div>
                 <div class="vendor-top">
                   <div class="vendor-portrait">
@@ -196,7 +256,7 @@ interface FeaturedVendor {
 
         <!-- Quick Experience Actions -->
         <section class="experience-actions">
-          <a [routerLink]="['/marketplace/nearby']" class="exp-card highlight-cyan">
+          <a [routerLink]="['/marketplace/nearby']" class="exp-card highlight-cyan animate-entrance" style="animation-delay: 600ms">
             <div class="exp-icon"><i class="pi pi-map-marker"></i></div>
             <div class="exp-text">
               <h4>{{ 'MARKETPLACE.FIND_NEARBY' | translate }}</h4>
@@ -204,15 +264,15 @@ interface FeaturedVendor {
             </div>
             <i class="pi pi-chevron-right exp-arrow"></i>
           </a>
-          <a [routerLink]="['/marketplace/orders']" class="exp-card highlight-amber">
+          <a [routerLink]="['/marketplace/orders']" class="exp-card highlight-amber animate-entrance" style="animation-delay: 700ms">
             <div class="exp-icon"><i class="pi pi-list"></i></div>
             <div class="exp-text">
               <h4>{{ 'MARKETPLACE.MY_ORDERS' | translate }}</h4>
-              <p>Track your procurements</p>
+              <p>Track your orders</p>
             </div>
             <i class="pi pi-chevron-right exp-arrow"></i>
           </a>
-          <a [routerLink]="['/marketplace/cart']" class="exp-card highlight-emerald">
+          <a [routerLink]="['/marketplace/cart']" class="exp-card highlight-emerald animate-entrance" style="animation-delay: 800ms">
             <div class="exp-icon"><i class="pi pi-shopping-cart"></i></div>
             <div class="exp-text">
               <h4>{{ 'MARKETPLACE.CART' | translate }}</h4>
@@ -229,86 +289,101 @@ interface FeaturedVendor {
       min-height: 100vh;
       background: var(--app-bg);
       color: var(--app-text);
-      padding-bottom: 5rem;
-      transition: all 0.3s ease;
+      padding-bottom: 8rem;
     }
 
     /* Hero Section */
     .hero-section-premium {
       position: relative;
-      height: 520px;
+      height: 600px;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
-      background-image: url('https://images.unsplash.com/photo-1541888946425-d81bb19480c5?auto=format&fit=crop&q=80&w=2070');
+      background-image: url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=2070');
       background-size: cover;
       background-position: center;
-      margin-bottom: -60px;
-      clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+      margin-bottom: -100px;
+      overflow: hidden;
+      clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+    }
+
+    .hero-bg-accent {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at top right, rgba(14, 165, 233, 0.2), transparent);
     }
 
     .hero-overlay {
       position: absolute;
       inset: 0;
       background: linear-gradient(to bottom, var(--hero-start, rgba(15, 23, 42, 0.7)), var(--hero-end, rgba(15, 23, 42, 0.95)));
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(8px);
     }
 
     :host-context(.dark) {
-       --hero-start: rgba(15, 23, 42, 0.8);
-       --hero-end: rgba(15, 23, 42, 0.98);
+       --hero-start: rgba(15, 23, 42, 0.75);
+       --hero-end: rgba(2, 6, 23, 0.98);
+       --glass-card: rgba(30, 41, 59, 0.7);
     }
 
     :host-context(:not(.dark)) {
-       --hero-start: rgba(255, 255, 255, 0.6);
-       --hero-end: rgba(255, 255, 255, 0.9);
+       --hero-start: rgba(255, 255, 255, 0.65);
+       --hero-end: rgba(248, 250, 252, 0.9);
+       --glass-card: rgba(255, 255, 255, 0.8);
     }
 
     .hero-content {
       position: relative;
       z-index: 10;
-      max-width: 850px;
+      max-width: 900px;
       padding: 0 2rem;
     }
 
     .badge-premium {
-      display: inline-block;
-      padding: 7px 18px;
-      background: rgba(14, 165, 233, 0.1);
-      border: 1px solid rgba(14, 165, 233, 0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 10px 24px;
+      background: rgba(14, 165, 233, 0.15);
+      border: 1px solid rgba(14, 165, 233, 0.3);
       border-radius: 100px;
       color: var(--accent-blue);
-      font-size: 0.8rem;
-      font-weight: 800;
+      font-size: 0.85rem;
+      font-weight: 950;
       text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 1.5rem;
-      backdrop-filter: blur(10px);
+      letter-spacing: 0.15em;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-blue);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent-blue);
+      animation: pulse-ring 2s infinite;
     }
 
     .hero-content h1 {
-      font-size: 4.5rem;
+      font-size: 5rem;
       font-weight: 950;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.5rem;
       color: var(--app-text);
-      letter-spacing: -0.05em;
-      line-height: 1.1;
-    }
-
-    :host-context(.dark) .hero-content h1 {
-      background: linear-gradient(to right, #fff, #94a3b8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.06em;
+      line-height: 1;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
     }
 
     .hero-content p {
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       color: var(--muted-text);
-      margin-bottom: 3rem;
+      margin-bottom: 3.5rem;
       line-height: 1.6;
       font-weight: 600;
-      max-width: 700px;
+      max-width: 750px;
       margin-left: auto;
       margin-right: auto;
     }
@@ -316,7 +391,7 @@ interface FeaturedVendor {
     /* Search Bar */
     .search-wrapper {
       width: 100%;
-      max-width: 700px;
+      max-width: 750px;
       margin: 0 auto;
     }
 
@@ -324,25 +399,25 @@ interface FeaturedVendor {
       display: flex;
       align-items: center;
       background: var(--glass-bg);
-      backdrop-filter: blur(30px);
+      backdrop-filter: blur(40px);
       border: 1px solid var(--glass-border);
-      border-radius: 24px;
-      padding: 10px 10px 10px 30px;
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
-      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      border-radius: 32px;
+      padding: 12px 12px 12px 35px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+      transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
     }
 
     .search-container-glass:focus-within {
       background: var(--card-bg);
       border-color: var(--accent-blue);
-      box-shadow: 0 30px 60px rgba(56, 189, 248, 0.2);
-      transform: scale(1.02);
+      box-shadow: 0 40px 80px rgba(14, 165, 233, 0.2);
+      transform: scale(1.03) translateY(-5px);
     }
 
     .search-icon {
       color: var(--accent-blue);
-      font-size: 1.5rem;
-      margin-right: 1.25rem;
+      font-size: 1.75rem;
+      margin-right: 1.5rem;
     }
 
     .search-container-glass input {
@@ -350,7 +425,7 @@ interface FeaturedVendor {
       background: transparent;
       border: none;
       color: var(--app-text);
-      font-size: 1.2rem;
+      font-size: 1.35rem;
       outline: none;
       padding: 0.75rem 0;
       font-weight: 700;
@@ -359,30 +434,89 @@ interface FeaturedVendor {
     .search-btn-premium {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 1rem;
       background: linear-gradient(135deg, var(--accent-blue) 0%, #2563eb 100%);
       color: white;
       border: none;
-      padding: 14px 32px;
-      border-radius: 18px;
-      font-weight: 900;
+      padding: 16px 40px;
+      border-radius: 24px;
+      font-weight: 950;
       cursor: pointer;
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3);
+      letter-spacing: 0.1em;
+      box-shadow: 0 15px 30px rgba(14, 165, 233, 0.4);
     }
 
     .search-btn-premium:hover {
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 20px 40px rgba(14, 165, 233, 0.4);
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 25px 50px rgba(14, 165, 233, 0.5);
+    }
+
+    /* Trends Hub */
+    .trends-hub {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin-bottom: 5rem;
+      flex-wrap: wrap;
+    }
+
+    .trend-card {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.5rem 2.5rem;
+      background: var(--glass-card);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+      min-width: 280px;
+      transition: all 0.4s ease;
+    }
+
+    .trend-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+      border-color: var(--accent-blue);
+    }
+
+    .trend-icon-box {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .trend-data {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .trend-label {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--muted-text);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .trend-value {
+      font-size: 1.5rem;
+      font-weight: 950;
+      color: var(--app-text);
+      letter-spacing: -0.02em;
     }
 
     /* Content Shell */
     .content-shell {
-      max-width: 1400px;
+      max-width: 1440px;
       margin: 0 auto;
-      padding: 0 2rem;
+      padding: 0 3rem;
       position: relative;
       z-index: 20;
     }
@@ -392,22 +526,22 @@ interface FeaturedVendor {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      margin-bottom: 3rem;
+      margin-bottom: 4rem;
     }
 
     .header-title h2 {
-      font-size: 2.5rem;
+      font-size: 3rem;
       font-weight: 950;
-      margin-bottom: 0.75rem;
+      margin-bottom: 1rem;
       color: var(--app-text);
-      letter-spacing: -0.04em;
+      letter-spacing: -0.05em;
     }
 
     .title-underline {
-      width: 100px;
-      height: 6px;
+      width: 120px;
+      height: 8px;
       background: linear-gradient(to right, var(--accent-blue), transparent);
-      border-radius: 3px;
+      border-radius: 4px;
     }
 
     .view-all-premium {
@@ -452,59 +586,60 @@ interface FeaturedVendor {
     /* Categories Grid */
     .categories-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 2rem;
-      margin-bottom: 6rem;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2.5rem;
+      margin-bottom: 8rem;
     }
 
     .category-card-glass {
-      background: var(--card-bg);
+      background: var(--glass-card);
+      backdrop-filter: blur(20px);
       border: 1px solid var(--glass-border);
-      border-radius: 32px;
-      padding: 3rem 2rem;
+      border-radius: 40px;
+      padding: 4rem 2.5rem;
       text-align: center;
       text-decoration: none;
       color: inherit;
-      transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+      transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
       position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+      overflow: hidden;
     }
 
     .category-card-glass:hover {
-      transform: translateY(-12px);
+      transform: translateY(-15px) rotate(1deg);
       border-color: var(--accent-blue);
-      box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+      box-shadow: 0 40px 80px rgba(0,0,0,0.12);
     }
 
     .category-icon-wrapper {
-      width: 90px;
-      height: 90px;
-      margin: 0 auto 2rem;
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 2.5rem;
       background: var(--input-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 28px;
+      border-radius: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
-      transition: all 0.4s ease;
+      transition: all 0.5s ease;
     }
 
     .category-card-glass:hover .category-icon-wrapper {
       background: var(--accent-blue);
       border-color: transparent;
-      transform: scale(1.1) rotate(10deg);
-      box-shadow: 0 15px 30px rgba(14, 165, 233, 0.3);
+      transform: scale(1.15) rotate(10deg);
+      box-shadow: 0 20px 40px rgba(14, 165, 233, 0.4);
     }
 
     .category-icon-wrapper i {
-      font-size: 2.5rem;
+      font-size: 3rem;
       color: var(--accent-blue);
       z-index: 2;
-      transition: all 0.3s ease;
+      transition: all 0.4s ease;
     }
 
     .category-card-glass:hover .category-icon-wrapper i {
@@ -524,12 +659,27 @@ interface FeaturedVendor {
       opacity: 0.4;
     }
 
+    .hover-indicator {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--accent-blue);
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+    }
+
+    .category-card-glass:hover .hover-indicator {
+      transform: scaleX(1);
+    }
+
     .category-card-glass h3 {
-      font-size: 1.5rem;
-      font-weight: 900;
-      margin-bottom: 0.75rem;
+      font-size: 1.75rem;
+      font-weight: 950;
+      margin-bottom: 0.85rem;
       color: var(--app-text);
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
     }
 
     .product-count {
@@ -547,28 +697,29 @@ interface FeaturedVendor {
 
     .products-grid-premium {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 2rem;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 3rem;
+      margin-bottom: 8rem;
     }
 
     .product-card-premium {
       background: var(--card-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 28px;
+      border-radius: 32px;
       overflow: hidden;
       cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+      transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.06);
     }
 
     .product-card-premium:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+      transform: translateY(-12px);
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.15);
       border-color: var(--accent-blue);
     }
 
     .product-image-wrapper {
-      height: 240px;
+      height: 280px;
       position: relative;
       background: var(--input-bg);
       overflow: hidden;
@@ -595,6 +746,28 @@ interface FeaturedVendor {
 
     .placeholder-image-premium i {
       font-size: 4rem;
+    }
+
+    .price-badge-floating {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 14px;
+      font-weight: 900;
+      font-size: 1.1rem;
+      z-index: 5;
+      border: 1px solid rgba(255,255,255,0.1);
+      transform: translateY(0);
+      transition: all 0.4s ease;
+    }
+
+    .product-card-premium:hover .price-badge-floating {
+      transform: translateY(-5px);
+      background: var(--accent-blue);
     }
 
     .image-overlay {
@@ -633,7 +806,23 @@ interface FeaturedVendor {
     }
 
     .product-card-body {
-      padding: 1.75rem;
+      padding: 2.25rem;
+    }
+
+    .flex-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .rating-stars {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--accent-amber);
+      font-weight: 800;
+      font-size: 0.85rem;
     }
 
     .category-tag-premium {
@@ -645,7 +834,6 @@ interface FeaturedVendor {
       background: rgba(14, 165, 233, 0.1);
       padding: 6px 12px;
       border-radius: 8px;
-      margin-bottom: 1rem;
       display: inline-block;
     }
 
@@ -678,10 +866,10 @@ interface FeaturedVendor {
     }
 
     .price-amount {
-      font-size: 1.6rem;
+      font-size: 2rem;
       font-weight: 950;
       color: var(--app-text);
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
     }
 
     .price-unit {
@@ -975,7 +1163,6 @@ interface FeaturedVendor {
     }
   `]
 })
-
 export class MarketplaceHomeComponent implements OnInit {
   private http = inject(HttpClient);
   protected translate = inject(TranslateService);
@@ -984,6 +1171,10 @@ export class MarketplaceHomeComponent implements OnInit {
   categories: ProductCategory[] = [];
   featuredProducts: FeaturedProduct[] = [];
   featuredVendors: FeaturedVendor[] = [];
+
+  totalCategories = 0;
+  totalProducts = 0;
+  totalWarehouses = 0;
 
   private get apiUrl(): string {
     return (window as any).__API_URL__ || '/api';
@@ -998,6 +1189,7 @@ export class MarketplaceHomeComponent implements OnInit {
   private loadCategories(): void {
     this.http.get<any[]>(`${this.apiUrl}/marketplace/categories`).subscribe({
       next: (data) => {
+        this.totalCategories = data.length;
         this.categories = data.slice(0, 8);
       },
       error: (error) => console.error('Error loading categories:', error)
@@ -1007,6 +1199,7 @@ export class MarketplaceHomeComponent implements OnInit {
   private loadFeaturedProducts(): void {
     this.http.get<any>(`${this.apiUrl}/marketplace/products?pageSize=4`).subscribe({
       next: (response) => {
+        this.totalProducts = response.pagination?.totalCount || response.products?.length || 0;
         this.featuredProducts = response.products || [];
       },
       error: (error) => console.error('Error loading featured products:', error)
@@ -1022,6 +1215,7 @@ export class MarketplaceHomeComponent implements OnInit {
           const lng = position.coords.longitude;
           this.http.get<any[]>(`${this.apiUrl}/marketplace/vendors/nearby?latitude=${lat}&longitude=${lng}&radiusKm=50`).subscribe({
             next: (data) => {
+              this.totalWarehouses = data.length;
               this.featuredVendors = data.slice(0, 3);
             },
             error: (error) => console.error('Error loading vendors:', error)

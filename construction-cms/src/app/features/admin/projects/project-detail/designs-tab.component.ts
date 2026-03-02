@@ -394,11 +394,11 @@ export class DesignsTabComponent implements OnInit, OnChanges {
     }
 
     get canViewDesigns(): boolean {
-        return this.authService.hasProjectPermission('Design.View') || this.canAddDesign || this.authService.hasRole(['SuperAdmin', 'CompanyAdmin']);
+        return this.authService.hasProjectPermission('Design.View') || this.canAddDesign || this.authService.hasRole(['SystemAdmin', 'CompanyAdmin']);
     }
 
     get canAddCategory(): boolean {
-        return this.authService.hasProjectPermission('Category.Add') || this.canAddDesign || this.authService.hasRole(['SuperAdmin', 'CompanyAdmin']);
+        return this.authService.hasProjectPermission('Category.Add') || this.canAddDesign || this.authService.hasRole(['SystemAdmin', 'CompanyAdmin']);
     }
 
     constructor(
@@ -728,3 +728,4 @@ export class DesignsTabComponent implements OnInit, OnChanges {
         }
     }
 }
+

@@ -72,6 +72,39 @@ interface OrderItem {
             </div>
         </div>
 
+        <!-- Orders Summary Hub -->
+        @if (!loading() && orders().length > 0) {
+          <div class="orders-summary-hub animate-fade-in-up">
+            <div class="summary-card">
+              <div class="summary-icon text-amber-500">
+                <i class="pi pi-shopping-bag"></i>
+              </div>
+              <div class="summary-info">
+                <span class="summary-label">{{ 'MARKETPLACE.ALL_ORDERS' | translate }}</span>
+                <span class="summary-value">{{ orders().length }}</span>
+              </div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-icon text-emerald-500">
+                <i class="pi pi-wallet"></i>
+              </div>
+              <div class="summary-info">
+                <span class="summary-label">{{ 'MARKETPLACE.TOTAL_SPENT' | translate }}</span>
+                <span class="summary-value">{{ calculateTotalSpent() | currency:'EGP':'symbol':'1.0-2' }}</span>
+              </div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-icon text-blue-500">
+                <i class="pi pi-clock"></i>
+              </div>
+              <div class="summary-info">
+                <span class="summary-label">{{ 'MARKETPLACE.ACTIVE_ORDERS' | translate }}</span>
+                <span class="summary-value">{{ calculateActiveOrders() }}</span>
+              </div>
+            </div>
+          </div>
+        }
+
         <!-- States -->
         <div class="status-containers">
             @if (loading()) {
@@ -300,6 +333,65 @@ interface OrderItem {
     }
 
     .filter-scroll button.active i { opacity: 1; transform: scale(1.1); }
+
+    /* Orders Summary Hub */
+    .orders-summary-hub {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+    }
+
+    .summary-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+      transition: all 0.3s ease;
+    }
+
+    .summary-card:hover {
+      transform: translateY(-5px);
+      background: var(--card-bg);
+      border-color: var(--accent-amber);
+    }
+
+    .summary-icon {
+      width: 52px;
+      height: 52px;
+      background: var(--input-bg);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .summary-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .summary-label {
+      font-size: 0.75rem;
+      font-weight: 850;
+      color: var(--muted-text);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 2px;
+    }
+
+    .summary-value {
+      font-size: 1.25rem;
+      font-weight: 950;
+      color: var(--app-text);
+      letter-spacing: -0.01em;
+    }
 
     /* States */
     .status-containers { margin-top: 5rem; }
@@ -667,5 +759,13 @@ export class MyOrdersComponent implements OnInit {
       'cancelled': 'MARKETPLACE.STATUS_CANCELLED'
     };
     return labels[status.toLowerCase()] || status;
+  }
+
+  calculateTotalSpent(): number {
+    return this.orders().reduce((acc, o) => acc + (o.totalAmount || 0), 0);
+  }
+
+  calculateActiveOrders(): number {
+    return this.orders().filter(o => ['pending', 'processing'].includes(o.status.toLowerCase())).length;
   }
 }

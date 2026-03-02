@@ -29,8 +29,8 @@ namespace ConstructionManagement.WebApi.Middleware
 
                     var roleClaim = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role || c.Type == "role");
 
-                    // 1. If SuperAdmin, always bypass global filters
-                    if (roleClaim?.Value == "SuperAdmin")
+                    // 1. If SystemAdmin, always bypass global filters
+                    if (roleClaim?.Value == "SystemAdmin")
                     {
                         companyContext.CompanyId = null; 
                     }
@@ -57,3 +57,4 @@ namespace ConstructionManagement.WebApi.Middleware
         }
     }
 }
+

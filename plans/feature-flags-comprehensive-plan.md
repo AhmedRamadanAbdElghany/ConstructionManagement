@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-This document outlines a comprehensive plan to ensure ALL features in the Construction Management System have proper feature flags that can be controlled by SuperAdmin. The plan addresses inconsistencies between frontend and backend feature flag implementations, adds missing flags, and ensures proper enforcement at both the UI and API levels.
+This document outlines a comprehensive plan to ensure ALL features in the Construction Management System have proper feature flags that can be controlled by SystemAdmin. The plan addresses inconsistencies between frontend and backend feature flag implementations, adds missing flags, and ensures proper enforcement at both the UI and API levels.
 
 ---
 
@@ -194,7 +194,7 @@ enableMarketplace?: boolean;
 Update [`settings.service.ts`](construction-cms/src/app/core/services/settings.service.ts):
 
 - Add the new flags to `UpdateCompanySettingsRequest` interface
-- Ensure all flags are included in the default settings for SuperAdmin
+- Ensure all flags are included in the default settings for SystemAdmin
 
 ---
 
@@ -358,7 +358,7 @@ public async Task<IActionResult> GetInspections() { }
 After implementation, verify the following:
 
 - [ ] All sidebar menu items check proper feature flags
-- [ ] SuperAdmin can see all features regardless of settings
+- [ ] SystemAdmin can see all features regardless of settings
 - [ ] CompanyAdmin sees only enabled features
 - [ ] Backend API returns 403 for disabled features
 - [ ] Feature flags persist in database
@@ -382,6 +382,6 @@ After implementation, verify the following:
 ## Notes
 
 - The `allowHR` and `allowLocations` flags in the sidebar are legacy flags from ProjectSettings - these should be phased out in favor of the CompanySettings flags
-- SuperAdmin should always see all features regardless of company settings
+- SystemAdmin should always see all features regardless of company settings
 - Feature flags should default to `false` for new companies to maintain a clean onboarding experience
 - Consider adding a "Enable All Features" option for demo/testing purposes

@@ -30,7 +30,7 @@ namespace ConstructionManagement.Application.Interfaces
         
         // Client Portal
         Task<GatewayPaymentHistoryDto> GetClientPaymentHistoryAsync(int userId);
-        Task<List<PaymentTransactionDto>> GetProjectPaymentsAsync(int projectId, int? companyId = null, bool isSuperAdmin = false);
+        Task<List<PaymentTransactionDto>> GetProjectPaymentsAsync(int projectId, int? companyId = null, bool isSystemAdmin = false);
 
         #region Marketplace Payments
 

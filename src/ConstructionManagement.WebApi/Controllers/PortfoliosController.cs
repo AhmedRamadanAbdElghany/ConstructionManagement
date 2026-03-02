@@ -32,7 +32,7 @@ public class PortfoliosController : ControllerBase
     }
 
     [HttpPost("categories")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult<int>> CreateCategory(CreatePortfolioCategoryRequest request)
     {
         var id = await _portfolioService.CreateCategoryAsync(request);
@@ -40,7 +40,7 @@ public class PortfoliosController : ControllerBase
     }
 
     [HttpPut("categories/{id}")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult> UpdateCategory(int id, UpdatePortfolioCategoryRequest request)
     {
         await _portfolioService.UpdateCategoryAsync(id, request);
@@ -48,7 +48,7 @@ public class PortfoliosController : ControllerBase
     }
 
     [HttpDelete("categories/{id}")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult> DeleteCategory(int id)
     {
         await _portfolioService.DeleteCategoryAsync(id);
@@ -63,7 +63,7 @@ public class PortfoliosController : ControllerBase
     }
 
     [HttpPost("items")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult<int>> CreateItem([FromForm] CreatePortfolioItemRequest request)
     {
         var id = await _portfolioService.CreateItemAsync(request);
@@ -71,7 +71,7 @@ public class PortfoliosController : ControllerBase
     }
 
     [HttpPut("items/{id}")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult> UpdateItem(int id, [FromForm] UpdatePortfolioItemRequest request)
     {
         await _portfolioService.UpdateItemAsync(id, request);
@@ -79,10 +79,11 @@ public class PortfoliosController : ControllerBase
     }
 
     [HttpDelete("items/{id}")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult> DeleteItem(int id)
     {
         await _portfolioService.DeleteItemAsync(id);
         return NoContent();
     }
 }
+

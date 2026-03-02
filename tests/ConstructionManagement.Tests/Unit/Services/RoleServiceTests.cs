@@ -35,7 +35,7 @@ public class RoleServiceTests
     private void SetupAdmin(int adminId, bool isSuper)
     {
         var roles = isSuper
-            ? new List<UserRole> { new UserRole { UserId = adminId, Role = new Role { Name = "SuperAdmin" } } }
+            ? new List<UserRole> { new UserRole { UserId = adminId, Role = new Role { Name = "SystemAdmin" } } }
             : new List<UserRole>();
         _userRoleRepo.Setup(r => r.AsQueryable()).Returns(roles.BuildMock());
         
@@ -96,11 +96,11 @@ public class RoleServiceTests
     }
 
     [Fact]
-    public async Task DeleteRoleAsync_WhenDeletingSuperAdmin_ThrowsException()
+    public async Task DeleteRoleAsync_WhenDeletingSystemAdmin_ThrowsException()
     {
         // Arrange
         SetupAdmin(1, true);
-        var role = new Role { Id = 10, Name = "SuperAdmin" };
+        var role = new Role { Id = 10, Name = "SystemAdmin" };
         _roleRepo.Setup(r => r.GetByIdAsync(10)).ReturnsAsync(role);
 
         var service = CreateService();

@@ -489,10 +489,10 @@ export class DailyLogComponent implements OnInit, OnDestroy {
   checkPermissions() {
     const role = this.authService.getCurrentUser()?.role;
     // In a real app, these would be fetched from the backend based on the user's project-specific permissions
-    this.canApprove = role === 'CompanyAdmin' || role === 'SuperAdmin';
-    this.canReopenDay = role === 'CompanyAdmin' || role === 'SuperAdmin';
+    this.canApprove = role === 'CompanyAdmin' || role === 'SystemAdmin';
+    this.canReopenDay = role === 'CompanyAdmin' || role === 'SystemAdmin';
     // All workers can add entries by default; this can be restricted per project role
-    this.canAddEntry = role === 'CompanyUser' || role === 'CompanyAdmin' || role === 'SuperAdmin';
+    this.canAddEntry = role === 'CompanyUser' || role === 'CompanyAdmin' || role === 'SystemAdmin';
   }
 
   // Date Navigation

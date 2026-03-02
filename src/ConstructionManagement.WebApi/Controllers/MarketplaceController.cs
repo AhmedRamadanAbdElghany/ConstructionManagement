@@ -284,7 +284,7 @@ public class MarketplaceController : ControllerBase
         if (order.RequestedByUserId != userId && order.WarehouseId != companyId)
         {
             var userRoles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
-            if (!userRoles.Contains("SuperAdmin"))
+            if (!userRoles.Contains("SystemAdmin"))
             {
                 return Forbid();
             }
@@ -463,3 +463,4 @@ public class CancelOrderDto
 }
 
 #endregion
+

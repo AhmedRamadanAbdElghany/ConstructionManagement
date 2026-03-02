@@ -406,9 +406,9 @@ export class CompanyDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Unverified owner can only message SuperAdmin
+    // Unverified owner can only message SystemAdmin
     if (this.messagingStatus.isUnverifiedCompanyOwner) {
-      this.canMessage = this.company.id === this.messagingStatus.superAdminCompanyId;
+      this.canMessage = this.company.id === this.messagingStatus.SystemAdminCompanyId;
       return;
     }
 
@@ -494,7 +494,7 @@ export class CompanyDetailComponent implements OnInit, OnDestroy {
     this.errorMessage = '';
 
     const request: StartConversationRequest = {
-      companyId: this.company.id,
+      recipientUserId: this.company.ownerUserId || 0,
       message: this.messageContent.trim()
     };
 
@@ -521,3 +521,4 @@ export class CompanyDetailComponent implements OnInit, OnDestroy {
     this.showAnnouncementsDialog = true;
   }
 }
+

@@ -396,7 +396,7 @@ Add "Companies" menu item for all authenticated users:
   label: 'Companies',
   icon: 'building',
   route: '/companies',
-  roles: ['User', 'Worker', 'CompanyAdmin', 'SuperAdmin']
+  roles: ['User', 'Worker', 'CompanyAdmin', 'SystemAdmin']
 }
 ```
 
@@ -407,7 +407,7 @@ Add "Messages" menu item with unread count badge:
   icon: 'message',
   route: '/messages',
   badge: unreadCount$,
-  roles: ['User', 'Worker', 'CompanyAdmin', 'SuperAdmin']
+  roles: ['User', 'Worker', 'CompanyAdmin', 'SystemAdmin']
 }
 ```
 

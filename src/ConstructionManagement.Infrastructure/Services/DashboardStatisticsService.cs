@@ -64,9 +64,9 @@ public class DashboardStatisticsService : IDashboardStatisticsService
         };
     }
 
-    public async Task<SuperAdminStats> GetSuperAdminStatsAsync()
+    public async Task<SystemAdminStats> GetSystemAdminStatsAsync()
     {
-        _logger.LogDebug("Fetching super admin dashboard stats");
+        _logger.LogDebug("Fetching System Admin dashboard stats");
 
         var totalCompanies = await _companyRepository.AsQueryable().CountAsync();
         var activeSubscriptions = await _companyRepository.AsQueryable().CountAsync(c => c.IsActive);
@@ -84,7 +84,7 @@ public class DashboardStatisticsService : IDashboardStatisticsService
         var newCompaniesCount = await _companyRepository.AsQueryable()
             .CountAsync(c => c.CreatedAt >= thirtyDaysAgo);
 
-        return new SuperAdminStats
+        return new SystemAdminStats
         {
             TotalCompanies = totalCompanies,
             ActiveSubscriptions = activeSubscriptions,
@@ -218,9 +218,9 @@ public class DashboardStatisticsService : IDashboardStatisticsService
         return dateTime.ToString("MMM dd, yyyy");
     }
 
-    public async Task<List<SuperAdminActivity>> GetSuperAdminActivitiesAsync(int? limit = null)
+    public async Task<List<SystemAdminActivity>> GetSystemAdminActivitiesAsync(int? limit = null)
     {
-        _logger.LogDebug("Fetching real super admin activities. Limit: {Limit}", limit);
+        _logger.LogDebug("Fetching real System Admin activities. Limit: {Limit}", limit);
 
         // Fetch company requests as activities
         var requestsData = await _companyRequestRepository.AsQueryable()
@@ -228,7 +228,7 @@ public class DashboardStatisticsService : IDashboardStatisticsService
             .Take(limit ?? 5)
             .ToListAsync();
 
-        var requests = requestsData.Select(r => new SuperAdminActivity
+        var requests = requestsData.Select(r => new SystemAdminActivity
             {
                 Id = r.Id,
                 Company = r.CompanyName,
@@ -249,7 +249,7 @@ public class DashboardStatisticsService : IDashboardStatisticsService
                 .Take((limit ?? 5) - requests.Count)
                 .ToListAsync();
  
-            var companies = companiesData.Select(c => new SuperAdminActivity
+            var companies = companiesData.Select(c => new SystemAdminActivity
                 {
                     Id = c.Id + 1000, // Offset for unique ID in this list
                     Company = c.Name,
@@ -266,3 +266,4 @@ public class DashboardStatisticsService : IDashboardStatisticsService
         return requests.OrderByDescending(a => a.Id).Take(limit ?? 5).ToList();
     }
 }
+

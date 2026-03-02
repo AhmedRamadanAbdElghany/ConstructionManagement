@@ -1202,7 +1202,7 @@ export class SocialWallComponent implements OnInit, OnDestroy {
     checkAdminRole(): void {
         // Check if user has admin role
         const userRole = localStorage.getItem('userRole');
-        this.isAdmin.set(userRole === 'Admin' || userRole === 'SuperAdmin');
+        this.isAdmin.set(userRole === 'Admin' || userRole === 'SystemAdmin');
     }
 
     onFilterChange(): void {

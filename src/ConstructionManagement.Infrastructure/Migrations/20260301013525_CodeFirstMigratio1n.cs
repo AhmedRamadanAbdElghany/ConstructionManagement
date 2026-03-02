@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ConstructionManagement.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class CodeFirstMigration2 : Migration
+    public partial class CodeFirstMigratio1n : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 keyColumns: new[] { "RoleId", "UserId" },
                 keyValues: new object[] { 1, 1 },
                 column: "AssignedAt",
-                value: new DateTime(2026, 2, 28, 20, 28, 49, 972, DateTimeKind.Utc).AddTicks(3866));
+                value: new DateTime(2026, 3, 1, 1, 35, 9, 676, DateTimeKind.Utc).AddTicks(8955));
         }
 
         /// <inheritdoc />
@@ -27,7 +27,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                 keyColumns: new[] { "RoleId", "UserId" },
                 keyValues: new object[] { 1, 1 },
                 column: "AssignedAt",
-                value: new DateTime(2026, 2, 28, 14, 31, 12, 985, DateTimeKind.Utc).AddTicks(8507));
+                value: new DateTime(2026, 3, 1, 0, 32, 48, 692, DateTimeKind.Utc).AddTicks(9642));
         }
     }
 }

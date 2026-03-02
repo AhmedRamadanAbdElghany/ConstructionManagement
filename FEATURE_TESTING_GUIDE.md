@@ -55,7 +55,7 @@ Create the following test accounts before testing:
 
 | Role | Email | Password | Purpose |
 |------|-------|----------|---------|
-| SuperAdmin | admin@construction.com | Admin@123 | Test system-wide features |
+| SystemAdmin | admin@construction.com | Admin@123 | Test system-wide features |
 | CompanyAdmin | admin@company.com | Company@123 | Test company management |
 | CompanyUser | user@company.com | User@123 | Test user features |
 | NormalUser | normal@company.com | Normal@123 | Test limited features |
@@ -214,9 +214,9 @@ Before testing, create the following test data:
 
 ### Test Cases
 
-#### TC-009: View All Companies (SuperAdmin)
+#### TC-009: View All Companies (SystemAdmin)
 **Steps:**
-1. Login as SuperAdmin
+1. Login as SystemAdmin
 2. Navigate to Admin → Companies
 
 **Expected Result:**
@@ -228,7 +228,7 @@ Before testing, create the following test data:
 
 #### TC-010: Create New Company
 **Steps:**
-1. Login as SuperAdmin
+1. Login as SystemAdmin
 2. Navigate to Admin → Companies
 3. Click "Add New Company"
 4. Fill in details:
@@ -247,7 +247,7 @@ Before testing, create the following test data:
 
 #### TC-011: View Company Details
 **Steps:**
-1. Login as SuperAdmin
+1. Login as SystemAdmin
 2. Navigate to Admin → Companies
 3. Click on company: "Test Construction Co."
 
@@ -2478,12 +2478,12 @@ Before testing, create the following test data:
 
 #### TC-133: View Roles
 **Steps:**
-1. Login as SuperAdmin
+1. Login as SystemAdmin
 2. Navigate to Admin → Access Control → Roles
 
 **Expected Result:**
 - Shows all roles:
-  - SuperAdmin
+  - SystemAdmin
   - CompanyAdmin
   - CompanyUser
   - NormalUser

@@ -98,8 +98,8 @@ public class CompanyFeatureService : ICompanyFeatureService
     /// Check if a specific feature is enabled for the current user's company
     /// </summary>
     /// <remarks>
-    /// Priority: SuperAdmin (always allowed) -> CompanySettings (primary) -> Company (fallback) -> false
-    /// SuperAdmin bypasses all feature checks for administrative access.
+    /// Priority: SystemAdmin (always allowed) -> CompanySettings (primary) -> Company (fallback) -> false
+    /// SystemAdmin bypasses all feature checks for administrative access.
     /// CompanySettings defaults to true for most features, while Company defaults to false.
     /// This allows fine-grained control via CompanySettings while providing backward compatibility.
     /// Results are cached for 5 minutes to reduce database queries.
@@ -108,13 +108,13 @@ public class CompanyFeatureService : ICompanyFeatureService
     {
         var companyId = _currentUserService.CompanyId;
         
-        // SuperAdmin always has access regardless of company context or settings
-        if (_currentUserService.IsInRole("SuperAdmin"))
+        // SystemAdmin always has access regardless of company context or settings
+        if (_currentUserService.IsInRole("SystemAdmin"))
         {
             return true;
         }
 
-        // Non-SuperAdmin requires company context
+        // Non-SystemAdmin requires company context
         if (!companyId.HasValue)
         {
             _logger.LogWarning("User {UserId} attempted to access {Feature} without company context", 
@@ -231,20 +231,20 @@ public class CompanyFeatureService : ICompanyFeatureService
     {
         var companyId = _currentUserService.CompanyId;
         
-        // If no company context, check if user is SuperAdmin
+        // If no company context, check if user is SystemAdmin
         if (!companyId.HasValue)
         {
-            var isSuperAdmin = _currentUserService.IsInRole("SuperAdmin");
-            if (!isSuperAdmin)
+            var isSystemAdmin = _currentUserService.IsInRole("SystemAdmin");
+            if (!isSystemAdmin)
             {
-                _logger.LogWarning("User {UserId} attempted to access {Feature} without company context and not SuperAdmin", 
+                _logger.LogWarning("User {UserId} attempted to access {Feature} without company context and not SystemAdmin", 
                     _currentUserService.UserId, flagName);
             }
-            return isSuperAdmin;
+            return isSystemAdmin;
         }
 
-        // SuperAdmin always has access regardless of company settings
-        if (_currentUserService.IsInRole("SuperAdmin"))
+        // SystemAdmin always has access regardless of company settings
+        if (_currentUserService.IsInRole("SystemAdmin"))
         {
             return true;
         }
@@ -335,3 +335,4 @@ public class CompanyFeatureService : ICompanyFeatureService
         _logger.LogWarning("ClearAllCaches called - MemoryCache does not support key enumeration. Cache will expire naturally based on CacheDuration (5 minutes). For immediate cache clearing across all companies, consider using IDistributedCache with Redis.");
     }
 }
+

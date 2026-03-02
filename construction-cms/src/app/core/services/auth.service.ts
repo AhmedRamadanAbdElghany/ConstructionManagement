@@ -303,8 +303,8 @@ export class AuthService {
         const user = this.getCurrentUser();
         if (!user) return false;
 
-        // SuperAdmin has all permissions
-        if (user.role === 'SuperAdmin') return true;
+        // SystemAdmin has all permissions
+        if (user.role === 'SystemAdmin') return true;
 
         // Check if user has the permission directly
         if (user.permissions && user.permissions.includes(permission)) {
@@ -325,7 +325,7 @@ export class AuthService {
     hasProjectPermission(permissions: string | string[]): boolean {
         const user = this.getCurrentUser();
         if (!user) return false;
-        if (user.role === 'SuperAdmin') return true;
+        if (user.role === 'SystemAdmin') return true;
 
         // Demo implementation: Admin has all project permissions
         return user.role === 'CompanyAdmin';
@@ -389,3 +389,4 @@ export class AuthService {
         this.selectedCompanySubject.next(null);
     }
 }
+

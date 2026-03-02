@@ -1,6 +1,7 @@
 using ConstructionManagement.Application.DTOs.Messaging;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
+using ConstructionManagement.Domain.Enums;
 using ConstructionManagement.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -50,11 +51,25 @@ public class MessagingController : BaseApiController
         try
         {
             var userId = GetUserId();
+            
+            // Convert the request to the new format
+            var serviceRequest = new StartConversationRequest
+            {
+                SenderCompanyId = request.SenderCompanyId,
+                RecipientCompanyId = request.RecipientCompanyId,
+                RecipientUserId = request.RecipientUserId,
+                Message = request.Message
+            };
+            
             var attachments = Request.Form.Files.ToList();
-            var result = await _messagingService.StartConversationAsync(userId, request, attachments);
+            var result = await _messagingService.StartConversationAsync(userId, serviceRequest, attachments);
             return Ok(result);
         }
         catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (ArgumentException ex)
         {
             return BadRequest(new { message = ex.Message });
         }
@@ -74,70 +89,14 @@ public class MessagingController : BaseApiController
         try
         {
             var userId = GetUserId();
-            var user = await GetUserAsync();
             
-            _logger.LogInformation("GetConversations called for userId: {UserId}, user.CompanyId: {CompanyId}, UserType: {UserType}", 
-                userId, user?.CompanyId, user?.UserType);
+            _logger.LogInformation("GetConversations called for userId: {UserId}", userId);
             
-            // 1. Every user can have user-level conversations (as initiator or target)
-            var userConversations = await _messagingService.GetUserConversationsAsync(userId);
-            _logger.LogInformation("Found {Count} user conversations", userConversations.Count());
+            // Get all conversations where user is initiator or target
+            var conversations = await _messagingService.GetUserConversationsAsync(userId);
+            _logger.LogInformation("Found {Count} conversations", conversations.Count());
             
-            var allConversations = new Dictionary<int, ConversationDto>();
-            foreach (var c in userConversations)
-            {
-                allConversations[c.Id] = c;
-            }
-
-            // 2. Determine if user is allowed to see company-level conversations
-            var isSuperAdmin = await _dbContext.UserRoles
-                .Include(ur => ur.Role)
-                .AnyAsync(ur => ur.UserId == userId && ur.Role.Name == "SuperAdmin");
-                
-            var isCompanyOwner = user?.UserType == ConstructionManagement.Domain.Enums.UserType.CompanyOwner;
-            _logger.LogInformation("User {UserId} isSuperAdmin: {IsSuperAdmin}, isCompanyOwner: {IsCompanyOwner}", 
-                userId, isSuperAdmin, isCompanyOwner);
-
-            if (isSuperAdmin || isCompanyOwner)
-            {
-                int? companyIdToFetch = null;
-
-                if (isCompanyOwner && user?.CompanyId.HasValue == true)
-                {
-                    companyIdToFetch = user.CompanyId.Value;
-                }
-                else if (isSuperAdmin)
-                {
-                    // Find SuperAdmin's designated company
-                    companyIdToFetch = await _dbContext.Users
-                        .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "SuperAdmin") && u.CompanyId.HasValue)
-                        .Select(u => u.CompanyId)
-                        .FirstOrDefaultAsync();
-                        
-                    if (!companyIdToFetch.HasValue || companyIdToFetch.Value == 0)
-                    {
-                        var systemAdminCompany = await _dbContext.Companies
-                            .FirstOrDefaultAsync(c => c.BusinessId == "SYSTEM-ADMIN");
-                        companyIdToFetch = systemAdminCompany?.Id;
-                    }
-                }
-
-                if (companyIdToFetch.HasValue && companyIdToFetch.Value > 0)
-                {
-                    _logger.LogInformation("Getting company conversations for CompanyId: {CompanyId}", companyIdToFetch.Value);
-                    var companyConversations = await _messagingService.GetCompanyConversationsAsync(companyIdToFetch.Value, userId);
-                    _logger.LogInformation("Found {Count} company conversations", companyConversations.Count());
-                    
-                    foreach (var c in companyConversations)
-                    {
-                        // Deduplicate (company conversation representation takes precedence for owner/admin)
-                        allConversations[c.Id] = c;
-                    }
-                }
-            }
-
-            _logger.LogInformation("Returning {Count} total conversations", allConversations.Count);
-            return Ok(allConversations.Values.OrderByDescending(c => c.LastMessageAt ?? c.CreatedAt));
+            return Ok(conversations.OrderByDescending(c => c.LastMessageAt ?? c.CreatedAt));
         }
         catch (Exception ex)
         {
@@ -241,7 +200,7 @@ public class MessagingController : BaseApiController
     /// Approve a conversation (company owner only)
     /// </summary>
     [HttpPut("conversations/{id}/approve")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult> ApproveConversation(int id, [FromBody] ApproveConversationRequest? request = null)
     {
         try
@@ -269,7 +228,7 @@ public class MessagingController : BaseApiController
     /// Block a conversation (company owner only)
     /// </summary>
     [HttpPut("conversations/{id}/block")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult> BlockConversation(int id, [FromBody] BlockConversationRequest? request = null)
     {
         try
@@ -297,7 +256,7 @@ public class MessagingController : BaseApiController
     /// Unblock a conversation (company owner only)
     /// </summary>
     [HttpPut("conversations/{id}/unblock")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult> UnblockConversation(int id)
     {
         try
@@ -327,7 +286,7 @@ public class MessagingController : BaseApiController
     /// Block a user from messaging the company (company owner only)
     /// </summary>
     [HttpPost("company/block-user")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult> BlockUser([FromBody] BlockUserRequest request)
     {
         try
@@ -362,7 +321,7 @@ public class MessagingController : BaseApiController
     /// Unblock a user from messaging the company (company owner only)
     /// </summary>
     [HttpDelete("company/block-user/{blockedUserId}")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult> UnblockUser(int blockedUserId)
     {
         try
@@ -397,7 +356,7 @@ public class MessagingController : BaseApiController
     /// Get all blocked users for the company (company owner only)
     /// </summary>
     [HttpGet("company/blocked-users")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult<IEnumerable<BlockedUserDto>>> GetBlockedUsers()
     {
         try
@@ -497,7 +456,7 @@ public class MessagingController : BaseApiController
     /// Company owners can initiate conversations with clients and workers
     /// </summary>
     [HttpPost("conversations/with-user")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult<ConversationDto>> StartConversationWithUser([FromForm] StartConversationWithUserRequest request)
     {
         try
@@ -505,37 +464,15 @@ public class MessagingController : BaseApiController
             var userId = GetUserId();
             var attachments = Request.Form.Files.ToList();
             
-            // Check if SuperAdmin
-            var isSuperAdmin = await _dbContext.UserRoles
-                .Include(ur => ur.Role)
-                .AnyAsync(ur => ur.UserId == userId && ur.Role.Name == "SuperAdmin");
-            
-            if (isSuperAdmin)
+            // Use the unified StartConversationAsync which handles all cases
+            var startRequest = new StartConversationRequest
             {
-                // SuperAdmin messaging a user: create conversation targeting the user's company
-                var targetUser = await _dbContext.Users.FindAsync(request.TargetUserId);
-                if (targetUser == null)
-                {
-                    return BadRequest(new { message = "Target user not found." });
-                }
-                
-                if (!targetUser.CompanyId.HasValue)
-                {
-                    return BadRequest(new { message = "Target user is not associated with a company." });
-                }
-                
-                // Use StartConversation targeting the user's company
-                var startRequest = new StartConversationRequest
-                {
-                    CompanyId = targetUser.CompanyId.Value,
-                    Message = request.Message
-                };
-                var result = await _messagingService.StartConversationAsync(userId, startRequest, attachments);
-                return Ok(result);
-            }
+                RecipientUserId = request.TargetUserId,
+                Message = request.Message
+            };
             
-            var normalResult = await _messagingService.StartConversationWithUserAsync(userId, request, attachments);
-            return Ok(normalResult);
+            var result = await _messagingService.StartConversationAsync(userId, startRequest, attachments);
+            return Ok(result);
         }
         catch (InvalidOperationException ex)
         {
@@ -556,7 +493,7 @@ public class MessagingController : BaseApiController
     /// Get users that the company can message (clients and workers)
     /// </summary>
     [HttpGet("messagable-users")]
-    [Authorize(Roles = "CompanyAdmin,SuperAdmin")]
+    [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
     public async Task<ActionResult<IEnumerable<MessagableUserDto>>> GetMessagableUsers([FromQuery] string? userType = null)
     {
         try
@@ -564,15 +501,15 @@ public class MessagingController : BaseApiController
             var userId = GetUserId();
             var user = await GetUserAsync();
             
-            // Check if SuperAdmin
-            var isSuperAdmin = await _dbContext.UserRoles
+            // Check if SystemAdmin
+            var isSystemAdmin = await _dbContext.UserRoles
                 .Include(ur => ur.Role)
-                .AnyAsync(ur => ur.UserId == userId && ur.Role.Name == "SuperAdmin");
+                .AnyAsync(ur => ur.UserId == userId && ur.Role.Name == "SystemAdmin");
             
-            if (isSuperAdmin)
+            if (isSystemAdmin)
             {
-                // SuperAdmin can message all company owners
-                var result = await _messagingService.GetMessagableUsersForSuperAdminAsync(userId, userType);
+                // SystemAdmin can message all company owners
+                var result = await _messagingService.GetMessagableUsersForSystemAdminAsync(userId, userType);
                 return Ok(result);
             }
             

@@ -7,7 +7,7 @@
 | **NormalUser** | Client | Construction client who hires companies to execute projects |
 | **CompanyOwner** | CompanyAdmin (userType=2) | Owner of a construction company |
 | **Worker** | CompanyUser | Employee/worker in a construction company |
-| **SuperAdmin** | SuperAdmin | Platform administrator |
+| **SystemAdmin** | SystemAdmin | Platform administrator |
 
 ---
 

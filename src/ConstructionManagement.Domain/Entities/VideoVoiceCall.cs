@@ -16,7 +16,7 @@ namespace ConstructionManagement.Domain.Entities
         public User? Receiver { get; set; }
 
         public int? ConversationId { get; set; }
-        public CompanyConversation? Conversation { get; set; }
+        public Conversation? Conversation { get; set; }
 
         public CallType CallType { get; set; }
         public CallStatus Status { get; set; }

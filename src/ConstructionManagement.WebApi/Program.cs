@@ -296,21 +296,21 @@ builder.Services.AddScoped<IAuthorizationHandler, ProjectRoleHandler>();
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("SuperAdminOnly", policy => policy.RequireRole("SuperAdmin"));
-    options.AddPolicy("CanManageUsers", policy => policy.RequireRole("SuperAdmin", "CompanyAdmin"));
+    options.AddPolicy("SystemAdminOnly", policy => policy.RequireRole("SystemAdmin"));
+    options.AddPolicy("CanManageUsers", policy => policy.RequireRole("SystemAdmin", "CompanyAdmin"));
     options.AddPolicy("RequireCompanyOwner", policy => policy.RequireAssertion(context =>
-        context.User.IsInRole("SuperAdmin") || 
+        context.User.IsInRole("SystemAdmin") || 
         context.User.IsInRole("CompanyAdmin") ||
         context.User.HasClaim(c => c.Type == "permission" && (c.Value == "Location.View" || c.Value == "Geofence.Manage" || c.Value == "Location.Manage"))));
     
     // Location permissions
     options.AddPolicy("CanViewLocation", policy => policy.RequireAssertion(context =>
-        context.User.IsInRole("SuperAdmin") || 
+        context.User.IsInRole("SystemAdmin") || 
         context.User.IsInRole("CompanyAdmin") ||
         context.User.HasClaim(c => c.Type == "permission" && c.Value == "Location.View")));
     
     options.AddPolicy("CanManageGeofence", policy => policy.RequireAssertion(context =>
-        context.User.IsInRole("SuperAdmin") || 
+        context.User.IsInRole("SystemAdmin") || 
         context.User.IsInRole("CompanyAdmin") ||
         context.User.HasClaim(c => c.Type == "permission" && c.Value == "Geofence.Manage")));
 
@@ -537,7 +537,7 @@ app.UseRequestLocalization(localizationOptions);
 // Company resolution middleware – MUST come early
 app.UseMiddleware<CompanyResolutionMiddleware>();
 
-// Hangfire Dashboard (secured – only SuperAdmin)
+// Hangfire Dashboard (secured – only SystemAdmin)
 if (!isTesting && hfConnectionString != null && !hfConnectionString.Contains("DataSource=", StringComparison.OrdinalIgnoreCase))
 {
     app.UseHangfireDashboard("/hangfire", new DashboardOptions
@@ -709,7 +709,7 @@ public class HangfireCustomAuthorizationFilter : IDashboardAuthorizationFilter
     {
         var httpContext = context.GetHttpContext();
         return httpContext.User.Identity?.IsAuthenticated == true &&
-               httpContext.User.IsInRole("SuperAdmin");
+               httpContext.User.IsInRole("SystemAdmin");
     }
 }
   
@@ -733,3 +733,4 @@ public class UtcDateTimeConverter : System.Text.Json.Serialization.JsonConverter
         writer.WriteStringValue(utcValue.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
     }
 }
+

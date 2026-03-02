@@ -242,9 +242,9 @@ public async Task NotifyJoinRequestRejectedAsync(int userId, string reason)
     await CreateNotificationAsync(userId, "Join Request Rejected", $"Your join request was rejected. Reason: {reason}", "JoinRequestRejected", null);
 }
 
-public async Task NotifyNewCompanyRequestAsync(int superAdminUserId, string companyName, int requestId)
+public async Task NotifyNewCompanyRequestAsync(int SystemAdminUserId, string companyName, int requestId)
 {
-    await CreateNotificationAsync(superAdminUserId, "New Company Request", $"New company creation request: {companyName}", "NewCompanyRequest", $"/admin/pending-requests/{requestId}");
+    await CreateNotificationAsync(SystemAdminUserId, "New Company Request", $"New company creation request: {companyName}", "NewCompanyRequest", $"/admin/pending-requests/{requestId}");
 }
 
 public async Task NotifyNewJoinRequestAsync(int companyAdminUserId, string userName, int requestId)

@@ -57,6 +57,6 @@ public interface INotificationService
     Task NotifyCompanyRequestRejectedAsync(int userId, string reason);
     Task NotifyJoinRequestApprovedAsync(int userId, string companyName);
     Task NotifyJoinRequestRejectedAsync(int userId, string reason);
-    Task NotifyNewCompanyRequestAsync(int superAdminUserId, string companyName, int requestId);
+    Task NotifyNewCompanyRequestAsync(int SystemAdminUserId, string companyName, int requestId);
     Task NotifyNewJoinRequestAsync(int companyAdminUserId, string userName, int requestId);
 }

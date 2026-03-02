@@ -275,7 +275,8 @@
     "settings": "الإعدادات",
     "logout": "تسجيل الخروج",
     "switch_company": "تبديل الشركة",
-    "current_company": "الشركة النشطة"
+    "current_company": "الشركة النشطة",
+    "view_all_messages": "عرض كافة الرسائل"
   },
   "company": {
     "hide_from_list": "إخفاء من القائمة",
@@ -309,6 +310,7 @@
   },
   "dashboard": {
     "welcome": "مرحباً",
+    "loading_insights": "جاري تحميل الرؤى...",
     "overview_subtitle": "إليك ما يحدث في مشاريعك اليوم",
     "live": "مباشر",
     "attention": "يحتاج اهتمام",
@@ -1031,7 +1033,6 @@
     "paste": "لصق",
     "required": "مطلوب",
     "optional": "اختياري",
-    "active": "نشط",
     "inactive": "غير نشط",
     "enabled": "مفعل",
     "disabled": "معطل",
@@ -2557,6 +2558,7 @@
   },
   "messages": {
     "title": "الرسائل",
+    "search_placeholder": "البحث في المحادثات...",
     "subtitle": "محادثاتك مع الشركات",
     "unread": "غير مقروءة",
     "no_messages": "لا توجد رسائل",
@@ -2584,7 +2586,7 @@
     "start_conversation_admin": "ابدأ محادثة مع المدير العام",
     "view_company": "عرض ملف الشركة",
     "new_conversation": "محادثة جديدة",
-    "messaging_superadmin": "أنت تبدأ محادثة مع المدير العام",
+    "messaging_SystemAdmin": "أنت تبدأ محادثة مع المدير العام",
     "your_message": "رسالتك",
     "message_placeholder": "اكتب رسالتك هنا...",
     "send_message": "إرسال الرسالة",
@@ -2597,12 +2599,21 @@
     "existing_conversation": "محادثة قائمة",
     "no_users_found": "لم يتم العثور على مستخدمين مطابقين لمعاييرك.",
     "back_to_list": "العودة إلى قائمة المستخدمين",
+    "total_conversations": "إجمالي المحادثات",
+    "unread_messages": "رسائل غير مقروءة",
+    "pending_requests": "طلبات معلقة",
+    "loading_conversations": "جاري تحميل المحادثات...",
+    "platform_status": "حالة المنصة",
+    "operational": "قيد التشغيل",
     "tabs": {
       "all": "الكل",
       "companies": "الشركات",
       "workers": "العمال",
       "clients": "العملاء",
-      "superadmin": "المدير العام"
+      "SystemAdmin": "المدير العام",
+      "support": "دعم المنصة",
+      "me": "أنا",
+      "self": "ذاتي"
     }
   },
   "safety": {
@@ -3036,11 +3047,13 @@
     "VIEW_ALL": "عرض الكل",
     "NEARBY_VENDORS": "الموردين القريبين",
     "ORDERS": "الطلبات",
-    "FIND_NEARBY": "مواقع الموردين",
+    "FIND_NEARBY": "محدد المستودعات",
     "MY_ORDERS": "طلبات المواد",
-    "MANAGE_ORDERS_SUBTITLE": "تتبع خط توريد المواد واللوجستيات الخاصة بك",
+    "MANAGE_ORDERS_SUBTITLE": "تتبع طلبات المواد واللوجستيات الخاصة بك",
+    "ACTIVE_SUPPLIERS": "الموردين النشطين",
+    "CATEGORIES_COUNT": "إجمالي الأقسام",
     "CART": "السلة",
-    "HOME": "مركز التوريد",
+    "HOME": "سوق المواد",
     "ALL_PRODUCTS": "جميع المنتجات",
     "SEARCH_PRODUCTS": "ابحث في المنتجات...",
     "PRICE_RANGE": "نطاق السعر",
@@ -3110,6 +3123,9 @@
     "NO_ORDERS": "لا توجد طلبات",
     "NO_ORDERS_MSG": "لم تقم بأي طلبات بعد. ابدأ التسوق لرؤية طلباتك هنا.",
     "MORE_ITEMS": "عناصر أخرى",
+    "TOTAL_SPENT": "إجمالي المصروفات",
+    "ACTIVE_ORDERS": "الطلبات النشطة",
+    "PENDING_PAYMENTS": "مدفوعات معلقة",
     "CANCEL": "إلغاء",
     "VIEW_DETAILS": "عرض التفاصيل",
     "STATUS_PENDING": "معلق",

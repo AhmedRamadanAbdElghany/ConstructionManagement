@@ -44,7 +44,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("categories")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<EmployeeDocumentCategoryDto>> CreateCategory([FromBody] CreateDocumentCategoryRequest request)
         {
             var result = await _service.CreateCategoryAsync(request, _currentUser.CompanyId, _currentUser.UserId);
@@ -52,7 +52,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPut("categories/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<EmployeeDocumentCategoryDto>> UpdateCategory(int id, [FromBody] UpdateDocumentCategoryRequest request)
         {
             var result = await _service.UpdateCategoryAsync(id, request);
@@ -61,7 +61,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("categories/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
             await _service.DeleteCategoryAsync(id);
@@ -118,7 +118,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<IActionResult> DeleteDocument(int id)
         {
             await _service.DeleteDocumentAsync(id);
@@ -149,7 +149,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("{id}/verify")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<EmployeeDocumentDto>> VerifyDocument(int id, [FromBody] VerifyDocumentRequest request)
         {
             var result = await _service.VerifyDocumentAsync(id, request, _currentUser.UserId);
@@ -224,7 +224,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpGet("profile/pending-updates")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<List<WorkerProfileUpdateRequestDto>>> GetPendingProfileUpdates()
         {
             var result = await _service.GetPendingProfileUpdatesAsync(_currentUser.CompanyId);
@@ -232,7 +232,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("profile/update-requests/{id}/review")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<WorkerProfileUpdateRequestDto>> ReviewProfileUpdate(int id, [FromBody] ReviewProfileUpdateRequest request)
         {
             var result = await _service.ReviewProfileUpdateAsync(id, request, _currentUser.UserId);
@@ -359,7 +359,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("templates")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<OnboardingTemplateDto>> CreateTemplate([FromBody] CreateOnboardingTemplateRequest request)
         {
             var result = await _service.CreateTemplateAsync(request, _currentUser.CompanyId, _currentUser.UserId);
@@ -367,7 +367,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPut("templates/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<OnboardingTemplateDto>> UpdateTemplate(int id, [FromBody] UpdateOnboardingTemplateRequest request)
         {
             var result = await _service.UpdateTemplateAsync(id, request);
@@ -376,7 +376,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("templates/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<IActionResult> DeleteTemplate(int id)
         {
             await _service.DeleteTemplateAsync(id);
@@ -395,7 +395,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("templates/{templateId}/tasks")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<OnboardingTaskTemplateDto>> AddTaskTemplate(int templateId, [FromBody] CreateTaskTemplateRequest request)
         {
             var result = await _service.AddTaskTemplateAsync(templateId, request);
@@ -403,7 +403,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPut("task-templates/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<OnboardingTaskTemplateDto>> UpdateTaskTemplate(int id, [FromBody] CreateTaskTemplateRequest request)
         {
             var result = await _service.UpdateTaskTemplateAsync(id, request);
@@ -412,7 +412,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("task-templates/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<IActionResult> DeleteTaskTemplate(int id)
         {
             await _service.DeleteTaskTemplateAsync(id);
@@ -420,7 +420,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("templates/{templateId}/tasks/reorder")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<IActionResult> ReorderTaskTemplates(int templateId, [FromBody] List<int> taskIds)
         {
             await _service.ReorderTaskTemplatesAsync(templateId, taskIds);
@@ -447,7 +447,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("processes")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<OnboardingProcessDto>> StartOnboarding([FromBody] CreateOnboardingProcessRequest request)
         {
             var result = await _service.StartOnboardingAsync(request, _currentUser.CompanyId);
@@ -455,7 +455,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("processes/{id}/complete")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<IActionResult> CompleteOnboarding(int id)
         {
             await _service.CompleteOnboardingAsync(id);
@@ -545,7 +545,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("types")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<DisciplinaryActionTypeDto>> CreateActionType([FromBody] CreateDisciplinaryActionTypeRequest request)
         {
             var result = await _service.CreateActionTypeAsync(request, _currentUser.CompanyId);
@@ -553,7 +553,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPut("types/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<DisciplinaryActionTypeDto>> UpdateActionType(int id, [FromBody] UpdateDisciplinaryActionTypeRequest request)
         {
             var result = await _service.UpdateActionTypeAsync(id, request);
@@ -562,7 +562,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("types/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<IActionResult> DeleteActionType(int id)
         {
             await _service.DeleteActionTypeAsync(id);
@@ -589,7 +589,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin,Manager")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin,Manager")]
         public async Task<ActionResult<DisciplinaryActionDto>> CreateAction([FromBody] CreateDisciplinaryActionRequest request)
         {
             var result = await _service.CreateActionAsync(request, _currentUser.CompanyId, _currentUser.UserId);
@@ -597,7 +597,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<DisciplinaryActionDto>> UpdateAction(int id, [FromBody] UpdateDisciplinaryActionRequest request)
         {
             var result = await _service.UpdateActionAsync(id, request);
@@ -606,7 +606,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Roles = "SystemAdmin")]
         public async Task<IActionResult> DeleteAction(int id)
         {
             await _service.DeleteActionAsync(id);
@@ -614,7 +614,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("{id}/attach-document")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<DisciplinaryActionDto>> AttachDocument(int id, [FromBody] AttachDocumentRequest request)
         {
             var result = await _service.AttachDocumentAsync(id, request.DocumentPath);
@@ -636,7 +636,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("appeals/{appealId}/review")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<DisciplinaryAppealDto>> ReviewAppeal(int appealId, [FromBody] ReviewAppealRequest request)
         {
             var result = await _service.ReviewAppealAsync(appealId, request, _currentUser.UserId);
@@ -645,7 +645,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpGet("appeals/pending")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<List<DisciplinaryAppealDto>>> GetPendingAppeals()
         {
             var result = await _service.GetPendingAppealsAsync(_currentUser.CompanyId);
@@ -665,7 +665,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpGet("records")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<List<EmployeeDisciplinaryRecordDto>>> GetEmployeeRecords()
         {
             var result = await _service.GetEmployeeRecordsAsync(_currentUser.CompanyId);
@@ -677,7 +677,7 @@ namespace ConstructionManagement.WebApi.Controllers
         #region Dashboard
 
         [HttpGet("dashboard")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<DisciplinaryDashboardDto>> GetDashboard()
         {
             var result = await _service.GetDashboardAsync(_currentUser.CompanyId);
@@ -728,7 +728,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("categories")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<SkillCategoryDto>> CreateCategory([FromBody] CreateSkillCategoryRequest request)
         {
             var result = await _service.CreateCategoryAsync(request, _currentUser.CompanyId);
@@ -736,7 +736,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPut("categories/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<SkillCategoryDto>> UpdateCategory(int id, [FromBody] UpdateSkillCategoryRequest request)
         {
             var result = await _service.UpdateCategoryAsync(id, request);
@@ -745,7 +745,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("categories/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
             await _service.DeleteCategoryAsync(id);
@@ -772,7 +772,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("skills")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<SkillDto>> CreateSkill([FromBody] CreateSkillRequest request)
         {
             var result = await _service.CreateSkillAsync(request, _currentUser.CompanyId);
@@ -780,7 +780,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPut("skills/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<SkillDto>> UpdateSkill(int id, [FromBody] UpdateSkillRequest request)
         {
             var result = await _service.UpdateSkillAsync(id, request);
@@ -789,7 +789,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("skills/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<IActionResult> DeleteSkill(int id)
         {
             await _service.DeleteSkillAsync(id);
@@ -808,7 +808,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("competency-levels")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<CompetencyLevelDto>> CreateCompetencyLevel([FromBody] CreateCompetencyLevelRequest request)
         {
             var result = await _service.CreateCompetencyLevelAsync(request, _currentUser.CompanyId);
@@ -816,7 +816,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPut("competency-levels/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<CompetencyLevelDto>> UpdateCompetencyLevel(int id, [FromBody] UpdateCompetencyLevelRequest request)
         {
             var result = await _service.UpdateCompetencyLevelAsync(id, request);
@@ -825,7 +825,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("competency-levels/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<IActionResult> DeleteCompetencyLevel(int id)
         {
             await _service.DeleteCompetencyLevelAsync(id);
@@ -852,7 +852,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("employee-skills")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin,Manager")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin,Manager")]
         public async Task<ActionResult<EmployeeSkillDto>> AssessEmployeeSkill([FromBody] CreateEmployeeSkillRequest request)
         {
             var result = await _service.AssessEmployeeSkillAsync(request, _currentUser.CompanyId, _currentUser.UserId);
@@ -860,7 +860,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPut("employee-skills/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin,Manager")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin,Manager")]
         public async Task<ActionResult<EmployeeSkillDto>> UpdateEmployeeSkill(int id, [FromBody] UpdateEmployeeSkillRequest request)
         {
             var result = await _service.UpdateEmployeeSkillAsync(id, request);
@@ -869,7 +869,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("employee-skills/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<IActionResult> DeleteEmployeeSkill(int id)
         {
             await _service.DeleteEmployeeSkillAsync(id);
@@ -896,7 +896,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("requirements")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin,Manager")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin,Manager")]
         public async Task<ActionResult<SkillRequirementDto>> AddSkillRequirement([FromBody] CreateSkillRequirementRequest request)
         {
             var result = await _service.AddSkillRequirementAsync(request, _currentUser.CompanyId);
@@ -904,7 +904,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpDelete("requirements/{id}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin,Manager")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin,Manager")]
         public async Task<IActionResult> DeleteSkillRequirement(int id)
         {
             await _service.DeleteSkillRequirementAsync(id);
@@ -923,7 +923,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("analyze/employee/{employeeId}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin,Manager")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin,Manager")]
         public async Task<ActionResult<List<SkillGapAnalysisDto>>> AnalyzeEmployeeGaps(int employeeId)
         {
             var result = await _service.AnalyzeEmployeeGapsAsync(employeeId);
@@ -931,7 +931,7 @@ namespace ConstructionManagement.WebApi.Controllers
         }
 
         [HttpPost("analyze/project/{projectId}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin,Manager")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin,Manager")]
         public async Task<ActionResult<List<SkillGapAnalysisDto>>> AnalyzeProjectGaps(int projectId)
         {
             var result = await _service.AnalyzeProjectGapsAsync(projectId);
@@ -954,7 +954,7 @@ namespace ConstructionManagement.WebApi.Controllers
         #region Bulk Operations
 
         [HttpPost("employee/{employeeId}/bulk-assess")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin,Manager")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin,Manager")]
         public async Task<IActionResult> BulkAssessSkills(int employeeId, [FromBody] List<CreateEmployeeSkillRequest> requests)
         {
             await _service.BulkAssessSkillsAsync(employeeId, requests, _currentUser.CompanyId, _currentUser.UserId);
@@ -973,3 +973,4 @@ namespace ConstructionManagement.WebApi.Controllers
 
     #endregion
 }
+

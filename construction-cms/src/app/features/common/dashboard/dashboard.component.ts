@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { forkJoin } from 'rxjs';
-import { DashboardService, DashboardStats, SuperAdminStats, CompanySubscription, RecentActivity, SuperAdminActivity } from '../../../core/services/dashboard.service';
+import { DashboardService, DashboardStats, SystemAdminStats, CompanySubscription, RecentActivity, SystemAdminActivity } from '../../../core/services/dashboard.service';
 import { Project, WorkerPerformance } from '../../../shared/interfaces';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
@@ -30,13 +30,13 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
           <div class="flex items-center space-x-2 mb-2">
             <span class="px-3 py-1 rounded-full bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-xs font-bold flex items-center border border-indigo-500/20">
               <span class="w-2 h-2 rounded-full bg-indigo-500 mr-2 animate-pulse"></span>
-              {{ isSuperAdmin ? ('dashboard.platform_management' | translate) : ('dashboard.live' | translate) }}
+              {{ isSystemAdmin ? ('dashboard.platform_management' | translate) : ('dashboard.live' | translate) }}
             </span>
           </div>
           <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">
             {{ 'dashboard.welcome' | translate }}, {{ currentUser.fullName }}! <span class="text-indigo-500">🏢</span>
           </h1>
-          <p class="text-slate-500 dark:text-slate-400 font-medium">{{ isSuperAdmin ? ('dashboard.revenue_analytics' | translate) : ('dashboard.overview_subtitle' | translate) }}</p>
+          <p class="text-slate-500 dark:text-slate-400 font-medium">{{ isSystemAdmin ? ('dashboard.revenue_analytics' | translate) : ('dashboard.overview_subtitle' | translate) }}</p>
         </div>
         }
 
@@ -130,9 +130,9 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
         }
         
         <!-- ──────────────────────────────────────────────────────────────────
-             SUPER ADMIN DASHBOARD
+             System Admin DASHBOARD
              ────────────────────────────────────────────────────────────────── -->
-        @else if (isSuperAdmin) {
+        @else if (isSystemAdmin) {
           <!-- Stats Cards -->
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <!-- Total Companies -->
@@ -742,7 +742,7 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
                     <div class="text-center mb-8">
                       <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{{ currentUser?.fullName }}</h2>
                       <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">
-                        {{ 'sidebar.role_' + (currentUser?.role === 'SuperAdmin' ? 'super' : (currentUser?.role === 'CompanyAdmin' && currentUser?.userType === 2) ? 'owner' : currentUser?.role === 'CompanyAdmin' ? 'admin' : currentUser?.role === 'CompanyUser' ? 'worker' : 'client') | translate }}
+                        {{ 'sidebar.role_' + (currentUser?.role === 'SystemAdmin' ? 'super' : (currentUser?.role === 'CompanyAdmin' && currentUser?.userType === 2) ? 'owner' : currentUser?.role === 'CompanyAdmin' ? 'admin' : currentUser?.role === 'CompanyUser' ? 'worker' : 'client') | translate }}
                       </p>
                     </div>
                     
@@ -1190,8 +1190,8 @@ export class DashboardComponent implements OnInit {
     totalRevenue: 0
   };
 
-  // Super Admin Stats
-  saStats: SuperAdminStats = {
+  // System Admin Stats
+  saStats: SystemAdminStats = {
     totalCompanies: 0,
     activeSubscriptions: 0,
     monthlyRecurringRevenue: 0,
@@ -1201,8 +1201,8 @@ export class DashboardComponent implements OnInit {
 
   subscriptions: any[] = [];
 
-  get isSuperAdmin(): boolean {
-    return this.currentUser?.role === 'SuperAdmin';
+  get isSystemAdmin(): boolean {
+    return this.currentUser?.role === 'SystemAdmin';
   }
 
   get isClient(): boolean {
@@ -1264,7 +1264,7 @@ export class DashboardComponent implements OnInit {
 
   recentActivities: RecentActivity[] = [];
 
-  saActivities: SuperAdminActivity[] = [];
+  saActivities: SystemAdminActivity[] = [];
 
   private clientPortalService = inject(ClientPortalService);
   private inspectionService = inject(InspectionService);
@@ -1285,8 +1285,8 @@ export class DashboardComponent implements OnInit {
         this.updateChartData();
         // Refresh dashboard data to get localized messages from backend
         if (!this.isPending) {
-          if (this.isSuperAdmin) {
-            this.dashboardService.getSuperAdminActivities().subscribe(activities => {
+          if (this.isSystemAdmin) {
+            this.dashboardService.getSystemAdminActivities().subscribe(activities => {
               this.saActivities = activities;
             });
           } else {
@@ -1315,8 +1315,8 @@ export class DashboardComponent implements OnInit {
       });
     }
 
-    if (this.isSuperAdmin) {
-      this.loadSuperAdminView();
+    if (this.isSystemAdmin) {
+      this.loadSystemAdminView();
     } else if (this.isWorker) {
       this.loadWorkerView();
     } else if (this.isClient) {
@@ -1341,12 +1341,12 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  loadSuperAdminView() {
+  loadSystemAdminView() {
     forkJoin({
-      stats: this.dashboardService.getSuperAdminStats(),
+      stats: this.dashboardService.getSystemAdminStats(),
       dashboardStats: this.dashboardService.getDashboardStats(),
       subs: this.dashboardService.getCompanySubscriptions(),
-      activities: this.dashboardService.getSuperAdminActivities()
+      activities: this.dashboardService.getSystemAdminActivities()
     }).subscribe({
       next: (result) => {
         this.saStats = result.stats;
@@ -1478,3 +1478,4 @@ export class DashboardComponent implements OnInit {
     });
   }
 }
+

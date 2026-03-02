@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ConstructionManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260228143122_CodeFirstMigration1")]
-    partial class CodeFirstMigration1
+    [Migration("20260302001017_CodeFirstMigratio3n")]
+    partial class CodeFirstMigratio3n
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1764,78 +1764,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.ToTable("CompanyAnnouncements");
                 });
 
-            modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyConversation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("ApprovedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ApprovedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("BlockReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("BlockedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("InitiatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("InitiatorUserId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastMessageAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("LastMessageId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("TargetUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApprovedByUserId");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("InitiatorUserId");
-
-                    b.HasIndex("LastMessageId");
-
-                    b.HasIndex("Status");
-
-                    b.HasIndex("TargetUserId");
-
-                    b.ToTable("CompanyConversations");
-                });
-
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyCurrencySetting", b =>
                 {
                     b.Property<int>("Id")
@@ -2207,61 +2135,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasFilter("[CompanyId] IS NOT NULL");
 
                     b.ToTable("CompanyLocationSettings");
-                });
-
-            modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyMessage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ConversationId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsFromCompany")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("ReadAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("SenderUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("ConversationId");
-
-                    b.HasIndex("CreatedAt");
-
-                    b.HasIndex("SenderUserId");
-
-                    b.ToTable("CompanyMessages");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyPackage", b =>
@@ -2945,6 +2818,78 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.HasIndex("Level");
 
                     b.ToTable("CompetencyLevels");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Conversation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ApprovedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BlockReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("BlockedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InitiatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("InitiatorUserId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastMessageAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastMessageId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("TargetUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovedByUserId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("InitiatorUserId");
+
+                    b.HasIndex("LastMessageId");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("TargetUserId");
+
+                    b.ToTable("Conversations");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CostEstimateItem", b =>
@@ -9172,6 +9117,61 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.ToTable("MaterialStocks");
                 });
 
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ConversationId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFromCompany")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ReadAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SenderUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("ConversationId");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("SenderUserId");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.MessageAttachment", b =>
                 {
                     b.Property<int>("Id")
@@ -14009,7 +14009,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Platform-level system administrator",
                             IsDeleted = false,
-                            Name = "SuperAdmin"
+                            Name = "SystemAdmin"
                         },
                         new
                         {
@@ -16561,7 +16561,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         {
                             UserId = 1,
                             RoleId = 1,
-                            AssignedAt = new DateTime(2026, 2, 28, 14, 31, 12, 985, DateTimeKind.Utc).AddTicks(8507)
+                            AssignedAt = new DateTime(2026, 3, 2, 0, 9, 54, 217, DateTimeKind.Utc).AddTicks(5033)
                         });
                 });
 
@@ -18042,7 +18042,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CallSession", b =>
                 {
-                    b.HasOne("ConstructionManagement.Domain.Entities.CompanyConversation", "Conversation")
+                    b.HasOne("ConstructionManagement.Domain.Entities.Conversation", "Conversation")
                         .WithMany()
                         .HasForeignKey("ConversationId");
 
@@ -18369,44 +18369,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("Company");
                 });
 
-            modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyConversation", b =>
-                {
-                    b.HasOne("ConstructionManagement.Domain.Entities.User", "ApprovedByUser")
-                        .WithMany()
-                        .HasForeignKey("ApprovedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("ConstructionManagement.Domain.Entities.User", "InitiatorUser")
-                        .WithMany()
-                        .HasForeignKey("InitiatorUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("ConstructionManagement.Domain.Entities.CompanyMessage", "LastMessage")
-                        .WithMany()
-                        .HasForeignKey("LastMessageId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("ConstructionManagement.Domain.Entities.User", "TargetUser")
-                        .WithMany()
-                        .HasForeignKey("TargetUserId");
-
-                    b.Navigation("ApprovedByUser");
-
-                    b.Navigation("Company");
-
-                    b.Navigation("InitiatorUser");
-
-                    b.Navigation("LastMessage");
-
-                    b.Navigation("TargetUser");
-                });
-
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyCurrencySetting", b =>
                 {
                     b.HasOne("ConstructionManagement.Domain.Entities.Currency", "BaseCurrency")
@@ -18523,32 +18485,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("Company");
                 });
 
-            modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyMessage", b =>
-                {
-                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("ConstructionManagement.Domain.Entities.CompanyConversation", "Conversation")
-                        .WithMany("Messages")
-                        .HasForeignKey("ConversationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ConstructionManagement.Domain.Entities.User", "SenderUser")
-                        .WithMany()
-                        .HasForeignKey("SenderUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Company");
-
-                    b.Navigation("Conversation");
-
-                    b.Navigation("SenderUser");
-                });
-
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyPackage", b =>
                 {
                     b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
@@ -18610,6 +18546,44 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Conversation", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "ApprovedByUser")
+                        .WithMany()
+                        .HasForeignKey("ApprovedByUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "InitiatorUser")
+                        .WithMany()
+                        .HasForeignKey("InitiatorUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.Message", "LastMessage")
+                        .WithMany()
+                        .HasForeignKey("LastMessageId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "TargetUser")
+                        .WithMany()
+                        .HasForeignKey("TargetUserId");
+
+                    b.Navigation("ApprovedByUser");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("InitiatorUser");
+
+                    b.Navigation("LastMessage");
+
+                    b.Navigation("TargetUser");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CostEstimateItem", b =>
@@ -20409,6 +20383,32 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("Warehouse");
                 });
 
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Message", b =>
+                {
+                    b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.Conversation", "Conversation")
+                        .WithMany("Messages")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConstructionManagement.Domain.Entities.User", "SenderUser")
+                        .WithMany()
+                        .HasForeignKey("SenderUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("SenderUser");
+                });
+
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.MessageAttachment", b =>
                 {
                     b.HasOne("ConstructionManagement.Domain.Entities.Company", "Company")
@@ -20433,7 +20433,7 @@ namespace ConstructionManagement.Infrastructure.Migrations
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("ConstructionManagement.Domain.Entities.CompanyMessage", "Message")
+                    b.HasOne("ConstructionManagement.Domain.Entities.Message", "Message")
                         .WithMany("Attachments")
                         .HasForeignKey("MessageId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -22691,11 +22691,6 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyConversation", b =>
-                {
-                    b.Navigation("Messages");
-                });
-
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyDefaultDesignCategory", b =>
                 {
                     b.Navigation("ChildCategories");
@@ -22710,9 +22705,9 @@ namespace ConstructionManagement.Infrastructure.Migrations
                     b.Navigation("Items");
                 });
 
-            modelBuilder.Entity("ConstructionManagement.Domain.Entities.CompanyMessage", b =>
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Conversation", b =>
                 {
-                    b.Navigation("Attachments");
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.Currency", b =>
@@ -22907,6 +22902,11 @@ namespace ConstructionManagement.Infrastructure.Migrations
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.MaterialRequest", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("ConstructionManagement.Domain.Entities.Message", b =>
+                {
+                    b.Navigation("Attachments");
                 });
 
             modelBuilder.Entity("ConstructionManagement.Domain.Entities.OnboardingProcess", b =>

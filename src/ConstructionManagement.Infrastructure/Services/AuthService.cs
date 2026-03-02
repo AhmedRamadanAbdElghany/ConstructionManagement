@@ -74,11 +74,11 @@ public class AuthService : IAuthService
         var roles = user.UserRoles?.Select(ur => ur.Role.Name).ToList() ?? new List<string>();
 
         // Get company associations from CompanyUser table
-        // Skip for SuperAdmin - they don't belong to any company (determined by role, not UserType)
+        // Skip for SystemAdmin - they don't belong to any company (determined by role, not UserType)
         int? companyId = null;
         List<CompanyAssociationDto>? companies = null;
         var userRoles = user.UserRoles?.Select(ur => ur.Role.Name).ToList() ?? new List<string>();
-        if (!userRoles.Contains("SuperAdmin"))
+        if (!userRoles.Contains("SystemAdmin"))
         {
             var companyUsers = await _companyUserRepository.GetActiveByUserIdAsync(user.Id);
             
@@ -183,9 +183,9 @@ public class AuthService : IAuthService
                 await _companyRequestRepository.AddAsync(companyRequest);
                 await _unitOfWork.SaveChangesAsync();
 
-                // Notify Super Admins
-                var superAdmins = await _userRepository.GetUsersByRoleAsync("SuperAdmin");
-                foreach (var admin in superAdmins)
+                // Notify System Admins
+                var SystemAdmins = await _userRepository.GetUsersByRoleAsync("SystemAdmin");
+                foreach (var admin in SystemAdmins)
                 {
                     await _notificationService.NotifyNewCompanyRequestAsync(admin.Id, companyRequest.CompanyName, companyRequest.Id);
                 }
@@ -218,9 +218,9 @@ public class AuthService : IAuthService
                 await _companyRequestRepository.AddAsync(companyRequest);
                 await _unitOfWork.SaveChangesAsync();
 
-                // Notify Super Admins
-                var superAdmins = await _userRepository.GetUsersByRoleAsync("SuperAdmin");
-                foreach (var admin in superAdmins)
+                // Notify System Admins
+                var SystemAdmins = await _userRepository.GetUsersByRoleAsync("SystemAdmin");
+                foreach (var admin in SystemAdmins)
                 {
                     await _notificationService.NotifyNewCompanyRequestAsync(admin.Id, companyRequest.CompanyName, companyRequest.Id);
                 }
@@ -642,3 +642,4 @@ public class AuthService : IAuthService
         return (true, "Password is strong");
     }
 }
+

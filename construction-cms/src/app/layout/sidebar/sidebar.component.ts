@@ -40,7 +40,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
           <div class="transition-all duration-500 overflow-hidden" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">
             <h1 class="text-slate-900 dark:text-white font-black text-xl leading-none tracking-tight">STRUC<span class="text-cyan-500 dark:text-cyan-400">T</span></h1>
             <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] font-bold mt-1.5 truncate">
-              {{ (isPending ? 'sidebar.role_owner' : isInventoryOwner ? 'sidebar.role_inventory_owner' : 'sidebar.role_' + (currentRole === 'SuperAdmin' ? 'super' : (currentRole === 'CompanyAdmin' && currentUserType === 2) ? 'owner' : currentRole === 'CompanyAdmin' ? 'admin' : currentRole === 'CompanyUser' ? 'worker' : 'client')) | translate }}
+              {{ (isPending ? 'sidebar.role_owner' : isInventoryOwner ? 'sidebar.role_inventory_owner' : 'sidebar.role_' + (currentRole === 'SystemAdmin' ? 'super' : (currentRole === 'CompanyAdmin' && currentUserType === 2) ? 'owner' : currentRole === 'CompanyAdmin' ? 'admin' : currentRole === 'CompanyUser' ? 'worker' : 'client')) | translate }}
             </p>
           </div>
         </div>
@@ -61,6 +61,19 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
           <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.dashboard' | translate }}</span>
         </a>
         }
+
+          @if (isSystemAdmin) {
+          <a routerLink="/admin/companies"
+             routerLinkActive="nav-active"
+             class="nav-item group">
+            <div class="nav-icon-box">
+              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+              </svg>
+            </div>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.company_management' | translate }}</span>
+          </a>
+          }
 
           @if (isClient || isWorker || isAdmin) {
           <a routerLink="/companies"
@@ -105,7 +118,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
 
         @if (isAdmin) {
 
-          <!-- Pending Requests (SuperAdmin & CompanyAdmin) -->
+          <!-- Pending Requests (SystemAdmin & CompanyAdmin) -->
           <a routerLink="/admin/pending-requests" 
              routerLinkActive="nav-active"
              class="nav-item group">
@@ -114,7 +127,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
               </svg>
               @if (pendingRequestsService.pendingRequests() > 0) {
-                <span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-amber-500 text-white text-[10px] font-black flex items-center justify-center shadow-lg ring-2 ring-white dark:ring-slate-900">{{ pendingRequestsService.pendingRequests() > 99 ? '99+' : pendingRequestsService.pendingRequests() }}</span>
+                <span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 text-white text-[10px] font-black flex items-center justify-center shadow-lg shadow-rose-500/25 ring-2 ring-white dark:ring-slate-900">{{ pendingRequestsService.pendingRequests() > 99 ? '99+' : pendingRequestsService.pendingRequests() }}</span>
               }
             </div>
             <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.pending_requests' | translate }}</span>
@@ -122,7 +135,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
         }
 
         @if (isAdmin) {
-          @if (currentRole !== 'SuperAdmin') {
+          @if (currentRole !== 'SystemAdmin') {
             @if (settings?.allowHR) {
               <a routerLink="/admin/hr" 
                  routerLinkActive="nav-active"
@@ -160,7 +173,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
             </a>
           }
 
-          @if (currentRole !== 'SuperAdmin') {
+          @if (currentRole !== 'SystemAdmin') {
             @if (settings?.allowLocations) {
             <a routerLink="/admin/locations" 
                routerLinkActive="nav-active"
@@ -267,7 +280,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
             </a>
           }
 
-          @if (currentRole !== 'SuperAdmin') {
+          @if (currentRole !== 'SystemAdmin') {
             <a routerLink="/admin/company-settings" 
                routerLinkActive="nav-active"
                class="nav-item group">
@@ -384,7 +397,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
         }
       }
 
-        @if (!isSuperAdmin && !isClient && !isInventoryOwner && !isPending && (!isWorker || hasApprovedCompany())) {
+        @if (!isSystemAdmin && !isClient && !isInventoryOwner && !isPending && (!isWorker || hasApprovedCompany())) {
         <p class="px-4 py-6 text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] min-w-max transition-opacity duration-300"
            [class.opacity-0]="isCollapsed()">{{ 'sidebar.operations' | translate }}</p>
 
@@ -413,7 +426,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
             }
         }
 
-        @if (currentRole !== 'SuperAdmin' && !isInventoryOwner && !isPending) {
+        @if (currentRole !== 'SystemAdmin' && !isInventoryOwner && !isPending) {
           @if ((isWorker && hasApprovedCompany()) || isAdmin) {
             <a routerLink="/worker/daily-log" 
                routerLinkActive="nav-active"
@@ -803,10 +816,10 @@ export class SidebarComponent {
     private clientPortalService: ClientPortalService
   ) {
     const user = this.authService.getCurrentUser();
-    const isSuperAdmin = user?.roles?.includes('SuperAdmin');
+    const isSystemAdmin = user?.roles?.includes('SystemAdmin');
     const activeCompanies = this.authService.getActiveCompanies();
 
-    if (!isSuperAdmin && activeCompanies.length > 0) {
+    if (!isSystemAdmin && activeCompanies.length > 0) {
       this.settingsService.getCompanySettings().subscribe(s => this.settings = s);
     }
 
@@ -841,13 +854,13 @@ export class SidebarComponent {
     return 'NormalUser';
   }
 
-  get isSuperAdmin(): boolean {
-    return this.currentRole === 'SuperAdmin';
+  get isSystemAdmin(): boolean {
+    return this.currentRole === 'SystemAdmin';
   }
 
   get isAdmin(): boolean {
     const role = this.currentRole;
-    return role === 'SuperAdmin' || role === 'CompanyAdmin';
+    return role === 'SystemAdmin' || role === 'CompanyAdmin';
   }
 
   get isWorker(): boolean {
@@ -883,4 +896,5 @@ export class SidebarComponent {
     this.router.navigate(['/auth/login']);
   }
 }
+
 

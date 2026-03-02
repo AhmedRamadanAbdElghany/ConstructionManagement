@@ -8,7 +8,7 @@ public class DashboardStats
     public decimal TotalRevenue { get; set; }
 }
 
-public class SuperAdminStats
+public class SystemAdminStats
 {
     public int TotalCompanies { get; set; }
     public int ActiveSubscriptions { get; set; }
@@ -37,7 +37,7 @@ public class RecentActivity
     public DateTime Timestamp { get; set; }
 }
 
-public class SuperAdminActivity
+public class SystemAdminActivity
 {
     public int Id { get; set; }
     public string Company { get; set; } = string.Empty;

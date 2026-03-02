@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ConstructionManagement.Domain.Entities;
 
 /// <summary>
-/// Global company feature flags (Super Admin controls these)
+/// Global company feature flags (System Admin controls these)
 /// </summary>
 public class CompanyFeatureSettings : BaseEntity, ICompanyEntity
 {
@@ -17,31 +17,31 @@ public class CompanyFeatureSettings : BaseEntity, ICompanyEntity
 
     /// <summary>
     /// Master switch for Inventory Management module
-    /// Only Super Admin can enable/disable this
+    /// Only System Admin can enable/disable this
     /// </summary>
     public bool EnableInventoryManagement { get; set; } = true;
     
     /// <summary>
     /// Master switch for Equipment Management module
-    /// Only Super Admin can enable/disable this
+    /// Only System Admin can enable/disable this
     /// </summary>
     public bool EnableEquipmentManagement { get; set; } = true;
     
     /// <summary>
     /// Master switch for Safety Management module
-    /// Only Super Admin can enable/disable this
+    /// Only System Admin can enable/disable this
     /// </summary>
     public bool EnableSafetyManagement { get; set; } = true;
     
     /// <summary>
     /// Master switch for Subcontractor Management module
-    /// Only Super Admin can enable/disable this
+    /// Only System Admin can enable/disable this
     /// </summary>
     public bool EnableSubcontractorManagement { get; set; } = true;
     
     /// <summary>
     /// Master switch for Document Management module
-    /// Only Super Admin can enable/disable this
+    /// Only System Admin can enable/disable this
     /// </summary>
     public bool EnableDocumentManagement { get; set; } = true;
 }
@@ -62,7 +62,7 @@ public class CompanySettings : BaseEntity, ICompanyEntity
 
 
     // ============================================
-    // MODULE MASTER SWITCHES (Controlled by Super Admin)
+    // MODULE MASTER SWITCHES (Controlled by System Admin)
     // ============================================
     public bool EnableUserManagement { get; set; } = true;
     public bool EnableProjectManagement { get; set; } = true;
@@ -257,7 +257,7 @@ public class CompanySettings : BaseEntity, ICompanyEntity
     
     /// <summary>
     /// Master switch for Safety Management module
-    /// Only Super Admin can enable/disable this
+    /// Only System Admin can enable/disable this
     /// </summary>
     
     /// <summary>
@@ -525,3 +525,4 @@ public class CompanySettings : BaseEntity, ICompanyEntity
 
     // You can add more global defaults here later
 }
+

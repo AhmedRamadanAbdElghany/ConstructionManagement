@@ -8,7 +8,7 @@ public class UpdateCompanySettingsRequest
     public string? Address { get; set; }
 
     // ============================================
-    // MODULE MASTER SWITCHES (Controlled by Super Admin)
+    // MODULE MASTER SWITCHES (Controlled by System Admin)
     // ============================================
     public bool? EnableUserManagement { get; set; }
     public bool? EnableProjectManagement { get; set; }
@@ -166,3 +166,4 @@ public class UpdateCompanySettingsRequest
 
     public bool? EnableAnalyticsReporting { get; set; }
 }
+

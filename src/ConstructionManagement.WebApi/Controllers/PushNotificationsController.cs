@@ -58,7 +58,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Send push notification to specific users (Admin only)
         /// </summary>
         [HttpPost("send")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<PushResultDto>> SendPush([FromBody] SendPushNotificationRequest request)
         {
             var result = await _pushService.SendPushAsync(request);
@@ -91,7 +91,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Mark push notification as opened
         /// </summary>
         [HttpPost("{pushLogId}/opened")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<IActionResult> MarkAsOpened(int pushLogId)
         {
             await _pushService.MarkAsOpenedAsync(pushLogId);
@@ -138,3 +138,4 @@ namespace ConstructionManagement.WebApi.Controllers
 
     }
 }
+

@@ -32,13 +32,13 @@ loadData() {
 import { AuthService } from '../../../core/services/auth.service';
 
 // Add computed property
-isSuperAdmin = computed(() => this.authService.hasRole('SuperAdmin'));
+isSystemAdmin = computed(() => this.authService.hasRole('SystemAdmin'));
 isCompanyAdmin = computed(() => this.authService.hasRole('CompanyAdmin'));
 
 // Update loadData to only load relevant requests
 loadData() {
     // Super Admin only sees Company Requests
-    if (this.isSuperAdmin()) {
+    if (this.isSystemAdmin()) {
         this.service.getPendingCompanyRequests().subscribe(reqs => this.companyRequests.set(reqs));
         this.activeTab = 'companies'; // Default to companies tab
     }
@@ -54,7 +54,7 @@ loadData() {
 #### Template Changes:
 ```html
 <!-- Only show Company Requests tab for Super Admin -->
-@if (isSuperAdmin()) {
+@if (isSystemAdmin()) {
     <button (click)="activeTab = 'companies'"
             [class.bg-white]="activeTab === 'companies'"
             ...>
@@ -83,7 +83,7 @@ The API endpoints should already be secured on the backend. However, we may need
 
 ```typescript
 // For Super Admin - only company requests count
-getSuperAdminPendingCounts(): Observable<{ pendingCount: number }> {
+getSystemAdminPendingCounts(): Observable<{ pendingCount: number }> {
     return this.http.get<{ pendingCount: number }>(`${this.apiUrl}/companyrequests/count`);
 }
 
@@ -102,7 +102,7 @@ The sidebar shows a badge for pending requests count. Update it to show only the
 ```typescript
 // Update refreshPendingCount to be role-aware
 refreshPendingCount() {
-    if (this.authService.hasRole('SuperAdmin')) {
+    if (this.authService.hasRole('SystemAdmin')) {
         this.service.getPendingCompanyRequestsCount().subscribe({
             next: (counts) => {
                 this.pendingRequests.set(counts.pendingCount);
@@ -140,7 +140,7 @@ The backend API endpoints should also be secured:
 flowchart TD
     A[User Logs In] --> B{User Role?}
     
-    B -->|SuperAdmin| C[Load Company Requests Only]
+    B -->|SystemAdmin| C[Load Company Requests Only]
     B -->|CompanyAdmin| D[Load Join Requests Only]
     B -->|CompanyUser| E[No Pending Requests Access]
     

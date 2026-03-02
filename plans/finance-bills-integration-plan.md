@@ -50,7 +50,7 @@ Add route under admin children:
     path: 'finance',
     loadComponent: () => import('./features/admin/finance/finance.component').then(m => m.FinanceComponent),
     canActivate: [roleGuard],
-    data: { roles: ['SuperAdmin', 'CompanyAdmin'] }
+    data: { roles: ['SystemAdmin', 'CompanyAdmin'] }
 }
 ```
 
@@ -64,7 +64,7 @@ Add navigation item for CompanyAdmin:
     label: 'Finance',
     icon: 'finance',
     route: '/admin/finance',
-    roles: ['SuperAdmin', 'CompanyAdmin']
+    roles: ['SystemAdmin', 'CompanyAdmin']
 }
 ```
 

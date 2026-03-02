@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using ConstructionManagement.Domain.Enums;
 namespace ConstructionManagement.WebApi.Controllers;
 
-[Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+[Authorize(Roles = "SystemAdmin,CompanyAdmin")]
 [ApiController]
 [Route("api/company-settings")]
 public class CompanySettingsController : ControllerBase
@@ -31,7 +31,7 @@ public class CompanySettingsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        // Query filter in DbContext will limit this to the current tenant if not SuperAdmin
+        // Query filter in DbContext will limit this to the current tenant if not SystemAdmin
         var settings = await _repo.AsQueryable()
             .Include(s => s.Company)
             .FirstOrDefaultAsync();
@@ -138,7 +138,7 @@ public class CompanySettingsController : ControllerBase
 
         // Map request to entity
         
-        // Master Switches (Super Admin Only - usually handled in CompaniesController too, but synced here for convenience)
+        // Master Switches (System Admin Only - usually handled in CompaniesController too, but synced here for convenience)
         if (request.EnableUserManagement.HasValue) settings.EnableUserManagement = request.EnableUserManagement.Value;
         if (request.EnableProjectManagement.HasValue) settings.EnableProjectManagement = request.EnableProjectManagement.Value;
         if (request.EnableProjectItemsManagement.HasValue) settings.EnableProjectItemsManagement = request.EnableProjectItemsManagement.Value;
@@ -330,3 +330,4 @@ public class CompanySettingsController : ControllerBase
         return Ok(settings);
     }
 }
+

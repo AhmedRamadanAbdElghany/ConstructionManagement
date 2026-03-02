@@ -204,12 +204,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                       <td class="px-8 py-8">
                         <span class="px-5 py-2.5 rounded-[1.25rem] text-[9px] font-black uppercase tracking-[0.2em] shadow-sm ring-1 ring-inset"
                                [ngClass]="{
-                                 'bg-indigo-500/10 text-indigo-600 ring-indigo-500/20': user.role === 'SuperAdmin',
+                                 'bg-indigo-500/10 text-indigo-600 ring-indigo-500/20': user.role === 'SystemAdmin',
                                  'bg-blue-500/10 text-blue-600 ring-blue-500/20': user.role === 'CompanyAdmin',
                                  'bg-emerald-500/10 text-emerald-600 ring-emerald-500/20': user.role === 'CompanyUser',
                                  'bg-slate-500/10 text-slate-600 ring-slate-500/20': user.role === 'NormalUser'
                                }">
-                          {{ 'sidebar.role_' + (user.role === 'SuperAdmin' ? 'super' : user.role === 'CompanyAdmin' ? 'admin' : user.role === 'CompanyUser' ? 'worker' : 'client') | translate }}
+                          {{ 'sidebar.role_' + (user.role === 'SystemAdmin' ? 'super' : user.role === 'CompanyAdmin' ? 'admin' : user.role === 'CompanyUser' ? 'worker' : 'client') | translate }}
                         </span>
                       </td>
                       <td class="px-8 py-8">
@@ -588,7 +588,7 @@ export class HrComponent implements OnInit {
   private checkAdminStatus() {
     const user = this.authService.getCurrentUser();
     const role = user?.role;
-    this.isAdmin = role === 'CompanyAdmin' || role === 'SuperAdmin';
+    this.isAdmin = role === 'CompanyAdmin' || role === 'SystemAdmin';
   }
 
   private loadTeamMembers() {
@@ -762,3 +762,4 @@ export class HrComponent implements OnInit {
     this.selectedUserForNotes = user;
   }
 }
+

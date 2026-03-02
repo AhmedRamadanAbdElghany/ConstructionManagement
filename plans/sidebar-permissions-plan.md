@@ -1,7 +1,7 @@
 # Sidebar Permission-Based Access Control Plan
 
 ## Overview
-This plan outlines implementing a permission-based system for the entire sidebar, allowing SuperAdmin to control which pages each role can access by assigning specific permissions.
+This plan outlines implementing a permission-based system for the entire sidebar, allowing SystemAdmin to control which pages each role can access by assigning specific permissions.
 
 ## Current Implementation
 We already have permissions for:
@@ -67,7 +67,7 @@ options.AddPolicy("CanViewMessages", policy => policy.RequireAssertion(...));
 ### Step 3: Update Sidebar Component
 Update `sidebar.component.ts`:
 - Replace all role-based conditions with permission-based checks
-- Keep SuperAdmin and CompanyAdmin bypass for admin features
+- Keep SystemAdmin and CompanyAdmin bypass for admin features
 - Use pattern: `authService.hasPermission('Permission.Name') || isAdmin`
 
 ### Step 4: Update Backend Controllers
@@ -82,7 +82,7 @@ Add translation keys for permission names (optional, for display purposes)
 ## Sidebar Current Conditions (to be updated)
 
 Current patterns to replace:
-- `currentRole !== 'SuperAdmin'` → `authService.hasPermission(...) || isAdmin`
+- `currentRole !== 'SystemAdmin'` → `authService.hasPermission(...) || isAdmin`
 - `(isWorker && hasApprovedCompany())` → `authService.hasPermission(...)`
 
 ## Priority

@@ -11,6 +11,7 @@ public class PublicCompanyDto
     public int FollowerCount { get; set; }
     public int PortfolioItemCount { get; set; }
     public bool IsFollowedByCurrentUser { get; set; }
+    public int? OwnerUserId { get; set; }
     // Legacy properties for backward compatibility
     public int CompletedProjectsCount { get; set; }
     public int SubscriberCount { get; set; }

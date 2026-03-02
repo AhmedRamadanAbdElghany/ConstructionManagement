@@ -30,7 +30,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get client portal settings for company
         /// </summary>
         [HttpGet("settings")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<ClientPortalSettingsDto>> GetClientPortalSettings()
         {
             var companyId = GetCurrentCompanyId();
@@ -42,7 +42,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Update client portal settings
         /// </summary>
         [HttpPut("settings")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<ClientPortalSettingsDto>> UpdateClientPortalSettings([FromBody] UpdateClientPortalSettingsRequest request)
         {
             var companyId = GetCurrentCompanyId();
@@ -58,7 +58,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get all client users for company
         /// </summary>
         [HttpGet("clients")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<List<ClientUserDto>>> GetClientUsers()
         {
             var companyId = GetCurrentCompanyId();
@@ -70,7 +70,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get client user by ID
         /// </summary>
         [HttpGet("clients/{clientUserId}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<ClientUserDto>> GetClientUser(int clientUserId)
         {
             var client = await _clientPortalService.GetClientUserAsync(clientUserId);
@@ -83,7 +83,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Create new client user
         /// </summary>
         [HttpPost("clients")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<ApiResponse<ClientUserDto>>> CreateClientUser([FromBody] CreateClientUserRequest request)
         {
             var companyId = GetCurrentCompanyId();
@@ -102,7 +102,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Update client user
         /// </summary>
         [HttpPut("clients/{clientUserId}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<ApiResponse<ClientUserDto>>> UpdateClientUser(int clientUserId, [FromBody] UpdateClientUserRequest request)
         {
             var client = await _clientPortalService.UpdateClientUserAsync(clientUserId, request);
@@ -115,7 +115,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Delete client user
         /// </summary>
         [HttpDelete("clients/{clientUserId}")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<ApiResponse<bool>>> DeleteClientUser(int clientUserId)
         {
             var deleted = await _clientPortalService.DeleteClientUserAsync(clientUserId);
@@ -128,7 +128,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Grant project access to client
         /// </summary>
         [HttpPost("clients/{clientUserId}/access")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<ApiResponse<ClientProjectAccessDto>>> GrantProjectAccess(int clientUserId, [FromBody] GrantClientProjectAccessRequest request)
         {
             var companyId = GetCurrentCompanyId();
@@ -469,7 +469,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get all client messages (admin)
         /// </summary>
         [HttpGet("admin/messages")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<List<ClientMessageDto>>> GetAllClientMessages(
             [FromQuery] string? status,
             [FromQuery] int? assignedTo)
@@ -483,7 +483,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Assign message to staff (admin)
         /// </summary>
         [HttpPut("admin/messages/{messageId}/assign")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<ClientMessageDto>> AssignMessage(int messageId, [FromQuery] int assignedToUserId)
         {
             var message = await _clientPortalService.AssignMessageAsync(messageId, assignedToUserId);
@@ -496,7 +496,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Update message status (admin)
         /// </summary>
         [HttpPut("admin/messages/{messageId}/status")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<ClientMessageDto>> UpdateMessageStatus(int messageId, [FromQuery] string status)
         {
             var message = await _clientPortalService.UpdateMessageStatusAsync(messageId, status);
@@ -509,7 +509,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Resolve message (admin)
         /// </summary>
         [HttpPut("admin/messages/{messageId}/resolve")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<ClientMessageDto>> ResolveMessage(int messageId, [FromBody] string resolution)
         {
             var message = await _clientPortalService.ResolveMessageAsync(messageId, resolution);
@@ -526,7 +526,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Get all change orders (admin)
         /// </summary>
         [HttpGet("admin/change-orders")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<List<ChangeOrderRequestDto>>> GetAllChangeOrders(
             [FromQuery] string? status,
             [FromQuery] int? projectId)
@@ -540,7 +540,7 @@ namespace ConstructionManagement.WebApi.Controllers
         /// Review change order (admin)
         /// </summary>
         [HttpPut("admin/change-orders/{requestId}/review")]
-        [Authorize(Roles = "SuperAdmin,CompanyAdmin")]
+        [Authorize(Roles = "SystemAdmin,CompanyAdmin")]
         public async Task<ActionResult<ChangeOrderRequestDto>> ReviewChangeOrder(
             int requestId,
             [FromQuery] string status,
@@ -609,3 +609,4 @@ namespace ConstructionManagement.WebApi.Controllers
         public UnauthorizedException(string message) : base(message) { }
     }
 }
+

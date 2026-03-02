@@ -5,7 +5,7 @@ import { LocalizedMessage, ApiResponse } from '../models/api-response.models';
 /**
  * Service for extracting localized messages from API responses.
  * Handles bilingual (Arabic/English) message extraction based on current language.
- * Arabic is the primary language as per application requirements.
+ * English is the primary language as per application requirements.
  */
 @Injectable({
     providedIn: 'root'
@@ -15,10 +15,10 @@ export class MessageService {
 
     /**
      * Gets the current language code from the translate service.
-     * Defaults to 'ar' (Arabic) if not set.
+     * Defaults to 'en' (English) if not set.
      */
     get currentLanguage(): string {
-        return this.translate.currentLang || this.translate.defaultLang || 'ar';
+        return this.translate.currentLang || this.translate.defaultLang || 'en';
     }
 
     /**

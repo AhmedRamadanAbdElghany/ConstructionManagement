@@ -60,7 +60,7 @@ public class HRService : IHRService
             {
                 status = "Client";
             }
-            else if (primaryRole == "SuperAdmin" || primaryRole == "CompanyAdmin")
+            else if (primaryRole == "SystemAdmin" || primaryRole == "CompanyAdmin")
             {
                 // Admins don't have attendance status - show as not applicable
                 status = "N/A";
@@ -339,7 +339,7 @@ public class HRService : IHRService
                     .Select(ur => ur.Role.Name)
                     .ToListAsync();
                     
-                if (!userRoles.Contains("CompanyAdmin") && !userRoles.Contains("SuperAdmin"))
+                if (!userRoles.Contains("CompanyAdmin") && !userRoles.Contains("SystemAdmin"))
                 {
                     throw new UnauthorizedAccessException("You do not have permission to update this certification.");
                 }
@@ -585,7 +585,7 @@ public class HRService : IHRService
                 .Select(ur => ur.Role.Name)
                 .ToListAsync();
                 
-            if (!userRoles.Contains("CompanyAdmin") && !userRoles.Contains("SuperAdmin"))
+            if (!userRoles.Contains("CompanyAdmin") && !userRoles.Contains("SystemAdmin"))
             {
                 throw new UnauthorizedAccessException("You do not have permission to delete this certification.");
             }
@@ -634,3 +634,4 @@ public class HRService : IHRService
         };
     }
 }
+

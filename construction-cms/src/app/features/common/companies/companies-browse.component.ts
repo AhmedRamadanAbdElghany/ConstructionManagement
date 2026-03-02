@@ -337,7 +337,7 @@ export class CompaniesBrowseComponent implements OnInit, OnDestroy {
   // Messaging restriction
   messagingStatus: MessagingStatusDto | null = null;
   isRestricted = false;
-  superAdminCompanyId: number | null = null;
+  SystemAdminCompanyId: number | null = null;
   // Inspection Request
   showRequestInspection = false;
   selectedIds: Set<number> = new Set();
@@ -369,7 +369,7 @@ export class CompaniesBrowseComponent implements OnInit, OnDestroy {
       next: (status) => {
         this.messagingStatus = status;
         this.isRestricted = status.isRestricted;
-        this.superAdminCompanyId = status.superAdminCompanyId ?? null;
+        this.SystemAdminCompanyId = status.SystemAdminCompanyId ?? null;
       },
       error: (error) => {
         console.error('Error loading messaging status:', error);
@@ -386,9 +386,9 @@ export class CompaniesBrowseComponent implements OnInit, OnDestroy {
       return company.id === this.messagingStatus.userCompanyId;
     }
 
-    // Unverified owner can only message SuperAdmin
+    // Unverified owner can only message SystemAdmin
     if (this.messagingStatus.isUnverifiedCompanyOwner) {
-      return company.id === this.superAdminCompanyId;
+      return company.id === this.SystemAdminCompanyId;
     }
 
     return false;
@@ -406,7 +406,7 @@ export class CompaniesBrowseComponent implements OnInit, OnDestroy {
         // We use both name check and ID check if available for robustness
         this.companies = companies.filter(c =>
           c.name !== 'System Administration' &&
-          c.id !== this.superAdminCompanyId &&
+          c.id !== this.SystemAdminCompanyId &&
           c.id !== userCompanyId
         );
         this.isLoading = false;
@@ -479,7 +479,7 @@ export class CompaniesBrowseComponent implements OnInit, OnDestroy {
     this.errorMessage = '';
 
     this.messagingService.startConversation({
-      companyId: this.selectedCompany.id,
+      recipientUserId: this.selectedCompany.ownerUserId || 0,
       message: this.messageContent.trim()
     }, this.selectedFiles).subscribe({
       next: (conversation) => {
@@ -550,3 +550,4 @@ export class CompaniesBrowseComponent implements OnInit, OnDestroy {
     alert('Inspection request(s) submitted successfully!');
   }
 }
+
