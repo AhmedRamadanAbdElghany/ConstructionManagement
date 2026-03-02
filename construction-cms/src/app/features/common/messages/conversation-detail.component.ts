@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { MessagingService, ConversationDetailDto, SendMessageRequest, CanSendMessageResult } from '../../../core/services/messaging.service';
 import { I18nService } from '../../../core/i18n/i18n.service';
@@ -147,7 +147,7 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
                     <!-- Avatar -->
                     <div class="w-16 h-16 rounded-[2rem] flex-shrink-0 flex items-center justify-center text-white text-2xl font-black shadow-2xl transition-transform group-hover:scale-110 duration-500"
                          [ngClass]="message.isFromCompany ? 'bg-indigo-600 shadow-indigo-600/20' : 'bg-slate-900 dark:bg-white dark:text-slate-900 shadow-black/10'">
-                      {{ message.senderName.charAt(0) }}
+                      {{ getSenderDisplayName(message) }}
                     </div>
                     
                     <!-- Message Content -->
@@ -155,7 +155,7 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
                       <div class="flex items-center gap-4 mb-3 px-2"
                            [ngClass]="{ 'flex-row-reverse': !message.isFromCompany }">
                         <span class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest">
-                          {{ message.senderName }}
+                          {{ getSenderNameTranslation(message) }}
                         </span>
                         <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
                           {{ formatTime(message.createdAt) }}
@@ -302,6 +302,7 @@ export class ConversationDetailComponent implements OnInit, OnDestroy {
   private messagingService = inject(MessagingService);
   private i18nService = inject(I18nService);
   private authService = inject(AuthService);
+  private translate = inject(TranslateService);
 
   conversation: ConversationDetailDto | null = null;
   isLoading = false;
@@ -471,6 +472,22 @@ export class ConversationDetailComponent implements OnInit, OnDestroy {
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString();
+  }
+
+  getSenderDisplayName(message: any): string {
+    // For avatar, show first letter
+    if (message.senderName === 'Me' || message.senderName === 'Self' || message.senderName === 'Me (Self)') {
+      return message.senderName.charAt(0);
+    }
+    return message.senderName.charAt(0);
+  }
+
+  getSenderNameTranslation(message: any): string {
+    // Translate 'Me' or 'Self' to current language
+    if (message.senderName === 'Me' || message.senderName === 'Self' || message.senderName === 'Me (Self)') {
+      return this.translate.instant('messages.tabs.me');
+    }
+    return message.senderName;
   }
 
   get groupedMessages() {

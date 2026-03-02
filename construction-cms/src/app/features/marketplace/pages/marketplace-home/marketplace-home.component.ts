@@ -614,6 +614,48 @@ interface FeaturedVendor {
       box-shadow: 0 40px 80px rgba(0,0,0,0.12);
     }
 
+    .category-img-wrapper {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 2.5rem;
+      border-radius: 50%;
+      overflow: hidden;
+      position: relative;
+      background: var(--input-bg);
+      border: 4px solid var(--glass-border);
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    .category-card-glass:hover .category-img-wrapper {
+      border-color: var(--accent-blue);
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 20px 40px rgba(14, 165, 233, 0.3);
+    }
+
+    .category-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .category-card-glass:hover .category-image {
+      transform: scale(1.15);
+    }
+
+    .img-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(14, 165, 233, 0.4), transparent);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .category-card-glass:hover .img-overlay {
+      opacity: 1;
+    }
+
     .category-icon-wrapper {
       width: 100px;
       height: 100px;
@@ -1245,5 +1287,39 @@ export class MarketplaceHomeComponent implements OnInit {
       'plumbing': 'pi pi-wrench'
     };
     return iconMap[icon || 'building'] || 'pi pi-box';
+  }
+
+  getCategoryImage(name: string, nameAr?: string): string | null {
+    const termStr = `${name} ${nameAr || ''}`.toLowerCase();
+
+    // Check known categories for specific images
+    if (termStr.includes('أبواب') || termStr.includes('door')) {
+      if (termStr.includes('خشب') || termStr.includes('wood')) return 'https://images.unsplash.com/photo-1541123437800-1c0c0e29b1be?auto=format&fit=crop&q=80&w=800';
+      if (termStr.includes('ألومنيوم') || termStr.includes('aluminum')) return 'https://images.unsplash.com/photo-1510006851064-e6056cd0e3a8?auto=format&fit=crop&q=80&w=800';
+      return 'https://images.unsplash.com/photo-1534066072460-a2d981da4fc6?auto=format&fit=crop&q=80&w=800';
+    }
+
+    if (termStr.includes('حمامات') || termStr.includes('bath') || termStr.includes('plumb')) {
+      return 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800';
+    }
+
+    if (termStr.includes('مواد البناء') || termStr.includes('building') || termStr.includes('أسمنت') || termStr.includes('cement')) {
+      return 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=800';
+    }
+
+    if (termStr.includes('سيراميك') || termStr.includes('بلاط') || termStr.includes('ceramic') || termStr.includes('tile')) {
+      return 'https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&q=80&w=800';
+    }
+
+    if (termStr.includes('أسلاك') || termStr.includes('كابلات') || termStr.includes('wire') || termStr.includes('cable') || termStr.includes('elect')) {
+      return 'https://images.unsplash.com/photo-1517504734587-2890819debab?auto=format&fit=crop&q=80&w=800';
+    }
+
+    if (termStr.includes('مواسير') || termStr.includes('pipe')) {
+      return 'https://images.unsplash.com/photo-1585611488585-6fec520023f2?auto=format&fit=crop&q=80&w=800';
+    }
+
+    // Default high-quality construction materials image if no match
+    return 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=800';
   }
 }
