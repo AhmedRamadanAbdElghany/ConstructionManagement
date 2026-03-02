@@ -12,7 +12,7 @@ import { HrService, LeaveRequestDto, PayrollDto, UserHRStatsDto, LeaveTypeDto } 
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   template: `
-    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500 font-['Outfit']">
+    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 transition-colors duration-500">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12 animate-premium-fade">
@@ -263,6 +263,31 @@ import { HrService, LeaveRequestDto, PayrollDto, UserHRStatsDto, LeaveTypeDto } 
       content: ''; @apply absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent translate-y-full transition-transform duration-700;
     }
     .premium-card:hover:after { @apply translate-y-0; }
+
+    .animate-premium-fade {
+      animation: premiumFade 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      opacity: 0;
+    }
+
+    .animate-premium-pulse {
+      animation: premiumPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes premiumFade {
+      from { 
+        opacity: 0; 
+        transform: translateY(20px) scale(0.98); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+      }
+    }
+
+    @keyframes premiumPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.02); }
+    }
   `]
 })
 export class PersonalHrComponent implements OnInit, OnDestroy {
