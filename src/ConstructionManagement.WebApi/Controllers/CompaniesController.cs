@@ -64,55 +64,55 @@ public class CompaniesController : ControllerBase
                 PackageId = request.PackageId,
                 IsActive = true,
 
-                EnableUserManagement = request.EnableUserManagement,
-                EnableProjectManagement = request.EnableProjectManagement,
-                EnableProjectItemsManagement = request.EnableProjectItemsManagement,
-                EnableDailyLogs = request.EnableDailyLogs,
-                EnableSiteMedia = request.EnableSiteMedia,
-                EnableEquipmentManagement = request.EnableEquipmentManagement,
-                EnableInventoryManagement = request.EnableInventoryManagement,
-                EnableQualityControl = request.EnableQualityControl,
-                EnableSafetyManagement = request.EnableSafetyManagement,
-                EnableSubcontractorManagement = request.EnableSubcontractorManagement,
-                EnableFinancialManagement = request.EnableFinancialManagement,
-                EnableAnalytics = request.EnableAnalytics,
-                EnableNotifications = request.EnableNotifications,
-                EnableDocumentManagement = request.EnableDocumentManagement,
-                EnableDesignManagement = request.EnableDesignManagement,
-                EnableClientPortal = request.EnableClientPortal,
-                EnableAccessControl = request.EnableAccessControl,
-                EnableHRManagement = request.EnableHRManagement,
-                EnableVendorManagement = request.EnableVendorManagement
+                EnableUserManagement = request.EnableUserManagement ?? true,
+                EnableProjectManagement = request.EnableProjectManagement ?? true,
+                EnableProjectItemsManagement = request.EnableProjectItemsManagement ?? true,
+                EnableDailyLogs = request.EnableDailyLogs ?? true,
+                EnableSiteMedia = request.EnableSiteMedia ?? true,
+                EnableEquipmentManagement = request.EnableEquipmentManagement ?? true,
+                EnableInventoryManagement = request.EnableInventoryManagement ?? true,
+                EnableQualityControl = request.EnableQualityControl ?? true,
+                EnableSafetyManagement = request.EnableSafetyManagement ?? true,
+                EnableSubcontractorManagement = request.EnableSubcontractorManagement ?? true,
+                EnableFinancialManagement = request.EnableFinancialManagement ?? true,
+                EnableAnalytics = request.EnableAnalytics ?? true,
+                EnableNotifications = request.EnableNotifications ?? true,
+                EnableDocumentManagement = request.EnableDocumentManagement ?? true,
+                EnableDesignManagement = request.EnableDesignManagement ?? true,
+                EnableClientPortal = request.EnableClientPortal ?? true,
+                EnableAccessControl = request.EnableAccessControl ?? true,
+                EnableHRManagement = request.EnableHRManagement ?? true,
+                EnableVendorManagement = request.EnableVendorManagement ?? true
             };
 
             // Link Settings via navigation property for atomic save
             company.Settings = new CompanySettings
             {
-                EnableDelayNotification = request.EnableDelayNotification,
-                EnablePhotoUpload = request.EnablePhotoUpload,
-                RequirePhotoReview = request.RequirePhotoReview,
-                ClientCanSeeFinancials = request.ClientCanSeeFinancials,
-                AllowMeasured = request.AllowMeasured,
-                AllowSupervision = request.AllowSupervision,
-                AllowPackages = request.AllowPackages,
-                AllowLocations = request.AllowLocations,
-                AllowHR = request.AllowHR,
+                EnableDelayNotification = request.EnableDelayNotification ?? true,
+                EnablePhotoUpload = request.EnablePhotoUpload ?? true,
+                RequirePhotoReview = request.RequirePhotoReview ?? true,
+                ClientCanSeeFinancials = request.ClientCanSeeFinancials ?? true,
+                AllowMeasured = request.AllowMeasured ?? true,
+                AllowSupervision = request.AllowSupervision ?? true,
+                AllowPackages = request.AllowPackages ?? true,
+                AllowLocations = request.AllowLocations ?? true,
+                AllowHR = request.AllowHR ?? true,
                 
-                RequireInvoiceApproval = request.EnableInvoiceReview,
+                RequireInvoiceApproval = request.EnableInvoiceReview ?? true,
                 InvoiceApproverRole = request.InvoiceApproverRole,
-                EnableVendorInvoiceUpload = request.EnableVendorInvoiceUpload,
-                EnableCashVoucher = request.EnableCashVoucher,
-                RequireCashVoucherApproval = request.RequireCashVoucherApproval,
+                EnableVendorInvoiceUpload = request.EnableVendorInvoiceUpload ?? true,
+                EnableCashVoucher = request.EnableCashVoucher ?? true,
+                RequireCashVoucherApproval = request.RequireCashVoucherApproval ?? true,
                 CashVoucherApproverRole = request.CashVoucherApproverRole,
                 CashVoucherSubmitterRole = request.CashVoucherSubmitterRole,
-                RecordCashVoucherToWorker = request.RecordCashVoucherToWorker,
+                RecordCashVoucherToWorker = request.RecordCashVoucherToWorker ?? true,
                 
                 DelayNotificationIntervalDays = 7,
                 DelayGracePeriodDays = 3,
                 PhotoApproverRole = "MediaReviewer",
-                DefaultMoneyCalculationMethod = request.AllowMeasured ? 
+                DefaultMoneyCalculationMethod = (request.AllowMeasured ?? true) ? 
                     ConstructionManagement.Domain.Enums.CalculationMethod.Measured : 
-                    (request.AllowSupervision ? ConstructionManagement.Domain.Enums.CalculationMethod.Supervision : ConstructionManagement.Domain.Enums.CalculationMethod.Packages)
+                    ((request.AllowSupervision ?? true) ? ConstructionManagement.Domain.Enums.CalculationMethod.Supervision : ConstructionManagement.Domain.Enums.CalculationMethod.Packages)
             };
             
             await _companyRepo.AddAsync(company);
