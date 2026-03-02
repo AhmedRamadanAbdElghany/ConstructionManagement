@@ -4,6 +4,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { SettingsService } from '../../core/services/settings.service';
 import { PendingRequestsService } from '../../core/services/pending-requests.service';
 import { NotificationsService } from '../../core/services/notifications.service';
+import { MessagingService } from '../../core/services/messaging.service';
 import { CompanySettings } from '../../shared/interfaces';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule, Router } from '@angular/router';
@@ -92,12 +93,20 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
           <a routerLink="/messages"
              routerLinkActive="nav-active"
              class="nav-item group">
-            <div class="nav-icon-box">
+            <div class="nav-icon-box relative text-slate-400 group-hover:text-indigo-500 dark:group-hover:text-indigo-400">
               <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
               </svg>
+              @if (unreadMessagesCount > 0) {
+                <span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-rose-500 text-white text-[10px] font-black flex items-center justify-center shadow-lg ring-2 ring-white dark:ring-slate-900">{{ unreadMessagesCount > 9 ? '9+' : unreadMessagesCount }}</span>
+              }
             </div>
             <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.messages' | translate }}</span>
+            <div class="ml-auto" [class.hidden]="isCollapsed()">
+                @if (unreadMessagesCount > 0) {
+                  <div class="flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full bg-rose-500 text-white text-[10px] font-black shadow-lg shadow-rose-500/20">{{ unreadMessagesCount > 99 ? '99+' : unreadMessagesCount }}</div>
+                }
+            </div>
           </a>
           }
 
@@ -806,6 +815,7 @@ export class SidebarComponent {
   settings?: CompanySettings;
   pendingRequestsCount = signal(0);
   hasApprovedCompany = signal(false);
+  unreadMessagesCount = 0;
   private router = inject(Router);
 
   constructor(
@@ -813,7 +823,8 @@ export class SidebarComponent {
     private settingsService: SettingsService,
     public pendingRequestsService: PendingRequestsService,
     public notificationsService: NotificationsService,
-    private clientPortalService: ClientPortalService
+    private clientPortalService: ClientPortalService,
+    private messagingService: MessagingService
   ) {
     const user = this.authService.getCurrentUser();
     const isSystemAdmin = user?.roles?.includes('SystemAdmin');
@@ -832,6 +843,19 @@ export class SidebarComponent {
 
     this.loadPendingRequestsCount();
     this.notificationsService.refreshUnreadCount();
+    this.loadUnreadMessagesCount();
+  }
+
+  loadUnreadMessagesCount() {
+    this.messagingService.getUnreadCount().subscribe({
+      next: (result) => {
+        this.unreadMessagesCount = result.count ?? 0;
+      },
+      error: (error) => {
+        console.error('Error loading unread messages count:', error);
+        this.unreadMessagesCount = 0;
+      }
+    });
   }
 
   loadPendingRequestsCount() {
