@@ -1,3 +1,4 @@
+using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.DTOs.HR;
 using ConstructionManagement.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;

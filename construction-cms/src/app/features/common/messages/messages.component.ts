@@ -411,7 +411,7 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
             <div class="flex items-center justify-between">
               <h3 class="text-xl font-black text-slate-900 dark:text-white">
                 @if (isSystemAdmin) {
-                  Search System Users
+                  {{ 'messages.search_system_users' | translate }}
                 } @else {
                   {{ 'messages.message_client_worker' | translate }}
                 }
@@ -444,8 +444,8 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
                   class="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
                   <option value="">{{ 'messages.all_users' | translate }}</option>
                   @if (isSystemAdmin) {
-                    <option value="CompanyOwner">Company Owners</option>
-                    <option value="SystemAdmin">System Admins</option>
+                    <option value="CompanyOwner">{{ 'messages.company_owners' | translate }}</option>
+                    <option value="SystemAdmin">{{ 'messages.system_admins' | translate }}</option>
                   } @else {
                     <option value="Client">{{ 'messages.clients' | translate }}</option>
                     <option value="Worker">{{ 'messages.workers' | translate }}</option>

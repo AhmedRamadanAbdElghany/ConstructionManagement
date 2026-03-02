@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.DTOs.HR;
 using ConstructionManagement.Application.Interfaces;
 using ConstructionManagement.Domain.Entities;
@@ -625,7 +627,7 @@ public class HRService : IHRService
             StartDate = l.StartDate,
             EndDate = l.EndDate,
             Reason = l.Reason,
-            Status = l.Status,
+            Status = l.Status.ToString(),
             ApprovedByUserId = l.ApprovedByUserId,
             ApprovedByFullName = l.ApprovedBy?.FirstName + " " + l.ApprovedBy?.LastName,
             ActionDate = l.ApprovedAt,

@@ -411,10 +411,10 @@ namespace ConstructionManagement.Application.DTOs
         public int OverdueCount { get; set; }
         public decimal CompletionRate { get; set; }
         public List<TrainingEnrollmentDto> ActiveEnrollments { get; set; } = new();
-        public List<CertificationDto> Certifications { get; set; } = new();
+        public List<TrainingCertificationDto> Certifications { get; set; } = new();
     }
 
-    public class CertificationDto
+    public class TrainingCertificationDto
     {
         public int Id { get; set; }
         public string TrainingTitle { get; set; } = string.Empty;

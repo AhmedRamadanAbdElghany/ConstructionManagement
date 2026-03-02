@@ -6,6 +6,7 @@ using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace ConstructionManagement.WebApi.Controllers
 {
@@ -26,6 +27,7 @@ namespace ConstructionManagement.WebApi.Controllers
         #region Leave Types
 
         [HttpGet("types")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<List<LeaveTypeDto>>> GetLeaveTypes([FromQuery] int? companyId)
         {
             // Check if leave management feature is enabled

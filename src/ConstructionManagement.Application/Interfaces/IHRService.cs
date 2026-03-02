@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using ConstructionManagement.Application.DTOs;
 using ConstructionManagement.Application.DTOs.HR;
 
 namespace ConstructionManagement.Application.Interfaces;

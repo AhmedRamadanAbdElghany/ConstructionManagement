@@ -949,7 +949,7 @@ namespace ConstructionManagement.Infrastructure.Services
             return enrollment.Status == EnrollmentStatus.Completed;
         }
 
-        public async Task<List<CertificationDto>> GetUserCertificationsAsync(int userId)
+        public async Task<List<TrainingCertificationDto>> GetUserCertificationsAsync(int userId)
         {
             var enrollments = await _context.TrainingEnrollments
                 .Include(e => e.TrainingProgram)
@@ -958,7 +958,7 @@ namespace ConstructionManagement.Infrastructure.Services
                 .Where(e => e.CertificateNumber != null)
                 .ToListAsync();
 
-            return enrollments.Select(e => new CertificationDto
+            return enrollments.Select(e => new TrainingCertificationDto
             {
                 Id = e.Id,
                 TrainingTitle = e.TrainingProgram?.Title ?? string.Empty,

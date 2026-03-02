@@ -74,7 +74,7 @@ namespace ConstructionManagement.Application.Interfaces
 
         Task<string> GenerateCertificateAsync(int enrollmentId);
         Task<bool> ValidateCertificateAsync(string certificateNumber);
-        Task<List<CertificationDto>> GetUserCertificationsAsync(int userId);
+        Task<List<TrainingCertificationDto>> GetUserCertificationsAsync(int userId);
 
         #endregion
 

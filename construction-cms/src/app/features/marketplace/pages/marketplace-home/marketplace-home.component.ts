@@ -1294,8 +1294,48 @@ export class MarketplaceHomeComponent implements OnInit {
     // Default high-quality placeholder we will return ONLY if no match found
     const defaultImage = 'https://images.unsplash.com/photo-1541888087405-eb81f8f3c7ea?auto=format&fit=crop&q=80&w=800'; // General construction
 
-    // Main Categories
-    if (termStr.includes('building materials') || termStr.includes('مواد البناء')) {
+    // 1. SPECIFIC SUB-CATEGORIES (Check these first for best matches)
+
+    // Doors Sub-categories
+    if (termStr.includes('wooden') || termStr.includes('خشب')) {
+      return 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&q=80&w=800'; // Elegant wooden door
+    }
+    if (termStr.includes('aluminum') || termStr.includes('ألومنيوم')) {
+      return 'https://images.unsplash.com/photo-1510006851064-e6056cd0e3a8?auto=format&fit=crop&q=80&w=800';
+    }
+    if (termStr.includes('pvc') || termStr.includes('بلاستيك')) {
+      return 'https://images.unsplash.com/photo-1534066072460-a2d981da4fc6?auto=format&fit=crop&q=80&w=800';
+    }
+
+    // Material Sub-categories
+    if (termStr.includes('cement') || termStr.includes('أسمنت')) {
+      return 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=800';
+    }
+    if (termStr.includes('steel') || termStr.includes('rebar') || termStr.includes('حديد')) {
+      return 'https://images.unsplash.com/photo-1535063406538-5152a414d5c9?auto=format&fit=crop&q=80&w=800';
+    }
+    if (termStr.includes('ceramic') || termStr.includes('tile') || termStr.includes('سيراميك') || termStr.includes('بلاط')) {
+      return 'https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&q=80&w=800';
+    }
+    if (termStr.includes('paint') || termStr.includes('دهان') || termStr.includes('طلاء') || termStr.includes('الوان')) {
+      return 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&q=80&w=800';
+    }
+
+    // Electrical Sub-categories
+    if (termStr.includes('wire') || termStr.includes('cable') || termStr.includes('سلك') || termStr.includes('كابل') || termStr.includes('أسلاك')) {
+      return 'https://images.unsplash.com/photo-1517504734587-2890819debab?auto=format&fit=crop&q=80&w=800';
+    }
+    if (termStr.includes('light') || termStr.includes('إضاءة')) {
+      return 'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?auto=format&fit=crop&q=80&w=800';
+    }
+
+    // Plumbing/Pipe Sub-categories
+    if (termStr.includes('pipe') || termStr.includes('مواسير') || termStr.includes('سباكة')) {
+      return 'https://images.unsplash.com/photo-1542037104857-ffbb0b9155fb?auto=format&fit=crop&q=80&w=800'; // High quality pipes
+    }
+
+    // 2. MAIN CATEGORIES (Catch-all for groups)
+    if (termStr.includes('building materials') || termStr.includes('مواد البناء') || termStr.includes('مواد بناء')) {
       return 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=800';
     }
     if (termStr.includes('finishing') || termStr.includes('تشطيب')) {
@@ -1304,112 +1344,17 @@ export class MarketplaceHomeComponent implements OnInit {
     if (termStr.includes('doors') || termStr.includes('windows') || termStr.includes('أبواب') || termStr.includes('شبابيك')) {
       return 'https://images.unsplash.com/photo-1534066072460-a2d981da4fc6?auto=format&fit=crop&q=80&w=800';
     }
-    if (termStr.includes('sanitary') || termStr.includes('أدوات صحية') || termStr.includes('bath')) {
+    if (termStr.includes('sanitary') || termStr.includes('أدوات صحية') || termStr.includes('حمامات') || termStr.includes('bath')) {
       return 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800';
     }
     if (termStr.includes('electrical') || termStr.includes('كهربائيات') || termStr.includes('bolt')) {
       return 'https://images.unsplash.com/photo-1517504734587-2890819debab?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('plumbing') || termStr.includes('سباكة') || termStr.includes('مواسير')) {
-      return 'https://images.unsplash.com/photo-1585611488585-6fec520023f2?auto=format&fit=crop&q=80&w=800';
     }
     if (termStr.includes('tools') || termStr.includes('معدات') || termStr.includes('أدوات')) {
       return 'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?auto=format&fit=crop&q=80&w=800';
     }
     if (termStr.includes('safety') || termStr.includes('السلامة')) {
       return 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=800';
-    }
-
-    // Building Materials Sub-categories
-    if (termStr.includes('cement') || termStr.includes('أسمنت')) {
-      return 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('sand') || termStr.includes('gravel') || termStr.includes('رمل') || termStr.includes('زلط')) {
-      return 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('steel') || termStr.includes('rebar') || termStr.includes('حديد')) {
-      return 'https://images.unsplash.com/photo-1535063406538-5152a414d5c9?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('brick') || termStr.includes('block') || termStr.includes('طوب') || termStr.includes('بلوك')) {
-      return 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('concrete') || termStr.includes('خرسانة')) {
-      return 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=800';
-    }
-
-    // Finishing Materials Sub-categories
-    if (termStr.includes('ceramic') || termStr.includes('tile') || termStr.includes('سيراميك') || termStr.includes('بلاط')) {
-      return 'https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('paint') || termStr.includes('دهان') || termStr.includes('طلاء') || termStr.includes(' coating')) {
-      return 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('floor') || termStr.includes('أرضيات')) {
-      return 'https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('ceiling') || termStr.includes('سقف')) {
-      return 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('wallpaper') || termStr.includes('decor') || termStr.includes('ورق')) {
-      return 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&q=80&w=800';
-    }
-
-    // Doors & Windows Sub-categories
-    if (termStr.includes('wooden') || termStr.includes('خشب')) {
-      return 'https://images.unsplash.com/photo-1541123437800-1c0c0e29b1be?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('aluminum') || termStr.includes('ألومنيوم')) {
-      return 'https://images.unsplash.com/photo-1510006851064-e6056cd0e3a8?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('pvc')) {
-      return 'https://images.unsplash.com/photo-1534066072460-a2d981da4fc6?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('hardware') || termStr.includes('أدوات')) {
-      return 'https://images.unsplash.com/photo-1534066072460-a2d981da4fc6?auto=format&fit=crop&q=80&w=800';
-    }
-
-    // Sanitary Ware Sub-categories
-    if (termStr.includes('kitchen') || termStr.includes('مطابخ')) {
-      return 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('faucet') || termStr.includes('mixer') || termStr.includes('خلاط')) {
-      return 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800';
-    }
-
-    // Electrical Sub-categories
-    if (termStr.includes('wire') || termStr.includes('cable') || termStr.includes('سلك') || termStr.includes('كابل')) {
-      return 'https://images.unsplash.com/photo-1517504734587-2890819debab?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('panel') || termStr.includes('لوحة')) {
-      return 'https://images.unsplash.com/photo-1517504734587-2890819debab?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('light') || termStr.includes('إضاءة')) {
-      return 'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('switch') || termStr.includes('socket') || termStr.includes('مفتاح') || termStr.includes('مأخذ')) {
-      return 'https://images.unsplash.com/photo-1517504734587-2890819debab?auto=format&fit=crop&q=80&w=800';
-    }
-
-    // Plumbing Sub-categories
-    if (termStr.includes('pipe') || termStr.includes('مواسير')) {
-      return 'https://images.unsplash.com/photo-1585611488585-6fec520023f2?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('fitting') || termStr.includes('valve') || termStr.includes('وصلات') || termStr.includes('محابس')) {
-      return 'https://images.unsplash.com/photo-1585611488585-6fec520023f2?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('heater') || termStr.includes('سخان') || termStr.includes('water heater')) {
-      return 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800';
-    }
-
-    // Fallback for specific Arabic terms not caught above
-    if (termStr.includes('أدوات حمامات') || termStr.includes('حمامات')) {
-      return 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('مواد بناء') || termStr.includes('building')) {
-      return 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=800';
-    }
-    if (termStr.includes('الوان') || termStr.includes('دهانات')) {
-      return 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&q=80&w=800';
     }
 
     return defaultImage;
