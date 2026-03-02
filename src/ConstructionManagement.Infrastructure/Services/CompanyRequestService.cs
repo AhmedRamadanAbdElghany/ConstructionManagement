@@ -158,25 +158,48 @@ public class CompanyRequestService : ICompanyRequestService
 
         if (config != null)
         {
-            company.EnableUserManagement = config.EnableUserManagement;
-            company.EnableProjectManagement = config.EnableProjectManagement;
-            company.EnableProjectItemsManagement = config.EnableProjectItemsManagement;
-            company.EnableDailyLogs = config.EnableDailyLogs;
-            company.EnableSiteMedia = config.EnableSiteMedia;
-            company.EnableEquipmentManagement = config.EnableEquipmentManagement;
-            company.EnableInventoryManagement = config.EnableInventoryManagement;
-            company.EnableQualityControl = config.EnableQualityControl;
-            company.EnableSafetyManagement = config.EnableSafetyManagement;
-            company.EnableSubcontractorManagement = config.EnableSubcontractorManagement;
-            company.EnableFinancialManagement = config.EnableFinancialManagement;
-            company.EnableAnalytics = config.EnableAnalytics;
-            company.EnableNotifications = config.EnableNotifications;
-            company.EnableDocumentManagement = config.EnableDocumentManagement;
-            company.EnableDesignManagement = config.EnableDesignManagement;
-            company.EnableClientPortal = config.EnableClientPortal;
-            company.EnableAccessControl = config.EnableAccessControl;
-            company.EnableHRManagement = config.EnableHRManagement;
-            company.EnableVendorManagement = config.EnableVendorManagement;
+            company.EnableUserManagement = config.EnableUserManagement ?? true;
+            company.EnableProjectManagement = config.EnableProjectManagement ?? true;
+            company.EnableProjectItemsManagement = config.EnableProjectItemsManagement ?? true;
+            company.EnableDailyLogs = config.EnableDailyLogs ?? true;
+            company.EnableSiteMedia = config.EnableSiteMedia ?? true;
+            company.EnableEquipmentManagement = config.EnableEquipmentManagement ?? true;
+            company.EnableInventoryManagement = config.EnableInventoryManagement ?? true;
+            company.EnableQualityControl = config.EnableQualityControl ?? true;
+            company.EnableSafetyManagement = config.EnableSafetyManagement ?? true;
+            company.EnableSubcontractorManagement = config.EnableSubcontractorManagement ?? true;
+            company.EnableFinancialManagement = config.EnableFinancialManagement ?? true;
+            company.EnableAnalytics = config.EnableAnalytics ?? true;
+            company.EnableNotifications = config.EnableNotifications ?? true;
+            company.EnableDocumentManagement = config.EnableDocumentManagement ?? true;
+            company.EnableDesignManagement = config.EnableDesignManagement ?? true;
+            company.EnableClientPortal = config.EnableClientPortal ?? true;
+            company.EnableAccessControl = config.EnableAccessControl ?? true;
+            company.EnableHRManagement = config.EnableHRManagement ?? true;
+            company.EnableVendorManagement = config.EnableVendorManagement ?? true;
+        }
+        else
+        {
+            // Enable all features by default when no config is provided
+            company.EnableUserManagement = true;
+            company.EnableProjectManagement = true;
+            company.EnableProjectItemsManagement = true;
+            company.EnableDailyLogs = true;
+            company.EnableSiteMedia = true;
+            company.EnableEquipmentManagement = true;
+            company.EnableInventoryManagement = true;
+            company.EnableQualityControl = true;
+            company.EnableSafetyManagement = true;
+            company.EnableSubcontractorManagement = true;
+            company.EnableFinancialManagement = true;
+            company.EnableAnalytics = true;
+            company.EnableNotifications = true;
+            company.EnableDocumentManagement = true;
+            company.EnableDesignManagement = true;
+            company.EnableClientPortal = true;
+            company.EnableAccessControl = true;
+            company.EnableHRManagement = true;
+            company.EnableVendorManagement = true;
         }
 
         // Create CompanySettings and link via navigation property for atomic save
