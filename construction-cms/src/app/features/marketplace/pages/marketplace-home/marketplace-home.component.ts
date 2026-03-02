@@ -1232,7 +1232,7 @@ export class MarketplaceHomeComponent implements OnInit {
     this.http.get<any[]>(`${this.apiUrl}/marketplace/categories`).subscribe({
       next: (data) => {
         this.totalCategories = data.length;
-        this.categories = data.slice(0, 8);
+        this.categories = data; // Show all categories
       },
       error: (error) => console.error('Error loading categories:', error)
     });
