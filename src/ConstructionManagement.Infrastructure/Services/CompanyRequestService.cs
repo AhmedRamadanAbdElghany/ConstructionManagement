@@ -158,25 +158,25 @@ public class CompanyRequestService : ICompanyRequestService
 
         if (config != null)
         {
-            company.EnableUserManagement = config.EnableUserManagement ?? true;
-            company.EnableProjectManagement = config.EnableProjectManagement ?? true;
-            company.EnableProjectItemsManagement = config.EnableProjectItemsManagement ?? true;
-            company.EnableDailyLogs = config.EnableDailyLogs ?? true;
-            company.EnableSiteMedia = config.EnableSiteMedia ?? true;
-            company.EnableEquipmentManagement = config.EnableEquipmentManagement ?? true;
-            company.EnableInventoryManagement = config.EnableInventoryManagement ?? true;
-            company.EnableQualityControl = config.EnableQualityControl ?? true;
-            company.EnableSafetyManagement = config.EnableSafetyManagement ?? true;
-            company.EnableSubcontractorManagement = config.EnableSubcontractorManagement ?? true;
-            company.EnableFinancialManagement = config.EnableFinancialManagement ?? true;
-            company.EnableAnalytics = config.EnableAnalytics ?? true;
-            company.EnableNotifications = config.EnableNotifications ?? true;
-            company.EnableDocumentManagement = config.EnableDocumentManagement ?? true;
-            company.EnableDesignManagement = config.EnableDesignManagement ?? true;
-            company.EnableClientPortal = config.EnableClientPortal ?? true;
-            company.EnableAccessControl = config.EnableAccessControl ?? true;
-            company.EnableHRManagement = config.EnableHRManagement ?? true;
-            company.EnableVendorManagement = config.EnableVendorManagement ?? true;
+            company.EnableUserManagement = config.EnableUserManagement;
+            company.EnableProjectManagement = config.EnableProjectManagement;
+            company.EnableProjectItemsManagement = config.EnableProjectItemsManagement;
+            company.EnableDailyLogs = config.EnableDailyLogs;
+            company.EnableSiteMedia = config.EnableSiteMedia;
+            company.EnableEquipmentManagement = config.EnableEquipmentManagement;
+            company.EnableInventoryManagement = config.EnableInventoryManagement;
+            company.EnableQualityControl = config.EnableQualityControl;
+            company.EnableSafetyManagement = config.EnableSafetyManagement;
+            company.EnableSubcontractorManagement = config.EnableSubcontractorManagement;
+            company.EnableFinancialManagement = config.EnableFinancialManagement;
+            company.EnableAnalytics = config.EnableAnalytics;
+            company.EnableNotifications = config.EnableNotifications;
+            company.EnableDocumentManagement = config.EnableDocumentManagement;
+            company.EnableDesignManagement = config.EnableDesignManagement;
+            company.EnableClientPortal = config.EnableClientPortal;
+            company.EnableAccessControl = config.EnableAccessControl;
+            company.EnableHRManagement = config.EnableHRManagement;
+            company.EnableVendorManagement = config.EnableVendorManagement;
         }
         else
         {
