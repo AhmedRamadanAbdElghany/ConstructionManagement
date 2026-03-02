@@ -184,7 +184,7 @@
     "hr_settings": "إعدادات الموارد البشرية",
     "projects": "المشاريع",
     "locations": "المواقع",
-    "inventory": "المخزون",
+    "inventory": "الموارد والمخزون",
     "equipment": "المعدات",
     "safety": "السلامة",
     "subcontractors": "مقاولين الباطن",
@@ -193,7 +193,7 @@
     "analytics": "التحليلات",
     "configurations": "الإعدادات",
     "operations": "العمليات",
-    "tasks": "المهام",
+    "tasks": "مركز العمليات",
     "escalations": "البلاغات",
     "items_progress": "تقدم البنود",
     "escalationsDashboard": {
@@ -236,8 +236,8 @@
     "change_orders": "أوامر التغيير",
     "daily_reports": "التقارير اليومية",
     "products": "المنتجات",
-    "orders": "الطلبات",
-    "sales": "المبيعات",
+    "orders": "طلبات المواد",
+    "sales": "حركات المخزون",
     "store_settings": "إعدادات المتجر",
     "notifications": "التنبيهات",
     "role_owner": "صاحب شركة مقاولات",
@@ -1588,7 +1588,7 @@
     "no_equipment_found": "لم يتم العثور على معدات تطابق معاييرك"
   },
   "inventory": {
-    "title": "إدارة المخزون",
+    "title": "إدارة الموارد والمخزون",
     "subtitle": "إدارة المواد الخام والتوريدات ولوجستيات المستودعات",
     "tabs": {
       "materials": "المواد والمؤن",
@@ -3478,5 +3478,28 @@
     "STATUS": "الحالة",
     "ASSIGNED_ZONES": "المناطق المخصصة لي",
     "NO_ASSIGNED_ZONES": "لا توجد مناطق جغرافية مخصصة لك"
+  },
+  "tasks": {
+    "board_title": "مركز العمليات",
+    "board_subtitle": "مزامنة المهام في الوقت الفعلي بين الموقع والمكتب",
+    "new_task": "مهمة جديدة",
+    "all": "جميع المهام",
+    "total_tasks": "إجمالي المهام",
+    "in_progress": "قيد التنفيذ",
+    "ready_for_review": "جاهز للمراجعة",
+    "overdue": "متأخر",
+    "search_placeholder": "البحث برقم المهمة، العنوان أو الأوسام...",
+    "pending": "معلق",
+    "approved": "معتمد",
+    "priority": "الأولوية",
+    "low": "منخفض",
+    "normal": "عادي",
+    "high": "عالي",
+    "critical": "حرج",
+    "due_date": "تاريخ الاستحقاق",
+    "description": "الوصف",
+    "create": "إنشاء مهمة",
+    "create_task": "إنشاء مهمة جديدة",
+    "title": "عنوان المهمة"
   }
 }

@@ -26,7 +26,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
             </p>
           </div>
           <div class="flex flex-wrap gap-4">
-            @if (activeTab === 'attendance') {
+            @if (activeTab === 'attendance' && (currentUserType !== 2)) {
                @if (!todayAttendance || todayAttendance.status === 'Absent') {
                   <button (click)="checkIn()" class="group relative px-10 py-5 rounded-[2.5rem] bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black uppercase tracking-[0.2em] text-xs hover:shadow-2xl hover:shadow-emerald-500/30 hover:-translate-y-1 active:scale-95 transition-all overflow-hidden flex items-center gap-3">
                     <span class="relative z-10">{{ 'hr.check_in' | translate }}</span>
@@ -338,12 +338,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                    <h2 class="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{{ 'hr.leave_requests' | translate }}</h2>
                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-2 opacity-60">Absence & Vacation Pipeline</p>
                  </div>
-                 <button (click)="openLeaveRequestModal()" 
-                         class="group relative px-12 py-6 rounded-[2.25rem] bg-indigo-600 text-white font-black uppercase tracking-[0.25em] text-[11px] hover:shadow-2xl hover:shadow-indigo-500/40 hover:-translate-y-2 active:scale-95 transition-all overflow-hidden flex items-center gap-4">
-                   <span class="relative z-10">{{ 'hr.request_leave' | translate }}</span>
-                   <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-                   <svg class="w-5 h-5 relative z-10 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
-                 </button>
+                 @if (currentUserType !== 2) {
+                   <button (click)="openLeaveRequestModal()" 
+                           class="group relative px-12 py-6 rounded-[2.25rem] bg-indigo-600 text-white font-black uppercase tracking-[0.25em] text-[11px] hover:shadow-2xl hover:shadow-indigo-500/40 hover:-translate-y-2 active:scale-95 transition-all overflow-hidden flex items-center gap-4">
+                     <span class="relative z-10">{{ 'hr.request_leave' | translate }}</span>
+                     <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                     <svg class="w-5 h-5 relative z-10 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+                   </button>
+                 }
               </div>
 
               <div class="grid grid-cols-1 gap-10">
@@ -660,6 +662,7 @@ export class HrComponent implements OnInit {
   isLoadingMatrix = true;
 
   isAdmin = false;
+  currentUserType: number = 0;
 
   private destroyRef = inject(DestroyRef);
   private hrService = inject(HrService);
@@ -696,6 +699,7 @@ export class HrComponent implements OnInit {
     const user = this.authService.getCurrentUser();
     const role = user?.role;
     this.isAdmin = role === 'CompanyAdmin' || role === 'SystemAdmin';
+    this.currentUserType = user?.userType ?? 0;
   }
 
   private loadTeamMembers() {

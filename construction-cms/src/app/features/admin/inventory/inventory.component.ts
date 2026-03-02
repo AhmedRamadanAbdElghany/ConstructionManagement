@@ -40,12 +40,12 @@ interface MaterialRequest {
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12 animate-premium-fade">
-          <div class="space-y-2">
-            <h1 class="text-5xl font-black text-slate-900 dark:text-white tracking-tight uppercase leading-none">
+          <div class="space-y-4">
+            <h1 class="premium-heading mb-0">
               {{ 'inventory.title' | translate }}
             </h1>
-            <p class="text-slate-500 dark:text-slate-400 font-medium italic opacity-75 text-lg">
-              Centralized Control for Materials & Logistics
+            <p class="premium-subheading mb-0">
+              {{ 'inventory.subtitle' | translate }}
             </p>
           </div>
           <button (click)="openAddModal()" 

@@ -201,10 +201,10 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
           @if (settings?.enableInventoryManagement) {
             <a routerLink="/admin/inventory" 
                routerLinkActive="nav-active"
-               class="nav-item group">
-              <div class="nav-icon-box">
-                <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+               class="nav-item group premium-nav-inventory">
+              <div class="nav-icon-box bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-500/5 dark:to-orange-500/5 border-amber-200/50 dark:border-amber-500/20">
+                <svg class="w-5 h-5 text-amber-600 dark:text-amber-400 transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                 </svg>
               </div>
               <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.inventory' | translate }}</span>
@@ -412,10 +412,10 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
 
             <a routerLink="/admin/tasks" 
                routerLinkActive="nav-active"
-               class="nav-item group">
-              <div class="nav-icon-box">
-                <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+               class="nav-item group premium-nav-tasks">
+              <div class="nav-icon-box bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-500/5 dark:to-indigo-500/5 border-blue-200/50 dark:border-blue-500/20">
+                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 transition-all duration-500 group-hover:scale-110 group-hover:-rotate-3 shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
                 </svg>
               </div>
               <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.tasks' | translate }}</span>
@@ -451,7 +451,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
             <a routerLink="/worker/location-submit" 
                routerLinkActive="nav-active"
                class="nav-item group"
-               *ngIf="authService.hasPermission('Location.Submit')">
+               *ngIf="authService.hasPermission('Location.Submit') && currentUserType !== 2">
               <div class="nav-icon-box">
                 <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>

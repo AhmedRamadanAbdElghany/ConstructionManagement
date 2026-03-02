@@ -185,7 +185,7 @@
     "notifications": "Notifications",
     "administration": "Administration",
     "operations": "Operations",
-    "tasks": "Tasks",
+    "tasks": "Operations Hub",
     "escalations": "Escalations",
     "items_progress": "Items Progress",
     "escalationsDashboard": {
@@ -222,7 +222,7 @@
     "other": "Other",
     "demo_role_switch": "Demo Role Switch",
     "vendors": "Warehouses",
-    "inventory": "Inventory",
+    "inventory": "Materials & Stock",
     "configurations": "Configurations",
     "companies": "Companies",
     "pending_requests": "Pending Requests",
@@ -249,8 +249,8 @@
     "building_material_stores": "Material Warehouses",
     "vendor_analytics": "Warehouse Analytics",
     "products": "Products",
-    "orders": "Orders",
-    "sales": "Sales",
+    "orders": "Material Requests",
+    "sales": "Stock Transactions",
     "store_settings": "Store Settings",
     "storefront": "Storefront",
     "finance": "Finance",
@@ -1561,7 +1561,7 @@
     "no_equipment_found": "No equipment found matching your criteria"
   },
   "inventory": {
-    "title": "Inventory Architecture",
+    "title": "Materials & Stock Control",
     "subtitle": "Manage raw materials, supplies, and warehouse logistics",
     "tabs": {
       "materials": "Stock Materials",
@@ -3400,5 +3400,28 @@
     "STATUS": "Status",
     "ASSIGNED_ZONES": "Assigned Zones",
     "NO_ASSIGNED_ZONES": "No assigned zones found for you"
+  },
+  "tasks": {
+    "board_title": "Operations Hub",
+    "board_subtitle": "Real-time task synchronization for site and office",
+    "new_task": "New Task",
+    "all": "All Tasks",
+    "total_tasks": "Total Volume",
+    "in_progress": "In Progress",
+    "ready_for_review": "Ready for Review",
+    "overdue": "Overdue",
+    "search_placeholder": "Search by task id, title or tags...",
+    "pending": "Pending",
+    "approved": "Approved",
+    "priority": "Priority",
+    "low": "Low",
+    "normal": "Normal",
+    "high": "High",
+    "critical": "Critical",
+    "due_date": "Due Date",
+    "description": "Description",
+    "create": "Create Task",
+    "create_task": "Create New Task",
+    "title": "Task Title"
   }
 }
