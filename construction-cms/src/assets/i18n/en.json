@@ -185,7 +185,7 @@
     "notifications": "Notifications",
     "administration": "Administration",
     "operations": "Operations",
-    "tasks": "Operations Hub",
+    "tasks": "Project Tasks",
     "escalations": "Escalations",
     "items_progress": "Items Progress",
     "escalationsDashboard": {
@@ -3402,7 +3402,7 @@
     "NO_ASSIGNED_ZONES": "No assigned zones found for you"
   },
   "tasks": {
-    "board_title": "Operations Hub",
+    "board_title": "Project Tasks",
     "board_subtitle": "Real-time task synchronization for site and office",
     "new_task": "New Task",
     "all": "All Tasks",

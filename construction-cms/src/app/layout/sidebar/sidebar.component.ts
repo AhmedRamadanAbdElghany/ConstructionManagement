@@ -198,7 +198,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
             }
           }
 
-          @if (settings?.enableInventoryManagement) {
+          @if (settings?.enableInventoryManagement && currentUserType !== 2) {
             <a routerLink="/admin/inventory" 
                routerLinkActive="nav-active"
                class="nav-item group premium-nav-inventory">
@@ -614,13 +614,13 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
 
           <a routerLink="/inventory-dashboard/products" 
              routerLinkActive="nav-active"
-             class="nav-item group">
-            <div class="nav-icon-box">
-              <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+             class="nav-item group premium-nav-inventory">
+            <div class="nav-icon-box bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-500/5 dark:to-orange-500/5 border-amber-200/50 dark:border-amber-500/20">
+              <svg class="w-5 h-5 text-amber-600 dark:text-amber-400 transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
               </svg>
             </div>
-            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.products' | translate }}</span>
+            <span class="nav-label" [class.opacity-0]="isCollapsed()" [class.w-0]="isCollapsed()">{{ 'sidebar.inventory' | translate }}</span>
           </a>
 
           <a routerLink="/inventory-dashboard/orders" 

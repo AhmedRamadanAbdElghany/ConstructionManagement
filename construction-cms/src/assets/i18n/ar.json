@@ -193,7 +193,7 @@
     "analytics": "التحليلات",
     "configurations": "الإعدادات",
     "operations": "العمليات",
-    "tasks": "مركز العمليات",
+    "tasks": "مهام المشاريع",
     "escalations": "البلاغات",
     "items_progress": "تقدم البنود",
     "escalationsDashboard": {
@@ -3480,7 +3480,7 @@
     "NO_ASSIGNED_ZONES": "لا توجد مناطق جغرافية مخصصة لك"
   },
   "tasks": {
-    "board_title": "مركز العمليات",
+    "board_title": "مهام المشاريع",
     "board_subtitle": "مزامنة المهام في الوقت الفعلي بين الموقع والمكتب",
     "new_task": "مهمة جديدة",
     "all": "جميع المهام",
