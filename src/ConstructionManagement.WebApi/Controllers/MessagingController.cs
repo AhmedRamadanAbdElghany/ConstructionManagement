@@ -43,7 +43,8 @@ public class MessagingController : BaseApiController
     /// Start a new conversation with a company
     /// </summary>
     [HttpPost("conversations")]
-    public async Task<ActionResult<ConversationDto>> StartConversation([FromForm] StartConversationRequest request)
+    [Consumes("multipart/form-data")]
+    public async Task<ActionResult<ConversationDto>> StartConversation([FromForm] StartConversationRequest request, IFormFileCollection attachments)
     {
         // Messaging is a general feature available to all users (including unverified company owners)
         // Feature check removed as per requirement
@@ -61,8 +62,8 @@ public class MessagingController : BaseApiController
                 Message = request.Message
             };
             
-            var attachments = Request.Form.Files.ToList();
-            var result = await _messagingService.StartConversationAsync(userId, serviceRequest, attachments);
+            var attachmentList = attachments.ToList();
+            var result = await _messagingService.StartConversationAsync(userId, serviceRequest, attachmentList);
             return Ok(result);
         }
         catch (InvalidOperationException ex)
@@ -136,13 +137,14 @@ public class MessagingController : BaseApiController
     /// Send a message in a conversation
     /// </summary>
     [HttpPost("conversations/{id}/messages")]
-    public async Task<ActionResult<CompanyMessageDto>> SendMessage(int id, [FromForm] SendMessageRequest request)
+    [Consumes("multipart/form-data")]
+    public async Task<ActionResult<CompanyMessageDto>> SendMessage(int id, [FromForm] SendMessageRequest request, IFormFileCollection attachments)
     {
         try
         {
             var userId = GetUserId();
-            var attachments = Request.Form.Files.ToList();
-            var result = await _messagingService.SendMessageAsync(id, userId, request, attachments);
+            var attachmentList = attachments.ToList();
+            var result = await _messagingService.SendMessageAsync(id, userId, request, attachmentList);
             return Ok(result);
         }
         catch (InvalidOperationException ex)
@@ -457,12 +459,13 @@ public class MessagingController : BaseApiController
     /// </summary>
     [HttpPost("conversations/with-user")]
     [Authorize(Roles = "CompanyAdmin,SystemAdmin")]
-    public async Task<ActionResult<ConversationDto>> StartConversationWithUser([FromForm] StartConversationWithUserRequest request)
+    [Consumes("multipart/form-data")]
+    public async Task<ActionResult<ConversationDto>> StartConversationWithUser([FromForm] StartConversationWithUserRequest request, IFormFileCollection attachments)
     {
         try
         {
             var userId = GetUserId();
-            var attachments = Request.Form.Files.ToList();
+            var attachmentList = attachments.ToList();
             
             // Use the unified StartConversationAsync which handles all cases
             var startRequest = new StartConversationRequest
@@ -471,7 +474,7 @@ public class MessagingController : BaseApiController
                 Message = request.Message
             };
             
-            var result = await _messagingService.StartConversationAsync(userId, startRequest, attachments);
+            var result = await _messagingService.StartConversationAsync(userId, startRequest, attachmentList);
             return Ok(result);
         }
         catch (InvalidOperationException ex)
@@ -567,13 +570,14 @@ public class MessagingController : BaseApiController
     /// </summary>
     [HttpPost("conversations/worker")]
     [Authorize(Roles = "Worker,CompanyAdmin,Subcontractor,SiteManager,Engineer")]
-    public async Task<ActionResult<ConversationDto>> StartWorkerConversation([FromForm] StartWorkerConversationRequest request)
+    [Consumes("multipart/form-data")]
+    public async Task<ActionResult<ConversationDto>> StartWorkerConversation([FromForm] StartWorkerConversationRequest request, IFormFileCollection attachments)
     {
         try
         {
             var userId = GetUserId();
-            var attachments = Request.Form.Files.ToList();
-            var result = await _messagingService.StartWorkerConversationAsync(userId, request, attachments);
+            var attachmentList = attachments.ToList();
+            var result = await _messagingService.StartWorkerConversationAsync(userId, request, attachmentList);
             return Ok(result);
         }
         catch (InvalidOperationException ex)
