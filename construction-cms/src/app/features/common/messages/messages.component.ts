@@ -766,19 +766,11 @@ export class MessagesComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.SystemAdminUserId === null || this.SystemAdminUserId === undefined) {
-      this.errorMessage = 'SystemAdmin not found. Please contact support.';
-      return;
-    }
-
     this.isSending = true;
     this.errorMessage = '';
 
-    // Use startConversationWithUser for direct user messaging
-    this.messagingService.startConversationWithUser({
-      targetUserId: this.SystemAdminUserId,
-      message: this.newMessage.trim()
-    }).subscribe({
+    // Use the new SystemAdmin conversation endpoint
+    this.messagingService.startSystemAdminConversation(this.newMessage.trim()).subscribe({
       next: (conversation) => {
         this.isSending = false;
         this.closeStartConversationModal();

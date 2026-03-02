@@ -25,6 +25,14 @@ public class StartConversationRequest
     public string Message { get; set; } = string.Empty;
 }
 
+/// <summary>
+/// Request to start a conversation with SystemAdmin
+/// </summary>
+public class StartSystemAdminConversationRequest
+{
+    public string Message { get; set; } = string.Empty;
+}
+
     /// <summary>
     /// Conversation summary for list views
     /// </summary>

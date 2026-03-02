@@ -490,6 +490,30 @@ public class MessagingController : BaseApiController
     }
 
     /// <summary>
+    /// Start a conversation with SystemAdmin (for unverified company owners)
+    /// </summary>
+    [HttpPost("conversations/system-admin")]
+    public async Task<ActionResult<ConversationDto>> StartSystemAdminConversation([FromForm] StartSystemAdminConversationRequest request)
+    {
+        try
+        {
+            var userId = GetUserId();
+            
+            var result = await _messagingService.StartSystemAdminConversationAsync(userId, request);
+            return Ok(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error starting conversation with SystemAdmin");
+            return StatusCode(500, new { message = "An error occurred while starting the conversation." });
+        }
+    }
+
+    /// <summary>
     /// Get users that the company can message (clients and workers)
     /// </summary>
     [HttpGet("messagable-users")]

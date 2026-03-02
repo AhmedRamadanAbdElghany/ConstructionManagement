@@ -267,6 +267,16 @@ export class MessagingService {
     }
 
     /**
+     * Start a conversation with SystemAdmin (for unverified company owners)
+     */
+    startSystemAdminConversation(message: string): Observable<ConversationDto> {
+        const formData = new FormData();
+        formData.append('message', message);
+
+        return this.http.post<ConversationDto>(`${this.baseUrl}/messaging/conversations/system-admin`, formData);
+    }
+
+    /**
      * Get all conversations for current user
      */
     getConversations(): Observable<ConversationDto[]> {

@@ -143,6 +143,28 @@ public class MessagingService : IMessagingService
         return await MapToConversationDto(conversation, userId);
     }
 
+    /// <summary>
+    /// Start a conversation with SystemAdmin (for unverified company owners)
+    /// </summary>
+    public async Task<ConversationDto> StartSystemAdminConversationAsync(int userId, StartSystemAdminConversationRequest request)
+    {
+        // Find SystemAdmin user
+        var systemAdminUserId = await GetSystemAdminUserIdAsync();
+        if (!systemAdminUserId.HasValue || systemAdminUserId.Value == 0)
+        {
+            throw new InvalidOperationException("SystemAdmin not found. Please contact support.");
+        }
+
+        // Use the existing StartConversationAsync logic
+        var serviceRequest = new StartConversationRequest
+        {
+            RecipientUserId = systemAdminUserId.Value,
+            Message = request.Message
+        };
+
+        return await StartConversationAsync(userId, serviceRequest);
+    }
+
     private async Task<bool> ShouldAutoApproveNewConversationAsync(User sender, User recipient)
     {
         // Rule: Every user can send message to himself

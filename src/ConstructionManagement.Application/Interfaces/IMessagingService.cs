@@ -18,6 +18,11 @@ public interface IMessagingService
     /// <param name="attachments">Optional file attachments</param>
     /// <returns>The created conversation</returns>
     Task<ConversationDto> StartConversationAsync(int userId, StartConversationRequest request, List<IFormFile>? attachments = null);
+
+    /// <summary>
+    /// Start a conversation with SystemAdmin (for unverified company owners)
+    /// </summary>
+    Task<ConversationDto> StartSystemAdminConversationAsync(int userId, StartSystemAdminConversationRequest request);
     
     /// <summary>
     /// Get all conversations for a user (as initiator)
