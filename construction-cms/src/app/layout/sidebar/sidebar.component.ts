@@ -462,7 +462,7 @@ import { ClientPortalService } from '../../core/services/client-portal.service';
             </a>
           }
 
-            @if (settings?.allowHR && (!isWorker || hasApprovedCompany())) {
+            @if (settings?.allowHR && (!isWorker || hasApprovedCompany()) && currentUserType !== 2) {
             <a routerLink="/worker/personal-hr" 
                routerLinkActive="nav-active"
                class="nav-item group">

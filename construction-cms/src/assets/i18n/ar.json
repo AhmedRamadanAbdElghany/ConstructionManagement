@@ -164,7 +164,9 @@
     "configurations": "الإعدادات",
     "operations": "العمليات",
     "tasks": "المهام",
-    "escalations": {
+    "escalations": "البلاغات",
+    "items_progress": "تقدم البنود",
+    "escalationsDashboard": {
       "title": "لوحة البلاغات",
       "subtitle": "مراقبة وإدارة بلاغات عناصر المشروع",
       "new_escalation": "بلاغ جديد",
@@ -2495,6 +2497,7 @@
     "photo_approval_req": "طلب الموافقة على الصور",
     "invoice_approval_req": "طلب الموافقة على الفواتير",
     "client_visibility": "ظهور العميل",
+    "no_announcements": "لا توجد إعلانات حالياً",
     "share_financials": "مشاركة الحالة المالية",
     "share_media": "مشاركة وسائط الموقع",
     "share_project_items": "مشاركة تفاصيل بنود المشروع",

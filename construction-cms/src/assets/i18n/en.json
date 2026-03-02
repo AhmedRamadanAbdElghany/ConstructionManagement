@@ -156,7 +156,9 @@
     "administration": "Administration",
     "operations": "Operations",
     "tasks": "Tasks",
-    "escalations": {
+    "escalations": "Escalations",
+    "items_progress": "Items Progress",
+    "escalationsDashboard": {
       "title": "Escalations Dashboard",
       "subtitle": "Monitor and manage project item escalations",
       "new_escalation": "New Escalation",
@@ -2408,6 +2410,7 @@
     "invoice_approval_req": "Require Invoice Approval",
     "client_visibility": "Client Visibility",
     "share_financials": "Share Financial Status",
+    "no_announcements": "No Announcements Yet",
     "share_media": "Share Site Media",
     "share_project_items": "Share Project Items Details",
     "ops_status_label": "Organizational Operation Status",
