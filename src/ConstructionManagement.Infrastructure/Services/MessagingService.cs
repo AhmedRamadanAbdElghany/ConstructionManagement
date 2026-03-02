@@ -1203,16 +1203,24 @@ public class MessagingService : IMessagingService
     /// </summary>
     private async Task<int?> GetSystemAdminUserIdAsync()
     {
-        // Find a SystemAdmin user (they don't have a company)
+        // First try to find by role
         var SystemAdmin = await _context.Users
             .Include(u => u.UserRoles)
             .ThenInclude(ur => ur.Role)
             .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "SystemAdmin"))
-            .OrderBy(u => u.Id)  // Get the first/primary SystemAdmin
+            .OrderBy(u => u.Id)
             .Select(u => u.Id)
             .FirstOrDefaultAsync();
 
-        return SystemAdmin > 0 ? SystemAdmin : null;
+        if (SystemAdmin > 0) return SystemAdmin;
+
+        // Fallback: find by known SystemAdmin email
+        var adminByEmail = await _context.Users
+            .Where(u => u.Email.ToLower() == "admin@construction.com")
+            .Select(u => u.Id)
+            .FirstOrDefaultAsync();
+
+        return adminByEmail > 0 ? adminByEmail : null;
     }
 
     // ── Company to User Messaging ─────────────────────────────────────────────────
